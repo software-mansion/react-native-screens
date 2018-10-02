@@ -5,7 +5,6 @@ import {
   View,
   UIManager,
   StyleSheet,
-  Platform,
 } from 'react-native';
 
 let USE_SCREENS = false;
@@ -23,16 +22,14 @@ export function screensEnabled() {
   return USE_SCREENS;
 }
 
-const isPlatformSupported = ['android', 'ios'].includes(Platform.OS);
-
-const NativeScreen = isPlatformSupported ? Animated.createAnimatedComponent(
+const NativeScreen = Animated.createAnimatedComponent(
   requireNativeComponent('RNSScreen', null)
-) : null;
+);
 
-const NativeScreenContainer = isPlatformSupported ? requireNativeComponent(
+const NativeScreenContainer = requireNativeComponent(
   'RNSScreenContainer',
   null
-) : null;
+);
 
 export class Screen extends React.Component {
   setNativeProps(props) {
