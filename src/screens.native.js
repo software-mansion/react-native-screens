@@ -16,7 +16,7 @@ const getViewManagerConfigCompat = name =>
     ? UIManager.getViewManagerConfig(name)
     : UIManager[name];
 
-export function useScreens(shouldUseScreens = true) {
+function useScreens(shouldUseScreens = true) {
   USE_SCREENS = shouldUseScreens;
   if (USE_SCREENS && !getViewManagerConfigCompat('RNSScreen')) {
     console.error(
@@ -25,64 +25,81 @@ export function useScreens(shouldUseScreens = true) {
   }
 }
 
-export function screensEnabled() {
+function screensEnabled() {
   return USE_SCREENS;
 }
 
-const NativeScreen = Animated.createAnimatedComponent(
-  requireNativeComponent('RNSScreen', null)
-);
-
+const NativeScreen = requireNativeComponent('RNSScreen', null);
 const NativeScreenContainer = requireNativeComponent(
   'RNSScreenContainer',
   null
 );
 
-export class Screen extends React.Component {
-  setNativeProps(props) {
-    this._ref.setNativeProps(props);
-  }
-  setRef = ref => {
-    this._ref = ref;
-    this.props.onComponentRef && this.props.onComponentRef(ref);
-  };
-  render() {
-    if (!USE_SCREENS) {
-      // Filter out active prop in this case because it is unused and
-      // can cause problems depending on react-native version:
-      // https://github.com/react-navigation/react-navigation/issues/4886
+function createScreenComponents(wrap = Animated.createAnimatedComponent) {
+  const WrappedNativeScreen = wrap(NativeScreen);
+  const WrappedView =
+    wrap === Animated.createAnimatedComponent ? Animated.View : wrap(View);
 
-      /* eslint-disable no-unused-vars */
-      const { active, onComponentRef, ...props } = this.props;
+  class Screen extends React.Component {
+    setNativeProps(props) {
+      this._ref.setNativeProps(props);
+    }
 
-      return <Animated.View {...props} ref={this.setRef} />;
-    } else {
-      const { style, children, ...rest } = this.props;
-      return (
-        <NativeScreen
-          {...rest}
-          ref={this.setRef}
-          style={StyleSheet.absoluteFill}>
-          {/*
+    setRef = ref => {
+      this._ref = ref;
+      this.props.onComponentRef && this.props.onComponentRef(ref);
+    };
+
+    render() {
+      if (!USE_SCREENS) {
+        // Filter out active prop in this case because it is unused and
+        // can cause problems depending on react-native version:
+        // https://github.com/react-navigation/react-navigation/issues/4886
+
+        /* eslint-disable no-unused-vars */
+        const { active, onComponentRef, ...props } = this.props;
+
+        return <WrappedView {...props} ref={this.setRef} />;
+      } else {
+        const { style, children, ...rest } = this.props;
+        return (
+          <WrappedNativeScreen
+            {...rest}
+            ref={this.setRef}
+            style={StyleSheet.absoluteFill}>
+            {/*
             We need to wrap children in additional Animated.View because
             of a bug in native driver preventing from both `active` and `styles`
             props begin animated in `NativeScreen` component. Once
             react-native/pull/20658 is merged we can export native screen directly
             and avoid wrapping with `Animated.View`.
           */}
-          <Animated.View style={style}>{children}</Animated.View>
-        </NativeScreen>
-      );
+            <WrappedView style={style}>{children}</WrappedView>
+          </WrappedNativeScreen>
+        );
+      }
     }
   }
+
+  class ScreenContainer extends React.Component {
+    render() {
+      if (!USE_SCREENS) {
+        return <View {...this.props} />;
+      } else {
+        return <NativeScreenContainer {...this.props} />;
+      }
+    }
+  }
+
+  return { Screen, ScreenContainer };
 }
 
-export class ScreenContainer extends React.Component {
-  render() {
-    if (!USE_SCREENS) {
-      return <View {...this.props} />;
-    } else {
-      return <NativeScreenContainer {...this.props} />;
-    }
-  }
-}
+const { Screen, ScreenContainer } = createScreenComponents();
+
+export {
+  Screen,
+  ScreenContainer,
+  createScreenComponents,
+  useScreens,
+  screensEnabled,
+};
