@@ -13,3 +13,13 @@ export function screensEnabled() {
 export const Screen = Animated.View;
 
 export const ScreenContainer = View;
+
+export const createScreenComponents = (
+  wrap = Animated.createAnimatedComponent
+) => {
+  return {
+    Screen:
+      wrap === Animated.createAnimatedComponent ? Animated.View : wrap(View),
+    ScreenContainer: ContainerComponent,
+  };
+};
