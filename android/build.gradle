@@ -44,8 +44,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:+'
-    compile  "com.android.support:appcompat-v7:${safeExtGet('supportLibVersion', '26.+')}"
+    implementation 'com.facebook.react:react-native:+'
+    implementation  "com.android.support:appcompat-v7:${safeExtGet('supportLibVersion', '26.+')}"
 }
 
 def configureReactNativePom(def pom) {
