@@ -49,22 +49,22 @@ class DetailsScreen extends React.Component {
   });
   state = { count: 1, text: '' };
   componentDidMount() {
-    Animated.loop(
-      Animated.timing(this.animvalue, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: false,
-      })
-    ).start();
-    setInterval(() => this.setState({ count: this.state.count + 1 }), 500);
+    // Animated.loop(
+    //   Animated.timing(this.animvalue, {
+    //     toValue: 1,
+    //     duration: 1000,
+    //     useNativeDriver: false,
+    //   })
+    // ).start();
+    // setInterval(() => this.setState({ count: this.state.count + 1 }), 500);
   }
   render() {
     const index = this.props.navigation.getParam('index', 0);
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Background index={index} />
+        {/* <Background index={index} /> */}
         <Button
-          title="More details"
+          title={'More details ' + index}
           onPress={() =>
             this.props.navigation.push('Details', {
               index: index + 1,
@@ -77,20 +77,6 @@ class DetailsScreen extends React.Component {
           onChangeText={text => this.setState({ text })}
           text={this.state.text}
         />
-        <Animated.View
-          style={{
-            transform: [
-              {
-                rotate: this.rotation,
-              },
-            ],
-            marginTop: 20,
-            borderColor: 'blue',
-            borderWidth: 3,
-            width: 20,
-            height: 20,
-          }}
-        />
       </View>
     );
   }
@@ -102,6 +88,7 @@ const App = createStackNavigator(
   },
   {
     initialRouteName: 'Details',
+    disableKeyboardHandling: true,
   }
 );
 
