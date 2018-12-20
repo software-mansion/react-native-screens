@@ -57,22 +57,7 @@ export class Screen extends React.Component {
 
       return <Animated.View {...props} ref={this.setRef} />;
     } else {
-      const { style, children, ...rest } = this.props;
-      return (
-        <AnimatedNativeScreen
-          {...rest}
-          ref={this.setRef}
-          style={StyleSheet.absoluteFill}>
-          {/*
-            We need to wrap children in additional Animated.View because
-            of a bug in native driver preventing from both `active` and `styles`
-            props begin animated in `NativeScreen` component. Once
-            react-native/pull/20658 is merged we can export native screen directly
-            and avoid wrapping with `Animated.View`.
-          */}
-          <Animated.View style={style}>{children}</Animated.View>
-        </AnimatedNativeScreen>
-      );
+      return <AnimatedNativeScreen {...this.props} />;
     }
   }
 }
