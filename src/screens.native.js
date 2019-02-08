@@ -5,6 +5,7 @@ import {
   View,
   UIManager,
   StyleSheet,
+  findNodeHandle,
 } from 'react-native';
 import { version } from 'react-native/Libraries/Core/ReactNativeVersion';
 
@@ -58,7 +59,7 @@ export class Screen extends React.Component {
 
       return <Animated.View {...props} ref={this.setRef} />;
     } else if (version.minor >= 57) {
-      return <AnimatedNativeScreen {...this.props} />;
+      return <AnimatedNativeScreen ref={this.setRef} {...this.props} />;
     } else {
       // On RN version below 0.57 we need to wrap screen's children with an
       // additional View because of a bug fixed in react-native/pull/20658 which
@@ -84,5 +85,73 @@ export class ScreenContainer extends React.Component {
     } else {
       return <NativeScreenContainer {...this.props} />;
     }
+  }
+}
+
+export class PeekAndPop extends React.Component {
+  preview = React.createRef();
+  peekable = React.createRef();
+  state = {
+    traversedActions: [],
+    mappedActions: [],
+  };
+
+  componentDidMount() {
+    this.peekable.current.setNativeProps({
+      previewView: findNodeHandle(this.preview.current),
+    });
+  }
+
+  static traverseActions(actions, actionsMap) {
+    const traversedAction = [];
+    actions.forEach(currentAction => {
+      if (currentAction.group) {
+        const { group, ...clonedAction } = currentAction;
+        clonedAction['group'] = this.traverseActions(group, actionsMap);
+        traversedAction.push(clonedAction);
+      } else {
+        const { action, ...clonedAction } = currentAction;
+        clonedAction['_key'] = actionsMap.length;
+        actionsMap.push(action);
+        traversedAction.push(clonedAction);
+      }
+    });
+    return traversedAction;
+  }
+
+  static getDerivedStateFromProps(props) {
+    const mappedActions = [];
+    const traversedActions = PeekAndPop.traverseActions(
+      props.previewActions,
+      mappedActions
+    );
+    return {
+      traversedActions,
+      mappedActions,
+    };
+  }
+
+  onActionsEvent = ({ nativeEvent: { key } }) => {
+    this.state.mappedActions[key]();
+  };
+  render() {
+    const { style, renderPreview, onPop, children } = this.props;
+    const { traversedActions } = this.state;
+    console.log(this.traversedActions);
+    return (
+      <ScreenContainer style={style}>
+        <Screen
+          active
+          onAction={this.onActionsEvent}
+          previewActions={traversedActions}
+          onPop={onPop}
+          ref={this.peekable}>
+          {children}
+        </Screen>
+        <Screen style={StyleSheet.absoluteFillObject} ref={this.preview}>
+          {renderPreview()}
+        </Screen>
+      </ScreenContainer>
+    );
   }
 }
