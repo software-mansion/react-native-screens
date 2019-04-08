@@ -15,6 +15,7 @@ import { useScreens } from 'react-native-screens';
 
 import Stack from './stack';
 import Tabs from './tabs';
+import Trans from './trans';
 import Navigation from './navigation';
 import NavigationTabsAndStack from './navigationTabsAndStack';
 
@@ -23,6 +24,7 @@ useScreens();
 const SCREENS = {
   Stack: { screen: Stack, title: 'Stack example' },
   Tabs: { screen: Tabs, title: 'Tabs example' },
+  Trans: { screen: Trans, title: 'Trans example' },
   Navigation: { screen: Navigation, title: 'React Navigation example' },
   NavigationTabsAndStack: {
     screen: NavigationTabsAndStack,

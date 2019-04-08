@@ -12,7 +12,9 @@ import java.util.List;
 public class RNScreensPackage implements ReactPackage {
   @Override
   public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-    return Collections.emptyList();
+    return Arrays.<NativeModule>asList(
+            new ScreensTransactions(reactContext)
+    );
   }
 
   @Override
