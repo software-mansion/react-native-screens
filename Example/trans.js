@@ -92,6 +92,7 @@ class App extends Component {
             <View
               style={{
                 backgroundColor: 'yellow',
+                left: 200,
                 width: 100,
                 height: 200,
                 zIndex: 100,
@@ -108,8 +109,8 @@ class App extends Component {
               style={{
                 backgroundColor: 'green',
                 left: 100,
-                width: 100,
-                height: 200,
+                width: 140,
+                height: 300,
                 zIndex: 100,
               }}
               ref={this.ref4}

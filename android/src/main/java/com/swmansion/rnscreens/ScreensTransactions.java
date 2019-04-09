@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.transition.Fade;
 import android.transition.Slide;
+import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.transition.TransitionSet;
 import android.util.Log;
@@ -79,18 +80,35 @@ public class ScreensTransactions extends ReactContextBaseJavaModule {
         shared.setTransitionName("my t");
 
 
-        TextView textView = new TextView(findRootFragmentActivity(viewFrom.getContainer()));
+        Transition slide = new Fade(Fade.IN);
+        slide.setDuration(1000);
 
-        textView.setText("This TextView is dynamically created");
+        slide.excludeChildren(shared, true);
+        slide.excludeTarget(shared, true);
+        slide.excludeTarget(sharedTo, true);
+        slide.excludeTarget(sharedTo, true);
 
-       TransitionSet enterTransitionSet = new TransitionSet();
+
+        viewTo.getFragment().setEnterTransition(slide);
+        slide = new Fade(Fade.OUT);
+        slide.setDuration(1000);
+
+        slide.excludeChildren(shared, true);
+        slide.excludeTarget(shared, true);
+        slide.excludeTarget(sharedTo, true);
+        slide.excludeTarget(sharedTo, true);
+
+        viewFrom.getFragment().setReturnTransition(slide);
+
+
+        TransitionSet enterTransitionSet = new TransitionSet();
         enterTransitionSet.addTransition(TransitionInflater.from(findRootFragmentActivity(viewFrom.getContainer())).inflateTransition(android.R.transition.move));
         enterTransitionSet.setDuration(1000);
         viewTo.getFragment().setSharedElementEnterTransition(enterTransitionSet);
 
         findRootFragmentActivity(viewFrom.getContainer()).getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addSharedElement(shared, sharedTo.getTransitionName())
                 .replace(viewFrom.getContainer().getId(), viewTo.getFragment(), viewTo.getFragment().getTag())
                 .commit();
