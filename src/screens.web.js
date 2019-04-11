@@ -1,14 +1,17 @@
 import React from 'react';
 import { Animated, View } from 'react-native';
 
+let _shouldUseScreens = true;
+
 export function useScreens(shouldUseScreens = true) {
   if (shouldUseScreens) {
-    console.warn('react-native-screens is not support on this platform.');
+    console.warn('react-native-screens is not fully support on this platform yet.');
   }
+  _shouldUseScreens = shouldUseScreens;
 }
 
 export function screensEnabled() {
-  return false;
+  return _shouldUseScreens;
 }
 
 export class Screen extends React.Component {
