@@ -21,7 +21,7 @@ export class Screen extends React.Component {
       activeValue = !!active.__getValue();
     }
 
-    if (activeValue === false) {
+    if (activeValue !== undefined && !activeValue) {
       viewStyle.push({ display: 'none' });
     }
 
