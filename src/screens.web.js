@@ -1,3 +1,4 @@
+import React from 'react';
 import { Animated, View } from 'react-native';
 
 export function useScreens(shouldUseScreens = true) {
@@ -10,7 +11,25 @@ export function screensEnabled() {
   return false;
 }
 
-export const Screen = Animated.View;
+export class Screen extends React.Component {
+  render() {
+    const { style, active, ...rest } = this.props;
+    let viewStyle = [style];
+    let activeValue = active;
+    // Convert animated value to boolean.
+    if (active && active.__getValue) {
+      activeValue = !!active.__getValue();
+    }
+
+    if (activeValue === false) {
+      viewStyle.push({ display: 'none' });
+    }
+
+    return (
+      <Animated.View {...rest} style={viewStyle} />
+    );
+  }
+}
 
 export const ScreenContainer = View;
 
