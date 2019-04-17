@@ -7,7 +7,7 @@ let _shouldUseScreens = true;
 export function useScreens(shouldUseScreens = true) {
   if (shouldUseScreens) {
     console.warn(
-      'react-native-screens is not fully support on this platform yet.'
+      'react-native-screens is not fully supported on this platform yet.'
     );
   }
   _shouldUseScreens = shouldUseScreens;
