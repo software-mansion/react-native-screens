@@ -98,10 +98,8 @@
   _previousFirstResponder = nil;
 }
 
-- (void)loadView
-{
-  self.view = _view;
-  _view = nil;
+- (UIView *)view {
+    return _view;
 }
 
 @end

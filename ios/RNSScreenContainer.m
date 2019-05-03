@@ -166,6 +166,7 @@
 
 @implementation RNSScreenContainerManager {
   NSMutableArray<RNSScreenContainerView *> *_markedContainers;
+  __weak RNSScreenContainerView *_containerView;
 }
 
 RCT_EXPORT_MODULE()
@@ -175,7 +176,9 @@ RCT_EXPORT_MODULE()
   if (!_markedContainers) {
     _markedContainers = [NSMutableArray new];
   }
-  return [[RNSScreenContainerView alloc] initWithManager:self];
+  RNSScreenContainerView *containerView = [[RNSScreenContainerView alloc] initWithManager:self];
+  _containerView = containerView;
+  return containerView;
 }
 
 - (void)markUpdated:(RNSScreenContainerView *)screen
@@ -193,5 +196,10 @@ RCT_EXPORT_MODULE()
     });
   }
 }
+
+- (void)invalidate {
+    [_containerView.controller removeFromParentViewController];
+}
+
 
 @end
