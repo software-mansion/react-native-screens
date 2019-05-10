@@ -42,12 +42,6 @@
   return _reactSuperview;
 }
 
-- (void)invalidate
-{
-  _controller.view = nil;
-  _controller = nil;
-}
-
 - (void)notifyFinishTransitioning
 {
   [_controller notifyFinishTransitioning];

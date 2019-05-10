@@ -7,7 +7,7 @@
 @interface RNSScreenManager : RCTViewManager
 @end
 
-@interface RNSScreenView : RCTView <RCTInvalidating>
+@interface RNSScreenView : RCTView
 
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
