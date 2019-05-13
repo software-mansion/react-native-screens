@@ -11,14 +11,14 @@ import {
   createSwitchNavigator,
   createAppContainer,
 } from 'react-navigation';
-import { useScreens } from 'react-native-screens';
+import { enableScreens } from 'react-native-screens';
 
 import Stack from './stack';
 import Tabs from './tabs';
 import Navigation from './navigation';
 import NavigationTabsAndStack from './navigationTabsAndStack';
 
-useScreens();
+enableScreens();
 
 const SCREENS = {
   Stack: { screen: Stack, title: 'Stack example' },
