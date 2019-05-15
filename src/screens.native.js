@@ -26,6 +26,11 @@ export function enableScreens(shouldEnableScreens = true) {
   }
 }
 
+// we should remove this at some point
+export function useScreens(shouldUseScreens = true) {
+  enableScreens(shouldUseScreens);
+}
+
 export function screensEnabled() {
   return ENABLE_SCREENS;
 }
