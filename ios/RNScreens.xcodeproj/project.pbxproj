@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		448078F52114595900280661 /* RNSScreenContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 448078F12114595900280661 /* RNSScreenContainer.m */; };
 		448078F72114595900280661 /* RNSScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 448078F42114595900280661 /* RNSScreen.m */; };
-		665F54AB229995FD0070A900 /* RNSPeekableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 665F54A9229995FD0070A900 /* RNSPeekableView.m */; };
 		B5C32A47220C6379000FFB8D /* RNSScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 448078F42114595900280661 /* RNSScreen.m */; };
 		B5C32A48220C6379000FFB8D /* RNSScreenContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 448078F12114595900280661 /* RNSScreenContainer.m */; };
 /* End PBXBuildFile section */
@@ -41,8 +40,6 @@
 		448078F02114595900280661 /* RNSScreenContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNSScreenContainer.h; sourceTree = "<group>"; };
 		448078F12114595900280661 /* RNSScreenContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNSScreenContainer.m; sourceTree = "<group>"; };
 		448078F42114595900280661 /* RNSScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNSScreen.m; sourceTree = "<group>"; };
-		665F54A9229995FD0070A900 /* RNSPeekableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNSPeekableView.m; sourceTree = "<group>"; };
-		665F54AA229995FD0070A900 /* RNSPeekableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNSPeekableView.h; sourceTree = "<group>"; };
 		B5C32A4F220C6379000FFB8D /* libRNScreens-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libRNScreens-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -75,8 +72,6 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				665F54AA229995FD0070A900 /* RNSPeekableView.h */,
-				665F54A9229995FD0070A900 /* RNSPeekableView.m */,
 				448078EF2114595900280661 /* RNSScreen.h */,
 				448078F42114595900280661 /* RNSScreen.m */,
 				448078F02114595900280661 /* RNSScreenContainer.h */,
@@ -142,7 +137,6 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
@@ -163,7 +157,6 @@
 			files = (
 				448078F72114595900280661 /* RNSScreen.m in Sources */,
 				448078F52114595900280661 /* RNSScreenContainer.m in Sources */,
-				665F54AB229995FD0070A900 /* RNSPeekableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
