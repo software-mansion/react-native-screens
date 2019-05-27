@@ -40,6 +40,8 @@ export const NativeScreenContainer = requireNativeComponent(
   null
 );
 
+const ScreenContext = React.createContext();
+
 export class Screen extends React.Component {
   setNativeProps(props) {
     this._ref.setNativeProps(props);
@@ -59,7 +61,15 @@ export class Screen extends React.Component {
 
       return <Animated.View {...props} ref={this.setRef} />;
     } else if (version.minor >= 57) {
-      return <AnimatedNativeScreen ref={this.setRef} {...this.props} />;
+      const { children, ...props } = this.props;
+
+      return (
+        <AnimatedNativeScreen {...props} ref={this.setRef}>
+          <ScreenContext.Provider value={this}>
+            {children}
+          </ScreenContext.Provider>
+        </AnimatedNativeScreen>
+      );
     } else {
       // On RN version below 0.57 we need to wrap screen's children with an
       // additional View because of a bug fixed in react-native/pull/20658 which
@@ -71,7 +81,9 @@ export class Screen extends React.Component {
           {...rest}
           ref={this.setRef}
           style={StyleSheet.absoluteFill}>
-          <Animated.View style={style}>{children}</Animated.View>
+          <ScreenContext.Provider value={this}>
+            <Animated.View style={style}>{children}</Animated.View>
+          </ScreenContext.Provider>
         </AnimatedNativeScreen>
       );
     }
@@ -88,22 +100,17 @@ export class ScreenContainer extends React.Component {
   }
 }
 
-export class PeekAndPop extends React.Component {
-  preview = React.createRef();
-  peekable = React.createRef();
-  state = {
-    traversedActions: [],
-    mappedActions: [],
-  };
+export const NativePeekableView = requireNativeComponent(
+  'RNSPeekableView',
+  null
+);
 
-  componentDidMount() {
-    this.peekable.current.setNativeProps({
-      previewView: findNodeHandle(this.preview.current),
-    });
-  }
-
+export class PeekableView extends React.Component {
   static traverseActions(actions, actionsMap) {
     const traversedAction = [];
+    if (!actions) {
+      return;
+    }
     actions.forEach(currentAction => {
       if (currentAction.group) {
         const { group, ...clonedAction } = currentAction;
@@ -121,7 +128,7 @@ export class PeekAndPop extends React.Component {
 
   static getDerivedStateFromProps(props) {
     const mappedActions = [];
-    const traversedActions = PeekAndPop.traverseActions(
+    const traversedActions = PeekableView.traverseActions(
       props.previewActions,
       mappedActions
     );
@@ -131,27 +138,67 @@ export class PeekAndPop extends React.Component {
     };
   }
 
+  preview = React.createRef();
+  previewView = React.createRef();
+  childView = React.createRef();
+  componentDidMount() {
+    const childRef = React.Children.only(this.props.children)._nativeTag;
+    setImmediate(() => {
+      const node = this.context._ref._component;
+      this.preview.current.setNativeProps({
+        childRef: findNodeHandle(this.childView.current),
+        screenRef: findNodeHandle(this.context._ref._component),
+      });
+    });
+  }
+
+  state = {
+    visible: false,
+  };
+
+  onDisappear = () => {
+    this.setState({
+      visible: false,
+    });
+    this.props.onDisappear && this.props.onDisappear();
+  };
+
+  onPeek = () => {
+    this.setState({
+      visible: true,
+    });
+    this.props.onPeek && this.props.onPeek();
+  };
+
+  state = {
+    traversedActions: [],
+    mappedActions: [],
+  };
+
   onActionsEvent = ({ nativeEvent: { key } }) => {
     this.state.mappedActions[key]();
   };
+
   render() {
-    const { style, renderPreview, onPop, children } = this.props;
-    const { traversedActions } = this.state;
-    console.log(this.traversedActions);
+    const { onPeek, onPop, onDisappear, previewActions, ...rest } = this.props;
     return (
-      <ScreenContainer style={style}>
-        <Screen
-          active
-          onAction={this.onActionsEvent}
-          previewActions={traversedActions}
-          onPop={onPop}
-          ref={this.peekable}>
-          {children}
-        </Screen>
-        <Screen style={StyleSheet.absoluteFillObject} ref={this.preview}>
-          {renderPreview()}
-        </Screen>
-      </ScreenContainer>
+      <React.Fragment>
+        <View {...this.props} ref={this.childView}>
+          {this.props.children}
+        </View>
+        <NativePeekableView
+          onDisappear={this.onDisappear}
+          onPeek={this.onPeek}
+          onPop={this.props.onPop}
+          ref={this.preview}
+          previewActions={this.state.traversedActions}
+          onAction={this.onActionsEvent}>
+          <View style={StyleSheet.absoluteFill}>
+            {this.state.visible ? this.props.renderPreview() : null}
+          </View>
+        </NativePeekableView>
+      </React.Fragment>
     );
   }
 }
+PeekableView.contextType = ScreenContext;

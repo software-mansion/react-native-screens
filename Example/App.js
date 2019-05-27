@@ -15,7 +15,7 @@ import { useScreens } from 'react-native-screens';
 
 import Stack from './stack';
 import Tabs from './tabs';
-import Peekable from './peekable';
+import Peekable, { PeekablePreview } from './peekable';
 import Navigation from './navigation';
 import NavigationTabsAndStack from './navigationTabsAndStack';
 
@@ -25,6 +25,7 @@ const SCREENS = {
   Stack: { screen: Stack, title: 'Stack example' },
   Tabs: { screen: Tabs, title: 'Tabs example' },
   Peekable: { screen: Peekable, title: 'Peekable' },
+  PeekablePreview: { screen: PeekablePreview, title: 'PeekablePreview' },
   Navigation: { screen: Navigation, title: 'React Navigation example' },
   NavigationTabsAndStack: {
     screen: NavigationTabsAndStack,
