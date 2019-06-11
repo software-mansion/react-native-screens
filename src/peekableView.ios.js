@@ -45,7 +45,6 @@ export default class PeekableView extends React.Component {
   }
 
   preview = React.createRef();
-  previewView = React.createRef();
   sourceView = React.createRef();
   componentDidMount() {
     this.preview.current.setNativeProps({
@@ -81,13 +80,13 @@ export default class PeekableView extends React.Component {
   };
 
   render() {
-    const { onPeek, onPop, onDisappear, previewActions, ...rest } = this.props;
     return (
       <React.Fragment>
         <View {...this.props} ref={this.sourceView}>
           {this.props.children}
         </View>
         <NativePeekableView
+          {...this.props}
           onDisappear={this.onDisappear}
           onPeek={this.onPeek}
           onPop={this.props.onPop}
