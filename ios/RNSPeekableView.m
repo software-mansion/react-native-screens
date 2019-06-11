@@ -106,7 +106,7 @@
 - (void)setChildRef:(NSInteger)reactTag
 {
   _child = [_uiManager viewForReactTag:[NSNumber numberWithInteger: reactTag]];
-  _previewController.view = ((RCTView*) super.reactSubviews[0]).reactSubviews[0];
+  _previewController.view = super.reactSubviews[0];
 }
 
 

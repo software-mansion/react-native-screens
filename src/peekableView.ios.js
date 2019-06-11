@@ -86,7 +86,7 @@ export default class PeekableView extends React.Component {
       <React.Fragment>
         <View {...this.props} ref={this.sourceView}>
           <NativePeekableView
-            style={[StyleSheet.absoluteFillObject, { backgroundColor: 'red' }]}
+            style={{ width: 0, height: 0 }}
             onDisappear={this.onDisappear}
             onPeek={this.onPeek}
             onPop={this.props.onPop}
@@ -94,10 +94,8 @@ export default class PeekableView extends React.Component {
             previewActions={this.state.traversedActions}
             onAction={this.onActionsEvent}>
             {/* Renders nothing and inside view bound to the screen used by controller */}
-            <View style={{ width: 0, height: 0 }}>
-              <View style={{ width, height }}>
-                {this.state.visible ? this.props.renderPreview() : null}
-              </View>
+            <View style={{ width, height }}>
+              {this.state.visible ? this.props.renderPreview() : null}
             </View>
           </NativePeekableView>
           {this.props.children}
