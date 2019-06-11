@@ -7,7 +7,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import { version } from 'react-native/Libraries/Core/ReactNativeVersion';
-import { ScreenContext } from './peekableView';
 export { default as PeekableView } from './peekableView';
 
 let USE_SCREENS = false;
@@ -64,9 +63,7 @@ export class Screen extends React.Component {
 
       return (
         <AnimatedNativeScreen {...props} ref={this.setRef}>
-          <ScreenContext.Provider value={this}>
-            {children}
-          </ScreenContext.Provider>
+          {children}
         </AnimatedNativeScreen>
       );
     } else {
@@ -80,9 +77,7 @@ export class Screen extends React.Component {
           {...rest}
           ref={this.setRef}
           style={StyleSheet.absoluteFill}>
-          <ScreenContext.Provider value={this}>
-            <Animated.View style={style}>{children}</Animated.View>
-          </ScreenContext.Provider>
+          <Animated.View style={style}>{children}</Animated.View>
         </AnimatedNativeScreen>
       );
     }

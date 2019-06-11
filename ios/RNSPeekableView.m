@@ -22,16 +22,16 @@
 - (UIViewController *)previewingContext:(id<UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location
 {
   if (_wrapper.onPeek) {
-    _wrapper.onPeek(@{});
+    _wrapper.onPeek(nil);
   }
   return _wrapper.previewController;
 }
 
-- (void)previewingContext:(id<UIViewControllerPreviewing>)  previewingContext
+- (void)previewingContext:(id<UIViewControllerPreviewing>)previewingContext
      commitViewController:(UIViewController *)viewControllerToCommit
 {
   if (_wrapper.onPop) {
-    _wrapper.onPop(@{});
+    _wrapper.onPop(nil);
   }
 }
 
@@ -41,7 +41,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
   if (_wrapper.onDisappear) {
-    _wrapper.onDisappear(@{});
+    _wrapper.onDisappear(nil);
   }
 }
 
@@ -56,32 +56,12 @@
 
 - (instancetype)initWithUIManager:(RCTUIManager *)uiManager
 {
-  if (self = [super init]) {
+  if (self = [super initWithFrame:self.frame]) {
     _uiManager = uiManager;
+    _previewController = [[RNPreviewViewController alloc] initWithWrapper:self];
   }
-  _previewController = [[RNPreviewViewController alloc] initWithWrapper:self];
-  
+
   return self;
-}
-
-- (void)setOnPop:(RCTDirectEventBlock)onPop
-{
-  _onPop = onPop;
-}
-
-- (void)setOnPeek:(RCTDirectEventBlock)onPeek
-{
-  _onPeek = onPeek;
-}
-
-- (void)setOnDisappear:(RCTDirectEventBlock)onDisappear
-{
-  _onDisappear = onDisappear;
-}
-
-- (void)setOnAction:(RCTDirectEventBlock)onAction
-{
-  _onAction = onAction;
 }
 
 - (void)setPreviewActions:(NSArray *)actions
@@ -120,21 +100,28 @@
 - (void)setScreenRef:(NSInteger)reactTag
 {
   RNSScreenView *view = (RNSScreenView *)[_uiManager viewForReactTag:[NSNumber numberWithInteger: reactTag]];
-  _screenController = view.controller;
-  [view.controller registerForPreviewingWithDelegate:_previewController sourceView:_child];
   
 }
 
 - (void)setChildRef:(NSInteger)reactTag
 {
   _child = [_uiManager viewForReactTag:[NSNumber numberWithInteger: reactTag]];
-  _previewController.view = super.reactSubviews[0];
+  _previewController.view = ((RCTView*) super.reactSubviews[0]).reactSubviews[0];
 }
 
-- (NSArray<UIView *> *)reactSubviews
-{
-  return nil;
+
+- (void)layoutSubviews {
+  [super layoutSubviews];
+  // Called after attaching
+  UIView *superScreen = self.superview;
+  while (![superScreen isKindOfClass:RNSScreenView.class]) {
+    superScreen  = [superScreen reactSuperview];
+  }
+  _screenController = ((RNSScreenView*) superScreen).controller;
+  [_screenController registerForPreviewingWithDelegate:_previewController sourceView:_child];
+  
 }
+
 
 - (void)invalidate
 {

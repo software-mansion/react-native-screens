@@ -6,8 +6,6 @@ import {
   findNodeHandle,
 } from 'react-native';
 
-export const ScreenContext = React.createContext();
-
 export const NativePeekableView = requireNativeComponent(
   'RNSPeekableView',
   null
@@ -48,15 +46,10 @@ export default class PeekableView extends React.Component {
 
   preview = React.createRef();
   previewView = React.createRef();
-  childView = React.createRef();
+  sourceView = React.createRef();
   componentDidMount() {
-    const childRef = React.Children.only(this.props.children)._nativeTag;
-    setImmediate(() => {
-      const node = this.context._ref._component;
-      this.preview.current.setNativeProps({
-        childRef: findNodeHandle(this.childView.current),
-        screenRef: findNodeHandle(this.context._ref._component),
-      });
+    this.preview.current.setNativeProps({
+      childRef: findNodeHandle(this.sourceView.current),
     });
   }
 
@@ -91,7 +84,7 @@ export default class PeekableView extends React.Component {
     const { onPeek, onPop, onDisappear, previewActions, ...rest } = this.props;
     return (
       <React.Fragment>
-        <View {...this.props} ref={this.childView}>
+        <View {...this.props} ref={this.sourceView}>
           {this.props.children}
         </View>
         <NativePeekableView
@@ -101,12 +94,14 @@ export default class PeekableView extends React.Component {
           ref={this.preview}
           previewActions={this.state.traversedActions}
           onAction={this.onActionsEvent}>
-          <View style={StyleSheet.absoluteFill}>
-            {this.state.visible ? this.props.renderPreview() : null}
+          {/* Used by previewing controller */}
+          <View style={{ width: 0, height: 0 }}>
+            <View style={StyleSheet.absoluteFill}>
+              {this.state.visible ? this.props.renderPreview() : null}
+            </View>
           </View>
         </NativePeekableView>
       </React.Fragment>
     );
   }
 }
-PeekableView.contextType = ScreenContext;

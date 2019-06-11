@@ -25,7 +25,6 @@ const SCREENS = {
   Stack: { screen: Stack, title: 'Stack example' },
   Tabs: { screen: Tabs, title: 'Tabs example' },
   Peekable: { screen: Peekable, title: 'Peekable' },
-  PeekablePreview: { screen: PeekablePreview, title: 'PeekablePreview' },
   Navigation: { screen: Navigation, title: 'React Navigation example' },
   NavigationTabsAndStack: {
     screen: NavigationTabsAndStack,
@@ -78,6 +77,7 @@ const MainScreenNav = createStackNavigator({
 const ExampleApp = createSwitchNavigator(
   {
     Main: { screen: MainScreenNav },
+    PeekablePreview: { screen: PeekablePreview },
     ...SCREENS,
   },
   {

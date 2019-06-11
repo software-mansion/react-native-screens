@@ -27,7 +27,7 @@ export class PeekablePreview extends React.Component {
 }
 
 class App extends Component {
-  renderPickable = source => (
+  renderPeekable = source => (
     <PeekableView
       renderPreview={() => <Image source={source} />}
       key={source}
@@ -77,7 +77,7 @@ class App extends Component {
     return (
       <View style={styles.container}>
         <Screen style={styles.container}>
-          {IMGS.map(i => this.renderPickable(i))}
+          {IMGS.map(i => this.renderPeekable(i))}
         </Screen>
       </View>
     );
