@@ -4,6 +4,7 @@ import {
   View,
   StyleSheet,
   findNodeHandle,
+  Dimensions,
 } from 'react-native';
 
 export const NativePeekableView = requireNativeComponent(
@@ -80,26 +81,27 @@ export default class PeekableView extends React.Component {
   };
 
   render() {
+    const { width, height } = Dimensions.get('window');
     return (
       <React.Fragment>
         <View {...this.props} ref={this.sourceView}>
+          <NativePeekableView
+            style={[StyleSheet.absoluteFillObject, { backgroundColor: 'red' }]}
+            onDisappear={this.onDisappear}
+            onPeek={this.onPeek}
+            onPop={this.props.onPop}
+            ref={this.preview}
+            previewActions={this.state.traversedActions}
+            onAction={this.onActionsEvent}>
+            {/* Renders nothing and inside view bound to the screen used by controller */}
+            <View style={{ width: 0, height: 0 }}>
+              <View style={{ width, height }}>
+                {this.state.visible ? this.props.renderPreview() : null}
+              </View>
+            </View>
+          </NativePeekableView>
           {this.props.children}
         </View>
-        <NativePeekableView
-          {...this.props}
-          onDisappear={this.onDisappear}
-          onPeek={this.onPeek}
-          onPop={this.props.onPop}
-          ref={this.preview}
-          previewActions={this.state.traversedActions}
-          onAction={this.onActionsEvent}>
-          {/* Used by previewing controller */}
-          <View style={{ width: 0, height: 0 }}>
-            <View style={StyleSheet.absoluteFill}>
-              {this.state.visible ? this.props.renderPreview() : null}
-            </View>
-          </View>
-        </NativePeekableView>
       </React.Fragment>
     );
   }
