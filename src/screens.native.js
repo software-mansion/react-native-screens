@@ -36,14 +36,14 @@ let NativeScreenContainerValue;
 const ScreensNativeModules = {
   get NativeScreen() {
     NativeScreenValue =
-      NativeScreenValue || requireNativeComponent('RNSScrfeen', null);
+      NativeScreenValue || requireNativeComponent('RNSScreen', null);
     return NativeScreenValue;
   },
 
   get NativeScreenContainer() {
     NativeScreenContainerValue =
       NativeScreenContainerValue ||
-      requireNativeComponent('RNSScreefnContainer', null);
+      requireNativeComponent('RNSScreenContainer', null);
     return NativeScreenContainerValue;
   },
 };
