@@ -30,14 +30,36 @@ export function screensEnabled() {
   return USE_SCREENS;
 }
 
-export const NativeScreen = requireNativeComponent('RNSScreen', null);
+// If screens aren't linked, `requireNativeComponent` will throw
+// Since screens aren't used unless `useScreens` is called, we shouldn't throw error
+// By lazily initializing the variables in `render`, we only throw if the component is used
+let NativeScreenValue;
+let NativeScreenContainerValue;
+
+export function NativeScreenContainer(props) {
+  NativeScreenContainerValue =
+    NativeScreenContainerValue ||
+    requireNativeComponent('RNSScreenContainer', null);
+
+  return <NativeScreenContainerValue {...props} />;
+}
+
+export class NativeScreen extends React.Component {
+  setNativeProps(props) {
+    this._root.current.setNativeProps(props);
+  }
+
+  _root = React.createRef();
+
+  render() {
+    NativeScreenValue =
+      NativeScreenValue || requireNativeComponent('RNSScreen', null);
+
+    return <NativeScreenValue ref={this._root} {...this.props} />;
+  }
+}
 
 const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
-
-export const NativeScreenContainer = requireNativeComponent(
-  'RNSScreenContainer',
-  null
-);
 
 export class Screen extends React.Component {
   setNativeProps(props) {
