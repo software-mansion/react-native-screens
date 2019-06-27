@@ -1,5 +1,9 @@
+#import <UIKit/UIKit.h>
+
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
+
+#import <React/RCTUIManager.h>
 
 @interface RNSScreen : UIViewController
 
@@ -10,6 +14,7 @@
 
 @implementation RNSScreenView {
   RNSScreen *_controller;
+  BOOL _invalidated;
 }
 
 @synthesize controller = _controller;
@@ -44,8 +49,7 @@
 
 - (void)invalidate
 {
-  _controller.view = nil;
-  _controller = nil;
+  _invalidated = YES;
 }
 
 - (void)notifyFinishTransitioning
@@ -100,8 +104,15 @@
 
 - (void)loadView
 {
-  self.view = _view;
-  _view = nil;
+  if (_view != nil) {
+    self.view = _view;
+    _view = nil;
+  }
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
 }
 
 @end

@@ -6,8 +6,11 @@ import {
   TextInput,
   Animated,
   Easing,
+  requireNativeComponent,
 } from 'react-native';
 import { Screen, ScreenContainer } from 'react-native-screens';
+
+export const ScreenStack = requireNativeComponent('RNSScreenStack', null);
 
 const COLORS = ['azure', 'pink', 'cyan'];
 
@@ -15,112 +18,50 @@ export class Stack extends Component {
   constructor(props) {
     super(props);
 
-    const progress = new Animated.Value(0);
-    const slideIn = progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [320, 0],
-    });
-    const slideOut = progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 320],
-    });
-    const backSlideIn = progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-50, 0],
-    });
-    const backSlideOut = progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, -50],
-    });
-
     this.state = {
       stack: ['azure'],
       transitioning: 0,
-      progress,
-      slideIn,
-      slideOut,
-      backSlideIn,
-      backSlideOut,
     };
   }
   push(key) {
     this.setState({ stack: [...this.state.stack, key], transitioning: 1 });
-    this.state.progress.setValue(0);
-    Animated.timing(this.state.progress, {
-      duration: 500,
-      easing: Easing.out(Easing.quad),
-      toValue: 1,
-      useNativeDriver: true,
-    }).start(() => {
-      this.setState({ transitioning: 0 });
-    });
   }
   pop() {
-    this.setState({ transitioning: -1 });
-    this.state.progress.setValue(0);
-    Animated.timing(this.state.progress, {
-      duration: 500,
-      easing: Easing.out(Easing.quad),
-      toValue: 1,
-      useNativeDriver: true,
-    }).start(() => {
-      this.setState({
-        transitioning: 0,
-        stack: this.state.stack.slice(0, -1),
-      });
+    this.setState({
+      transitioning: 0,
+      stack: this.state.stack.slice(0, -1),
+    });
+  }
+  remove(index) {
+    this.setState({
+      stack: this.state.stack.filter((v, idx) => idx !== index),
     });
   }
   renderScreen = (key, index) => {
     let style = StyleSheet.absoluteFill;
     const { stack, transitioning } = this.state;
-    if (index === stack.length - 1) {
-      if (transitioning > 0) {
-        style = {
-          ...StyleSheet.absoluteFillObject,
-          transform: [{ translateX: this.state.slideIn }],
-        };
-      } else if (transitioning < 0) {
-        style = {
-          ...StyleSheet.absoluteFillObject,
-          transform: [{ translateX: this.state.slideOut }],
-        };
-      }
-    } else if (index === stack.length - 2) {
-      if (transitioning > 0) {
-        style = {
-          ...StyleSheet.absoluteFillObject,
-          transform: [{ translateX: this.state.backSlideOut }],
-        };
-      } else if (transitioning < 0) {
-        style = {
-          ...StyleSheet.absoluteFillObject,
-          transform: [{ translateX: this.state.backSlideIn }],
-        };
-      }
-    }
     const active =
       index === stack.length - 1 ||
       (transitioning !== 0 && index === stack.length - 2);
     return (
-      <Screen style={style} key={key} active={active ? 1 : 0}>
+      <Screen style={style} key={key} active={1}>
         {this.props.renderScreen(key)}
       </Screen>
     );
   };
   render() {
     const screens = this.state.stack.map(this.renderScreen);
-    return (
-      <ScreenContainer style={styles.container}>{screens}</ScreenContainer>
-    );
+    return <ScreenStack style={styles.container}>{screens}</ScreenStack>;
   }
 }
 
-class App extends Component {
+class Apper extends Component {
   renderScreen = key => {
     const index = COLORS.indexOf(key);
     const color = key;
     const pop = index > 0 ? () => this.stack.pop() : null;
     const push = index < 2 ? () => this.stack.push(COLORS[index + 1]) : null;
+    const remove = index > 1 ? () => this.stack.remove(1) : null;
     return (
       <View
         style={{
@@ -128,10 +69,13 @@ class App extends Component {
           backgroundColor: color,
           alignItems: 'center',
           justifyContent: 'center',
+          margin: index * 40,
         }}>
         {pop && <Button title="Pop" onPress={pop} />}
         {push && <Button title="Push" onPress={push} />}
+        {remove && <Button title="Remove middle screen" onPress={remove} />}
         <TextInput placeholder="Hello" style={styles.textInput} />
+        <View style={{ height: 100, backgroundColor: 'red', width: '70%' }} />
       </View>
     );
   };
@@ -144,6 +88,21 @@ class App extends Component {
     );
   }
 }
+
+const App = () => (
+  <View style={StyleSheet.absoluteFill}>
+    <Apper />
+    <View
+      style={{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        backgroundColor: 'red',
+        right: 0,
+      }}
+    />
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {

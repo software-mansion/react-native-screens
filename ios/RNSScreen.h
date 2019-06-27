@@ -12,6 +12,7 @@
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic) BOOL active;
+@property (nonatomic) BOOL dismissed;
 
 - (void)notifyFinishTransitioning;
 
