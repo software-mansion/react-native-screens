@@ -86,3 +86,15 @@ export class ScreenContainer extends React.Component {
     }
   }
 }
+
+export const ScreenStack = requireNativeComponent('RNSScreenStack', null);
+
+export const ScreenStackHeaderConfig = requireNativeComponent(
+  'RNSScreenStackHeaderConfig',
+  null
+);
+
+export const ScreenStackHeaderTitleView = requireNativeComponent(
+  'RNSScreenStackHeaderTitleView',
+  null
+);

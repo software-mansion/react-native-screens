@@ -4,13 +4,19 @@ import {
   Button,
   View,
   TextInput,
+  Text,
   Animated,
   Easing,
   requireNativeComponent,
 } from 'react-native';
-import { Screen, ScreenContainer } from 'react-native-screens';
+import {
+  Screen,
+  ScreenStack,
+  ScreenStackHeaderConfig,
+  ScreenStackHeaderTitleView,
+} from 'react-native-screens';
 
-export const ScreenStack = requireNativeComponent('RNSScreenStack', null);
+// const ScreenStack = requireNativeComponent('RNSScreenStack', null);
 
 const COLORS = ['azure', 'pink', 'cyan'];
 
@@ -45,6 +51,17 @@ export class Stack extends Component {
       (transitioning !== 0 && index === stack.length - 2);
     return (
       <Screen style={style} key={key} active={1}>
+        <ScreenStackHeaderConfig
+          title={`Testing ${key} sdhfgi ksjdfh`}
+          backTitle="Oh no!"
+          hidden={index === 1}
+          backgroundColor={key}
+          largeTitle={index === 0}
+          tintColor={key}>
+          {/* <ScreenStackHeaderTitleView>
+            <Text>Yo!</Text>
+          </ScreenStackHeaderTitleView> */}
+        </ScreenStackHeaderConfig>
         {this.props.renderScreen(key)}
       </Screen>
     );
@@ -55,7 +72,7 @@ export class Stack extends Component {
   }
 }
 
-class Apper extends Component {
+class App extends Component {
   renderScreen = key => {
     const index = COLORS.indexOf(key);
     const color = key;
@@ -88,21 +105,6 @@ class Apper extends Component {
     );
   }
 }
-
-const App = () => (
-  <View style={StyleSheet.absoluteFill}>
-    <Apper />
-    <View
-      style={{
-        position: 'absolute',
-        width: 50,
-        height: 50,
-        backgroundColor: 'red',
-        right: 0,
-      }}
-    />
-  </View>
-);
 
 const styles = StyleSheet.create({
   container: {

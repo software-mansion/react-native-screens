@@ -1,5 +1,6 @@
 #import "RNSScreenStack.h"
 #import "RNSScreen.h"
+#import "RNSScreenStackHeaderConfig.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -24,12 +25,26 @@
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
     _controller = [[UINavigationController alloc] init];
-    _controller.navigationBar.hidden = YES;
+//    _controller.navigationBar.hidden = YES;
+    if (@available(iOS 11.0, *)) {
+      _controller.navigationBar.prefersLargeTitles = YES;
+    }
     _controller.delegate = self;
     _needUpdate = NO;
     [self addSubview:_controller.view];
   }
   return self;
+}
+
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+  UIView *view = viewController.view;
+  for (UIView *subview in view.reactSubviews) {
+    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      [((RNSScreenStackHeaderConfig*) subview) willShowViewController:viewController];
+      break;
+    }
+  }
 }
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
@@ -39,7 +54,7 @@
       break;
     } else {
       // TODO: send dismiss event
-//      [_reactSubviews objectAtIndex:i].dismissed = YES;
+      [_reactSubviews objectAtIndex:i].dismissed = YES;
     }
   }
 }
@@ -107,6 +122,7 @@
   // presenting new controllers
   for (UIViewController *newController in newControllers) {
     [_presentedModals addObject:newController];
+    newController.modalPresentationStyle = UIModalPresentationCurrentContext;
     if (_controller.presentedViewController != nil) {
       [_controller.presentedViewController presentViewController:newController animated:YES completion:nil];
     } else {
@@ -140,8 +156,8 @@
     }
   }
 
-//  [_controller setViewControllers:controllers animated:YES];
-  [self setModalViewControllers:controllers];
+  [_controller setViewControllers:controllers animated:YES];
+//  [self setModalViewControllers:controllers];
 }
 
 - (void)layoutSubviews
