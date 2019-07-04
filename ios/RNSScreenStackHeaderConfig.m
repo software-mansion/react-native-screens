@@ -5,6 +5,12 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 
+@interface RNSScreenStackHeaderSubview : UIView
+
+@property (nonatomic) RNSScreenStackHeaderSubviewType type;
+
+@end
+
 @implementation RNSScreenStackHeaderConfig
 
 - (instancetype)init
@@ -54,6 +60,25 @@
 
   [((UINavigationController *)vc.parentViewController) setNavigationBarHidden:_hidden animated:YES];
 
+  for (UIView *_subview in self.reactSubviews) {
+    RNSScreenStackHeaderSubview *subview = (RNSScreenStackHeaderSubview *)_subview;
+    switch (subview.type) {
+      case RNSScreenStackHeaderSubviewTypeLeft: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.leftBarButtonItem = buttonItem;
+        break;
+      }
+      case RNSScreenStackHeaderSubviewTypeRight: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.rightBarButtonItem = buttonItem;
+        break;
+      }
+      case RNSScreenStackHeaderSubviewTypeTitle: {
+        navitem.titleView = subview;
+        break;
+      }
+    }
+  }
 
   if (vc.transitionCoordinator != nil) {
     [vc.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
@@ -84,8 +109,30 @@ RCT_EXPORT_VIEW_PROPERTY(hidden, BOOL)
 
 @end
 
-@implementation RNSScreenStackHeaderTitleViewManager
+@implementation RCTConvert (RNSScreenStackHeader)
+
+RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
+   @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
+   @"right": @(RNSScreenStackHeaderSubviewTypeRight),
+   @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
+   }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
+
+@end
+
+
+
+@implementation RNSScreenStackHeaderSubview
+@end
+
+@implementation RNSScreenStackHeaderSubviewManager
 
 RCT_EXPORT_MODULE()
+
+RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
+
+- (UIView *)view
+{
+  return [RNSScreenStackHeaderSubview new];
+}
 
 @end

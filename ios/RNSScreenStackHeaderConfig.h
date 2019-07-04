@@ -1,4 +1,5 @@
 #import <React/RCTViewManager.h>
+#import <React/RCTConvert.h>
 
 @interface RNSScreenStackHeaderConfig : UIView
 
@@ -18,6 +19,20 @@
 
 @end
 
-@interface RNSScreenStackHeaderTitleViewManager : RCTViewManager
+typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
+  RNSScreenStackHeaderSubviewTypeLeft,
+  RNSScreenStackHeaderSubviewTypeRight,
+  RNSScreenStackHeaderSubviewTypeTitle,
+};
+
+@interface RCTConvert (RNSScreenStackHeader)
+
++ (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
+
+@end
+
+@interface RNSScreenStackHeaderSubviewManager : RCTViewManager
+
+@property (nonatomic) RNSScreenStackHeaderSubviewType type;
 
 @end

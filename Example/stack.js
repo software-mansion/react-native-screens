@@ -14,6 +14,8 @@ import {
   ScreenStack,
   ScreenStackHeaderConfig,
   ScreenStackHeaderTitleView,
+  ScreenStackHeaderRightView,
+  ScreenStackHeaderLeftView,
 } from 'react-native-screens';
 
 // const ScreenStack = requireNativeComponent('RNSScreenStack', null);
@@ -54,13 +56,14 @@ export class Stack extends Component {
         <ScreenStackHeaderConfig
           title={`Testing ${key} sdhfgi ksjdfh`}
           backTitle="Oh no!"
-          hidden={index === 1}
+          hidden={index === 2}
           backgroundColor={key}
-          largeTitle={index === 0}
-          tintColor={key}>
-          {/* <ScreenStackHeaderTitleView>
-            <Text>Yo!</Text>
-          </ScreenStackHeaderTitleView> */}
+          largeTitle={index === 0}>
+          {index === 1 && (
+            <ScreenStackHeaderTitleView>
+              <Text>Yo!</Text>
+            </ScreenStackHeaderTitleView>
+          )}
         </ScreenStackHeaderConfig>
         {this.props.renderScreen(key)}
       </Screen>

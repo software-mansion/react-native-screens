@@ -25,7 +25,6 @@
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
     _controller = [[UINavigationController alloc] init];
-//    _controller.navigationBar.hidden = YES;
     if (@available(iOS 11.0, *)) {
       _controller.navigationBar.prefersLargeTitles = YES;
     }
@@ -147,6 +146,39 @@
   }
 }
 
+- (void)setStackViewControllers:(NSArray<UIViewController *> *)controllers
+{
+  UIViewController *top = controllers.lastObject;
+  if (_controller.viewControllers.count == 0) {
+    // nothing pushed yet
+    [_controller setViewControllers:@[top] animated:NO];
+  } else if (top != _controller.viewControllers.lastObject) {
+    if (![controllers containsObject:_controller.viewControllers.lastObject]) {
+      // last top controller is no longer on stack
+      // in this case we set the controllers stack to the new list with
+      // added the last top element to it and perform animated pop
+      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
+      [newControllers addObject:_controller.viewControllers.lastObject];
+      [_controller setViewControllers:newControllers animated:NO];
+      [_controller popViewControllerAnimated:YES];
+    } else if (![_controller.viewControllers containsObject:top]) {
+      // new top controller is not on the stack
+      // in such case we update the stack except from the last element with
+      // no animation and do animated push of the last item
+      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
+      [newControllers removeLastObject];
+      [_controller setViewControllers:newControllers animated:NO];
+      [_controller pushViewController:top animated:YES];
+    } else {
+      // don't really know what this case could be, but may need to handle it
+      // somehow
+      [_controller setViewControllers:controllers animated:YES];
+    }
+  } else {
+    [_controller setViewControllers:controllers animated:NO];
+  }
+}
+
 - (void)updateContainer
 {
   NSMutableArray<UIViewController *> *controllers = [NSMutableArray new];
@@ -156,7 +188,7 @@
     }
   }
 
-  [_controller setViewControllers:controllers animated:YES];
+  [self setStackViewControllers:controllers];
 //  [self setModalViewControllers:controllers];
 }
 

@@ -94,7 +94,39 @@ export const ScreenStackHeaderConfig = requireNativeComponent(
   null
 );
 
-export const ScreenStackHeaderTitleView = requireNativeComponent(
-  'RNSScreenStackHeaderTitleView',
+const ScreenStackHeaderSubview = requireNativeComponent(
+  'RNSScreenStackHeaderSubview',
   null
+);
+
+const styles = StyleSheet.create({
+  headerSubview: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+  },
+});
+
+export const ScreenStackHeaderRightView = props => (
+  <ScreenStackHeaderSubview
+    {...props}
+    type="right"
+    style={styles.headerSubview}
+  />
+);
+
+export const ScreenStackHeaderLeftView = props => (
+  <ScreenStackHeaderSubview
+    {...props}
+    type="left"
+    style={styles.headerSubview}
+  />
+);
+
+export const ScreenStackHeaderTitleView = props => (
+  <ScreenStackHeaderSubview
+    {...props}
+    type="title"
+    style={styles.headerSubview}
+  />
 );
