@@ -9,6 +9,7 @@
 @property (nonatomic, retain) UIColor *tintColor;
 @property (nonatomic) BOOL hidden;
 @property (nonatomic) BOOL largeTitle;
+@property (nonatomic) BOOL translucent;
 
 
 - (void)willShowViewController:(UIViewController *)vc;

@@ -16,7 +16,7 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    self.hidden = YES;
+    self.translucent = YES;
   }
   return self;
 }
@@ -34,8 +34,9 @@
 {
 
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
-  navbar.tintColor = _tintColor;
-  navbar.backgroundColor = _backgroundColor;
+  [navbar setTintColor:_tintColor];
+  [navbar setBarTintColor:_backgroundColor];
+  [navbar setTranslucent:_translucent];
 }
 
 - (void)willShowViewController:(UIViewController *)vc
@@ -106,6 +107,7 @@ RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hidden, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @end
 

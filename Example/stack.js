@@ -58,7 +58,7 @@ export class Stack extends Component {
           backTitle="Oh no!"
           hidden={index === 2}
           backgroundColor={key}
-          largeTitle={index === 0}>
+          largeTitle={index === 10}>
           {index === 1 && (
             <ScreenStackHeaderTitleView>
               <Text>Yo!</Text>
