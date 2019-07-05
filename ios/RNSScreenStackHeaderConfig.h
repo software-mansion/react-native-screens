@@ -6,9 +6,10 @@
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) UIColor *backgroundColor;
-@property (nonatomic, retain) UIColor *tintColor;
-@property (nonatomic) BOOL hidden;
+@property (nonatomic, retain) UIColor *color;
+@property (nonatomic) BOOL hide;
 @property (nonatomic) BOOL largeTitle;
+@property (nonatomic) BOOL hideBackButton;
 @property (nonatomic) BOOL translucent;
 
 

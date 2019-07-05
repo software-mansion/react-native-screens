@@ -7,18 +7,44 @@
 
 @interface RNSScreenStackHeaderSubview : UIView
 
+@property (nonatomic, weak) UIView *reactSuperview;
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 
 @end
 
-@implementation RNSScreenStackHeaderConfig
+@implementation RNSScreenStackHeaderConfig {
+  NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
+}
 
 - (instancetype)init
 {
   if (self = [super init]) {
-    self.translucent = YES;
+    self.hidden = YES;
+    _translucent = YES;
+    _reactSubviews = [NSMutableArray new];
   }
   return self;
+}
+
+- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex
+{
+  if (![subview isKindOfClass:[RNSScreenStackHeaderSubview class]]) {
+    RCTLogError(@"StackHeaderConfig only accepts limited number of children types");
+  } else {
+    RNSScreenStackHeaderSubview *child = (RNSScreenStackHeaderSubview*)subview;
+    [_reactSubviews insertObject:child atIndex:atIndex];
+    child.reactSuperview = self;
+  }
+}
+
+- (void)removeReactSubview:(UIView *)subview
+{
+  [_reactSubviews removeObject:(RNSScreenStackHeaderSubview*)subview];
+}
+
+- (NSArray<UIView *> *)reactSubviews
+{
+  return _reactSubviews;
 }
 
 - (UIViewController*)screen
@@ -34,7 +60,7 @@
 {
 
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
-  [navbar setTintColor:_tintColor];
+  [navbar setTintColor:_color];
   [navbar setBarTintColor:_backgroundColor];
   [navbar setTranslucent:_translucent];
 }
@@ -42,10 +68,9 @@
 - (void)willShowViewController:(UIViewController *)vc
 {
   UINavigationItem *navitem = vc.navigationItem;
-//  UIBarButtonItem *bi = [[UIBarButtonItem alloc] initWithCustomView:[self.reactSubviews objectAtIndex:0]];
-//  vc.navigationItem.rightBarButtonItem = bi;
 
   navitem.title = _title;
+  navitem.hidesBackButton = _hideBackButton;
   if (_backTitle != nil) {
     navitem.backBarButtonItem = [[UIBarButtonItem alloc]
                                  initWithTitle:_backTitle
@@ -59,10 +84,9 @@
     navitem.largeTitleDisplayMode = self.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
   }
 
-  [((UINavigationController *)vc.parentViewController) setNavigationBarHidden:_hidden animated:YES];
+  [((UINavigationController *)vc.parentViewController) setNavigationBarHidden:_hide animated:YES];
 
-  for (UIView *_subview in self.reactSubviews) {
-    RNSScreenStackHeaderSubview *subview = (RNSScreenStackHeaderSubview *)_subview;
+  for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
@@ -104,9 +128,11 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_VIEW_PROPERTY(title, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(hidden, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
+// `hidden` is an UIView property, we need to use different name internally
+RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @end

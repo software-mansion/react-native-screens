@@ -4,6 +4,8 @@ import {
   Button,
   View,
   TextInput,
+  TouchableHighlight,
+  Image,
   Text,
   Animated,
   Easing,
@@ -54,14 +56,34 @@ export class Stack extends Component {
     return (
       <Screen style={style} key={key} active={1}>
         <ScreenStackHeaderConfig
-          title={`Testing ${key} sdhfgi ksjdfh`}
-          backTitle="Oh no!"
-          hidden={index === 2}
-          backgroundColor={key}
+          title={`Testing ${key} sdhfgi ksjdfh sjkahdfg asdjkhfgksdjfhg sjadfg sdhg `}
+          hidden={index == 1}
           largeTitle={index === 10}>
+          {index === 0 && (
+            <ScreenStackHeaderRightView>
+              <TouchableHighlight onPress={() => alert('sdf')}>
+                <Image
+                  source={{
+                    uri:
+                      'https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+                  }}
+                  style={{ width: 30, height: 30 }}
+                />
+              </TouchableHighlight>
+            </ScreenStackHeaderRightView>
+          )}
+          {index === 1 && <ScreenStackHeaderLeftView />}
           {index === 1 && (
             <ScreenStackHeaderTitleView>
-              <Text>Yo!</Text>
+              <TextInput
+                style={{
+                  width: 350,
+                  height: 30,
+                  backgroundColor: 'white',
+                  borderRadius: 15,
+                  padding: 10,
+                }}
+              />
             </ScreenStackHeaderTitleView>
           )}
         </ScreenStackHeaderConfig>
@@ -89,8 +111,18 @@ class App extends Component {
           backgroundColor: color,
           alignItems: 'center',
           justifyContent: 'center',
-          margin: index * 40,
+          // margin: index * 40,
         }}>
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 80,
+            height: 80,
+            backgroundColor: 'black',
+          }}
+        />
         {pop && <Button title="Pop" onPress={pop} />}
         {push && <Button title="Push" onPress={push} />}
         {remove && <Button title="Remove middle screen" onPress={remove} />}
