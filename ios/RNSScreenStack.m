@@ -14,6 +14,7 @@
   BOOL _needUpdate;
   UINavigationController *_controller;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
+  NSMutableSet<RNSScreenView *> *_dismissedScreens;
   NSMutableArray<UIViewController *> *_presentedModals;
   __weak RNSScreenStackManager *_manager;
 }
@@ -24,10 +25,8 @@
     _manager = manager;
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
+    _dismissedScreens = [NSMutableSet new];
     _controller = [[UINavigationController alloc] init];
-    if (@available(iOS 11.0, *)) {
-      _controller.navigationBar.prefersLargeTitles = YES;
-    }
     _controller.delegate = self;
     _needUpdate = NO;
     [self addSubview:_controller.view];
@@ -53,7 +52,7 @@
       break;
     } else {
       // TODO: send dismiss event
-      [_reactSubviews objectAtIndex:i].dismissed = YES;
+      [_dismissedScreens addObject:[_reactSubviews objectAtIndex:i]];
     }
   }
 }
@@ -94,6 +93,7 @@
 - (void)removeReactSubview:(RNSScreenView *)subview
 {
   [_reactSubviews removeObject:subview];
+  [_dismissedScreens removeObject:subview];
   [self markUpdated];
 }
 
@@ -183,7 +183,7 @@
 {
   NSMutableArray<UIViewController *> *controllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
-    if (!screen.dismissed) {
+    if (![_dismissedScreens containsObject:screen]) {
       [controllers addObject:screen.controller];
     }
   }

@@ -47,6 +47,11 @@ export class Stack extends Component {
       stack: this.state.stack.filter((v, idx) => idx !== index),
     });
   }
+  removeByKey(key) {
+    this.setState({
+      stack: this.state.stack.filter(v => key !== v),
+    });
+  }
   renderScreen = (key, index) => {
     let style = StyleSheet.absoluteFill;
     const { stack, transitioning } = this.state;
@@ -54,10 +59,13 @@ export class Stack extends Component {
       index === stack.length - 1 ||
       (transitioning !== 0 && index === stack.length - 2);
     return (
-      <Screen style={style} key={key} active={1}>
+      <Screen
+        style={style}
+        key={key}
+        active={1}
+        onDismissed={() => this.removeByKey(key)}>
         <ScreenStackHeaderConfig
           title={`Testing ${key} sdhfgi ksjdfh sjkahdfg asdjkhfgksdjfhg sjadfg sdhg `}
-          hidden={index == 1}
           largeTitle={index === 10}>
           {index === 0 && (
             <ScreenStackHeaderRightView>
@@ -71,20 +79,6 @@ export class Stack extends Component {
                 />
               </TouchableHighlight>
             </ScreenStackHeaderRightView>
-          )}
-          {index === 1 && <ScreenStackHeaderLeftView />}
-          {index === 1 && (
-            <ScreenStackHeaderTitleView>
-              <TextInput
-                style={{
-                  width: 350,
-                  height: 30,
-                  backgroundColor: 'white',
-                  borderRadius: 15,
-                  padding: 10,
-                }}
-              />
-            </ScreenStackHeaderTitleView>
           )}
         </ScreenStackHeaderConfig>
         {this.props.renderScreen(key)}

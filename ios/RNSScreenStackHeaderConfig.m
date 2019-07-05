@@ -26,20 +26,15 @@
   return self;
 }
 
-- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex
+- (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
 {
-  if (![subview isKindOfClass:[RNSScreenStackHeaderSubview class]]) {
-    RCTLogError(@"StackHeaderConfig only accepts limited number of children types");
-  } else {
-    RNSScreenStackHeaderSubview *child = (RNSScreenStackHeaderSubview*)subview;
-    [_reactSubviews insertObject:child atIndex:atIndex];
-    child.reactSuperview = self;
-  }
+  [_reactSubviews insertObject:subview atIndex:atIndex];
+  subview.reactSuperview = self;
 }
 
-- (void)removeReactSubview:(UIView *)subview
+- (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
 {
-  [_reactSubviews removeObject:(RNSScreenStackHeaderSubview*)subview];
+  [_reactSubviews removeObject:subview];
 }
 
 - (NSArray<UIView *> *)reactSubviews
@@ -68,6 +63,7 @@
 - (void)willShowViewController:(UIViewController *)vc
 {
   UINavigationItem *navitem = vc.navigationItem;
+  UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
 
   navitem.title = _title;
   navitem.hidesBackButton = _hideBackButton;
@@ -81,10 +77,13 @@
   }
 
   if (@available(iOS 11.0, *)) {
+    if (self.largeTitle) {
+      navctr.navigationBar.prefersLargeTitles = YES;
+    }
     navitem.largeTitleDisplayMode = self.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
   }
 
-  [((UINavigationController *)vc.parentViewController) setNavigationBarHidden:_hide animated:YES];
+  [navctr setNavigationBarHidden:_hide animated:YES];
 
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     switch (subview.type) {

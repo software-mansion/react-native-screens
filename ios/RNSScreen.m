@@ -38,8 +38,8 @@
 
 - (void)setPointerEvents:(RCTPointerEvents)pointerEvents
 {
-  // pointer events settings are managed by the parent screen container, we ignore any attempt
-  // of setting that via React props
+  // pointer events settings are managed by the parent screen container, we ignore
+  // any attempt of setting that via React props
 }
 
 - (UIView *)reactSuperview
@@ -55,6 +55,17 @@
 - (void)notifyFinishTransitioning
 {
   [_controller notifyFinishTransitioning];
+}
+
+- (void)notifyDismissed
+{
+  if (self.onDismissed) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      if (self.onDismissed) {
+        self.onDismissed(nil);
+      }
+    });
+  }
 }
 
 @end
@@ -96,6 +107,15 @@
   }
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+  if (self.parentViewController == nil) {
+    // screen dismissed, send event
+    [((RNSScreenView *)self.view) notifyDismissed];
+  }
+}
+
 - (void)notifyFinishTransitioning
 {
   [_previousFirstResponder becomeFirstResponder];
@@ -117,6 +137,7 @@
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
 - (UIView *)view
 {

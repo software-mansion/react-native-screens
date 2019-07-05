@@ -1,5 +1,6 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTView.h>
+#import <React/RCTComponent.h>
 #import "RNSScreenContainer.h"
 
 @class RNSScreenContainerView;
@@ -9,10 +10,10 @@
 
 @interface RNSScreenView : RCTView <RCTInvalidating>
 
+@property (nonatomic, copy) RCTDirectEventBlock onDismissed;
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic) BOOL active;
-@property (nonatomic) BOOL dismissed;
 
 - (void)notifyFinishTransitioning;
 
