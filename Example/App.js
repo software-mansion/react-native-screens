@@ -78,7 +78,7 @@ const ExampleApp = createSwitchNavigator(
     ...SCREENS,
   },
   {
-    initialRouteName: 'Stack',
+    initialRouteName: 'Navigation',
   }
 );
 

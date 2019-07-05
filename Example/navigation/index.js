@@ -61,7 +61,13 @@ class DetailsScreen extends React.Component {
   render() {
     const index = this.props.navigation.getParam('index', 0);
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'white',
+        }}>
         <Background index={index} />
         <Button
           title="More details"
@@ -71,6 +77,7 @@ class DetailsScreen extends React.Component {
             })
           }
         />
+        <Button title="POP" onPress={() => this.props.navigation.pop()} />
         <TextInput
           placeholder="Hello"
           style={styles.textInput}
