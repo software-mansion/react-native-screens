@@ -24,6 +24,8 @@
   if (self = [super init]) {
     _controller = [[RNSScreen alloc] initWithView:self];
     _controller.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    _stackPresentation = RNSScreenStackPresentationPush;
+    _animate = YES;
   }
   return self;
 }
@@ -110,7 +112,7 @@
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-  if (self.parentViewController == nil) {
+  if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
     [((RNSScreenView *)self.view) notifyDismissed];
   }
@@ -137,11 +139,23 @@
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(animate, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
 - (UIView *)view
 {
   return [[RNSScreenView alloc] init];
 }
+
+@end
+
+@implementation RCTConvert (RNSScreen)
+
+RCT_ENUM_CONVERTER(RNSScreenStackPresentation, (@{
+    @"push": @(RNSScreenStackPresentationPush),
+    @"modal": @(RNSScreenStackPresentationModal),
+    @"transparentModal": @(RNSScreenStackPresentationTransparentModal)
+  }), RNSScreenStackPresentationPush, integerValue)
 
 @end

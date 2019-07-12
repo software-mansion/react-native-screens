@@ -6,7 +6,7 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 
-@interface RNSScreenStackView () <UINavigationControllerDelegate>
+@interface RNSScreenStackView () <UINavigationControllerDelegate, UIGestureRecognizerDelegate>
 
 @end
 
@@ -30,6 +30,7 @@
     _controller.delegate = self;
     _needUpdate = NO;
     [self addSubview:_controller.view];
+    _controller.interactivePopGestureRecognizer.delegate = self;
   }
   return self;
 }
@@ -47,14 +48,24 @@
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-  for (NSUInteger i = _reactSubviews.count - 1; i >= 0; i--) {
-    if ([viewController isEqual:[_reactSubviews objectAtIndex:i].controller]) {
+  for (NSUInteger i = _reactSubviews.count; i > 0; i--) {
+    if ([viewController isEqual:[_reactSubviews objectAtIndex:i - 1].controller]) {
       break;
     } else {
       // TODO: send dismiss event
-      [_dismissedScreens addObject:[_reactSubviews objectAtIndex:i]];
+      [_dismissedScreens addObject:[_reactSubviews objectAtIndex:i - 1]];
     }
   }
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+  return _controller.viewControllers.count > 1;
+}
+
+ - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  return YES;
 }
 
 - (void)markUpdated
@@ -86,6 +97,10 @@
 
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
 {
+  if (![subview isKindOfClass:[RNSScreenView class]]) {
+    RCTLogError(@"ScreenStack only accepts children of type Screen");
+    return;
+  }
   [_reactSubviews insertObject:subview atIndex:atIndex];
   [self markUpdated];
 }
@@ -107,16 +122,13 @@
   // do nothing
 }
 
-- (void)setModalViewControllers:(NSArray<UIViewController *> *) controllers
+- (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
 {
   NSMutableArray<UIViewController *> *newControllers = [NSMutableArray arrayWithArray:controllers];
   [newControllers removeObjectsInArray:_presentedModals];
-  [newControllers removeObject:controllers.firstObject];
 
   NSMutableArray<UIViewController *> *controllersToRemove = [NSMutableArray arrayWithArray:_presentedModals];
   [controllersToRemove removeObjectsInArray:controllers];
-
-  [_controller setViewControllers:@[controllers.firstObject]];
 
   // presenting new controllers
   for (UIViewController *newController in newControllers) {
@@ -146,7 +158,7 @@
   }
 }
 
-- (void)setStackViewControllers:(NSArray<UIViewController *> *)controllers
+- (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
   UIViewController *top = controllers.lastObject;
   if (_controller.viewControllers.count == 0) {
@@ -181,15 +193,29 @@
 
 - (void)updateContainer
 {
-  NSMutableArray<UIViewController *> *controllers = [NSMutableArray new];
+  NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
+  NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
     if (![_dismissedScreens containsObject:screen]) {
-      [controllers addObject:screen.controller];
+      if (pushControllers.count == 0) {
+        // first screen on the list needs to be places as "push controller"
+        [pushControllers addObject:screen.controller];
+      } else {
+        switch (screen.stackPresentation) {
+          case RNSScreenStackPresentationPush:
+            [pushControllers addObject:screen.controller];
+            break;
+          case RNSScreenStackPresentationModal:
+          case RNSScreenStackPresentationTransparentModal:
+            [modalControllers addObject:screen.controller];
+            break;
+        }
+      }
     }
   }
 
-  [self setStackViewControllers:controllers];
-//  [self setModalViewControllers:controllers];
+  [self setPushViewControllers:pushControllers];
+  [self setModalViewControllers:modalControllers];
 }
 
 - (void)layoutSubviews

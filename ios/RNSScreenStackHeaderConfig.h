@@ -10,8 +10,9 @@
 @property (nonatomic) BOOL hide;
 @property (nonatomic) BOOL largeTitle;
 @property (nonatomic) BOOL hideBackButton;
+@property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
-
+@property (nonatomic) BOOL gestureEnabled;
 
 - (void)willShowViewController:(UIViewController *)vc;
 

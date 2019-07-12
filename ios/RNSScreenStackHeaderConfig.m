@@ -58,6 +58,7 @@
   [navbar setTintColor:_color];
   [navbar setBarTintColor:_backgroundColor];
   [navbar setTranslucent:_translucent];
+  [navbar setValue:@(_hideShadow ? YES : NO) forKey:@"hidesShadow"];
 }
 
 - (void)willShowViewController:(UIViewController *)vc
@@ -65,14 +66,28 @@
   UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
 
+  BOOL wasHidden = navctr.navigationBarHidden;
+
+  [navctr setNavigationBarHidden:_hide animated:YES];
+  navctr.interactivePopGestureRecognizer.enabled = _gestureEnabled;
+  if (_hide) {
+    return;
+  }
+
   navitem.title = _title;
   navitem.hidesBackButton = _hideBackButton;
   if (_backTitle != nil) {
     navitem.backBarButtonItem = [[UIBarButtonItem alloc]
-                                 initWithTitle:_backTitle
+                                 initWithTitle:@"Fooo"
                                  style:UIBarButtonItemStylePlain
                                  target:nil
                                  action:nil];
+//    navitem.back
+//    navctr.navigationBar.backItem.backBarButtonItem = [[UIBarButtonItem alloc]
+//                                 initWithTitle:_backTitle
+//                                 style:UIBarButtonItemStylePlain
+//                                 target:nil
+//                                 action:nil];
 
   }
 
@@ -82,8 +97,6 @@
     }
     navitem.largeTitleDisplayMode = self.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
   }
-
-  [navctr setNavigationBarHidden:_hide animated:YES];
 
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     switch (subview.type) {
@@ -104,7 +117,7 @@
     }
   }
 
-  if (vc.transitionCoordinator != nil) {
+  if (vc.transitionCoordinator != nil && !wasHidden) {
     [vc.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
       [self setAnimatedConfig:vc];
     } completion:nil];
@@ -130,9 +143,11 @@ RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 
 @end
 
