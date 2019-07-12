@@ -47,7 +47,7 @@ const App = createStackNavigator(
     Some: {
       screen: SomeScreen,
       navigationOptions: () => ({
-        title: 'Some',
+        headerTitle: () => <Text>Lol</Text>,
         headerBackTitle: null,
       }),
     },
@@ -55,7 +55,10 @@ const App = createStackNavigator(
       screen: PushScreen,
       navigationOptions: {
         title: 'Wat?',
-        headerBackTitle: 'Yo',
+        headerBackTitle: 'Yoo',
+        headerBackTitleFontFamily: 'ChalkboardSE-Light',
+        headerTintColor: 'black',
+        headerBackImage: () => <Text>Well</Text>,
       },
     },
   },

@@ -69,6 +69,8 @@
   [navbar setTranslucent:_translucent];
   [navbar setValue:@(_hideShadow ? YES : NO) forKey:@"hidesShadow"];
 
+//  [navbar setBack]
+
   if (_titleFontFamily || _titleFontSize) {
     [navbar setTitleTextAttributes:[self makeHeaderFontAttributes:_titleFontFamily withSize:_titleFontSize]];
   }
@@ -95,7 +97,7 @@
   navitem.hidesBackButton = _hideBackButton;
   if (_backTitle != nil) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
-                                  initWithTitle:@"Fooo"
+                                  initWithTitle:_backTitle
                                   style:UIBarButtonItemStylePlain
                                   target:nil
                                   action:nil];

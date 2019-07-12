@@ -8,17 +8,18 @@ import {
   createNavigator,
 } from '@react-navigation/core';
 import { createKeyboardAwareNavigator } from '@react-navigation/native';
-import { ScenesReducer } from 'react-navigation-stack';
+import { ScenesReducer, HeaderBackButton } from 'react-navigation-stack';
 import {
   ScreenStack,
   Screen,
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
+  ScreenStackHeaderRightView,
+  ScreenStackHeaderTitleView,
 } from 'react-native-screens';
 
 class StackView extends React.Component {
   _removeScene = scene => {
-    console.warn('REMOVE');
     const { navigation } = this.props;
     navigation.dispatch(
       NavigationActions.back({
@@ -39,35 +40,88 @@ class StackView extends React.Component {
       return <ScreenStackHeaderConfig hidden />;
     }
 
-    const headerOptions = { translucent: false };
-    const children = [];
-    console.warn('OPTS', options);
-    if (options.title !== undefined) {
-      headerOptions.title = options.title;
-    }
+    const {
+      title,
+      titleFontFamily,
+      titleFontSize,
+      headerBackTitle,
+      headerBackTitleFontFamily,
+      headerBackTitleFontSize,
+      headerTintColor,
+      gestureEnabled,
+    } = options;
+
+    const headerOptions = {
+      translucent: false,
+      title,
+      titleFontFamily,
+      titleFontSize,
+      backTitle: headerBackTitle,
+      backTitleFontFamily: headerBackTitleFontFamily,
+      backTitleFontSize: headerBackTitleFontSize,
+      color: headerTintColor,
+      gestureEnabled: gestureEnabled === undefined ? true : gestureEnabled,
+    };
+
     if (options.headerStyle !== undefined) {
       headerOptions.backgroundColor = options.headerStyle.backgroundColor;
     }
-    if (options.headerBackTitle !== undefined) {
-      headerOptions.backTitle = options.headerBackTitle;
-    }
-    if (options.headerTintColor !== undefined) {
-      headerOptions.color = options.headerTintColor;
-    }
-    if (options.headerBackImage !== undefined) {
+
+    const children = [];
+
+    if (options.headerLeft !== undefined) {
       children.push(
         <ScreenStackHeaderLeftView>
-          {options.headerBackImage}
+          {options.headerLeft({ scene })}
+        </ScreenStackHeaderLeftView>
+      );
+    } else if (options.headerBackImage !== undefined) {
+      const goBack = () => {
+        // Go back on next tick because button ripple effect needs to happen on Android
+        requestAnimationFrame(() => {
+          scene.descriptor.navigation.goBack(scene.descriptor.key);
+        });
+      };
+
+      children.push(
+        <ScreenStackHeaderLeftView>
+          <HeaderBackButton
+            onPress={goBack}
+            pressColorAndroid={options.headerPressColorAndroid}
+            tintColor={options.headerTintColor}
+            backImage={options.headerBackImage}
+            title={options.backButtonTitle}
+            truncatedTitle={options.truncatedBackButtonTitle}
+            backTitleVisible={this.props.backTitleVisible}
+            titleStyle={options.headerBackTitleStyle}
+            layoutPreset={this.props.layoutPreset}
+            scene={scene}
+          />
         </ScreenStackHeaderLeftView>
       );
     }
-    headerOptions.backTitleFontFamily = 'ChalkboardSE-Light';
+
+    if (options.headerTitle) {
+      children.push(
+        <ScreenStackHeaderTitleView>
+          {options.headerTitle({ scene })}
+        </ScreenStackHeaderTitleView>
+      );
+    }
+
+    if (options.headerRight) {
+      children.push(
+        <ScreenStackHeaderRightView>
+          {options.headerRight({ scene })}
+        </ScreenStackHeaderRightView>
+      );
+    }
 
     if (children.length > 0) {
       headerOptions.children = children;
     }
 
-    return <ScreenStackHeaderConfig {...headerOptions} gestureEnabled={true} />;
+    return <ScreenStackHeaderConfig {...headerOptions} />;
   };
 
   _renderScene = scene => {
