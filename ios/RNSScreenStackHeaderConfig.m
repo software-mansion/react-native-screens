@@ -66,6 +66,9 @@
   UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
 
+  NSUInteger currentIndex = [navctr.viewControllers indexOfObject:vc];
+  UINavigationItem *prevItem = currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
+
   BOOL wasHidden = navctr.navigationBarHidden;
 
   [navctr setNavigationBarHidden:_hide animated:YES];
@@ -77,18 +80,13 @@
   navitem.title = _title;
   navitem.hidesBackButton = _hideBackButton;
   if (_backTitle != nil) {
-    navitem.backBarButtonItem = [[UIBarButtonItem alloc]
-                                 initWithTitle:@"Fooo"
-                                 style:UIBarButtonItemStylePlain
-                                 target:nil
-                                 action:nil];
-//    navitem.back
-//    navctr.navigationBar.backItem.backBarButtonItem = [[UIBarButtonItem alloc]
-//                                 initWithTitle:_backTitle
-//                                 style:UIBarButtonItemStylePlain
-//                                 target:nil
-//                                 action:nil];
-
+    prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
+                                  initWithTitle:@"Fooo"
+                                  style:UIBarButtonItemStylePlain
+                                  target:nil
+                                  action:nil];
+  } else {
+    prevItem.backBarButtonItem = nil;
   }
 
   if (@available(iOS 11.0, *)) {

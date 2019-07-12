@@ -28,7 +28,7 @@ class SomeScreen extends React.Component {
 class PushScreen extends React.Component {
   render() {
     return (
-      <View style={styles.modal}>
+      <View style={styles.screen}>
         <Button
           onPress={() => this.props.navigation.goBack()}
           title="Go back"
@@ -54,6 +54,7 @@ const App = createStackNavigator(
     Push: {
       screen: PushScreen,
       navigationOptions: {
+        title: 'Wat?',
         headerBackTitle: 'Yo',
       },
     },
@@ -61,7 +62,7 @@ const App = createStackNavigator(
   {
     initialRouteName: 'Some',
     // transparentCard: true,
-    mode: 'modal',
+    // mode: 'modal',
   }
 );
 
