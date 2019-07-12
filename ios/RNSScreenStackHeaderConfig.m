@@ -51,14 +51,28 @@
   return nil;
 }
 
+- (NSDictionary *)makeHeaderFontAttributes:(NSString *)fontFamily
+                                  withSize:(NSNumber *)fontSize
+{
+  CGFloat size = fontSize ? [fontSize floatValue] : 17;
+  return @{
+    NSFontAttributeName: fontFamily ? [UIFont fontWithName:fontFamily size:size]
+                                    : [UIFont systemFontOfSize:size]
+  };
+}
+
 - (void)setAnimatedConfig:(UIViewController *)vc
 {
-
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
   [navbar setTintColor:_color];
   [navbar setBarTintColor:_backgroundColor];
   [navbar setTranslucent:_translucent];
   [navbar setValue:@(_hideShadow ? YES : NO) forKey:@"hidesShadow"];
+
+  if (_titleFontFamily || _titleFontSize) {
+    [navbar setTitleTextAttributes:[self makeHeaderFontAttributes:_titleFontFamily withSize:_titleFontSize]];
+  }
+
 }
 
 - (void)willShowViewController:(UIViewController *)vc
@@ -85,6 +99,9 @@
                                   style:UIBarButtonItemStylePlain
                                   target:nil
                                   action:nil];
+    if (_backTitleFontFamily || _backTitleFontSize) {
+      [prevItem.backBarButtonItem setTitleTextAttributes:[self makeHeaderFontAttributes:_backTitleFontFamily withSize:_backTitleFontSize] forState:UIControlStateNormal];
+    }
   } else {
     prevItem.backBarButtonItem = nil;
   }
@@ -136,7 +153,11 @@ RCT_EXPORT_MODULE()
 }
 
 RCT_EXPORT_VIEW_PROPERTY(title, NSString)
+RCT_EXPORT_VIEW_PROPERTY(titleFontFamily, NSString)
+RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
+RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
+RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)

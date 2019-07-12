@@ -4,7 +4,11 @@
 @interface RNSScreenStackHeaderConfig : UIView
 
 @property (nonatomic, retain) NSString *title;
+@property (nonatomic, retain) NSString *titleFontFamily;
+@property (nonatomic, retain) NSNumber *titleFontSize;
 @property (nonatomic, retain) NSString *backTitle;
+@property (nonatomic, retain) NSString *backTitleFontFamily;
+@property (nonatomic, retain) NSNumber *backTitleFontSize;
 @property (nonatomic, retain) UIColor *backgroundColor;
 @property (nonatomic, retain) UIColor *color;
 @property (nonatomic) BOOL hide;

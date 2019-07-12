@@ -61,6 +61,7 @@ class StackView extends React.Component {
         </ScreenStackHeaderLeftView>
       );
     }
+    headerOptions.backTitleFontFamily = 'ChalkboardSE-Light';
 
     if (children.length > 0) {
       headerOptions.children = children;
