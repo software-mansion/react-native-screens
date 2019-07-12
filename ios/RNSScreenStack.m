@@ -133,7 +133,6 @@
   // presenting new controllers
   for (UIViewController *newController in newControllers) {
     [_presentedModals addObject:newController];
-    newController.modalPresentationStyle = UIModalPresentationCurrentContext;
     if (_controller.presentedViewController != nil) {
       [_controller.presentedViewController presentViewController:newController animated:YES completion:nil];
     } else {

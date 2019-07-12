@@ -71,13 +71,12 @@ class StackView extends React.Component {
 
   _renderScene = scene => {
     const { navigation, getComponent } = scene.descriptor;
-    const { mode } = this.props.navigationConfig;
+    const { mode, transparentCard } = this.props.navigationConfig;
     const SceneComponent = getComponent();
 
     let stackPresentation = 'push';
     if (mode === 'modal') {
-      stackPresentation = 'modal';
-      stackPresentation = 'transparentModal';
+      stackPresentation = transparentCard ? 'transparentModal' : 'modal';
     }
 
     const { screenProps } = this.props;
@@ -104,7 +103,6 @@ class StackView extends React.Component {
       null,
       this.props.descriptors
     );
-    console.warn('SCENES', scenes.length);
 
     return (
       <ScreenStack style={styles.scenes}>

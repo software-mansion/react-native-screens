@@ -28,7 +28,7 @@ class SomeScreen extends React.Component {
 class PushScreen extends React.Component {
   render() {
     return (
-      <View style={styles.screen}>
+      <View style={styles.modal}>
         <Button
           onPress={() => this.props.navigation.goBack()}
           title="Go back"
@@ -60,7 +60,8 @@ const App = createStackNavigator(
   },
   {
     initialRouteName: 'Some',
-    // mode: 'modal',
+    // transparentCard: true,
+    mode: 'modal',
   }
 );
 
@@ -68,6 +69,14 @@ const styles = StyleSheet.create({
   screen: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'white',
+  },
+  modal: {
+    position: 'absolute',
+    left: 50,
+    top: 50,
+    right: 50,
+    bottom: 50,
+    backgroundColor: 'red',
   },
   textInput: {
     backgroundColor: 'white',

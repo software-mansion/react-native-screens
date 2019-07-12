@@ -44,6 +44,19 @@
   // any attempt of setting that via React props
 }
 
+- (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
+{
+  _stackPresentation = stackPresentation;
+  switch (stackPresentation) {
+    case RNSScreenStackPresentationModal:
+      _controller.modalPresentationStyle = UIModalPresentationCurrentContext;
+      break;
+    case RNSScreenStackPresentationTransparentModal:
+      _controller.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+      break;
+  }
+}
+
 - (UIView *)reactSuperview
 {
   return _reactSuperview;
