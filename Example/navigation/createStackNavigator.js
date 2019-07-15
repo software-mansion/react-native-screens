@@ -49,6 +49,7 @@ class StackView extends React.Component {
       headerBackTitleFontSize,
       headerTintColor,
       gestureEnabled,
+      largeTitle,
     } = options;
 
     const headerOptions = {
@@ -61,6 +62,7 @@ class StackView extends React.Component {
       backTitleFontSize: headerBackTitleFontSize,
       color: headerTintColor,
       gestureEnabled: gestureEnabled === undefined ? true : gestureEnabled,
+      largeTitle,
     };
 
     if (options.headerStyle !== undefined) {
