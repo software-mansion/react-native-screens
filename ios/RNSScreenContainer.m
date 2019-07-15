@@ -102,30 +102,11 @@
   }
 
   // detect if new screen is going to be activated
-  BOOL activeScreenAdded = NO;
+  RNSScreenView* activeScreenAdded = NULL;
   for (RNSScreenView *screen in _reactSubviews) {
     if (screen.active && ![_activeScreens containsObject:screen]) {
-      activeScreenAdded = YES;
-    }
-  }
-
-  // if we are adding new active screen, we perform remounting of all already marked as active
-  // this is done to mimick the effect UINavigationController has when willMoveToWindow:nil is
-  // triggered before the animation starts
-  if (activeScreenAdded) {
-    for (RNSScreenView *screen in _reactSubviews) {
-      if (screen.active && [_activeScreens containsObject:screen]) {
-        [self detachScreen:screen];
-        // disable interactions for the duration of transition
-        screen.userInteractionEnabled = NO;
-      }
-    }
-
-    // add new screens in order they are placed in subviews array
-    for (RNSScreenView *screen in _reactSubviews) {
-      if (screen.active) {
-        [self attachScreen:screen];
-      }
+      screen.userInteractionEnabled = NO;
+      [self attachScreen:screen];
     }
   }
 
