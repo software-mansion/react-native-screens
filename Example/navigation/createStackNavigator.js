@@ -35,11 +35,6 @@ class StackView extends React.Component {
     const { options } = scene.descriptor;
     const { headerMode } = navigationConfig;
 
-    const hasHeader = headerMode !== 'none' && options.header !== null;
-    if (!hasHeader) {
-      return <ScreenStackHeaderConfig hidden />;
-    }
-
     const {
       title,
       titleFontFamily,
@@ -64,6 +59,11 @@ class StackView extends React.Component {
       gestureEnabled: gestureEnabled === undefined ? true : gestureEnabled,
       largeTitle,
     };
+
+    const hasHeader = headerMode !== 'none' && options.header !== null;
+    if (!hasHeader) {
+      return <ScreenStackHeaderConfig {...headerOptions} hidden />;
+    }
 
     if (options.headerStyle !== undefined) {
       headerOptions.backgroundColor = options.headerStyle.backgroundColor;

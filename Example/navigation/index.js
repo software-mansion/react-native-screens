@@ -26,6 +26,11 @@ class SomeScreen extends React.Component {
 }
 
 class PushScreen extends React.Component {
+  static route = {
+    navigationBar: {
+      visible: false,
+    },
+  };
   render() {
     return (
       <View style={styles.screen}>
@@ -49,7 +54,7 @@ const App = createStackNavigator(
       navigationOptions: () => ({
         title: 'Lol',
         headerBackTitle: null,
-        largeTitle: true,
+        // largeTitle: true,
       }),
     },
     Push: {
@@ -59,11 +64,14 @@ const App = createStackNavigator(
         headerBackTitle: 'Yoo',
         headerBackTitleFontFamily: 'ChalkboardSE-Light',
         headerTintColor: 'black',
+        header: null,
+        gestureEnabled: false,
       },
     },
   },
   {
-    initialRouteName: 'Some',
+    initialRouteName1: 'Some',
+    // headerMode: 'none',
     // transparentCard: true,
     // mode: 'modal',
   }
