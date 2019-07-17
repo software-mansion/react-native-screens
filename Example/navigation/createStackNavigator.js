@@ -37,11 +37,10 @@ class StackView extends React.Component {
 
     const {
       title,
-      titleFontFamily,
-      titleFontSize,
+      headerStyle,
+      headerTitleStyle,
+      headerBackTitleStyle,
       headerBackTitle,
-      headerBackTitleFontFamily,
-      headerBackTitleFontSize,
       headerTintColor,
       gestureEnabled,
       largeTitle,
@@ -51,11 +50,12 @@ class StackView extends React.Component {
     const headerOptions = {
       translucent: translucent === undefined ? false : translucent,
       title,
-      titleFontFamily,
-      titleFontSize,
+      titleFontFamily: headerTitleStyle && headerTitleStyle.fontFamily,
+      titleFontSize: headerTitleStyle && headerTitleStyle.fontSize,
       backTitle: headerBackTitle,
-      backTitleFontFamily: headerBackTitleFontFamily,
-      backTitleFontSize: headerBackTitleFontSize,
+      backTitleFontFamily:
+        headerBackTitleStyle && headerBackTitleStyle.fontFamily,
+      backTitleFontSize: headerBackTitleStyle && headerBackTitleStyle.fontSize,
       color: headerTintColor,
       gestureEnabled: gestureEnabled === undefined ? true : gestureEnabled,
       largeTitle,
@@ -66,8 +66,8 @@ class StackView extends React.Component {
       return <ScreenStackHeaderConfig {...headerOptions} hidden />;
     }
 
-    if (options.headerStyle !== undefined) {
-      headerOptions.backgroundColor = options.headerStyle.backgroundColor;
+    if (headerStyle !== undefined) {
+      headerOptions.backgroundColor = headerStyle.backgroundColor;
     }
 
     const children = [];

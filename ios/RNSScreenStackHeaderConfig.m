@@ -64,15 +64,32 @@
 - (void)setAnimatedConfig:(UIViewController *)vc
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
+  BOOL hideShadow = _hideShadow;
   [navbar setTintColor:_color];
-  [navbar setBarTintColor:_backgroundColor];
+  if (_backgroundColor && CGColorGetAlpha(_backgroundColor.CGColor) == 0.) {
+    [navbar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    [navbar setBarTintColor:[UIColor clearColor]];
+    hideShadow = YES;
+  } else {
+    [navbar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    [navbar setBarTintColor:_backgroundColor];
+  }
   [navbar setTranslucent:_translucent];
-  [navbar setValue:@(_hideShadow ? YES : NO) forKey:@"hidesShadow"];
+  [navbar setValue:@(hideShadow ? YES : NO) forKey:@"hidesShadow"];
 
   if (_titleFontFamily || _titleFontSize) {
     [navbar setTitleTextAttributes:[self makeHeaderFontAttributes:_titleFontFamily withSize:_titleFontSize]];
   }
 
+}
+
+- (void)setTitleAttibutes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
+{
+  [button setTitleTextAttributes:attrs forState:UIControlStateNormal];
+  [button setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
+  [button setTitleTextAttributes:attrs forState:UIControlStateDisabled];
+  [button setTitleTextAttributes:attrs forState:UIControlStateSelected];
+  [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
 - (void)willShowViewController:(UIViewController *)vc
@@ -100,7 +117,7 @@
                                   target:nil
                                   action:nil];
     if (_backTitleFontFamily || _backTitleFontSize) {
-      [prevItem.backBarButtonItem setTitleTextAttributes:[self makeHeaderFontAttributes:_backTitleFontFamily withSize:_backTitleFontSize] forState:UIControlStateNormal];
+      [self setTitleAttibutes:[self makeHeaderFontAttributes:_backTitleFontFamily withSize:_backTitleFontSize] forButton:prevItem.backBarButtonItem];
     }
   } else {
     prevItem.backBarButtonItem = nil;

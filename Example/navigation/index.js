@@ -59,16 +59,24 @@ const App = createStackNavigator(
       navigationOptions: () => ({
         title: 'Lol',
         headerBackTitle: null,
-        // translucent: true,
-        largeTitle: true,
+        headerStyle: {
+          // backgroundColor: 'transparent',
+        },
+        translucent: true,
+        // largeTitle: true,
       }),
     },
     Push: {
       screen: PushScreen,
       navigationOptions: {
         title: 'Wat?',
-        headerBackTitle: 'Yoo',
-        headerBackTitleFontFamily: 'ChalkboardSE-Light',
+        // headerBackTitle: 'Yoo',
+        // headerBackTitleStyle: {
+        //   fontFamily: 'ChalkboardSE-Light',
+        // },
+        headerStyle: {
+          backgroundColor: 'transparent',
+        },
         headerTintColor: 'black',
         // header: null,
         translucent: true,
@@ -87,6 +95,7 @@ const App = createStackNavigator(
 const styles = StyleSheet.create({
   screen: {
     ...StyleSheet.absoluteFillObject,
+    paddingTop: 200,
     flex: 1,
     backgroundColor: 'white',
   },
