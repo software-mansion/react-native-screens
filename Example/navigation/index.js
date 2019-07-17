@@ -59,7 +59,8 @@ const App = createStackNavigator(
       navigationOptions: () => ({
         title: 'Lol',
         headerBackTitle: null,
-        // largeTitle: true,
+        // translucent: true,
+        largeTitle: true,
       }),
     },
     Push: {
@@ -69,7 +70,7 @@ const App = createStackNavigator(
         headerBackTitle: 'Yoo',
         headerBackTitleFontFamily: 'ChalkboardSE-Light',
         headerTintColor: 'black',
-        header: null,
+        // header: null,
         translucent: true,
         // gestureEnabled: false,
       },

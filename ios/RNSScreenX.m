@@ -65,7 +65,7 @@
 {
   CGFloat navbarOffset = 0;
   UINavigationController *navctr = self.controller.navigationController;
-  if (!navctr.isNavigationBarHidden || navctr.navigationBar.isTranslucent) {
+  if (!navctr.isNavigationBarHidden && !navctr.navigationBar.isTranslucent) {
     CGRect navbarFrame = navctr.navigationBar.frame;
     navbarOffset = navbarFrame.origin.y + navbarFrame.size.height;
   }

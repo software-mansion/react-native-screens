@@ -222,20 +222,6 @@
 
 @end
 
-@interface RNSSscreenStackShadowView : RCTShadowView
-@end
-
-@implementation RNSSscreenStackShadowView
-
-//- (void)insertReactSubview:(RCTShadowView *)subview atIndex:(NSInteger)atIndex
-//{
-//  [super insertReactSubview:subview atIndex:atIndex];
-//  UINavigationController *vc = [UINavigationController new];
-//  subview.borderBottomWidth = 64;
-//}
-
-@end
-
 @implementation RNSScreenStackManager
 
 RCT_EXPORT_MODULE()
@@ -246,11 +232,6 @@ RCT_EXPORT_VIEW_PROPERTY(progress, CGFloat)
 - (UIView *)view
 {
   return [[RNSScreenStackView alloc] initWithManager:self];
-}
-
-- (RCTShadowView *)shadowView
-{
-  return [RNSSscreenStackShadowView new];
 }
 
 @end
