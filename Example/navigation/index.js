@@ -75,11 +75,11 @@ const App = createStackNavigator(
         //   fontFamily: 'ChalkboardSE-Light',
         // },
         headerStyle: {
-          backgroundColor: 'transparent',
+          // backgroundColor: 'green',
         },
         headerTintColor: 'black',
         // header: null,
-        translucent: true,
+        // translucent: true,
         // gestureEnabled: false,
       },
     },

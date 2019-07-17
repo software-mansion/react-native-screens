@@ -79,11 +79,7 @@
 
 - (void)safeAreaInsetsDidChange
 {
-  [self updateBounds];
-}
-
-- (void)layoutSubviews
-{
+  [super safeAreaInsetsDidChange];
   [self updateBounds];
 }
 
@@ -216,10 +212,6 @@
   self.paddingLeft = (YGValue){data.leftInset, YGUnitPoint};
   self.paddingRight = (YGValue){data.rightInset, YGUnitPoint};
   self.top = (YGValue){data.navbarOffset, YGUnitPoint};
-//  self.marginTop = (YGValue){100, YGUnitPoint};
-//  self.width = (YGValue){100, YGUnitPoint};
-//  self.height = (YGValue){300, YGUnitPoint};
-//  [self didSetProps:@[@"marginTop", @"width", @"height"]];
   [self didSetProps:@[@"paddingTop", @"paddingBottom", @"paddingLeft", @"paddingRight", @"top"]];
 }
 
