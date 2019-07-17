@@ -4,6 +4,34 @@
 #import "RNSScreenContainer.h"
 
 #import <React/RCTUIManager.h>
+#import <React/RCTShadowView.h>
+
+@interface RNSScreenFrameData : NSObject
+@property (nonatomic, readonly) CGFloat rightInset;
+@property (nonatomic, readonly) CGFloat topInset;
+@property (nonatomic, readonly) CGFloat bottomInset;
+@property (nonatomic, readonly) CGFloat leftInset;
+@property (nonatomic, readonly) CGFloat navbarOffset;
+
+- (instancetype)initWithInsets:(UIEdgeInsets)insets;
+
+@end
+
+@implementation RNSScreenFrameData
+
+- (instancetype)initWithInsets:(UIEdgeInsets)insets andNavbarOffset:(CGFloat)navbarOffset
+{
+  if (self = [super init]) {
+    _topInset = insets.top;
+    _bottomInset = insets.bottom;
+    _leftInset = insets.left;
+    _rightInset = insets.right;
+    _navbarOffset = navbarOffset;
+  }
+  return self;
+}
+
+@end
 
 @interface RNSScreen : UIViewController
 
@@ -13,21 +41,50 @@
 @end
 
 @implementation RNSScreenView {
+  __weak RCTBridge *_bridge;
   RNSScreen *_controller;
   BOOL _invalidated;
 }
 
 @synthesize controller = _controller;
 
-- (instancetype)init
+- (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
+    _bridge = bridge;
     _controller = [[RNSScreen alloc] initWithView:self];
     _controller.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     _stackPresentation = RNSScreenStackPresentationPush;
     _animate = YES;
   }
+
   return self;
+}
+
+- (void)updateBounds
+{
+  CGFloat navbarOffset = 0;
+  UINavigationController *navctr = self.controller.navigationController;
+  if (!navctr.isNavigationBarHidden || navctr.navigationBar.isTranslucent) {
+    CGRect navbarFrame = navctr.navigationBar.frame;
+    navbarOffset = navbarFrame.origin.y + navbarFrame.size.height;
+  }
+
+  [_bridge.uiManager
+   setLocalData:[[RNSScreenFrameData alloc]
+                 initWithInsets:self.safeAreaInsets
+                 andNavbarOffset:navbarOffset]
+   forView:self];
+}
+
+- (void)safeAreaInsetsDidChange
+{
+  [self updateBounds];
+}
+
+- (void)layoutSubviews
+{
+  [self updateBounds];
 }
 
 - (void)setActive:(BOOL)active
@@ -147,6 +204,27 @@
 
 @end
 
+@interface RNSScreenShadowView : RCTShadowView
+@end
+
+@implementation RNSScreenShadowView
+
+- (void)setLocalData:(RNSScreenFrameData *)data
+{
+  self.paddingTop = (YGValue){data.topInset, YGUnitPoint};
+  self.paddingBottom = (YGValue){data.bottomInset, YGUnitPoint};
+  self.paddingLeft = (YGValue){data.leftInset, YGUnitPoint};
+  self.paddingRight = (YGValue){data.rightInset, YGUnitPoint};
+  self.top = (YGValue){data.navbarOffset, YGUnitPoint};
+//  self.marginTop = (YGValue){100, YGUnitPoint};
+//  self.width = (YGValue){100, YGUnitPoint};
+//  self.height = (YGValue){300, YGUnitPoint};
+//  [self didSetProps:@[@"marginTop", @"width", @"height"]];
+  [self didSetProps:@[@"paddingTop", @"paddingBottom", @"paddingLeft", @"paddingRight", @"top"]];
+}
+
+@end
+
 @implementation RNSScreenManager
 
 RCT_EXPORT_MODULE()
@@ -158,7 +236,12 @@ RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
 - (UIView *)view
 {
-  return [[RNSScreenView alloc] init];
+  return [[RNSScreenView alloc] initWithBridge:self.bridge];
+}
+
+- (RCTShadowView *)shadowView
+{
+  return [RNSScreenShadowView new];
 }
 
 @end
@@ -166,9 +249,9 @@ RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 @implementation RCTConvert (RNSScreen)
 
 RCT_ENUM_CONVERTER(RNSScreenStackPresentation, (@{
-    @"push": @(RNSScreenStackPresentationPush),
-    @"modal": @(RNSScreenStackPresentationModal),
-    @"transparentModal": @(RNSScreenStackPresentationTransparentModal)
-  }), RNSScreenStackPresentationPush, integerValue)
+                                                  @"push": @(RNSScreenStackPresentationPush),
+                                                  @"modal": @(RNSScreenStackPresentationModal),
+                                                  @"transparentModal": @(RNSScreenStackPresentationTransparentModal)
+                                                  }), RNSScreenStackPresentationPush, integerValue)
 
 @end

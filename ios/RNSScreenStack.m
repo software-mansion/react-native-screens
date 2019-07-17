@@ -5,6 +5,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import <React/RCTShadowView.h>
 
 @interface RNSScreenStackView () <UINavigationControllerDelegate, UIGestureRecognizerDelegate>
 
@@ -61,11 +62,6 @@
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
   return _controller.viewControllers.count > 1;
-}
-
- - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return YES;
 }
 
 - (void)markUpdated
@@ -226,6 +222,19 @@
 
 @end
 
+@interface RNSSscreenStackShadowView : RCTShadowView
+@end
+
+@implementation RNSSscreenStackShadowView
+
+//- (void)insertReactSubview:(RCTShadowView *)subview atIndex:(NSInteger)atIndex
+//{
+//  [super insertReactSubview:subview atIndex:atIndex];
+//  UINavigationController *vc = [UINavigationController new];
+//  subview.borderBottomWidth = 64;
+//}
+
+@end
 
 @implementation RNSScreenStackManager
 
@@ -237,6 +246,11 @@ RCT_EXPORT_VIEW_PROPERTY(progress, CGFloat)
 - (UIView *)view
 {
   return [[RNSScreenStackView alloc] initWithManager:self];
+}
+
+- (RCTShadowView *)shadowView
+{
+  return [RNSSscreenStackShadowView new];
 }
 
 @end

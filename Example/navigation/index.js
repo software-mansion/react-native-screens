@@ -4,6 +4,7 @@ import {
   Button,
   Text,
   View,
+  ScrollView,
   TextInput,
   Animated,
   Image,
@@ -20,6 +21,8 @@ class SomeScreen extends React.Component {
           onPress={() => this.props.navigation.push('Push')}
           title="Push"
         />
+        <View style={styles.leftTop} />
+        <View style={styles.bottomRight} />
       </View>
     );
   }
@@ -33,7 +36,7 @@ class PushScreen extends React.Component {
   };
   render() {
     return (
-      <View style={styles.screen}>
+      <ScrollView style={styles.screen}>
         <Button
           onPress={() => this.props.navigation.goBack()}
           title="Go back"
@@ -42,7 +45,9 @@ class PushScreen extends React.Component {
           onPress={() => this.props.navigation.push('Push')}
           title="Push more"
         />
-      </View>
+        <View style={styles.leftTop} />
+        <View style={styles.bottomRight} />
+      </ScrollView>
     );
   }
 }
@@ -65,12 +70,13 @@ const App = createStackNavigator(
         headerBackTitleFontFamily: 'ChalkboardSE-Light',
         headerTintColor: 'black',
         header: null,
-        gestureEnabled: false,
+        translucent: true,
+        // gestureEnabled: false,
       },
     },
   },
   {
-    initialRouteName1: 'Some',
+    initialRouteName: 'Some',
     // headerMode: 'none',
     // transparentCard: true,
     // mode: 'modal',
@@ -80,7 +86,24 @@ const App = createStackNavigator(
 const styles = StyleSheet.create({
   screen: {
     ...StyleSheet.absoluteFillObject,
+    flex: 1,
     backgroundColor: 'white',
+  },
+  leftTop: {
+    position: 'absolute',
+    width: 80,
+    height: 80,
+    left: 0,
+    top: 0,
+    backgroundColor: 'red',
+  },
+  bottomRight: {
+    position: 'absolute',
+    width: 80,
+    height: 80,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'blue',
   },
   modal: {
     position: 'absolute',

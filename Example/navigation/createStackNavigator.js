@@ -45,10 +45,11 @@ class StackView extends React.Component {
       headerTintColor,
       gestureEnabled,
       largeTitle,
+      translucent,
     } = options;
 
     const headerOptions = {
-      translucent: false,
+      translucent: translucent === undefined ? false : translucent,
       title,
       titleFontFamily,
       titleFontSize,
@@ -140,7 +141,11 @@ class StackView extends React.Component {
     return (
       <Screen
         key={`screen_${scene.key}`}
-        style={StyleSheet.absoluteFill}
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          borderColor: 'green',
+          borderWidth: 5,
+        }}
         stackPresentation={stackPresentation}
         onDismissed={() => this._removeScene(scene)}>
         {this._renderHeaderConfig(scene)}
