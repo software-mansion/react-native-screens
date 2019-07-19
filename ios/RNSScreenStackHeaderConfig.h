@@ -6,6 +6,7 @@
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *titleFontFamily;
 @property (nonatomic, retain) NSNumber *titleFontSize;
+@property (nonatomic, retain) UIColor *titleColor;
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;

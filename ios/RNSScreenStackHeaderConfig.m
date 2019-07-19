@@ -51,16 +51,6 @@
   return nil;
 }
 
-- (NSDictionary *)makeHeaderFontAttributes:(NSString *)fontFamily
-                                  withSize:(NSNumber *)fontSize
-{
-  CGFloat size = fontSize ? [fontSize floatValue] : 17;
-  return @{
-    NSFontAttributeName: fontFamily ? [UIFont fontWithName:fontFamily size:size]
-                                    : [UIFont systemFontOfSize:size]
-  };
-}
-
 - (void)setAnimatedConfig:(UIViewController *)vc
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
@@ -77,8 +67,20 @@
   [navbar setTranslucent:_translucent];
   [navbar setValue:@(hideShadow ? YES : NO) forKey:@"hidesShadow"];
 
-  if (_titleFontFamily || _titleFontSize) {
-    [navbar setTitleTextAttributes:[self makeHeaderFontAttributes:_titleFontFamily withSize:_titleFontSize]];
+  if (_titleFontFamily || _titleFontSize || _titleColor) {
+    NSMutableDictionary *attrs = [NSMutableDictionary new];
+
+    if (_titleColor) {
+      attrs[NSForegroundColorAttributeName] = _titleColor;
+    }
+
+    CGFloat size = _titleFontSize ? [_titleFontSize floatValue] : 17;
+    if (_titleFontFamily) {
+      attrs[NSFontAttributeName] = [UIFont fontWithName:_titleFontFamily size:size];
+    } else {
+      attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:size];
+    }
+    [navbar setTitleTextAttributes:attrs];
   }
 
 }
@@ -89,7 +91,9 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
   [button setTitleTextAttributes:attrs forState:UIControlStateDisabled];
   [button setTitleTextAttributes:attrs forState:UIControlStateSelected];
-  [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
+  if (@available(iOS 9.0, *)) {
+    [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
+  }
 }
 
 - (void)willShowViewController:(UIViewController *)vc
@@ -117,7 +121,14 @@
                                   target:nil
                                   action:nil];
     if (_backTitleFontFamily || _backTitleFontSize) {
-      [self setTitleAttibutes:[self makeHeaderFontAttributes:_backTitleFontFamily withSize:_backTitleFontSize] forButton:prevItem.backBarButtonItem];
+      NSMutableDictionary *attrs = [NSMutableDictionary new];
+      CGFloat size = _backTitleFontSize ? [_backTitleFontSize floatValue] : 17;
+      if (_backTitleFontFamily) {
+        attrs[NSFontAttributeName] = [UIFont fontWithName:_backTitleFontFamily size:size];
+      } else {
+        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:size];
+      }
+      [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
     }
   } else {
     prevItem.backBarButtonItem = nil;
@@ -172,6 +183,7 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_VIEW_PROPERTY(title, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(titleColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)

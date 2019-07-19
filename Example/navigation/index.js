@@ -16,14 +16,19 @@ import createStackNavigator from './createStackNavigator';
 class SomeScreen extends React.Component {
   render() {
     return (
-      <View style={styles.screen}>
+      <ScrollView style={styles.screen}>
         <Button
           onPress={() => this.props.navigation.push('Push')}
           title="Push"
         />
+        <Button
+          onPress={() => this.props.navigation.push('Modal')}
+          title="Modal"
+        />
+        <Button onPress={() => this.props.navigation.pop()} title="Back" />
         <View style={styles.leftTop} />
         <View style={styles.bottomRight} />
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -52,17 +57,17 @@ class PushScreen extends React.Component {
   }
 }
 
-const App = createStackNavigator(
+const AppStack = createStackNavigator(
   {
     Some: {
       screen: SomeScreen,
       navigationOptions: () => ({
         title: 'Lol',
-        headerBackTitle: null,
+        // headerBackTitle: null,
         headerStyle: {
           // backgroundColor: 'transparent',
         },
-        translucent: true,
+        // translucent: true,
         // largeTitle: true,
       }),
     },
@@ -89,6 +94,17 @@ const App = createStackNavigator(
     // headerMode: 'none',
     // transparentCard: true,
     // mode: 'modal',
+  }
+);
+
+const App = createStackNavigator(
+  {
+    Root: { screen: AppStack },
+    Modal: PushScreen,
+  },
+  {
+    mode: 'modal',
+    headerMode: 'none',
   }
 );
 
