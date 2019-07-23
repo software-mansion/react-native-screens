@@ -104,6 +104,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
