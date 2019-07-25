@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.facebook.react.uimanager.PointerEvents;
 import com.facebook.react.uimanager.ReactPointerEventsView;
 
@@ -35,6 +35,12 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
                              @Nullable Bundle savedInstanceState) {
       return mScreenView;
     }
+
+    @Override
+    public void onDetach() {
+      super.onDetach();
+      mScreenView.onDetach();
+    }
   }
 
   private final Fragment mFragment;
@@ -48,8 +54,13 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
   }
 
   @Override
-  protected void onLayout(boolean b, int i, int i1, int i2, int i3) {
+  protected void onLayout(boolean changed, int l, int t, int b, int r) {
     // no-op
+  }
+
+  private void onDetach() {
+    setTransitioning(false);
+    clearDisappearingChildren();
   }
 
   /**
