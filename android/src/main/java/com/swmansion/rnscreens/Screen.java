@@ -1,11 +1,13 @@
 package com.swmansion.rnscreens;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +61,6 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
   }
 
   private void onDetach() {
-    setTransitioning(false);
     clearDisappearingChildren();
   }
 
@@ -77,11 +78,6 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
   }
 
   @Override
-  public boolean hasOverlappingRendering() {
-    return mTransitioning;
-  }
-
-  @Override
   public PointerEvents getPointerEvents() {
     return mTransitioning ? PointerEvents.NONE : PointerEvents.AUTO;
   }
@@ -89,10 +85,6 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
   @Override
   public void setLayerType(int layerType, @Nullable Paint paint) {
     // ignore - layer type is controlled by `transitioning` prop
-  }
-
-  public void setNeedsOffscreenAlphaCompositing(boolean needsOffscreenAlphaCompositing) {
-    // ignore - offscreen alpha is controlled by `transitioning` prop
   }
 
   protected void setContainer(@Nullable ScreenContainer mContainer) {

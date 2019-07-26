@@ -62,9 +62,7 @@ export class Stack extends Component {
         key={key}
         active={1}
         onDismissed={() => this.removeByKey(key)}>
-        <ScreenStackHeaderConfig
-          title={`Testing ${key} sdhfgi ksjdfh sjkahdfg asdjkhfgksdjfhg sjadfg sdhg `}
-          largeTitle={index === 10}>
+        <ScreenStackHeaderConfig title={`Filter`} largeTitle={index === 10}>
           {index === 0 && (
             <ScreenStackHeaderRightView>
               <TouchableHighlight onPress={() => alert('sdf')}>

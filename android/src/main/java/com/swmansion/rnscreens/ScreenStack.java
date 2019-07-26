@@ -3,11 +3,8 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
@@ -159,36 +156,6 @@ public class ScreenStack extends ViewGroup {
       mStack.addAll(mScreens);
     }
 
-    // detach screens that are no longer active
-//    Set<Screen> orphaned = new HashSet<>(mActiveScreens);
-//    for (int i = 0, size = mScreens.size(); i < size; i++) {
-//      Screen screen = mScreens.get(i);
-//      boolean isActive = isScreenActive(screen, mScreens);
-//      if (!isActive && mActiveScreens.contains(screen)) {
-//        detachScreen(screen);
-//      }
-//      orphaned.remove(screen);
-//    }
-//    if (!orphaned.isEmpty()) {
-//      Object[] orphanedAry = orphaned.toArray();
-//      for (int i = 0; i < orphanedAry.length; i++) {
-//        detachScreen((Screen) orphanedAry[i]);
-//      }
-//    }
-
-    // attach newly activated screens
-//    boolean addedBefore = false;
-//    for (int i = 0, size = mScreens.size(); i < size; i++) {
-//      Screen screen = mScreens.get(i);
-//      boolean isActive = isScreenActive(screen, mScreens);
-//      if (isActive && !mActiveScreens.contains(screen)) {
-//        addedBefore = true;
-//        attachScreen(screen);
-//      } else if (isActive && addedBefore) {
-//        moveToFront(screen);
-//      }
-//      screen.setTransitioning(transitioning);
-//    }
     tryCommitTransaction();
   }
 }

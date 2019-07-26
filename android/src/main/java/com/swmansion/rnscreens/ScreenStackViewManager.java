@@ -37,7 +37,6 @@ public class ScreenStackViewManager extends ViewGroupManager<ScreenStack> {
   }
 
   private void prepareOutTransition(Screen screen) {
-    screen.setTransitioning(true);
     startTransitionRecursive(screen);
   }
 
