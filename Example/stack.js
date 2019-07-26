@@ -7,9 +7,7 @@ import {
   TouchableHighlight,
   Image,
   Text,
-  Animated,
-  Easing,
-  requireNativeComponent,
+  ToolbarAndroid,
 } from 'react-native';
 import {
   Screen,

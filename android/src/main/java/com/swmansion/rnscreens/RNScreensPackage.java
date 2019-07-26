@@ -20,7 +20,8 @@ public class RNScreensPackage implements ReactPackage {
     return Arrays.<ViewManager>asList(
             new ScreenContainerViewManager(),
             new ScreenViewManager(),
-            new ScreenStackViewManager()
+            new ScreenStackViewManager(),
+            new ScreenStackHeaderConfigViewManager()
     );
   }
 }

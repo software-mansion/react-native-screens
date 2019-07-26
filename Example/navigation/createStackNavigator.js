@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import {
   StackRouter,
   SceneView,
@@ -30,7 +30,7 @@ class StackView extends React.Component {
     navigation.dispatch(StackActions.completeTransition());
   };
 
-  _renderHeaderConfig = scene => {
+  _renderHeaderConfig = (scene, scenes) => {
     const { navigationConfig } = this.props;
     const { options } = scene.descriptor;
     const { headerMode } = navigationConfig;
@@ -128,7 +128,7 @@ class StackView extends React.Component {
     return <ScreenStackHeaderConfig {...headerOptions} />;
   };
 
-  _renderScene = scene => {
+  _renderScene = (scene, scenes) => {
     const { navigation, getComponent } = scene.descriptor;
     const { mode, transparentCard } = this.props.navigationConfig;
     const SceneComponent = getComponent();
@@ -149,7 +149,7 @@ class StackView extends React.Component {
         }}
         stackPresentation={stackPresentation}
         onDismissed={() => this._removeScene(scene)}>
-        {this._renderHeaderConfig(scene)}
+        {this._renderHeaderConfig(scene, scenes)}
         <SceneView
           screenProps={screenProps}
           navigation={navigation}
@@ -169,7 +169,7 @@ class StackView extends React.Component {
 
     return (
       <ScreenStack style={styles.scenes}>
-        {scenes.map(this._renderScene)}
+        {scenes.map(scene => this._renderScene(scene, scenes))}
       </ScreenStack>
     );
   }
