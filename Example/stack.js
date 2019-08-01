@@ -62,9 +62,9 @@ export class Stack extends Component {
         key={key}
         active={1}
         onDismissed={() => this.removeByKey(key)}>
-        <ScreenStackHeaderConfig title={`Filter`}>
+        <ScreenStackHeaderConfig title={key}>
           {index === 0 && (
-            <ScreenStackHeaderRightView>
+            <ScreenStackHeaderTitleView>
               <TouchableHighlight onPress={() => alert('sdf')}>
                 <Image
                   source={{
@@ -74,7 +74,7 @@ export class Stack extends Component {
                   style={{ width: 30, height: 30 }}
                 />
               </TouchableHighlight>
-            </ScreenStackHeaderRightView>
+            </ScreenStackHeaderTitleView>
           )}
         </ScreenStackHeaderConfig>
         {this.props.renderScreen(key)}
@@ -106,7 +106,7 @@ class App extends Component {
         <View
           style={{
             position: 'absolute',
-            top: 0,
+            top: 110,
             left: 0,
             width: 80,
             height: 80,

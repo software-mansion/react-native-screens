@@ -133,3 +133,11 @@ export const ScreenStackHeaderTitleView = props => (
     style={styles.headerSubview}
   />
 );
+
+export const ScreenStackHeaderCenterView = props => (
+  <ScreenStackHeaderSubview
+    {...props}
+    type="center"
+    style={styles.headerSubview}
+  />
+);

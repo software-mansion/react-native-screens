@@ -1,14 +1,17 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
-import android.graphics.Typeface;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.react.uimanager.PixelUtil;
@@ -20,10 +23,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   private static final class ToolbarWithLayoutLoop extends Toolbar {
 
-    public ToolbarWithLayoutLoop(Context context) {
-      super(context);
-    }
-
     private final Runnable mLayoutRunnable = new Runnable() {
       @Override
       public void run() {
@@ -33,6 +32,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         layout(getLeft(), getTop(), getRight(), getBottom());
       }
     };
+
+    public ToolbarWithLayoutLoop(Context context) {
+      super(context);
+    }
 
     @Override
     public void requestLayout() {
@@ -44,39 +47,40 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
   }
 
-  private final View mConfigSubviews[] = new View[3];
+  private final ScreenStackHeaderSubview mConfigSubviews[] = new ScreenStackHeaderSubview[3];
   private int mSubviewsCount = 0;
+  private String mTitle;
+  private int mTitleColor;
+  private String mTitleFontFamily;
+  private int mTitleFontSize;
+  private int mBackgroundColor;
   private boolean mIsHidden;
+  private boolean mIsBackButtonHidden;
+  private boolean mIsShadowHidden;
+  private int mTintColor;
   private int mWidth;
   private int mHeight;
   private final Toolbar mToolbar;
 
   public ScreenStackHeaderConfig(Context context) {
     super(context);
+    setVisibility(View.GONE);
+
+
     mToolbar = new ToolbarWithLayoutLoop(context);
-    mToolbar.setTitle(null);
-    mToolbar.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-    mToolbar.setElevation(TOOLBAR_ELEVATION);
 
-    View v = new View(context);
-    v.setBackgroundColor(getResources().getColor(R.color.catalyst_redbox_background));
-
-    Toolbar.LayoutParams params = new Toolbar.LayoutParams(80, 80);
-    params.gravity = Gravity.LEFT;
-    v.setLayoutParams(params);
-
-
-    mToolbar.addView(v);
+    // set primary color as background by default
+    TypedValue tv = new TypedValue();
+    if (context.getTheme().resolveAttribute(android.R.attr.colorPrimary, tv, true)) {
+      mToolbar.setBackgroundColor(tv.data);
+    }
 
     mWidth = 0;
     mHeight = 0;
 
-    TypedValue tv = new TypedValue();
-    if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-    {
-      mHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+    if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+      mHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
     }
-
 
   }
 
@@ -98,23 +102,92 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   @Override
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
+    update();
+  }
 
+  private void update() {
     Screen parent = (Screen) getParent();
+    if (mIsHidden) {
+      if (mToolbar.getParent() != null) {
+        parent.removeView(mToolbar);
+      }
+      return;
+    }
+
     if (mToolbar.getParent() == null) {
-      // FIXME: the order of subviews is a subject to change as view manager can order
-      // to insert new views or delete some of the old ones, we need to make sure that
-      // view manager ignores toolbar view (not included in view count for example)
       parent.addView(mToolbar);
     }
 
     AppCompatActivity activity = (AppCompatActivity) parent.getFragment().getActivity();
     activity.setSupportActionBar(mToolbar);
-//    activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//    activity.getSupportActionBar().setHomeButtonEnabled(true);
-//    activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
+    ActionBar actionBar = activity.getSupportActionBar();
+
+    // hidden
+    actionBar.setDisplayHomeAsUpEnabled(!mIsBackButtonHidden);
+
+    // shadow
+    actionBar.setElevation(mIsShadowHidden ? 0 : TOOLBAR_ELEVATION);
+
+    // title
+    actionBar.setTitle(mTitle);
+    TextView titleTextView = getTitleTextView();
+    if (mTitleColor != 0) {
+      mToolbar.setTitleTextColor(mTitleColor);
+    }
+    if (titleTextView != null) {
+      if (mTitleFontFamily != null) {
+        titleTextView.setTypeface(ReactFontManager.getInstance().getTypeface(
+                mTitleFontFamily, 0, getContext().getAssets()));
+      }
+      if (mTitleFontSize > 0) {
+        titleTextView.setTextSize(mTitleFontSize);
+      }
+    }
+
+    // background
+    if (mBackgroundColor != 0) {
+      mToolbar.setBackgroundColor(mBackgroundColor);
+    }
+
+    // color
+    if (mTintColor != 0) {
+      Drawable navigationIcon = mToolbar.getNavigationIcon();
+      if (navigationIcon != null) {
+        navigationIcon.setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP);
+      }
+    }
+
+    // subviews
+    for (int i = 0; i < mSubviewsCount; i++) {
+      ScreenStackHeaderSubview view = mConfigSubviews[i];
+      ScreenStackHeaderSubview.Type type = view.getType();
+
+      Toolbar.LayoutParams params =
+              new Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+
+      switch (type) {
+        case LEFT:
+          params.gravity = Gravity.LEFT;
+          break;
+        case CENTER:
+          params.gravity = Gravity.CENTER_HORIZONTAL;
+          break;
+        case TITLE:
+          params.gravity = Gravity.CENTER_HORIZONTAL;
+          break;
+        case RIGHT:
+          params.gravity = Gravity.RIGHT;
+          break;
+      }
+
+      view.setLayoutParams(params);
+      if (view.getParent() == null) {
+        mToolbar.addView(view);
+      }
+    }
   }
 
-  public View getConfigSubview(int index) {
+  public ScreenStackHeaderSubview getConfigSubview(int index) {
     return mConfigSubviews[index];
   }
 
@@ -129,7 +202,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     mConfigSubviews[index] = null;
   }
 
-  public void addConfigSubview(View child, int index) {
+  public void addConfigSubview(ScreenStackHeaderSubview child, int index) {
     if (mConfigSubviews[index] == null) {
       mSubviewsCount++;
     }
@@ -137,9 +210,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   }
 
   private TextView getTitleTextView() {
-    if (mToolbar.getTitle() == null) {
-      mToolbar.setTitle(" "); // set some title in order for toolbar to create title textview
-    }
     for (int i = 0, size = mToolbar.getChildCount(); i < size; i++) {
       View view = mToolbar.getChildAt(i);
       if (view instanceof TextView) {
@@ -153,29 +223,35 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   }
 
   public void setTitle(String title) {
-    mToolbar.setTitle(title);
+    mTitle = title;
   }
 
   public void setTitleFontFamily(String titleFontFamily) {
-    TextView tv = getTitleTextView();
-    if (tv != null) {
-      ReactFontManager.getInstance().getTypeface(titleFontFamily, 0, getContext().getAssets());
-    }
+    mTitleFontFamily = titleFontFamily;
   }
 
   public void setTitleFontSize(int titleFontSize) {
-    TextView tv = getTitleTextView();
-    if (tv != null) {
-      tv.setTextSize(titleFontSize);
-    }
+    mTitleFontSize = titleFontSize;
   }
 
   public void setTitleColor(int color) {
-    mToolbar.setTitleTextColor(color);
+    mTitleColor = color;
+  }
+
+  public void setTintColor(int color) {
+    mTintColor = color;
+  }
+
+  public void setBackgroundColor(int color) {
+    mBackgroundColor = color;
   }
 
   public void setHideShadow(boolean hideShadow) {
-    mToolbar.setElevation(hideShadow ? 0 : TOOLBAR_ELEVATION);
+    mIsShadowHidden = hideShadow;
+  }
+
+  public void setHideBackButton(boolean hideBackButton) {
+    mIsBackButtonHidden = hideBackButton;
   }
 
   public void setHidden(boolean hidden) {

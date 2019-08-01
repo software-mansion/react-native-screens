@@ -2,6 +2,7 @@ package com.swmansion.rnscreens;
 
 import android.view.View;
 
+import com.facebook.react.bridge.JSApplicationCausedNativeException;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -25,7 +26,10 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
 
   @Override
   public void addView(ScreenStackHeaderConfig parent, View child, int index) {
-    parent.addConfigSubview(child, index);
+    if (!(child instanceof ScreenStackHeaderSubview)) {
+      throw new JSApplicationCausedNativeException("Config children should be of type " + ScreenStackHeaderSubviewManager.REACT_CLASS);
+    }
+    parent.addConfigSubview((ScreenStackHeaderSubview) child, index);
   }
 
   @Override
@@ -63,12 +67,25 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     config.setTitleColor(titleColor);
   }
 
+  @ReactProp(name = "backgroundColor", customType = "Color")
+  public void setBackgroundColor(ScreenStackHeaderConfig config, int titleColor) {
+    config.setBackgroundColor(titleColor);
+  }
+
   @ReactProp(name = "hideShadow")
   public void setHideShadow(ScreenStackHeaderConfig config, boolean hideShadow) {
     config.setHideShadow(hideShadow);
   }
 
-  //  RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
+  @ReactProp(name = "hideBackButton")
+  public void setHideBackButton(ScreenStackHeaderConfig config, boolean hideBackButton) {
+    config.setHideBackButton(hideBackButton);
+  }
+
+  @ReactProp(name = "color", customType = "Color")
+  public void setColor(ScreenStackHeaderConfig config, int color) {
+    config.setTintColor(color);
+  }
 
   @ReactProp(name = "hidden")
   public void setHidden(ScreenStackHeaderConfig config, boolean hidden) {
@@ -82,9 +99,7 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
 //  RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 //  RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 //  RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
-//  RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 //  // `hidden` is an UIView property, we need to use different name internally
-//  RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 //  RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 //  RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 }
