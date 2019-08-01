@@ -1,15 +1,22 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.facebook.react.uimanager.PixelUtil;
+import com.facebook.react.views.text.ReactFontManager;
 
 public class ScreenStackHeaderConfig extends ViewGroup {
+
+  private static final float TOOLBAR_ELEVATION = PixelUtil.toPixelFromDIP(4);
 
   private static final class ToolbarWithLayoutLoop extends Toolbar {
 
@@ -47,9 +54,19 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   public ScreenStackHeaderConfig(Context context) {
     super(context);
     mToolbar = new ToolbarWithLayoutLoop(context);
-    mToolbar.setTitle("Lol");
+    mToolbar.setTitle(null);
     mToolbar.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-    mToolbar.setElevation(PixelUtil.toPixelFromDIP(4));
+    mToolbar.setElevation(TOOLBAR_ELEVATION);
+
+    View v = new View(context);
+    v.setBackgroundColor(getResources().getColor(R.color.catalyst_redbox_background));
+
+    Toolbar.LayoutParams params = new Toolbar.LayoutParams(80, 80);
+    params.gravity = Gravity.LEFT;
+    v.setLayoutParams(params);
+
+
+    mToolbar.addView(v);
 
     mWidth = 0;
     mHeight = 0;
@@ -84,14 +101,17 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     Screen parent = (Screen) getParent();
     if (mToolbar.getParent() == null) {
+      // FIXME: the order of subviews is a subject to change as view manager can order
+      // to insert new views or delete some of the old ones, we need to make sure that
+      // view manager ignores toolbar view (not included in view count for example)
       parent.addView(mToolbar);
     }
 
     AppCompatActivity activity = (AppCompatActivity) parent.getFragment().getActivity();
     activity.setSupportActionBar(mToolbar);
-    activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    activity.getSupportActionBar().setHomeButtonEnabled(true);
-    activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
+//    activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//    activity.getSupportActionBar().setHomeButtonEnabled(true);
+//    activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
   }
 
   public View getConfigSubview(int index) {
@@ -116,8 +136,46 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     mConfigSubviews[index] = child;
   }
 
+  private TextView getTitleTextView() {
+    if (mToolbar.getTitle() == null) {
+      mToolbar.setTitle(" "); // set some title in order for toolbar to create title textview
+    }
+    for (int i = 0, size = mToolbar.getChildCount(); i < size; i++) {
+      View view = mToolbar.getChildAt(i);
+      if (view instanceof TextView) {
+        TextView tv = (TextView) view;
+        if (tv.getText().equals(mToolbar.getTitle())) {
+          return tv;
+        }
+      }
+    }
+    return null;
+  }
+
   public void setTitle(String title) {
     mToolbar.setTitle(title);
+  }
+
+  public void setTitleFontFamily(String titleFontFamily) {
+    TextView tv = getTitleTextView();
+    if (tv != null) {
+      ReactFontManager.getInstance().getTypeface(titleFontFamily, 0, getContext().getAssets());
+    }
+  }
+
+  public void setTitleFontSize(int titleFontSize) {
+    TextView tv = getTitleTextView();
+    if (tv != null) {
+      tv.setTextSize(titleFontSize);
+    }
+  }
+
+  public void setTitleColor(int color) {
+    mToolbar.setTitleTextColor(color);
+  }
+
+  public void setHideShadow(boolean hideShadow) {
+    mToolbar.setElevation(hideShadow ? 0 : TOOLBAR_ELEVATION);
   }
 
   public void setHidden(boolean hidden) {

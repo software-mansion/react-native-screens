@@ -94,7 +94,10 @@ export const ScreenStackHeaderConfig = requireNativeComponent(
   null
 );
 
-const ScreenStackHeaderSubview = () => null;
+const ScreenStackHeaderSubview = requireNativeComponent(
+  'RNSScreenStackHeaderSubview',
+  null
+);
 
 const styles = StyleSheet.create({
   headerSubview: {

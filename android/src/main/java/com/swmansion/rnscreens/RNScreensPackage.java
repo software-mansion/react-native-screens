@@ -21,7 +21,8 @@ public class RNScreensPackage implements ReactPackage {
             new ScreenContainerViewManager(),
             new ScreenViewManager(),
             new ScreenStackViewManager(),
-            new ScreenStackHeaderConfigViewManager()
+            new ScreenStackHeaderConfigViewManager(),
+            new ScreenStackHeaderSubviewManager()
     );
   }
 }

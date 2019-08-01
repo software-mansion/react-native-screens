@@ -3,6 +3,7 @@ package com.swmansion.rnscreens;
 import android.view.View;
 
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -47,15 +48,34 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     config.setTitle(title);
   }
 
+  @ReactProp(name = "titleFontFamily")
+  public void setTitleFontFamily(ScreenStackHeaderConfig config, String titleFontFamily) {
+    config.setTitleFontFamily(titleFontFamily);
+  }
+
+  @ReactProp(name = "titleFontSize")
+  public void setTitleFontSize(ScreenStackHeaderConfig config, double titleFontSizeSP) {
+    config.setTitleFontSize((int) PixelUtil.toPixelFromSP(titleFontSizeSP));
+  }
+
+  @ReactProp(name = "titleColor", customType = "Color")
+  public void setTitleColor(ScreenStackHeaderConfig config, int titleColor) {
+    config.setTitleColor(titleColor);
+  }
+
+  @ReactProp(name = "hideShadow")
+  public void setHideShadow(ScreenStackHeaderConfig config, boolean hideShadow) {
+    config.setHideShadow(hideShadow);
+  }
+
+  //  RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
+
   @ReactProp(name = "hidden")
   public void setHidden(ScreenStackHeaderConfig config, boolean hidden) {
     config.setHidden(hidden);
   }
 
-//  RCT_EXPORT_VIEW_PROPERTY(title, NSString)
-//  RCT_EXPORT_VIEW_PROPERTY(titleFontFamily, NSString)
-//  RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
-//  RCT_EXPORT_VIEW_PROPERTY(titleColor, UIColor)
+
 //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
@@ -63,7 +83,6 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
 //  RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 //  RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 //  RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
-//  RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 //  // `hidden` is an UIView property, we need to use different name internally
 //  RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 //  RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
