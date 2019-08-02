@@ -14,6 +14,7 @@ import {
   ScreenStack,
   ScreenStackHeaderConfig,
   ScreenStackHeaderTitleView,
+  ScreenStackHeaderCenterView,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
 } from 'react-native-screens';
@@ -63,8 +64,8 @@ export class Stack extends Component {
         active={1}
         onDismissed={() => this.removeByKey(key)}>
         <ScreenStackHeaderConfig title={key}>
-          {index === 0 && (
-            <ScreenStackHeaderTitleView>
+          {/* {index === 0 && (
+            <ScreenStackHeaderLeftView>
               <TouchableHighlight onPress={() => alert('sdf')}>
                 <Image
                   source={{
@@ -74,8 +75,22 @@ export class Stack extends Component {
                   style={{ width: 30, height: 30 }}
                 />
               </TouchableHighlight>
-            </ScreenStackHeaderTitleView>
-          )}
+            </ScreenStackHeaderLeftView>
+          )} */}
+          <ScreenStackHeaderRightView>
+            <View style={{ width: 80, height: 40, backgroundColor: 'green' }} />
+          </ScreenStackHeaderRightView>
+          {/* <ScreenStackHeaderCenterView>
+            <View
+              style={{
+                width: '100%',
+                height: 40,
+                backgroundColor: 'plum',
+                borderWidth: 1,
+                borderColor: 'red',
+              }}
+            />
+          </ScreenStackHeaderCenterView> */}
         </ScreenStackHeaderConfig>
         {this.props.renderScreen(key)}
       </Screen>

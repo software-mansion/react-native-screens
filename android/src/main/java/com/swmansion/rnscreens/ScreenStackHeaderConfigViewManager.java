@@ -47,6 +47,11 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     return parent.getConfigSubview(index);
   }
 
+  @Override
+  public boolean needsCustomLayoutForChildren() {
+    return true;
+  }
+
   @ReactProp(name = "title")
   public void setTitle(ScreenStackHeaderConfig config, String title) {
     config.setTitle(title);

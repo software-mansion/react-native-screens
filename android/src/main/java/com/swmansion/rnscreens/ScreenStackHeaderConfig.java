@@ -3,11 +3,9 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -26,12 +24,14 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     private final Runnable mLayoutRunnable = new Runnable() {
       @Override
       public void run() {
+        mLayoutEnqueued = false;
         measure(
                 MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
         layout(getLeft(), getTop(), getRight(), getBottom());
       }
     };
+    private boolean mLayoutEnqueued = false;
 
     public ToolbarWithLayoutLoop(Context context) {
       super(context);
@@ -41,9 +41,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     public void requestLayout() {
       super.requestLayout();
 
-      // The toolbar relies on a measure + layout pass happening after it calls requestLayout().
-      // Without this, certain calls (e.g. setLogo) only take effect after a second invalidation.
-      post(mLayoutRunnable);
+      if (!mLayoutEnqueued) {
+        mLayoutEnqueued = true;
+        post(mLayoutRunnable);
+      }
     }
   }
 
@@ -167,16 +168,20 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
       switch (type) {
         case LEFT:
+          // when there is a left item we need to disable navigation icon
+          // we also hide title as there is no other way to display left side items
+          mToolbar.setNavigationIcon(null);
+          mToolbar.setTitle(null);
           params.gravity = Gravity.LEFT;
-          break;
-        case CENTER:
-          params.gravity = Gravity.CENTER_HORIZONTAL;
-          break;
-        case TITLE:
-          params.gravity = Gravity.CENTER_HORIZONTAL;
           break;
         case RIGHT:
           params.gravity = Gravity.RIGHT;
+          break;
+        case TITLE:
+          params.width = LayoutParams.MATCH_PARENT;
+          mToolbar.setTitle(null);
+        case CENTER:
+          params.gravity = Gravity.CENTER_HORIZONTAL;
           break;
       }
 
