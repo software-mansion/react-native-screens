@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TextView;
 
 import com.facebook.react.uimanager.PixelUtil;
@@ -67,7 +68,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     super(context);
     setVisibility(View.GONE);
 
-
     mToolbar = new ToolbarWithLayoutLoop(context);
 
     // set primary color as background by default
@@ -106,6 +106,18 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     update();
   }
 
+  private boolean isStackRootScreen() {
+    ViewParent screen = getParent();
+    if (screen instanceof Screen) {
+      ViewParent stack = ((Screen) screen).getFragment().getView().getParent();
+      if (stack instanceof ScreenStack) {
+        return ((ScreenStack) stack).getScreenCount() == 1;
+      }
+    }
+    // something is broken with the view hierarchy, lets just treat this as it was a root
+    return true;
+  }
+
   private void update() {
     Screen parent = (Screen) getParent();
     if (mIsHidden) {
@@ -123,8 +135,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     activity.setSupportActionBar(mToolbar);
     ActionBar actionBar = activity.getSupportActionBar();
 
-    // hidden
-    actionBar.setDisplayHomeAsUpEnabled(!mIsBackButtonHidden);
+    // hide back button
+    actionBar.setDisplayHomeAsUpEnabled(isStackRootScreen() ? false : !mIsBackButtonHidden);
 
     // shadow
     actionBar.setElevation(mIsShadowHidden ? 0 : TOOLBAR_ELEVATION);
