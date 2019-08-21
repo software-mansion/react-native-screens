@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
@@ -52,27 +53,40 @@ public class ScreenStack extends ScreenContainer {
 
   @Override
   protected void onUpdate() {
+    // remove all screens previously on stack
+    for (Screen screen : mStack) {
+      if (!mScreens.contains(screen) || mDismissed.contains(screen)) {
+        getOrCreateTransaction().remove(screen.getFragment());
+      }
+    }
     Screen newTop = getTopScreen();
 
-    if (mTopScreen == null || !mTopScreen.equals(newTop)) {
-
-
-      if (mTopScreen != null && mStack != null && mStack.contains(newTop)) {
-        // new top screen has already been added to stack, we do "back" animation
-
-        getOrCreateTransaction()
-                .replace(getId(), newTop.getFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-      } else {
-        getOrCreateTransaction()
-                .replace(getId(), newTop.getFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+    // add all new views that weren't on stack except for the top view, then detach them so they
+    // can't be seen
+    for (Screen screen : mScreens) {
+      if (!screen.equals(newTop) && !mStack.contains(screen) && !mDismissed.contains(screen)) {
+        getOrCreateTransaction().add(getId(), screen.getFragment()).detach(screen.getFragment());
       }
-
-      mTopScreen = newTop;
-      mStack.clear();
-      mStack.addAll(mScreens);
     }
+
+    if (!mStack.contains(newTop)) {
+      // if new top screen wasn't on stack we do "open animation" (or no animation if it is the first screen)
+      getOrCreateTransaction().add(getId(), newTop.getFragment());
+      if (mTopScreen != null) {
+        // there was some other screen attached before
+        getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+      }
+    } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
+      // otherwise if we are performing top screen change we do "back animation"
+      getOrCreateTransaction()
+              .attach(mTopScreen.getFragment())
+              .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+    }
+
+    mTopScreen = newTop;
+
+    mStack.clear();
+    mStack.addAll(mScreens);
 
     tryCommitTransaction();
   }

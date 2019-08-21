@@ -3,7 +3,6 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -71,7 +70,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private OnBackPressedCallback mBackCallback = new OnBackPressedCallback(false) {
     @Override
     public void handleOnBackPressed() {
-      Log.e("CAT", "TROLOLO");
       getScreenStack().dismiss(getScreen());
     }
   };
