@@ -3,6 +3,7 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -10,9 +11,11 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.views.text.ReactFontManager;
@@ -65,6 +68,14 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private int mHeight;
   private final Toolbar mToolbar;
 
+  private OnBackPressedCallback mBackCallback = new OnBackPressedCallback(false) {
+    @Override
+    public void handleOnBackPressed() {
+      Log.e("CAT", "TROLOLO");
+      getScreenStack().dismiss(getScreen());
+    }
+  };
+
   public ScreenStackHeaderConfig(Context context) {
     super(context);
     setVisibility(View.GONE);
@@ -107,16 +118,37 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     update();
   }
 
-  private boolean isStackRootScreen() {
+  private Screen getScreen() {
     ViewParent screen = getParent();
     if (screen instanceof Screen) {
-      ScreenContainer container = ((Screen) screen).getContainer();
+      return (Screen) screen;
+    }
+    return null;
+  }
+
+  private ScreenStack getScreenStack() {
+    Screen screen = getScreen();
+    if (screen  != null) {
+      ScreenContainer container = screen.getContainer();
       if (container instanceof ScreenStack) {
-        return ((ScreenStack) container).getRootScreen() == screen;
+        return (ScreenStack) container;
       }
     }
-    // something is broken with the view hierarchy, lets just treat this as it was a root
-    return true;
+    return null;
+  }
+
+  private Fragment getScreenFragment() {
+    ViewParent screen = getParent();
+    if (screen instanceof Screen) {
+      return ((Screen) screen).getFragment();
+    }
+    return null;
+  }
+
+  private void installBackCallback() {
+    mBackCallback.remove();
+    Fragment fragment = getScreenFragment();
+    fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment, mBackCallback);
   }
 
   private void update() {
@@ -137,7 +169,14 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     ActionBar actionBar = activity.getSupportActionBar();
 
     // hide back button
-    actionBar.setDisplayHomeAsUpEnabled(isStackRootScreen() ? false : !mIsBackButtonHidden);
+    final ScreenStack stack = getScreenStack();
+    boolean isRoot = stack == null ? true : stack.getRootScreen() == parent;
+    actionBar.setDisplayHomeAsUpEnabled(isRoot ? false : !mIsBackButtonHidden);
+    if (!isRoot) {
+      installBackCallback();
+    }
+    mBackCallback.setEnabled(!isRoot);
+
 
     // shadow
     actionBar.setElevation(mIsShadowHidden ? 0 : TOOLBAR_ELEVATION);

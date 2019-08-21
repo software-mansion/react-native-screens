@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
@@ -19,9 +18,8 @@ public class ScreenStack extends ScreenContainer {
     super(context);
   }
 
-  public void goBack() {
-    Screen topScreen = getTopScreen();
-    mDismissed.add(topScreen);
+  public void dismiss(Screen screen) {
+    mDismissed.add(screen);
     onUpdate();
   }
 
@@ -52,17 +50,12 @@ public class ScreenStack extends ScreenContainer {
     super.removeScreenAt(index);
   }
 
-  public static final class FakerFragment extends Fragment {
-
-  }
-
   @Override
   protected void onUpdate() {
     Screen newTop = getTopScreen();
 
     if (mTopScreen == null || !mTopScreen.equals(newTop)) {
 
-//      findRootFragmentActivity().getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
       if (mTopScreen != null && mStack != null && mStack.contains(newTop)) {
         // new top screen has already been added to stack, we do "back" animation
@@ -82,7 +75,5 @@ public class ScreenStack extends ScreenContainer {
     }
 
     tryCommitTransaction();
-
-//    getOrCreateTransaction()
   }
 }

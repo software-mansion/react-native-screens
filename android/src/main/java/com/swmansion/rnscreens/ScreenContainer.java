@@ -2,11 +2,10 @@ package com.swmansion.rnscreens;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import androidx.annotation.Nullable;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -146,12 +145,6 @@ public class ScreenContainer extends ViewGroup {
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
     mIsAttached = true;
-//    findRootFragmentActivity().getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-//      @Override
-//      public void onBackStackChanged() {
-//        Log.e("CAT", "ON BACK STACK CHANGED");
-//      }
-//    });
     updateIfNeeded();
   }
 
