@@ -12,8 +12,6 @@ public class ScreenStackHeaderSubview extends ReactViewGroup {
   public class Measurements {
     public int width;
     public int height;
-    public int leftPadding;
-    public int rightPadding;
   }
 
   public enum Type {

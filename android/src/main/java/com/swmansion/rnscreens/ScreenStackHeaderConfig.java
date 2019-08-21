@@ -3,15 +3,16 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.views.text.ReactFontManager;
@@ -109,9 +110,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean isStackRootScreen() {
     ViewParent screen = getParent();
     if (screen instanceof Screen) {
-      ViewParent stack = ((Screen) screen).getFragment().getView().getParent();
-      if (stack instanceof ScreenStack) {
-        return ((ScreenStack) stack).getScreenCount() == 1;
+      ScreenContainer container = ((Screen) screen).getContainer();
+      if (container instanceof ScreenStack) {
+        return ((ScreenStack) container).getRootScreen() == screen;
       }
     }
     // something is broken with the view hierarchy, lets just treat this as it was a root

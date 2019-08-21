@@ -62,7 +62,8 @@ export class Stack extends Component {
         style={style}
         key={key}
         active={1}
-        onDismissed={() => this.removeByKey(key)}>
+        onDismissed={() => console.warn('DISMISED')}
+        onDismissedX={() => this.removeByKey(key)}>
         <ScreenStackHeaderConfig title={key}>
           {/* {index === 0 && (
             <ScreenStackHeaderLeftView>
@@ -80,7 +81,7 @@ export class Stack extends Component {
           <ScreenStackHeaderRightView>
             <View style={{ width: 80, height: 40, backgroundColor: 'green' }} />
           </ScreenStackHeaderRightView>
-          {/* <ScreenStackHeaderCenterView>
+          <ScreenStackHeaderCenterView>
             <View
               style={{
                 width: '100%',
@@ -90,7 +91,7 @@ export class Stack extends Component {
                 borderColor: 'red',
               }}
             />
-          </ScreenStackHeaderCenterView> */}
+          </ScreenStackHeaderCenterView>
         </ScreenStackHeaderConfig>
         {this.props.renderScreen(key)}
       </Screen>

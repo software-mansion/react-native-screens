@@ -101,10 +101,6 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
 //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
-//  RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
-//  RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
-//  RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 //  // `hidden` is an UIView property, we need to use different name internally
 //  RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
-//  RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 }

@@ -176,6 +176,7 @@
         navitem.rightBarButtonItem = buttonItem;
         break;
       }
+      case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle: {
         subview.translatesAutoresizingMaskIntoConstraints = NO;
         navitem.titleView = subview;
@@ -229,6 +230,7 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
    @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
    @"right": @(RNSScreenStackHeaderSubviewTypeRight),
    @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
+   @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
    }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
 @end

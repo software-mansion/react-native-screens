@@ -1,19 +1,20 @@
 package com.swmansion.rnscreens;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.PointerEvents;
 import com.facebook.react.uimanager.ReactPointerEventsView;
+import com.facebook.react.uimanager.UIManagerModule;
+import com.facebook.react.uimanager.events.EventDispatcher;
 
 public class Screen extends ViewGroup implements ReactPointerEventsView {
 
@@ -46,13 +47,15 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
   }
 
   private final Fragment mFragment;
+  private final EventDispatcher mEventDispatcher;
   private @Nullable ScreenContainer mContainer;
   private boolean mActive;
   private boolean mTransitioning;
 
-  public Screen(Context context) {
+  public Screen(ReactContext context) {
     super(context);
     mFragment = new ScreenFragment(this);
+    mEventDispatcher = context.getNativeModule(UIManagerModule.class).getEventDispatcher();
   }
 
   @Override
@@ -62,6 +65,7 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
 
   private void onDetach() {
     clearDisappearingChildren();
+    mEventDispatcher.dispatchEvent(new ScreenDismissedEvent(getId()));
   }
 
   /**
