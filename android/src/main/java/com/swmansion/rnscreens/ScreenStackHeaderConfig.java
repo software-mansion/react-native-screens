@@ -73,6 +73,12 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       getScreenStack().dismiss(getScreen());
     }
   };
+  private OnClickListener mBackClickListener = new OnClickListener() {
+    @Override
+    public void onClick(View view) {
+      getScreenStack().dismiss(getScreen());
+    }
+  };
 
   public ScreenStackHeaderConfig(Context context) {
     super(context);
@@ -174,6 +180,11 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       installBackCallback();
     }
     mBackCallback.setEnabled(!isRoot);
+
+    // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
+    // navigation click listener. The default behavior set in the wrapper is to call into
+    // menu options handlers, but we prefer the back handling logic to stay here instead.
+    mToolbar.setNavigationOnClickListener(mBackClickListener);
 
 
     // shadow

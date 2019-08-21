@@ -42,13 +42,7 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
     @Override
     public void onDestroy() {
       super.onDestroy();
-      mScreenView.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-      super.onDetach();
-      mScreenView.onDetach();
+      mScreenView.mEventDispatcher.dispatchEvent(new ScreenDismissedEvent(getId()));
     }
   }
 
@@ -69,12 +63,10 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
     // no-op
   }
 
-  private void onDetach() {
+  @Override
+  protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
     clearDisappearingChildren();
-  }
-
-  private void onDestroy() {
-    mEventDispatcher.dispatchEvent(new ScreenDismissedEvent(getId()));
   }
 
   /**

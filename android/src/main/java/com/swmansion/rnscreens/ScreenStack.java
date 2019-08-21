@@ -69,6 +69,11 @@ public class ScreenStack extends ScreenContainer {
       }
     }
 
+    // detach previous top screen
+    if (mTopScreen != null && !mTopScreen.equals(newTop)) {
+      getOrCreateTransaction().detach(mTopScreen.getFragment());
+    }
+
     if (!mStack.contains(newTop)) {
       // if new top screen wasn't on stack we do "open animation" (or no animation if it is the first screen)
       getOrCreateTransaction().add(getId(), newTop.getFragment());
@@ -79,7 +84,7 @@ public class ScreenStack extends ScreenContainer {
     } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
       // otherwise if we are performing top screen change we do "back animation"
       getOrCreateTransaction()
-              .attach(mTopScreen.getFragment())
+              .attach(newTop.getFragment())
               .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
     }
 
