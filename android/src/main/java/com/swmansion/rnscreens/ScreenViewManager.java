@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens;
 
+import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -28,6 +29,28 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
   @ReactProp(name = "active", defaultFloat = 0)
   public void setActive(Screen view, float active) {
     view.setActive(active != 0);
+  }
+
+  @ReactProp(name = "stackPresentation")
+  public void setStackPresentation(Screen view, String presentation) {
+    if ("push".equals(presentation)) {
+      view.setStackPresentation(Screen.StackPresentation.PUSH);
+    } else if ("modal".equals(presentation)) {
+      view.setStackPresentation(Screen.StackPresentation.MODAL);
+    } else if ("transparentModal".equals(presentation)) {
+      view.setStackPresentation(Screen.StackPresentation.TRANSPARENT_MODAL);
+    } else {
+      throw new JSApplicationIllegalArgumentException("Unknown presentation type " + presentation);
+    }
+  }
+
+  @ReactProp(name = "stackAnimation")
+  public void setStackAnimation(Screen view, String animation) {
+    if (animation == null || "default".equals(animation)) {
+      view.setStackAnimation(Screen.StackAnimation.DEFAULT);
+    } else if ("none".equals(animation)) {
+      view.setStackAnimation(Screen.StackAnimation.NONE);
+    }
   }
 
   @Nullable

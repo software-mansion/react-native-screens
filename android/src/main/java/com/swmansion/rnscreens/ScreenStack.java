@@ -59,33 +59,56 @@ public class ScreenStack extends ScreenContainer {
         getOrCreateTransaction().remove(screen.getFragment());
       }
     }
-    Screen newTop = getTopScreen();
+    Screen newTop = null;
+    Screen belowTop = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
 
-    // add all new views that weren't on stack except for the top view, then detach them so they
-    // can't be seen
-    for (Screen screen : mScreens) {
-      if (!screen.equals(newTop) && !mStack.contains(screen) && !mDismissed.contains(screen)) {
-        getOrCreateTransaction().add(getId(), screen.getFragment()).detach(screen.getFragment());
+    for (int i = mScreens.size() - 1; i >= 0; i--) {
+      Screen screen = mScreens.get(i);
+      if (!mDismissed.contains(screen)) {
+        if (newTop == null) {
+          newTop = screen;
+          if (newTop.getStackPresentation() != Screen.StackPresentation.TRANSPARENT_MODAL) {
+            break;
+          }
+        } else {
+          belowTop = screen;
+          break;
+        }
       }
     }
 
-    // detach previous top screen
-    if (mTopScreen != null && !mTopScreen.equals(newTop)) {
-      getOrCreateTransaction().detach(mTopScreen.getFragment());
+
+    for (Screen screen : mScreens) {
+      // add all new views that weren't on stack before
+      if (!mStack.contains(screen) && !mDismissed.contains(screen)) {
+        getOrCreateTransaction().add(getId(), screen.getFragment());
+      }
+      // detach all screens that should not be visible
+      if (screen != newTop && screen != belowTop && !mDismissed.contains(screen)) {
+        getOrCreateTransaction().hide(screen.getFragment());
+      }
     }
+    // attach "below top" screen if set
+    if (belowTop != null) {
+      final Screen top = newTop;
+      getOrCreateTransaction().show(belowTop.getFragment()).runOnCommit(new Runnable() {
+        @Override
+        public void run() {
+          top.bringToFront();
+        }
+      });
+    }
+    getOrCreateTransaction().show(newTop.getFragment());
 
     if (!mStack.contains(newTop)) {
-      // if new top screen wasn't on stack we do "open animation" (or no animation if it is the first screen)
-      getOrCreateTransaction().add(getId(), newTop.getFragment());
+      // if new top screen wasn't on stack we do "open animation" so long it is not the very first screen on stack
       if (mTopScreen != null) {
         // there was some other screen attached before
         getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
       }
     } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
       // otherwise if we are performing top screen change we do "back animation"
-      getOrCreateTransaction()
-              .attach(newTop.getFragment())
-              .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+      getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
     }
 
     mTopScreen = newTop;

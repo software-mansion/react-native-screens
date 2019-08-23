@@ -18,6 +18,17 @@ import com.facebook.react.uimanager.events.EventDispatcher;
 
 public class Screen extends ViewGroup implements ReactPointerEventsView {
 
+  public enum StackPresentation {
+    PUSH,
+    MODAL,
+    TRANSPARENT_MODAL
+  }
+
+  public enum StackAnimation {
+    DEFAULT,
+    NONE
+  }
+
   public static class ScreenFragment extends Fragment {
 
     private Screen mScreenView;
@@ -42,7 +53,7 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
     @Override
     public void onDestroy() {
       super.onDestroy();
-      mScreenView.mEventDispatcher.dispatchEvent(new ScreenDismissedEvent(getId()));
+      mScreenView.mEventDispatcher.dispatchEvent(new ScreenDismissedEvent(mScreenView.getId()));
     }
   }
 
@@ -51,6 +62,8 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
   private @Nullable ScreenContainer mContainer;
   private boolean mActive;
   private boolean mTransitioning;
+  private StackPresentation mStackPresentation = StackPresentation.PUSH;
+  private StackAnimation mStackAnimation = StackAnimation.DEFAULT;
 
   public Screen(ReactContext context) {
     super(context);
@@ -82,6 +95,22 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
     super.setLayerType(transitioning ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE, null);
   }
 
+  public void setStackPresentation(StackPresentation stackPresentation) {
+    mStackPresentation = stackPresentation;
+  }
+
+  public void setStackAnimation(StackAnimation stackAnimation) {
+    mStackAnimation = stackAnimation;
+  }
+
+  public StackAnimation getStackAnimation() {
+    return mStackAnimation;
+  }
+
+  public StackPresentation getStackPresentation() {
+    return mStackPresentation;
+  }
+
   @Override
   public PointerEvents getPointerEvents() {
     return mTransitioning ? PointerEvents.NONE : PointerEvents.AUTO;
@@ -92,8 +121,8 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
     // ignore - layer type is controlled by `transitioning` prop
   }
 
-  protected void setContainer(@Nullable ScreenContainer mContainer) {
-    this.mContainer = mContainer;
+  protected void setContainer(@Nullable ScreenContainer container) {
+    mContainer = container;
   }
 
   protected @Nullable ScreenContainer getContainer() {

@@ -61,9 +61,9 @@ export class Stack extends Component {
       <Screen
         style={style}
         key={key}
+        stackPresentation={key !== 'cyan' ? 'push' : 'transparentModal'}
         active={1}
-        onDismissed={() => console.warn('DISMISED')}
-        onDismissedX={() => this.removeByKey(key)}>
+        onDismissed={() => this.removeByKey(key)}>
         <ScreenStackHeaderConfig title={key}>
           {/* {index === 0 && (
             <ScreenStackHeaderLeftView>
@@ -117,7 +117,7 @@ class App extends Component {
           backgroundColor: color,
           alignItems: 'center',
           justifyContent: 'center',
-          // margin: index * 40,
+          margin: index * 40,
         }}>
         <View
           style={{
