@@ -50,6 +50,8 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
       view.setStackAnimation(Screen.StackAnimation.DEFAULT);
     } else if ("none".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.NONE);
+    } else if ("fade".equals(animation)) {
+      view.setStackAnimation(Screen.StackAnimation.FADE);
     }
   }
 

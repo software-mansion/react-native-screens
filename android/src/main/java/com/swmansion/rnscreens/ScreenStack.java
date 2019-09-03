@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.swmansion.rnscreens.Screen.StackAnimation.*;
+
 public class ScreenStack extends ScreenContainer {
 
   private final ArrayList<Screen> mStack = new ArrayList<>();
@@ -104,11 +106,29 @@ public class ScreenStack extends ScreenContainer {
       // if new top screen wasn't on stack we do "open animation" so long it is not the very first screen on stack
       if (mTopScreen != null) {
         // there was some other screen attached before
-        getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        int transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+        switch (mTopScreen.getStackAnimation()) {
+          case NONE:
+            transition = FragmentTransaction.TRANSIT_NONE;
+            break;
+          case FADE:
+            transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
+            break;
+        }
+        getOrCreateTransaction().setTransition(transition);
       }
     } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
       // otherwise if we are performing top screen change we do "back animation"
-      getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+      int transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
+      switch (mTopScreen.getStackAnimation()) {
+        case NONE:
+          transition = FragmentTransaction.TRANSIT_NONE;
+          break;
+        case FADE:
+          transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
+          break;
+      }
+      getOrCreateTransaction().setTransition(transition);
     }
 
     mTopScreen = newTop;
