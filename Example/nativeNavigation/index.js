@@ -11,7 +11,7 @@ import {
   requireNativeComponent,
 } from 'react-native';
 import { createAppContainer } from 'react-navigation';
-import createStackNavigator from './createStackNavigator';
+import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
 
 class SomeScreen extends React.Component {
   render() {
@@ -57,16 +57,17 @@ class PushScreen extends React.Component {
   }
 }
 
-const AppStack = createStackNavigator(
+const AppStack = createNativeStackNavigator(
   {
     Some: {
       screen: SomeScreen,
       navigationOptions: () => ({
-        title: 'Lol',
+        title: 'Start',
         // headerBackTitle: null,
         headerStyle: {
           // backgroundColor: 'transparent',
         },
+        headerTintColor: 'black',
         // translucent: true,
         // largeTitle: true,
       }),
@@ -74,13 +75,13 @@ const AppStack = createStackNavigator(
     Push: {
       screen: PushScreen,
       navigationOptions: {
-        title: 'Wat?',
+        title: 'Pushed',
         // headerBackTitle: 'Yoo',
         // headerBackTitleStyle: {
         //   fontFamily: 'ChalkboardSE-Light',
         // },
         headerStyle: {
-          // backgroundColor: 'green',
+          backgroundColor: 'green',
         },
         headerTintColor: 'black',
         // header: null,
@@ -97,7 +98,7 @@ const AppStack = createStackNavigator(
   }
 );
 
-const App = createStackNavigator(
+const App = createNativeStackNavigator(
   {
     Root: { screen: AppStack },
     Modal: PushScreen,
