@@ -2,143 +2,110 @@ import React from 'react';
 import {
   StyleSheet,
   Button,
-  Text,
   View,
-  ScrollView,
   TextInput,
   Animated,
   Image,
   requireNativeComponent,
 } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import createStackNavigator from './createStackNavigator';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+// import { createStackNavigator } from './react-navigation/react-navigation';
 
-class SomeScreen extends React.Component {
-  render() {
-    return (
-      <ScrollView style={styles.screen}>
-        <Button
-          onPress={() => this.props.navigation.push('Push')}
-          title="Push"
-        />
-        <Button
-          onPress={() => this.props.navigation.push('Modal')}
-          title="Modal"
-        />
-        <Button onPress={() => this.props.navigation.pop()} title="Back" />
-        <View style={styles.leftTop} />
-        <View style={styles.bottomRight} />
-      </ScrollView>
-    );
-  }
-}
-
-class PushScreen extends React.Component {
-  static route = {
-    navigationBar: {
-      visible: false,
-    },
-  };
-  render() {
-    return (
-      <ScrollView style={styles.screen}>
-        <Button
-          onPress={() => this.props.navigation.goBack()}
-          title="Go back"
-        />
-        <Button
-          onPress={() => this.props.navigation.push('Push')}
-          title="Push more"
-        />
-        <View style={styles.leftTop} />
-        <View style={styles.bottomRight} />
-      </ScrollView>
-    );
-  }
-}
-
-const AppStack = createStackNavigator(
-  {
-    Some: {
-      screen: SomeScreen,
-      navigationOptions: () => ({
-        title: 'Lol',
-        // headerBackTitle: null,
-        headerStyle: {
-          // backgroundColor: 'transparent',
-        },
-        // translucent: true,
-        // largeTitle: true,
-      }),
-    },
-    Push: {
-      screen: PushScreen,
-      navigationOptions: {
-        title: 'Wat?',
-        // headerBackTitle: 'Yoo',
-        // headerBackTitleStyle: {
-        //   fontFamily: 'ChalkboardSE-Light',
-        // },
-        headerStyle: {
-          // backgroundColor: 'green',
-        },
-        headerTintColor: 'black',
-        // header: null,
-        // translucent: true,
-        // gestureEnabled: false,
-      },
-    },
-  },
-  {
-    initialRouteName: 'Some',
-    // headerMode: 'none',
-    // transparentCard: true,
-    // mode: 'modal',
-  }
+export const LifecycleAwareView = requireNativeComponent(
+  'RNSLifecycleAwareView',
+  null
 );
+
+const IMGS = [
+  require('./img/dawid-zawila-628275-unsplash.jpg'),
+  require('./img/dawid-zawila-715178-unsplash.jpg'),
+  require('./img/janusz-maniak-143024-unsplash.jpg'),
+  require('./img/janusz-maniak-272680-unsplash.jpg'),
+];
+
+const Background = ({ index }) => (
+  <Image
+    resizeMode="cover"
+    source={IMGS[index % IMGS.length]}
+    style={{
+      opacity: 0.5,
+      width: null,
+      height: null,
+      ...StyleSheet.absoluteFillObject,
+    }}
+  />
+);
+
+class DetailsScreen extends React.Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Details screen #' + navigation.getParam('index', '0'),
+    };
+  };
+  animvalue = new Animated.Value(0);
+  rotation = this.animvalue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+  state = { count: 1, text: '' };
+  componentDidMount() {
+    Animated.loop(
+      Animated.timing(this.animvalue, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      })
+    ).start();
+    setInterval(() => this.setState({ count: this.state.count + 1 }), 500);
+  }
+  render() {
+    const index = this.props.navigation.getParam('index', 0);
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Background index={index} />
+        <Button
+          title="More details"
+          onPress={() =>
+            this.props.navigation.push('Details', {
+              index: index + 1,
+            })
+          }
+        />
+        <TextInput
+          placeholder="Hello"
+          style={styles.textInput}
+          onChangeText={text => this.setState({ text })}
+          text={this.state.text}
+        />
+        <Animated.View
+          style={{
+            transform: [
+              {
+                rotate: this.rotation,
+              },
+            ],
+            marginTop: 20,
+            borderColor: 'blue',
+            borderWidth: 3,
+            width: 20,
+            height: 20,
+          }}
+        />
+      </View>
+    );
+  }
+}
 
 const App = createStackNavigator(
   {
-    Root: { screen: AppStack },
-    Modal: PushScreen,
+    Details: DetailsScreen,
   },
   {
-    mode: 'modal',
-    headerMode: 'none',
+    initialRouteName: 'Details',
   }
 );
 
 const styles = StyleSheet.create({
-  screen: {
-    ...StyleSheet.absoluteFillObject,
-    paddingTop: 200,
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  leftTop: {
-    position: 'absolute',
-    width: 80,
-    height: 80,
-    left: 0,
-    top: 0,
-    backgroundColor: 'red',
-  },
-  bottomRight: {
-    position: 'absolute',
-    width: 80,
-    height: 80,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'blue',
-  },
-  modal: {
-    position: 'absolute',
-    left: 50,
-    top: 50,
-    right: 50,
-    bottom: 50,
-    backgroundColor: 'red',
-  },
   textInput: {
     backgroundColor: 'white',
     borderWidth: 1,
