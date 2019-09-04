@@ -45,6 +45,7 @@
     self.hidden = YES;
     _translucent = YES;
     _reactSubviews = [NSMutableArray new];
+    _gestureEnabled = YES;
   }
   return self;
 }

@@ -11,9 +11,16 @@ typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
   RNSScreenStackPresentationTransparentModal,
 };
 
+typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
+  RNSScreenStackAnimationDefault,
+  RNSScreenStackAnimationNone,
+  RNSScreenStackAnimationFade,
+};
+
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
++ (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
 
 @end
 
@@ -26,8 +33,8 @@ typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic) BOOL active;
+@property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
-@property (nonatomic) BOOL animate;
 
 - (void)notifyFinishTransitioning;
 

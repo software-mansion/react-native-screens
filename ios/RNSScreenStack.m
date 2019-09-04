@@ -8,7 +8,10 @@
 #import <React/RCTShadowView.h>
 
 @interface RNSScreenStackView () <UINavigationControllerDelegate, UIGestureRecognizerDelegate>
+@end
 
+@interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
+- (instancetype)initWithOperation:(UINavigationControllerOperation)operation;
 @end
 
 @implementation RNSScreenStackView {
@@ -57,6 +60,20 @@
       [_dismissedScreens addObject:[_reactSubviews objectAtIndex:i - 1]];
     }
   }
+}
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC
+{
+  RNSScreenView *screen;
+  if (operation == UINavigationControllerOperationPush) {
+    screen = (RNSScreenView *) toVC.view;
+  } else if (operation == UINavigationControllerOperationPop) {
+   screen = (RNSScreenView *) fromVC.view;
+  }
+  if (screen != nil && screen.stackAnimation != RNSScreenStackAnimationDefault) {
+    return  [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+  }
+  return nil;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -156,18 +173,22 @@
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
   UIViewController *top = controllers.lastObject;
+  UIViewController *lastTop = _controller.viewControllers.lastObject;
+
+  BOOL shouldAnimate = YES;// ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
+
   if (_controller.viewControllers.count == 0) {
     // nothing pushed yet
     [_controller setViewControllers:@[top] animated:NO];
-  } else if (top != _controller.viewControllers.lastObject) {
-    if (![controllers containsObject:_controller.viewControllers.lastObject]) {
+  } else if (top != lastTop) {
+    if (![controllers containsObject:lastTop]) {
       // last top controller is no longer on stack
       // in this case we set the controllers stack to the new list with
-      // added the last top element to it and perform animated pop
+      // added the last top element to it and perform (animated) pop
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-      [newControllers addObject:_controller.viewControllers.lastObject];
+      [newControllers addObject:lastTop];
       [_controller setViewControllers:newControllers animated:NO];
-      [_controller popViewControllerAnimated:YES];
+      [_controller popViewControllerAnimated:shouldAnimate];
     } else if (![_controller.viewControllers containsObject:top]) {
       // new top controller is not on the stack
       // in such case we update the stack except from the last element with
@@ -175,13 +196,14 @@
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
-      [_controller pushViewController:top animated:YES];
+      [_controller pushViewController:top animated:shouldAnimate];
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
-      [_controller setViewControllers:controllers animated:YES];
+      [_controller setViewControllers:controllers animated:shouldAnimate];
     }
   } else {
+    // change wasn't on the top of the stack. We don't need animation.
     [_controller setViewControllers:controllers animated:NO];
   }
 }
@@ -232,6 +254,61 @@ RCT_EXPORT_VIEW_PROPERTY(progress, CGFloat)
 - (UIView *)view
 {
   return [[RNSScreenStackView alloc] initWithManager:self];
+}
+
+@end
+
+@implementation RNSScreenStackAnimator {
+  UINavigationControllerOperation _operation;
+}
+
+- (instancetype)initWithOperation:(UINavigationControllerOperation)operation
+{
+  if (self = [super init]) {
+    _operation = operation;
+  }
+  return self;
+}
+
+- (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext
+{
+  RNSScreenView *screen;
+  if (_operation == UINavigationControllerOperationPush) {
+    UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    screen = (RNSScreenView *)toViewController.view;
+  } else if (_operation == UINavigationControllerOperationPop) {
+    UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    screen = (RNSScreenView *)fromViewController.view;
+  }
+
+  if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
+    return 0;
+  }
+  return 0.35; // default duration
+}
+
+- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
+{
+  UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+  UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+
+  if (_operation == UINavigationControllerOperationPush) {
+    [[transitionContext containerView] addSubview:toViewController.view];
+    toViewController.view.alpha = 0.0;
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+      toViewController.view.alpha = 1.0;
+    } completion:^(BOOL finished) {
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+  } else if (_operation == UINavigationControllerOperationPop) {
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+      fromViewController.view.alpha = 0.0;
+    } completion:^(BOOL finished) {
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
+  }
 }
 
 @end

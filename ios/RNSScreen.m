@@ -55,7 +55,7 @@
     _controller = [[RNSScreen alloc] initWithView:self];
     _controller.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     _stackPresentation = RNSScreenStackPresentationPush;
-    _animate = YES;
+    _stackAnimation = RNSScreenStackAnimationDefault;
   }
 
   return self;
@@ -222,8 +222,8 @@
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(animate, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
+RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
 - (UIView *)view
@@ -245,5 +245,12 @@ RCT_ENUM_CONVERTER(RNSScreenStackPresentation, (@{
                                                   @"modal": @(RNSScreenStackPresentationModal),
                                                   @"transparentModal": @(RNSScreenStackPresentationTransparentModal)
                                                   }), RNSScreenStackPresentationPush, integerValue)
+
+RCT_ENUM_CONVERTER(RNSScreenStackAnimation, (@{
+                                                  @"default": @(RNSScreenStackAnimationDefault),
+                                                  @"none": @(RNSScreenStackAnimationNone),
+                                                  @"fade": @(RNSScreenStackAnimationFade)
+                                                  }), RNSScreenStackAnimationDefault, integerValue)
+
 
 @end
