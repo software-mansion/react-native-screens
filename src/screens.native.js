@@ -34,6 +34,9 @@ function screensEnabled() {
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
 let NativeScreenValue;
 let NativeScreenContainerValue;
+let NativeScreenStack;
+let NativeScreenStackHeaderConfig;
+let NativeScreenStackHeaderSubview;
 let AnimatedNativeScreen;
 
 const ScreensNativeModules = {
@@ -48,6 +51,26 @@ const ScreensNativeModules = {
       NativeScreenContainerValue ||
       requireNativeComponent('RNSScreenContainer', null);
     return NativeScreenContainerValue;
+  },
+
+  get NativeScreenStack() {
+    NativeScreenStack =
+      NativeScreenStack || requireNativeComponent('RNSScreenStack', null);
+    return NativeScreenStack;
+  },
+
+  get NativeScreenStackHeaderConfig() {
+    NativeScreenStackHeaderConfig =
+      NativeScreenStackHeaderConfig ||
+      requireNativeComponent('RNSScreenStackHeaderConfig', null);
+    return NativeScreenStackHeaderConfig;
+  },
+
+  get NativeScreenStackHeaderSubview() {
+    NativeScreenStackHeaderSubview =
+      NativeScreenStackHeaderSubview ||
+      requireNativeComponent('RNSScreenStackHeaderSubview', null);
+    return NativeScreenStackHeaderSubview;
   },
 };
 
@@ -105,18 +128,6 @@ class ScreenContainer extends React.Component {
   }
 }
 
-export const ScreenStack = requireNativeComponent('RNSScreenStack', null);
-
-export const ScreenStackHeaderConfig = requireNativeComponent(
-  'RNSScreenStackHeaderConfig',
-  null
-);
-
-const ScreenStackHeaderSubview = requireNativeComponent(
-  'RNSScreenStackHeaderSubview',
-  null
-);
-
 const styles = StyleSheet.create({
   headerSubview: {
     position: 'absolute',
@@ -129,7 +140,7 @@ const styles = StyleSheet.create({
 });
 
 export const ScreenStackHeaderRightView = props => (
-  <ScreenStackHeaderSubview
+  <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="right"
     style={styles.headerSubview}
@@ -137,7 +148,7 @@ export const ScreenStackHeaderRightView = props => (
 );
 
 export const ScreenStackHeaderLeftView = props => (
-  <ScreenStackHeaderSubview
+  <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="left"
     style={styles.headerSubview}
@@ -145,7 +156,7 @@ export const ScreenStackHeaderLeftView = props => (
 );
 
 export const ScreenStackHeaderTitleView = props => (
-  <ScreenStackHeaderSubview
+  <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="title"
     style={styles.headerSubview}
@@ -153,7 +164,7 @@ export const ScreenStackHeaderTitleView = props => (
 );
 
 export const ScreenStackHeaderCenterView = props => (
-  <ScreenStackHeaderSubview
+  <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="center"
     style={styles.headerSubview}
@@ -169,6 +180,17 @@ module.exports = {
   get NativeScreenContainer() {
     return ScreensNativeModules.NativeScreenContainer;
   },
+
+  get ScreenStack() {
+    return ScreensNativeModules.NativeScreenStack;
+  },
+  get ScreenStackHeaderConfig() {
+    return ScreensNativeModules.NativeScreenStackHeaderConfig;
+  },
+  get ScreenStackHeaderSubview() {
+    return ScreensNativeModules.NativeScreenStackHeaderSubview;
+  },
+
   useScreens,
   screensEnabled,
 };
