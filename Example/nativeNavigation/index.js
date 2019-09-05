@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Button,
-  Text,
-  View,
-  ScrollView,
-  TextInput,
-  Animated,
-  Image,
-  requireNativeComponent,
-} from 'react-native';
+import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
 
@@ -41,7 +31,8 @@ class PushScreen extends React.Component {
   };
   render() {
     return (
-      <ScrollView style={styles.screen}>
+      <View style={styles.screen}>
+        <TextInput placeholder="Hello" style={styles.textInput} />
         <Button
           onPress={() => this.props.navigation.goBack()}
           title="Go back"
@@ -52,7 +43,7 @@ class PushScreen extends React.Component {
         />
         <View style={styles.leftTop} />
         <View style={styles.bottomRight} />
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -68,7 +59,7 @@ const AppStack = createNativeStackNavigator(
           // backgroundColor: 'transparent',
         },
         headerTintColor: 'black',
-        // translucent: true,
+        translucent: true,
         // largeTitle: true,
       }),
     },
@@ -76,12 +67,12 @@ const AppStack = createNativeStackNavigator(
       screen: PushScreen,
       navigationOptions: {
         title: 'Pushed',
-        // headerBackTitle: 'Yoo',
+        headerBackTitle: 'Escape',
         // headerBackTitleStyle: {
         //   fontFamily: 'ChalkboardSE-Light',
         // },
         headerStyle: {
-          backgroundColor: 'green',
+          backgroundColor: '#3da4ab',
         },
         headerTintColor: 'black',
         // header: null,
