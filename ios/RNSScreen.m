@@ -72,7 +72,7 @@
 
   [_bridge.uiManager
    setLocalData:[[RNSScreenFrameData alloc]
-                 initWithInsets:self.safeAreaInsets
+                 initWithInsets:navctr.isNavigationBarHidden ? UIEdgeInsetsZero : self.safeAreaInsets
                  andNavbarOffset:navbarOffset]
    forView:self];
 }

@@ -175,7 +175,7 @@
   UIViewController *top = controllers.lastObject;
   UIViewController *lastTop = _controller.viewControllers.lastObject;
 
-  BOOL shouldAnimate = YES;// ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
+  BOOL shouldAnimate = ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
 
   if (_controller.viewControllers.count == 0) {
     // nothing pushed yet
