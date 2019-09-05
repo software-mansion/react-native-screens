@@ -59,7 +59,7 @@ const AppStack = createNativeStackNavigator(
           // backgroundColor: 'transparent',
         },
         headerTintColor: 'black',
-        translucent: true,
+        // translucent: true,
         // largeTitle: true,
       }),
     },
