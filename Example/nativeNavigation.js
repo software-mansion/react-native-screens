@@ -1,7 +1,16 @@
 import React from 'react';
-import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
+import {
+  TextInput,
+  Text,
+  StyleSheet,
+  Button,
+  View,
+  ScrollView,
+} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
+
+const Title = () => <Text>Hello</Text>;
 
 class SomeScreen extends React.Component {
   render() {
@@ -59,6 +68,9 @@ const AppStack = createNativeStackNavigator(
           // backgroundColor: 'transparent',
         },
         headerTintColor: 'black',
+        headerRight: () => (
+          <Button onPress={() => alert('This is a button!')} title="Info" />
+        ),
         // translucent: true,
         // largeTitle: true,
       }),
