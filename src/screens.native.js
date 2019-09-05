@@ -17,7 +17,7 @@ const getViewManagerConfigCompat = name =>
     ? UIManager.getViewManagerConfig(name)
     : UIManager[name];
 
-export function useScreens(shouldUseScreens = true) {
+function useScreens(shouldUseScreens = true) {
   USE_SCREENS = shouldUseScreens;
   if (USE_SCREENS && !getViewManagerConfigCompat('RNSScreen')) {
     console.error(
@@ -26,20 +26,32 @@ export function useScreens(shouldUseScreens = true) {
   }
 }
 
-export function screensEnabled() {
+function screensEnabled() {
   return USE_SCREENS;
 }
 
-export const NativeScreen = requireNativeComponent('RNSScreen', null);
+// We initialize these lazily so that importing the module doesn't throw error when not linked
+// This is necessary coz libraries such as React Navigation import the library where it may not be enabled
+let NativeScreenValue;
+let NativeScreenContainerValue;
+let AnimatedNativeScreen;
 
-const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
+const ScreensNativeModules = {
+  get NativeScreen() {
+    NativeScreenValue =
+      NativeScreenValue || requireNativeComponent('RNSScreen', null);
+    return NativeScreenValue;
+  },
 
-export const NativeScreenContainer = requireNativeComponent(
-  'RNSScreenContainer',
-  null
-);
+  get NativeScreenContainer() {
+    NativeScreenContainerValue =
+      NativeScreenContainerValue ||
+      requireNativeComponent('RNSScreenContainer', null);
+    return NativeScreenContainerValue;
+  },
+};
 
-export class Screen extends React.Component {
+class Screen extends React.Component {
   setNativeProps(props) {
     this._ref.setNativeProps(props);
   }
@@ -57,32 +69,38 @@ export class Screen extends React.Component {
       const { active, onComponentRef, ...props } = this.props;
 
       return <Animated.View {...props} ref={this.setRef} />;
-    } else if (version.minor >= 57) {
-      return <AnimatedNativeScreen {...this.props} ref={this.setRef} />;
     } else {
-      // On RN version below 0.57 we need to wrap screen's children with an
-      // additional View because of a bug fixed in react-native/pull/20658 which
-      // was preventing a view from having both styles and some other props being
-      // "animated" (using Animated native driver)
-      const { style, children, ...rest } = this.props;
-      return (
-        <AnimatedNativeScreen
-          {...rest}
-          ref={this.setRef}
-          style={StyleSheet.absoluteFill}>
-          <Animated.View style={style}>{children}</Animated.View>
-        </AnimatedNativeScreen>
-      );
+      AnimatedNativeScreen =
+        AnimatedNativeScreen ||
+        Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
+
+      if (version.minor >= 57) {
+        return <AnimatedNativeScreen {...this.props} ref={this.setRef} />;
+      } else {
+        // On RN version below 0.57 we need to wrap screen's children with an
+        // additional View because of a bug fixed in react-native/pull/20658 which
+        // was preventing a view from having both styles and some other props being
+        // "animated" (using Animated native driver)
+        const { style, children, ...rest } = this.props;
+        return (
+          <AnimatedNativeScreen
+            {...rest}
+            ref={this.setRef}
+            style={StyleSheet.absoluteFill}>
+            <Animated.View style={style}>{children}</Animated.View>
+          </AnimatedNativeScreen>
+        );
+      }
     }
   }
 }
 
-export class ScreenContainer extends React.Component {
+class ScreenContainer extends React.Component {
   render() {
     if (!USE_SCREENS) {
       return <View {...this.props} />;
     } else {
-      return <NativeScreenContainer {...this.props} />;
+      return <ScreensNativeModules.NativeScreenContainer {...this.props} />;
     }
   }
 }
@@ -141,3 +159,16 @@ export const ScreenStackHeaderCenterView = props => (
     style={styles.headerSubview}
   />
 );
+module.exports = {
+  ScreenContainer,
+  Screen,
+  get NativeScreen() {
+    return ScreensNativeModules.NativeScreen;
+  },
+
+  get NativeScreenContainer() {
+    return ScreensNativeModules.NativeScreenContainer;
+  },
+  useScreens,
+  screensEnabled,
+};

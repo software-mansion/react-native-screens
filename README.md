@@ -34,7 +34,7 @@ useScreens();
 
 Note that the above code need to execute before first render of a navigation screen. You can check Example's app [App.js](https://github.com/kmagiera/react-native-screens/blob/master/Example/App.js#L16) file as a reference.
 
-4. On Android change your main activity class to extend [`ReactFragmentActivity`](https://github.com/facebook/react-native/blob/0.57-stable/ReactAndroid/src/main/java/com/facebook/react/ReactFragmentActivity.java). The file you'll have to change is likely called `MainActivity.java` unless you customized it after creating your project:
+4. On Android, you might need to change your main activity class to extend [`ReactFragmentActivity`](https://github.com/facebook/react-native/blob/0.57-stable/ReactAndroid/src/main/java/com/facebook/react/ReactFragmentActivity.java). The file you'll have to change is likely called `MainActivity.java` unless you customized it after creating your project. **Note that this isn't necessary if you're on React Native >= 0.59**.
 ```diff
 -import com.facebook.react.ReactActivity;
 +import android.os.Bundle;
@@ -95,7 +95,7 @@ This component is a container for one or more `Screen` components.
 It does not accept other component types are direct children.
 The role of container is to control which of its children screens should be attached to the view hierarchy.
 It does that by monitoring `active` property of each of its children.
-It it possible to have as many `active` children as you'd like but in order for the component to be the most effictent we should keep the number of active screens to the minimum.
+It it possible to have as many `active` children as you'd like but in order for the component to be the most efficient we should keep the number of active screens to the minimum.
 In a case of stack navigator or tabs navigator we only want to have one active screen (the top most view on a stack or the selected tab).
 Then for the time of transitioning between views we may want to activate a second screen for the duration of transition, and then go back to just one active screen.
 
@@ -235,7 +235,7 @@ In order for your native view on iOS to be notified when its parent navigation c
 }
 ```
 
-You can check our example app for a fully functional demo see [RNSSampleLifecycleAwareView.m](https://github.com/kmagiera/react-native-screens/blob/master./Example/ios/RNSSampleLifecycleAwareView.m) for more details.
+You can check our example app for a fully functional demo see [RNSSampleLifecycleAwareView.m](https://github.com/kmagiera/react-native-screens/blob/master/Example/ios/ScreensExample/RNSSampleLifecycleAwareView.m) for more details.
 
 ### Navigation lifecycle on Android
 

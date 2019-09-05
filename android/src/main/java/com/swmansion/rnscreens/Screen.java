@@ -1,5 +1,8 @@
 package com.swmansion.rnscreens;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.os.Bundle;
