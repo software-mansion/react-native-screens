@@ -273,10 +273,9 @@
 
 - (void)getSourceView:(RNSScreenView *)screenView completion:(void (^)(UIView *view))completion {
   if (screenView.popoverSourceViewNativeID) {
-    __block NSString *nativeID = screenView.popoverSourceViewNativeID;
     RCTUIManager *uiManager = _manager.bridge.uiManager;
     [uiManager rootViewForReactTag:screenView.reactTag withCompletion:^(UIView *view) {
-      UIView *target = [uiManager viewForNativeID:nativeID withRootTag:view.reactTag];
+      UIView *target = [uiManager viewForNativeID:screenView.popoverSourceViewNativeID withRootTag:view.reactTag];
       completion(target);
     }];
   } else {
