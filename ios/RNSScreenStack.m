@@ -117,6 +117,14 @@
   // do nothing
 }
 
+#pragma mark - RCTInvalidating
+
+- (void)invalidate {
+  [_reactSubviews removeAllObjects];
+  [_dismissedScreens removeAllObjects];
+  [self updateContainer];
+}
+
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
 {
   if (![subview isKindOfClass:[RNSScreenView class]]) {
@@ -285,7 +293,9 @@
 
 @end
 
-@implementation RNSScreenStackManager
+@implementation RNSScreenStackManager {
+  NSHashTable *_hostViews;
+}
 
 RCT_EXPORT_MODULE()
 
@@ -294,7 +304,21 @@ RCT_EXPORT_VIEW_PROPERTY(progress, CGFloat)
 
 - (UIView *)view
 {
-  return [[RNSScreenStackView alloc] initWithManager:self];
+  RNSScreenStackView *view = [[RNSScreenStackView alloc] initWithManager:self];
+  if (!_hostViews) {
+    _hostViews = [NSHashTable weakObjectsHashTable];
+  }
+  [_hostViews addObject:view];
+  return view;
+}
+
+#pragma mark - RCTInvalidating
+
+- (void)invalidate {
+  for (RNSScreenStackView *hostView in _hostViews) {
+    [hostView invalidate];
+  }
+  [_hostViews removeAllObjects];
 }
 
 @end
