@@ -8,6 +8,7 @@ import {
   Image,
   Text,
   ToolbarAndroid,
+  Platform,
 } from 'react-native';
 import {
   Screen,
@@ -57,13 +58,35 @@ export class Stack extends Component {
     const active =
       index === stack.length - 1 ||
       (transitioning !== 0 && index === stack.length - 2);
+    let stackPresentation = 'transparentModal';
+    let popoverConfig = {};
+    if (key === 'cyan' && Platform.isPad) {
+      style = { flex: 1 };
+      stackPresentation = 'popover';
+      popoverConfig = {
+        popoverSourceViewNativeID: 'push:pink',
+        popoverSourceRect: {
+          x: 10,
+          y: 10,
+          width: 44,
+          height: 44,
+        },
+        popoverPermittedArrowDirections: ['up', 'down'],
+        preferredContentSize: {
+          width: 600,
+          height: 600,
+        },
+      };
+    }
     return (
       <Screen
         style={style}
         key={key}
         stackAnimation="fade"
         active={1}
-        onDismissed={() => this.removeByKey(key)}>
+        stackPresentation={stackPresentation}
+        onDismissed={() => this.removeByKey(key)}
+        {...popoverConfig}>
         <ScreenStackHeaderConfig title={key}>
           {/* {index === 0 && (
             <ScreenStackHeaderLeftView>
@@ -130,7 +153,11 @@ class App extends Component {
           }}
         />
         {pop && <Button title="Pop" onPress={pop} />}
-        {push && <Button title="Push" onPress={push} />}
+        {push && (
+          <View nativeID={`push:${key}`}>
+            <Button title="Push" onPress={push} />
+          </View>
+        )}
         {remove && <Button title="Remove middle screen" onPress={remove} />}
         <TextInput placeholder="Hello" style={styles.textInput} />
         <View style={{ height: 100, backgroundColor: 'red', width: '70%' }} />

@@ -130,12 +130,23 @@ class StackView extends React.Component {
 
   _renderScene = (scene, scenes) => {
     const { navigation, getComponent } = scene.descriptor;
-    const { mode, transparentCard } = this.props.navigationConfig;
+    const {
+      mode,
+      transparentCard,
+      popoverSourceViewNativeID,
+      popoverSourceRect,
+      popoverPermittedArrowDirections,
+      preferredContentSize,
+    } = this.props.navigationConfig;
     const SceneComponent = getComponent();
 
-    let stackPresentation = 'push';
+    let stackPresentation;
     if (mode === 'modal') {
       stackPresentation = transparentCard ? 'transparentModal' : 'modal';
+    } else if (mode === 'popover') {
+      stackPresentation = mode;
+    } else {
+      stackPresentation = 'push';
     }
 
     const { screenProps } = this.props;
@@ -144,6 +155,10 @@ class StackView extends React.Component {
         key={`screen_${scene.key}`}
         style={StyleSheet.absoluteFill}
         stackPresentation={stackPresentation}
+        popoverSourceViewNativeID={popoverSourceViewNativeID}
+        popoverSourceRect={popoverSourceRect}
+        popoverPermittedArrowDirections={popoverPermittedArrowDirections}
+        preferredContentSize={preferredContentSize}
         onDismissed={() => this._removeScene(scene)}>
         {this._renderHeaderConfig(scene, scenes)}
         <SceneView
