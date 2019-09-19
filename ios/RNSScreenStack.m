@@ -156,9 +156,9 @@
   for (UIViewController *newController in newControllers) {
     [_presentedModals addObject:newController];
     if (_controller.presentedViewController != nil) {
-      [_controller.presentedViewController presentViewController:newController animated:YES completion:nil];
+      [self presentViewController:newController parentViewController:_controller.presentedViewController animated:YES completion:nil];
     } else {
-      [_controller presentViewController:newController animated:YES completion:nil];
+      [self presentViewController:newController parentViewController:_controller animated:YES completion:nil];
     }
   }
 
@@ -170,7 +170,7 @@
       UIViewController *parent = controller.presentingViewController;
       [controller dismissViewControllerAnimated:NO completion:^{
         [parent dismissViewControllerAnimated:NO completion:^{
-          [parent presentViewController:restore animated:NO completion:nil];
+          [self presentViewController:restore parentViewController:parent animated:NO completion:nil];
         }];
       }];
     } else {
@@ -233,6 +233,7 @@
             break;
           case RNSScreenStackPresentationModal:
           case RNSScreenStackPresentationTransparentModal:
+          case RNSScreenStackPresentationPopover:
             [modalControllers addObject:screen.controller];
             break;
         }
@@ -249,6 +250,38 @@
   [super layoutSubviews];
   [self reactAddControllerToClosestParent:_controller];
   _controller.view.frame = self.bounds;
+}
+
+#pragma mark - private
+
+- (void)presentViewController:(UIViewController *)viewController parentViewController:(UIViewController *)parentViewController animated: (BOOL)flag completion:(void (^ __nullable)(void))completion {
+  if (viewController.modalPresentationStyle == UIModalPresentationPopover) {
+    RNSScreenView *screenView = (RNSScreenView *)viewController.view;
+    [self getSourceView:screenView completion:^(UIView *view) {
+      viewController.popoverPresentationController.sourceRect = screenView.popoverSourceRect;
+      viewController.popoverPresentationController.sourceView = view ?: parentViewController.view;
+      viewController.popoverPresentationController.permittedArrowDirections = screenView.realPopoverPermittedArrowDirections;
+      if (!CGSizeEqualToSize(CGSizeZero, screenView.preferredContentSize)) {
+        viewController.preferredContentSize = screenView.preferredContentSize;
+      }
+      [parentViewController presentViewController:viewController animated:flag completion:completion];
+    }];
+  } else {
+    [parentViewController presentViewController:viewController animated:flag completion:completion];
+  }
+}
+
+- (void)getSourceView:(RNSScreenView *)screenView completion:(void (^)(UIView *view))completion {
+  if (screenView.popoverSourceViewNativeID) {
+    __block NSString *nativeID = screenView.popoverSourceViewNativeID;
+    RCTUIManager *uiManager = _manager.bridge.uiManager;
+    [uiManager rootViewForReactTag:screenView.reactTag withCompletion:^(UIView *view) {
+      UIView *target = [uiManager viewForNativeID:nativeID withRootTag:view.reactTag];
+      completion(target);
+    }];
+  } else {
+    completion(nil);
+  }
 }
 
 @end

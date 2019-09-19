@@ -5,6 +5,7 @@
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
+#import <React/RCTTouchHandler.h>
 
 @interface RNSScreenFrameData : NSObject
 @property (nonatomic, readonly) CGFloat rightInset;
@@ -40,10 +41,17 @@
 
 @end
 
+@interface RNSScreenView()
+
+@property (nonatomic, assign) UIPopoverArrowDirection realPopoverPermittedArrowDirections;
+
+@end
+
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
   RNSScreen *_controller;
   BOOL _invalidated;
+  NSMapTable *_touchHandlers;
 }
 
 @synthesize controller = _controller;
@@ -56,9 +64,30 @@
     _controller.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
+    _touchHandlers = [NSMapTable weakToStrongObjectsMapTable];
+    _realPopoverPermittedArrowDirections = UIPopoverArrowDirectionAny;
   }
-
   return self;
+}
+
+- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex {
+  [super insertReactSubview:subview atIndex:atIndex];
+  
+  RCTTouchHandler *touchHandler = [_touchHandlers objectForKey:subview];
+  if (touchHandler == nil) {
+    touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
+    [touchHandler attachToView:subview];
+    [_touchHandlers setObject:touchHandler forKey:subview];
+  }
+}
+
+- (void)removeReactSubview:(UIView *)subview {
+  [super removeReactSubview:subview];
+  RCTTouchHandler *touchHandler = [_touchHandlers objectForKey:subview];
+  if (touchHandler != nil) {
+    [touchHandler detachFromView:subview];
+    [_touchHandlers removeObjectForKey:subview];
+  }
 }
 
 - (void)updateBounds
@@ -76,6 +105,8 @@
                  andNavbarOffset:navbarOffset]
    forView:self];
 }
+
+#pragma mark - Setter
 
 - (void)setActive:(BOOL)active
 {
@@ -101,7 +132,32 @@
     case RNSScreenStackPresentationTransparentModal:
       _controller.modalPresentationStyle = UIModalPresentationOverCurrentContext;
       break;
+    case RNSScreenStackPresentationPopover:
+      _controller.modalPresentationStyle = UIModalPresentationPopover;
+      break;
   }
+}
+
+- (void)setPopoverPermittedArrowDirections:(NSArray *)popoverPermittedArrowDirections
+{
+  if (popoverPermittedArrowDirections.count == 0 || [_popoverPermittedArrowDirections isEqualToArray:popoverPermittedArrowDirections]) {
+    return;
+  }
+  _popoverPermittedArrowDirections = popoverPermittedArrowDirections;
+  
+  UIPopoverArrowDirection permittedArrowDirections = 0;
+  for (NSString *direction in popoverPermittedArrowDirections) {
+    if ([direction isEqualToString:@"up"]) {
+      permittedArrowDirections |= UIPopoverArrowDirectionUp;
+    } else if ([direction isEqualToString:@"down"]) {
+      permittedArrowDirections |= UIPopoverArrowDirectionDown;
+    } else if ([direction isEqualToString:@"left"]) {
+      permittedArrowDirections |= UIPopoverArrowDirectionLeft;
+    } else if ([direction isEqualToString:@"right"]) {
+      permittedArrowDirections |= UIPopoverArrowDirectionRight;
+    }
+  }
+  _realPopoverPermittedArrowDirections = permittedArrowDirections;
 }
 
 - (UIView *)reactSuperview
@@ -218,7 +274,11 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
-RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(popoverSourceViewNativeID, NSString)
+RCT_EXPORT_VIEW_PROPERTY(popoverSourceRect, CGRect)
+RCT_EXPORT_VIEW_PROPERTY(popoverPermittedArrowDirections, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(preferredContentSize, CGSize)
+RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock)
 
 - (UIView *)view
 {
@@ -237,7 +297,8 @@ RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_ENUM_CONVERTER(RNSScreenStackPresentation, (@{
                                                   @"push": @(RNSScreenStackPresentationPush),
                                                   @"modal": @(RNSScreenStackPresentationModal),
-                                                  @"transparentModal": @(RNSScreenStackPresentationTransparentModal)
+                                                  @"transparentModal": @(RNSScreenStackPresentationTransparentModal),
+                                                  @"popover": @(RNSScreenStackPresentationPopover)
                                                   }), RNSScreenStackPresentationPush, integerValue)
 
 RCT_ENUM_CONVERTER(RNSScreenStackAnimation, (@{
@@ -245,6 +306,5 @@ RCT_ENUM_CONVERTER(RNSScreenStackAnimation, (@{
                                                   @"none": @(RNSScreenStackAnimationNone),
                                                   @"fade": @(RNSScreenStackAnimationFade)
                                                   }), RNSScreenStackAnimationDefault, integerValue)
-
 
 @end
