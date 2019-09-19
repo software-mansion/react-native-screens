@@ -61,7 +61,6 @@ export class Stack extends Component {
     let stackPresentation = 'transparentModal';
     let popoverConfig = {};
     if (key === 'cyan' && Platform.isPad) {
-      style = { flex: 1 };
       stackPresentation = 'popover';
       popoverConfig = {
         popoverSourceViewNativeID: 'push:pink',
@@ -77,6 +76,7 @@ export class Stack extends Component {
           height: 600,
         },
       };
+      style = popoverConfig.preferredContentSize;
     }
     return (
       <Screen
