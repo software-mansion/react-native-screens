@@ -3,9 +3,9 @@ package com.swmansion.rnscreens;
 import android.view.View;
 import android.view.ViewParent;
 
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
+import android.support.v4.app.Fragment;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
 
 import java.util.HashMap;
 import java.util.Map;

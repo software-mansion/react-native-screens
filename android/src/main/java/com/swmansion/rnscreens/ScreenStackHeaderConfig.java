@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.TextView;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
+//import androidx.activity.OnBackPressedCallback;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
 
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.views.text.ReactFontManager;
@@ -67,12 +67,12 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private int mHeight;
   private final Toolbar mToolbar;
 
-  private OnBackPressedCallback mBackCallback = new OnBackPressedCallback(false) {
-    @Override
-    public void handleOnBackPressed() {
-      getScreenStack().dismiss(getScreen());
-    }
-  };
+//  private OnBackPressedCallback mBackCallback = new OnBackPressedCallback(false) {
+//    @Override
+//    public void handleOnBackPressed() {
+//      getScreenStack().dismiss(getScreen());
+//    }
+//  };
   private OnClickListener mBackClickListener = new OnClickListener() {
     @Override
     public void onClick(View view) {
@@ -150,9 +150,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   }
 
   private void installBackCallback() {
-    mBackCallback.remove();
+   // mBackCallback.remove();
     Fragment fragment = getScreenFragment();
-    fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment, mBackCallback);
+    //fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment, mBackCallback);
   }
 
   private void update() {
@@ -179,7 +179,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     if (!isRoot) {
       installBackCallback();
     }
-    mBackCallback.setEnabled(!isRoot);
+   // mBackCallback.setEnabled(!isRoot);
 
     // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
     // navigation click listener. The default behavior set in the wrapper is to call into

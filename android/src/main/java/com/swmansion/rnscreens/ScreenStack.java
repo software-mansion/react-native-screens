@@ -2,7 +2,7 @@ package com.swmansion.rnscreens;
 
 import android.content.Context;
 
-import androidx.fragment.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
