@@ -154,7 +154,7 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
 
   @Override
   public PointerEvents getPointerEvents() {
-    return mTransitioning ? PointerEvents.NONE : PointerEvents.AUTO;
+    return /* mTransitioning ? PointerEvents.NONE : */ PointerEvents.AUTO;
   }
 
   @Override
