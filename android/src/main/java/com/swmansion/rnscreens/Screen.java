@@ -5,21 +5,26 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.PointerEvents;
 import com.facebook.react.uimanager.ReactPointerEventsView;
+import com.facebook.react.uimanager.RootView;
+import com.facebook.react.uimanager.RootViewUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.events.EventDispatcher;
 
-public class Screen extends ViewGroup implements ReactPointerEventsView {
+public class Screen extends ViewGroup implements ReactPointerEventsView, RootView {
 
   public enum StackPresentation {
     PUSH,
@@ -33,7 +38,7 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
     FADE
   }
 
-  public static class ScreenFragment extends Fragment {
+  public static class ScreenFragment extends DialogFragment {
 
     private Screen mScreenView;
 
@@ -45,6 +50,14 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
     public ScreenFragment(Screen screenView) {
       super();
       mScreenView = screenView;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      if (mScreenView.mIsModal) {
+        setShowsDialog(true);
+      }
     }
 
     @Override
@@ -84,11 +97,16 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
   private boolean mTransitioning;
   private StackPresentation mStackPresentation = StackPresentation.PUSH;
   private StackAnimation mStackAnimation = StackAnimation.DEFAULT;
+  private boolean mIsModal;
 
   public Screen(ReactContext context) {
     super(context);
     mFragment = new ScreenFragment(this);
     mEventDispatcher = context.getNativeModule(UIManagerModule.class).getEventDispatcher();
+  }
+
+  public void setModal(boolean isModal) {
+    mIsModal = isModal;
   }
 
   @Override
@@ -186,5 +204,27 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
 
   public boolean isActive() {
     return mActive;
+  }
+
+  @Override
+  public void onChildStartedNativeGesture(MotionEvent androidEvent) {
+    // Forward methods from RootView interface onto a RootView from the container
+    RootViewUtil.getRootView(mContainer).onChildStartedNativeGesture(androidEvent);
+  }
+
+  @Override
+  public void handleException(Throwable t) {
+    // Forward methods from RootView interface onto a RootView from the container
+    RootViewUtil.getRootView(mContainer).handleException(t);
+  }
+
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent ev) {
+    if (mIsModal && mContainer instanceof ScreenStack) {
+      if (((ScreenStack) mContainer).handleTouchInModal(ev)) {
+        return true;
+      }
+    }
+    return super.dispatchTouchEvent(ev);
   }
 }

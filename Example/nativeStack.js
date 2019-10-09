@@ -18,6 +18,7 @@ import {
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
 } from 'react-native-screens';
+import { RectButton } from 'react-native-gesture-handler';
 
 // const ScreenStack = requireNativeComponent('RNSScreenStack', null);
 
@@ -52,7 +53,7 @@ export class Stack extends Component {
     });
   }
   renderScreen = (key, index) => {
-    let style = StyleSheet.absoluteFill;
+    let style = StyleSheet.absoluteFillObject;
     const { stack, transitioning } = this.state;
     const active =
       index === stack.length - 1 ||
@@ -129,6 +130,12 @@ class App extends Component {
             backgroundColor: 'black',
           }}
         />
+        <TouchableHighlight onPress={() => alert('lol')}>
+          <View style={{ width: 200, height: 40, backgroundColor: 'green' }} />
+        </TouchableHighlight>
+        <RectButton onPress={() => alert('lol')}>
+          <View style={{ width: 200, height: 40, backgroundColor: 'blue' }} />
+        </RectButton>
         {pop && <Button title="Pop" onPress={pop} />}
         {push && <Button title="Push" onPress={push} />}
         {remove && <Button title="Remove middle screen" onPress={remove} />}
@@ -139,10 +146,17 @@ class App extends Component {
   };
   render() {
     return (
-      <Stack
-        ref={stack => (this.stack = stack)}
-        renderScreen={this.renderScreen}
-      />
+      <View
+        style={{
+          backgroundColor: 'brown',
+          padding: 10,
+          ...StyleSheet.absoluteFillObject,
+        }}>
+        <Stack
+          ref={stack => (this.stack = stack)}
+          renderScreen={this.renderScreen}
+        />
+      </View>
     );
   }
 }

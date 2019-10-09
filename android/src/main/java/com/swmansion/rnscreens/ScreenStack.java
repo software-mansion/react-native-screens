@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.fragment.app.FragmentTransaction;
 
@@ -22,6 +24,31 @@ public class ScreenStack extends ScreenContainer {
   public void dismiss(Screen screen) {
     mDismissed.add(screen);
     onUpdate();
+  }
+
+  private boolean mDispatchingTouch;
+
+  public boolean handleTouchInModal(MotionEvent ev) {
+    mDispatchingTouch = true;
+    boolean result = findRootView().dispatchTouchEvent(ev);
+    mDispatchingTouch = false;
+    return result;
+  }
+
+  @Override
+  public int getChildCount() {
+    if (mDispatchingTouch) {
+      return mStack.size();
+    }
+    return super.getChildCount();
+  }
+
+  @Override
+  public View getChildAt(int index) {
+    if (mDispatchingTouch) {
+      return mStack.get(index);
+    }
+    return super.getChildAt(index);
   }
 
   public Screen getTopScreen() {
@@ -81,7 +108,12 @@ public class ScreenStack extends ScreenContainer {
     for (Screen screen : mScreens) {
       // add all new views that weren't on stack before
       if (!mStack.contains(screen) && !mDismissed.contains(screen)) {
-        getOrCreateTransaction().add(getId(), screen.getFragment());
+        if (mScreens.size() > 1) {
+          screen.setModal(true);
+          getOrCreateTransaction().add(screen.getFragment(), null);
+        } else {
+          getOrCreateTransaction().add(getId(), screen.getFragment());
+        }
       }
       // detach all screens that should not be visible
       if (screen != newTop && screen != belowTop && !mDismissed.contains(screen)) {

@@ -79,6 +79,22 @@ public class ScreenContainer extends ViewGroup {
     return mScreens.get(index);
   }
 
+  public ReactRootView findRootView() {
+    ViewParent parent = this;
+    while (!(parent instanceof ReactRootView) && parent.getParent() != null) {
+      parent = parent.getParent();
+    }
+    // we expect top level view to be of type ReactRootView, this isn't really necessary but in order
+    // to find root view we test if parent is null. This could potentially happen also when the view
+    // is detached from the hierarchy and that test would not correctly indicate the root view. So
+    // in order to make sure we indeed reached the root we test if it is of a correct type. This
+    // allows us to provide a more descriptive error message for the aforementioned case.
+    if (!(parent instanceof ReactRootView)) {
+      throw new IllegalStateException("ScreenContainer is not attached under ReactRootView");
+    }
+    return (ReactRootView) parent;
+  }
+
   protected final FragmentActivity findRootFragmentActivity() {
     ViewParent parent = this;
     while (!(parent instanceof ReactRootView) && parent.getParent() != null) {

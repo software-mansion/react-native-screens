@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createAppContainer(ExampleApp);
+export default NativeStack; // createAppContainer(ExampleApp);
