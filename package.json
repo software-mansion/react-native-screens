@@ -1,6 +1,6 @@
 {
   "name": "react-native-screens",
-  "version": "1.0.0-alpha.22",
+  "version": "2.0.0-alpha.4",
   "description": "First incomplete navigation solution for your react-native app.",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -14,6 +14,7 @@
   "types": "src/screens.d.ts",
   "files": [
     "src/",
+    "createNativeStackNavigator.js",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
     "android/build.gradle",
