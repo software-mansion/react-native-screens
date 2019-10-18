@@ -118,6 +118,21 @@
   }
 }
 
+- (void)setStackAnimation:(RNSScreenStackAnimation)stackAnimation
+{
+  _stackAnimation = stackAnimation;
+
+  switch (stackAnimation) {
+    case RNSScreenStackAnimationFade:
+      _controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+      break;
+    case RNSScreenStackAnimationNone:
+    case RNSScreenStackAnimationDefault:
+      // Default
+      break;
+  }
+}
+
 - (UIView *)reactSuperview
 {
   return _reactSuperview;
