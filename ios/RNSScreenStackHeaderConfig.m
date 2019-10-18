@@ -105,7 +105,16 @@
       attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:size];
     }
     [navbar setTitleTextAttributes:attrs];
-  }
+
+    if (@available(iOS 11.0, *) && config.largeTitle) {
+        if (config.titleFontFamily) {
+            attrs[NSFontAttributeName] = [UIFont fontWithName:config.titleFontFamily size:34];
+        } else {
+          attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:34];
+        }
+        [navbar setLargeTitleTextAttributes:attrs];
+    }
+ }
 
 }
 
