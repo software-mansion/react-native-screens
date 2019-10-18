@@ -117,7 +117,7 @@
   }
   // `modalPresentationStyle` must be set before accessing `presentationController`
   // otherwise a default controller will be created and cannot be changed after.
-  // Docuemented here: https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
+  // Documented here: https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
   _controller.presentationController.delegate = self;
 }
 
