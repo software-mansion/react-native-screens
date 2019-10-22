@@ -114,7 +114,7 @@
   // triggered before the animation starts
   if (activeScreenAdded) {
     for (RNSScreenView *screen in _reactSubviews) {
-      if (screen.active && [_activeScreens containsObject:screen]) {
+      if (screen.active) {
         [self detachScreen:screen];
         // disable interactions for the duration of transition
         screen.userInteractionEnabled = NO;
