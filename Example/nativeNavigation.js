@@ -1,5 +1,13 @@
 import React from 'react';
-import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
+import {
+  TextInput,
+  StyleSheet,
+  Button,
+  Text,
+  View,
+  ScrollView,
+  AsyncStorage,
+} from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
 
@@ -32,13 +40,18 @@ class PushScreen extends React.Component {
   render() {
     return (
       <View style={styles.screen}>
+        <Text>{'INDEX ' + this.props.navigation.getParam('index', 0)}</Text>
         <TextInput placeholder="Hello" style={styles.textInput} />
         <Button
           onPress={() => this.props.navigation.goBack()}
           title="Go back"
         />
         <Button
-          onPress={() => this.props.navigation.push('Push')}
+          onPress={() =>
+            this.props.navigation.push('Push', {
+              index: this.props.navigation.getParam('index', 0) + 1,
+            })
+          }
           title="Push more"
         />
         <View style={styles.leftTop} />
@@ -141,4 +154,27 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createAppContainer(App);
+const persistenceKey = 'persistenceKey';
+const persistNavigationState = async navState => {
+  try {
+    await AsyncStorage.setItem(persistenceKey, JSON.stringify(navState));
+  } catch (err) {
+    // handle the error according to your needs
+  }
+};
+const loadNavigationState = async () => {
+  const jsonString = await AsyncStorage.getItem(persistenceKey);
+  console.warn('LOADED', jsonString);
+  return JSON.parse(jsonString);
+};
+
+const AppContainer = createAppContainer(App);
+
+const AppX = () => (
+  <AppContainer
+    persistNavigationState={persistNavigationState}
+    loadNavigationState={loadNavigationState}
+  />
+);
+
+export default AppX;

@@ -28,7 +28,7 @@ export class Stack extends Component {
     super(props);
 
     this.state = {
-      stack: ['azure'],
+      stack: ['azure', 'pink', 'cyan'],
       transitioning: 0,
     };
   }
