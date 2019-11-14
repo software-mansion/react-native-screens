@@ -27,7 +27,6 @@ function renderComponentOrThunk(componentOrThunk, props) {
 
 class StackView extends React.Component {
   _removeScene = route => {
-    console.warn('DISMISSED', route.key);
     const { navigation } = this.props;
     navigation.dispatch(
       NavigationActions.back({
@@ -183,7 +182,6 @@ class StackView extends React.Component {
 
   render() {
     const { navigation, descriptors } = this.props;
-    console.warn('RUTS', navigation.state.routes.length);
 
     return (
       <ScreenStack style={styles.scenes}>
