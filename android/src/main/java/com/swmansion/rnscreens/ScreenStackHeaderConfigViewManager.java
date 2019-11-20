@@ -63,8 +63,8 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   }
 
   @ReactProp(name = "titleFontSize")
-  public void setTitleFontSize(ScreenStackHeaderConfig config, double titleFontSizeSP) {
-    config.setTitleFontSize((int) PixelUtil.toPixelFromSP(titleFontSizeSP));
+  public void setTitleFontSize(ScreenStackHeaderConfig config, float titleFontSize) {
+    config.setTitleFontSize(titleFontSize);
   }
 
   @ReactProp(name = "titleColor", customType = "Color")
