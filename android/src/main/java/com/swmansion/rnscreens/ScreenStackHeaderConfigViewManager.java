@@ -58,6 +58,11 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     parent.onUpdate();
   }
 
+  @ReactProp(name = "collapsable")
+  public void setCollapsable(ScreenStackHeaderConfig config, boolean collapsable) {
+    config.setCollapsable(collapsable);
+  }
+
   @ReactProp(name = "title")
   public void setTitle(ScreenStackHeaderConfig config, String title) {
     config.setTitle(title);
@@ -69,8 +74,23 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   }
 
   @ReactProp(name = "titleFontSize")
-  public void setTitleFontSize(ScreenStackHeaderConfig config, double titleFontSizeSP) {
-    config.setTitleFontSize((int) PixelUtil.toPixelFromSP(titleFontSizeSP));
+  public void setTitleFontSize(ScreenStackHeaderConfig config, float titleFontSize) {
+    config.setTitleFontSize(titleFontSize);
+  }
+
+  @ReactProp(name = "largeTitle")
+  public void setLargeTitle(ScreenStackHeaderConfig config, boolean largeTitle) {
+    config.setLargeTitle(largeTitle);
+  }
+
+  @ReactProp(name = "largeTitleFontFamily")
+  public void setLargeTitleFontFamily(ScreenStackHeaderConfig config, String titleFontFamily) {
+    config.setLargeTitleFontFamily(titleFontFamily);
+  }
+
+  @ReactProp(name = "largeTitleFontSize")
+  public void setLargeTitleFontSize(ScreenStackHeaderConfig config, float titleFontSize) {
+    config.setLargeTitleFontSize(titleFontSize);
   }
 
   @ReactProp(name = "titleColor", customType = "Color")
