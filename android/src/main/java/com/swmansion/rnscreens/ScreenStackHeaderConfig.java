@@ -63,8 +63,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     mCollapsingToolbarLayout = new CollapsingToolbarLayout(getContext());
     mCollapsingToolbarLayout.setFitsSystemWindows(true);
-    mCollapsingToolbarLayout.setExpandedTitleMarginStart((int) PixelUtil.toPixelFromDIP(16));
-    mCollapsingToolbarLayout.setExpandedTitleMarginEnd((int) PixelUtil.toPixelFromDIP(16));
     mCollapsingToolbarLayout.addView(mToolbar);
 
     // set primary color as background by default

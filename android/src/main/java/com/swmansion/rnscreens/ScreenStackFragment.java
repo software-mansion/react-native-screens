@@ -33,7 +33,6 @@ public class ScreenStackFragment extends ScreenFragment {
     contentView.setFitsSystemWindows(false);
 
     if (mAppBarLayout != null) {
-      mAppBarLayout.setFitsSystemWindows(false);
       contentView.removeView(mAppBarLayout);
       mAppBarLayout = null;
     }
