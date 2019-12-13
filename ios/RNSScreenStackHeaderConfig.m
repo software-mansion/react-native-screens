@@ -5,6 +5,18 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 #import <React/RCTShadowView.h>
+#import <React/RCTImageLoader.h>
+#import <React/RCTImageView.h>
+#import <React/RCTImageSource.h>
+
+@interface RCTImageView ()
+@property (nonatomic, copy) RCTDirectEventBlock onLoadEnd;
+@end
+
+@interface RCTImageLoader (Private)
+- (id<RCTImageCache>)imageCache;
+@end
+
 
 @interface RNSScreenHeaderItemMeasurements : NSObject
 @property (nonatomic, readonly) CGSize headerSize;
@@ -30,6 +42,7 @@
 
 @interface RNSScreenStackHeaderSubview : UIView
 
+@property (nonatomic, weak) RCTBridge *bridge;
 @property (nonatomic, weak) UIView *reactSuperview;
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 
@@ -179,6 +192,7 @@
 
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || config.hide;
+  BOOL shouldHideBackButton = config.hideBackButton;
 
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
@@ -201,7 +215,6 @@
   }
 
   navitem.title = config.title;
-  navitem.hidesBackButton = config.hideBackButton;
   if (config.backTitle != nil) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
                                   initWithTitle:config.backTitle
@@ -290,11 +303,44 @@
       appearance.largeTitleTextAttributes = largeAttrs;
     }
 
+    BOOL hasBackButtonImage = NO;
+    for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
+      if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
+        hasBackButtonImage = YES;
+        RCTImageView *imageView = subview.subviews[0];
+        UIImage *image = imageView.image;
+        if (image == nil) {
+          RCTImageSource *source = imageView.imageSources[0];
+          image = [subview.bridge.imageLoader.imageCache
+                   imageForUrl:source.request.URL.absoluteString
+                   size:source.size
+                   scale:source.scale
+                   resizeMode:RCTResizeModeCover];
+        }
+        if (image == nil) {
+          if (vc.transitionCoordinator) {
+            [vc.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+              // nothing, we just want completion
+            } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+              [config updateViewControllerIfNeeded];
+            }];
+          }
+          shouldHideBackButton = YES;
+        } else {
+          [appearance setBackIndicatorImage:image transitionMaskImage:image];
+        }
+      }
+    }
+    if (!hasBackButtonImage && appearance.backIndicatorImage) {
+      [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
+    }
+
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
     navitem.scrollEdgeAppearance = appearance;
   }
 #endif
+  navitem.hidesBackButton = shouldHideBackButton;
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
@@ -378,6 +424,7 @@ RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 @implementation RCTConvert (RNSScreenStackHeader)
 
 RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
+   @"back": @(RNSScreenStackHeaderSubviewTypeBackButton),
    @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
    @"right": @(RNSScreenStackHeaderSubviewTypeRight),
    @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
@@ -386,9 +433,7 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
 
 @end
 
-@implementation RNSScreenStackHeaderSubview {
-  __weak RCTBridge *_bridge;
-}
+@implementation RNSScreenStackHeaderSubview
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
