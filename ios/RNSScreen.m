@@ -31,6 +31,15 @@
   return self;
 }
 
+- (void)reactSetFrame:(CGRect)frame
+{
+  if (_active) {
+    [super reactSetFrame:frame];
+  }
+  // ignore setFrame call from react, the frame of this view
+  // is controlled by the UIViewController it is contained in
+}
+
 - (void)updateBounds
 {
   [_bridge.uiManager setSize:self.bounds.size forView:self];
