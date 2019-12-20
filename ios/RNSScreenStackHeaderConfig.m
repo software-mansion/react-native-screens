@@ -165,6 +165,15 @@
         [navbar setLargeTitleTextAttributes:largeAttrs];
       }
     }
+
+    UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
+    if (backButtonImage) {
+      navbar.backIndicatorImage = backButtonImage;
+      navbar.backIndicatorTransitionMaskImage = backButtonImage;
+    } else if (navbar.backIndicatorImage) {
+      navbar.backIndicatorImage = nil;
+      navbar.backIndicatorTransitionMaskImage = nil;
+    }
   }
 }
 
@@ -177,6 +186,59 @@
   if (@available(iOS 9.0, *)) {
     [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
   }
+}
+
++ (UIImage*)loadBackButtonImageInViewController:(UIViewController *)vc
+                                     withConfig:(RNSScreenStackHeaderConfig *)config
+{
+  BOOL hasBackButtonImage = NO;
+  for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
+    if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
+      hasBackButtonImage = YES;
+      RCTImageView *imageView = subview.subviews[0];
+      UIImage *image = imageView.image;
+      // IMPORTANT!!!
+      // image can be nil in DEV MODE ONLY
+      //
+      // It is so, because in dev mode images are loaded over HTTP from the packager. In that case
+      // we first check if image is already loaded in cache and if it is, we take it from cache and
+      // display immediately. Otherwise we wait for the transition to finish and retry updating
+      // header config.
+      // Unfortunately due to some problems in UIKit we cannot update the image while the screen
+      // transition is ongoing. This results in the settings being reset after the transition is done
+      // to the state from before the transition.
+      if (image == nil) {
+        // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
+        // publically in headers).
+        RCTImageSource *source = imageView.imageSources[0];
+        image = [subview.bridge.imageLoader.imageCache
+                 imageForUrl:source.request.URL.absoluteString
+                 size:source.size
+                 scale:source.scale
+                 resizeMode:imageView.resizeMode];
+      }
+      if (image == nil) {
+        // This will be triggered if the image is not in the cache yet. What we do is we wait until
+        // the end of transition and run header config updates again. We could potentially wait for
+        // image on load to trigger, but that would require even more private method hacking.
+        if (vc.transitionCoordinator) {
+          [vc.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            // nothing, we just want completion
+          } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            // in order for new back button image to be loaded we need to trigger another change
+            // in back button props that'd make UIKit redraw the button. Otherwise the changes are
+            // not reflected. Here we change back button visibility which is then immediately restored
+            vc.navigationItem.hidesBackButton = YES;
+            [config updateViewControllerIfNeeded];
+          }];
+        }
+        return [UIImage new];
+      } else {
+        return image;
+      }
+    }
+  }
+  return nil;
 }
 
 + (void)willShowViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
@@ -194,7 +256,6 @@
 
   BOOL wasHidden = navctr.navigationBarHidden;
   BOOL shouldHide = config == nil || config.hide;
-  BOOL shouldHideBackButton = config.hideBackButton;
 
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
@@ -305,50 +366,10 @@
       appearance.largeTitleTextAttributes = largeAttrs;
     }
 
-    BOOL hasBackButtonImage = NO;
-    for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
-      if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
-        hasBackButtonImage = YES;
-        RCTImageView *imageView = subview.subviews[0];
-        UIImage *image = imageView.image;
-        // IMPORTANT!!!
-        // image can be nil in DEV MODE ONLY
-        //
-        // It is so, because in dev mode images are loaded over HTTP from the packager. In that case
-        // we first check if image is already loaded in cache and if it is, we take it from cache and
-        // display immediately. Otherwise we wait for the transition to finish and retry updating
-        // header config.
-        // Unfortunately due to some problems in UIKit we cannot update the image while the screen
-        // transition is ongoing. This results in the settings being reset after the transition is done
-        // to the state from before the transition.
-        if (image == nil) {
-          // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
-          // publically in headers).
-          RCTImageSource *source = imageView.imageSources[0];
-          image = [subview.bridge.imageLoader.imageCache
-                   imageForUrl:source.request.URL.absoluteString
-                   size:source.size
-                   scale:source.scale
-                   resizeMode:imageView.resizeMode];
-        }
-        if (image == nil) {
-          // This will be triggered if the image is not in the cache yet. What we do is we wait until
-          // the end of transition and run header config updates again. We could potentially wait for
-          // image on load to trigger, but that would require even more private method hacking.
-          if (vc.transitionCoordinator) {
-            [vc.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-              // nothing, we just want completion
-            } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-              [config updateViewControllerIfNeeded];
-            }];
-          }
-          shouldHideBackButton = YES;
-        } else {
-          [appearance setBackIndicatorImage:image transitionMaskImage:image];
-        }
-      }
-    }
-    if (!hasBackButtonImage && appearance.backIndicatorImage) {
+    UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
+    if (backButtonImage) {
+      [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
+    } else if (appearance.backIndicatorImage) {
       [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
     }
 
@@ -357,7 +378,7 @@
     navitem.scrollEdgeAppearance = appearance;
   }
 #endif
-  navitem.hidesBackButton = shouldHideBackButton;
+  navitem.hidesBackButton = config.hideBackButton;
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
