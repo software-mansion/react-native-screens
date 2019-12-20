@@ -151,7 +151,7 @@ const ScreenStackHeaderBackButtonImage = props => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
     style={styles.headerSubview}>
-    <Image {...props} />
+    <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 

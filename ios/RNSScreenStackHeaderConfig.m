@@ -9,8 +9,10 @@
 #import <React/RCTImageView.h>
 #import <React/RCTImageSource.h>
 
-@interface RCTImageView ()
-@property (nonatomic, copy) RCTDirectEventBlock onLoadEnd;
+// Some RN private method hacking below. Couldn't figure out better way to access image data
+// of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
+@interface RCTImageView (Private)
+- (UIImage*)image;
 @end
 
 @interface RCTImageLoader (Private)
@@ -309,15 +311,30 @@
         hasBackButtonImage = YES;
         RCTImageView *imageView = subview.subviews[0];
         UIImage *image = imageView.image;
+        // IMPORTANT!!!
+        // image can be nil in DEV MODE ONLY
+        //
+        // It is so, because in dev mode images are loaded over HTTP from the packager. In that case
+        // we first check if image is already loaded in cache and if it is, we take it from cache and
+        // display immediately. Otherwise we wait for the transition to finish and retry updating
+        // header config.
+        // Unfortunately due to some problems in UIKit we cannot update the image while the screen
+        // transition is ongoing. This results in the settings being reset after the transition is done
+        // to the state from before the transition.
         if (image == nil) {
+          // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
+          // publically in headers).
           RCTImageSource *source = imageView.imageSources[0];
           image = [subview.bridge.imageLoader.imageCache
                    imageForUrl:source.request.URL.absoluteString
                    size:source.size
                    scale:source.scale
-                   resizeMode:RCTResizeModeCover];
+                   resizeMode:imageView.resizeMode];
         }
         if (image == nil) {
+          // This will be triggered if the image is not in the cache yet. What we do is we wait until
+          // the end of transition and run header config updates again. We could potentially wait for
+          // image on load to trigger, but that would require even more private method hacking.
           if (vc.transitionCoordinator) {
             [vc.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
               // nothing, we just want completion
