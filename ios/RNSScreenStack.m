@@ -96,7 +96,9 @@
   RCTRootContentView *rootView = (RCTRootContentView *)parent;
   [rootView.touchHandler cancel];
 
-  return _controller.viewControllers.count > 1;
+  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+
+  return _controller.viewControllers.count > 1 && topScreen.gestureEnabled;
 }
 
 - (void)markChildUpdated
