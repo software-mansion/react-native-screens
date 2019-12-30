@@ -164,14 +164,20 @@
     }
   }
 
+  if (changeRootController != _controller) {
+    changeRootController = changeRootController.parentViewController;
+  }
+
   void (^finish)(void) = ^{
     UIViewController *previous = changeRootController;
     for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
       UIViewController *next = controllers[i];
-      [previous presentViewController:next
+      UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:next];
+      nc.delegate = self;
+      [previous presentViewController:nc
                              animated:(i == controllers.count - 1)
                              completion:nil];
-      previous = next;
+      previous = nc;
     }
 
     [self->_presentedModals removeAllObjects];
@@ -263,8 +269,9 @@
 
 - (void)invalidate
 {
+  [_controller dismissViewControllerAnimated:NO completion:nil];
   for (UIViewController *controller in _presentedModals) {
-    [controller dismissViewControllerAnimated:NO completion:nil];
+    [controller.parentViewController dismissViewControllerAnimated:NO completion:nil];
   }
   [_presentedModals removeAllObjects];
 }
