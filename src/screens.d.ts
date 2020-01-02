@@ -18,6 +18,33 @@ declare module 'react-native-screens' {
   export type ScreenContainerProps = ViewProps;
   export const ScreenContainer: ComponentClass<ScreenContainerProps>;
 
+  export interface ScreenStackProps extends ViewProps{
+    transitioning?: number
+    progress?: number
+  }
+  
+  export interface ScreenStackHeaderConfigProps extends ViewProps {
+    title?: string
+    titleFontFamily?:string
+    titleFontSize?: number
+    titleColor?: string
+    backTitle?: string
+    backTitleFontFamily?: string
+    backTitleFontSize?: string
+    backgroundColor?: string
+    color?: string
+    largeTitle?: boolean
+    largeTitleFontFamily?: string
+    largeTitleFontSize?: number
+    hideBackButton?: boolean
+    hideShadow?: boolean
+    hide?: boolean
+    translucent?: boolean
+    gestureEnabled?:boolean
+  }
+
   export const NativeScreen: ComponentClass<ScreenProps>;
   export const NativeScreenContainer: ComponentClass<ScreenContainerProps>;
+  export const ScreenStack: ComponentClass<ScreenStackProps>;
+  export const ScreenStackHeaderConfig: ComponentClass<ScreenStackHeaderConfigProps>;
 }
