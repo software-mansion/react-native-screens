@@ -12,6 +12,10 @@ declare module 'react-native-screens' {
   export interface ScreenProps extends ViewProps {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
     onComponentRef?: (view: any) => void;
+    onAppear?: () => void;
+    onDismissed?: () => void;
+    stackPresentation: 'push' | 'modal' |'containedModal'| 'transparentModal' | 'containedTransparentModal';
+    stackAnimation?: 'default' | 'none' | 'fade' | 'flip';
   }
   export const Screen: ComponentClass<ScreenProps>;
 
