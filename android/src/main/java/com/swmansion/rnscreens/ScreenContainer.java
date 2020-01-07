@@ -25,7 +25,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   private final Set<ScreenFragment> mActiveScreenFragments = new HashSet<>();
   private final ArrayList<Runnable> mAfterTransitionRunnables = new ArrayList<>(1);
 
-  private @Nullable FragmentManager mFragmentManager;
+  protected @Nullable FragmentManager mFragmentManager;
   private @Nullable FragmentTransaction mCurrentTransaction;
   private @Nullable FragmentTransaction mProcessingTransaction;
   private boolean mNeedUpdate;
@@ -176,16 +176,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     return ((FragmentActivity) context).getSupportFragmentManager();
   }
 
-  protected final FragmentManager getFragmentManager() {
-    if (mFragmentManager == null) {
-      mFragmentManager = findFragmentManager();
-    }
-    return mFragmentManager;
-  }
-
   protected FragmentTransaction getOrCreateTransaction() {
     if (mCurrentTransaction == null) {
-      mCurrentTransaction = getFragmentManager().beginTransaction();
+      mCurrentTransaction = mFragmentManager.beginTransaction();
       mCurrentTransaction.setReorderingAllowed(true);
     }
     return mCurrentTransaction;
@@ -235,24 +228,11 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     return mScreenFragments.contains(screenFragment);
   }
 
-  protected void ensureFragmentManager() {
-    if (mFragmentManager != null && mFragmentManager.isDestroyed()) {
-      // When fragmentManager is destroyed, try to remove current fragment's views
-      for (int i = 0, size = mScreenFragments.size(); i < size; i++) {
-        ScreenFragment screenFragment = mScreenFragments.get(i);
-        removeView(screenFragment.getScreenRootView());
-      }
-      mFragmentManager = null;
-      mActiveScreenFragments.clear();
-      mNeedUpdate = true;
-    }
-  }
-
   @Override
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
     mIsAttached = true;
-    ensureFragmentManager();
+    mFragmentManager = findFragmentManager();
     updateIfNeeded();
   }
 
@@ -260,6 +240,13 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     mIsAttached = false;
+
+    // fragment manager is destroyed so we can't do anything with it anymore
+    mFragmentManager = null;
+    // so we don't add the same screen twice after re-attach
+    removeAllViews();
+    // after re-attach we'll update the screen and add views again
+    markUpdated();
   }
 
   @Override
