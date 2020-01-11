@@ -30,7 +30,8 @@ class StackView extends React.Component {
     this.props.navigation.dispatch(StackActions.pop({ key: route.key }));
   };
 
-  _onSceneFocus = route => {
+  _onSceneFocus = (route, descriptor) => {
+    descriptor.options && descriptor.options.onAppear && descriptor.options.onAppear()
     this.props.navigation.dispatch(
       StackActions.completeTransition({ toChildKey: route.key })
     );
@@ -95,7 +96,10 @@ class StackView extends React.Component {
 
     if (options.backButtonImage) {
       children.push(
-        <ScreenStackHeaderBackButtonImage source={options.backButtonImage} />
+        <ScreenStackHeaderBackButtonImage
+          key="backImage"
+          source={options.backButtonImage}
+        />
       );
     }
 
@@ -187,7 +191,7 @@ class StackView extends React.Component {
         stackAnimation={stackAnimation}
         stackPresentation={stackPresentation}
         gestureEnabled={gestureEnabled === undefined ? true : gestureEnabled}
-        onAppear={() => this._onSceneFocus(route)}
+        onAppear={() => this._onSceneFocus(route, descriptor)}
         onDismissed={() => this._removeScene(route)}>
         {this._renderHeaderConfig(index, route, descriptor)}
         <SceneView
@@ -218,7 +222,6 @@ const styles = StyleSheet.create({
 
 function createStackNavigator(routeConfigMap, stackConfig = {}) {
   const router = StackRouter(routeConfigMap, stackConfig);
-
   // Create a navigator with StackView as the view
   let Navigator = createNavigator(StackView, router, stackConfig);
   // if (!stackConfig.disableKeyboardHandling) {
