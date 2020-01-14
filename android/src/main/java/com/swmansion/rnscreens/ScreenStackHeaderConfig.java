@@ -238,6 +238,11 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     maybeUpdate();
   }
 
+  public void removeAllConfigSubviews() {
+    mConfigSubviews.clear();
+    maybeUpdate();
+  }
+
   public void addConfigSubview(ScreenStackHeaderSubview child, int index) {
     mConfigSubviews.add(index, child);
     maybeUpdate();
