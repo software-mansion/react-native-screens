@@ -53,12 +53,6 @@
   }
 }
 
-- (void)setPointerEvents:(RCTPointerEvents)pointerEvents
-{
-  // pointer events settings are managed by the parent screen container, we ignore
-  // any attempt of setting that via React props
-}
-
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
 {
   _stackPresentation = stackPresentation;

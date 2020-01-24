@@ -131,11 +131,6 @@ public class Screen extends ViewGroup implements ReactPointerEventsView {
   }
 
   @Override
-  public PointerEvents getPointerEvents() {
-    return mTransitioning ? PointerEvents.NONE : PointerEvents.AUTO;
-  }
-
-  @Override
   public void setLayerType(int layerType, @Nullable Paint paint) {
     // ignore - layer type is controlled by `transitioning` prop
   }
