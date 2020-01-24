@@ -53,6 +53,12 @@
   }
 }
 
+- (void)setPointerEvents:(RCTPointerEvents)pointerEvents
+{
+  // pointer events settings are managed by the parent screen container, we ignore
+  // any attempt of setting that via React props
+}
+
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
 {
   _stackPresentation = stackPresentation;
@@ -114,6 +120,11 @@
   } else {
     ((RNSScreenStackHeaderConfig*) view).screenView = self;
   }
+}
+
+- (void)notifyFinishTransitioning
+{
+  [_controller notifyFinishTransitioning];
 }
 
 - (void)notifyDismissed
@@ -242,6 +253,12 @@
 {
   [super viewDidAppear:animated];
   [((RNSScreenView *)self.view) notifyAppear];
+}
+
+- (void)notifyFinishTransitioning
+{
+  [_previousFirstResponder becomeFirstResponder];
+  _previousFirstResponder = nil;
 }
 
 - (void)loadView
