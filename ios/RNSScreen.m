@@ -116,11 +116,6 @@
   }
 }
 
-- (void)notifyFinishTransitioning
-{
-  [_controller notifyFinishTransitioning];
-}
-
 - (void)notifyDismissed
 {
   if (self.onDismissed) {
@@ -247,12 +242,6 @@
 {
   [super viewDidAppear:animated];
   [((RNSScreenView *)self.view) notifyAppear];
-}
-
-- (void)notifyFinishTransitioning
-{
-  [_previousFirstResponder becomeFirstResponder];
-  _previousFirstResponder = nil;
 }
 
 - (void)loadView

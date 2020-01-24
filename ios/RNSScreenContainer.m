@@ -124,15 +124,9 @@
     for (RNSScreenView *screen in _reactSubviews) {
       if (screen.active) {
         [self attachScreen:screen];
+        [[screen controller] becomeFirstResponder];
       }
     }
-  }
-
-  // if we are down to one active screen it means the transitioning is over and we want to notify
-  // the transition has finished
-  if ((activeScreenRemoved || activeScreenAdded) && _activeScreens.count == 1) {
-    RNSScreenView *singleActiveScreen = [_activeScreens anyObject];
-    [singleActiveScreen notifyFinishTransitioning];
   }
 
   if ((activeScreenRemoved || activeScreenAdded) && _controller.presentedViewController == nil) {
