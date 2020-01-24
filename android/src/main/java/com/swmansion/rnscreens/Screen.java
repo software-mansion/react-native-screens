@@ -16,7 +16,7 @@ import com.facebook.react.uimanager.PointerEvents;
 import com.facebook.react.uimanager.ReactPointerEventsView;
 import com.facebook.react.uimanager.UIManagerModule;
 
-public class Screen extends ViewGroup implements ReactPointerEventsView {
+public class Screen extends ViewGroup {
 
   public enum StackPresentation {
     PUSH,
