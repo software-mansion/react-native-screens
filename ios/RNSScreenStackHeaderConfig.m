@@ -159,10 +159,10 @@
     }
 
     if (@available(iOS 11.0, *)) {
-      if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.titleColor)) {
+      if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
-        if (config.titleColor) {
-          largeAttrs[NSForegroundColorAttributeName] = config.titleColor;
+        if (config.largeTitleColor) {
+          largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor;
         }
         CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
         if (config.largeTitleFontFamily) {
@@ -356,11 +356,11 @@
       appearance.titleTextAttributes = attrs;
     }
 
-    if (config.largeTitleFontFamily || config.largeTitleFontSize || config.titleColor) {
+    if (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor) {
       NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
 
-      if (config.titleColor) {
-        largeAttrs[NSForegroundColorAttributeName] = config.titleColor;
+      if (config.largeTitleColor) {
+        largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor;
       }
 
       CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
@@ -457,6 +457,7 @@ RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(largeTitleColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 // `hidden` is an UIView property, we need to use different name internally

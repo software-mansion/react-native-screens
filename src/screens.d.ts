@@ -122,6 +122,11 @@ declare module 'react-native-screens' {
      */
     largeTitleFontSize?: number;
     /**
+     * @host (iOS only)
+     * @description Customize the color to be used for the large title.
+     */
+    largeTitleColor?: string;
+    /**
      * Pass HeaderLeft, HeaderRight and HeaderTitle
      */
     children?: React.ReactNode;
