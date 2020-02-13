@@ -25,12 +25,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   protected final ArrayList<T> mScreenFragments = new ArrayList<>();
   private final ArrayList<Runnable> mAfterTransitionRunnables = new ArrayList<>(1);
 
-  protected @Nullable
-  FragmentManager mFragmentManager;
-  private @Nullable
-  FragmentTransaction mCurrentTransaction;
-  private @Nullable
-  FragmentTransaction mProcessingTransaction;
+  protected @Nullable FragmentManager mFragmentManager;
+  private @Nullable FragmentTransaction mCurrentTransaction;
+  private @Nullable FragmentTransaction mProcessingTransaction;
   private boolean mNeedUpdate;
   private boolean mIsAttached;
   private boolean mIsTransitioning;
