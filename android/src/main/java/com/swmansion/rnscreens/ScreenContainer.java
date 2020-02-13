@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -22,12 +23,14 @@ import java.util.Set;
 public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
   protected final ArrayList<T> mScreenFragments = new ArrayList<>();
-  private final Set<ScreenFragment> mActiveScreenFragments = new HashSet<>();
   private final ArrayList<Runnable> mAfterTransitionRunnables = new ArrayList<>(1);
 
-  protected @Nullable FragmentManager mFragmentManager;
-  private @Nullable FragmentTransaction mCurrentTransaction;
-  private @Nullable FragmentTransaction mProcessingTransaction;
+  protected @Nullable
+  FragmentManager mFragmentManager;
+  private @Nullable
+  FragmentTransaction mCurrentTransaction;
+  private @Nullable
+  FragmentTransaction mProcessingTransaction;
   private boolean mNeedUpdate;
   private boolean mIsAttached;
   private boolean mIsTransitioning;
@@ -204,22 +207,21 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       mProcessingTransaction.runOnCommit(new Runnable() {
         @Override
         public void run() {
-         if (mProcessingTransaction == transaction) {
-           // we need to take into account that commit is initiated with some other transaction while
-           // the previous one is still processing. In this case mProcessingTransaction gets overwritten
-           // and we don't want to set it to null until the second transaction is finished.
-           mProcessingTransaction = null;
-         }
+          if (mProcessingTransaction == transaction) {
+            // we need to take into account that commit is initiated with some other transaction while
+            // the previous one is still processing. In this case mProcessingTransaction gets overwritten
+            // and we don't want to set it to null until the second transaction is finished.
+            mProcessingTransaction = null;
+          }
         }
       });
-      mCurrentTransaction.commitAllowingStateLoss();
+      mCurrentTransaction.commitNowAllowingStateLoss();
       mCurrentTransaction = null;
     }
   }
 
   private void attachScreen(ScreenFragment screenFragment) {
     getOrCreateTransaction().add(getId(), screenFragment);
-    mActiveScreenFragments.add(screenFragment);
   }
 
   private void moveToFront(ScreenFragment screenFragment) {
@@ -230,7 +232,6 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
   private void detachScreen(ScreenFragment screenFragment) {
     getOrCreateTransaction().remove(screenFragment);
-    mActiveScreenFragments.remove(screenFragment);
   }
 
   protected boolean isScreenActive(ScreenFragment screenFragment) {
@@ -255,13 +256,14 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     super.onDetachedFromWindow();
     mIsAttached = false;
 
-    // fragment manager is destroyed so we can't do anything with it anymore
-    mFragmentManager = null;
-    // so we don't add the same screen twice after re-attach
-    removeAllViews();
-    mActiveScreenFragments.clear();
-    // after re-attach we'll update the screen and add views again
-    markUpdated();
+    if (mFragmentManager == null || mFragmentManager.isStateSaved()) {
+      // fragment manager is destroyed so we can't do anything with it anymore
+      mFragmentManager = null;
+      // so we don't add the same screen twice after re-attach
+      removeAllViews();
+      // after re-attach we'll update the screen and add views again
+      markUpdated();
+    }
   }
 
   @Override
@@ -282,11 +284,11 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
   protected void onUpdate() {
     // detach screens that are no longer active
-    Set<ScreenFragment> orphaned = new HashSet<>(mActiveScreenFragments);
+    Set<Fragment> orphaned = new HashSet<>(mFragmentManager.getFragments());
     for (int i = 0, size = mScreenFragments.size(); i < size; i++) {
       ScreenFragment screenFragment = mScreenFragments.get(i);
       boolean isActive = isScreenActive(screenFragment);
-      if (!isActive && mActiveScreenFragments.contains(screenFragment)) {
+      if (!isActive && screenFragment.isAdded()) {
         detachScreen(screenFragment);
       }
       orphaned.remove(screenFragment);
@@ -312,7 +314,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     for (int i = 0, size = mScreenFragments.size(); i < size; i++) {
       ScreenFragment screenFragment = mScreenFragments.get(i);
       boolean isActive = isScreenActive(screenFragment);
-      if (isActive && !mActiveScreenFragments.contains(screenFragment)) {
+      if (isActive && !screenFragment.isAdded()) {
         addedBefore = true;
         attachScreen(screenFragment);
       } else if (isActive && addedBefore) {
