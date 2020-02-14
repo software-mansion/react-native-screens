@@ -260,9 +260,9 @@
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
     [((RNSScreenView *)self.view) notifyDismissed];
+    _view = self.view;
+    self.view = nil;
   }
-  _view = self.view;
-  self.view = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
