@@ -23,6 +23,7 @@
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
 @property (nonatomic) BOOL hideBackButton;
 @property (nonatomic) BOOL hideShadow;
+@property (nonatomic) BOOL scrollEdgeHideShadow;
 @property (nonatomic) BOOL translucent;
 
 + (void)willShowViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig*)config;
