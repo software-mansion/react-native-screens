@@ -201,7 +201,7 @@
         RCTImageSource *source = imageView.imageSources[0];
         [imageView reactSetFrame:CGRectMake(imageView.frame.origin.x,
                                             imageView.frame.origin.y,
-                                            source.size.width, 
+                                            source.size.width,
                                             source.size.height)];
       }
       UIImage *image = imageView.image;
@@ -253,6 +253,79 @@
 {
   [self updateViewController:vc withConfig:config];
 }
+
+#ifdef __IPHONE_13_0
++ (UINavigationBarAppearance*)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
+{
+  UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
+
+  if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
+    // transparent background color
+    [appearance configureWithTransparentBackground];
+  } else {
+    // non-transparent background or default background
+    if (config.translucent) {
+      [appearance configureWithDefaultBackground];
+    } else {
+      [appearance configureWithOpaqueBackground];
+    }
+
+    // set background color if specified
+    if (config.backgroundColor) {
+      appearance.backgroundColor = config.backgroundColor;
+    }
+  }
+
+  if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
+    appearance.backgroundColor = config.backgroundColor;
+  }
+
+  if (config.hideShadow) {
+    appearance.shadowColor = nil;
+  }
+
+  if (config.titleFontFamily || config.titleFontSize || config.titleColor) {
+    NSMutableDictionary *attrs = [NSMutableDictionary new];
+
+    if (config.titleColor) {
+      attrs[NSForegroundColorAttributeName] = config.titleColor;
+    }
+
+    CGFloat size = config.titleFontSize ? [config.titleFontSize floatValue] : 17;
+    if (config.titleFontFamily) {
+      attrs[NSFontAttributeName] = [UIFont fontWithName:config.titleFontFamily size:size];
+    } else {
+      attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:size];
+    }
+    appearance.titleTextAttributes = attrs;
+  }
+
+  if (config.largeTitleFontFamily || config.largeTitleFontSize || config.titleColor) {
+    NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
+
+    if (config.titleColor) {
+      largeAttrs[NSForegroundColorAttributeName] = config.titleColor;
+    }
+
+    CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
+    if (config.largeTitleFontFamily) {
+      largeAttrs[NSFontAttributeName] = [UIFont fontWithName:config.largeTitleFontFamily size:largeSize];
+    } else {
+      largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:largeSize];
+    }
+
+    appearance.largeTitleTextAttributes = largeAttrs;
+  }
+
+  UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
+  if (backButtonImage) {
+    [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
+  } else if (appearance.backIndicatorImage) {
+    [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
+  }
+  return appearance;
+}
+#endif
 
 + (void)updateViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
@@ -313,76 +386,13 @@
   }
 #ifdef __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
-    UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
-    if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
-      // transparent background color
-      [appearance configureWithTransparentBackground];
-    } else {
-      // non-transparent background or default background
-      if (config.translucent) {
-        [appearance configureWithDefaultBackground];
-      } else {
-        [appearance configureWithOpaqueBackground];
-      }
-
-      // set background color if specified
-      if (config.backgroundColor) {
-        appearance.backgroundColor = config.backgroundColor;
-      }
-    }
-
-    if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
-      appearance.backgroundColor = config.backgroundColor;
-    }
-
-    if (config.hideShadow) {
-      appearance.shadowColor = nil;
-    }
-
-    if (config.titleFontFamily || config.titleFontSize || config.titleColor) {
-      NSMutableDictionary *attrs = [NSMutableDictionary new];
-
-      if (config.titleColor) {
-        attrs[NSForegroundColorAttributeName] = config.titleColor;
-      }
-
-      CGFloat size = config.titleFontSize ? [config.titleFontSize floatValue] : 17;
-      if (config.titleFontFamily) {
-        attrs[NSFontAttributeName] = [UIFont fontWithName:config.titleFontFamily size:size];
-      } else {
-        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:size];
-      }
-      appearance.titleTextAttributes = attrs;
-    }
-
-    if (config.largeTitleFontFamily || config.largeTitleFontSize || config.titleColor) {
-      NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
-
-      if (config.titleColor) {
-        largeAttrs[NSForegroundColorAttributeName] = config.titleColor;
-      }
-
-      CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
-      if (config.largeTitleFontFamily) {
-        largeAttrs[NSFontAttributeName] = [UIFont fontWithName:config.largeTitleFontFamily size:largeSize];
-      } else {
-        largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:largeSize];
-      }
-
-      appearance.largeTitleTextAttributes = largeAttrs;
-    }
-
-    UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
-    if (backButtonImage) {
-      [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
-    } else if (appearance.backIndicatorImage) {
-      [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
-    }
-
+    UINavigationBarAppearance *appearance = [self buildAppearance: vc withConfig:config];
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
-    navitem.scrollEdgeAppearance = appearance;
+    UINavigationBarAppearance *scrollEdgeAppearance = [self buildAppearance: vc withConfig:config];
+    scrollEdgeAppearance.backgroundColor = config.scrollEdgeBackgroundColor;
+    navitem.scrollEdgeAppearance = scrollEdgeAppearance;
   } else
 #endif
   {
@@ -470,6 +480,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(scrollEdgeBackgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)

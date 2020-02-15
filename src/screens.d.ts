@@ -84,6 +84,10 @@ declare module 'react-native-screens' {
      */
     backgroundColor?: string;
     /**
+     *@description Controlls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation ba.
+     */
+    scrollEdgeBackgroundColor?: string;
+    /**
      * @description Boolean that allows for disabling drop shadow under navigation header. The default value is true.
      */
     hideShadow?: boolean;
