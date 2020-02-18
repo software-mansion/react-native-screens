@@ -210,6 +210,14 @@
     for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
       UIViewController *next = controllers[i];
       BOOL animate = (i == controllers.count - 1);
+
+      if (animate && [next.view isKindOfClass:[RNSScreenView class]]) {
+        RNSScreenView *screen = (RNSScreenView*)next.view;
+        if (screen.stackAnimation == RNSScreenStackAnimationNone) {
+          animate = NO;
+        }
+      }
+
       [previous presentViewController:next
                              animated:animate
                            completion:animate ? dispatchFinishTransitioning : nil];
@@ -221,8 +229,19 @@
   };
 
   if (changeRootController.presentedViewController) {
+    BOOL animate = (changeRootIndex == controllers.count);
+
+    UIViewController *lastTop = _controller.viewControllers.lastObject;
+
+    if (animate && lastTop && [lastTop.view isKindOfClass:[RNSScreenView class]]) {
+      RNSScreenView *screen = (RNSScreenView*)lastTop.view;
+      if (screen.stackAnimation == RNSScreenStackAnimationNone) {
+        animate = NO;
+      }
+    }
+
     [changeRootController
-     dismissViewControllerAnimated:(changeRootIndex == controllers.count)
+     dismissViewControllerAnimated:animate
      completion:finish];
   } else {
     finish();
