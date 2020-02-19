@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-// eslint-disable-next-line import/no-unresolved
 import { ScreenProps } from 'react-native-screens';
 import {
   DefaultNavigatorOptions,

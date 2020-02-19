@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   ScreenStackHeaderConfig,
   ScreenStackHeaderRightView,
-  // eslint-disable-next-line import/no-unresolved
 } from 'react-native-screens';
 import { Route, useTheme } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '../types';
@@ -30,7 +29,6 @@ export default function HeaderConfig(props: Props) {
     headerLargeTitleStyle = {},
     headerBackTitleStyle = {},
     headerShown,
-    gestureEnabled,
   } = props;
 
   return (

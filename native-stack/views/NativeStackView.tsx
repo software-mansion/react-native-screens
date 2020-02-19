@@ -4,7 +4,6 @@ import {
   ScreenStack,
   Screen as ScreenComponent,
   ScreenProps,
-  // eslint-disable-next-line import/no-unresolved
 } from 'react-native-screens';
 import {
   StackNavigationState,
