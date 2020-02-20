@@ -114,6 +114,25 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     config.setHidden(hidden);
   }
 
+  @ReactProp(name = "insetBackButton")
+  public void setInsetBackButton(ScreenStackHeaderConfig config, int insetBackButton) {
+    config.setInsetBackButton(insetBackButton);
+  }
+
+  @ReactProp(name = "insetEndAction")
+  public void setInsetEndAction(ScreenStackHeaderConfig config, int insetEndAction) {
+    config.setInsetEndAction(insetEndAction);
+  }
+  @ReactProp(name = "insetRight")
+  public void setInsetRight(ScreenStackHeaderConfig config, int insetRight) {
+    config.setInsetRight(insetRight);
+  }
+
+  @ReactProp(name = "insetLeft")
+  public void setInsetLeft(ScreenStackHeaderConfig config, int insetLeft) {
+    config.setInsetLeft(insetLeft);
+  }
+
 
 //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)

@@ -23,297 +23,334 @@ import java.util.ArrayList;
 
 public class ScreenStackHeaderConfig extends ViewGroup {
 
-  private final ArrayList<ScreenStackHeaderSubview> mConfigSubviews = new ArrayList<>(3);
-  private String mTitle;
-  private int mTitleColor;
-  private String mTitleFontFamily;
-  private float mTitleFontSize;
-  private int mBackgroundColor;
-  private boolean mIsHidden;
-  private boolean mIsBackButtonHidden;
-  private boolean mIsShadowHidden;
-  private boolean mDestroyed;
-  private int mTintColor;
-  private final Toolbar mToolbar;
+    private final ArrayList<ScreenStackHeaderSubview> mConfigSubviews = new ArrayList<>(3);
+    private String mTitle;
+    private int mTitleColor;
+    private String mTitleFontFamily;
+    private float mTitleFontSize;
+    private int mBackgroundColor;
+    private boolean mIsHidden;
+    private boolean mIsBackButtonHidden;
+    private int mInsetBackButton = -1;
+    private int mInsetEndAction = -1;
+    private int mInsetLeft = -1;
+    private int mInsetRight = -1;
+    private boolean mIsShadowHidden;
+    private boolean mDestroyed;
+    private int mTintColor;
+    private final Toolbar mToolbar;
 
-  private boolean mIsAttachedToWindow = false;
+    private boolean mIsAttachedToWindow = false;
 
-  private OnClickListener mBackClickListener = new OnClickListener() {
+    private OnClickListener mBackClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ScreenStack stack = getScreenStack();
+            ScreenStackFragment fragment = getScreenFragment();
+            if (stack.getRootScreen() == fragment.getScreen()) {
+                Fragment parentFragment = fragment.getParentFragment();
+                if (parentFragment instanceof ScreenStackFragment) {
+                    ((ScreenStackFragment) parentFragment).dismiss();
+                }
+            } else {
+                fragment.dismiss();
+            }
+        }
+    };
+
+    public ScreenStackHeaderConfig(Context context) {
+        super(context);
+        setVisibility(View.GONE);
+
+        mToolbar = new Toolbar(context);
+
+        // set primary color as background by default
+        TypedValue tv = new TypedValue();
+        if (context.getTheme().resolveAttribute(android.R.attr.colorPrimary, tv, true)) {
+            mToolbar.setBackgroundColor(tv.data);
+        }
+    }
+
     @Override
-    public void onClick(View view) {
-      ScreenStack stack = getScreenStack();
-      ScreenStackFragment fragment = getScreenFragment();
-      if (stack.getRootScreen() == fragment.getScreen()) {
-        Fragment parentFragment = fragment.getParentFragment();
-        if (parentFragment instanceof ScreenStackFragment) {
-          ((ScreenStackFragment) parentFragment).dismiss();
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        // no-op
+    }
+
+    public void destroy() {
+        mDestroyed = true;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mIsAttachedToWindow = true;
+        onUpdate();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mIsAttachedToWindow = false;
+    }
+
+    private Screen getScreen() {
+        ViewParent screen = getParent();
+        if (screen instanceof Screen) {
+            return (Screen) screen;
         }
-      } else {
-        fragment.dismiss();
-      }
-    }
-  };
-
-  public ScreenStackHeaderConfig(Context context) {
-    super(context);
-    setVisibility(View.GONE);
-
-    mToolbar = new Toolbar(context);
-    // reset content insets to be 0 to allow react position custom navbar views. Note that this does
-    // not affect platform native back button as toolbar does not apply left inset when navigation
-    // button is specified
-    mToolbar.setContentInsetsAbsolute(0, 0);
-
-    // set primary color as background by default
-    TypedValue tv = new TypedValue();
-    if (context.getTheme().resolveAttribute(android.R.attr.colorPrimary, tv, true)) {
-      mToolbar.setBackgroundColor(tv.data);
-    }
-  }
-
-  @Override
-  protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    // no-op
-  }
-
-  public void destroy() {
-    mDestroyed = true;
-  }
-
-  @Override
-  protected void onAttachedToWindow() {
-    super.onAttachedToWindow();
-    mIsAttachedToWindow = true;
-    onUpdate();
-  }
-
-  @Override
-  protected void onDetachedFromWindow() {
-    super.onDetachedFromWindow();
-    mIsAttachedToWindow = false;
-  }
-
-  private Screen getScreen() {
-    ViewParent screen = getParent();
-    if (screen instanceof Screen) {
-      return (Screen) screen;
-    }
-    return null;
-  }
-
-  private ScreenStack getScreenStack() {
-    Screen screen = getScreen();
-    if (screen  != null) {
-      ScreenContainer container = screen.getContainer();
-      if (container instanceof ScreenStack) {
-        return (ScreenStack) container;
-      }
-    }
-    return null;
-  }
-
-  private ScreenStackFragment getScreenFragment() {
-    ViewParent screen = getParent();
-    if (screen instanceof Screen) {
-      Fragment fragment = ((Screen) screen).getFragment();
-      if (fragment instanceof ScreenStackFragment) {
-        return (ScreenStackFragment) fragment;
-      }
-    }
-    return null;
-  }
-
-  public void onUpdate() {
-    Screen parent = (Screen) getParent();
-    final ScreenStack stack = getScreenStack();
-    boolean isTop = stack == null ? true : stack.getTopScreen() == parent;
-
-    if (!mIsAttachedToWindow || !isTop || mDestroyed) {
-      return;
+        return null;
     }
 
-    AppCompatActivity activity = (AppCompatActivity) getScreenFragment().getActivity();
-    if (activity == null) {
-      return;
-    }
-
-    if (mIsHidden) {
-      if (mToolbar.getParent() != null) {
-        getScreenFragment().removeToolbar();
-      }
-      return;
-    }
-
-    if (mToolbar.getParent() == null) {
-      getScreenFragment().setToolbar(mToolbar);
-    }
-
-    activity.setSupportActionBar(mToolbar);
-    ActionBar actionBar = activity.getSupportActionBar();
-
-    // hide back button
-    actionBar.setDisplayHomeAsUpEnabled(getScreenFragment().canNavigateBack() ? !mIsBackButtonHidden : false);
-
-    // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
-    // navigation click listener. The default behavior set in the wrapper is to call into
-    // menu options handlers, but we prefer the back handling logic to stay here instead.
-    mToolbar.setNavigationOnClickListener(mBackClickListener);
-
-
-    // shadow
-    getScreenFragment().setToolbarShadowHidden(mIsShadowHidden);
-
-    // title
-    actionBar.setTitle(mTitle);
-    TextView titleTextView = getTitleTextView();
-    if (mTitleColor != 0) {
-      mToolbar.setTitleTextColor(mTitleColor);
-    }
-    if (titleTextView != null) {
-      if (mTitleFontFamily != null) {
-        titleTextView.setTypeface(ReactFontManager.getInstance().getTypeface(
-                mTitleFontFamily, 0, getContext().getAssets()));
-      }
-      if (mTitleFontSize > 0) {
-        titleTextView.setTextSize(mTitleFontSize);
-      }
-    }
-
-    // background
-    if (mBackgroundColor != 0) {
-      mToolbar.setBackgroundColor(mBackgroundColor);
-    }
-
-    // color
-    if (mTintColor != 0) {
-      Drawable navigationIcon = mToolbar.getNavigationIcon();
-      if (navigationIcon != null) {
-        navigationIcon.setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP);
-      }
-    }
-
-    // subviews
-    for (int i = mToolbar.getChildCount() - 1; i >= 0; i--) {
-      if (mToolbar.getChildAt(i) instanceof ScreenStackHeaderSubview) {
-        mToolbar.removeViewAt(i);
-      }
-    }
-    for (int i = 0, size = mConfigSubviews.size(); i < size; i++) {
-      ScreenStackHeaderSubview view = mConfigSubviews.get(i);
-      ScreenStackHeaderSubview.Type type = view.getType();
-
-      if (type == ScreenStackHeaderSubview.Type.BACK) {
-        // we special case BACK button header config type as we don't add it as a view into toolbar
-        // but instead just copy the drawable from imageview that's added as a first child to it.
-        View firstChild = view.getChildAt(0);
-        if (!(firstChild instanceof ImageView)) {
-          throw new JSApplicationIllegalArgumentException("Back button header config view should have Image as first child");
+    private ScreenStack getScreenStack() {
+        Screen screen = getScreen();
+        if (screen != null) {
+            ScreenContainer container = screen.getContainer();
+            if (container instanceof ScreenStack) {
+                return (ScreenStack) container;
+            }
         }
-        actionBar.setHomeAsUpIndicator(((ImageView) firstChild).getDrawable());
-        continue;
-      }
-
-      Toolbar.LayoutParams params =
-              new Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-
-      switch (type) {
-        case LEFT:
-          // when there is a left item we need to disable navigation icon
-          // we also hide title as there is no other way to display left side items
-          mToolbar.setNavigationIcon(null);
-          mToolbar.setTitle(null);
-          params.gravity = Gravity.LEFT;
-          break;
-        case RIGHT:
-          params.gravity = Gravity.RIGHT;
-          break;
-        case CENTER:
-          params.width = LayoutParams.MATCH_PARENT;
-          params.gravity = Gravity.CENTER_HORIZONTAL;
-          mToolbar.setTitle(null);
-          break;
-      }
-
-      view.setLayoutParams(params);
-      mToolbar.addView(view);
+        return null;
     }
-  }
 
-  private void maybeUpdate() {
-    if (getParent() != null && !mDestroyed) {
-      onUpdate();
-    }
-  }
-
-  public ScreenStackHeaderSubview getConfigSubview(int index) {
-    return mConfigSubviews.get(index);
-  }
-
-  public int getConfigSubviewsCount() {
-    return mConfigSubviews.size();
-  }
-
-  public void removeConfigSubview(int index) {
-    mConfigSubviews.remove(index);
-    maybeUpdate();
-  }
-
-  public void removeAllConfigSubviews() {
-    mConfigSubviews.clear();
-    maybeUpdate();
-  }
-
-  public void addConfigSubview(ScreenStackHeaderSubview child, int index) {
-    mConfigSubviews.add(index, child);
-    maybeUpdate();
-  }
-
-  private TextView getTitleTextView() {
-    for (int i = 0, size = mToolbar.getChildCount(); i < size; i++) {
-      View view = mToolbar.getChildAt(i);
-      if (view instanceof TextView) {
-        TextView tv = (TextView) view;
-        if (tv.getText().equals(mToolbar.getTitle())) {
-          return tv;
+    private ScreenStackFragment getScreenFragment() {
+        ViewParent screen = getParent();
+        if (screen instanceof Screen) {
+            Fragment fragment = ((Screen) screen).getFragment();
+            if (fragment instanceof ScreenStackFragment) {
+                return (ScreenStackFragment) fragment;
+            }
         }
-      }
+        return null;
     }
-    return null;
-  }
 
-  public void setTitle(String title) {
-    mTitle = title;
-  }
+    public void onUpdate() {
+        Screen parent = (Screen) getParent();
+        final ScreenStack stack = getScreenStack();
+        boolean isTop = stack == null ? true : stack.getTopScreen() == parent;
 
-  public void setTitleFontFamily(String titleFontFamily) {
-    mTitleFontFamily = titleFontFamily;
-  }
+        if (!mIsAttachedToWindow || !isTop || mDestroyed) {
+            return;
+        }
 
-  public void setTitleFontSize(float titleFontSize) {
-    mTitleFontSize = titleFontSize;
-  }
+        AppCompatActivity activity = (AppCompatActivity) getScreenFragment().getActivity();
+        if (activity == null) {
+            return;
+        }
 
-  public void setTitleColor(int color) {
-    mTitleColor = color;
-  }
+        if (mIsHidden) {
+            if (mToolbar.getParent() != null) {
+                getScreenFragment().removeToolbar();
+            }
+            return;
+        }
 
-  public void setTintColor(int color) {
-    mTintColor = color;
-  }
+        if (mToolbar.getParent() == null) {
+            getScreenFragment().setToolbar(mToolbar);
+        }
 
-  public void setBackgroundColor(int color) {
-    mBackgroundColor = color;
-  }
+        activity.setSupportActionBar(mToolbar);
+        ActionBar actionBar = activity.getSupportActionBar();
 
-  public void setHideShadow(boolean hideShadow) {
-    mIsShadowHidden = hideShadow;
-  }
+        // hide back button
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(getScreenFragment().canNavigateBack() && !mIsBackButtonHidden);
+        }
 
-  public void setHideBackButton(boolean hideBackButton) {
-    mIsBackButtonHidden = hideBackButton;
-  }
+        // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
+        // navigation click listener. The default behavior set in the wrapper is to call into
+        // menu options handlers, but we prefer the back handling logic to stay here instead.
+        mToolbar.setNavigationOnClickListener(mBackClickListener);
 
-  public void setHidden(boolean hidden) {
-    mIsHidden = hidden;
-  }
+        //content insets
+        setConsentInsets();
+
+        // shadow
+        getScreenFragment().setToolbarShadowHidden(mIsShadowHidden);
+
+        // title
+        actionBar.setTitle(mTitle);
+        TextView titleTextView = getTitleTextView();
+        if (mTitleColor != 0) {
+            mToolbar.setTitleTextColor(mTitleColor);
+        }
+        if (titleTextView != null) {
+            if (mTitleFontFamily != null) {
+                titleTextView.setTypeface(ReactFontManager.getInstance().getTypeface(
+                        mTitleFontFamily, 0, getContext().getAssets()));
+            }
+            if (mTitleFontSize > 0) {
+                titleTextView.setTextSize(mTitleFontSize);
+            }
+        }
+
+        // background
+        if (mBackgroundColor != 0) {
+            mToolbar.setBackgroundColor(mBackgroundColor);
+        }
+
+        // color
+        if (mTintColor != 0) {
+            Drawable navigationIcon = mToolbar.getNavigationIcon();
+            if (navigationIcon != null) {
+                navigationIcon.setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP);
+            }
+        }
+
+        // subviews
+        for (int i = mToolbar.getChildCount() - 1; i >= 0; i--) {
+            if (mToolbar.getChildAt(i) instanceof ScreenStackHeaderSubview) {
+                mToolbar.removeViewAt(i);
+            }
+        }
+        for (int i = 0, size = mConfigSubviews.size(); i < size; i++) {
+            ScreenStackHeaderSubview view = mConfigSubviews.get(i);
+            ScreenStackHeaderSubview.Type type = view.getType();
+
+            if (type == ScreenStackHeaderSubview.Type.BACK) {
+                // we special case BACK button header config type as we don't add it as a view into toolbar
+                // but instead just copy the drawable from imageview that's added as a first child to it.
+                View firstChild = view.getChildAt(0);
+                if (!(firstChild instanceof ImageView)) {
+                    throw new JSApplicationIllegalArgumentException("Back button header config view should have Image as first child");
+                }
+                actionBar.setHomeAsUpIndicator(((ImageView) firstChild).getDrawable());
+                continue;
+            }
+
+            Toolbar.LayoutParams params =
+                    new Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+
+            switch (type) {
+                case LEFT:
+                    // when there is a left item we need to disable navigation icon
+                    // we also hide title as there is no other way to display left side items
+                    mToolbar.setNavigationIcon(null);
+                    mToolbar.setTitle(null);
+                    params.gravity = Gravity.LEFT;
+                    break;
+                case RIGHT:
+                    params.gravity = Gravity.RIGHT;
+                    break;
+                case CENTER:
+                    params.width = LayoutParams.MATCH_PARENT;
+                    params.gravity = Gravity.CENTER_HORIZONTAL;
+                    mToolbar.setTitle(null);
+                    break;
+            }
+
+            view.setLayoutParams(params);
+            mToolbar.addView(view);
+        }
+    }
+
+    private void maybeUpdate() {
+        if (getParent() != null && !mDestroyed) {
+            onUpdate();
+        }
+    }
+
+    public ScreenStackHeaderSubview getConfigSubview(int index) {
+        return mConfigSubviews.get(index);
+    }
+
+    public int getConfigSubviewsCount() {
+        return mConfigSubviews.size();
+    }
+
+    public void removeConfigSubview(int index) {
+        mConfigSubviews.remove(index);
+        maybeUpdate();
+    }
+
+    public void removeAllConfigSubviews() {
+        mConfigSubviews.clear();
+        maybeUpdate();
+    }
+
+    public void addConfigSubview(ScreenStackHeaderSubview child, int index) {
+        mConfigSubviews.add(index, child);
+        maybeUpdate();
+    }
+
+    /*
+     * Sets insets to toolbar content if specified or use default native defaults
+     * */
+    private void setConsentInsets() {
+        if (mInsetLeft == -1) mInsetLeft = mToolbar.getContentInsetStart();
+        if (mInsetRight == -1) mInsetRight = mToolbar.getContentInsetEnd();
+
+        mToolbar.setContentInsetsAbsolute(mInsetLeft, mInsetRight);
+
+        if (mInsetBackButton != -1)
+            mToolbar.setContentInsetStartWithNavigation(mInsetBackButton);
+
+        if (mInsetEndAction != -1)
+            mToolbar.setContentInsetEndWithActions(mInsetEndAction);
+    }
+
+
+    private TextView getTitleTextView() {
+        for (int i = 0, size = mToolbar.getChildCount(); i < size; i++) {
+            View view = mToolbar.getChildAt(i);
+            if (view instanceof TextView) {
+                TextView tv = (TextView) view;
+                if (tv.getText().equals(mToolbar.getTitle())) {
+                    return tv;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public void setTitleFontFamily(String titleFontFamily) {
+        mTitleFontFamily = titleFontFamily;
+    }
+
+    public void setTitleFontSize(float titleFontSize) {
+        mTitleFontSize = titleFontSize;
+    }
+
+    public void setTitleColor(int color) {
+        mTitleColor = color;
+    }
+
+    public void setTintColor(int color) {
+        mTintColor = color;
+    }
+
+    public void setBackgroundColor(int color) {
+        mBackgroundColor = color;
+    }
+
+    public void setHideShadow(boolean hideShadow) {
+        mIsShadowHidden = hideShadow;
+    }
+
+    public void setHideBackButton(boolean hideBackButton) {
+        mIsBackButtonHidden = hideBackButton;
+    }
+
+    public void setInsetBackButton(int insetBackButton) {
+        mInsetBackButton = insetBackButton;
+    }
+
+    public void setInsetEndAction(int insetEndAction) {
+        mInsetEndAction = insetEndAction;
+    }
+
+    public void setInsetLeft(int insetLeft) {
+        mInsetLeft = insetLeft;
+    }
+
+    public void setInsetRight(int insetRight) {
+        mInsetRight = insetRight;
+    }
+
+    public void setHidden(boolean hidden) {
+        mIsHidden = hidden;
+    }
 }

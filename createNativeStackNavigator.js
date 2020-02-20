@@ -72,6 +72,10 @@ class StackView extends React.Component {
       headerLargeTitleStyle,
       translucent,
       hideShadow,
+      insetLeft,
+      insetRight,
+      insetBackButton,
+      insetEndAction,
     } = options;
 
     const scene = {
@@ -98,6 +102,10 @@ class StackView extends React.Component {
       largeTitleFontSize:
         headerLargeTitleStyle && headerLargeTitleStyle.fontSize,
       hideShadow,
+      insetLeft,
+      insetRight,
+      insetBackButton,
+      insetEndAction,
     };
 
     const hasHeader = headerMode !== 'none' && options.header !== null;

@@ -64,7 +64,11 @@ export class Stack extends Component {
         stackAnimation="fade"
         active={1}
         onDismissed={() => this.removeByKey(key)}>
-        <ScreenStackHeaderConfig title={key}>
+        <ScreenStackHeaderConfig
+          title={key}
+          insetLeft={0}
+          insetRight={0}
+          insetBackButton={11}>
           {/* {index === 0 && (
             <ScreenStackHeaderLeftView>
               <TouchableHighlight onPress={() => alert('sdf')}>

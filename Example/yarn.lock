@@ -4811,7 +4811,7 @@ react-native-safe-area-view@^0.14.1:
     debounce "^1.2.0"
 
 "react-native-screens@file:..":
-  version "2.0.0-alpha.22"
+  version "2.0.0-beta.7"
   dependencies:
     debounce "^1.2.0"
 
