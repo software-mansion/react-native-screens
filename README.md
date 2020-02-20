@@ -202,6 +202,22 @@ If set to `true` the back button will not be rendered as a part of navigation he
 
 When set to `false` the back swipe gesture will be disabled when the parent `Screen` is on top of the stack. The default value is `true`.
 
+#### `insetBackButton` (Android only)
+
+Customize the inset between back button and content, it will still has small space between due size of image view containing icon. 
+ 
+#### `insetBackButton` (Android only)
+
+Customize the inset between end action and content.
+
+#### `insetLeft` (Android only)
+
+Customize the inset on left size of content.
+
+#### `insetRight` (Android only)
+
+Customize the inset on left size of content.
+
 #### `translucent` (iOS only)
 
 When set to `true`, it makes native navigation bar on iOS semi transparent with blur effect. It is a common way of presenting navigation bar introduced in iOS 11. The default value is `false`.
