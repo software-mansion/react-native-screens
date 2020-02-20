@@ -137,11 +137,11 @@ A callback that gets called when the current screen is dismissed by hardware bac
 
 #### `stackAnimation`
 
-Allows for the customization of how the given screen should appear/dissapear when pushed or popped at the top of the stack. The followin values are currently supported:
+Allows for the customization of how the given screen should appear/disappear when pushed or popped at the top of the stack. The following values are currently supported:
  - `"default"` – uses a platform default animation
  - `"fade"` – fades screen in or out
  - `"flip"` – flips the screen, requires `stackPresentation: "modal"` (iOS only)
- - `"none"` – the screen appears/dissapears without an animation
+ - `"none"` – the screen appears/disappears without an animation
 
  #### `stackPresentation`
 
@@ -155,7 +155,7 @@ Defines how the method that should be used to present the given screen. It is a 
 The config component is expected to be rendered as a direct children of `<Screen>`. It provides an ability to configure native navigation header that gets rendered as a part of native screen stack. The component acts as a "virtual" element that is not directly rendered under `Screen`. You can use its properties to customize platform native header for the parent screen and also render react-native components that you'd like to be displayed inside the header (e.g. in the title are or on the side).
 
 Along with this component properties that can be used to customize header behavior one can also use one or the below component containers to render custom react-native content in different areas of the native header:
- - `ScreenStackHeaderCenterView` – the childern will render in the center of the native navigation bar.
+ - `ScreenStackHeaderCenterView` – the children will render in the center of the native navigation bar.
  - `ScreenStackHeaderRightView` – the children will render on the right hand side of the navigation bar (or on the left hand side in case LTR locales are set on the user's device).
  - `ScreenStackHeaderLeftView` – the children will render on the left hand side of the navigation bar (or on the right hand side in case LTR locales are set on the user's device).
 
@@ -188,7 +188,7 @@ Allows for setting text color of the title.
 
 #### `backgroundColor`
 
-Controlls the color of the navigation header.
+Controls the color of the navigation header.
 
 #### `hideShadow`
 
