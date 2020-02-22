@@ -15,7 +15,7 @@ declare module 'react-native-screens' {
   export function enableScreens(shouldEnableScreens?: boolean): void;
   export function screensEnabled(): boolean;
 
-  export type StackPresentationTypes = 'push' | 'modal' | 'transparentModal' | 'fullScreenModal' | 'formSheet';
+  export type StackPresentationTypes = 'push' | 'modal' | 'transparentModal' | 'containedModal' | 'containedTransparentModal' | 'fullScreenModal' | 'formSheet';
   export type StackAnimationTypes = 'default' | 'fade' | 'flip' | 'none';
 
   export interface ScreenProps extends ViewProps {
@@ -29,8 +29,12 @@ declare module 'react-native-screens' {
     onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
      * @type "push" – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
-     * @type "modal" – the new screen will be presented modally. In addition this allow for a nested stack to be rendered inside such screens
-     * @type "transparentModal" – the new screen will be presented modally but in addition the second to last screen will remain attached to the stack container such that if the top screen is non opaque the content below can still be seen. If "modal" is used instead the below screen will get unmounted as soon as the transition ends.
+     * @type "modal" – blabla
+     * @type "transparentModal" – blabla
+     * @type "containedModal" – blabla
+     * @type "containedTransparentModal" – blabla
+     * @type "fullScreenModal" – blabla
+     * @type "formSheet" – blabla
      */
     stackPresentation: StackPresentationTypes;
     /**
