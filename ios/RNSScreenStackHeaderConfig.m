@@ -392,8 +392,8 @@
     navitem.compactAppearance = appearance;
 
     UINavigationBarAppearance *scrollEdgeAppearance = [self buildAppearance: vc withConfig:config];
-    scrollEdgeAppearance.backgroundColor = config.scrollEdgeBackgroundColor;
-    if (config.scrollEdgeHideShadow) {
+    scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
+    if (config.largeTitleHideShadow) {
         scrollEdgeAppearance.shadowColor = nil;
     }
     navitem.scrollEdgeAppearance = scrollEdgeAppearance;
@@ -484,14 +484,14 @@ RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(scrollEdgeBackgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(largeTitleBackgroundColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(largeTitleHideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(scrollEdgeHideShadow, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)

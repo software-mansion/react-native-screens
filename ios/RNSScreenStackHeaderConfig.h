@@ -15,15 +15,15 @@
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;
 @property (nonatomic, retain) UIColor *backgroundColor;
-@property (nonatomic, retain) UIColor *scrollEdgeBackgroundColor;
 @property (nonatomic, retain) UIColor *color;
 @property (nonatomic) BOOL hide;
 @property (nonatomic) BOOL largeTitle;
 @property (nonatomic, retain) NSString *largeTitleFontFamily;
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
+@property (nonatomic, retain) UIColor *largeTitleBackgroundColor;
+@property (nonatomic) BOOL largeTitleHideShadow;
 @property (nonatomic) BOOL hideBackButton;
 @property (nonatomic) BOOL hideShadow;
-@property (nonatomic) BOOL scrollEdgeHideShadow;
 @property (nonatomic) BOOL translucent;
 
 + (void)willShowViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig*)config;

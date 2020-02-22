@@ -84,17 +84,9 @@ declare module 'react-native-screens' {
      */
     backgroundColor?: string;
     /**
-     *@description Controlls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
-     */
-    scrollEdgeBackgroundColor?: string;
-    /**
      * @description Boolean that allows for disabling drop shadow under navigation header. The default value is true.
      */
     hideShadow?: boolean;
-    /**
-     * @description Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
-     */
-    scrollEdgeHideShadow?: boolean;
     /**
      * @description If set to true the back button will not be rendered as a part of navigation header.
      */
@@ -134,6 +126,14 @@ declare module 'react-native-screens' {
      * @description Customize the size of the font to be used for the large title.
      */
     largeTitleFontSize?: number;
+    /**
+     *@description Controlls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+     */
+    largeTitleBackgroundColor?: string;
+    /**
+     * @description Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+     */
+    largeTitleHideShadow?: boolean;
     /**
      * Pass HeaderLeft, HeaderRight and HeaderTitle
      */
