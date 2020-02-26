@@ -5,7 +5,7 @@ import {
   SceneView,
   StackActions,
   createNavigator,
-} from '@react-navigation/core';
+} from 'react-navigation';
 import { HeaderBackButton } from 'react-navigation-stack';
 import {
   ScreenStack,
