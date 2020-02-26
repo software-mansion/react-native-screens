@@ -7,13 +7,14 @@
     "test": "npm run format && npm run lint && npm run test:unit",
     "test:unit": "jest",
     "format": "prettier --write --list-different './src/**/*.js'",
-    "lint": "eslint --fix './src/**/*.js'",
+    "lint": "eslint --ext '.js,.ts,.tsx' --fix src native-stack",
     "precommit": "lint-staged"
   },
   "main": "src/screens",
   "types": "src/screens.d.ts",
   "files": [
     "src/",
+    "native-stack/",
     "createNativeStackNavigator.js",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
@@ -44,10 +45,15 @@
     "react-native": "*"
   },
   "devDependencies": {
+    "@react-navigation/native": "^5.0.5",
+    "@types/react": "^16.9.20",
+    "@types/react-native": "^0.61.15",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
     "babel-eslint": "^8.2.3",
     "babel-jest": "23.0.1",
     "babel-preset-react-native": "4.0.0",
-    "eslint": "^4.19.1",
+    "eslint": "^6.8.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-flowtype": "^2.50.0",
@@ -66,10 +72,11 @@
     "react": "^16.0.0-alpha.12",
     "react-dom": "^16.0.0-beta.5",
     "react-native": "^0.56.0",
-    "react-test-renderer": "^16.0.0-alpha.12"
+    "react-test-renderer": "^16.0.0-alpha.12",
+    "typescript": "^3.7.5"
   },
   "lint-staged": {
-    "*.js": [
+    "*.{js,ts,tsx}": [
       "prettier --write",
       "git add"
     ]
