@@ -1,12 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   StackRouter,
   SceneView,
   StackActions,
   createNavigator,
-} from '@react-navigation/core';
-import { createKeyboardAwareNavigator } from '@react-navigation/native';
+} from 'react-navigation';
 import { HeaderBackButton } from 'react-navigation-stack';
 import {
   ScreenStack,
@@ -25,9 +24,14 @@ function renderComponentOrThunk(componentOrThunk, props) {
   return componentOrThunk;
 }
 
+const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
+
 class StackView extends React.Component {
   _removeScene = route => {
-    this.props.navigation.dispatch(StackActions.pop({ key: route.key }));
+    this.props.navigation.dispatch({
+      type: REMOVE_ACTION,
+      key: route.key,
+    });
   };
 
   _onAppear = (route, descriptor) => {
@@ -204,9 +208,14 @@ class StackView extends React.Component {
     return (
       <Screen
         key={`screen_${route.key}`}
-        style={options.cardStyle}
+        style={[StyleSheet.absoluteFill, options.cardStyle]}
         stackAnimation={stackAnimation}
         stackPresentation={stackPresentation}
+        pointerEvents={
+          index === this.props.navigation.state.routes.length - 1
+            ? 'auto'
+            : 'none'
+        }
         gestureEnabled={
           options.gestureEnabled === undefined ? true : options.gestureEnabled
         }
@@ -243,13 +252,39 @@ const styles = StyleSheet.create({
 
 function createStackNavigator(routeConfigMap, stackConfig = {}) {
   const router = StackRouter(routeConfigMap, stackConfig);
-  // Create a navigator with StackView as the view
-  let Navigator = createNavigator(StackView, router, stackConfig);
-  // if (!stackConfig.disableKeyboardHandling) {
-  //   Navigator = createKeyboardAwareNavigator(Navigator, stackConfig);
-  // }
 
-  return Navigator;
+  // belowe we override getStateForAction method in order to add handling for
+  // a custom native stack navigation action. The action REMOVE that we want to
+  // add works in a similar way to POP, but it does not remove all the routes
+  // that sit on top of the removed route. For example if we have three routes
+  // [a,b,c] and call POP on b, then both b and c will go away. In case we
+  // call REMOVE on b, only b will be removed from the stack and the resulting
+  // state will be [a, c]
+  const superGetStateForAction = router.getStateForAction;
+  router.getStateForAction = (action, state) => {
+    if (action.type === REMOVE_ACTION) {
+      const { key, immediate } = action;
+      let backRouteIndex = state.index;
+      if (key) {
+        const backRoute = state.routes.find(route => route.key === key);
+        backRouteIndex = state.routes.indexOf(backRoute);
+      }
+
+      if (backRouteIndex > 0) {
+        const newRoutes = [...state.routes];
+        newRoutes.splice(backRouteIndex, 1);
+        return {
+          ...state,
+          routes: newRoutes,
+          index: newRoutes.length - 1,
+          isTransitioning: immediate !== true,
+        };
+      }
+    }
+    return superGetStateForAction(action, state);
+  };
+  // Create a navigator with StackView as the view
+  return createNavigator(StackView, router, stackConfig);
 }
 
 export default createStackNavigator;

@@ -97,7 +97,9 @@
   }
 
   if (vc != nil && nextVC == vc) {
-    [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self];
+    [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller
+                                          withConfig:self
+                                            animated:YES];
   }
 }
 
@@ -249,9 +251,9 @@
   return nil;
 }
 
-+ (void)willShowViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
++ (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig *)config
 {
-  [self updateViewController:vc withConfig:config];
+  [self updateViewController:vc withConfig:config animated:animated];
 }
 
 #ifdef __IPHONE_13_0
@@ -327,7 +329,7 @@
 }
 #endif
 
-+ (void)updateViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
++ (void)updateViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config animated:(BOOL)animated
 {
   UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
@@ -347,12 +349,8 @@
     vc.edgesForExtendedLayout = UIRectEdgeAll;
   }
 
-  [navctr setNavigationBarHidden:shouldHide animated:YES];
-#ifdef __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    vc.modalInPresentation = !config.screenView.gestureEnabled;
-  }
-#endif
+  [navctr setNavigationBarHidden:shouldHide animated:animated];
+
   if (shouldHide) {
     return;
   }
@@ -435,7 +433,8 @@
     }
   }
 
-  if (vc.transitionCoordinator != nil
+  if (animated
+      && vc.transitionCoordinator != nil
       && vc.transitionCoordinator.presentationStyle == UIModalPresentationNone
       && !wasHidden) {
     // when there is an ongoing transition we may need to update navbar setting in animation block

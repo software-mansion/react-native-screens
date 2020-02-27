@@ -8,7 +8,7 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
 
-@interface RNSScreenView () <UIAdaptivePresentationControllerDelegate>
+@interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
 
 @implementation RNSScreenView {
@@ -34,11 +34,21 @@
 
 - (void)reactSetFrame:(CGRect)frame
 {
-  if (_active) {
+  if (![self.reactViewController.parentViewController
+        isKindOfClass:[UINavigationController class]]) {
     [super reactSetFrame:frame];
   }
-  // ignore setFrame call from react, the frame of this view
-  // is controlled by the UIViewController it is contained in
+  // when screen is mounted under UINavigationController it's size is controller
+  // by the navigation controller itself. That is, it is set to fill space of
+  // the controller. In that case we ignore react layout system from managing
+  // the screen dimentions and we wait for the screen VC to update and then we
+  // pass the dimentions to ui view manager to take into account when laying out
+  // subviews
+}
+
+- (UIViewController *)reactViewController
+{
+  return _controller;
 }
 
 - (void)updateBounds
@@ -62,7 +72,6 @@
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
 {
-  _stackPresentation = stackPresentation;
   switch (stackPresentation) {
     case RNSScreenStackPresentationModal:
 #ifdef __IPHONE_13_0
@@ -75,6 +84,12 @@
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
 #endif
       break;
+    case RNSScreenStackPresentationFullScreenModal:
+      _controller.modalPresentationStyle = UIModalPresentationFullScreen;
+      break;
+    case RNSScreenStackPresentationFormSheet:
+      _controller.modalPresentationStyle = UIModalPresentationFormSheet;
+      break;
     case RNSScreenStackPresentationTransparentModal:
       _controller.modalPresentationStyle = UIModalPresentationOverFullScreen;
       break;
@@ -84,11 +99,23 @@
     case RNSScreenStackPresentationContainedTransparentModal:
       _controller.modalPresentationStyle = UIModalPresentationOverCurrentContext;
       break;
+    case RNSScreenStackPresentationPush:
+      // ignored, we only need to keep in mind not to set presentation delegate
+      break;
   }
-  // `modalPresentationStyle` must be set before accessing `presentationController`
-  // otherwise a default controller will be created and cannot be changed after.
-  // Documented here: https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
-  _controller.presentationController.delegate = self;
+  // There is a bug in UIKit which causes retain loop when presentationController is accessed for a
+  // controller that is not going to be presented modally. We therefore need to avoid setting the
+  // delegate for screens presented using push. This also means that when controller is updated from
+  // modal to push type, this may cause memory leak, we warn about that as well.
+  if (stackPresentation != RNSScreenStackPresentationPush) {
+    // `modalPresentationStyle` must be set before accessing `presentationController`
+    // otherwise a default controller will be created and cannot be changed after.
+    // Documented here: https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
+    _controller.presentationController.delegate = self;
+  } else if (_stackPresentation != RNSScreenStackPresentationPush) {
+    RCTLogError(@"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
+  }
+  _stackPresentation = stackPresentation;
 }
 
 - (void)setStackAnimation:(RNSScreenStackAnimation)stackAnimation
@@ -107,6 +134,17 @@
       // Default
       break;
   }
+}
+
+- (void)setGestureEnabled:(BOOL)gestureEnabled
+{
+  #ifdef __IPHONE_13_0
+    if (@available(iOS 13.0, *)) {
+      _controller.modalInPresentation = !gestureEnabled;
+    }
+  #endif
+
+  _gestureEnabled = gestureEnabled;
 }
 
 - (UIView *)reactSuperview
@@ -204,10 +242,14 @@
   }
 }
 
+- (void)invalidate
+{
+  _controller = nil;
+}
+
 @end
 
 @implementation RNSScreen {
-  __weak UIView *_view;
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
 }
@@ -215,7 +257,7 @@
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
-    _view = view;
+    self.view = view;
   }
   return self;
 }
@@ -226,7 +268,7 @@
 
   if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
-    [((RNSScreenView *)self.view) updateBounds];
+    [((RNSScreenView *)self.viewIfLoaded) updateBounds];
   }
 }
 
@@ -246,6 +288,7 @@
 
 - (void)willMoveToParentViewController:(UIViewController *)parent
 {
+  [super willMoveToParentViewController:parent];
   if (parent == nil) {
     id responder = [self findFirstResponder:self.view];
     if (responder != nil) {
@@ -260,8 +303,6 @@
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
     [((RNSScreenView *)self.view) notifyDismissed];
-    _view = self.view;
-    self.view = nil;
   }
 }
 
@@ -275,14 +316,6 @@
 {
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
-}
-
-- (void)loadView
-{
-  if (_view != nil) {
-    self.view = _view;
-    _view = nil;
-  }
 }
 
 @end
@@ -310,6 +343,8 @@ RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_ENUM_CONVERTER(RNSScreenStackPresentation, (@{
                                                   @"push": @(RNSScreenStackPresentationPush),
                                                   @"modal": @(RNSScreenStackPresentationModal),
+                                                  @"fullScreenModal": @(RNSScreenStackPresentationFullScreenModal),
+                                                  @"formSheet": @(RNSScreenStackPresentationFormSheet),
                                                   @"containedModal": @(RNSScreenStackPresentationContainedModal),
                                                   @"transparentModal": @(RNSScreenStackPresentationTransparentModal),
                                                   @"containedTransparentModal": @(RNSScreenStackPresentationContainedTransparentModal)

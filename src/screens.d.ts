@@ -15,18 +15,30 @@ declare module 'react-native-screens' {
   export function enableScreens(shouldEnableScreens?: boolean): void;
   export function screensEnabled(): boolean;
 
-  export type StackPresentationTypes = 'push' | 'modal' | 'transparentModal';
+  export type StackPresentationTypes =
+    | 'push'
+    | 'modal'
+    | 'transparentModal'
+    | 'fullScreenModal'
+    | 'formSheet';
   export type StackAnimationTypes = 'default' | 'fade' | 'flip' | 'none';
 
   export interface ScreenProps extends ViewProps {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
     onComponentRef?: (view: any) => void;
     children?: React.ReactNode;
+    /**
+     *@description A callback that gets called when the current screen appears.
+     */
     onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
      *@description A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
      */
     onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    /**
+     *@description A callback that gets called when the current screen finishes its transition.
+     */
+    onFinishTransitioning?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
      * @type "push" – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
      * @type "modal" – the new screen will be presented modally. In addition this allow for a nested stack to be rendered inside such screens
