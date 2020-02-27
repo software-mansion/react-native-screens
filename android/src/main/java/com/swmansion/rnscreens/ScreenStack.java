@@ -51,7 +51,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   public void dismiss(ScreenStackFragment screenFragment) {
     mDismissed.add(screenFragment);
-    onUpdate();
+    markUpdated();
   }
 
   public Screen getTopScreen() {
@@ -142,7 +142,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   @Override
-  protected void onUpdate() {
+  protected void performUpdate() {
     // remove all screens previously on stack
     for (ScreenStackFragment screen : mStack) {
       if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
