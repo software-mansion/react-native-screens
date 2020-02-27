@@ -157,7 +157,7 @@ Defaults to `default`.
 
 ### Events
 
-The navigator can emit events on certain actions. Supported events are:
+The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:
 
 #### `appear`
 
@@ -184,6 +184,22 @@ Example:
 ```js
 React.useEffect(() => {
   const unsubscribe = navigation.addListener('dismiss', e => {
+    // Do something
+  });
+
+  return unsubscribe;
+}, [navigation]);
+```
+
+#### `finishTransitioning`
+
+Event which fires when the current screen finishes its transition.
+
+Example:
+
+```js
+React.useEffect(() => {
+  const unsubscribe = navigation.addListener('finishTransitioning', e => {
     // Do something
   });
 
