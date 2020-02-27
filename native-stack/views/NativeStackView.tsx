@@ -77,7 +77,12 @@ export default function NativeStackView({
             <View
               style={[
                 styles.container,
-                { backgroundColor: colors.background },
+                {
+                  backgroundColor:
+                    stackPresentation !== 'transparentModal'
+                      ? colors.background
+                      : undefined,
+                },
                 contentStyle,
               ]}>
               {renderScene()}
