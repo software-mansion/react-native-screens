@@ -76,6 +76,8 @@ function NativeStackNavigator(props: NativeStackNavigatorProps) {
 }
 
 export default createNavigatorFactory<
+  StackNavigationState,
   NativeStackNavigationOptions,
+  NativeStackNavigationEventMap,
   typeof NativeStackNavigator
 >(NativeStackNavigator);
