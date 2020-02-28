@@ -123,7 +123,7 @@ declare module 'react-native-screens' {
     largeTitleFontSize?: number;
     /**
      * @host (iOS only)
-     * @description Customize the color to be used for the large title.
+     * @description Customize the color to be used for the large title. By default uses the titleColor property.
      */
     largeTitleColor?: string;
     /**
