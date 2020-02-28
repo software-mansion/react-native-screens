@@ -211,10 +211,10 @@ RCT_EXPORT_MODULE()
     // we enqueue updates to be run on the main queue in order to make sure that
     // all this updates (new screens attached etc) are executed in one batch
     RCTExecuteOnMainQueue(^{
-      for (RNSScreenContainerView *container in _markedContainers) {
+      for (RNSScreenContainerView *container in self->_markedContainers) {
         [container updateContainer];
       }
-      [_markedContainers removeAllObjects];
+      [self->_markedContainers removeAllObjects];
     });
   }
 }
