@@ -159,10 +159,10 @@
     }
 
     if (@available(iOS 11.0, *)) {
-      if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor)) {
+      if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
-        if (config.largeTitleColor) {
-          largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor;
+        if (config.largeTitleColor || config.titleColor) {
+          largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
         }
         CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
         if (config.largeTitleFontFamily) {
@@ -356,11 +356,11 @@
       appearance.titleTextAttributes = attrs;
     }
 
-    if (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor) {
+    if (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor) {
       NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
 
-      if (config.largeTitleColor) {
-        largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor;
+      if (config.largeTitleColor || config.titleColor) {
+        largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
       }
 
       CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
