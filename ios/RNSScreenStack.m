@@ -24,7 +24,6 @@
 @implementation RNSScreenStackView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
-  NSMutableSet<RNSScreenView *> *_dismissedScreens;
   __weak RNSScreenStackManager *_manager;
 }
 
@@ -34,7 +33,6 @@
     _manager = manager;
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
-    _dismissedScreens = [NSMutableSet new];
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
 
@@ -67,14 +65,6 @@
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-  for (NSUInteger i = _reactSubviews.count; i > 0; i--) {
-    RNSScreenView *screenView = [_reactSubviews objectAtIndex:i - 1];
-    if ([viewController isEqual:screenView.controller]) {
-      break;
-    } else if (screenView.stackPresentation == RNSScreenStackPresentationPush) {
-      [_dismissedScreens addObject:screenView];
-    }
-  }
   if (self.onFinishTransitioning) {
     self.onFinishTransitioning(nil);
   }
@@ -86,7 +76,6 @@
   // forward certain calls to the container (Stack).
   UIView *screenView = presentationController.presentedViewController.view;
   if ([screenView isKindOfClass:[RNSScreenView class]]) {
-    [_dismissedScreens addObject:(RNSScreenView *)screenView];
     [_presentedModals removeObject:presentationController.presentedViewController];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
@@ -155,7 +144,6 @@
 {
   subview.reactSuperview = nil;
   [_reactSubviews removeObject:subview];
-  [_dismissedScreens removeObject:subview];
 }
 
 - (NSArray<UIView *> *)reactSubviews
@@ -324,6 +312,21 @@
   if (self.window == nil) {
     return;
   }
+  // when transition is ongoing, any updates made to the controller will not be reflected until the
+  // transition is complete. In particular, when we push/pop view controllers we expect viewControllers
+  // property to be updated immediately. Based on that property we then calculate future updates.
+  // When the transition is ongoing the property won't be updated immediatly. We therefore avoid
+  // making any updated when transition is ongoing and schedule updates for when the transition
+  // is complete.
+  if (_controller.transitionCoordinator != nil) {
+    __weak RNSScreenStackView *weakSelf = self;
+    [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+      // do nothing here, we only want to be notified when transition is complete
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+      [weakSelf updateContainer];
+    }];
+    return;
+  }
 
   UIViewController *top = controllers.lastObject;
   UIViewController *lastTop = _controller.viewControllers.lastObject;
@@ -372,7 +375,7 @@
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
-    if (![_dismissedScreens containsObject:screen] && screen.controller != nil) {
+    if (!screen.dismissed && screen.controller != nil) {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
