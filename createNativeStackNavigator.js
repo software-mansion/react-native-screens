@@ -30,6 +30,7 @@ class StackView extends React.Component {
   _removeScene = route => {
     this.props.navigation.dispatch({
       type: REMOVE_ACTION,
+      immediate: true,
       key: route.key,
     });
   };
