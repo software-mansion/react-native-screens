@@ -205,12 +205,26 @@
 
 - (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
 {
+  // prevent re-entry
+  if (_updatingModals) {
+    _scheduleModalsUpdate = YES;
+    return;
+  }
+
   // when there is no change we return immediately. This check is important because sometime we may
   // accidently trigger modal dismiss if we don't verify to run the below code only when an actual
   // change in the list of presented modal was made.
   if ([_presentedModals isEqualToArray:controllers]) {
     return;
   }
+
+  // if view controller is not yet attached to window we skip updates now and run them when view
+  // is attached
+  if (self.window == nil) {
+    return;
+  }
+
+  _updatingModals = YES;
 
   NSMutableArray<UIViewController *> *newControllers = [NSMutableArray arrayWithArray:controllers];
   [newControllers removeObjectsInArray:_presentedModals];
@@ -235,13 +249,6 @@
       RCTAssert(false, @"Modally presented controllers are being reshuffled, this is not allowed");
     }
   }
-
-  // prevent re-entry
-  if (_updatingModals) {
-    _scheduleModalsUpdate = YES;
-    return;
-  }
-  _updatingModals = YES;
 
   __weak RNSScreenStackView *weakSelf = self;
 
@@ -291,7 +298,8 @@
     }
   };
 
-  if (changeRootController.presentedViewController) {
+  if (changeRootController.presentedViewController != nil
+      && [_presentedModals containsObject:changeRootController.presentedViewController]) {
     [changeRootController
      dismissViewControllerAnimated:(changeRootIndex == controllers.count)
      completion:finish];
