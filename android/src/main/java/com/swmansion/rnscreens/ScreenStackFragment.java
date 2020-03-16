@@ -51,9 +51,10 @@ public class ScreenStackFragment extends ScreenFragment {
   }
 
   public void removeToolbar() {
-    if (mAppBarLayout != null && mToolbar.getParent() == mAppBarLayout) {
+    if (mAppBarLayout != null && mToolbar != null && mToolbar.getParent() == mAppBarLayout) {
       mAppBarLayout.removeView(mToolbar);
     }
+    mToolbar = null;
   }
 
   public void setToolbar(Toolbar toolbar) {
