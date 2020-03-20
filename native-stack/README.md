@@ -83,6 +83,10 @@ Title string used by the back button on iOS. Defaults to the previous scene's `h
 
 Whether the back button title should be visible or not. Defaults to `true`. Only supported on iOS.
 
+#### `headerLeft`
+
+Function which returns a React Element to display on the left side of the header.
+
 #### `headerRight`
 
 Function which returns a React Element to display on the right side of the header.

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   ScreenStackHeaderConfig,
+  ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
 } from 'react-native-screens';
 import { Route, useTheme } from '@react-navigation/native';
@@ -15,6 +16,7 @@ export default function HeaderConfig(props: Props) {
   const {
     route,
     title,
+    headerLeft,
     headerRight,
     headerTitle,
     headerBackTitle,
@@ -66,6 +68,9 @@ export default function HeaderConfig(props: Props) {
           ? headerStyle.backgroundColor
           : colors.card
       }>
+      {headerLeft !== undefined ? (
+        <ScreenStackHeaderLeftView>{headerLeft()}</ScreenStackHeaderLeftView>
+      ) : null}
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>{headerRight()}</ScreenStackHeaderRightView>
       ) : null}
