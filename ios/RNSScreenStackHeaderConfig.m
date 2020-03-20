@@ -156,10 +156,10 @@
     }
 
     if (@available(iOS 11.0, *)) {
-      if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.titleColor)) {
+      if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
-        if (config.titleColor) {
-          largeAttrs[NSForegroundColorAttributeName] = config.titleColor;
+        if (config.largeTitleColor || config.titleColor) {
+          largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
         }
         CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
         if (config.largeTitleFontFamily) {
@@ -302,11 +302,11 @@
     appearance.titleTextAttributes = attrs;
   }
 
-  if (config.largeTitleFontFamily || config.largeTitleFontSize || config.titleColor) {
+  if (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor) {
     NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
 
-    if (config.titleColor) {
-      largeAttrs[NSForegroundColorAttributeName] = config.titleColor;
+    if (config.largeTitleColor || config.titleColor) {
+      largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
     }
 
     CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
@@ -384,7 +384,6 @@
   }
 #ifdef __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
-
     UINavigationBarAppearance *appearance = [self buildAppearance: vc withConfig:config];
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
@@ -487,6 +486,7 @@ RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(largeTitleColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleBackgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleHideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)

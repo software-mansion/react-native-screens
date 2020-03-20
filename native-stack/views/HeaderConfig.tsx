@@ -60,6 +60,7 @@ export default function HeaderConfig(props: Props) {
       largeTitle={headerLargeTitle}
       largeTitleFontFamily={headerLargeTitleStyle.fontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
+      largeTitleColor={headerLargeTitleStyle.color}
       backgroundColor={
         headerStyle.backgroundColor !== undefined
           ? headerStyle.backgroundColor

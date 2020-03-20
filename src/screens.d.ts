@@ -147,6 +147,11 @@ declare module 'react-native-screens' {
      */
     largeTitleHideShadow?: boolean;
     /**
+     * @host (iOS only)
+     * @description Customize the color to be used for the large title. By default uses the titleColor property.
+     */
+    largeTitleColor?: string;
+    /**
      * Pass HeaderLeft, HeaderRight and HeaderTitle
      */
     children?: React.ReactNode;

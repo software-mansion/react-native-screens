@@ -22,6 +22,7 @@
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
 @property (nonatomic, retain) UIColor *largeTitleBackgroundColor;
 @property (nonatomic) BOOL largeTitleHideShadow;
+@property (nonatomic, retain) UIColor *largeTitleColor;
 @property (nonatomic) BOOL hideBackButton;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
