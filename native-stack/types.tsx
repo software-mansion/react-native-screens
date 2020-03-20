@@ -158,6 +158,7 @@ export type NativeStackNavigationOptions = {
   headerLargeTitleStyle?: {
     fontFamily?: string;
     fontSize?: number;
+    color?: string;
   };
   /**
    * Style object for header back title. Supported properties:
