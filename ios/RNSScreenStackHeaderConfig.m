@@ -384,11 +384,11 @@
   }
 #ifdef __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
-    UINavigationBarAppearance *appearance = [self buildAppearance: vc withConfig:config];
+    UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
 
-    UINavigationBarAppearance *scrollEdgeAppearance = [self buildAppearance: vc withConfig:config];
+    UINavigationBarAppearance *scrollEdgeAppearance = [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
     if (config.largeTitleHideShadow) {
         scrollEdgeAppearance.shadowColor = nil;
