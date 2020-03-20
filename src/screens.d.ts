@@ -139,6 +139,14 @@ declare module 'react-native-screens' {
      */
     largeTitleFontSize?: number;
     /**
+     *@description Controlls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+     */
+    largeTitleBackgroundColor?: string;
+    /**
+     * @description Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+     */
+    largeTitleHideShadow?: boolean;
+    /**
      * @host (iOS only)
      * @description Customize the color to be used for the large title. By default uses the titleColor property.
      */
