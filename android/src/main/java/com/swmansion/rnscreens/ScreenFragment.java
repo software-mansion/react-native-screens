@@ -23,6 +23,13 @@ public class ScreenFragment extends Fragment {
       ((ViewGroup) parent).endViewTransition(view);
       ((ViewGroup) parent).removeView(view);
     }
+    // the below check is here to help determine if crashes due to IllegalStateException with
+    // "child already has a parent" caused when view is created are there because for some reason
+    // the above code fails detach the view from its parent
+    if (view.getParent() != null) {
+      throw new IllegalStateException("Recycled fragment view is not detached from its parent");
+    }
+
     // view detached from fragment manager get their visibility changed to GONE after their state is
     // dumped. Since we don't restore the state but want to reuse the view we need to change visibility
     // back to VISIBLE in order for the fragment manager to animate in the view.
@@ -58,11 +65,6 @@ public class ScreenFragment extends Fragment {
             .getNativeModule(UIManagerModule.class)
             .getEventDispatcher()
             .dispatchEvent(new ScreenAppearEvent(mScreenView.getId()));
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
   }
 
   public void onViewAnimationEnd() {

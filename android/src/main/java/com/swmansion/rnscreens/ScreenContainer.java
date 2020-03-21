@@ -2,7 +2,6 @@ package com.swmansion.rnscreens;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
@@ -220,12 +219,32 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   protected void onDetachedFromWindow() {
     // if there are pending transactions and this view is about to get detached we need to perform
     // them here as otherwise fragment manager will crash because it won't be able to find container
-    // view.
+    // view. We also need to make sure all the fragments attached to the given container are removed
+    // from fragment manager as in some cases fragment manager may be reused and in such case it'd
+    // attempt to reattach previously registered fragments that are not removed
     if (mFragmentManager != null && !mFragmentManager.isDestroyed()) {
+      removeMyFragments();
       mFragmentManager.executePendingTransactions();
     }
     super.onDetachedFromWindow();
     mIsAttached = false;
+  }
+
+  /**
+   * Removes fragments from fragment manager that are attached to this container
+   */
+  private void removeMyFragments() {
+    FragmentTransaction transaction = mFragmentManager.beginTransaction();
+    boolean hasFragments = false;
+    for (Fragment fragment : mFragmentManager.getFragments()) {
+      if (fragment instanceof ScreenFragment) {
+        transaction.remove(fragment);
+        hasFragments = true;
+      }
+    }
+    if (hasFragments) {
+      transaction.commitNowAllowingStateLoss();
+    }
   }
 
   @Override
