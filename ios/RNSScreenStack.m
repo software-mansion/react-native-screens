@@ -8,6 +8,8 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTRootContentView.h>
 #import <React/RCTTouchHandler.h>
+#import "RNScreens-umbrella.h"
+#import "RNScreens-Swift.h"
 
 @interface RNSScreenStackView () <UINavigationControllerDelegate, UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate>
 
@@ -285,7 +287,10 @@
       for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
         UIViewController *next = controllers[i];
         BOOL lastModal = (i == controllers.count - 1);
-        [previous presentViewController:next
+
+
+
+         [previous presentModally:next
                                animated:lastModal
                              completion:^{
           [weakSelf.presentedModals addObject:next];
@@ -298,8 +303,17 @@
     }
   };
 
-  if (changeRootController.presentedViewController != nil
-      && [_presentedModals containsObject:changeRootController.presentedViewController]) {
+  UIViewController* presentedViewController = changeRootController.presentedViewController;
+  if (![presentedViewController isKindOfClass:[RNSScreen class]] && presentedViewController != nil) {
+    RNSScreenView* view = (RNSScreenView*) presentedViewController.view;
+    presentedViewController = view.controller;
+    if ([_presentedModals containsObject:presentedViewController]) {
+      view.controller = nil;
+    }
+
+  }
+  if (presentedViewController != nil
+      && ([_presentedModals containsObject:presentedViewController] )) {
     [changeRootController
      dismissViewControllerAnimated:(changeRootIndex == controllers.count)
      completion:finish];

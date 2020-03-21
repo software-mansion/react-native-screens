@@ -13,12 +13,13 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   # s.license    = { :type => "MIT", :file => "FILE_LICENSE" }
   s.author       = { "author" => "author@domain.cn" }
-  s.platforms    = { :ios => "9.0", :tvos => "11.0" }
+  s.platforms    = { :ios => "10.0", :tvos => "11.0" }
   s.source       = { :git => "https://github.com/kmagiera/react-native-screens.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m}"
+  s.source_files = "ios/**/*.{h,m,swift}"
   s.requires_arc = true
 
   s.dependency "React"
+  s.dependency "PanModal"
 end
 

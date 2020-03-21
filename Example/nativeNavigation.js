@@ -31,18 +31,114 @@ class PushScreen extends React.Component {
   };
   render() {
     return (
-      <View style={styles.screen}>
-        <TextInput placeholder="Hello" style={styles.textInput} />
-        <Button
-          onPress={() => this.props.navigation.goBack()}
-          title="Go back"
-        />
-        <Button
-          onPress={() => this.props.navigation.push('Push')}
-          title="Push more"
-        />
-        <View style={styles.leftTop} />
-        <View style={styles.bottomRight} />
+      <View
+        style={[StyleSheet.absoluteFillObject, { backgroundColor: 'white' }]}>
+        <ScrollView style={StyleSheet.absoluteFillObject}>
+          <TextInput placeholder="Hello" style={styles.textInput} />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+          <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Go back"
+          />
+
+          <Button
+            onPress={() => this.props.navigation.push('Push')}
+            title="Push more"
+          />
+          <View style={styles.leftTop} />
+          <View style={styles.bottomRight} />
+        </ScrollView>
       </View>
     );
   }

@@ -31,6 +31,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
 
 @interface RNSScreen : UIViewController
 
+@property (nonatomic, strong) id<UIViewControllerTransitioningDelegate> transDelegate;
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
 

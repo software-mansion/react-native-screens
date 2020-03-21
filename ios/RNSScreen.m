@@ -7,6 +7,7 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
+#import "RNScreens-Swift.h"
 
 @interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
@@ -84,6 +85,9 @@
 #else
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
 #endif
+      if (_controller.transDelegate != nil) {
+        _controller.modalPresentationStyle = UIModalPresentationCustom;
+      }
       break;
     case RNSScreenStackPresentationFullScreenModal:
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
@@ -112,7 +116,7 @@
     // `modalPresentationStyle` must be set before accessing `presentationController`
     // otherwise a default controller will be created and cannot be changed after.
     // Documented here: https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
-    _controller.presentationController.delegate = self;
+    //_controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
     RCTLogError(@"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
   }
@@ -246,7 +250,9 @@
 
 - (void)invalidate
 {
-  _controller = nil;
+  if (self.stackPresentation != RNSScreenStackPresentationModal) {
+     _controller = nil;
+  }
 }
 
 @end
@@ -254,14 +260,37 @@
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
+  UIViewController *_parentVC;
 }
 
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
     self.view = view;
+    self.transDelegate = [self obtainDelegate];
+    if (self.transDelegate != nil) {
+      self.transitioningDelegate = self.transDelegate;
+      self.modalPresentationStyle = UIModalPresentationCustom;
+    }
   }
   return self;
+}
+
+
+- (void)presentModally:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
+  return [_parentVC presentModally:viewControllerToPresent animated:flag completion:completion];
+}
+
+- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion {
+  return [_parentVC dismissViewControllerAnimated:flag completion:completion];
+}
+
+- (UIViewController *)presentedViewController {
+  return [_parentVC presentedViewController];
+}
+
+- (UIViewController *)presentingViewController {
+  return [_parentVC presentingViewController];
 }
 
 - (void)viewDidLayoutSubviews

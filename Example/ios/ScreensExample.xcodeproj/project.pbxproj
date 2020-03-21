@@ -13,6 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3DF641D7EF0CF58C677CD274 /* libPods-ScreensExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC21D5898029BA5732221EC7 /* libPods-ScreensExample.a */; };
 		44BCAFE3213FB64300CF39F1 /* RNSSampleLifecycleAwareView.m in Sources */ = {isa = PBXBuildFile; fileRef = 44BCAFBC213FB64200CF39F1 /* RNSSampleLifecycleAwareView.m */; };
+		662749522426B8420052112B /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662749512426B8420052112B /* File.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,8 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ScreensExample/main.m; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		44BCAFBC213FB64200CF39F1 /* RNSSampleLifecycleAwareView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RNSSampleLifecycleAwareView.m; path = ScreensExample/RNSSampleLifecycleAwareView.m; sourceTree = "<group>"; };
+		662749502426B8410052112B /* ScreensExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ScreensExample-Bridging-Header.h"; sourceTree = "<group>"; };
+		662749512426B8420052112B /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		8E2AA8F11B8C93DBCB5D2D3B /* Pods-ScreensExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreensExample.debug.xcconfig"; path = "Target Support Files/Pods-ScreensExample/Pods-ScreensExample.debug.xcconfig"; sourceTree = "<group>"; };
 		EC21D5898029BA5732221EC7 /* libPods-ScreensExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ScreensExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4F2B14C46961C8C58D25AAF /* Pods-ScreensExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreensExample.release.xcconfig"; path = "Target Support Files/Pods-ScreensExample/Pods-ScreensExample.release.xcconfig"; sourceTree = "<group>"; };
@@ -73,6 +76,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				662749512426B8420052112B /* File.swift */,
+				662749502426B8410052112B /* ScreensExample-Bridging-Header.h */,
 			);
 			name = ScreensExample;
 			sourceTree = "<group>";
@@ -166,6 +171,7 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = J5FM626PE2;
+						LastSwiftMigration = 1130;
 					};
 				};
 			};
@@ -245,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				662749522426B8420052112B /* File.swift in Sources */,
 				44BCAFE3213FB64300CF39F1 /* RNSSampleLifecycleAwareView.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -270,6 +277,7 @@
 			baseConfigurationReference = 8E2AA8F11B8C93DBCB5D2D3B /* Pods-ScreensExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = J5FM626PE2;
@@ -278,6 +286,7 @@
 					"$(SRCROOT)/../node_modules/react-native-screens/ios/**",
 				);
 				INFOPLIST_FILE = ScreensExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
@@ -286,6 +295,9 @@
 					"-lc++",
 				);
 				PRODUCT_NAME = ScreensExample;
+				SWIFT_OBJC_BRIDGING_HEADER = "ScreensExample-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -295,6 +307,7 @@
 			baseConfigurationReference = F4F2B14C46961C8C58D25AAF /* Pods-ScreensExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = J5FM626PE2;
 				HEADER_SEARCH_PATHS = (
@@ -302,6 +315,7 @@
 					"$(SRCROOT)/../node_modules/react-native-screens/ios/**",
 				);
 				INFOPLIST_FILE = ScreensExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
@@ -310,6 +324,8 @@
 					"-lc++",
 				);
 				PRODUCT_NAME = ScreensExample;
+				SWIFT_OBJC_BRIDGING_HEADER = "ScreensExample-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -348,7 +364,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -383,7 +399,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

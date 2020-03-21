@@ -19,6 +19,7 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
+  - PanModal (1.2.5)
   - RCTRequired (0.61.2)
   - RCTTypeSafety (0.61.2):
     - FBLazyVector (= 0.61.2)
@@ -219,7 +220,8 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.2)
   - RNGestureHandler (1.3.0):
     - React
-  - RNScreens (2.0.0-alpha.23):
+  - RNScreens (2.3.0):
+    - PanModal
     - React
   - Yoga (1.14.0)
 
@@ -258,6 +260,8 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - boost-for-react-native
+  trunk:
+    - PanModal
 
 EXTERNAL SOURCES:
   DoubleConversion:
@@ -322,6 +326,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 5a764c60abdc3336a213e5310c40b74741f32839
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
+  PanModal: 7c5af3ad4fe22b91508040965bebffb89fb607ae
   RCTRequired: c639d59ed389cfb1f1203f65c2ea946d8ec586e2
   RCTTypeSafety: dc23fb655d6c77667c78e327bf661bc11e3b8aec
   React: 7e586e5d7bec12b91c1a096826b0fc9ab1da7865
@@ -342,9 +347,9 @@ SPEC CHECKSUMS:
   React-RCTVibration: fb54c732fd20405a76598e431aa2f8c2bf527de9
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
   RNGestureHandler: 5329a942fce3d41c68b84c2c2276ce06a696d8b0
-  RNScreens: 55c735f525774e894be67848c250c95a9c3194c0
+  RNScreens: 2505ebf01970c66277eebe580fa9c890bf913aac
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 1a141b811c7076eb11c48f2e22336181f52531b5
+PODFILE CHECKSUM: f2c3d16acb10e8fae4cbb3473b0182efeebba8bc
 
 COCOAPODS: 1.8.4
