@@ -73,8 +73,10 @@ class PanModalViewController: UIViewController, PanModalPresentable {
 
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      self.panModalSetNeedsLayoutUpdate()
+    for i in 1...10 {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3 * Double(i)) {
+        self.panModalSetNeedsLayoutUpdate()
+      }
     }
   }
 
