@@ -3,6 +3,7 @@ import PanModal
 
 class PanModalViewController: UIViewController, PanModalPresentable {
   var viewController: UIViewController?
+  var panScrollableCache: UIScrollView?
   convenience init(_ viewControllerToPresent: UIViewController) {
     self.init(nibName: nil, bundle: nil)
 
@@ -11,11 +12,15 @@ class PanModalViewController: UIViewController, PanModalPresentable {
   }
 
   func findChildScrollViewDFS(view: UIView)-> UIScrollView? {
+    if panScrollableCache != nil {
+      return panScrollableCache
+    }
     var viewsToTraverse = [view]
     while !viewsToTraverse.isEmpty {
       let last = viewsToTraverse.last!
       viewsToTraverse.removeLast()
       if last is UIScrollView {
+        panScrollableCache = last as? UIScrollView
         return last as? UIScrollView
       }
       last.subviews.forEach { subview in
@@ -49,8 +54,13 @@ class PanModalViewController: UIViewController, PanModalPresentable {
 
   var panScrollable: UIScrollView? {
     return findChildScrollViewDFS(view: self.view!)
-    //return nil
   }
+
+  var longFormHeight: PanModalHeight {
+    return .contentHeight(UIScreen.main.bounds.height)
+  }
+
+
 
   override var transitioningDelegate: UIViewControllerTransitioningDelegate? {
     get {
@@ -58,6 +68,13 @@ class PanModalViewController: UIViewController, PanModalPresentable {
     }
     set {
 
+    }
+  }
+
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      self.panModalSetNeedsLayoutUpdate()
     }
   }
 

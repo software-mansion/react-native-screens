@@ -296,6 +296,7 @@
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+  [_parentVC viewDidLayoutSubviews];
 
   if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
