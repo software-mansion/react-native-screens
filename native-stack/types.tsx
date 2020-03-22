@@ -129,6 +129,10 @@ export type NativeStackNavigationOptions = {
    */
   headerHideShadow?: boolean;
   /**
+   * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+   */
+  headerLargeTitleHideShadow?: boolean;
+  /**
    * Style object for header title. Supported properties:
    * - backgroundColor
    */
@@ -201,6 +205,10 @@ export type NativeStackNavigationOptions = {
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: ScreenProps['stackAnimation'];
+  /**
+   * Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+   */
+  headerLargeTitleBackgroundColor?: string;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

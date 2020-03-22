@@ -21,7 +21,9 @@ export default function HeaderConfig(props: Props) {
     headerBackTitleVisible = true,
     headerHideBackButton,
     headerHideShadow,
+    headerLargeTitleHideShadow,
     headerTintColor,
+    headerLargeTitleBackgroundColor,
     headerLargeTitle,
     headerTranslucent,
     headerStyle = {},
@@ -36,6 +38,7 @@ export default function HeaderConfig(props: Props) {
       hidden={headerShown === false}
       translucent={headerTranslucent === true}
       hideShadow={headerHideShadow}
+      largeTitleHideShadow={headerLargeTitleHideShadow}
       hideBackButton={headerHideBackButton}
       title={
         headerTitle !== undefined
@@ -65,7 +68,8 @@ export default function HeaderConfig(props: Props) {
         headerStyle.backgroundColor !== undefined
           ? headerStyle.backgroundColor
           : colors.card
-      }>
+      }
+      largeTitleBackgroundColor={headerLargeTitleBackgroundColor}>
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>{headerRight()}</ScreenStackHeaderRightView>
       ) : null}
