@@ -23,10 +23,10 @@ export default function HeaderConfig(props: Props) {
     headerHideShadow,
     headerLargeTitleHideShadow,
     headerTintColor,
-    headerLargeTitleBackgroundColor,
     headerLargeTitle,
     headerTranslucent,
     headerStyle = {},
+    headerLargeStyle = {},
     headerTitleStyle = {},
     headerLargeTitleStyle = {},
     headerBackTitleStyle = {},
@@ -69,7 +69,7 @@ export default function HeaderConfig(props: Props) {
           ? headerStyle.backgroundColor
           : colors.card
       }
-      largeTitleBackgroundColor={headerLargeTitleBackgroundColor}>
+      largeTitleBackgroundColor={headerLargeStyle.backgroundColor}>
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>{headerRight()}</ScreenStackHeaderRightView>
       ) : null}

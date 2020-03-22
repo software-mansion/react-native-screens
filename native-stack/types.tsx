@@ -140,6 +140,15 @@ export type NativeStackNavigationOptions = {
     backgroundColor?: string;
   };
   /**
+   * Controls the style of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar. Supported properties:
+   * - backgroundColor
+   *
+   * @platform ios
+   */
+  headerLargeStyle?: {
+    backgroundColor?: string;
+  };
+  /**
    * Style object for header title. Supported properties:
    * - fontFamily
    * - fontSize
@@ -205,10 +214,6 @@ export type NativeStackNavigationOptions = {
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: ScreenProps['stackAnimation'];
-  /**
-   * Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
-   */
-  headerLargeTitleBackgroundColor?: string;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<
