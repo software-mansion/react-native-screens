@@ -129,10 +129,23 @@ export type NativeStackNavigationOptions = {
    */
   headerHideShadow?: boolean;
   /**
+   * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+   */
+  headerLargeTitleHideShadow?: boolean;
+  /**
    * Style object for header title. Supported properties:
    * - backgroundColor
    */
   headerStyle?: {
+    backgroundColor?: string;
+  };
+  /**
+   * Controls the style of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar. Supported properties:
+   * - backgroundColor
+   *
+   * @platform ios
+   */
+  headerLargeStyle?: {
     backgroundColor?: string;
   };
   /**

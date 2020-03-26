@@ -389,7 +389,9 @@
     navitem.compactAppearance = appearance;
 
     UINavigationBarAppearance *scrollEdgeAppearance = [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
-    scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
+    if (config.largeTitleBackgroundColor != nil) {
+      scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
+    }
     if (config.largeTitleHideShadow) {
         scrollEdgeAppearance.shadowColor = nil;
     }
