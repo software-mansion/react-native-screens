@@ -48,7 +48,10 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) BOOL active;
+@property (nonatomic) BOOL customStack;
 @property (nonatomic) BOOL gestureEnabled;
+@property (nonatomic) BOOL showDragIndicator;
+@property (nonatomic) NSNumber* topOffset;
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 

@@ -191,6 +191,8 @@ class StackView extends React.Component {
     const SceneComponent = getComponent();
 
     let stackPresentation = 'push';
+    const { customStack, topOffset, showDragIndicator } = options;
+
     if (mode === 'modal' || mode === 'containedModal') {
       stackPresentation = mode;
       if (transparentCard || options.cardTransparent) {
@@ -209,6 +211,9 @@ class StackView extends React.Component {
     const { screenProps } = this.props;
     return (
       <Screen
+        customStack={customStack}
+        topOffset={topOffset}
+        showDragIndicator={showDragIndicator}
         key={`screen_${route.key}`}
         style={[StyleSheet.absoluteFill, options.cardStyle]}
         stackAnimation={stackAnimation}

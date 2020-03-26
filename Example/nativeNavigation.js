@@ -188,7 +188,14 @@ const AppStack = createNativeStackNavigator(
 const App = createNativeStackNavigator(
   {
     Root: { screen: AppStack },
-    Modal: PushScreen,
+    Modal: {
+      screen: PushScreen,
+      navigationOptions: {
+        customStack: true,
+        topOffset: 100,
+        showDragIndicator: true,
+      },
+    },
   },
   {
     mode: 'modal',
