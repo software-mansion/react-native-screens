@@ -220,7 +220,7 @@
 
   // if view controller is not yet attached to window we skip updates now and run them when view
   // is attached
-  if (self.window == nil) {
+  if (self.window == nil && _presentedModals.lastObject.view.window == nil) {
     return;
   }
 
@@ -317,7 +317,7 @@
 
   // if view controller is not yet attached to window we skip updates now and run them when view
   // is attached
-  if (self.window == nil && _presentedModals.lastObject.view.window == nil) {
+  if (self.window == nil) {
     return;
   }
   // when transition is ongoing, any updates made to the controller will not be reflected until the
