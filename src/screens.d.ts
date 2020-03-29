@@ -139,7 +139,7 @@ declare module 'react-native-screens' {
      */
     largeTitleFontSize?: number;
     /**
-     *@description Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+     *@description Controlls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
      */
     largeTitleBackgroundColor?: string;
     /**
@@ -165,6 +165,7 @@ declare module 'react-native-screens' {
   export const ScreenStackHeaderBackButtonImage: ComponentClass<ImageProps>;
   export const ScreenStackHeaderLeftView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderRightView: ComponentClass<ViewProps>;
+  export const ScreenStackHeaderCenterView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderConfig: ComponentClass<
     ScreenStackHeaderConfigProps
   >;
