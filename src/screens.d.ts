@@ -92,7 +92,7 @@ declare module 'react-native-screens' {
      */
     titleColor?: string;
     /**
-     *@description Controlls the color of the navigation header.
+     *@description Controls the color of the navigation header.
      */
     backgroundColor?: string;
     /**
@@ -139,7 +139,7 @@ declare module 'react-native-screens' {
      */
     largeTitleFontSize?: number;
     /**
-     *@description Controlls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+     *@description Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
      */
     largeTitleBackgroundColor?: string;
     /**
