@@ -1,6 +1,6 @@
 {
   "name": "react-native-screens",
-  "version": "10000.0.0",
+  "version": "99999.0.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
