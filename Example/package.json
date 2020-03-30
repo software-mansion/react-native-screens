@@ -8,9 +8,9 @@
     "postinstall": "rm -rf node_modules/react-native-screens/{.git,node_modules,Example}"
   },
   "dependencies": {
-    "react": "16.9.0",
-    "react-native": "^0.61.2",
-    "react-native-gesture-handler": "^1.0.12",
+    "react": "16.11.0",
+    "react-native": "0.62.0",
+    "react-native-gesture-handler": "^1.6.1",
     "react-native-screens": "file:..",
     "react-navigation": "^3.0.8"
   },
@@ -19,8 +19,8 @@
     "@babel/runtime": "^7.1.2",
     "babel-jest": "23.6.0",
     "jest": "23.6.0",
-    "metro-react-native-babel-preset": "0.45.2",
-    "react-test-renderer": "16.9.0"
+    "metro-react-native-babel-preset": "^0.58.0",
+    "react-test-renderer": "16.11.0"
   },
   "jest": {
     "preset": "react-native"
