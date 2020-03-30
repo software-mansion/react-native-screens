@@ -336,6 +336,7 @@
     // screen dismissed, send event
     [((RNSScreenView *)self.view) notifyDismissed];
   }
+  _parentVC = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
