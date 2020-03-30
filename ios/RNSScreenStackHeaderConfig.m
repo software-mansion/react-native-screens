@@ -147,7 +147,7 @@
         attrs[NSForegroundColorAttributeName] = config.titleColor;
       }
 
-      NSNumber *size = config.titleFontSize ? config.titleFontSize : @17;
+      NSNumber *size = config.titleFontSize ?: @17;
       if (config.titleFontFamily) {
         attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
       } else {
@@ -162,7 +162,7 @@
         if (config.largeTitleColor || config.titleColor) {
           largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
         }
-        NSNumber *largeSize = config.largeTitleFontSize ? config.largeTitleFontSize : @34;
+        NSNumber *largeSize = config.largeTitleFontSize ?: @34;
         if (config.largeTitleFontFamily) {
           largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.largeTitleFontFamily size:largeSize weight:nil style:nil variant:nil scaleMultiplier:1.0];
         } else {
@@ -294,12 +294,12 @@
       attrs[NSForegroundColorAttributeName] = config.titleColor;
     }
 
-     NSNumber *size = config.titleFontSize ? config.titleFontSize : @17;
-     if (config.titleFontFamily) {
-       attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
-     } else {
-       attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
-     }
+    NSNumber *size = config.titleFontSize ?: @17;
+    if (config.titleFontFamily) {
+      attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
+    } else {
+      attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+    }
     appearance.titleTextAttributes = attrs;
   }
 
@@ -310,7 +310,7 @@
       largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
     }
 
-    NSNumber *largeSize = config.largeTitleFontSize ? config.largeTitleFontSize : @34;
+    NSNumber *largeSize = config.largeTitleFontSize ?: @34;
     if (config.largeTitleFontFamily) {
       largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.largeTitleFontFamily size:largeSize weight:nil style:nil variant:nil scaleMultiplier:1.0];
     } else {
@@ -365,7 +365,7 @@
                                   action:nil];
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
-      NSNumber *size = config.backTitleFontSize ? config.backTitleFontSize : @17;
+      NSNumber *size = config.backTitleFontSize ?: @17;
       if (config.backTitleFontFamily) {
         attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.backTitleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
       } else {
