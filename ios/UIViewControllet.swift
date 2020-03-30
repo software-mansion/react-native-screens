@@ -6,6 +6,7 @@ class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSup
   var topAnchor: NSLayoutYAxisAnchor = NSLayoutYAxisAnchor.init()
   var bottomAnchor: NSLayoutYAxisAnchor = NSLayoutYAxisAnchor.init()
   var heightAnchor: NSLayoutDimension = NSLayoutDimension.init()
+  var disappared = false
 
   weak var viewController: UIViewController?
   var panScrollableCache: UIScrollView?
@@ -80,11 +81,15 @@ class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSup
     return .contentHeight(UIScreen.main.bounds.height)
   }
 
+  override func viewWillDisappear(_ animated: Bool) {
+    disappared = true
+  }
+
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     for i in 1...10 {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.3 * Double(i)) {
-        if self.isViewLoaded {
+        if !self.disappared {
           self.panModalSetNeedsLayoutUpdate()
         }
       }
