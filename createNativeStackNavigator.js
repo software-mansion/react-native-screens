@@ -191,7 +191,7 @@ class StackView extends React.Component {
     const SceneComponent = getComponent();
 
     let stackPresentation = 'push';
-    const { customStack, topOffset, showDragIndicator } = options;
+    const { customStack, topOffset, showDragIndicator, cornerRadius } = options;
 
     if (mode === 'modal' || mode === 'containedModal') {
       stackPresentation = mode;
@@ -213,6 +213,7 @@ class StackView extends React.Component {
       <Screen
         customStack={customStack}
         topOffset={topOffset}
+        cornerRadius={cornerRadius}
         showDragIndicator={showDragIndicator}
         key={`screen_${route.key}`}
         style={[StyleSheet.absoluteFill, options.cardStyle]}

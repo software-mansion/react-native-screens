@@ -12,6 +12,8 @@ class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSup
   var panScrollableCache: UIScrollView?
   var showDragIndicatorVal: Bool = false
   var topOffsetVal: CGFloat = 0.0
+  var cornerRadiusValue: CGFloat = 8.0
+  
   convenience init(_ viewControllerToPresent: UIViewController) {
     self.init(nibName: nil, bundle: nil)
 
@@ -25,6 +27,12 @@ class PanModalViewController: UIViewController, PanModalPresentable, UILayoutSup
         return super.bottomLayoutGuide
       }
       return self
+    }
+  }
+  
+  var cornerRadius: CGFloat {
+    get {
+      return cornerRadiusValue
     }
   }
 
@@ -109,12 +117,16 @@ extension UIViewController {
                                    completion: (() -> Void)? = nil,
                                    topOffset: CGFloat,
                                    showDragIndicator: Bool,
-                                   slackStack:Bool) -> Void {
+                                   slackStack:Bool,
+                                   cornerRadius:NSNumber? = nil) -> Void {
     let controller = PanModalViewController(viewControllerToPresent)
     controller.transitioningDelegate = slackStack ? viewControllerToPresent.transitioningDelegate : nil
     controller.modalPresentationStyle = slackStack ? viewControllerToPresent.modalPresentationStyle : .pageSheet
     controller.topOffsetVal = topOffset
     controller.showDragIndicatorVal = showDragIndicator
+    if (cornerRadius != nil) {
+      controller.cornerRadiusValue = CGFloat(truncating: cornerRadius!)
+    }
     self.present(controller, animated: flag, completion: completion)
   }
 }

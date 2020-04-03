@@ -297,7 +297,7 @@
           if (lastModal) {
             afterTransitions();
           };
-        } topOffset:[((RNSScreenView *)next.view).topOffset floatValue] showDragIndicator:((RNSScreenView *)next.view).showDragIndicator slackStack: ((RNSScreenView*) next.view).customStack];
+        } topOffset:[((RNSScreenView *)next.view).topOffset floatValue] showDragIndicator:((RNSScreenView *)next.view).showDragIndicator slackStack: ((RNSScreenView*) next.view).customStack cornerRadius:((RNSScreenView*) next.view).cornerRadius];
         previous = next;
       }
     }

@@ -276,8 +276,8 @@
   return self;
 }
 
-- (void)presentModally:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion topOffset:(CGFloat)topOffset showDragIndicator:(BOOL)showDragIndicator slackStack:(BOOL)slackStack {
-  return [_parentVC presentModally:viewControllerToPresent animated:flag completion:completion topOffset:topOffset showDragIndicator:showDragIndicator slackStack:slackStack];
+- (void)presentModally:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion topOffset:(CGFloat)topOffset showDragIndicator:(BOOL)showDragIndicator slackStack:(BOOL)slackStack cornerRadius:(NSNumber*)cornerRadius {
+  return [_parentVC presentModally:viewControllerToPresent animated:flag completion:completion topOffset:topOffset showDragIndicator:showDragIndicator slackStack:slackStack cornerRadius:cornerRadius];
 
 }
 
@@ -362,6 +362,7 @@ RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(showDragIndicator, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(customStack, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(topOffset, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(cornerRadius, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
