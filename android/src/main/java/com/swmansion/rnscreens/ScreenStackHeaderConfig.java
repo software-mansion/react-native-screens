@@ -73,6 +73,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     if (context.getTheme().resolveAttribute(android.R.attr.colorPrimary, tv, true)) {
       mToolbar.setBackgroundColor(tv.data);
     }
+    mToolbar.setClipChildren(false);
   }
 
   @Override
