@@ -24,6 +24,7 @@
 @property (nonatomic) BOOL largeTitleHideShadow;
 @property (nonatomic, retain) UIColor *largeTitleColor;
 @property (nonatomic) BOOL hideBackButton;
+@property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
 

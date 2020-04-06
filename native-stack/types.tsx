@@ -94,6 +94,10 @@ export type NativeStackNavigationOptions = {
    */
   headerShown?: boolean;
   /**
+   * Whether to show the back button with custom left side of the header.
+   */
+  backButtonInCustomView?: boolean;
+  /**
    * Boolean indicating whether the navigation bar is translucent.
    * Only supported on iOS.
    *
@@ -113,6 +117,14 @@ export type NativeStackNavigationOptions = {
    * Function which returns a React Element to display on the right side of the header.
    */
   headerRight?: () => React.ReactNode;
+  /**
+   * Function which returns a React Element to display on the left side of the header.
+   */
+  headerLeft?: () => React.ReactNode;
+  /**
+   * Function which returns a React Element to display in the center of the header.
+   */
+  headerCenter?: () => React.ReactNode;
   /**
    * Tint color for the header. Changes the color of back button and title.
    */
