@@ -1,18 +1,16 @@
 #import <UIKit/UIKit.h>
 
 #import "RNSScreen.h"
-#import "RNSScreenContainer.h"
-#import "RNSScreenStackHeaderConfig.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
 #import "RNScreens-Swift.h"
 
-@interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
+@interface RNCMScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
 
-@implementation RNSScreenView {
+@implementation RNCMScreenView {
   __weak RCTBridge *_bridge;
   RNSScreen *_controller;
   RCTTouchHandler *_touchHandler;
@@ -58,13 +56,6 @@
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 }
 
-- (void)setActive:(BOOL)active
-{
-  if (active != _active) {
-    _active = active;
-    [_reactSuperview markChildUpdated];
-  }
-}
 
 - (void)setPointerEvents:(RCTPointerEvents)pointerEvents
 {
@@ -157,14 +148,14 @@
   return _reactSuperview;
 }
 
-- (void)addSubview:(UIView *)view
-{
-  if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-    [super addSubview:view];
-  } else {
-    ((RNSScreenStackHeaderConfig*) view).screenView = self;
-  }
-}
+//- (void)addSubview:(UIView *)view
+//{
+//  if (![view isKindOfClass:[RNCMScreenStackHeaderConfig class]]) {
+//    [super addSubview:view];
+//  } else {
+//    ((RNCMScreenStackHeaderConfig*) view).screenView = self;
+//  }
+//}
 
 - (void)notifyFinishTransitioning
 {
@@ -197,7 +188,7 @@
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
-    if ([parent isKindOfClass:[RCTRootView class]] || [parent isKindOfClass:[RNSScreenView class]]) {
+    if ([parent isKindOfClass:[RCTRootView class]] || [parent isKindOfClass:[RNCMScreenView class]]) {
       return YES;
     }
   }
@@ -300,7 +291,7 @@
 
   if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
-    [((RNSScreenView *)self.viewIfLoaded) updateBounds];
+    [((RNCMScreenView *)self.viewIfLoaded) updateBounds];
   }
 }
 
@@ -334,7 +325,7 @@
   [super viewDidDisappear:animated];
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
-    [((RNSScreenView *)self.view) notifyDismissed];
+    [((RNCMScreenView *)self.view) notifyDismissed];
   }
   _parentVC = nil;
 }
@@ -342,7 +333,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [((RNSScreenView *)self.view) notifyAppear];
+  [((RNCMScreenView *)self.view) notifyAppear];
 }
 
 - (void)notifyFinishTransitioning
@@ -353,11 +344,10 @@
 
 @end
 
-@implementation RNSScreenManager
+@implementation RNCMScreenManager
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(showDragIndicator, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(customStack, BOOL)
@@ -370,7 +360,7 @@ RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
 - (UIView *)view
 {
-  return [[RNSScreenView alloc] initWithBridge:self.bridge];
+  return [[RNCMScreenView alloc] initWithBridge:self.bridge];
 }
 
 @end

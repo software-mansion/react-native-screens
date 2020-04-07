@@ -20,7 +20,7 @@ const getViewManagerConfigCompat = name =>
 
 function enableScreens(shouldEnableScreens = true) {
   ENABLE_SCREENS = shouldEnableScreens;
-  if (ENABLE_SCREENS && !getViewManagerConfigCompat('RNSScreen')) {
+  if (ENABLE_SCREENS && !getViewManagerConfigCompat('RNCMScreen')) {
     console.error(
       `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
     );
@@ -40,45 +40,37 @@ function screensEnabled() {
 // We initialize these lazily so that importing the module doesn't throw error when not linked
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
 let NativeScreenValue;
-let NativeScreenContainerValue;
 let NativeScreenStack;
-let NativeScreenStackHeaderConfig;
-let NativeScreenStackHeaderSubview;
+// let NativeScreenStackHeaderConfig;
+// let NativeScreenStackHeaderSubview;
 let AnimatedNativeScreen;
 
 const ScreensNativeModules = {
   get NativeScreen() {
     NativeScreenValue =
-      NativeScreenValue || requireNativeComponent('RNSScreen', null);
+      NativeScreenValue || requireNativeComponent('RNCMScreen', null);
     return NativeScreenValue;
-  },
-
-  get NativeScreenContainer() {
-    NativeScreenContainerValue =
-      NativeScreenContainerValue ||
-      requireNativeComponent('RNSScreenContainer', null);
-    return NativeScreenContainerValue;
   },
 
   get NativeScreenStack() {
     NativeScreenStack =
-      NativeScreenStack || requireNativeComponent('RNSScreenStack', null);
+      NativeScreenStack || requireNativeComponent('RNCMScreenStack', null);
     return NativeScreenStack;
   },
 
-  get NativeScreenStackHeaderConfig() {
-    NativeScreenStackHeaderConfig =
-      NativeScreenStackHeaderConfig ||
-      requireNativeComponent('RNSScreenStackHeaderConfig', null);
-    return NativeScreenStackHeaderConfig;
-  },
-
-  get NativeScreenStackHeaderSubview() {
-    NativeScreenStackHeaderSubview =
-      NativeScreenStackHeaderSubview ||
-      requireNativeComponent('RNSScreenStackHeaderSubview', null);
-    return NativeScreenStackHeaderSubview;
-  },
+  // get NativeScreenStackHeaderConfig() {
+  //   NativeScreenStackHeaderConfig =
+  //     NativeScreenStackHeaderConfig ||
+  //     requireNativeComponent('RNCMScreenStackHeaderConfig', null);
+  //   return NativeScreenStackHeaderConfig;
+  // },
+  //
+  // get NativeScreenStackHeaderSubview() {
+  //   NativeScreenStackHeaderSubview =
+  //     NativeScreenStackHeaderSubview ||
+  //     requireNativeComponent('RNCMScreenStackHeaderSubview', null);
+  //   return NativeScreenStackHeaderSubview;
+  // },
 };
 
 class Screen extends React.Component {
@@ -96,7 +88,7 @@ class Screen extends React.Component {
       // https://github.com/react-navigation/react-navigation/issues/4886
 
       /* eslint-disable no-unused-vars */
-      const { active, onComponentRef, ...props } = this.props;
+      const { onComponentRef, ...props } = this.props;
 
       return <Animated.View {...props} ref={this.setRef} />;
     } else {
@@ -122,16 +114,6 @@ class Screen extends React.Component {
           </AnimatedNativeScreen>
         );
       }
-    }
-  }
-}
-
-class ScreenContainer extends React.Component {
-  render() {
-    if (!ENABLE_SCREENS) {
-      return <View {...this.props} />;
-    } else {
-      return <ScreensNativeModules.NativeScreenContainer {...this.props} />;
     }
   }
 }
@@ -180,29 +162,24 @@ const ScreenStackHeaderCenterView = props => (
 );
 
 module.exports = {
-  ScreenContainer,
   Screen,
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
   },
 
-  get NativeScreenContainer() {
-    return ScreensNativeModules.NativeScreenContainer;
-  },
-
   get ScreenStack() {
     return ScreensNativeModules.NativeScreenStack;
   },
-  get ScreenStackHeaderConfig() {
-    return ScreensNativeModules.NativeScreenStackHeaderConfig;
-  },
-  get ScreenStackHeaderSubview() {
-    return ScreensNativeModules.NativeScreenStackHeaderSubview;
-  },
-  ScreenStackHeaderBackButtonImage,
-  ScreenStackHeaderRightView,
-  ScreenStackHeaderLeftView,
-  ScreenStackHeaderCenterView,
+  // get ScreenStackHeaderConfig() {
+  //   return ScreensNativeModules.NativeScreenStackHeaderConfig;
+  // },
+  // get ScreenStackHeaderSubview() {
+  //   return ScreensNativeModules.NativeScreenStackHeaderSubview;
+  // },
+  // ScreenStackHeaderBackButtonImage,
+  // ScreenStackHeaderRightView,
+  // ScreenStackHeaderLeftView,
+  // ScreenStackHeaderCenterView,
 
   enableScreens,
   useScreens,

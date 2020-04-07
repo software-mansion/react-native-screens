@@ -1,8 +1,7 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTUIManagerObserverCoordinator.h>
-#import "RNSScreenContainer.h"
 
-@interface RNSScreenStackView : UIView <RNSScreenContainerDelegate, RCTInvalidating>
+@interface RNCMcreenStackView : UIView <RCTInvalidating>
 
 @property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
 
@@ -11,6 +10,6 @@
 
 @end
 
-@interface RNSScreenStackManager : RCTViewManager <RCTInvalidating>
+@interface RNCMScreenStackManager : RCTViewManager <RCTInvalidating>
 
 @end

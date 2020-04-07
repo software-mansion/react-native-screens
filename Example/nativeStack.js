@@ -17,7 +17,7 @@ import {
   ScreenStackHeaderCenterView,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
-} from 'react-native-screens';
+} from 'react-native-cool-modals';
 
 // const ScreenStack = requireNativeComponent('RNSScreenStack', null);
 

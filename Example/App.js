@@ -11,16 +11,12 @@ import {
   createSwitchNavigator,
   createAppContainer,
 } from 'react-navigation';
-import { enableScreens } from 'react-native-screens';
 
 import Stack from './stack';
 import NativeStack from './nativeStack';
 import Tabs from './tabs';
 import Navigation from './navigation';
 import NativeNavigation from './nativeNavigation';
-import NavigationTabsAndStack from './navigationTabsAndStack';
-
-enableScreens();
 
 const SCREENS = {
   Stack: { screen: Stack, title: 'Screen container based stack' },
@@ -33,10 +29,6 @@ const SCREENS = {
   Navigation: {
     screen: Navigation,
     title: 'React Navigation with screen enabled',
-  },
-  NavigationTabsAndStack: {
-    screen: NavigationTabsAndStack,
-    title: 'React Navigation Tabs + Stack',
   },
 };
 
@@ -77,21 +69,6 @@ class MainScreenItem extends React.Component {
     );
   }
 }
-
-const MainScreenNav = createStackNavigator({
-  MainScreen: { screen: MainScreen },
-});
-
-const ExampleApp = createSwitchNavigator(
-  {
-    Main: { screen: MainScreenNav },
-    ...SCREENS,
-  },
-  {
-    initialRouteName: 'Main',
-  }
-);
-
 const styles = StyleSheet.create({
   list: {
     backgroundColor: '#EFEFF4',
@@ -113,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createAppContainer(ExampleApp);
+export default createAppContainer(NativeNavigation);

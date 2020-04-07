@@ -5,13 +5,13 @@
   "scripts": {
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "rm -rf node_modules/react-native-screens/{.git,node_modules,Example}"
+    "postinstall": "rm -rf node_modules/react-native-cool-modals/{.git,node_modules,Example}"
   },
   "dependencies": {
     "react": "16.11.0",
     "react-native": "0.62.0",
     "react-native-gesture-handler": "^1.6.1",
-    "react-native-screens": "file:..",
+    "react-native-cool-modals": "file:..",
     "react-navigation": "^3.0.8"
   },
   "devDependencies": {

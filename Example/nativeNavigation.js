@@ -1,27 +1,8 @@
 import React from 'react';
 import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
+import createNativeStackNavigator from 'react-native-cool-modals/createNativeStackNavigator';
 
-class SomeScreen extends React.Component {
-  render() {
-    return (
-      <ScrollView style={styles.screen}>
-        <Button
-          onPress={() => this.props.navigation.push('Push')}
-          title="Push"
-        />
-        <Button
-          onPress={() => this.props.navigation.push('Modal')}
-          title="Modal"
-        />
-        <Button onPress={() => this.props.navigation.pop()} title="Back" />
-        <View style={styles.leftTop} />
-        <View style={styles.bottomRight} />
-      </ScrollView>
-    );
-  }
-}
+let key = 1;
 
 class PushScreen extends React.Component {
   static route = {
@@ -31,110 +12,28 @@ class PushScreen extends React.Component {
   };
   render() {
     return (
-      <View
-        style={[StyleSheet.absoluteFillObject, { backgroundColor: 'white' }]}>
-        <ScrollView style={StyleSheet.absoluteFillObject}>
+      <View style={[StyleSheet.absoluteFillObject]}>
+        <ScrollView>
           <TextInput placeholder="Hello" style={styles.textInput} />
           <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-          <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Go back"
-          />
-
-          <Button
-            onPress={() => this.props.navigation.push('Push')}
+            onPress={() =>
+              this.props.navigation.navigate({
+                routeName: 'Root',
+                key: key++,
+                params: { customStack: false },
+              })
+            }
             title="Push more"
+          />
+          <Button
+            onPress={() =>
+              this.props.navigation.navigate({
+                routeName: 'Root',
+                key: key++,
+                params: { customStack: true },
+              })
+            }
+            title="Push custom"
           />
           <View style={styles.leftTop} />
           <View style={styles.bottomRight} />
@@ -144,57 +43,22 @@ class PushScreen extends React.Component {
   }
 }
 
-const AppStack = createNativeStackNavigator(
-  {
-    Some: {
-      screen: SomeScreen,
-      navigationOptions: () => ({
-        title: 'Start',
-        // headerBackTitle: null,
-        headerStyle: {
-          // backgroundColor: 'transparent',
-        },
-        headerTintColor: 'black',
-        // translucent: true,
-        // largeTitle: true,
-      }),
-    },
-    Push: {
-      screen: PushScreen,
-      navigationOptions: {
-        title: 'Pushed',
-        headerBackTitle: 'Escape',
-        // headerBackTitleStyle: {
-        //   fontFamily: 'ChalkboardSE-Light',
-        // },
-        headerStyle: {
-          backgroundColor: '#3da4ab',
-        },
-        headerTintColor: 'black',
-        // header: null,
-        // translucent: true,
-        // gestureEnabled: false,
-      },
-    },
-  },
-  {
-    initialRouteName: 'Some',
-    // headerMode: 'none',
-    // transparentCard: true,
-    // mode: 'modal',
-  }
-);
-
 const App = createNativeStackNavigator(
   {
-    Root: { screen: AppStack },
+    Root: {
+      screen: PushScreen,
+      navigationOptions: ({
+        navigation: {
+          state: { params },
+        },
+      }) => ({
+        customStack: !!params?.customStack,
+        // topOffset: 100,
+        // showDragIndicator: true,
+      }),
+    },
     Modal: {
       screen: PushScreen,
-      navigationOptions: {
-        customStack: true,
-        topOffset: 100,
-        showDragIndicator: true,
-      },
     },
   },
   {
@@ -244,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createAppContainer(App);
+export default App;

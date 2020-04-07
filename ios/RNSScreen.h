@@ -1,7 +1,6 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTView.h>
 #import <React/RCTComponent.h>
-#import "RNSScreenContainer.h"
 
 @class RNSScreenContainerView;
 
@@ -37,14 +36,14 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
 
 @end
 
-@interface RNSScreenManager : RCTViewManager
+@interface RNCMScreenManager : RCTViewManager
 @end
 
-@interface RNSScreenView : RCTView
+@interface RNCMScreenView : RCTView
 
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
-@property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
+@property (weak, nonatomic) UIView *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) BOOL active;
