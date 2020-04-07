@@ -357,9 +357,9 @@
   }
 
   navitem.title = config.title;
-  if (config.backTitle != nil) {
+  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
-                                  initWithTitle:config.backTitle
+                                  initWithTitle:config.backTitle ?: prevItem.title
                                   style:UIBarButtonItemStylePlain
                                   target:nil
                                   action:nil];
