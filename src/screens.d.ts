@@ -92,7 +92,7 @@ declare module 'react-native-screens' {
      */
     titleColor?: string;
     /**
-     *@description Controlls the color of the navigation header.
+     *@description Controls the color of the navigation header.
      */
     backgroundColor?: string;
     /**
@@ -165,6 +165,7 @@ declare module 'react-native-screens' {
   export const ScreenStackHeaderBackButtonImage: ComponentClass<ImageProps>;
   export const ScreenStackHeaderLeftView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderRightView: ComponentClass<ViewProps>;
+  export const ScreenStackHeaderCenterView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderConfig: ComponentClass<
     ScreenStackHeaderConfigProps
   >;
