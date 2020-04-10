@@ -122,14 +122,15 @@
   // this is done to mimick the effect UINavigationController has when willMoveToWindow:nil is
   // triggered before the animation starts
   if (activeScreenAdded) {
-    // Follow the assumption that there're mostly two active screens
-    // it's reasnabe to assume that it's not allowed to add any other
+    // Following the assumption that there're mostly two active screens
+    // it's reasnabe to assume that it's not allowed to add additional one
+    // if there're already two on them
     RCTAssert(_activeScreens.count < 2, @"It's allowed to have max two active screens");
     RNSScreenView* onlyActiveScreen = [_activeScreens anyObject];
     if (onlyActiveScreen != nil) {
-      // We're not using [self.detachScreen:] screen couse in we don't
-      // want ot actually add removeFromSuperview to keep the gesture
-      // recognition continuos
+      // We're not using [self.detachScreen:] screen couse we don't
+      // want ot actually call [view.removeFromSuperview] in order 
+      // to keep the gesture recognition continuous
       [onlyActiveScreen.controller removeFromParentViewController];
       [onlyActiveScreen.controller willMoveToParentViewController:nil];
       [_activeScreens removeObject:onlyActiveScreen];
@@ -141,25 +142,25 @@
       if (screen.active) {
         if (screen == onlyActiveScreen) {
           // We're not using [self.attachScreen:] screen couse we don't
-          // want to actually removeFromSuperview to keep the gesture
+          // want to call [view.addSubview:] to keep the gesture
           // recognition continuos
           [_controller addChildViewController:screen.controller];
           [screen.controller didMoveToParentViewController:_controller];
           [_activeScreens addObject:screen];
         } else {
           [_controller addChildViewController:screen.controller];
-          // We need to keed the native views' order sync with js
           if (onlyActiveScreen == nil) {
             [_controller.view addSubview:screen.controller.view];
           } else {
+            // We need to keed the native views' order sync with js.
             // if there's already another active screen attached we
-            // need to keep the order or screens on native site
-            // same as in JS. Therefore assuming that the order of attaching
-            // might be different that order in he hierarchy and
-            // assuming that there might be max two active screens
-            // we're insering the new screen either at index 0
-            // or at index 1 according to the position is react
-            // hierarchy.
+            // need to keep the order of screens on native site the
+            // same as on react site. Therefore assuming that the order 
+            // of screens' attaching might be different than the order 
+            // in the react hierarchy and assuming that there might
+            // be max two active screens we're insering the new screen 
+            // either at index 0 or at index 1 according to
+            // the position is react hierarchy.
             BOOL isBeforePreviouslyOnlyOneActiveScreen = [_reactSubviews indexOfObject:screen] < [_reactSubviews indexOfObject:onlyActiveScreen];
             [_controller.view insertSubview:screen.controller.view atIndex: isBeforePreviouslyOnlyOneActiveScreen ? 0 : 1];
           }
