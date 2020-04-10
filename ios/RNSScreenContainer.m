@@ -128,7 +128,7 @@
     RCTAssert(_activeScreens.count < 2, @"It's allowed to have max two active screens");
     RNSScreenView* onlyActiveScreen = [_activeScreens anyObject];
     if (onlyActiveScreen != nil) {
-      // We're not using [self.detachScreen:] screen couse we don't
+      // We're not using [self.detachScreen:] couse we don't
       // want ot actually call [view.removeFromSuperview] in order 
       // to keep the gesture recognition continuous
       [onlyActiveScreen.controller removeFromParentViewController];
@@ -141,7 +141,7 @@
     for (RNSScreenView *screen in _reactSubviews) {
       if (screen.active) {
         if (screen == onlyActiveScreen) {
-          // We're not using [self.attachScreen:] screen couse we don't
+          // We're not using [self.attachScreen:] couse we don't
           // want to call [view.addSubview:] to keep the gesture
           // recognition continuos
           [_controller addChildViewController:screen.controller];
