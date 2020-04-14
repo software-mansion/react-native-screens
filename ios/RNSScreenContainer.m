@@ -130,9 +130,6 @@
     for (RNSScreenView *screen in _reactSubviews) {
       if (screen.active) {
         if (screen == onlyActiveScreen) {
-          // We're not using [self.attachScreen:] cause we don't
-          // want to call [view.addSubview:] to keep the gesture
-          // recognition continuous
           [_controller addChildViewController:screen.controller];
           [screen.controller didMoveToParentViewController:_controller];
           [_activeScreens addObject:screen];
