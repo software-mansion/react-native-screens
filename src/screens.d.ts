@@ -104,7 +104,8 @@ declare module 'react-native-screens' {
      */
     hideBackButton?: boolean;
     /**
-     * Whether to show the back button with custom left side of the header.
+     * @host (iOS only)
+     * @description Whether to show the back button with a custom left side of the header.
      */
     backButtonInCustomView?: boolean;
     /**
