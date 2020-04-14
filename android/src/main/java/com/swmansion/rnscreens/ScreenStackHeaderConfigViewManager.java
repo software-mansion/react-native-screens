@@ -114,6 +114,11 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     config.setHidden(hidden);
   }
 
+  @ReactProp(name = "backButtonInCustomView")
+  public void setbackButtonInCustomView(ScreenStackHeaderConfig config, boolean backButtonInCustomView) {
+    config.setbackButtonInCustomView(backButtonInCustomView);
+  }
+
 
 //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
