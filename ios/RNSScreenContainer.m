@@ -122,14 +122,14 @@
   // this is done to mimick the effect UINavigationController has when willMoveToWindow:nil is
   // triggered before the animation starts
   if (activeScreenAdded) {
-    // Following the assumption that there're mostly two active screens
+    // Following the assumption that there are mostly two active screens at once,
     // it's reasonable to assume that it's not allowed to add an additional one
-    // if there're already two on them
+    // if there are already two of them
     RCTAssert(_activeScreens.count < 2, @"It's allowed to have max two active screens");
     RNSScreenView* onlyActiveScreen = [_activeScreens anyObject];
     if (onlyActiveScreen != nil) {
-      // We're not using [self.detachScreen:] couse we don't
-      // want ot actually call [view.removeFromSuperview] in order 
+      // We're not using [self.detachScreen:] cause we don't
+      // want to actually call [view.removeFromSuperview] in order 
       // to keep the gesture recognition continuous
       [onlyActiveScreen.controller removeFromParentViewController];
       [onlyActiveScreen.controller willMoveToParentViewController:nil];
@@ -152,15 +152,15 @@
           if (onlyActiveScreen == nil) {
             [_controller.view addSubview:screen.controller.view];
           } else {
-            // We need to keed the native views' order sync with js.
-            // if there's already another active screen attached we
+            // We need to keep the native views' order sync with js.
+            // If there's already another active screen attached, we
             // need to keep the order of screens on native site the
-            // same as on the react site. Therefore assuming that the order 
+            // same as on the react site. Therefore, assuming that the order 
             // of screens' attaching might be different than the order 
             // in the react hierarchy and assuming that there might
-            // be at most two active screens we're inserting the new screen 
-            // either at index 0 or index 1 according to
-            // the position is the react hierarchy.
+            // be at most two active screens, we're inserting the new screen 
+            // either at index 0 or 1, according to
+            // the position in the react hierarchy.
             BOOL isBeforePreviouslyOnlyOneActiveScreen = [_reactSubviews indexOfObject:screen] < [_reactSubviews indexOfObject:onlyActiveScreen];
             [_controller.view insertSubview:screen.controller.view atIndex: isBeforePreviouslyOnlyOneActiveScreen ? 0 : 1];
           }
