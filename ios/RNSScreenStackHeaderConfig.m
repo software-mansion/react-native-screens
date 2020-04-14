@@ -357,9 +357,9 @@
   }
 
   navitem.title = config.title;
-  if (config.backTitle != nil) {
+  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
-                                  initWithTitle:config.backTitle
+                                  initWithTitle:config.backTitle ?: prevItem.title
                                   style:UIBarButtonItemStylePlain
                                   target:nil
                                   action:nil];
@@ -483,7 +483,7 @@ RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(titleColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
-RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
+RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
