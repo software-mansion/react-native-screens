@@ -81,17 +81,6 @@
   [_activeScreens removeObject:screen];
 }
 
-- (void)attachScreen:(RNSScreenView *)screen
-{
-  [_controller addChildViewController:screen.controller];
-  // the frame is already set at this moment because we adjust it in insertReactSubview. We don't
-  // want to update it here as react-driven animations may already run and hence changing the frame
-  // would result in visual glitches
-  [_controller.view addSubview:screen.controller.view];
-  [screen.controller didMoveToParentViewController:_controller];
-  [_activeScreens addObject:screen];
-}
-
 - (void)updateContainer
 {
   _needUpdate = NO;
