@@ -91,6 +91,14 @@ Whether the back button title should be visible or not. Defaults to `true`. Only
 
 Function which returns a React Element to display on the right side of the header.
 
+#### `headerLeft`
+
+Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
+
+#### `headerCenter`
+
+Function which returns a React Element to display in the center of the header.
+
 #### `headerTranslucent`
 
 Boolean indicating whether the navigation bar is translucent. Only supported on iOS.
