@@ -115,8 +115,8 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   }
 
   @ReactProp(name = "backButtonInCustomView")
-  public void setbackButtonInCustomView(ScreenStackHeaderConfig config, boolean backButtonInCustomView) {
-    config.setbackButtonInCustomView(backButtonInCustomView);
+  public void setBackButtonInCustomView(ScreenStackHeaderConfig config, boolean backButtonInCustomView) {
+    config.setBackButtonInCustomView(backButtonInCustomView);
   }
 
 

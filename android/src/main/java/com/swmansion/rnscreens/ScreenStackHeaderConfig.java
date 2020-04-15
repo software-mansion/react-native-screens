@@ -338,5 +338,5 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     mIsHidden = hidden;
   }
 
-  public void setbackButtonInCustomView(boolean backButtonInCustomView) { mBackButtonInCustomView = backButtonInCustomView; }
+  public void setBackButtonInCustomView(boolean backButtonInCustomView) { mBackButtonInCustomView = backButtonInCustomView; }
 }
