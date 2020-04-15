@@ -2,9 +2,9 @@
 
 Provides a way for your app to transition between screens where each new screen is placed on top of a stack.
 
-By default the stack navigator is configured to have the familiar iOS and Android look & feel: new screens slide in from the right on iOS, fade in from the bottom on Android. On iOS the stack navigator can also be configured to a modal style where screens slide in from the bottom.
+By default the stack navigator is configured to have the familiar iOS and Android look & feel: new screens slide in from the right on iOS, fade in from the bottom on Android. On iOS, the stack navigator can also be configured to a modal style where screens slide in from the bottom.
 
-This navigator uses native navigation primitives (`UINavigationController` on iOS and `Fragment` on Android) for navigation under the hood. The main difference from React Navigation's JS based [stack navigator](https://reactnavigation.org/docs/stack-navigator.html) is that the JS based navigator re-implements animations and gestures while the native stack navigator relies on the platform primitives for animations and gestures. You should use this navigator if you want native feeling and performance for navigation and don't need much customization, as the customization options of this navigator are limited.
+This navigator uses native navigation primitives (`UINavigationController` on iOS and `Fragment` on Android) for navigation under the hood. The main difference from React Navigation's JS-based [stack navigator](https://reactnavigation.org/docs/stack-navigator.html) is that the JS-based navigator re-implements animations and gestures while the native stack navigator relies on the platform primitives for animations and gestures. You should use this navigator if you want native feeling and performance for navigation and don't need much customization, as the customization options of this navigator are limited.
 
 ```sh
 npm install react-native-screens @react-navigation/native
@@ -45,7 +45,7 @@ The `Stack.Navigator` component accepts following props:
 
 #### `initialRouteName`
 
-The name of the route to render on first load of the navigator.
+The name of the route to render on the first load of the navigator.
 
 #### `screenOptions`
 
@@ -57,7 +57,7 @@ The `options` prop can be used to configure individual screens inside the naviga
 
 #### `title`
 
-String that can be used as a fallback for `headerTitle`.
+A string that can be used as a fallback for `headerTitle`.
 
 #### `headerShown`
 
@@ -65,7 +65,11 @@ Whether to show or hide the header for the screen. The header is shown by defaul
 
 #### `headerHideBackButton`
 
-Boolean indicating whether to hide the back button in header. Only supported on Android.
+Boolean indicating whether to hide the back button in the header. Only supported on Android.
+
+#### `backButtonInCustomView`
+
+Boolean indicating whether to hide the back button while using `headerLeft` function.
 
 #### `headerHideShadow`
 
@@ -87,21 +91,29 @@ Whether the back button title should be visible or not. Defaults to `true`. Only
 
 Function which returns a React Element to display on the right side of the header.
 
+#### `headerLeft`
+
+Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
+
+#### `headerCenter`
+
+Function which returns a React Element to display in the center of the header.
+
 #### `headerTranslucent`
 
 Boolean indicating whether the navigation bar is translucent. Only supported on iOS.
 
 #### `headerLargeTitle`
 
-Boolean to set native property to prefer large title header (like in iOS setting).
+Boolean used to set a native property to prefer a large title header (like in iOS setting).
 
-For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
+For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
 
 Only supported on iOS.
 
 #### `headerTintColor`
 
-Tint color for the header. Changes the color of back button and title.
+Tint color for the header. Changes the color of the back button and title.
 
 #### `headerStyle`
 
@@ -136,10 +148,10 @@ Gestures are only supported on iOS. They can be disabled only when `stackPresent
 
 #### `stackPresentation`
 
-How should the screen be presented. Possible values:
+How the screen should be presented. Possible values:
 
 - `push` - The new screen will be pushed onto a stack. The default animation on iOS is to slide from the side. The animation on Android may vary depending on the OS version and theme.
-- `modal` - The new screen will be presented modally. In addition this allows for a nested stack to be rendered inside such screens
+- `modal` - The new screen will be presented modally. In addition, this allows for a nested stack to be rendered inside such screens
 - `transparentModal` - The new screen will be presented modally. In addition, the second to last screen will remain attached to the stack container such that if the top screen is translucent, the content below can still be seen. If `"modal"` is used instead, the below screen gets removed as soon as the transition ends.
 
 Defaults to `push`.
@@ -166,13 +178,16 @@ Event which fires when the screen appears.
 Example:
 
 ```js
-React.useEffect(() => {
-  const unsubscribe = navigation.addListener('appear', e => {
-    // Do something
-  });
+React.useEffect(
+  () => {
+    const unsubscribe = navigation.addListener('appear', e => {
+      // Do something
+    });
 
-  return unsubscribe;
-}, [navigation]);
+    return unsubscribe;
+  },
+  [navigation]
+);
 ```
 
 #### `dismiss`
@@ -182,13 +197,16 @@ Event which fires when the current screen is dismissed by hardware back (on Andr
 Example:
 
 ```js
-React.useEffect(() => {
-  const unsubscribe = navigation.addListener('dismiss', e => {
-    // Do something
-  });
+React.useEffect(
+  () => {
+    const unsubscribe = navigation.addListener('dismiss', e => {
+      // Do something
+    });
 
-  return unsubscribe;
-}, [navigation]);
+    return unsubscribe;
+  },
+  [navigation]
+);
 ```
 
 #### `finishTransitioning`
@@ -198,13 +216,16 @@ Event which fires when the current screen finishes its transition.
 Example:
 
 ```js
-React.useEffect(() => {
-  const unsubscribe = navigation.addListener('finishTransitioning', e => {
-    // Do something
-  });
+React.useEffect(
+  () => {
+    const unsubscribe = navigation.addListener('finishTransitioning', e => {
+      // Do something
+    });
 
-  return unsubscribe;
-}, [navigation]);
+    return unsubscribe;
+  },
+  [navigation]
+);
 ```
 
 ### Helpers
@@ -213,7 +234,7 @@ The stack navigator adds the following methods to the navigation prop:
 
 #### `push`
 
-Pushes a new screen to top of the stack and navigate to it. The method accepts following arguments:
+Pushes a new screen to the top of the stack and navigate to it. The method accepts the following arguments:
 
 - `name` - _string_ - Name of the route to push onto the stack.
 - `params` - _object_ - Screen params to merge into the destination route (found in the pushed screen through `route.params`).
@@ -253,8 +274,7 @@ function MyStack() {
         headerShown: false,
         headerTintColor: 'white',
         headerStyle: { backgroundColor: 'tomato' },
-      }}
-    >
+      }}>
       <Stack.Screen
         name="Home"
         component={Home}

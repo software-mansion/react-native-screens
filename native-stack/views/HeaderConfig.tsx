@@ -2,6 +2,8 @@ import * as React from 'react';
 import {
   ScreenStackHeaderConfig,
   ScreenStackHeaderRightView,
+  ScreenStackHeaderLeftView,
+  ScreenStackHeaderCenterView,
 } from 'react-native-screens';
 import { Route, useTheme } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '../types';
@@ -16,6 +18,8 @@ export default function HeaderConfig(props: Props) {
     route,
     title,
     headerRight,
+    headerLeft,
+    headerCenter,
     headerTitle,
     headerBackTitle,
     headerBackTitleVisible = true,
@@ -31,11 +35,13 @@ export default function HeaderConfig(props: Props) {
     headerLargeTitleStyle = {},
     headerBackTitleStyle = {},
     headerShown,
+    backButtonInCustomView,
   } = props;
 
   return (
     <ScreenStackHeaderConfig
       hidden={headerShown === false}
+      backButtonInCustomView={backButtonInCustomView}
       translucent={headerTranslucent === true}
       hideShadow={headerHideShadow}
       largeTitleHideShadow={headerLargeTitleHideShadow}
@@ -72,6 +78,14 @@ export default function HeaderConfig(props: Props) {
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}>
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>{headerRight()}</ScreenStackHeaderRightView>
+      ) : null}
+      {headerLeft !== undefined ? (
+        <ScreenStackHeaderLeftView>{headerLeft()}</ScreenStackHeaderLeftView>
+      ) : null}
+      {headerCenter !== undefined ? (
+        <ScreenStackHeaderCenterView>
+          {headerCenter()}
+        </ScreenStackHeaderCenterView>
       ) : null}
     </ScreenStackHeaderConfig>
   );

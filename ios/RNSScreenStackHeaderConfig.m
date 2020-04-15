@@ -394,7 +394,7 @@
       scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
     }
     if (config.largeTitleHideShadow) {
-        scrollEdgeAppearance.shadowColor = nil;
+      scrollEdgeAppearance.shadowColor = nil;
     }
     navitem.scrollEdgeAppearance = scrollEdgeAppearance;
   } else
@@ -418,6 +418,7 @@
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
+        navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
         navitem.leftBarButtonItem = buttonItem;
         break;
@@ -494,6 +495,7 @@ RCT_EXPORT_VIEW_PROPERTY(largeTitleBackgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleHideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)

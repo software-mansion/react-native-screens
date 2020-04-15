@@ -104,6 +104,10 @@ declare module 'react-native-screens' {
      */
     hideBackButton?: boolean;
     /**
+     * @description Whether to show the back button with a custom left side of the header.
+     */
+    backButtonInCustomView?: boolean;
+    /**
      * @host (iOS only)
      * @description When set to true, it makes native navigation bar on iOS semi transparent with blur effect. It is a common way of presenting navigation bar introduced in iOS 11. The default value is false
      */
