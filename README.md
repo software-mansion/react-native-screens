@@ -189,11 +189,11 @@ Boolean that allows for disabling drop shadow under navigation header. The defau
 
 #### `hideBackButton`
 
-If set to `true` the back button will also be rendered while using `headerLeft` function.
+If set to `true` the back button will not be rendered as a part of the navigation header.
 
 #### `backButtonInCustomView`
 
-If set to `true` the back button will not be rendered as a part of the navigation header.
+If set to `true` the back button will also be rendered while using `headerLeft` function.
 
 #### `gestureEnabled`
 
