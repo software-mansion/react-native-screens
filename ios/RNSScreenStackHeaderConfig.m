@@ -5,19 +5,17 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 #import <React/RCTShadowView.h>
-#import <React/RCTImageLoader.h>
+#import <React/RCTImageURLLoader.h>
+#import <React/RCTImageShadowView.h>
+#import <React/RCTImageView.h>
+#import <React/RCTImageLoaderProtocol.h>
 #import <React/RCTImageView.h>
 #import <React/RCTImageSource.h>
-#import <React/RCTFont.h>
 
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
 - (UIImage*)image;
-@end
-
-@interface RCTImageLoader (Private)
-- (id<RCTImageCache>)imageCache;
 @end
 
 
@@ -147,11 +145,11 @@
         attrs[NSForegroundColorAttributeName] = config.titleColor;
       }
 
-      NSNumber *size = config.titleFontSize ?: @17;
+      CGFloat size = config.titleFontSize ? [config.titleFontSize floatValue] : 17;
       if (config.titleFontFamily) {
-        attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
+        attrs[NSFontAttributeName] = [UIFont fontWithName:config.titleFontFamily size:size];
       } else {
-        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:size];
       }
       [navbar setTitleTextAttributes:attrs];
     }
@@ -162,11 +160,11 @@
         if (config.largeTitleColor || config.titleColor) {
           largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
         }
-        NSNumber *largeSize = config.largeTitleFontSize ?: @34;
+        CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
         if (config.largeTitleFontFamily) {
-          largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.largeTitleFontFamily size:largeSize weight:nil style:nil variant:nil scaleMultiplier:1.0];
+          largeAttrs[NSFontAttributeName] = [UIFont fontWithName:config.largeTitleFontFamily size:largeSize];
         } else {
-          largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[largeSize floatValue]];
+          largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:largeSize];
         }
         [navbar setLargeTitleTextAttributes:largeAttrs];
       }
@@ -222,11 +220,12 @@
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *source = imageView.imageSources[0];
-        image = [subview.bridge.imageLoader.imageCache
-                 imageForUrl:source.request.URL.absoluteString
-                 size:source.size
-                 scale:source.scale
-                 resizeMode:imageView.resizeMode];
+
+          image = [[subview.bridge moduleForName:@"ImageLoader" lazilyLoadIfNecessary:true]
+                   imageForUrl:source.request.URL.absoluteString
+                   size:source.size
+                   scale:source.scale
+                   resizeMode:imageView.resizeMode];
       }
       if (image == nil) {
         // This will be triggered if the image is not in the cache yet. What we do is we wait until
@@ -294,11 +293,11 @@
       attrs[NSForegroundColorAttributeName] = config.titleColor;
     }
 
-    NSNumber *size = config.titleFontSize ?: @17;
+    CGFloat size = config.titleFontSize ? [config.titleFontSize floatValue] : 17;
     if (config.titleFontFamily) {
-      attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
+      attrs[NSFontAttributeName] = [UIFont fontWithName:config.titleFontFamily size:size];
     } else {
-      attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+      attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:size];
     }
     appearance.titleTextAttributes = attrs;
   }
@@ -310,11 +309,11 @@
       largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
     }
 
-    NSNumber *largeSize = config.largeTitleFontSize ?: @34;
+    CGFloat largeSize = config.largeTitleFontSize ? [config.largeTitleFontSize floatValue] : 34;
     if (config.largeTitleFontFamily) {
-      largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.largeTitleFontFamily size:largeSize weight:nil style:nil variant:nil scaleMultiplier:1.0];
+      largeAttrs[NSFontAttributeName] = [UIFont fontWithName:config.largeTitleFontFamily size:largeSize];
     } else {
-      largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[largeSize floatValue]];
+      largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:largeSize];
     }
 
     appearance.largeTitleTextAttributes = largeAttrs;
@@ -357,19 +356,19 @@
   }
 
   navitem.title = config.title;
-  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
+  if (config.backTitle != nil) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
-                                  initWithTitle:config.backTitle ?: prevItem.title
+                                  initWithTitle:config.backTitle
                                   style:UIBarButtonItemStylePlain
                                   target:nil
                                   action:nil];
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
-      NSNumber *size = config.backTitleFontSize ?: @17;
+      CGFloat size = config.backTitleFontSize ? [config.backTitleFontSize floatValue] : 17;
       if (config.backTitleFontFamily) {
-        attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.backTitleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
+        attrs[NSFontAttributeName] = [UIFont fontWithName:config.backTitleFontFamily size:size];
       } else {
-        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
+        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:size];
       }
       [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
     }
@@ -390,9 +389,7 @@
     navitem.compactAppearance = appearance;
 
     UINavigationBarAppearance *scrollEdgeAppearance = [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
-    if (config.largeTitleBackgroundColor != nil) {
-      scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
-    }
+    scrollEdgeAppearance.backgroundColor = config.largeTitleBackgroundColor;
     if (config.largeTitleHideShadow) {
         scrollEdgeAppearance.shadowColor = nil;
     }
@@ -483,7 +480,7 @@ RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(titleColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
-RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
