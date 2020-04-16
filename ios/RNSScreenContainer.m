@@ -136,6 +136,9 @@
         } else {
           [_controller addChildViewController:screen.controller];
           if (onlyActiveScreen == nil) {
+			 // the frame is already set at this moment because we adjust it in insertReactSubview. We don't
+			 // want to update it here as react-driven animations may already run and hence changing the frame
+			 // would result in visual glitches
             [_controller.view addSubview:screen.controller.view];
           } else {
             // We need to keep the native views' order sync with js.
