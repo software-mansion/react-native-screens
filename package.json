@@ -73,6 +73,7 @@
     "react-dom": "^16.0.0-beta.5",
     "react-native": "^0.56.0",
     "react-test-renderer": "^16.0.0-alpha.12",
+    "release-it": "^13.5.2",
     "typescript": "^3.7.5"
   },
   "lint-staged": {
