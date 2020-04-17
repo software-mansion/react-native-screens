@@ -8,7 +8,8 @@
     "test:unit": "jest",
     "format": "prettier --write --list-different './src/**/*.js'",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src native-stack",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "release": "npm login && release-it"
   },
   "main": "src/screens",
   "types": "src/screens.d.ts",
@@ -73,6 +74,7 @@
     "react-dom": "^16.0.0-beta.5",
     "react-native": "^0.56.0",
     "react-test-renderer": "^16.0.0-alpha.12",
+    "release-it": "^13.5.2",
     "typescript": "^3.7.5"
   },
   "lint-staged": {
@@ -80,5 +82,12 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "release-it": {
+    "hooks": {
+      "before:git:bump": [
+        "# check if version corresponds to changes in native files \n git diff --name-only ${latestVersion} HEAD -- | egrep \"(^android/.*)|(^ios/.*)\" -q && egrep '\\.0$' -q <<< ${version}"
+      ]
+    }
   }
 }
