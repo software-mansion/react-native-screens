@@ -1,7 +1,6 @@
 import React from 'react';
 import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
 class SomeScreen extends React.Component {
   render() {
@@ -12,7 +11,7 @@ class SomeScreen extends React.Component {
           title="Push"
         />
         <Button
-          onPress={() => this.props.navigation.push('Modal')}
+          onPress={() => this.props.navigation.navigate('Modal')}
           title="Modal"
         />
         <Button onPress={() => this.props.navigation.pop()} title="Back" />
@@ -48,56 +47,30 @@ class PushScreen extends React.Component {
   }
 }
 
-const AppStack = createNativeStackNavigator(
-  {
-    Some: {
-      screen: SomeScreen,
-      navigationOptions: () => ({
-        title: 'Start',
-        // headerBackTitle: null,
-        headerStyle: {
-          // backgroundColor: 'transparent',
-        },
-        headerTintColor: 'black',
-        // translucent: true,
-        // largeTitle: true,
-      }),
-    },
-    Push: {
-      screen: PushScreen,
-      navigationOptions: {
-        title: 'Pushed',
-        headerBackTitle: 'Escape',
-        // headerBackTitleStyle: {
-        //   fontFamily: 'ChalkboardSE-Light',
-        // },
-        headerStyle: {
-          backgroundColor: '#3da4ab',
-        },
-        headerTintColor: 'black',
-        // header: null,
-        // translucent: true,
-        // gestureEnabled: false,
-      },
-    },
-  },
-  {
-    initialRouteName: 'Some',
-    // headerMode: 'none',
-    // transparentCard: true,
-    // mode: 'modal',
-  }
-);
+const AppStack = createNativeStackNavigator();
 
-const App = createNativeStackNavigator(
-  {
-    Root: { screen: AppStack },
-    Modal: PushScreen,
-  },
-  {
-    mode: 'modal',
-    headerMode: 'none',
-  }
+const App = () => (
+  <AppStack.Navigator>
+    <AppStack.Screen
+      name="Some"
+      component={SomeScreen}
+      options={{ title: 'Start', headerTintColor: 'black' }}
+    />
+    <AppStack.Screen
+      name="Push"
+      component={PushScreen}
+      options={{
+        title: 'Pushed',
+        headerStyle: { backgroundColor: '#3da4ab' },
+        headerTintColor: 'black',
+      }}
+    />
+    <AppStack.Screen
+      name="Modal"
+      component={PushScreen}
+      options={{ stackPresentation: 'modal' }}
+    />
+  </AppStack.Navigator>
 );
 
 const styles = StyleSheet.create({
@@ -141,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createAppContainer(App);
+export default App;

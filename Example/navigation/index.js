@@ -8,8 +8,7 @@ import {
   Image,
   requireNativeComponent,
 } from 'react-native';
-import { createStackNavigator, createAppContainer } from 'react-navigation';
-// import { createStackNavigator } from './react-navigation/react-navigation';
+import { createStackNavigator } from '@react-navigation/stack';
 
 export const LifecycleAwareView = requireNativeComponent(
   'RNSLifecycleAwareView',
@@ -37,18 +36,17 @@ const Background = ({ index }) => (
 );
 
 class DetailsScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Details screen #' + navigation.getParam('index', '0'),
-    };
-  };
   animvalue = new Animated.Value(0);
   rotation = this.animvalue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
   state = { count: 1, text: '' };
+
   componentDidMount() {
+    this.props.navigation.setOptions({
+      title: `Details screen #${this.getIndex()}`,
+    });
     Animated.loop(
       Animated.timing(this.animvalue, {
         toValue: 1,
@@ -58,8 +56,14 @@ class DetailsScreen extends React.Component {
     ).start();
     setInterval(() => this.setState({ count: this.state.count + 1 }), 500);
   }
+
+  getIndex() {
+    const { params } = this.props.route;
+    return params && params.index ? params.index : 0;
+  }
+
   render() {
-    const index = this.props.navigation.getParam('index', 0);
+    const index = this.getIndex();
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Background index={index} />
@@ -74,7 +78,7 @@ class DetailsScreen extends React.Component {
         <TextInput
           placeholder="Hello"
           style={styles.textInput}
-          onChangeText={text => this.setState({ text })}
+          onChangeText={(text) => this.setState({ text })}
           text={this.state.text}
         />
         <Animated.View
@@ -96,13 +100,12 @@ class DetailsScreen extends React.Component {
   }
 }
 
-const App = createStackNavigator(
-  {
-    Details: DetailsScreen,
-  },
-  {
-    initialRouteName: 'Details',
-  }
+const Stack = createStackNavigator();
+
+const App = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Details" component={DetailsScreen} />
+  </Stack.Navigator>
 );
 
 const styles = StyleSheet.create({
@@ -116,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createAppContainer(App);
+export default App;
