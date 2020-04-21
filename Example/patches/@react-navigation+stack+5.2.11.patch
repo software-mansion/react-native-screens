@@ -1,0 +1,13 @@
+diff --git a/node_modules/@react-navigation/stack/src/views/Stack/CardStack.tsx b/node_modules/@react-navigation/stack/src/views/Stack/CardStack.tsx
+index 4a0d093..5d2d019 100755
+--- a/node_modules/@react-navigation/stack/src/views/Stack/CardStack.tsx
++++ b/node_modules/@react-navigation/stack/src/views/Stack/CardStack.tsx
+@@ -445,7 +445,7 @@ export default class CardStack extends React.Component<Props, State> {
+ 
+     // Screens is buggy on iOS and web, so we only enable it on Android
+     // For modals, usually we want the screen underneath to be visible, so also disable it there
+-    const isScreensEnabled = Platform.OS !== 'ios' && mode !== 'modal';
++    const isScreensEnabled = screensEnabled();
+ 
+     return (
+       <React.Fragment>

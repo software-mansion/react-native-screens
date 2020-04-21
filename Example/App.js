@@ -19,6 +19,7 @@ import Tabs from './tabs';
 import Navigation from './navigation';
 import NativeNavigation from './nativeNavigation';
 import NavigationTabsAndStack from './navigationTabsAndStack';
+import Test from './Test';
 
 enableScreens();
 
@@ -37,6 +38,10 @@ const SCREENS = {
   NavigationTabsAndStack: {
     screen: NavigationTabsAndStack,
     title: 'React Navigation Tabs + Stack',
+  },
+  Test: {
+    screen: Test,
+    title: 'iOS modal with visible previous screen',
   },
 };
 
