@@ -237,7 +237,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     FragmentTransaction transaction = mFragmentManager.beginTransaction();
     boolean hasFragments = false;
     for (Fragment fragment : mFragmentManager.getFragments()) {
-      if (fragment instanceof ScreenFragment) {
+      if (fragment instanceof ScreenFragment && ((ScreenFragment) fragment).mScreenView.getContainer() == this) {
         transaction.remove(fragment);
         hasFragments = true;
       }
@@ -293,7 +293,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       Object[] orphanedAry = orphaned.toArray();
       for (int i = 0; i < orphanedAry.length; i++) {
         if (orphanedAry[i] instanceof ScreenFragment) {
-          detachScreen((ScreenFragment) orphanedAry[i]);
+          if (((ScreenFragment) orphanedAry[i]).getScreen().getContainer() == null) {
+            detachScreen((ScreenFragment) orphanedAry[i]);
+          }
         }
       }
     }
