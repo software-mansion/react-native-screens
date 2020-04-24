@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.FrameLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -22,12 +23,6 @@ public class ScreenFragment extends Fragment {
     if (parent != null) {
       ((ViewGroup) parent).endViewTransition(view);
       ((ViewGroup) parent).removeView(view);
-    }
-    // the below check is here to help determine if crashes due to IllegalStateException with
-    // "child already has a parent" caused when view is created are there because for some reason
-    // the above code fails detach the view from its parent
-    if (view.getParent() != null) {
-      throw new IllegalStateException("Recycled fragment view is not detached from its parent");
     }
 
     // view detached from fragment manager get their visibility changed to GONE after their state is
@@ -53,7 +48,12 @@ public class ScreenFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater,
                            @Nullable ViewGroup container,
                            @Nullable Bundle savedInstanceState) {
-    return recycleView(mScreenView);
+    FrameLayout wrapper = new FrameLayout(getContext());
+    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    mScreenView.setLayoutParams(params);
+    wrapper.addView(recycleView(mScreenView));
+    return wrapper;
   }
 
   public Screen getScreen() {
@@ -72,12 +72,6 @@ public class ScreenFragment extends Fragment {
     // We override Screen#onAnimationEnd and an appropriate method of the StackFragment's root view
     // in order to achieve this.
     dispatchOnAppear();
-  }
-
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    recycleView(getView());
   }
 
   @Override
