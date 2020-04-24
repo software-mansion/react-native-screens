@@ -13,7 +13,7 @@ export { default as NativeStackView } from './views/NativeStackView';
 /**
  * Types
  */
-export {
+export type {
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from './types';
