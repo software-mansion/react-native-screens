@@ -27,6 +27,7 @@
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
     _gestureEnabled = YES;
+    _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
   }
 
@@ -146,6 +147,11 @@
   #endif
 
   _gestureEnabled = gestureEnabled;
+}
+
+- (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
+{
+  _replaceAnimation = replaceAnimation;
 }
 
 - (UIView *)reactSuperview
@@ -365,6 +371,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
@@ -398,6 +405,11 @@ RCT_ENUM_CONVERTER(RNSScreenStackAnimation, (@{
                                                   @"fade": @(RNSScreenStackAnimationFade),
                                                   @"flip": @(RNSScreenStackAnimationFlip),
                                                   }), RNSScreenStackAnimationDefault, integerValue)
+
+RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
+                                                  @"push": @(RNSScreenReplaceAnimationPush),
+                                                  @"pop": @(RNSScreenReplaceAnimationPop),
+                                                  }), RNSScreenReplaceAnimationPop, integerValue)
 
 
 @end

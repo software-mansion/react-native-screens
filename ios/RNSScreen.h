@@ -22,6 +22,11 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
   RNSScreenStackAnimationFlip,
 };
 
+typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
+  RNSScreenReplaceAnimationPop,
+  RNSScreenReplaceAnimationPush,
+};
+
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
@@ -53,6 +58,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
+@property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 
 - (void)notifyFinishTransitioning;
 

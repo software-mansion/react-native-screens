@@ -364,13 +364,21 @@
     [_controller setViewControllers:controllers animated:NO];
   } else if (top != lastTop) {
     if (![controllers containsObject:lastTop]) {
-      // last top controller is no longer on stack
-      // in this case we set the controllers stack to the new list with
-      // added the last top element to it and perform (animated) pop
-      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-      [newControllers addObject:lastTop];
-      [_controller setViewControllers:newControllers animated:NO];
-      [_controller popViewControllerAnimated:shouldAnimate];
+      // if we have same amount of controllers as before and the screen wasn't on the stack before probably replace was called
+      // so we check if the new screen has "push" replace animation
+      if (_controller.viewControllers.count == controllers.count && ![_controller.viewControllers containsObject:top] && ((RNSScreenView *) top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
+        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
+        [_controller pushViewController:top animated:shouldAnimate];
+        [_controller setViewControllers:newControllers animated:NO];
+      } else {
+        // last top controller is no longer on stack
+        // in this case we set the controllers stack to the new list with
+        // added the last top element to it and perform (animated) pop
+        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
+        [newControllers addObject:lastTop];
+        [_controller setViewControllers:newControllers animated:NO];
+        [_controller popViewControllerAnimated:shouldAnimate];
+      }
     } else if (![_controller.viewControllers containsObject:top]) {
       // new top controller is not on the stack
       // in such case we update the stack except from the last element with
