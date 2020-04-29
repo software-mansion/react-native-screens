@@ -289,7 +289,7 @@
 #ifdef __IPHONE_13_0
         if (@available(iOS 13.0, *)) {
           // Inherit UI style from its parent - solves an issue with incorrect style being applied to some UIKit views like date picker or segmented control.
-          next.overrideUserInterfaceStyle = previous.overrideUserInterfaceStyle;
+          next.overrideUserInterfaceStyle = _controller.overrideUserInterfaceStyle;
         }
 #endif
 
