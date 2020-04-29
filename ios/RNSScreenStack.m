@@ -286,10 +286,12 @@
         UIViewController *next = controllers[i];
         BOOL lastModal = (i == controllers.count - 1);
 
+#ifdef __IPHONE_13_0
         if (@available(iOS 13.0, *)) {
           // Inherit UI style from its parent - solves an issue with incorrect style being applied to some UIKit views like date picker or segmented control.
           next.overrideUserInterfaceStyle = previous.overrideUserInterfaceStyle;
         }
+#endif
 
         [previous presentViewController:next
                                animated:lastModal
