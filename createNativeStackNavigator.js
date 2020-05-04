@@ -90,7 +90,7 @@ class StackView extends React.Component {
       translucent: translucent === undefined ? false : translucent,
       title,
       titleFontFamily: headerTitleStyle && headerTitleStyle.fontFamily,
-      titleColor: headerTintColor,
+      titleColor: (headerTitleStyle && headerTitleStyle.color) || headerTintColor,
       titleFontSize: headerTitleStyle && headerTitleStyle.fontSize,
       backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
       backTitleFontFamily:
