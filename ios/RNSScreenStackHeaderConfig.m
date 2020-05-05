@@ -168,7 +168,9 @@
         } else {
           largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[largeSize floatValue]];
         }
+#if (!TARGET_OS_TV)
         [navbar setLargeTitleTextAttributes:largeAttrs];
+#endif
       }
     }
   }
@@ -239,7 +241,9 @@
             // in order for new back button image to be loaded we need to trigger another change
             // in back button props that'd make UIKit redraw the button. Otherwise the changes are
             // not reflected. Here we change back button visibility which is then immediately restored
+#if (!TARGET_OS_TV)
             vc.navigationItem.hidesBackButton = YES;
+#endif
             [config updateViewControllerIfNeeded];
           }];
         }
@@ -357,7 +361,8 @@
   }
 
   navitem.title = config.title;
-  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
+#if (!TARGET_OS_TV)
+if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
                                   initWithTitle:config.backTitle ?: prevItem.title
                                   style:UIBarButtonItemStylePlain
@@ -375,6 +380,7 @@
     }
   } else {
     prevItem.backBarButtonItem = nil;
+
   }
 
   if (@available(iOS 11.0, *)) {
@@ -383,6 +389,8 @@
     }
     navitem.largeTitleDisplayMode = config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
   }
+    
+#endif
 #ifdef __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
@@ -403,6 +411,7 @@
     // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
     // to update it before the navigation starts.
     UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
+#if (!TARGET_OS_TV)
     if (backButtonImage) {
       navctr.navigationBar.backIndicatorImage = backButtonImage;
       navctr.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
@@ -410,15 +419,20 @@
       navctr.navigationBar.backIndicatorImage = nil;
       navctr.navigationBar.backIndicatorTransitionMaskImage = nil;
     }
+#endif
   }
+#if (!TARGET_OS_TV)
   navitem.hidesBackButton = config.hideBackButton;
+#endif
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
+#if (!TARGET_OS_TV)
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
+#endif
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
         navitem.leftBarButtonItem = buttonItem;
         break;
