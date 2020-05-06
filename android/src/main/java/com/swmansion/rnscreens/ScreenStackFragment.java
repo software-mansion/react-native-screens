@@ -44,7 +44,6 @@ public class ScreenStackFragment extends ScreenFragment {
 
   private AppBarLayout mAppBarLayout;
   private Toolbar mToolbar;
-  private boolean mShadowHidden;
 
   @SuppressLint("ValidFragment")
   public ScreenStackFragment(Screen screenView) {
@@ -74,9 +73,6 @@ public class ScreenStackFragment extends ScreenFragment {
       StateListAnimator stateListAnimator = new StateListAnimator();
       stateListAnimator.addState(new int[0], ObjectAnimator.ofFloat(mAppBarLayout, "elevation",hidden ?  0 : TOOLBAR_ELEVATION));
       mAppBarLayout.setStateListAnimator(stateListAnimator);
-    } else if (mShadowHidden != hidden) {
-      mAppBarLayout.setTargetElevation(hidden ? 0 : TOOLBAR_ELEVATION);
-      mShadowHidden = hidden;
     }
   }
 
