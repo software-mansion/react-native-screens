@@ -13,35 +13,19 @@ import {
 } from 'react-navigation';
 import { enableScreens } from 'react-native-screens';
 
-import Stack from './stack';
-import NativeStack from './nativeStack';
-import Tabs from './tabs';
-import Navigation from './navigation';
-import NativeNavigation from './nativeNavigation';
-import NavigationTabsAndStack from './navigationTabsAndStack';
 import Test from './Test';
+import Test2 from './Test2';
 
 enableScreens();
 
 const SCREENS = {
-  Stack: { screen: Stack, title: 'Screen container based stack' },
-  NativeStack: { screen: NativeStack, title: 'Native stack example' },
-  Tabs: { screen: Tabs, title: 'Tabs example' },
-  NativeNavigation: {
-    screen: NativeNavigation,
-    title: 'Native stack bindings for RNN',
-  },
-  Navigation: {
-    screen: Navigation,
-    title: 'React Navigation with screen enabled',
-  },
-  NavigationTabsAndStack: {
-    screen: NavigationTabsAndStack,
-    title: 'React Navigation Tabs + Stack',
-  },
   Test: {
     screen: Test,
     title: 'iOS modal with visible previous screen',
+  },
+  Test2: {
+    screen: Test2,
+    title: 'Android tabs without screens enabled',
   },
 };
 
