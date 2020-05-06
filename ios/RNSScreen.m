@@ -179,6 +179,20 @@
   }
 }
 
+- (void)notifyWillAppear
+{
+  if (self.onWillAppear) {
+    self.onWillAppear(nil);
+  }
+}
+
+- (void)notifyWillDisappear
+{
+  if (self.onWillDisappear) {
+    self.onWillDisappear(nil);
+  }
+}
+
 - (void)notifyAppear
 {
   if (self.onAppear) {
@@ -187,6 +201,13 @@
         self.onAppear(nil);
       }
     });
+  }
+}
+
+- (void)notifyDisappear
+{
+  if (self.onDisappear) {
+    self.onDisappear(nil);
   }
 }
 
@@ -299,19 +320,35 @@
   }
 }
 
-- (void)viewDidDisappear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-  [super viewDidDisappear:animated];
-  if (self.parentViewController == nil && self.presentingViewController == nil) {
-    // screen dismissed, send event
-    [((RNSScreenView *)self.view) notifyDismissed];
-  }
+  [super viewWillAppear:animated];
+
+  [((RNSScreenView *)self.view) notifyWillAppear];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+  [super viewWillDisappear:animated];
+
+  [((RNSScreenView *)self.view) notifyWillDisappear];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
   [((RNSScreenView *)self.view) notifyAppear];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+
+  [((RNSScreenView *)self.view) notifyDisappear];
+  if (self.parentViewController == nil && self.presentingViewController == nil) {
+    // screen dismissed, send event
+    [((RNSScreenView *)self.view) notifyDismissed];
+  }
 }
 
 - (void)notifyFinishTransitioning
@@ -330,7 +367,10 @@ RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
+RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 
 - (UIView *)view

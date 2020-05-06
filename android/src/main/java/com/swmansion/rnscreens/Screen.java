@@ -55,6 +55,14 @@ public class Screen extends ViewGroup {
   private boolean mGestureEnabled = true;
 
   @Override
+  protected void onAnimationStart() {
+    super.onAnimationStart();
+    if (mFragment != null) {
+      mFragment.onViewAnimationStart();
+    }
+  }
+
+  @Override
   protected void onAnimationEnd() {
     super.onAnimationEnd();
     if (mFragment != null) {
