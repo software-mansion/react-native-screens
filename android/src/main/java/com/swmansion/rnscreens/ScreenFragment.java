@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class ScreenFragment extends Fragment {
 
@@ -60,18 +60,54 @@ public class ScreenFragment extends Fragment {
     return mScreenView;
   }
 
-  private void dispatchOnAppear() {
+  protected void dispatchOnWillAppear() {
+    ((ReactContext) mScreenView.getContext())
+        .getNativeModule(UIManagerModule.class)
+        .getEventDispatcher()
+        .dispatchEvent(new ScreenWillAppearEvent(mScreenView.getId()));
+  }
+
+  protected void dispatchOnAppear() {
     ((ReactContext) mScreenView.getContext())
             .getNativeModule(UIManagerModule.class)
             .getEventDispatcher()
             .dispatchEvent(new ScreenAppearEvent(mScreenView.getId()));
   }
 
+  protected void dispatchOnWillDisappear() {
+    ((ReactContext) mScreenView.getContext())
+        .getNativeModule(UIManagerModule.class)
+        .getEventDispatcher()
+        .dispatchEvent(new ScreenWillDisappearEvent(mScreenView.getId()));
+  }
+
+  protected void dispatchOnDisappear() {
+    ((ReactContext) mScreenView.getContext())
+        .getNativeModule(UIManagerModule.class)
+        .getEventDispatcher()
+        .dispatchEvent(new ScreenDisappearEvent(mScreenView.getId()));
+  }
+
+  public void onViewAnimationStart() {
+    // onViewAnimationStart is triggered from View#onAnimationStart method of the fragment's root view.
+    // We override Screen#onAnimationStart and an appropriate method of the StackFragment's root view
+    // in order to achieve this.
+    if (isResumed()) {
+      dispatchOnWillAppear();
+    } else {
+      dispatchOnWillDisappear();
+    }
+  }
+
   public void onViewAnimationEnd() {
     // onViewAnimationEnd is triggered from View#onAnimationEnd method of the fragment's root view.
     // We override Screen#onAnimationEnd and an appropriate method of the StackFragment's root view
     // in order to achieve this.
-    dispatchOnAppear();
+    if (isResumed()) {
+      dispatchOnAppear();
+    } else {
+      dispatchOnDisappear();
+    }
   }
 
   @Override
