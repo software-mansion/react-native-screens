@@ -49,9 +49,35 @@ export default function NativeStackView({
             gestureEnabled={Platform.OS === 'android' ? false : gestureEnabled}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
+            onWillAppear={() => {
+              navigation.emit({
+                type: 'transitionStart',
+                data: { closing: false },
+                target: route.key,
+              });
+            }}
+            onWillDisappear={() => {
+              navigation.emit({
+                type: 'transitionStart',
+                data: { closing: true },
+                target: route.key,
+              });
+            }}
             onAppear={() => {
               navigation.emit({
                 type: 'appear',
+                target: route.key,
+              });
+              navigation.emit({
+                type: 'transitionEnd',
+                data: { closing: false },
+                target: route.key,
+              });
+            }}
+            onDisappear={() => {
+              navigation.emit({
+                type: 'transitionEnd',
+                data: { closing: true },
                 target: route.key,
               });
             }}
