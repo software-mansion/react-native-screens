@@ -20,10 +20,6 @@ export type NativeStackNavigationEventMap = {
    * Event which fires when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
    */
   dismiss: { data: undefined };
-  /**
-   * Event which fires when the screen finishes its transition
-   */
-  finishTransitioning: { data: undefined };
 };
 
 export type NativeStackNavigationProp<

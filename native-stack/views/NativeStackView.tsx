@@ -33,7 +33,7 @@ export default function NativeStackView({
 
   return (
     <ScreenStack style={styles.container}>
-      {state.routes.map(route => {
+      {state.routes.map((route) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
           gestureEnabled,
@@ -65,12 +65,6 @@ export default function NativeStackView({
                 ...StackActions.pop(),
                 source: route.key,
                 target: state.key,
-              });
-            }}
-            onFinishTransitioning={() => {
-              navigation.emit({
-                type: 'finishTransitioning',
-                target: route.key,
               });
             }}>
             <HeaderConfig {...options} route={route} />
