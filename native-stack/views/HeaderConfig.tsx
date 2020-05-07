@@ -77,10 +77,10 @@ export default function HeaderConfig(props: Props) {
       }
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}>
       {headerRight !== undefined ? (
-        <ScreenStackHeaderRightView>{headerRight()}</ScreenStackHeaderRightView>
+        <ScreenStackHeaderRightView>{headerRight({tintColor: colors.primary})}</ScreenStackHeaderRightView>
       ) : null}
       {headerLeft !== undefined ? (
-        <ScreenStackHeaderLeftView>{headerLeft()}</ScreenStackHeaderLeftView>
+        <ScreenStackHeaderLeftView>{headerLeft({tintColor: colors.primary})}</ScreenStackHeaderLeftView>
       ) : null}
       {headerCenter !== undefined ? (
         <ScreenStackHeaderCenterView>
