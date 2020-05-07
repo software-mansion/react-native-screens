@@ -30,7 +30,8 @@ function AnotherScreen({ navigation, route }) {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>
         Change the tab to the first one and see that you came back to
-        HomeScreen. Look at the PR to see the details why it happens
+        HomeScreen. Look at the PR to see the details why it happens. To make it
+        work properly, add gestureEnabled: false in screenOptions
       </Text>
     </View>
   );
@@ -41,7 +42,7 @@ const Tab = createMaterialBottomTabNavigator();
 function HomeStack() {
   const Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator screenOptions={{ gestureEnabled: false }}>
+    <Stack.Navigator screenOptions={{}}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Edit" component={EditScreen} />
     </Stack.Navigator>
@@ -51,7 +52,7 @@ function HomeStack() {
 function EditStack() {
   const Stack1 = createNativeStackNavigator();
   return (
-    <Stack1.Navigator screenOptions={{ gestureEnabled: false }}>
+    <Stack1.Navigator screenOptions={{}}>
       <Stack1.Screen name="AnotherScreen" component={AnotherScreen} />
     </Stack1.Navigator>
   );
