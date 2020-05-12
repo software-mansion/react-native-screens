@@ -293,8 +293,10 @@
         }
 #endif
 
+        BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] && ((RNSScreenView *) next.view).stackAnimation != RNSScreenStackAnimationNone;
+
         [previous presentViewController:next
-                               animated:lastModal
+                               animated:shouldAnimate
                              completion:^{
           [weakSelf.presentedModals addObject:next];
           if (lastModal) {
@@ -308,8 +310,10 @@
 
   if (changeRootController.presentedViewController != nil
       && [_presentedModals containsObject:changeRootController.presentedViewController]) {
+
+    BOOL shouldAnimate = changeRootIndex == controllers.count && [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] && ((RNSScreenView *) changeRootController.presentedViewController.view).stackAnimation != RNSScreenStackAnimationNone;
     [changeRootController
-     dismissViewControllerAnimated:(changeRootIndex == controllers.count)
+     dismissViewControllerAnimated:shouldAnimate
      completion:finish];
   } else {
     finish();
