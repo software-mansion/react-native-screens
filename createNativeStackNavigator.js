@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import {
   StackRouter,
   SceneView,
@@ -90,7 +90,8 @@ class StackView extends React.Component {
       translucent: translucent === undefined ? false : translucent,
       title,
       titleFontFamily: headerTitleStyle && headerTitleStyle.fontFamily,
-      titleColor: (headerTitleStyle && headerTitleStyle.color) || headerTintColor,
+      titleColor:
+        (headerTitleStyle && headerTitleStyle.color) || headerTintColor,
       titleFontSize: headerTitleStyle && headerTitleStyle.fontSize,
       backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
       backTitleFontFamily:
@@ -213,13 +214,22 @@ class StackView extends React.Component {
         style={[StyleSheet.absoluteFill, options.cardStyle]}
         stackAnimation={stackAnimation}
         stackPresentation={stackPresentation}
+        replaceAnimation={
+          options.replaceAnimation === undefined
+            ? 'pop'
+            : options.replaceAnimation
+        }
         pointerEvents={
           index === this.props.navigation.state.routes.length - 1
             ? 'auto'
             : 'none'
         }
         gestureEnabled={
-          options.gestureEnabled === undefined ? true : options.gestureEnabled
+          Platform.OS === 'android'
+            ? false
+            : options.gestureEnabled === undefined
+              ? true
+              : options.gestureEnabled
         }
         onAppear={() => this._onAppear(route, descriptor)}
         onDismissed={() => this._removeScene(route)}>

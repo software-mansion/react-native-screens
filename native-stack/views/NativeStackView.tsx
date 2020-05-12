@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import {
   ScreenStack,
   Screen as ScreenComponent,
@@ -46,7 +46,7 @@ export default function NativeStackView({
           <Screen
             key={route.key}
             style={StyleSheet.absoluteFill}
-            gestureEnabled={gestureEnabled}
+            gestureEnabled={Platform.OS === 'android' ? false : gestureEnabled}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
             onAppear={() => {
