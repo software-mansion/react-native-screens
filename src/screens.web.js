@@ -12,10 +12,6 @@ export function screensEnabled() {
 }
 
 export class NativeScreen extends React.Component {
-  static defaultProps = {
-    active: true,
-  };
-
   render() {
     const { active, style, ...rest } = this.props;
 
