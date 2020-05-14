@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { StyleProp, ViewStyle, ImageSourcePropType } from 'react-native';
-import { ScreenProps } from 'react-native-screens';
+import {
+  ScreenProps,
+  ScreenStackHeaderConfigProps,
+} from 'react-native-screens';
 import {
   DefaultNavigatorOptions,
   Descriptor,
@@ -25,35 +28,35 @@ export type NativeStackNavigationEventMap = {
 export type NativeStackNavigationProp<
   ParamList extends ParamListBase,
   RouteName extends keyof ParamList = string
-> = NavigationProp<
-  ParamList,
-  RouteName,
-  StackNavigationState,
-  NativeStackNavigationOptions,
-  NativeStackNavigationEventMap
-> & {
-  /**
-   * Push a new screen onto the stack.
-   *
-   * @param name Name of the route for the tab.
-   * @param [params] Params object for the route.
-   */
-  push<RouteName extends keyof ParamList>(
-    ...args: ParamList[RouteName] extends undefined | any
-      ? [RouteName] | [RouteName, ParamList[RouteName]]
-      : [RouteName, ParamList[RouteName]]
-  ): void;
+  > = NavigationProp<
+    ParamList,
+    RouteName,
+    StackNavigationState,
+    NativeStackNavigationOptions,
+    NativeStackNavigationEventMap
+  > & {
+    /**
+     * Push a new screen onto the stack.
+     *
+     * @param name Name of the route for the tab.
+     * @param [params] Params object for the route.
+     */
+    push<RouteName extends keyof ParamList>(
+      ...args: ParamList[RouteName] extends undefined | any
+        ? [RouteName] | [RouteName, ParamList[RouteName]]
+        : [RouteName, ParamList[RouteName]]
+    ): void;
 
-  /**
-   * Pop a screen from the stack.
-   */
-  pop(count?: number): void;
+    /**
+     * Pop a screen from the stack.
+     */
+    pop(count?: number): void;
 
-  /**
-   * Pop to the first route in the stack, dismissing all other screens.
-   */
-  popToTop(): void;
-};
+    /**
+     * Pop to the first route in the stack, dismissing all other screens.
+     */
+    popToTop(): void;
+  };
 
 export type NativeStackNavigationHelpers = NavigationHelpers<
   ParamListBase,
@@ -148,9 +151,11 @@ export type NativeStackNavigationOptions = {
   /**
    * Style object for header title. Supported properties:
    * - backgroundColor
+   * - blurEffect
    */
   headerStyle?: {
     backgroundColor?: string;
+    blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
   };
   /**
    * Controls the style of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar. Supported properties:

@@ -15,6 +15,7 @@
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;
 @property (nonatomic, retain) UIColor *backgroundColor;
+@property (nonatomic, retain) NSString *blurEffect;
 @property (nonatomic, retain) UIColor *color;
 @property (nonatomic) BOOL hide;
 @property (nonatomic) BOOL largeTitle;

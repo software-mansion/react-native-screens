@@ -265,6 +265,7 @@
   if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
     // transparent background color
     [appearance configureWithTransparentBackground];
+    appearance.backgroundColor = config.backgroundColor;
   } else {
     // non-transparent background or default background
     if (config.translucent) {
@@ -279,8 +280,8 @@
     }
   }
 
-  if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
-    appearance.backgroundColor = config.backgroundColor;
+  if (config.blurEffect) {
+    appearance.backgroundEffect = [UIBlurEffect effectWithStyle:[self blurEffectStyleFromEffectName:config.blurEffect]];
   }
 
   if (config.hideShadow) {
@@ -467,6 +468,59 @@
   }
 }
 
++ (UIBlurEffectStyle)blurEffectStyleFromEffectName:(NSString *)effectName
+{
+  if (@available(iOS 13.0, *)) {
+    if ([effectName  isEqual: @"extraLight"]) {
+      return UIBlurEffectStyleExtraLight;
+    } else if ([effectName  isEqual: @"light"]) {
+      return UIBlurEffectStyleLight;
+    } else if ([effectName  isEqual: @"dark"]) {
+      return UIBlurEffectStyleDark;
+      
+    } else if ([effectName  isEqual: @"regular"]) {
+      return UIBlurEffectStyleRegular;
+    } else if ([effectName  isEqual: @"prominent"]) {
+      return UIBlurEffectStyleProminent;
+
+    } else if ([effectName  isEqual: @"ultraThinMaterial"]) {
+      return UIBlurEffectStyleSystemUltraThinMaterial;
+    } else if ([effectName  isEqual: @"thinMaterial"]) {
+      return UIBlurEffectStyleSystemThinMaterial;
+    } else if ([effectName  isEqual: @"material"]) {
+      return UIBlurEffectStyleSystemMaterial;
+    } else if ([effectName  isEqual: @"thickMaterial"]) {
+      return UIBlurEffectStyleSystemThickMaterial;
+    } else if ([effectName  isEqual: @"chromeMaterial"]) {
+      return UIBlurEffectStyleSystemChromeMaterial;
+
+
+    } else if ([effectName  isEqual: @"ultraThinMaterialLight"]) {
+      return UIBlurEffectStyleSystemUltraThinMaterialLight;
+    } else if ([effectName  isEqual: @"thinMaterialLight"]) {
+      return UIBlurEffectStyleSystemThinMaterialLight;
+    } else if ([effectName  isEqual: @"materialLight"]) {
+      return UIBlurEffectStyleSystemMaterialLight;
+    } else if ([effectName  isEqual: @"thickMaterialLight"]) {
+      return UIBlurEffectStyleSystemThickMaterialLight;
+    } else if ([effectName  isEqual: @"chromeMaterialLight"]) {
+      return UIBlurEffectStyleSystemChromeMaterialLight;
+    
+    } else if ([effectName  isEqual: @"ultraThinMaterialDark"]) {
+      return UIBlurEffectStyleSystemUltraThinMaterialDark;
+    } else if ([effectName  isEqual: @"thinMaterialDark"]) {
+      return UIBlurEffectStyleSystemThinMaterialDark;
+    } else if ([effectName  isEqual: @"materialDark"]) {
+      return UIBlurEffectStyleSystemMaterialDark;
+    } else if ([effectName  isEqual: @"thickMaterialDark"]) {
+      return UIBlurEffectStyleSystemThickMaterialDark;
+    } else if ([effectName  isEqual: @"chromeMaterialDark"]) {
+      return UIBlurEffectStyleSystemChromeMaterialDark;
+    }
+  }
+  return UIBlurEffectStyleLight;
+}
+
 @end
 
 @implementation RNSScreenStackHeaderConfigManager
@@ -486,6 +540,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(blurEffect, NSString)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)

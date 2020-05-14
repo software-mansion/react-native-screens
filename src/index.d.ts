@@ -22,6 +22,27 @@ declare module 'react-native-screens' {
     | 'fullScreenModal'
     | 'formSheet';
   export type StackAnimationTypes = 'default' | 'fade' | 'flip' | 'none';
+  export type BlurEffectTypes =
+    | 'extraLight'
+    | 'light'
+    | 'dark'
+    | 'regular'
+    | 'prominent'
+    | 'systemUltraThinMaterial '
+    | 'systemThinMaterial'
+    | 'systemMaterial'
+    | 'systemThickMaterial'
+    | 'systemChromeMaterial'
+    | 'systemUltraThinMaterialLight'
+    | 'systemThinMaterialLight'
+    | 'systemMaterialLight'
+    | 'systemThickMaterialLight'
+    | 'systemChromeMaterialLight'
+    | 'systemUltraThinMaterialDark'
+    | 'systemThinMaterialDark'
+    | 'systemMaterialDark'
+    | 'systemThickMaterialDark'
+    | 'systemChromeMaterialDark';
 
   export interface ScreenProps extends ViewProps {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
@@ -164,6 +185,11 @@ declare module 'react-native-screens' {
      * Pass HeaderLeft, HeaderRight and HeaderTitle
      */
     children?: React.ReactNode;
+    /**
+     * @host (iOS only)
+     * @description Blur effect to be applied to the header
+     */
+    blurEffect?: BlurEffectTypes;
   }
 
   export const Screen: ComponentClass<ScreenProps>;
