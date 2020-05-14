@@ -187,7 +187,7 @@ declare module 'react-native-screens' {
     children?: React.ReactNode;
     /**
      * @host (iOS only)
-     * @description Blur effect to be applied to the header
+     * @description Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
      */
     blurEffect?: BlurEffectTypes;
   }
