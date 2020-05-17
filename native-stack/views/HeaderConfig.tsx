@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderConfig,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
@@ -23,6 +24,7 @@ export default function HeaderConfig(props: Props) {
     headerTitle,
     headerBackTitle,
     headerBackTitleVisible = true,
+    backButtonImage,
     headerHideBackButton,
     headerHideShadow,
     headerLargeTitleHideShadow,
@@ -78,6 +80,9 @@ export default function HeaderConfig(props: Props) {
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}>
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>{headerRight()}</ScreenStackHeaderRightView>
+      ) : null}
+      {backButtonImage !== undefined ? (
+        <ScreenStackHeaderBackButtonImage key="backImage" source={backButtonImage} />
       ) : null}
       {headerLeft !== undefined ? (
         <ScreenStackHeaderLeftView>{headerLeft()}</ScreenStackHeaderLeftView>
