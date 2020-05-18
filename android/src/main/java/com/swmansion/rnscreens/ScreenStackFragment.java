@@ -126,6 +126,10 @@ public class ScreenStackFragment extends ScreenFragment {
             AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT));
     view.addView(mAppBarLayout);
 
+    if (mShadowHidden) {
+      mAppBarLayout.setTargetElevation(0);
+    }
+
     if (mToolbar != null) {
       mAppBarLayout.addView(recycleView(mToolbar));
     }
