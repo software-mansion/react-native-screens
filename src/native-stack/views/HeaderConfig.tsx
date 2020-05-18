@@ -84,7 +84,10 @@ export default function HeaderConfig(props: Props) {
         </ScreenStackHeaderRightView>
       ) : null}
       {backButtonImage !== undefined ? (
-        <ScreenStackHeaderBackButtonImage key="backImage" source={backButtonImage} />
+        <ScreenStackHeaderBackButtonImage
+          key="backImage"
+          source={backButtonImage}
+        />
       ) : null}
       {headerLeft !== undefined ? (
         <ScreenStackHeaderLeftView>
