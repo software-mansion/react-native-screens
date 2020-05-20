@@ -3,18 +3,23 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.Window;
+import android.view.WindowInsets;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
@@ -173,6 +178,11 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     mToolbar.setNavigationOnClickListener(mBackClickListener);
 
 
+    // we apply padding if status bar is translucent
+    if (Build.VERSION.SDK_INT >= 21) {
+      applyWindowInsets(activity.getWindow());
+    }
+
     // shadow
     getScreenFragment().setToolbarShadowHidden(mIsShadowHidden);
 
@@ -300,6 +310,24 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       }
     }
     return null;
+  }
+
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+  protected void applyWindowInsets(Window window)
+  {
+      window.getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+        @Override
+        public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+          WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
+          // this inset is set to 0 by translucent status bar
+          if (defaultInsets.getStableInsetTop() == 0) {
+            mToolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
+          } else {
+            mToolbar.setPadding(0, defaultInsets.getSystemWindowInsetTop(), 0, 0);
+          }
+          return insets.consumeSystemWindowInsets();
+        }
+      });
   }
 
   public void setTitle(String title) {
