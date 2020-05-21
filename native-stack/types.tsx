@@ -124,7 +124,7 @@ export type NativeStackNavigationOptions = {
   /**
    * Function which returns a React Element to display in the center of the header.
    */
-  headerCenter?: () => React.ReactNode;
+  headerCenter?: (props: {tintColor?: string}) => React.ReactNode;
   /**
    * Tint color for the header. Changes the color of back button and title.
    */

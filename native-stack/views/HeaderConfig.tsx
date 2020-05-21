@@ -50,8 +50,8 @@ export default function HeaderConfig(props: Props) {
         headerTitle !== undefined
           ? headerTitle
           : title !== undefined
-            ? title
-            : route.name
+          ? title
+          : route.name
       }
       titleFontFamily={headerTitleStyle.fontFamily}
       titleFontSize={headerTitleStyle.fontSize}
@@ -59,8 +59,8 @@ export default function HeaderConfig(props: Props) {
         headerTitleStyle.color !== undefined
           ? headerTitleStyle.color
           : headerTintColor !== undefined
-            ? headerTintColor
-            : colors.text
+          ? headerTintColor
+          : colors.text
       }
       backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
       backTitleFontFamily={headerBackTitleStyle.fontFamily}
@@ -77,14 +77,18 @@ export default function HeaderConfig(props: Props) {
       }
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}>
       {headerRight !== undefined ? (
-        <ScreenStackHeaderRightView>{headerRight({tintColor: colors.primary})}</ScreenStackHeaderRightView>
+        <ScreenStackHeaderRightView>
+          {headerRight({ tintColor: headerTintColor ?? colors.primary })}
+        </ScreenStackHeaderRightView>
       ) : null}
       {headerLeft !== undefined ? (
-        <ScreenStackHeaderLeftView>{headerLeft({tintColor: colors.primary})}</ScreenStackHeaderLeftView>
+        <ScreenStackHeaderLeftView>
+          {headerLeft({ tintColor: headerTintColor ?? colors.primary })}
+        </ScreenStackHeaderLeftView>
       ) : null}
       {headerCenter !== undefined ? (
         <ScreenStackHeaderCenterView>
-          {headerCenter()}
+          {headerCenter({ tintColor: headerTintColor ?? colors.text })}
         </ScreenStackHeaderCenterView>
       ) : null}
     </ScreenStackHeaderConfig>
