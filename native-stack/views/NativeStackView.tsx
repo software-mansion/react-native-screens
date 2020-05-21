@@ -33,7 +33,7 @@ export default function NativeStackView({
 
   return (
     <ScreenStack style={styles.container}>
-      {state.routes.map(route => {
+      {state.routes.map((route) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
           gestureEnabled,

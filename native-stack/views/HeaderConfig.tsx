@@ -50,8 +50,8 @@ export default function HeaderConfig(props: Props) {
         headerTitle !== undefined
           ? headerTitle
           : title !== undefined
-            ? title
-            : route.name
+          ? title
+          : route.name
       }
       titleFontFamily={headerTitleStyle.fontFamily}
       titleFontSize={headerTitleStyle.fontSize}
@@ -59,8 +59,8 @@ export default function HeaderConfig(props: Props) {
         headerTitleStyle.color !== undefined
           ? headerTitleStyle.color
           : headerTintColor !== undefined
-            ? headerTintColor
-            : colors.text
+          ? headerTintColor
+          : colors.text
       }
       backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
       backTitleFontFamily={headerBackTitleStyle.fontFamily}

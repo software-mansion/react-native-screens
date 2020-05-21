@@ -13,7 +13,7 @@ let ENABLE_SCREENS = false;
 
 // UIManager[`${moduleName}`] is deprecated in RN 0.58 and `getViewManagerConfig` is added.
 // We can remove this when we drop support for RN < 0.58.
-const getViewManagerConfigCompat = name =>
+const getViewManagerConfigCompat = (name) =>
   typeof UIManager.getViewManagerConfig !== 'undefined'
     ? UIManager.getViewManagerConfig(name)
     : UIManager[name];
@@ -85,7 +85,7 @@ class Screen extends React.Component {
   setNativeProps(props) {
     this._ref.setNativeProps(props);
   }
-  setRef = ref => {
+  setRef = (ref) => {
     this._ref = ref;
     this.props.onComponentRef && this.props.onComponentRef(ref);
   };
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ScreenStackHeaderBackButtonImage = props => (
+const ScreenStackHeaderBackButtonImage = (props) => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
     style={styles.headerSubview}>
@@ -155,7 +155,7 @@ const ScreenStackHeaderBackButtonImage = props => (
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 
-const ScreenStackHeaderRightView = props => (
+const ScreenStackHeaderRightView = (props) => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="right"
@@ -163,7 +163,7 @@ const ScreenStackHeaderRightView = props => (
   />
 );
 
-const ScreenStackHeaderLeftView = props => (
+const ScreenStackHeaderLeftView = (props) => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="left"
@@ -171,7 +171,7 @@ const ScreenStackHeaderLeftView = props => (
   />
 );
 
-const ScreenStackHeaderCenterView = props => (
+const ScreenStackHeaderCenterView = (props) => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="center"
