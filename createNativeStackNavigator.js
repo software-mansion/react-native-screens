@@ -27,7 +27,7 @@ function renderComponentOrThunk(componentOrThunk, props) {
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
 class StackView extends React.Component {
-  _removeScene = route => {
+  _removeScene = (route) => {
     this.props.navigation.dispatch({
       type: REMOVE_ACTION,
       immediate: true,
@@ -228,8 +228,8 @@ class StackView extends React.Component {
           Platform.OS === 'android'
             ? false
             : options.gestureEnabled === undefined
-              ? true
-              : options.gestureEnabled
+            ? true
+            : options.gestureEnabled
         }
         onAppear={() => this._onAppear(route, descriptor)}
         onDismissed={() => this._removeScene(route)}>
@@ -278,7 +278,7 @@ function createStackNavigator(routeConfigMap, stackConfig = {}) {
       const { key, immediate } = action;
       let backRouteIndex = state.index;
       if (key) {
-        const backRoute = state.routes.find(route => route.key === key);
+        const backRoute = state.routes.find((route) => route.key === key);
         backRouteIndex = state.routes.indexOf(backRoute);
       }
 
