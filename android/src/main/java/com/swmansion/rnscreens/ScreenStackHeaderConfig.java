@@ -313,21 +313,20 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   }
 
   @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-  protected void applyWindowInsets(Window window)
-  {
-      window.getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-        @Override
-        public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-          WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
-          // this inset is set to 0 by translucent status bar
-          if (defaultInsets.getStableInsetTop() == 0) {
-            mToolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
-          } else {
-            mToolbar.setPadding(0, defaultInsets.getSystemWindowInsetTop(), 0, 0);
-          }
-          return insets.consumeSystemWindowInsets();
+  protected void applyWindowInsets(Window window) {
+    window.getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+      @Override
+      public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+        WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
+        // this inset is set to 0 by translucent status bar
+        if (defaultInsets.getStableInsetTop() == 0) {
+          mToolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
+        } else {
+          mToolbar.setPadding(0, defaultInsets.getSystemWindowInsetTop(), 0, 0);
         }
-      });
+        return insets.consumeSystemWindowInsets();
+      }
+    });
   }
 
   public void setTitle(String title) {
