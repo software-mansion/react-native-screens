@@ -79,17 +79,21 @@ export default function HeaderConfig(props: Props) {
       }
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}>
       {headerRight !== undefined ? (
-        <ScreenStackHeaderRightView>{headerRight()}</ScreenStackHeaderRightView>
+        <ScreenStackHeaderRightView>
+          {headerRight({ tintColor: headerTintColor ?? colors.primary })}
+        </ScreenStackHeaderRightView>
       ) : null}
       {backButtonImage !== undefined ? (
         <ScreenStackHeaderBackButtonImage key="backImage" source={backButtonImage} />
       ) : null}
       {headerLeft !== undefined ? (
-        <ScreenStackHeaderLeftView>{headerLeft()}</ScreenStackHeaderLeftView>
+        <ScreenStackHeaderLeftView>
+          {headerLeft({ tintColor: headerTintColor ?? colors.primary })}
+        </ScreenStackHeaderLeftView>
       ) : null}
       {headerCenter !== undefined ? (
         <ScreenStackHeaderCenterView>
-          {headerCenter()}
+          {headerCenter({ tintColor: headerTintColor ?? colors.primary })}
         </ScreenStackHeaderCenterView>
       ) : null}
     </ScreenStackHeaderConfig>

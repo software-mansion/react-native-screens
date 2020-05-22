@@ -117,15 +117,15 @@ export type NativeStackNavigationOptions = {
   /**
    * Function which returns a React Element to display on the right side of the header.
    */
-  headerRight?: () => React.ReactNode;
+  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
   /**
    * Function which returns a React Element to display on the left side of the header.
    */
-  headerLeft?: () => React.ReactNode;
+  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
   /**
    * Function which returns a React Element to display in the center of the header.
    */
-  headerCenter?: () => React.ReactNode;
+  headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
   /**
    * Tint color for the header. Changes the color of back button and title.
    */
