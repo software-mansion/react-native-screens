@@ -66,12 +66,6 @@ export default function NativeStackView({
                 source: route.key,
                 target: state.key,
               });
-            }}
-            onFinishTransitioning={() => {
-              navigation.emit({
-                type: 'finishTransitioning',
-                target: route.key,
-              });
             }}>
             <HeaderConfig {...options} route={route} />
             <View
