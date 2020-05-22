@@ -88,7 +88,7 @@ export default function HeaderConfig(props: Props) {
       ) : null}
       {headerCenter !== undefined ? (
         <ScreenStackHeaderCenterView>
-          {headerCenter({ tintColor: headerTintColor ?? colors.text })}
+          {headerCenter({ tintColor: headerTintColor ?? colors.primary })}
         </ScreenStackHeaderCenterView>
       ) : null}
     </ScreenStackHeaderConfig>
