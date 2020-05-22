@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle, ImageSourcePropType } from 'react-native';
 import { ScreenProps } from 'react-native-screens';
 import {
   DefaultNavigatorOptions,
@@ -75,6 +75,11 @@ export type NativeStackNavigationOptions = {
    * String to display in the header as title. Defaults to scene `title`.
    */
   headerTitle?: string;
+  /**
+   * Image to display in the header as the back button.
+   * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
+   */
+  backButtonImage?: ImageSourcePropType;
   /**
    * Title to display in the back button.
    * Only supported on iOS.
