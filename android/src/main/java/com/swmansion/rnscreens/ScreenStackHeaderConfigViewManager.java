@@ -119,6 +119,10 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     config.setBackButtonInCustomView(backButtonInCustomView);
   }
 
+  @ReactProp(name = "translucentStatusBar")
+  public void setTranslucentStatusBar(ScreenStackHeaderConfig config, boolean translucentStatusBar) {
+    config.setTranslucentStatusBar(translucentStatusBar);
+  }
 
 //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)

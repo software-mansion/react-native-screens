@@ -109,9 +109,14 @@ declare module 'react-native-screens' {
     backButtonInCustomView?: boolean;
     /**
      * @host (iOS only)
-     * @description When set to true, it makes native navigation bar on iOS semi transparent with blur effect. It is a common way of presenting navigation bar introduced in iOS 11. The default value is false
+     * @description When set to true, it makes native navigation bar on iOS semi transparent with blur effect. It is a common way of presenting navigation bar introduced in iOS 11. The default value is false.
      */
     translucent?: boolean;
+    /**
+     * @host (Android only)
+     * @description When set to true, the header will be rendered under the status bar with additional top padding. It should be only used with translucent status bar. The default value is false.
+     */
+    translucentStatusBar?: boolean;
     /**
      * @host (iOS only)
      * @description Allows for controlling the string to be rendered next to back button. By default iOS uses the title of the previous screen.

@@ -77,6 +77,7 @@ class StackView extends React.Component {
       headerLargeTitleStyle,
       translucent,
       hideShadow,
+      translucentStatusBar,
     } = options;
 
     const scene = {
@@ -88,6 +89,8 @@ class StackView extends React.Component {
 
     const headerOptions = {
       translucent: translucent === undefined ? false : translucent,
+      translucentStatusBar:
+        translucentStatusBar === undefined ? false : translucentStatusBar,
       title,
       titleFontFamily: headerTitleStyle && headerTitleStyle.fontFamily,
       titleColor:

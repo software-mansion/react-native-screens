@@ -40,6 +40,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mIsShadowHidden;
   private boolean mDestroyed;
   private boolean mBackButtonInCustomView;
+  private boolean mTranslucentStatusBar;
   private int mTintColor;
   private final Toolbar mToolbar;
 
@@ -63,6 +64,20 @@ public class ScreenStackHeaderConfig extends ViewGroup {
           fragment.dismiss();
         }
       }
+    }
+  };
+
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
+  private OnApplyWindowInsetsListener mOnApplyWindowInsetsListener = new View.OnApplyWindowInsetsListener() {
+    @Override
+    public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+      WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
+      mToolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
+      return defaultInsets.replaceSystemWindowInsets(
+              defaultInsets.getSystemWindowInsetLeft(),
+              0,
+              defaultInsets.getSystemWindowInsetRight(),
+              defaultInsets.getSystemWindowInsetBottom());
     }
   };
 
@@ -177,9 +192,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     // menu options handlers, but we prefer the back handling logic to stay here instead.
     mToolbar.setNavigationOnClickListener(mBackClickListener);
 
-
     // we apply padding if status bar is translucent
-    if (Build.VERSION.SDK_INT >= 21) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
       applyWindowInsets(activity.getWindow());
     }
 
@@ -312,21 +326,17 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     return null;
   }
 
-  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-  protected void applyWindowInsets(Window window) {
-    window.getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-      @Override
-      public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-        WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
-        // this inset is set to 0 by translucent status bar
-        if (defaultInsets.getStableInsetTop() == 0) {
-          mToolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
-        } else {
-          mToolbar.setPadding(0, defaultInsets.getSystemWindowInsetTop(), 0, 0);
-        }
-        return insets.consumeSystemWindowInsets();
-      }
-    });
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
+  private void applyWindowInsets(Window window) {
+    View decorView = window.getDecorView();
+    // we mimic behavior of RN StatusBar's code with padding addition
+    if (mTranslucentStatusBar) {
+      decorView.setOnApplyWindowInsetsListener(mOnApplyWindowInsetsListener);
+    } else {
+      decorView.setOnApplyWindowInsetsListener(null);
+    }
+
+    ViewCompat.requestApplyInsets(decorView);
   }
 
   public void setTitle(String title) {
@@ -366,4 +376,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   }
 
   public void setBackButtonInCustomView(boolean backButtonInCustomView) { mBackButtonInCustomView = backButtonInCustomView; }
+
+  public void setTranslucentStatusBar(boolean translucentStatusBar) { mTranslucentStatusBar = translucentStatusBar; }
 }

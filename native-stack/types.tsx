@@ -211,6 +211,13 @@ export type NativeStackNavigationOptions = {
    */
   gestureEnabled?: boolean;
   /**
+   * Set this prop to true whenever you have translucent status bar in order for it to work correctly. Defaults to `false`.
+   * Only supported on Android.
+   *
+   * @platform android
+   */
+  translucentStatusBar?: boolean;
+  /**
    * How should the screen be presented.
    * The following values are currently supported:
    * - "push" – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.

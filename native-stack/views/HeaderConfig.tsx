@@ -38,6 +38,7 @@ export default function HeaderConfig(props: Props) {
     headerBackTitleStyle = {},
     headerShown,
     backButtonInCustomView,
+    translucentStatusBar,
   } = props;
 
   return (
@@ -77,14 +78,18 @@ export default function HeaderConfig(props: Props) {
           ? headerStyle.backgroundColor
           : colors.card
       }
-      largeTitleBackgroundColor={headerLargeStyle.backgroundColor}>
+      largeTitleBackgroundColor={headerLargeStyle.backgroundColor}
+      translucentStatusBar={translucentStatusBar}>
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>
           {headerRight({ tintColor: headerTintColor ?? colors.primary })}
         </ScreenStackHeaderRightView>
       ) : null}
       {backButtonImage !== undefined ? (
-        <ScreenStackHeaderBackButtonImage key="backImage" source={backButtonImage} />
+        <ScreenStackHeaderBackButtonImage
+          key="backImage"
+          source={backButtonImage}
+        />
       ) : null}
       {headerLeft !== undefined ? (
         <ScreenStackHeaderLeftView>
