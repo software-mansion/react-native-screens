@@ -9,9 +9,9 @@ Read usage guide depending on if you are [using Expo](#usage-in-expo-with-react-
 
 ## Supported react-native version
 
-Since version 2.0.0 react-native-screens requires RN v0.60+. Check 1.0.0-alpha for Expo support or older versions of React Native.
+Since version 2.0.0 react-native-screens requires RN v0.60+.
 
-## Usage with [react-navigation](https://github.com/react-navigation/react-navigation) (without Expo)
+## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
 Screens support is built into [react-navigation](https://github.com/react-navigation/react-navigation) starting from version [2.14.0](https://github.com/react-navigation/react-navigation/releases/tag/2.14.0) for all the different navigator types (stack, tab, drawer, etc). We plan on adding it to other navigators shortly.
 
@@ -20,18 +20,14 @@ To configure react-navigation to use screens instead of plain RN Views for rende
 1.  Add this library as a dependency to your project:
 
 ```bash
+# bare React Native project
 yarn add react-native-screens
+
+# if you use Expo managed workflow
+expo install react-native-screens
 ```
 
-2.  Link native modules this library ships with into your app:
-
-```bash
-react-native link react-native-screens
-```
-
-> If you are not familiar with the concept of linking libraries [read on here](https://facebook.github.io/react-native/docs/linking-libraries-ios).
-
-3.  Enable screens support before any of your navigation screens renders. Add the following code to your main application file (e.g. App.js):
+2.  Enable screens support before any of your navigation screens renders. Add the following code to your main application file (e.g. App.js):
 
 ```js
 import { enableScreens } from 'react-native-screens';
@@ -41,43 +37,17 @@ enableScreens();
 
 Note that the above code needs to execute before the first render of a navigation screen. You can check the Example's app [App.js](https://github.com/kmagiera/react-native-screens/blob/master/Example/App.js#L16) file as a reference.
 
-4.  Make sure that the version of [react-navigation](https://github.com/react-navigation/react-navigation) you are using is 2.14.0 or higher
+3.  Make sure that the version of [react-navigation](https://github.com/react-navigation/react-navigation) you are using is 2.14.0 or higher
 
-5.  You are all set 🎉 – when screens are enabled in your application code react-navigation will automatically use them instead of relying on plain React Native Views.
+4.  You are all set 🎉 – when screens are enabled in your application code react-navigation will automatically use them instead of relying on plain React Native Views.
 
-## Usage in Expo with [react-navigation](https://github.com/react-navigation/react-navigation) v1.0.0
+### Using createNativeStackNavigator with React Navigation
 
-Screens support is built into Expo [SDK 30](https://blog.expo.io/expo-sdk-30-0-0-is-now-available-e64d8b1db2a7) and react-navigation starting from [2.14.0](https://github.com/react-navigation/react-navigation/releases/tag/2.14.0). Make sure your app uses these versions before you start.
-
-1.  Add screens library as a dependency to your project – you can skip this step when using snack as the dependency will be imported when you import it in one of the JS files
-
-```bash
-yarn add react-native-screens
-```
-
-2.  Open your App.js file and add the following snippet somewhere near the top of the file (e.g. right after import statements):
-
-```js
-import { enableScreens } from 'react-native-screens';
-
-enableScreens();
-```
-
-3.  That's all 🎉 – enjoy faster navigation in your Expo app. Keep in mind screens are in the pretty early phase so please report if you discover some issues.
+To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack). Note that this depends on React Navigation v5.
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
 React-native-navigation library already uses native containers for rendering navigation scenes so wrapping these scenes with `<ScreenContainer>` or `<Screen>` component does not provide any benefits. Yet if you would like to build a component that uses screens primitives under the hood (for example a view pager component) it is safe to use `<ScreenContainer>` and `<Screen>` components for that as these work out of the box when rendered on react-native-navigation scenes.
-
-## Using native stack navigator
-
-To take advantage of the native stack navigator primitive introduced in version 2.0 you need to use navigator creator function exported by react-native-screens package:
-
-```js
-import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
-```
-
-Then replace places when you use `createStackNavigator` with `createNativeStackNavigator`. Note that not all the screen customization options are supported. There are some technical limitations to implementing some of the stack header options. Documenting the supported parameters is on an immediate roadmap and will be available soon.
 
 ## Interop with other libraries
 
