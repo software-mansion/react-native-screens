@@ -15,7 +15,7 @@
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;
 @property (nonatomic, retain) UIColor *backgroundColor;
-@property (nonatomic, retain) NSString *blurEffect;
+@property (nonatomic) UIBlurEffectStyle blurEffect;
 @property (nonatomic, retain) UIColor *color;
 @property (nonatomic) BOOL hide;
 @property (nonatomic) BOOL largeTitle;
@@ -48,6 +48,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 @interface RCTConvert (RNSScreenStackHeader)
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
++ (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
 
 @end
 
