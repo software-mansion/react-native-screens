@@ -200,6 +200,15 @@ export type NativeStackNavigationOptions = {
     fontSize?: number;
   };
   /**
+   * A flag to that lets you opt out of insetting the header. You may want to
+   * set this to `false` if you use an opaque status bar. Defaults to `true`.
+   * Only supported on Android. Insets are always applied on iOS because the
+   * header cannot be opaque.
+   *
+   * @platform android
+   */
+  headerTopInsetEnabled?: boolean;
+  /**
    * Style object for the scene content.
    */
   contentStyle?: StyleProp<ViewStyle>;

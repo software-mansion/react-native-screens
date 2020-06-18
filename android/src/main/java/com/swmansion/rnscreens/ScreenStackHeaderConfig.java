@@ -3,6 +3,7 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -35,6 +36,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mIsShadowHidden;
   private boolean mDestroyed;
   private boolean mBackButtonInCustomView;
+  private boolean mIsTopInsetEnabled = true;
   private int mTintColor;
   private final Toolbar mToolbar;
 
@@ -151,6 +153,19 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     if (mToolbar.getParent() == null) {
       getScreenFragment().setToolbar(mToolbar);
+    }
+
+    if (mIsTopInsetEnabled) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        mToolbar.setPadding(0, getRootWindowInsets().getSystemWindowInsetTop(), 0, 0);
+      } else {
+        // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
+        mToolbar.setPadding(0, (int) (25 * getResources().getDisplayMetrics().density), 0, 0);
+      }
+    } else {
+      if (mToolbar.getPaddingTop() > 0) {
+        mToolbar.setPadding(0, 0, 0, 0);
+      }
     }
 
     activity.setSupportActionBar(mToolbar);
@@ -321,6 +336,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   public void setTintColor(int color) {
     mTintColor = color;
   }
+
+  public void setTopInsetEnabled(boolean topInsetEnabled) { mIsTopInsetEnabled = topInsetEnabled; }
 
   public void setBackgroundColor(int color) {
     mBackgroundColor = color;
