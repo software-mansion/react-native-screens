@@ -116,7 +116,7 @@ declare module 'react-native-screens' {
      * @description A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
      * @host (Android only)
      */
-    headerTopInsetEnabled?: boolean;
+    topInsetEnabled?: boolean;
     /**
      * @host (iOS only)
      * @description Allows for controlling the string to be rendered next to back button. By default iOS uses the title of the previous screen.
