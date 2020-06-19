@@ -103,6 +103,10 @@ Function which returns a React Element to display in the center of the header.
 
 Boolean indicating whether the navigation bar is translucent. Only supported on iOS.
 
+#### `headerTopInsetEnabled`
+
+A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque. Only supported on Android.
+
 #### `headerLargeTitle`
 
 Boolean used to set a native property to prefer a large title header (like in iOS setting).

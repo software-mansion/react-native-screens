@@ -29,6 +29,7 @@ export default function HeaderConfig(props: Props) {
     headerHideShadow,
     headerLargeTitleHideShadow,
     headerTintColor,
+    headerTopInsetEnabled = true,
     headerLargeTitle,
     headerTranslucent,
     headerStyle = {},
@@ -64,6 +65,7 @@ export default function HeaderConfig(props: Props) {
           ? headerTintColor
           : colors.text
       }
+      topInsetEnabled={headerTopInsetEnabled}
       backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
       backTitleFontFamily={headerBackTitleStyle.fontFamily}
       backTitleFontSize={headerBackTitleStyle.fontSize}
