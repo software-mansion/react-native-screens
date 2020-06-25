@@ -266,12 +266,7 @@
     // transparent background color
     [appearance configureWithTransparentBackground];
   } else {
-    // non-transparent background or default background
-    if (config.translucent) {
-      [appearance configureWithDefaultBackground];
-    } else {
-      [appearance configureWithOpaqueBackground];
-    }
+    [appearance configureWithOpaqueBackground];
   }
   
   // set background color if specified
@@ -524,21 +519,21 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 #ifdef __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
-      @"ultraThinMaterial": @(UIBlurEffectStyleSystemUltraThinMaterial),
-      @"thinMaterial": @(UIBlurEffectStyleSystemThinMaterial),
-      @"material": @(UIBlurEffectStyleSystemMaterial),
-      @"thickMaterial": @(UIBlurEffectStyleSystemThickMaterial),
-      @"chromeMaterial": @(UIBlurEffectStyleSystemChromeMaterial),
-      @"ultraThinMaterialLight": @(UIBlurEffectStyleSystemUltraThinMaterialLight),
-      @"thinMaterialLight": @(UIBlurEffectStyleSystemThinMaterialLight),
-      @"materialLight": @(UIBlurEffectStyleSystemMaterialLight),
-      @"thickMaterialLight": @(UIBlurEffectStyleSystemThickMaterialLight),
-      @"chromeMaterialLight": @(UIBlurEffectStyleSystemChromeMaterialLight),
-      @"ultraThinMaterialDark": @(UIBlurEffectStyleSystemUltraThinMaterialDark),
-      @"thinMaterialDark": @(UIBlurEffectStyleSystemThinMaterialDark),
-      @"materialDark": @(UIBlurEffectStyleSystemMaterialDark),
-      @"thickMaterialDark": @(UIBlurEffectStyleSystemThickMaterialDark),
-      @"chromeMaterialDark": @(UIBlurEffectStyleSystemChromeMaterialDark),
+      @"systemUltraThinMaterial": @(UIBlurEffectStyleSystemUltraThinMaterial),
+      @"systemThinMaterial": @(UIBlurEffectStyleSystemThinMaterial),
+      @"systemMaterial": @(UIBlurEffectStyleSystemMaterial),
+      @"systemThickMaterial": @(UIBlurEffectStyleSystemThickMaterial),
+      @"systemChromeMaterial": @(UIBlurEffectStyleSystemChromeMaterial),
+      @"systemUltraThinMaterialLight": @(UIBlurEffectStyleSystemUltraThinMaterialLight),
+      @"systemThinMaterialLight": @(UIBlurEffectStyleSystemThinMaterialLight),
+      @"systemMaterialLight": @(UIBlurEffectStyleSystemMaterialLight),
+      @"systemThickMaterialLight": @(UIBlurEffectStyleSystemThickMaterialLight),
+      @"systemChromeMaterialLight": @(UIBlurEffectStyleSystemChromeMaterialLight),
+      @"systemUltraThinMaterialDark": @(UIBlurEffectStyleSystemUltraThinMaterialDark),
+      @"systemThinMaterialDark": @(UIBlurEffectStyleSystemThinMaterialDark),
+      @"systemMaterialDark": @(UIBlurEffectStyleSystemMaterialDark),
+      @"systemThickMaterialDark": @(UIBlurEffectStyleSystemThickMaterialDark),
+      @"systemChromeMaterialDark": @(UIBlurEffectStyleSystemChromeMaterialDark),
     }];
   }
 #endif

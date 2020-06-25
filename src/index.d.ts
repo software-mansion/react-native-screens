@@ -28,7 +28,7 @@ declare module 'react-native-screens' {
     | 'dark'
     | 'regular'
     | 'prominent'
-    | 'systemUltraThinMaterial '
+    | 'systemUltraThinMaterial'
     | 'systemThinMaterial'
     | 'systemMaterial'
     | 'systemThickMaterial'
