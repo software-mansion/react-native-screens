@@ -109,9 +109,27 @@ Allows for the customization of how the given screen should appear/disappear whe
 
 Defines how the method that should be used to present the given screen. It is a separate property from `stackAnimation` as the presentation mode can carry additional semantic. The allowed values are:
 
-- `"push"` – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
-- `"modal"` – the new screen will be presented modally. Besides, this allows for a nested stack to be rendered inside such screens
-- `"transparentModal"` – the new screen will be presented modally but also, the second to last screen will remain attached to the stack container such that if the top screen is non-opaque, the content below can still be seen. If `"modal"` is used instead the below screen will get unmounted as soon as the transition ends.
+ - `push` – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
+ - `modal` – Explained below.
+ - `transparentModal` – Explained below.
+ - `containedModal` – Explained below.
+ - `containedTransparentModal` – Explained below.
+ - `fullScreenModal` – Explained below.
+ - `formSheet` – Explained below.
+
+ For iOS:
+ - `modal` will use [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc) on iOS 13 and later, and will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc) on iOS 12 and earlier.
+ - `fullScreenModal` will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc)
+ - `formSheet` will use [`UIModalPresentationFormSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationformsheet?language=objc)
+ - `transparentModal` will use [`UIModalPresentationOverFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationoverfullscreen?language=objc)
+ - `containedModal` will use [`UIModalPresentationCurrentContext`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationcurrentcontext?language=objc)
+ - `containedTransparentModal` will use [`UIModalPresentationOverCurrentContext`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationovercurrentcontext?language=objc)
+
+ For Android:
+
+ `modal`, `containedModal`, `fullScreenModal`, `formSheet` will use `Screen.StackPresentation.MODAL`.
+
+ `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
 ### `<ScreenStackHeaderConfig>`
 
