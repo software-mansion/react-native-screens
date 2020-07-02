@@ -119,7 +119,8 @@
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
-  [navbar setTintColor:[UIColor whiteColor]]; // really weird, but triggering the change of color resolves issue with custom back image
+  // really weird, but triggering the change of color resolves issue with custom back image, so we change it by a really small value and then back to the right one
+  [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
 #ifdef __IPHONE_13_0
