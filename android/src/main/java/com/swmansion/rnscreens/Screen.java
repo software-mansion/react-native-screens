@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.Paint;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -75,6 +76,11 @@ public class Screen extends ViewGroup {
     // params this way is not the most elegant way to solve this problem but workarounds it for the
     // time being
     setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION));
+  }
+
+  @Override
+  protected boolean onRequestFocusInDescendants(final int dir, final Rect rect) {
+    return false;
   }
 
   @Override
