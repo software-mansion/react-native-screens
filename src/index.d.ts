@@ -52,7 +52,7 @@ declare module 'react-native-screens' {
     children?: React.ReactNode;
 
     /**
-     * @description A callback that gets called when the current screen will appears. This is called as soon as the transition begins.
+     * @description A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
      */
     onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
