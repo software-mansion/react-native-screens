@@ -56,7 +56,7 @@ declare module 'react-native-screens' {
      */
     onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
-     * @description A callback that gets called when the current screen will disappears. This is called as soon as the transition begins.
+     * @description A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
      */
     onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
