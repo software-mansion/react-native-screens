@@ -181,7 +181,7 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateDisabled];
   [button setTitleTextAttributes:attrs forState:UIControlStateSelected];
   if (@available(iOS 9.0, *)) {
-    [button setTitleTextAttributes:attrs forState:UIControlStateFocused];	
+    [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
   }
 }
 
