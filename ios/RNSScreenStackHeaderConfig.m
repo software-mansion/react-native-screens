@@ -180,7 +180,9 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
   [button setTitleTextAttributes:attrs forState:UIControlStateDisabled];
   [button setTitleTextAttributes:attrs forState:UIControlStateSelected];
-  [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
+  if (@available(iOS 9.0, *)) {
+    [button setTitleTextAttributes:attrs forState:UIControlStateFocused];	
+  }
 }
 
 + (UIImage*)loadBackButtonImageInViewController:(UIViewController *)vc
