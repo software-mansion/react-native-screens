@@ -8,19 +8,20 @@
     "postinstall": "rm -rf node_modules/react-native-screens/{.git,node_modules,Example}"
   },
   "dependencies": {
-    "react": "16.11.0",
-    "react-native": "0.62.0",
+    "react": "16.13.1",
+    "react-native": "0.63.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-screens": "file:..",
     "react-navigation": "^3.0.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/runtime": "^7.9.2",
-    "babel-jest": "23.6.0",
-    "jest": "23.6.0",
-    "metro-react-native-babel-preset": "^0.58.0",
-    "react-test-renderer": "16.11.0"
+    "@babel/core": "^7.8.4",
+    "@babel/runtime": "^7.8.4",
+    "@react-native-community/eslint-config": "^1.1.0",
+    "babel-jest": "^25.1.0",
+    "jest": "^25.1.0",
+    "metro-react-native-babel-preset": "^0.59.0",
+    "react-test-renderer": "16.13.1"
   },
   "jest": {
     "preset": "react-native"
