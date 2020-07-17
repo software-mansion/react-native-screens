@@ -266,21 +266,16 @@
     // transparent background color
     [appearance configureWithTransparentBackground];
   } else {
-    // non-transparent background or default background
-    if (config.translucent) {
-      [appearance configureWithDefaultBackground];
-    } else {
-      [appearance configureWithOpaqueBackground];
-    }
-
-    // set background color if specified
-    if (config.backgroundColor) {
-      appearance.backgroundColor = config.backgroundColor;
-    }
+    [appearance configureWithOpaqueBackground];
+  }
+  
+  // set background color if specified
+  if (config.backgroundColor) {
+    appearance.backgroundColor = config.backgroundColor;
   }
 
-  if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
-    appearance.backgroundColor = config.backgroundColor;
+  if (config.blurEffect) {
+    appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
   }
 
   if (config.hideShadow) {
@@ -486,6 +481,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(blurEffect, UIBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
@@ -504,6 +500,46 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @implementation RCTConvert (RNSScreenStackHeader)
 
++ (NSMutableDictionary *)blurEffectsForIOSVersion
+{
+  NSMutableDictionary *blurEffects = [NSMutableDictionary new];
+  [blurEffects addEntriesFromDictionary:@{
+    @"extraLight": @(UIBlurEffectStyleExtraLight),
+    @"light": @(UIBlurEffectStyleLight),
+    @"dark": @(UIBlurEffectStyleDark),
+  }];
+  
+  if (@available(iOS 10.0, *)) {
+    [blurEffects addEntriesFromDictionary:@{
+      @"regular": @(UIBlurEffectStyleRegular),
+      @"prominent": @(UIBlurEffectStyleProminent),
+
+    }];
+  }
+#ifdef __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    [blurEffects addEntriesFromDictionary:@{
+      @"systemUltraThinMaterial": @(UIBlurEffectStyleSystemUltraThinMaterial),
+      @"systemThinMaterial": @(UIBlurEffectStyleSystemThinMaterial),
+      @"systemMaterial": @(UIBlurEffectStyleSystemMaterial),
+      @"systemThickMaterial": @(UIBlurEffectStyleSystemThickMaterial),
+      @"systemChromeMaterial": @(UIBlurEffectStyleSystemChromeMaterial),
+      @"systemUltraThinMaterialLight": @(UIBlurEffectStyleSystemUltraThinMaterialLight),
+      @"systemThinMaterialLight": @(UIBlurEffectStyleSystemThinMaterialLight),
+      @"systemMaterialLight": @(UIBlurEffectStyleSystemMaterialLight),
+      @"systemThickMaterialLight": @(UIBlurEffectStyleSystemThickMaterialLight),
+      @"systemChromeMaterialLight": @(UIBlurEffectStyleSystemChromeMaterialLight),
+      @"systemUltraThinMaterialDark": @(UIBlurEffectStyleSystemUltraThinMaterialDark),
+      @"systemThinMaterialDark": @(UIBlurEffectStyleSystemThinMaterialDark),
+      @"systemMaterialDark": @(UIBlurEffectStyleSystemMaterialDark),
+      @"systemThickMaterialDark": @(UIBlurEffectStyleSystemThickMaterialDark),
+      @"systemChromeMaterialDark": @(UIBlurEffectStyleSystemChromeMaterialDark),
+    }];
+  }
+#endif
+  return blurEffects;
+}
+
 RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
    @"back": @(RNSScreenStackHeaderSubviewTypeBackButton),
    @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
@@ -512,6 +548,8 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
    @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
    }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
+RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
+  
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager
