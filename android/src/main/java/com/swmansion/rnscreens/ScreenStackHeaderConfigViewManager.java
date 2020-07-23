@@ -90,8 +90,8 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   }
 
   @ReactProp(name = "backgroundColor", customType = "Color")
-  public void setBackgroundColor(ScreenStackHeaderConfig config, int titleColor) {
-    config.setBackgroundColor(titleColor);
+  public void setBackgroundColor(ScreenStackHeaderConfig config, Integer backgroundColor) {
+    config.setBackgroundColor(backgroundColor);
   }
 
   @ReactProp(name = "hideShadow")
@@ -134,5 +134,4 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
 //  // `hidden` is an UIView property, we need to use different name internally
-//  RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 }
