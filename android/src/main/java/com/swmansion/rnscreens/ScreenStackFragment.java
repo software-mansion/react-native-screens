@@ -65,6 +65,7 @@ public class ScreenStackFragment extends ScreenFragment {
   private AppBarLayout mAppBarLayout;
   private Toolbar mToolbar;
   private boolean mShadowHidden;
+  private boolean mIsTranslucent;
 
   @SuppressLint("ValidFragment")
   public ScreenStackFragment(Screen screenView) {
@@ -93,6 +94,14 @@ public class ScreenStackFragment extends ScreenFragment {
     if (mShadowHidden != hidden) {
       mAppBarLayout.setTargetElevation(hidden ? 0 : TOOLBAR_ELEVATION);
       mShadowHidden = hidden;
+    }
+  }
+
+  public void setToolbarTranslucent(boolean translucent) {
+    if (mIsTranslucent != translucent) {
+      ViewGroup.LayoutParams params = mScreenView.getLayoutParams();
+      ((CoordinatorLayout.LayoutParams) params).setBehavior(translucent ? null : new AppBarLayout.ScrollingViewBehavior());
+      mIsTranslucent = translucent;
     }
   }
 
