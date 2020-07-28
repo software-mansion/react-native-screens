@@ -185,6 +185,10 @@ declare module 'react-native-screens' {
      */
     largeTitle?: boolean;
     /**
+     *@description Controls whether the stack should be in rtl or ltr form.
+     */
+    direction?: 'rtl' | 'ltr';
+    /**
      * @host (iOS only)
      * @description Customize font family to be used for the large title.
      */

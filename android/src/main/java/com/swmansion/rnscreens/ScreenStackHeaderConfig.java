@@ -30,6 +30,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private String mTitle;
   private int mTitleColor;
   private String mTitleFontFamily;
+  private String mDirection;
   private float mTitleFontSize;
   private int mBackgroundColor;
   private boolean mIsHidden;
@@ -157,6 +158,14 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     AppCompatActivity activity = (AppCompatActivity) getScreenFragment().getActivity();
     if (activity == null) {
       return;
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mDirection != null) {
+      if (mDirection.equals("rtl")) {
+        activity.getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+      } else if (mDirection.equals("ltr")) {
+        activity.getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+      }
     }
 
     if (mIsHidden) {
@@ -371,4 +380,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   }
 
   public void setBackButtonInCustomView(boolean backButtonInCustomView) { mBackButtonInCustomView = backButtonInCustomView; }
+
+  public void setDirection(String direction) {
+    mDirection = direction;
+  }
 }

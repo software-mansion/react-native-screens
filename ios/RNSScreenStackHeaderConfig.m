@@ -356,6 +356,21 @@
     return;
   }
 
+  if (config.direction) {
+    switch (config.direction) {
+      case RNSScreenDirectionLeftToRight:
+        navctr.view.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
+        navctr.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
+        break;
+      case RNSScreenDirectionRightToLeft:
+        navctr.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        navctr.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        break;
+      default:
+        break;
+    }
+  }
+
   navitem.title = config.title;
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
@@ -488,6 +503,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(blurEffect, UIBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(direction, RNSScreenDirection)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
@@ -552,6 +568,11 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
    @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
    @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
    }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
+
+RCT_ENUM_CONVERTER(RNSScreenDirection, (@{
+   @"ltr": @(RNSScreenDirectionLeftToRight),
+   @"rtl": @(RNSScreenDirectionRightToLeft),
+   }), RNSScreenDirectionLeftToRight, integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
   

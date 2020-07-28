@@ -124,6 +124,11 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     config.setBackButtonInCustomView(backButtonInCustomView);
   }
 
+  @ReactProp(name = "direction")
+  public void setDirection(ScreenStackHeaderConfig config, String direction) {
+    config.setDirection(direction);
+  }
+
 
 //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
