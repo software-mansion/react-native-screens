@@ -119,6 +119,11 @@
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
+  // It is workaround for loading custom back icon when transitioning from a screen without header to the screen which has one.
+  // This action fails when navigating to the screen with header for the second time and loads default back button.
+  // It looks like changing the tint color of navbar triggers an update of the items belonging to it and it seems to load the custom back image
+  // so we change the tint color's alpha by a very small amount and then set it to the one it should have.  
+  [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
 #ifdef __IPHONE_13_0
