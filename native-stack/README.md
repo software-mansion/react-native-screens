@@ -115,6 +115,10 @@ For the large title to collapse on scroll, the content of the screen should be w
 
 Only supported on iOS.
 
+### `direction`
+
+String that applies `rtl` or `ltr` form to the stack.
+
 #### `headerTintColor`
 
 Tint color for the header. Changes the color of the back button and title.
