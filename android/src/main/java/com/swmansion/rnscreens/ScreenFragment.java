@@ -11,6 +11,9 @@ import android.widget.FrameLayout;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -33,6 +36,7 @@ public class ScreenFragment extends Fragment {
   }
 
   protected Screen mScreenView;
+  private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
 
   public ScreenFragment() {
     throw new IllegalStateException("Screen fragments should never be restored");
@@ -65,6 +69,13 @@ public class ScreenFragment extends Fragment {
         .getNativeModule(UIManagerModule.class)
         .getEventDispatcher()
         .dispatchEvent(new ScreenWillAppearEvent(mScreenView.getId()));
+
+    for (ScreenContainer sc : mChildScreenContainers) {
+      if (sc.getScreenCount() > 0) {
+        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
+        topScreen.getFragment().dispatchOnWillAppear();
+      }
+    }
   }
 
   protected void dispatchOnAppear() {
@@ -72,6 +83,13 @@ public class ScreenFragment extends Fragment {
             .getNativeModule(UIManagerModule.class)
             .getEventDispatcher()
             .dispatchEvent(new ScreenAppearEvent(mScreenView.getId()));
+
+    for (ScreenContainer sc : mChildScreenContainers) {
+      if (sc.getScreenCount() > 0) {
+        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
+        topScreen.getFragment().dispatchOnAppear();
+      }
+    }
   }
 
   protected void dispatchOnWillDisappear() {
@@ -79,6 +97,13 @@ public class ScreenFragment extends Fragment {
         .getNativeModule(UIManagerModule.class)
         .getEventDispatcher()
         .dispatchEvent(new ScreenWillDisappearEvent(mScreenView.getId()));
+
+    for (ScreenContainer sc : mChildScreenContainers) {
+      if (sc.getScreenCount() > 0) {
+        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
+        topScreen.getFragment().dispatchOnWillDisappear();
+      }
+    }
   }
 
   protected void dispatchOnDisappear() {
@@ -86,6 +111,21 @@ public class ScreenFragment extends Fragment {
         .getNativeModule(UIManagerModule.class)
         .getEventDispatcher()
         .dispatchEvent(new ScreenDisappearEvent(mScreenView.getId()));
+
+    for (ScreenContainer sc : mChildScreenContainers) {
+      if (sc.getScreenCount() > 0) {
+        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
+        topScreen.getFragment().dispatchOnDisappear();
+      }
+    }
+  }
+
+  public void registerChildScreenContainer(ScreenContainer screenContainer) {
+    mChildScreenContainers.add(screenContainer);
+  }
+
+  public void unregisterChildScreenContainer(ScreenContainer screenContainer) {
+    mChildScreenContainers.remove(screenContainer);
   }
 
   public void onViewAnimationStart() {
@@ -121,5 +161,6 @@ public class ScreenFragment extends Fragment {
               .getEventDispatcher()
               .dispatchEvent(new ScreenDismissedEvent(mScreenView.getId()));
     }
+    mChildScreenContainers.clear();
   }
 }
