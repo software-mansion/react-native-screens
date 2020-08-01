@@ -85,10 +85,12 @@ class Screen extends React.Component {
   setNativeProps(props) {
     this._ref.setNativeProps(props);
   }
+
   setRef = (ref) => {
     this._ref = ref;
     this.props.onComponentRef && this.props.onComponentRef(ref);
   };
+
   render() {
     if (!ENABLE_SCREENS) {
       // Filter out active prop in this case because it is unused and
