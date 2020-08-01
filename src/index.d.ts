@@ -50,12 +50,25 @@ declare module 'react-native-screens' {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
     onComponentRef?: (view: any) => void;
     children?: React.ReactNode;
+
     /**
-     *@description A callback that gets called when the current screen appears.
+     * @description A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
+     */
+    onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    /**
+     * @description A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
+     */
+    onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    /**
+     * @description A callback that gets called when the current screen appears.
      */
     onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
-     *@description A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+     * @description A callback that gets called when the current screen disappears.
+     */
+    onDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    /**
+     * @description A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
      */
     onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
@@ -69,7 +82,7 @@ declare module 'react-native-screens' {
      */
     stackPresentation: StackPresentationTypes;
     /**
-     *@description Allows for the customization of how the given screen should appear/dissapear when pushed or popped at the top of the stack. The followin values are currently supported:
+     * @description Allows for the customization of how the given screen should appear/dissapear when pushed or popped at the top of the stack. The followin values are currently supported:
      *  @type "default" – uses a platform default animation
      *  @type "fade" – fades screen in or out
      *  @type "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)

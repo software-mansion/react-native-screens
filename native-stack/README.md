@@ -217,17 +217,52 @@ React.useEffect(
 );
 ```
 
-#### `finishTransitioning`
+#### `transitionStart`
 
-Event which fires when the current screen finishes its transition.
+Event which fires when a transition animation starts.
+
+Event data:
+
+- `closing` - Whether the screen will be dismissed or will appear.
 
 Example:
 
 ```js
 React.useEffect(
   () => {
-    const unsubscribe = navigation.addListener('finishTransitioning', e => {
-      // Do something
+    const unsubscribe = navigation.addListener('transitionStart', e => {
+      if (e.data.closing) {
+        // Will be dismissed
+      } else {
+        // Will appear
+      }
+    });
+
+    return unsubscribe;
+  },
+  [navigation]
+);
+```
+
+#### `transitionEnd`
+
+Event which fires when a transition animation ends.
+
+Event data:
+
+- `closing` - Whether the screen was dismissed or did appear.
+
+Example:
+
+```js
+React.useEffect(
+  () => {
+    const unsubscribe = navigation.addListener('transitionEnd', e => {
+      if (e.data.closing) {
+        // Was dismissed
+      } else {
+        // Did appear
+      }
     });
 
     return unsubscribe;
