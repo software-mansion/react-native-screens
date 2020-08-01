@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   Animated,
-  requireNativeComponent,
-  View,
-  UIManager,
   Image,
+  requireNativeComponent,
   StyleSheet,
+  UIManager,
+  View,
 } from 'react-native';
 import { version } from 'react-native/Libraries/Core/ReactNativeVersion';
 
