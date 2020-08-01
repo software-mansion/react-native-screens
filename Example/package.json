@@ -8,19 +8,24 @@
     "postinstall": "rm -rf node_modules/react-native-screens/{.git,node_modules,Example}"
   },
   "dependencies": {
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/bottom-tabs": "^5.7.3",
+    "@react-navigation/native": "^5.7.2",
+    "@react-navigation/stack": "^5.8.0",
     "react": "16.13.1",
     "react-native": "0.63.0",
     "react-native-gesture-handler": "^1.6.1",
-    "react-native-screens": "file:..",
-    "react-navigation": "^3.0.8"
+    "react-native-reanimated": "^1.10.1",
+    "react-native-safe-area-context": "^3.1.1",
+    "react-native-screens": "file:.."
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/runtime": "^7.8.4",
+    "@babel/core": "^7.10.5",
+    "@babel/runtime": "^7.10.5",
     "@react-native-community/eslint-config": "^1.1.0",
     "babel-jest": "^25.1.0",
     "jest": "^25.1.0",
-    "metro-react-native-babel-preset": "^0.59.0",
+    "metro-react-native-babel-preset": "^0.61.0",
     "react-test-renderer": "16.13.1"
   },
   "jest": {

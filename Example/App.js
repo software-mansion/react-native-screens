@@ -6,11 +6,8 @@ import {
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
-import {
-  createStackNavigator,
-  createSwitchNavigator,
-  createAppContainer,
-} from 'react-navigation';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import { enableScreens } from 'react-native-screens';
 
 import Stack from './stack';
@@ -23,19 +20,19 @@ import NavigationTabsAndStack from './navigationTabsAndStack';
 enableScreens();
 
 const SCREENS = {
-  Stack: { screen: Stack, title: 'Screen container based stack' },
-  NativeStack: { screen: NativeStack, title: 'Native stack example' },
-  Tabs: { screen: Tabs, title: 'Tabs example' },
+  Stack: { Screen: Stack, title: 'Screen container based stack' },
+  NativeStack: { Screen: NativeStack, title: 'Native stack example' },
+  Tabs: { Screen: Tabs, title: 'Tabs example' },
   NativeNavigation: {
-    screen: NativeNavigation,
+    Screen: NativeNavigation,
     title: 'Native stack bindings for RNN',
   },
   Navigation: {
-    screen: Navigation,
+    Screen: Navigation,
     title: 'React Navigation with screen enabled',
   },
   NavigationTabsAndStack: {
-    screen: NavigationTabsAndStack,
+    Screen: NavigationTabsAndStack,
     title: 'React Navigation Tabs + Stack',
   },
 };
@@ -45,13 +42,13 @@ class MainScreen extends React.Component {
     title: '📱 React Native Screens Examples',
   };
   render() {
-    const data = Object.keys(SCREENS).map(key => ({ key }));
+    const data = Object.keys(SCREENS).map((key) => ({ key }));
     return (
       <FlatList
         style={styles.list}
         data={data}
         ItemSeparatorComponent={ItemSeparator}
-        renderItem={props => (
+        renderItem={(props) => (
           <MainScreenItem
             {...props}
             onPressItem={({ key }) => this.props.navigation.navigate(key)}
@@ -78,18 +75,25 @@ class MainScreenItem extends React.Component {
   }
 }
 
-const MainScreenNav = createStackNavigator({
-  MainScreen: { screen: MainScreen },
-});
+const MainScreenStack = createStackNavigator();
 
-const ExampleApp = createSwitchNavigator(
-  {
-    Main: { screen: MainScreenNav },
-    ...SCREENS,
-  },
-  {
-    initialRouteName: 'Main',
-  }
+const ExampleApp = () => (
+  <NavigationContainer>
+    <MainScreenStack.Navigator>
+      <MainScreenStack.Screen name="Main" component={MainScreen} />
+      {Object.keys(SCREENS).map((name) => {
+        const { Screen, title } = SCREENS[name];
+        return (
+          <MainScreenStack.Screen
+            key={name}
+            name={name}
+            component={Screen}
+            options={{ title }}
+          />
+        );
+      })}
+    </MainScreenStack.Navigator>
+  </NavigationContainer>
 );
 
 const styles = StyleSheet.create({
@@ -113,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default createAppContainer(ExampleApp);
+export default ExampleApp;
