@@ -71,7 +71,7 @@ export type NativeStackNavigationHelpers = NavigationHelpers<
   NativeStackNavigationEventMap
 >;
 
-export type NativeStackNavigationConfig = {};
+export type NativeStackNavigationConfig = Record<string, unknown>;
 
 export type NativeStackNavigationOptions = {
   /**
