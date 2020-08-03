@@ -49,7 +49,8 @@ class StackView extends React.Component {
 
   _onFinishTransitioning = () => {
     const { routes } = this.props.navigation.state;
-    const lastRoute = routes && routes.length && routes[routes.length - 1];
+    const lastRoute = routes?.length && routes[routes.length - 1];
+
     if (lastRoute) {
       this.props.navigation.dispatch(
         StackActions.completeTransition({
