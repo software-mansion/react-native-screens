@@ -25,11 +25,11 @@ type Props = {
   descriptors: NativeStackDescriptorMap;
 };
 
-const NativeStackView: React.FC<Props> = ({
+export default function NativeStackView({
   state,
   navigation,
   descriptors,
-}) => {
+}: Props): JSX.Element {
   const { key, routes } = state;
   const { colors } = useTheme();
 
@@ -52,56 +52,6 @@ const NativeStackView: React.FC<Props> = ({
           contentStyle,
         ];
 
-        const onAppear = () => {
-          navigation.emit({
-            type: 'appear',
-            target: route.key,
-          });
-
-          navigation.emit({
-            type: 'transitionEnd',
-            data: { closing: false },
-            target: route.key,
-          });
-        };
-
-        const onWillAppear = () => {
-          navigation.emit({
-            type: 'transitionStart',
-            data: { closing: false },
-            target: route.key,
-          });
-        };
-
-        const onWillDisappear = () => {
-          navigation.emit({
-            type: 'transitionStart',
-            data: { closing: true },
-            target: route.key,
-          });
-        };
-
-        const onDisappear = () => {
-          navigation.emit({
-            type: 'transitionEnd',
-            data: { closing: true },
-            target: route.key,
-          });
-        };
-
-        const onDismissed = () => {
-          navigation.emit({
-            type: 'dismiss',
-            target: route.key,
-          });
-
-          navigation.dispatch({
-            ...StackActions.pop(),
-            source: route.key,
-            target: key,
-          });
-        };
-
         return (
           <Screen
             key={route.key}
@@ -109,11 +59,50 @@ const NativeStackView: React.FC<Props> = ({
             gestureEnabled={isAndroid ? false : gestureEnabled}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
-            onAppear={onAppear}
-            onDismissed={onDismissed}
-            onWillAppear={onWillAppear}
-            onWillDisappear={onWillDisappear}
-            onDisappear={onDisappear}>
+            onWillAppear={() => {
+              navigation.emit({
+                type: 'transitionStart',
+                data: { closing: false },
+                target: route.key,
+              });
+            }}
+            onWillDisappear={() => {
+              navigation.emit({
+                type: 'transitionStart',
+                data: { closing: true },
+                target: route.key,
+              });
+            }}
+            onAppear={() => {
+              navigation.emit({
+                type: 'appear',
+                target: route.key,
+              });
+              navigation.emit({
+                type: 'transitionEnd',
+                data: { closing: false },
+                target: route.key,
+              });
+            }}
+            onDisappear={() => {
+              navigation.emit({
+                type: 'transitionEnd',
+                data: { closing: true },
+                target: route.key,
+              });
+            }}
+            onDismissed={() => {
+              navigation.emit({
+                type: 'dismiss',
+                target: route.key,
+              });
+
+              navigation.dispatch({
+                ...StackActions.pop(),
+                source: route.key,
+                target: key,
+              });
+            }}>
             <HeaderConfig {...options} route={route} />
             <View style={viewStyles}>{renderScene()}</View>
           </Screen>
@@ -121,12 +110,10 @@ const NativeStackView: React.FC<Props> = ({
       })}
     </ScreenStack>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
-
-export default NativeStackView;
