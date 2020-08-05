@@ -56,7 +56,7 @@ public class Screen extends ViewGroup {
   private boolean mActive;
   private boolean mTransitioning;
   private StackPresentation mStackPresentation = StackPresentation.PUSH;
-  private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.PUSH;
+  private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.POP;
   private StackAnimation mStackAnimation = StackAnimation.DEFAULT;
   private boolean mGestureEnabled = true;
 
