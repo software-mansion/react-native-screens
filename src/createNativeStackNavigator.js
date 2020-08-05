@@ -1,21 +1,21 @@
 import React from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import {
-  StackRouter,
+  Screen,
+  ScreenStack,
+  ScreenStackHeaderBackButtonImage,
+  ScreenStackHeaderCenterView,
+  ScreenStackHeaderConfig,
+  ScreenStackHeaderLeftView,
+  ScreenStackHeaderRightView
+} from 'react-native-screens';
+import {
+  createNavigator,
   SceneView,
   StackActions,
-  createNavigator,
+  StackRouter
 } from 'react-navigation';
 import { HeaderBackButton } from 'react-navigation-stack';
-import {
-  ScreenStack,
-  Screen,
-  ScreenStackHeaderConfig,
-  ScreenStackHeaderBackButtonImage,
-  ScreenStackHeaderLeftView,
-  ScreenStackHeaderRightView,
-  ScreenStackHeaderCenterView,
-} from 'react-native-screens';
 
 function renderComponentOrThunk(componentOrThunk, props) {
   if (typeof componentOrThunk === 'function') {
@@ -49,7 +49,8 @@ class StackView extends React.Component {
 
   _onFinishTransitioning = () => {
     const { routes } = this.props.navigation.state;
-    let lastRoute = routes && routes.length && routes[routes.length - 1];
+    const lastRoute = routes?.length && routes[routes.length - 1];
+
     if (lastRoute) {
       this.props.navigation.dispatch(
         StackActions.completeTransition({
@@ -231,8 +232,8 @@ class StackView extends React.Component {
           Platform.OS === 'android'
             ? false
             : options.gestureEnabled === undefined
-              ? true
-              : options.gestureEnabled
+            ? true
+            : options.gestureEnabled
         }
         onAppear={() => this._onAppear(route, descriptor)}
         onDismissed={() => this._removeScene(route)}>

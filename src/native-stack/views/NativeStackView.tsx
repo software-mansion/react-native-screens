@@ -1,22 +1,23 @@
-import * as React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
 import {
-  ScreenStack,
+  StackActions,
+  StackNavigationState,
+  useTheme
+} from '@react-navigation/native';
+import * as React from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import {
   Screen as ScreenComponent,
   ScreenProps,
+  ScreenStack
 } from 'react-native-screens';
 import {
-  StackNavigationState,
-  StackActions,
-  useTheme,
-} from '@react-navigation/native';
-import HeaderConfig from './HeaderConfig';
-import {
-  NativeStackNavigationHelpers,
   NativeStackDescriptorMap,
+  NativeStackNavigationHelpers
 } from '../types';
+import HeaderConfig from './HeaderConfig';
 
 const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
+const isAndroid = Platform.OS === 'android';
 
 type Props = {
   state: StackNavigationState;
@@ -28,12 +29,13 @@ export default function NativeStackView({
   state,
   navigation,
   descriptors,
-}: Props) {
+}: Props): JSX.Element {
+  const { key, routes } = state;
   const { colors } = useTheme();
 
   return (
     <ScreenStack style={styles.container}>
-      {state.routes.map((route) => {
+      {routes.map((route) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
           gestureEnabled,
@@ -42,11 +44,19 @@ export default function NativeStackView({
           contentStyle,
         } = options;
 
+        const viewStyles = [
+          styles.container,
+          stackPresentation !== 'transparentModal' && {
+            backgroundColor: colors.background,
+          },
+          contentStyle,
+        ];
+
         return (
           <Screen
             key={route.key}
             style={StyleSheet.absoluteFill}
-            gestureEnabled={Platform.OS === 'android' ? false : gestureEnabled}
+            gestureEnabled={isAndroid ? false : gestureEnabled}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
             onWillAppear={() => {
@@ -90,23 +100,11 @@ export default function NativeStackView({
               navigation.dispatch({
                 ...StackActions.pop(),
                 source: route.key,
-                target: state.key,
+                target: key,
               });
             }}>
             <HeaderConfig {...options} route={route} />
-            <View
-              style={[
-                styles.container,
-                {
-                  backgroundColor:
-                    stackPresentation !== 'transparentModal'
-                      ? colors.background
-                      : undefined,
-                },
-                contentStyle,
-              ]}>
-              {renderScene()}
-            </View>
+            <View style={viewStyles}>{renderScene()}</View>
           </Screen>
         );
       })}

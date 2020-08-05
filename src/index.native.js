@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   Animated,
-  requireNativeComponent,
-  View,
-  UIManager,
   Image,
+  requireNativeComponent,
   StyleSheet,
+  UIManager,
+  View,
 } from 'react-native';
 import { version } from 'react-native/Libraries/Core/ReactNativeVersion';
 
@@ -85,10 +85,12 @@ class Screen extends React.Component {
   setNativeProps(props) {
     this._ref.setNativeProps(props);
   }
+
   setRef = (ref) => {
     this._ref = ref;
     this.props.onComponentRef && this.props.onComponentRef(ref);
   };
+
   render() {
     if (!ENABLE_SCREENS) {
       // Filter out active prop in this case because it is unused and

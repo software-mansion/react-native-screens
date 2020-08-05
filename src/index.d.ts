@@ -4,11 +4,11 @@
 declare module 'react-native-screens' {
   import { ComponentClass } from 'react';
   import {
-    ViewProps,
     Animated,
+    ImageProps,
     NativeSyntheticEvent,
     NativeTouchEvent,
-    ImageProps,
+    ViewProps,
   } from 'react-native';
 
   export function useScreens(shouldUseScreens?: boolean): void;

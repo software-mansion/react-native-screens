@@ -1,33 +1,33 @@
-import * as React from 'react';
 import {
   createNavigatorFactory,
-  useNavigationBuilder,
   EventArg,
-  StackRouter,
-  StackNavigationState,
-  StackRouterOptions,
   StackActions,
+  StackNavigationState,
+  StackRouter,
+  StackRouterOptions,
+  useNavigationBuilder,
 } from '@react-navigation/native';
-
+import * as React from 'react';
+import { screensEnabled } from 'react-native-screens';
 import {
-  screensEnabled,
-  // eslint-disable-next-line import/no-unresolved
-} from 'react-native-screens';
-import NativeStackView from '../views/NativeStackView';
-import {
-  NativeStackNavigatorProps,
-  NativeStackNavigationOptions,
   NativeStackNavigationEventMap,
+  NativeStackNavigationOptions,
+  NativeStackNavigatorProps,
 } from '../types';
+import NativeStackView from '../views/NativeStackView';
 
-function NativeStackNavigator(props: NativeStackNavigatorProps) {
+function NativeStackNavigator({
+  initialRouteName,
+  children,
+  screenOptions,
+  ...rest
+}: NativeStackNavigatorProps) {
   if (!screensEnabled()) {
     throw new Error(
       'Native stack is only available if React Native Screens is enabled.'
     );
   }
 
-  const { initialRouteName, children, screenOptions, ...rest } = props;
   const { state, descriptors, navigation } = useNavigationBuilder<
     StackNavigationState,
     StackRouterOptions,
@@ -41,8 +41,7 @@ function NativeStackNavigator(props: NativeStackNavigatorProps) {
 
   React.useEffect(
     () =>
-      navigation.addListener &&
-      navigation.addListener('tabPress', (e) => {
+      navigation?.addListener('tabPress', (e) => {
         const isFocused = navigation.isFocused();
 
         // Run the operation in the next frame so we're sure all listeners have been run

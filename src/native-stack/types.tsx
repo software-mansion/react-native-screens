@@ -1,9 +1,3 @@
-import * as React from 'react';
-import { StyleProp, ViewStyle, ImageSourcePropType } from 'react-native';
-import {
-  ScreenProps,
-  ScreenStackHeaderConfigProps,
-} from 'react-native-screens';
 import {
   DefaultNavigatorOptions,
   Descriptor,
@@ -13,6 +7,12 @@ import {
   StackNavigationState,
   StackRouterOptions,
 } from '@react-navigation/native';
+import * as React from 'react';
+import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
+import {
+  ScreenProps,
+  ScreenStackHeaderConfigProps,
+} from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
   /**
@@ -36,42 +36,42 @@ export type NativeStackNavigationEventMap = {
 export type NativeStackNavigationProp<
   ParamList extends ParamListBase,
   RouteName extends keyof ParamList = string
-  > = NavigationProp<
-    ParamList,
-    RouteName,
-    StackNavigationState,
-    NativeStackNavigationOptions,
-    NativeStackNavigationEventMap
-  > & {
-    /**
-     * Push a new screen onto the stack.
-     *
-     * @param name Name of the route for the tab.
-     * @param [params] Params object for the route.
-     */
-    push<RouteName extends keyof ParamList>(
-      ...args: ParamList[RouteName] extends undefined | any
-        ? [RouteName] | [RouteName, ParamList[RouteName]]
-        : [RouteName, ParamList[RouteName]]
-    ): void;
+> = NavigationProp<
+  ParamList,
+  RouteName,
+  StackNavigationState,
+  NativeStackNavigationOptions,
+  NativeStackNavigationEventMap
+> & {
+  /**
+   * Push a new screen onto the stack.
+   *
+   * @param name Name of the route for the tab.
+   * @param [params] Params object for the route.
+   */
+  push<RouteName extends keyof ParamList>(
+    ...args: ParamList[RouteName] extends undefined | any
+      ? [RouteName] | [RouteName, ParamList[RouteName]]
+      : [RouteName, ParamList[RouteName]]
+  ): void;
 
-    /**
-     * Pop a screen from the stack.
-     */
-    pop(count?: number): void;
+  /**
+   * Pop a screen from the stack.
+   */
+  pop(count?: number): void;
 
-    /**
-     * Pop to the first route in the stack, dismissing all other screens.
-     */
-    popToTop(): void;
-  };
+  /**
+   * Pop to the first route in the stack, dismissing all other screens.
+   */
+  popToTop(): void;
+};
 
 export type NativeStackNavigationHelpers = NavigationHelpers<
   ParamListBase,
   NativeStackNavigationEventMap
 >;
 
-export type NativeStackNavigationConfig = {};
+export type NativeStackNavigationConfig = Record<string, unknown>;
 
 export type NativeStackNavigationOptions = {
   /**
