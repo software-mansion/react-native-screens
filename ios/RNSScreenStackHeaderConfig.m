@@ -355,20 +355,20 @@
   if (shouldHide) {
     return;
   }
-
-  if (config.direction) {
-    switch (config.direction) {
-      case RNSScreenDirectionLeftToRight:
-        navctr.view.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
-        navctr.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
-        break;
-      case RNSScreenDirectionRightToLeft:
-        navctr.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-        navctr.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-        break;
-      default:
-        break;
-    }
+  
+  // if we don't explicitly change the direction in config, we should get it from the phone settings
+  if (config.direction == UISemanticContentAttributeUnspecified) {
+    if ([NSLocale preferredLanguages].count != 0 &&
+         [NSLocale characterDirectionForLanguage:[[NSLocale preferredLanguages] objectAtIndex:0]] == NSLocaleLanguageDirectionRightToLeft) {
+       navctr.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+       navctr.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+     } else {
+       navctr.view.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
+       navctr.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
+     }
+  } else {
+    navctr.view.semanticContentAttribute = config.direction;
+    navctr.navigationBar.semanticContentAttribute = config.direction;
   }
 
   navitem.title = config.title;
@@ -503,7 +503,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(blurEffect, UIBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(direction, RNSScreenDirection)
+RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
@@ -569,10 +569,10 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
    @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
    }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
-RCT_ENUM_CONVERTER(RNSScreenDirection, (@{
-   @"ltr": @(RNSScreenDirectionLeftToRight),
-   @"rtl": @(RNSScreenDirectionRightToLeft),
-   }), RNSScreenDirectionLeftToRight, integerValue)
+RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
+   @"ltr": @(UISemanticContentAttributeForceLeftToRight),
+   @"rtl": @(UISemanticContentAttributeForceRightToLeft),
+   }), UISemanticContentAttributeUnspecified, integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
   

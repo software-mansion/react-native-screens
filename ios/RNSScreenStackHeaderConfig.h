@@ -3,11 +3,6 @@
 
 #import "RNSScreen.h"
 
-typedef NS_ENUM(NSInteger, RNSScreenDirection) {
-  RNSScreenDirectionLeftToRight,
-  RNSScreenDirectionRightToLeft,
-};
-
 @interface RNSScreenStackHeaderConfig : UIView
 
 @property (nonatomic, weak) RNSScreenView *screenView;
@@ -33,7 +28,7 @@ typedef NS_ENUM(NSInteger, RNSScreenDirection) {
 @property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
-@property (nonatomic) RNSScreenDirection direction;
+@property (nonatomic) UISemanticContentAttribute direction;
 
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
 
@@ -55,7 +50,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
-+ (RNSScreenDirection)RNSScreenDirection:(id)json;
++ (UISemanticContentAttribute)RNSScreenDirection:(id)json;
 
 @end
 
