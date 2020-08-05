@@ -197,9 +197,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       if (mTopScreen != null && newTop != null) {
         // there was some other screen attached before
         int transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
-        if (mStack.size() == mScreenFragments.size() && newTop.getScreen().getReplaceAnimation() == Screen.ReplaceAnimation.POP) {
-          // new screen was not on the stack before and the stack has the same amount of screens as before,
-          // so probably the "replace" action was called
+        if (!mScreenFragments.contains(mTopScreen) && newTop.getScreen().getReplaceAnimation() == Screen.ReplaceAnimation.POP) {
+          // if the previous top screen does not exist anymore and the new top was not on the stack before,
+          // probably replace was called, so we check the animation
           transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
         }
         switch (newTop.getScreen().getStackAnimation()) {

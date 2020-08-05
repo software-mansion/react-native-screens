@@ -7,13 +7,13 @@ import {
   ScreenStackHeaderCenterView,
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
-  ScreenStackHeaderRightView
+  ScreenStackHeaderRightView,
 } from 'react-native-screens';
 import {
   createNavigator,
   SceneView,
   StackActions,
-  StackRouter
+  StackRouter,
 } from 'react-navigation';
 import { HeaderBackButton } from 'react-navigation-stack';
 
