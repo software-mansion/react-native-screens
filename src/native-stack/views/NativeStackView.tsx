@@ -1,18 +1,18 @@
 import {
   StackActions,
   StackNavigationState,
-  useTheme
+  useTheme,
 } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import {
   Screen as ScreenComponent,
   ScreenProps,
-  ScreenStack
+  ScreenStack,
 } from 'react-native-screens';
 import {
   NativeStackDescriptorMap,
-  NativeStackNavigationHelpers
+  NativeStackNavigationHelpers,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 
@@ -39,6 +39,7 @@ export default function NativeStackView({
         const { options, render: renderScene } = descriptors[route.key];
         const {
           gestureEnabled,
+          replaceAnimation = 'pop',
           stackPresentation = 'push',
           stackAnimation,
           contentStyle,
@@ -57,6 +58,7 @@ export default function NativeStackView({
             key={route.key}
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
+            replaceAnimation={replaceAnimation}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
             onWillAppear={() => {

@@ -62,6 +62,15 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
     view.setGestureEnabled(gestureEnabled);
   }
 
+  @ReactProp(name = "replaceAnimation")
+  public void setReplaceAnimation(Screen view, String animation) {
+    if (animation == null || "pop".equals(animation)) {
+      view.setReplaceAnimation(Screen.ReplaceAnimation.POP);
+    } else if ("push".equals(animation)) {
+      view.setReplaceAnimation(Screen.ReplaceAnimation.PUSH);
+    }
+  }
+
   @Nullable
   @Override
   public Map getExportedCustomDirectEventTypeConstants() {
