@@ -37,7 +37,7 @@ export default function HeaderConfig({
   headerBackTitleStyle = {},
   headerShown,
   backButtonInCustomView,
-}: Props) {
+}: Props): JSX.Element {
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
 
@@ -52,7 +52,7 @@ export default function HeaderConfig({
       backTitleFontSize={headerBackTitleStyle.fontSize}
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
-      hidden={!headerShown}
+      hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}
       largeTitle={headerLargeTitle}
@@ -61,33 +61,41 @@ export default function HeaderConfig({
       largeTitleFontFamily={headerLargeTitleStyle.fontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleHideShadow={headerLargeTitleHideShadow}
-      title={headerTitle || title || route.name}
+      title={
+        headerTitle !== undefined
+          ? headerTitle
+          : title !== undefined
+          ? title
+          : route.name
+      }
       titleColor={
-        headerTitleStyle.color
+        headerTitleStyle.color !== undefined
           ? headerTitleStyle.color
-          : headerTintColor || colors.text
+          : headerTintColor !== undefined
+          ? headerTintColor
+          : colors.text
       }
       titleFontFamily={headerTitleStyle.fontFamily}
       titleFontSize={headerTitleStyle.fontSize}
       topInsetEnabled={headerTopInsetEnabled}
-      translucent={headerTranslucent}>
-      {headerRight ? (
+      translucent={headerTranslucent === true}>
+      {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>
           {headerRight({ tintColor })}
         </ScreenStackHeaderRightView>
       ) : null}
-      {backButtonImage ? (
+      {backButtonImage !== undefined ? (
         <ScreenStackHeaderBackButtonImage
           key="backImage"
           source={backButtonImage}
         />
       ) : null}
-      {headerLeft ? (
+      {headerLeft !== undefined ? (
         <ScreenStackHeaderLeftView>
           {headerLeft({ tintColor })}
         </ScreenStackHeaderLeftView>
       ) : null}
-      {headerCenter ? (
+      {headerCenter !== undefined ? (
         <ScreenStackHeaderCenterView>
           {headerCenter({ tintColor })}
         </ScreenStackHeaderCenterView>

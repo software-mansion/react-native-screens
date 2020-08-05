@@ -41,7 +41,7 @@ function NativeStackNavigator({
 
   React.useEffect(
     () =>
-      navigation?.addListener('tabPress', (e) => {
+      navigation?.addListener?.('tabPress', (e) => {
         const isFocused = navigation.isFocused();
 
         // Run the operation in the next frame so we're sure all listeners have been run
