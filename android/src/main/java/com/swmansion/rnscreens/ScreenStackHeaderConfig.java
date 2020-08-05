@@ -162,9 +162,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mDirection != null) {
       if (mDirection.equals("rtl")) {
-        activity.getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        mToolbar.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
       } else if (mDirection.equals("ltr")) {
-        activity.getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        mToolbar.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
       }
     }
 
