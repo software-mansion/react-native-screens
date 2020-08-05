@@ -91,13 +91,6 @@
       "git add"
     ]
   },
-  "release-it": {
-    "hooks": {
-      "before:git:bump": [
-        "# check if version corresponds to changes in native files  \n git diff --name-only ${latestVersion} HEAD | egrep \"(android/.*)|(ios/.*)\" -q && egrep '\\.0$' -q <<< ${version}"
-      ]
-    }
-  },
   "@react-native-community/bob": {
     "source": "src",
     "output": "lib",
