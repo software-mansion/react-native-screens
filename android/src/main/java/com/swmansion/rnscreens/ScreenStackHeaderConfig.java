@@ -282,10 +282,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
             mToolbar.setNavigationIcon(null);
           }
           mToolbar.setTitle(null);
-          params.gravity = Gravity.LEFT;
+          params.gravity = Gravity.START;
           break;
         case RIGHT:
-          params.gravity = Gravity.RIGHT;
+          params.gravity = Gravity.END;
           break;
         case CENTER:
           params.width = LayoutParams.MATCH_PARENT;
