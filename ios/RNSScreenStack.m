@@ -157,24 +157,23 @@
   // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
   // ui queue will guarantee that the update will run after layout.
   dispatch_async(dispatch_get_main_queue(), ^{
-    [self updateContainer];
+    [self maybeAddToParentAndUpdateContainer];
   });
 }
 
-- (void)didMoveToWindow
+- (void)maybeAddToParentAndUpdateContainer
 {
-  [super didMoveToWindow];
-  if (self.window) {
-    // when stack is attached to a window we do two things:
-    // 1) we run updateContainer – we do this because we want push view controllers to be installed
-    // before the VC is mounted. If we do that after it is added to parent the push updates operations
-    // are going to be blocked by UIKit.
+  [self updateContainer];
+  if (_controller.parentViewController == nil) {
+    // when stack hasn't been added to parent VC yet we do two things:
+    // 1) we run updateContainer (the one above) – we do this because we want push view controllers to
+    // be installed before the VC is mounted. If we do that after it is added to parent the push
+    // updates operations are going to be blocked by UIKit.
     // 2) we add navigation VS to parent – this is needed for the VC lifecycle events to be dispatched
     // properly
     // 3) we again call updateContainer – this time we do this to open modal controllers. Modals
     // won't open in (1) because they require navigator to be added to parent. We handle that case
     // gracefully in setModalViewControllers and can retry opening at any point.
-    [self updateContainer];
     [self reactAddControllerToClosestParent:_controller];
     [self updateContainer];
   }
