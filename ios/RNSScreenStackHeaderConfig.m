@@ -126,7 +126,7 @@
   [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_13_0) && TARGET_OS_IOS
   if (@available(iOS 13.0, *)) {
     // font customized on the navigation item level, so nothing to do here
   } else
@@ -161,6 +161,7 @@
       [navbar setTitleTextAttributes:attrs];
     }
 
+#if (TARGET_OS_IOS)
     if (@available(iOS 11.0, *)) {
       if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
@@ -173,11 +174,10 @@
         } else {
           largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[largeSize floatValue]];
         }
-#if (TARGET_OS_IOS)
         [navbar setLargeTitleTextAttributes:largeAttrs];
-#endif
       }
     }
+#endif
   }
 }
 
@@ -407,10 +407,10 @@
   } else
 #endif
   {
+#if (TARGET_OS_IOS)
     // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
     // to update it before the navigation starts.
     UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
-#if (TARGET_OS_IOS)
     if (backButtonImage) {
       navctr.navigationBar.backIndicatorImage = backButtonImage;
       navctr.navigationBar.backIndicatorTransitionMaskImage = backButtonImage;
@@ -534,7 +534,7 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
     }];
   }
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_13_0) && TARGET_OS_IOS
   if (@available(iOS 13.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
       @"systemUltraThinMaterial": @(UIBlurEffectStyleSystemUltraThinMaterial),
