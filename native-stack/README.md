@@ -306,7 +306,18 @@ navigation.popToTop();
 
 ### Measuring header's height on iOS
 
-Using translucent header on iOS can result in the need of measuring your header's height. In order to do it, you can use `react-native-safe-area-context`. It should always be `safeArea.top` + 96 for large header and `safeArea.top` + 44 for small header.
+Using translucent header on iOS can result in the need of measuring your header's height. In order to do it, you can use `react-native-safe-area-context`. It can be measured like this:
+```js
+import {useSafeArea} from 'react-native-safe-area-context';
+
+...
+
+const statusBarInset = useSafeArea().top;
+const smallHeaderInset = statusBarInset + 44;
+const largeHeaderInset = statusBarInset + 96;
+```
+
+You can also see an example of using these values with a `ScrollView` here: https://snack.expo.io/@wolewicki/ios-header-height.
 
 
 ## Example
