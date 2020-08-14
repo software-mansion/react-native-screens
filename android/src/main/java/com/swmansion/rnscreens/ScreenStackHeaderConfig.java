@@ -56,10 +56,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     @Override
     public boolean showOverflowMenu() {
-      Activity activity =  ((ThemedReactContext) getContext()).getCurrentActivity();
-      if (activity != null) {
-        ((ReactApplication) activity.getApplication()).getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
-      }
+      ((ReactApplication) getContext().getApplicationContext()).getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
       return true;
     }
   }
