@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
 import com.facebook.react.views.text.ReactFontManager;
 
@@ -45,6 +46,19 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private int mDefaultStartInset;
   private int mDefaultStartInsetWithNavigation;
 
+  private static class DebugMenuToolbar extends Toolbar {
+
+    public DebugMenuToolbar(Context context) {
+      super(context);
+    }
+
+    @Override
+    public boolean showOverflowMenu() {
+      ((ReactApplication) getContext().getApplicationContext()).getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
+      return true;
+    }
+  }
+
   private OnClickListener mBackClickListener = new OnClickListener() {
     @Override
     public void onClick(View view) {
@@ -67,7 +81,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     super(context);
     setVisibility(View.GONE);
 
-    mToolbar = new Toolbar(context);
+    mToolbar = BuildConfig.DEBUG ? new DebugMenuToolbar(context) : new Toolbar(context);
     mDefaultStartInset = mToolbar.getContentInsetStart();
     mDefaultStartInsetWithNavigation = mToolbar.getContentInsetStartWithNavigation();
 
