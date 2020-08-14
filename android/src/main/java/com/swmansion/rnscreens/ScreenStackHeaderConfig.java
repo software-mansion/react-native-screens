@@ -46,9 +46,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private int mDefaultStartInset;
   private int mDefaultStartInsetWithNavigation;
 
-  private class MyToolbar extends Toolbar {
+  private class DebugMenuToolbar extends Toolbar {
 
-    public MyToolbar(Context context) {
+    public DebugMenuToolbar(Context context) {
       super(context);
     }
 
@@ -81,7 +81,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     super(context);
     setVisibility(View.GONE);
 
-    mToolbar = new MyToolbar(context);
+    mToolbar = BuildConfig.DEBUG ? new DebugMenuToolbar(context) : new Toolbar(context);
     mDefaultStartInset = mToolbar.getContentInsetStart();
     mDefaultStartInsetWithNavigation = mToolbar.getContentInsetStartWithNavigation();
 
@@ -196,6 +196,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     // hide back button
     actionBar.setDisplayHomeAsUpEnabled(getScreenFragment().canNavigateBack() ? !mIsBackButtonHidden : false);
+
+//    ((ReactApplication) activity.getApplication()).getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
 
     // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
     // navigation click listener. The default behavior set in the wrapper is to call into
