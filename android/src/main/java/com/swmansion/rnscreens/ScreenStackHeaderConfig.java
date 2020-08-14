@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -21,7 +20,6 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
-import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.views.text.ReactFontManager;
 
 import java.util.ArrayList;
