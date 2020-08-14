@@ -2,8 +2,10 @@ package com.swmansion.rnscreens;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -59,6 +61,27 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     for (int i = 0, size = getChildCount(); i < size; i++) {
       getChildAt(i).layout(0, 0, getWidth(), getHeight());
     }
+  }
+
+  @Override
+  public void removeView(View view) {
+    // The below block is a workaround for an issue with keyboard handling within fragments. Despite
+    // Android handles input focus on the fragments that leave the screen, the keyboard stays open
+    // in a number of cases. The issue can be best reproduced on Android 5 devices, before some changes
+    // in Android's InputMethodManager have been introduced (specifically around dismissing the
+    // keyboard in onDetachedFromWindow). However, we also noticed the keyboard issue happen
+    // intermittently on recent versions of Android as well. The issue hasn't been previously noticed
+    // as in React Native <= 0.61 there was a logic that'd trigger keyboard dismiss upon a blur event
+    // (the blur even gets dispatched properly, the keyboard just stays open despite that) – note
+    // the change in RN core here: https://github.com/facebook/react-native/commit/e9b4928311513d3cbbd9d875827694eab6cfa932
+    // The workaround is to force-hide keyboard when the screen that has focus is dismissed (we detect
+    // that in removeView as super.removeView causes the input view to un focus while keeping the
+    // keyboard open).
+    if (view == getFocusedChild()) {
+      ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
+              .hideSoftInputFromWindow(getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+    super.removeView(view);
   }
 
   @Override
