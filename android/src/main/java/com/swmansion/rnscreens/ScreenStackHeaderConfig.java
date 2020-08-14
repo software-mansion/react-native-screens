@@ -197,8 +197,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     // hide back button
     actionBar.setDisplayHomeAsUpEnabled(getScreenFragment().canNavigateBack() ? !mIsBackButtonHidden : false);
 
-//    ((ReactApplication) activity.getApplication()).getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
-
     // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
     // navigation click listener. The default behavior set in the wrapper is to call into
     // menu options handlers, but we prefer the back handling logic to stay here instead.
