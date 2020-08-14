@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
+import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.views.text.ReactFontManager;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private int mDefaultStartInset;
   private int mDefaultStartInsetWithNavigation;
 
-  private class DebugMenuToolbar extends Toolbar {
+  private static class DebugMenuToolbar extends Toolbar {
 
     public DebugMenuToolbar(Context context) {
       super(context);
@@ -54,7 +56,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     @Override
     public boolean showOverflowMenu() {
-      ((ReactApplication) getScreenFragment().getActivity().getApplication()).getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
+      Activity activity =  ((ThemedReactContext) getContext()).getCurrentActivity();
+      if (activity != null) {
+        ((ReactApplication) activity.getApplication()).getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
+      }
       return true;
     }
   }
