@@ -88,8 +88,8 @@
       break;
     case RNSScreenStackPresentationFullScreenModal:
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
-#if (TARGET_OS_IOS)
       break;
+#if (TARGET_OS_IOS)
     case RNSScreenStackPresentationFormSheet:
       _controller.modalPresentationStyle = UIModalPresentationFormSheet;
       break;
@@ -417,4 +417,3 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
 
 
 @end
-
