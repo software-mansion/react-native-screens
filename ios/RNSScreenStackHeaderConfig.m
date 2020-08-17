@@ -266,7 +266,7 @@
   [self updateViewController:vc withConfig:config animated:animated];
 }
 
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_13_0) && TARGET_OS_IOS
 + (UINavigationBarAppearance*)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
@@ -390,7 +390,7 @@
   }
 #endif
 
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_13_0) && TARGET_OS_IOS
   if (@available(iOS 13.0, *)) {
     UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
     navitem.standardAppearance = appearance;
