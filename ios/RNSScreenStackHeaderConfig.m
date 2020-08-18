@@ -356,7 +356,6 @@
     return;
   }
   
-  // if we don't explicitly change the direction in config, we should get it from the phone settings
   if (config.direction == UISemanticContentAttributeForceLeftToRight || config.direction == UISemanticContentAttributeForceRightToLeft) {
     navctr.view.semanticContentAttribute = config.direction;
     navctr.navigationBar.semanticContentAttribute = config.direction;
