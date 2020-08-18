@@ -357,16 +357,7 @@
   }
   
   // if we don't explicitly change the direction in config, we should get it from the phone settings
-  if (config.direction == UISemanticContentAttributeUnspecified) {
-    if ([NSLocale preferredLanguages].count != 0 &&
-         [NSLocale characterDirectionForLanguage:[[NSLocale preferredLanguages] objectAtIndex:0]] == NSLocaleLanguageDirectionRightToLeft) {
-       navctr.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-       navctr.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-     } else {
-       navctr.view.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
-       navctr.navigationBar.semanticContentAttribute = UISemanticContentAttributeForceLeftToRight;
-     }
-  } else {
+  if (config.direction == UISemanticContentAttributeForceLeftToRight || config.direction == UISemanticContentAttributeForceRightToLeft) {
     navctr.view.semanticContentAttribute = config.direction;
     navctr.navigationBar.semanticContentAttribute = config.direction;
   }
