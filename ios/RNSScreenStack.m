@@ -25,11 +25,13 @@
   UINavigationController *_controller;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
   __weak RNSScreenStackManager *_manager;
+  BOOL _hasLayout;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager*)manager
 {
   if (self = [super init]) {
+    _hasLayout = NO;
     _manager = manager;
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
@@ -157,24 +159,41 @@
   // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
   // ui queue will guarantee that the update will run after layout.
   dispatch_async(dispatch_get_main_queue(), ^{
-    [self updateContainer];
+    self->_hasLayout = YES;
+    [self maybeAddToParentAndUpdateContainer];
   });
 }
 
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-  if (self.window) {
-    // when stack is attached to a window we do two things:
-    // 1) we run updateContainer – we do this because we want push view controllers to be installed
-    // before the VC is mounted. If we do that after it is added to parent the push updates operations
-    // are going to be blocked by UIKit.
+  [self maybeAddToParentAndUpdateContainer];
+}
+
+- (void)maybeAddToParentAndUpdateContainer
+{
+  if (self.window && !_hasLayout) {
+    // We wait with adding to parent controller until the stack is mounted and has its initial
+    // layout done.
+    // If we add it before layout, some of the items (specifically items from the navigation bar),
+    // won't be able to position properly. Also the position and size of such items, even if it
+    // happens to change, won't be properly updated (this is perhaps some internal issue of UIKit).
+    // If we add it when window is not attached, some of the view transitions will be bloced (i.e.
+    // modal transitions) and the internal view controler's state will get out of sync with what's
+    // on screen without us knowing.
+    return;
+  }
+  [self updateContainer];
+  if (_controller.parentViewController == nil) {
+    // when stack hasn't been added to parent VC yet we do two things:
+    // 1) we run updateContainer (the one above) – we do this because we want push view controllers to
+    // be installed before the VC is mounted. If we do that after it is added to parent the push
+    // updates operations are going to be blocked by UIKit.
     // 2) we add navigation VS to parent – this is needed for the VC lifecycle events to be dispatched
     // properly
     // 3) we again call updateContainer – this time we do this to open modal controllers. Modals
     // won't open in (1) because they require navigator to be added to parent. We handle that case
     // gracefully in setModalViewControllers and can retry opening at any point.
-    [self updateContainer];
     [self reactAddControllerToClosestParent:_controller];
     [self updateContainer];
   }
