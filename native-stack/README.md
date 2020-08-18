@@ -302,6 +302,24 @@ Pops all of the screens in the stack except the first one and navigates to it.
 navigation.popToTop();
 ```
 
+## Additional options
+
+### Measuring header's height on iOS
+
+Using translucent header on iOS can result in the need of measuring your header's height. In order to do it, you can use `react-native-safe-area-context`. It can be measured like this:
+```js
+import {useSafeArea} from 'react-native-safe-area-context';
+
+...
+
+const statusBarInset = useSafeArea().top; // inset of the status bar
+const smallHeaderInset = statusBarInset + 44; // inset to use for a small header since it's frame is equal to 44 + the frame of status bar
+const largeHeaderInset = statusBarInset + 96; // inset to use for a large header since it's frame is equal to 96 + the frame of status bar
+```
+
+You can also see an example of using these values with a `ScrollView` here: https://snack.expo.io/@wolewicki/ios-header-height.
+
+
 ## Example
 
 ```js
