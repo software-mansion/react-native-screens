@@ -126,6 +126,10 @@ export type NativeStackNavigationOptions = {
    */
   headerLargeTitle?: boolean;
   /**
+   * Whether the stack should be in rtl or ltr form.
+   */
+  direction?: 'rtl' | 'ltr';
+  /**
    * Function which returns a React Element to display on the right side of the header.
    */
   headerRight?: (props: { tintColor?: string }) => React.ReactNode;

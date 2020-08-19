@@ -37,6 +37,7 @@ export default function HeaderConfig({
   headerBackTitleStyle = {},
   headerShown,
   backButtonInCustomView,
+  direction,
 }: Props): JSX.Element {
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
@@ -52,6 +53,7 @@ export default function HeaderConfig({
       backTitleFontSize={headerBackTitleStyle.fontSize}
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
+      direction={direction}
       hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}

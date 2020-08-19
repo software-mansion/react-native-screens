@@ -355,6 +355,11 @@
   if (shouldHide) {
     return;
   }
+  
+  if (config.direction == UISemanticContentAttributeForceLeftToRight || config.direction == UISemanticContentAttributeForceRightToLeft) {
+    navctr.view.semanticContentAttribute = config.direction;
+    navctr.navigationBar.semanticContentAttribute = config.direction;
+  }
 
   navitem.title = config.title;
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
@@ -488,6 +493,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(blurEffect, UIBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
@@ -552,6 +558,11 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
    @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
    @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
    }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
+
+RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
+   @"ltr": @(UISemanticContentAttributeForceLeftToRight),
+   @"rtl": @(UISemanticContentAttributeForceRightToLeft),
+   }), UISemanticContentAttributeUnspecified, integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
   

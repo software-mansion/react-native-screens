@@ -28,6 +28,7 @@
 @property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
+@property (nonatomic) UISemanticContentAttribute direction;
 
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
 
@@ -49,6 +50,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
++ (UISemanticContentAttribute)RNSScreenDirection:(id)json;
 
 @end
 

@@ -30,6 +30,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private String mTitle;
   private int mTitleColor;
   private String mTitleFontFamily;
+  private String mDirection;
   private float mTitleFontSize;
   private int mBackgroundColor;
   private boolean mIsHidden;
@@ -159,6 +160,14 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       return;
     }
 
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mDirection != null) {
+      if (mDirection.equals("rtl")) {
+        mToolbar.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+      } else if (mDirection.equals("ltr")) {
+        mToolbar.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+      }
+    }
+
     if (mIsHidden) {
       if (mToolbar.getParent() != null) {
         getScreenFragment().removeToolbar();
@@ -273,10 +282,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
             mToolbar.setNavigationIcon(null);
           }
           mToolbar.setTitle(null);
-          params.gravity = Gravity.LEFT;
+          params.gravity = Gravity.START;
           break;
         case RIGHT:
-          params.gravity = Gravity.RIGHT;
+          params.gravity = Gravity.END;
           break;
         case CENTER:
           params.width = LayoutParams.MATCH_PARENT;
@@ -371,4 +380,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   }
 
   public void setBackButtonInCustomView(boolean backButtonInCustomView) { mBackButtonInCustomView = backButtonInCustomView; }
+
+  public void setDirection(String direction) {
+    mDirection = direction;
+  }
 }

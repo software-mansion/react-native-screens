@@ -183,7 +183,11 @@ If set to `true` the back button will not be rendered as a part of the navigatio
 
 If set to `true` the back button will also be rendered while using `headerLeft` function.
 
-#### `gestureEnabled`
+#### `direction`
+
+String that applies `rtl` or `ltr` form to the stack.
+
+#### `gestureEnabled` (iOS only)
 
 When set to `false` the back swipe gesture will be disabled when the parent `Screen` is on top of the stack. The default value is `true`.
 
