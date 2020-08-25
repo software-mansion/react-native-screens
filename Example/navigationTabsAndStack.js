@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import React, { Component } from 'react';
+import { View, Button } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
 enableScreens();
 
-class DetailsScreen extends React.Component {
+class DetailsScreen extends Component {
   componentDidMount() {
     this.props.navigation.setOptions({
       title: `Details screen #${this.getIndex()}`,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Button,
@@ -35,7 +35,7 @@ const Background = ({ index }) => (
   />
 );
 
-class DetailsScreen extends React.Component {
+class DetailsScreen extends Component {
   animvalue = new Animated.Value(0);
   rotation = this.animvalue.interpolate({
     inputRange: [0, 1],

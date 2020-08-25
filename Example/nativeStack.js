@@ -4,19 +4,13 @@ import {
   Button,
   View,
   TextInput,
-  TouchableHighlight,
-  Image,
-  Text,
-  ToolbarAndroid,
 } from 'react-native';
 import {
   Screen,
   ScreenStack,
   ScreenStackHeaderConfig,
-  ScreenStackHeaderTitleView,
   ScreenStackHeaderCenterView,
   ScreenStackHeaderRightView,
-  ScreenStackHeaderLeftView,
 } from 'react-native-screens';
 
 // const ScreenStack = requireNativeComponent('RNSScreenStack', null);

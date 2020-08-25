@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
-class SomeScreen extends React.Component {
+class SomeScreen extends Component {
   render() {
     return (
       <ScrollView style={styles.screen}>
@@ -22,7 +22,7 @@ class SomeScreen extends React.Component {
   }
 }
 
-class PushScreen extends React.Component {
+class PushScreen extends Component {
   static route = {
     navigationBar: {
       visible: false,
