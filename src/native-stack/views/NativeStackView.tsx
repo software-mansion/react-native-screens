@@ -5,6 +5,7 @@ import {
 } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
+import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import {
   Screen as ScreenComponent,
   ScreenProps,
@@ -35,7 +36,7 @@ export default function NativeStackView({
 
   return (
     <ScreenStack style={styles.container}>
-      {routes.map((route) => {
+      {routes.map((route, index) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
           gestureEnabled,
@@ -106,7 +107,16 @@ export default function NativeStackView({
               });
             }}>
             <HeaderConfig {...options} route={route} />
-            <View style={viewStyles}>{renderScene()}</View>
+            {__DEV__ &&
+            Platform.OS === 'ios' &&
+            stackPresentation !== 'push' &&
+            index !== 0 ? (
+              <AppContainer>
+                <View style={viewStyles}>{renderScene()}</View>
+              </AppContainer>
+            ) : (
+              <View style={viewStyles}>{renderScene()}</View>
+            )}
           </Screen>
         );
       })}
