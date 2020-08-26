@@ -417,3 +417,4 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
 
 
 @end
+
