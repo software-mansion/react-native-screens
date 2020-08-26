@@ -152,17 +152,17 @@ public class Screen extends ViewGroup {
       return;
     }
     mTransitioning = transitioning;
-    boolean isWebViewInScreen = findWebView(this);
+    boolean isWebViewInScreen = hasWebView(this);
     super.setLayerType(transitioning && !isWebViewInScreen ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE, null);
   }
 
-  private boolean findWebView(ViewGroup viewGroup) {
+  private boolean hasWebView(ViewGroup viewGroup) {
     for(int i = 0; i < viewGroup.getChildCount(); i++) {
       View child = viewGroup.getChildAt(i);
       if (child instanceof WebView) {
         return true;
       } else if (child instanceof ViewGroup) {
-         if (findWebView((ViewGroup) child)) {
+         if (hasWebView((ViewGroup) child)) {
            return true;
          }
       }
