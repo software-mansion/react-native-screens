@@ -207,7 +207,9 @@
       if (parentView.reactViewController) {
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
+#if (TARGET_OS_IOS)
         _controller.interactivePopGestureRecognizer.delegate = self;
+#endif
         [controller didMoveToParentViewController:parentView.reactViewController];
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
         // get triggered when the navigation controller is instantiated. As the only thing we do in

@@ -126,7 +126,7 @@
   [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_13_0) && TARGET_OS_IOS
   if (@available(iOS 13.0, *)) {
     // font customized on the navigation item level, so nothing to do here
   } else
@@ -161,6 +161,7 @@
       [navbar setTitleTextAttributes:attrs];
     }
 
+#if (TARGET_OS_IOS)
     if (@available(iOS 11.0, *)) {
       if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
@@ -176,6 +177,7 @@
         [navbar setLargeTitleTextAttributes:largeAttrs];
       }
     }
+#endif
   }
 }
 
@@ -244,7 +246,9 @@
             // in order for new back button image to be loaded we need to trigger another change
             // in back button props that'd make UIKit redraw the button. Otherwise the changes are
             // not reflected. Here we change back button visibility which is then immediately restored
+#if (TARGET_OS_IOS)
             vc.navigationItem.hidesBackButton = YES;
+#endif
             [config updateViewControllerIfNeeded];
           }];
         }
@@ -262,7 +266,7 @@
   [self updateViewController:vc withConfig:config animated:animated];
 }
 
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_13_0) && TARGET_OS_IOS
 + (UINavigationBarAppearance*)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
@@ -362,6 +366,7 @@
   }
 
   navitem.title = config.title;
+#if (TARGET_OS_IOS)
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
                                   initWithTitle:config.backTitle ?: prevItem.title
@@ -388,7 +393,9 @@
     }
     navitem.largeTitleDisplayMode = config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
   }
-#ifdef __IPHONE_13_0
+#endif
+
+#if defined(__IPHONE_13_0) && TARGET_OS_IOS
   if (@available(iOS 13.0, *)) {
     UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
     navitem.standardAppearance = appearance;
@@ -405,6 +412,7 @@
   } else
 #endif
   {
+#if (TARGET_OS_IOS)
     // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
     // to update it before the navigation starts.
     UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
@@ -415,15 +423,20 @@
       navctr.navigationBar.backIndicatorImage = nil;
       navctr.navigationBar.backIndicatorTransitionMaskImage = nil;
     }
+#endif
   }
+#if (TARGET_OS_IOS)
   navitem.hidesBackButton = config.hideBackButton;
+#endif
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
+#if (TARGET_OS_IOS)
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
+#endif
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
         navitem.leftBarButtonItem = buttonItem;
         break;
@@ -527,7 +540,7 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
     }];
   }
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_13_0) && TARGET_OS_IOS
   if (@available(iOS 13.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
       @"systemUltraThinMaterial": @(UIBlurEffectStyleSystemUltraThinMaterial),

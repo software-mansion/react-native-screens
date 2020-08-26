@@ -89,9 +89,11 @@
     case RNSScreenStackPresentationFullScreenModal:
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
       break;
+#if (TARGET_OS_IOS)
     case RNSScreenStackPresentationFormSheet:
       _controller.modalPresentationStyle = UIModalPresentationFormSheet;
       break;
+#endif
     case RNSScreenStackPresentationTransparentModal:
       _controller.modalPresentationStyle = UIModalPresentationOverFullScreen;
       break;
@@ -128,9 +130,11 @@
     case RNSScreenStackAnimationFade:
       _controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
       break;
+#if (TARGET_OS_IOS)
     case RNSScreenStackAnimationFlip:
       _controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
       break;
+#endif
     case RNSScreenStackAnimationNone:
     case RNSScreenStackAnimationDefault:
       // Default
