@@ -163,7 +163,7 @@ public class ScreenStackFragment extends ScreenFragment {
     CoordinatorLayout view = new NotifyingCoordinatorLayout(getContext(), this);
     CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+    params.setBehavior(mIsTranslucent ? null : new AppBarLayout.ScrollingViewBehavior());
     mScreenView.setLayoutParams(params);
     view.addView(recycleView(mScreenView));
 

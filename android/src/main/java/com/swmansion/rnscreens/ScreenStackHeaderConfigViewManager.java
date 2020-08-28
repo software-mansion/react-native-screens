@@ -119,6 +119,11 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     config.setHidden(hidden);
   }
 
+  @ReactProp(name = "translucent")
+  public void setTranslucent(ScreenStackHeaderConfig config, boolean translucent) {
+    config.setTranslucent(translucent);
+  }
+
   @ReactProp(name = "backButtonInCustomView")
   public void setBackButtonInCustomView(ScreenStackHeaderConfig config, boolean backButtonInCustomView) {
     config.setBackButtonInCustomView(backButtonInCustomView);

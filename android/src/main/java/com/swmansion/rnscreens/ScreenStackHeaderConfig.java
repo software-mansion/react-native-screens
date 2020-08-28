@@ -92,6 +92,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     if (context.getTheme().resolveAttribute(android.R.attr.colorPrimary, tv, true)) {
       mToolbar.setBackgroundColor(tv.data);
     }
+    mToolbar.setClipChildren(false);
   }
 
   @Override
@@ -380,6 +381,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   public void setHidden(boolean hidden) {
     mIsHidden = hidden;
+  }
+
+  public void setTranslucent(boolean translucent) {
+    mIsTranslucent = translucent;
   }
 
   public void setBackButtonInCustomView(boolean backButtonInCustomView) { mBackButtonInCustomView = backButtonInCustomView; }
