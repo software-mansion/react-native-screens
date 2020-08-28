@@ -264,6 +264,18 @@ export type NativeStackNavigationOptions = {
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: ScreenProps['stackAnimation'];
+  /**
+   * In which orientation should the screen appear.
+   * The following values are currently supported:
+   * - "all" – all orientations are permitted
+   * - "portrait" – portrait orientations are permitted
+   * - "portrait_up" – right-side portrait orientation is permitted
+   * - "portrait_down" – upside-down portrait orientation is permitted
+   * - "landscape" – landscape orientations are permitted
+   * - "landscape_left" – landscape-left orientation is permitted
+   * - "landscape_right" – landscape-right orientation is permitted
+   */
+  stackOrientation?: ScreenStackHeaderConfigProps['stackOrientation'];
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

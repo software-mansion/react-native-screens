@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -40,6 +41,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mBackButtonInCustomView;
   private boolean mIsTopInsetEnabled = true;
   private int mTintColor;
+  private int mStackOrientation;
+
   private final Toolbar mToolbar;
 
   private boolean mIsAttachedToWindow = false;
@@ -166,6 +169,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       } else if (mDirection.equals("ltr")) {
         mToolbar.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
       }
+    }
+
+    if (mStackOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+      activity.setRequestedOrientation(mStackOrientation);
     }
 
     if (mIsHidden) {
@@ -383,5 +390,38 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   public void setDirection(String direction) {
     mDirection = direction;
+
+  public void setStackOrientation(String stackOrientation) {
+    if (stackOrientation == null) {
+      mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+      return;
+    }
+
+    switch (stackOrientation) {
+      case "all":
+        mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
+        break;
+      case "portrait":
+        mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
+        break;
+      case "portrait_up":
+        mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        break;
+      case "portrait_down":
+        mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+        break;
+      case "landscape":
+        mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+        break;
+      case "landscape_left":
+        mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+        break;
+      case "landscape_right":
+        mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        break;
+      default:
+        mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        break;
+    }
   }
 }

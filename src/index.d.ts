@@ -23,6 +23,14 @@ declare module 'react-native-screens' {
     | 'containedTransparentModal'
     | 'fullScreenModal'
     | 'formSheet';
+  export type StackOrientationTypes =
+    | 'all'
+    | 'portrait'
+    | 'portrait_up'
+    | 'portrait_down'
+    | 'landscape'
+    | 'landscape_left'
+    | 'landscape_right';
   export type StackAnimationTypes = 'default' | 'fade' | 'flip' | 'none';
   export type BlurEffectTypes =
     | 'extraLight'
@@ -220,6 +228,17 @@ declare module 'react-native-screens' {
      * @description Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
      */
     blurEffect?: BlurEffectTypes;
+    /**
+     * @description Controls in which orientation should the screen appear.
+     * @type "all" – all orientations are permitted
+     * @type "portrait" – portrait orientations are permitted
+     * @type "portrait_up" – right-side portrait orientation is permitted
+     * @type "portrait_down" – upside-down portrait orientation is permitted
+     * @type "landscape" – landscape orientations are permitted
+     * @type "landscape_left" – landscape-left orientation is permitted
+     * @type "landscape_right" – landscape-right orientation is permitted
+     */
+    stackOrientation?: StackOrientationTypes;
   }
 
   export const Screen: ComponentClass<ScreenProps>;

@@ -38,6 +38,7 @@ export default function HeaderConfig({
   headerShown,
   backButtonInCustomView,
   direction,
+  stackOrientation,
 }: Props): JSX.Element {
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
@@ -63,6 +64,7 @@ export default function HeaderConfig({
       largeTitleFontFamily={headerLargeTitleStyle.fontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleHideShadow={headerLargeTitleHideShadow}
+      stackOrientation={stackOrientation}
       title={
         headerTitle !== undefined
           ? headerTitle
