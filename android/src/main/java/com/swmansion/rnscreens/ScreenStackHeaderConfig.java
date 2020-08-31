@@ -41,7 +41,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mBackButtonInCustomView;
   private boolean mIsTopInsetEnabled = true;
   private int mTintColor;
-  private int mStackOrientation;
+  private int mStackOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
 
   private final Toolbar mToolbar;
 
