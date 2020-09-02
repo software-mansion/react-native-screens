@@ -8,6 +8,7 @@ import {
   ScreenStackHeaderRightView,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
+import { processFonts } from './FontProcessor';
 
 type Props = NativeStackNavigationOptions & {
   route: Route<string>;
@@ -42,6 +43,16 @@ export default function HeaderConfig({
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
 
+  const [
+    backTitleFontFamily,
+    largeTitleFontFamily,
+    titleFontFamily,
+  ] = processFonts([
+    headerBackTitleStyle.fontFamily,
+    headerLargeTitleStyle.fontFamily,
+    headerTitleStyle.fontFamily,
+  ]);
+
   return (
     <ScreenStackHeaderConfig
       backButtonInCustomView={backButtonInCustomView}
@@ -49,7 +60,7 @@ export default function HeaderConfig({
         headerStyle.backgroundColor ? headerStyle.backgroundColor : colors.card
       }
       backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
-      backTitleFontFamily={headerBackTitleStyle.fontFamily}
+      backTitleFontFamily={backTitleFontFamily}
       backTitleFontSize={headerBackTitleStyle.fontSize}
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
@@ -60,7 +71,7 @@ export default function HeaderConfig({
       largeTitle={headerLargeTitle}
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}
       largeTitleColor={headerLargeTitleStyle.color}
-      largeTitleFontFamily={headerLargeTitleStyle.fontFamily}
+      largeTitleFontFamily={largeTitleFontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleHideShadow={headerLargeTitleHideShadow}
       title={
@@ -77,7 +88,7 @@ export default function HeaderConfig({
           ? headerTintColor
           : colors.text
       }
-      titleFontFamily={headerTitleStyle.fontFamily}
+      titleFontFamily={titleFontFamily}
       titleFontSize={headerTitleStyle.fontSize}
       topInsetEnabled={headerTopInsetEnabled}
       translucent={headerTranslucent === true}>
