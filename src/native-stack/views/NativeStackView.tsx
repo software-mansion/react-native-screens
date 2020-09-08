@@ -4,7 +4,9 @@ import {
   useTheme,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, ViewProps } from 'react-native';
+// @ts-ignore Getting private component
+import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import {
   Screen as ScreenComponent,
   ScreenProps,
@@ -18,6 +20,24 @@ import HeaderConfig from './HeaderConfig';
 
 const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
+
+let Container = View;
+
+if (__DEV__) {
+  const DebugContainer = (props: ViewProps & { stackAnimation: string }) => {
+    const { stackAnimation, ...rest } = props;
+    if (Platform.OS === 'ios' && stackAnimation !== 'push') {
+      return (
+        <AppContainer>
+          <View {...rest} />
+        </AppContainer>
+      );
+    }
+    return <View {...rest} />;
+  };
+  // @ts-ignore Wrong props
+  Container = DebugContainer;
+}
 
 type Props = {
   state: StackNavigationState;
@@ -106,7 +126,12 @@ export default function NativeStackView({
               });
             }}>
             <HeaderConfig {...options} route={route} />
-            <View style={viewStyles}>{renderScene()}</View>
+            <Container
+              style={viewStyles}
+              // @ts-ignore Wrong props passed to View
+              stackPresentation={stackPresentation}>
+              {renderScene()}
+            </Container>
           </Screen>
         );
       })}
