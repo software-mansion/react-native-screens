@@ -72,7 +72,7 @@ public class ScreenStackFragment extends ScreenFragment {
   }
 
   public ScreenStackFragment() {
-    throw new IllegalStateException("ScreenStack fragments should never be restored. Apply https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 for the crash to disappear.");
+    throw new IllegalStateException("ScreenStack fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
   }
 
   public void removeToolbar() {
