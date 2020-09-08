@@ -41,7 +41,7 @@ public class ScreenFragment extends Fragment {
   private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
 
   public ScreenFragment() {
-    throw new IllegalStateException("Screen fragments should never be restored");
+    throw new IllegalStateException("Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
   }
 
   @SuppressLint("ValidFragment")
