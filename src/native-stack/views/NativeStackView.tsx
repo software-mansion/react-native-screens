@@ -55,7 +55,7 @@ export default function NativeStackView({
 
   return (
     <ScreenStack style={styles.container}>
-      {routes.map((route, index) => {
+      {routes.map((route) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
           gestureEnabled,
@@ -129,8 +129,7 @@ export default function NativeStackView({
             <Container
               style={viewStyles}
               // @ts-ignore Wrong props passed to View
-              stackPresentation={stackPresentation}
-              index={index}>
+              stackPresentation={stackPresentation}>
               {renderScene()}
             </Container>
           </Screen>
