@@ -20,6 +20,23 @@ import HeaderConfig from './HeaderConfig';
 const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
 
+let Container = View;
+
+if (__DEV__) {
+  const DebugContainer = (props) => {
+    const { stackAnimation, index, ...rest } = props;
+    if (Platform.OS === 'ios' && stackAnimation !== 'push' && index !== 0) {
+      return (
+        <AppContainer>
+          <View {...rest} />
+        </AppContainer>
+      );
+    }
+    return <View {...rest} />;
+  };
+  Container = DebugContainer;
+}
+
 type Props = {
   state: StackNavigationState;
   navigation: NativeStackNavigationHelpers;
@@ -107,16 +124,12 @@ export default function NativeStackView({
               });
             }}>
             <HeaderConfig {...options} route={route} />
-            {__DEV__ &&
-            Platform.OS === 'ios' &&
-            stackPresentation !== 'push' &&
-            index !== 0 ? (
-              <AppContainer>
-                <View style={viewStyles}>{renderScene()}</View>
-              </AppContainer>
-            ) : (
-              <View style={viewStyles}>{renderScene()}</View>
-            )}
+            <Container
+              style={viewStyles}
+              stackPresentation={stackPresentation}
+              index={index}>
+              {renderScene()}
+            </Container>
           </Screen>
         );
       })}
