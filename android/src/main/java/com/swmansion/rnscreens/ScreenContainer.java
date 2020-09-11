@@ -208,12 +208,12 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       mProcessingTransaction.runOnCommit(new Runnable() {
         @Override
         public void run() {
-         if (mProcessingTransaction == transaction) {
-           // we need to take into account that commit is initiated with some other transaction while
-           // the previous one is still processing. In this case mProcessingTransaction gets overwritten
-           // and we don't want to set it to null until the second transaction is finished.
-           mProcessingTransaction = null;
-         }
+          if (mProcessingTransaction == transaction) {
+            // we need to take into account that commit is initiated with some other transaction while
+            // the previous one is still processing. In this case mProcessingTransaction gets overwritten
+            // and we don't want to set it to null until the second transaction is finished.
+            mProcessingTransaction = null;
+          }
         }
       });
       mCurrentTransaction.commitAllowingStateLoss();
@@ -235,8 +235,12 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     getOrCreateTransaction().remove(screenFragment);
   }
 
+  protected Screen.ActivityState getActivityState(ScreenFragment screenFragment) {
+    return screenFragment.getScreen().getActivityState();
+  }
+
   protected boolean isScreenActive(ScreenFragment screenFragment) {
-    return screenFragment.getScreen().isActive();
+    return getActivityState(screenFragment) != Screen.ActivityState.INACTIVE;
   }
 
   protected boolean hasScreen(ScreenFragment screenFragment) {
@@ -352,14 +356,16 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       }
     }
 
-    // detect if we are "transitioning" based on the number of active screens
-    int activeScreens = 0;
+    boolean transitioning = true;
+
     for (int i = 0, size = mScreenFragments.size(); i < size; i++) {
-      if (isScreenActive(mScreenFragments.get(i))) {
-        activeScreens += 1;
+      ScreenFragment screenFragment = mScreenFragments.get(i);
+      Screen.ActivityState active = getActivityState(screenFragment);
+      if (active == Screen.ActivityState.ON_TOP) {
+        // top screen gets the active value of 2 after the end of transition
+        transitioning = false;
       }
     }
-    boolean transitioning = activeScreens > 1;
 
     // attach newly activated screens
     boolean addedBefore = false;
@@ -374,6 +380,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       }
       screenFragment.getScreen().setTransitioning(transitioning);
     }
+
     tryCommitTransaction();
   }
 }
