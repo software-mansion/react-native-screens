@@ -90,7 +90,7 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   }
 
   @ReactProp(name = "backgroundColor", customType = "Color")
-  public void setBackgroundColor(ScreenStackHeaderConfig config, Integer backgroundColor) {
+  public void setBackgroundColor(ScreenStackHeaderConfig config, int backgroundColor) {
     config.setBackgroundColor(backgroundColor);
   }
 
