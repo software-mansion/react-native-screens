@@ -359,6 +359,17 @@
     // screen dismissed, send event
     [((RNSScreenView *)self.view) notifyDismissed];
   }
+  [self traverseForScrollView:self.view];
+}
+
+- (void)traverseForScrollView:(UIView*)view
+{
+  if([view isKindOfClass:[UIScrollView class]] && ([[(UIScrollView*)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)]) ) {
+    [[(UIScrollView*)view delegate] scrollViewDidEndDecelerating:(id)view];
+  }
+  [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [self traverseForScrollView:obj];
+  }];
 }
 
 - (void)notifyFinishTransitioning
