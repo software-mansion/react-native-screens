@@ -167,7 +167,7 @@
     [singleActiveScreen notifyFinishTransitioning];
   }
 
-  if ((activeScreenRemoved || activeScreenAdded) && _controller.presentedViewController == nil) {
+  if ((activeScreenRemoved || activeScreenAdded) && _controller.presentedViewController == nil && _controller.presentingViewController == nil) {
     // if user has reachability enabled (one hand use) and the window is slided down the below
     // method will force it to slide back up as it is expected to happen with UINavController when
     // we push or pop views.
