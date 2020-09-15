@@ -111,9 +111,6 @@ export type NativeStackNavigationOptions = {
   backButtonInCustomView?: boolean;
   /**
    * Boolean indicating whether the navigation bar is translucent.
-   * Only supported on iOS.
-   *
-   * @platform ios
    */
   headerTranslucent?: boolean;
   /**
