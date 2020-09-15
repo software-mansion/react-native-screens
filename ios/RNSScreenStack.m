@@ -172,7 +172,7 @@
 
 - (void)maybeAddToParentAndUpdateContainer
 {
-  if (self.window && !_hasLayout) {
+  if (!self.window || !_hasLayout) {
     // We wait with adding to parent controller until the stack is mounted and has its initial
     // layout done.
     // If we add it before layout, some of the items (specifically items from the navigation bar),
