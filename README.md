@@ -193,7 +193,7 @@ When set to `false` the back swipe gesture will be disabled when the parent `Scr
 
 #### `translucent`
 
-When set to `true`, it makes native navigation bar on iOS semi-transparent with blur effect, while on Android is fully transparent. It is a common way of presenting a navigation bar introduced in iOS 11. The default value is `false`.
+When set to `true`, it allows the content to go under the navigation header, not bellow. If you want to create a transparent header, you should also set `backgroundColor` to `transparent`. The default value is `false`.
 
 #### `backTitle` (iOS only)
 
