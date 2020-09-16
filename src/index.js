@@ -13,11 +13,14 @@ export function screensEnabled() {
 
 export class NativeScreen extends React.Component {
   render() {
-    const { active, style, ...rest } = this.props;
+    const { active, style, enabled = true, ...rest } = this.props;
 
     return (
       <View
-        style={[style, ENABLE_SCREENS && !active ? { display: 'none' } : null]}
+        style={[
+          style,
+          ENABLE_SCREENS && enabled && !active ? { display: 'none' } : null,
+        ]}
         {...rest}
       />
     );

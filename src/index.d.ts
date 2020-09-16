@@ -53,6 +53,10 @@ declare module 'react-native-screens' {
     children?: React.ReactNode;
 
     /**
+     * @description All children screens should have the same value of their "enabled" prop as their container.
+     */
+    enabled?: boolean;
+    /**
      * @description A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
      */
     onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
@@ -81,7 +85,7 @@ declare module 'react-native-screens' {
      * @type "fullScreenModal" – will use "UIModalPresentationFullScreen" modal style on iOS and will fallback to "modal" on Android.
      * @type "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS and will fallback to "modal" on Android.
      */
-    stackPresentation: StackPresentationTypes;
+    stackPresentation?: StackPresentationTypes;
     /**
      * @description Allows for the customization of how the given screen should appear/dissapear when pushed or popped at the top of the stack. The following values are currently supported:
      *  @type "default" – uses a platform default animation
@@ -102,7 +106,12 @@ declare module 'react-native-screens' {
     gestureEnabled?: boolean;
   }
 
-  export type ScreenContainerProps = ViewProps;
+  export interface ScreenContainerProps extends ViewProps {
+    /**
+     * @description A prop that gives users an option to switch between using Screens for the navigator (container). All children screens should have the same value of their "enabled" prop as their container.
+     */
+    enabled?: boolean;
+  }
 
   export interface ScreenStackProps extends ViewProps {
     transitioning?: number;

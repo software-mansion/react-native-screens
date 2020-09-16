@@ -92,15 +92,17 @@ class Screen extends React.Component {
   };
 
   render() {
-    if (!ENABLE_SCREENS) {
+    const { enabled = true } = this.props;
+
+    if (!ENABLE_SCREENS || !enabled) {
       // Filter out active prop in this case because it is unused and
       // can cause problems depending on react-native version:
       // https://github.com/react-navigation/react-navigation/issues/4886
 
       /* eslint-disable no-unused-vars */
-      const { active, onComponentRef, ...props } = this.props;
+      const { active, enabled, onComponentRef, ...rest } = this.props;
 
-      return <Animated.View {...props} ref={this.setRef} />;
+      return <Animated.View {...rest} ref={this.setRef} />;
     } else {
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
@@ -108,13 +110,14 @@ class Screen extends React.Component {
 
       // When using RN from master version is 0.0.0
       if (version.minor >= 57 || version.minor === 0) {
-        return <AnimatedNativeScreen {...this.props} ref={this.setRef} />;
+        const { enabled, ...rest } = this.props;
+        return <AnimatedNativeScreen {...rest} ref={this.setRef} />;
       } else {
         // On RN version below 0.57 we need to wrap screen's children with an
         // additional View because of a bug fixed in react-native/pull/20658 which
         // was preventing a view from having both styles and some other props being
         // "animated" (using Animated native driver)
-        const { style, children, ...rest } = this.props;
+        const { style, children, enabled, ...rest } = this.props;
         return (
           <AnimatedNativeScreen
             {...rest}
@@ -130,8 +133,10 @@ class Screen extends React.Component {
 
 class ScreenContainer extends React.Component {
   render() {
-    if (!ENABLE_SCREENS) {
-      return <View {...this.props} />;
+    const { enabled = true, ...rest } = this.props;
+
+    if (!ENABLE_SCREENS || !enabled) {
+      return <View {...rest} />;
     } else {
       return <ScreensNativeModules.NativeScreenContainer {...this.props} />;
     }
