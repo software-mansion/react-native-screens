@@ -59,6 +59,8 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+@property (nonatomic) UIStatusBarStyle statusBarStyle;
+@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
 
 - (void)notifyFinishTransitioning;
 

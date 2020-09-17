@@ -28,6 +28,7 @@ class PushScreen extends React.Component {
       visible: false,
     },
   };
+
   render() {
     return (
       <View style={styles.screen}>
@@ -54,7 +55,11 @@ const App = () => (
     <AppStack.Screen
       name="Some"
       component={SomeScreen}
-      options={{ title: 'Start', headerTintColor: 'black' }}
+      options={{
+        title: 'Start',
+        headerTintColor: 'black',
+        statusBarStyle: 'light-content',
+      }}
     />
     <AppStack.Screen
       name="Push"
@@ -63,12 +68,13 @@ const App = () => (
         title: 'Pushed',
         headerStyle: { backgroundColor: '#3da4ab' },
         headerTintColor: 'black',
+        statusBarStyle: 'dark-content',
       }}
     />
     <AppStack.Screen
       name="Modal"
       component={PushScreen}
-      options={{ stackPresentation: 'modal' }}
+      options={{ stackPresentation: 'modal', statusBarStyle: 'default' }}
     />
   </AppStack.Navigator>
 );

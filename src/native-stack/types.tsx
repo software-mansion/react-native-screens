@@ -264,6 +264,16 @@ export type NativeStackNavigationOptions = {
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: ScreenProps['stackAnimation'];
+  /**
+   * @host (iOS only)
+   * @description Sets the status bar color (similar to the <StatusBar /> component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   */
+  statusBarStyle?: ScreenProps['statusBarStyle'];
+  /**
+   * @host (iOS only)
+   * @description Sets the status bar animation (similar to the <StatusBar /> component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   */
+  statusBarAnimation?: ScreenProps['statusBarAnimation'];
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

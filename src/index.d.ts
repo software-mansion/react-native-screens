@@ -101,6 +101,16 @@ declare module 'react-native-screens' {
      */
     replaceAnimation?: ScreenReplaceTypes;
     /**
+     * @host (iOS only)
+     * @description Sets the status bar color (similar to the <StatusBar /> component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `default`.
+     */
+    statusBarStyle?: 'default' | 'light-content' | 'dark-content';
+    /**
+     * @host (iOS only)
+     * @description Sets the status bar animation (similar to the <StatusBar /> component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+     */
+    statusBarAnimation?: 'none' | 'fade' | 'slide';
+    /**
      * @description When set to false the back swipe gesture will be disabled when the parent Screen is on top of the stack. The default value is true.
      */
     gestureEnabled?: boolean;

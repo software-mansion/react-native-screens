@@ -22,6 +22,19 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+@interface RNScreensViewController: UIViewController
+@end
+
+@implementation RNScreensViewController
+
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  UIViewController* lastViewController = [[self childViewControllers] lastObject];
+  return [lastViewController childViewControllerForStatusBarStyle] ?: lastViewController;
+}
+
+@end
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -37,7 +50,7 @@ static void InitializeFlipper(UIApplication *application) {
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [UIViewController new];
+  UIViewController *rootViewController = [RNScreensViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];

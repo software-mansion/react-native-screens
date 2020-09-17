@@ -26,6 +26,10 @@
     _controller = [[RNSScreen alloc] initWithView:self];
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
+#if (TARGET_OS_IOS)
+    _statusBarStyle = UIStatusBarStyleDefault;
+    _statusBarAnimation = UIStatusBarAnimationNone;
+#endif
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
@@ -140,6 +144,24 @@
       // Default
       break;
   }
+}
+
+- (void)setStatusBarStyle:(UIStatusBarStyle)statusBarStyle
+{
+  if (statusBarStyle != _statusBarStyle) {
+    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
+      RCTLogError(@"If you want to change the style of status bar, you have to change \
+      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
+    } else {
+      _statusBarStyle = statusBarStyle;
+      [_controller setNeedsStatusBarAppearanceUpdate];
+    }
+  }
+}
+
+- (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
+{
+  _statusBarAnimation = statusBarAnimation;
 }
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
@@ -295,6 +317,16 @@
   return self;
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+  return ((RNSScreenView *)self.view).statusBarStyle;
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  return ((RNSScreenView *)self.view).statusBarAnimation;
+}
+
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
@@ -389,6 +421,8 @@ RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
+RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, UIStatusBarStyle)
+RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
@@ -428,4 +462,3 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
 
 
 @end
-
