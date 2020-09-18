@@ -111,6 +111,10 @@ declare module 'react-native-screens' {
      */
     statusBarAnimation?: 'none' | 'fade' | 'slide';
     /**
+     * @description When set to true, the status bar for this screen is hidden.
+     */
+    statusBarHidden?: boolean;
+    /**
      * @description When set to false the back swipe gesture will be disabled when the parent Screen is on top of the stack. The default value is true.
      */
     gestureEnabled?: boolean;

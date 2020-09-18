@@ -28,7 +28,8 @@
     _stackAnimation = RNSScreenStackAnimationDefault;
 #if (TARGET_OS_IOS)
     _statusBarStyle = UIStatusBarStyleDefault;
-    _statusBarAnimation = UIStatusBarAnimationNone;
+    _statusBarAnimation = UIStatusBarAnimationFade;
+    _statusBarHidden = NO;
 #endif
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
@@ -161,7 +162,30 @@
 
 - (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
 {
-  _statusBarAnimation = statusBarAnimation;
+  if (statusBarAnimation != _statusBarAnimation) {
+    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
+      RCTLogError(@"If you want to change the style of status bar, you have to change \
+      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
+    } else {
+      _statusBarAnimation = statusBarAnimation;
+      [_controller setNeedsStatusBarAppearanceUpdate];
+    }
+  }
+}
+
+- (void)setStatusBarHidden:(BOOL)statusBarHidden
+{
+  if (statusBarHidden != _statusBarHidden) {
+    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
+      RCTLogError(@"If you want to change the style of status bar, you have to change \
+      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
+    } else {
+      _statusBarHidden = statusBarHidden;
+      [UIView animateWithDuration:0.5 animations:^{
+        [self->_controller setNeedsStatusBarAppearanceUpdate];
+      }];
+    }
+  }
 }
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
@@ -319,12 +343,29 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
+  UIViewController *child = [[self childViewControllers] lastObject];
+  if (child != nil) {
+    return child.preferredStatusBarStyle;
+  }
   return ((RNSScreenView *)self.view).statusBarStyle;
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
+  UIViewController *child = [[self childViewControllers] lastObject];
+  if (child != nil) {
+    return child.preferredStatusBarUpdateAnimation;
+  }
   return ((RNSScreenView *)self.view).statusBarAnimation;
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+  UIViewController *child = [[self childViewControllers] lastObject];
+  if (child != nil) {
+    return child.prefersStatusBarHidden;
+  }
+  return ((RNSScreenView *)self.view).statusBarHidden;
 }
 
 - (void)viewDidLayoutSubviews
@@ -423,6 +464,7 @@ RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, UIStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
+RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);

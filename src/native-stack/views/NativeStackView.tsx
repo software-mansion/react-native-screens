@@ -64,6 +64,7 @@ export default function NativeStackView({
           stackAnimation,
           statusBarStyle,
           statusBarAnimation,
+          statusBarHidden,
           contentStyle,
         } = options;
 
@@ -83,8 +84,9 @@ export default function NativeStackView({
             replaceAnimation={replaceAnimation}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
-            statusBarStyle={statusBarStyle}
             statusBarAnimation={statusBarAnimation}
+            statusBarHidden={statusBarHidden}
+            statusBarStyle={statusBarStyle}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',

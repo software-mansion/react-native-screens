@@ -274,6 +274,11 @@ export type NativeStackNavigationOptions = {
    * @description Sets the status bar animation (similar to the <StatusBar /> component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
    */
   statusBarAnimation?: ScreenProps['statusBarAnimation'];
+  /**
+   * @host (iOS only)
+   * @description Whether the status bar should be hidden on this screen
+   */
+  statusBarHidden?: boolean;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

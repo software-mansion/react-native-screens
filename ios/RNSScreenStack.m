@@ -28,6 +28,19 @@
   return childVC ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+  UIViewController *childVC =  [[self childViewControllers] lastObject];
+  return childVC ? childVC.prefersStatusBarHidden : false;
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  UIViewController *childVC =  [[self childViewControllers] lastObject];
+  return childVC ? childVC.preferredStatusBarUpdateAnimation : UIStatusBarAnimationFade;
+}
+
+
 @end
 
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
