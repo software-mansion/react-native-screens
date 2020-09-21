@@ -3,23 +3,15 @@ import {
   StyleSheet,
   Button,
   View,
-  TextInput,
-  TouchableHighlight,
-  Image,
-  Text,
-  ToolbarAndroid,
 } from 'react-native';
 import {
   Screen,
   ScreenStack,
   ScreenStackHeaderConfig,
-  ScreenStackHeaderTitleView,
   ScreenStackHeaderCenterView,
   ScreenStackHeaderRightView,
-  ScreenStackHeaderLeftView,
 } from 'react-native-screens';
 
-// const ScreenStack = requireNativeComponent('RNSScreenStack', null);
 
 const COLORS = ['azure', 'pink', 'cyan'];
 
@@ -51,12 +43,8 @@ export class Stack extends Component {
       stack: this.state.stack.filter(v => key !== v),
     });
   }
-  renderScreen = (key, index) => {
+  renderScreen = (key) => {
     let style = StyleSheet.absoluteFill;
-    const { stack, transitioning } = this.state;
-    const active =
-      index === stack.length - 1 ||
-      (transitioning !== 0 && index === stack.length - 2);
     return (
       <Screen
         style={style}
@@ -65,19 +53,6 @@ export class Stack extends Component {
         active={1}
         onDismissed={() => this.removeByKey(key)}>
         <ScreenStackHeaderConfig title={key}>
-          {/* {index === 0 && (
-            <ScreenStackHeaderLeftView>
-              <TouchableHighlight onPress={() => alert('sdf')}>
-                <Image
-                  source={{
-                    uri:
-                      'https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-                  }}
-                  style={{ width: 30, height: 30 }}
-                />
-              </TouchableHighlight>
-            </ScreenStackHeaderLeftView>
-          )} */}
           <ScreenStackHeaderRightView>
             <View style={{ width: 80, height: 40, backgroundColor: 'green' }} />
           </ScreenStackHeaderRightView>
@@ -117,7 +92,6 @@ class App extends Component {
           backgroundColor: color,
           alignItems: 'center',
           justifyContent: 'center',
-          // margin: index * 40,
         }}>
         <View
           style={{
@@ -132,7 +106,6 @@ class App extends Component {
         {pop && <Button title="Pop" onPress={pop} />}
         {push && <Button title="Push" onPress={push} />}
         {remove && <Button title="Remove middle screen" onPress={remove} />}
-        <TextInput placeholder="Hello" style={styles.textInput} />
         <View style={{ height: 100, backgroundColor: 'red', width: '70%' }} />
       </View>
     );

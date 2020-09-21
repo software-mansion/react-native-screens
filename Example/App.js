@@ -37,11 +37,7 @@ const SCREENS = {
   },
 };
 
-class MainScreen extends React.Component {
-  static navigationOptions = {
-    title: '📱 React Native Screens Examples',
-  };
-  render() {
+const MainScreen = ({ navigation }) => {
     const data = Object.keys(SCREENS).map((key) => ({ key }));
     return (
       <FlatList
@@ -51,28 +47,25 @@ class MainScreen extends React.Component {
         renderItem={(props) => (
           <MainScreenItem
             {...props}
-            onPressItem={({ key }) => this.props.navigation.navigate(key)}
+            onPressItem={({ key }) => navigation.navigate(key)}
           />
         )}
       />
     );
-  }
 }
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-class MainScreenItem extends React.Component {
-  _onPress = () => this.props.onPressItem(this.props.item);
-  render() {
-    const { key } = this.props.item;
+const MainScreenItem = (props) => {
+  _onPress = () => props.onPressItem(props.item);
+    const { key } = props.item;
     return (
-      <TouchableHighlight onPress={this._onPress}>
+      <TouchableHighlight onPress={_onPress}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>{SCREENS[key].title || key}</Text>
         </View>
       </TouchableHighlight>
     );
-  }
 }
 
 const MainScreenStack = createStackNavigator();

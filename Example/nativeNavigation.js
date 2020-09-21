@@ -2,49 +2,40 @@ import React from 'react';
 import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
-class SomeScreen extends React.Component {
-  render() {
+const SomeScreen = ({ navigation }) => {
     return (
       <ScrollView style={styles.screen}>
         <Button
-          onPress={() => this.props.navigation.push('Push')}
+          onPress={() => navigation.push('Push')}
           title="Push"
         />
         <Button
-          onPress={() => this.props.navigation.navigate('Modal')}
+          onPress={() => navigation.navigate('Modal')}
           title="Modal"
         />
-        <Button onPress={() => this.props.navigation.pop()} title="Back" />
+        <Button onPress={() => navigation.pop()} title="Back" />
         <View style={styles.leftTop} />
         <View style={styles.bottomRight} />
       </ScrollView>
     );
-  }
 }
 
-class PushScreen extends React.Component {
-  static route = {
-    navigationBar: {
-      visible: false,
-    },
-  };
-  render() {
+const PushScreen = ({ navigation }) => {
     return (
       <View style={styles.screen}>
         <TextInput placeholder="Hello" style={styles.textInput} />
         <Button
-          onPress={() => this.props.navigation.goBack()}
+          onPress={() => navigation.goBack()}
           title="Go back"
         />
         <Button
-          onPress={() => this.props.navigation.push('Push')}
+          onPress={() => navigation.push('Push')}
           title="Push more"
         />
         <View style={styles.leftTop} />
         <View style={styles.bottomRight} />
       </View>
     );
-  }
 }
 
 const AppStack = createNativeStackNavigator();

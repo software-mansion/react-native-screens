@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Button,
   View,
-  TextInput,
   Animated,
   Easing,
 } from 'react-native';
@@ -131,7 +130,6 @@ class App extends Component {
         }}>
         {pop && <Button title="Pop" onPress={pop} />}
         {push && <Button title="Push" onPress={push} />}
-        <TextInput placeholder="Hello" style={styles.textInput} />
       </View>
     );
   };
