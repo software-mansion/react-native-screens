@@ -179,6 +179,59 @@ How the given screen should appear/disappear when pushed or popped at the top of
 
 Defaults to `default`.
 
+### Status bar managment
+
+With `native-stack`, the status bar can be managed by `UIViewController` on iOS. It requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file and so disables the option to use RN's <StatusBar /> component. For each of those 3 props to work, you also need to apply those changes to the `rootViewController` in your project's `AppDelegate.m`:
+
+1. Add the interface and implementation of `RNScreensRootViewController`:
+
+```objc
+@interface RNScreensRootViewController: UIViewController
+@end
+
+@implementation RNScreensRootViewController
+
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  UIViewController* lastViewController = [[self childViewControllers] lastObject];
+  return [lastViewController childViewControllerForStatusBarStyle] ?: lastViewController;
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  UIViewController* lastViewController = [[self childViewControllers] lastObject];
+  return [lastViewController childViewControllerForStatusBarHidden] ?: lastViewController;
+}
+
+@end
+```
+
+2. Add the `RNScreensRootViewController` as your `rootViewController`:
+
+```objc
+  UIViewController *rootViewController = [RNScreensRootViewController new];
+```
+
+You can see those changes applied in the `AppDelegate.m` of `Example` project.
+
+#### `statusBarStyle`
+
+Sets the status bar color (similar to the <StatusBar /> component). Possible values: `default`, `light-content`, `dark-content`.
+
+Defaults to `default`.
+
+#### `statusBarAnimation`
+
+Sets the status bar animation (similar to the <StatusBar /> component). Possible values: `fade`, `none`, `slide`.
+
+Defaults to `fade`.
+
+#### `statusBarHidden`
+
+Boolean saying if the status bar for this screen is hidden.
+
+Defaults to `false`.
+
 ### Events
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:

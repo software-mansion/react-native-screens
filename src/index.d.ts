@@ -111,7 +111,7 @@ declare module 'react-native-screens' {
      */
     statusBarAnimation?: 'none' | 'fade' | 'slide';
     /**
-     * @description When set to true, the status bar for this screen is hidden.
+     * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
      */
     statusBarHidden?: boolean;
     /**

@@ -51,14 +51,15 @@ class PushScreen extends React.Component {
 const AppStack = createNativeStackNavigator();
 
 const App = () => (
-  <AppStack.Navigator>
+  <AppStack.Navigator screenProps={{ statusBarAnimation: 'fade' }}>
     <AppStack.Screen
       name="Some"
       component={SomeScreen}
       options={{
         title: 'Start',
         headerTintColor: 'black',
-        statusBarStyle: 'light-content',
+        statusBarStyle: 'dark-content',
+        statusBarHidden: false,
       }}
     />
     <AppStack.Screen
@@ -68,13 +69,13 @@ const App = () => (
         title: 'Pushed',
         headerStyle: { backgroundColor: '#3da4ab' },
         headerTintColor: 'black',
-        statusBarStyle: 'dark-content',
+        statusBarHidden: true,
       }}
     />
     <AppStack.Screen
       name="Modal"
       component={PushScreen}
-      options={{ stackPresentation: 'modal', statusBarStyle: 'default' }}
+      options={{ stackPresentation: 'modal' }}
     />
   </AppStack.Navigator>
 );

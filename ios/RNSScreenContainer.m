@@ -21,10 +21,10 @@
 
 @end
 
-@interface RNScreensController: UIViewController
+@interface RNScreensViewController: UIViewController
 @end
 
-@implementation RNScreensController
+@implementation RNScreensViewController
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
@@ -56,7 +56,7 @@
   if (self = [super init]) {
     _activeScreens = [NSMutableSet new];
     _reactSubviews = [NSMutableArray new];
-    _controller = [[RNScreensController alloc] init];
+    _controller = [[RNScreensViewController alloc] init];
     _needUpdate = NO;
     _manager = manager;
     [self addSubview:_controller.view];
