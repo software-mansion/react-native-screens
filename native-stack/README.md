@@ -181,7 +181,7 @@ Defaults to `default`.
 
 ### Status bar managment
 
-With `native-stack`, the status bar can be managed by `UIViewController` on iOS. It requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file and so disables the option to use RN's <StatusBar /> component. For each of those 3 props to work, you also need to apply those changes to the `rootViewController` in your project's `AppDelegate.m`:
+With `native-stack`, the status bar can be managed by `UIViewController` on iOS. It requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file and so disables the option to use react-native `StatusBar` component. For each of those 3 props to work, you also need to apply those changes to the `rootViewController` in your project's `AppDelegate.m`:
 
 1. Add the interface and implementation of `RNScreensRootViewController`:
 
@@ -216,13 +216,13 @@ You can see those changes applied in the `AppDelegate.m` of `Example` project.
 
 #### `statusBarStyle`
 
-Sets the status bar color (similar to the <StatusBar /> component). Possible values: `default`, `light-content`, `dark-content`.
+Sets the status bar color (similar to the `StatusBar` component). Possible values: `default`, `light-content`, `dark-content`.
 
 Defaults to `default`.
 
 #### `statusBarAnimation`
 
-Sets the status bar animation (similar to the <StatusBar /> component). Possible values: `fade`, `none`, `slide`.
+Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`.
 
 Defaults to `fade`.
 

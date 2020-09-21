@@ -102,12 +102,12 @@ declare module 'react-native-screens' {
     replaceAnimation?: ScreenReplaceTypes;
     /**
      * @host (iOS only)
-     * @description Sets the status bar color (similar to the <StatusBar /> component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `default`.
+     * @description Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `default`.
      */
     statusBarStyle?: 'default' | 'light-content' | 'dark-content';
     /**
      * @host (iOS only)
-     * @description Sets the status bar animation (similar to the <StatusBar /> component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+     * @description Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
      */
     statusBarAnimation?: 'none' | 'fade' | 'slide';
     /**
