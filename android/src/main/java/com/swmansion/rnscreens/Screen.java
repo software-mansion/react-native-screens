@@ -28,7 +28,8 @@ public class Screen extends ViewGroup {
   public enum StackAnimation {
     DEFAULT,
     NONE,
-    FADE
+    FADE,
+    SLIDE
   }
 
   public enum ReplaceAnimation {

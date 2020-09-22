@@ -143,12 +143,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   @Override
   protected void performUpdate() {
-    // remove all screens previously on stack
-    for (ScreenStackFragment screen : mStack) {
-      if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
-        getOrCreateTransaction().remove(screen);
-      }
-    }
 
     // When going back from a nested stack with a single screen on it, we may hit an edge case
     // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
@@ -156,10 +150,13 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
     ScreenStackFragment belowTop = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
 
+    boolean added = false;
+
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
       if (!mDismissed.contains(screen)) {
         if (newTop == null) {
+          added = true;
           newTop = screen;
           if (newTop.getScreen().getStackPresentation() != Screen.StackPresentation.TRANSPARENT_MODAL) {
             break;
@@ -168,6 +165,64 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           belowTop = screen;
           break;
         }
+      }
+    }
+
+    boolean customAnimation = false;
+
+    if (!mStack.contains(newTop)) {
+      // if new top screen wasn't on stack we do "open animation" so long it is not the very first screen on stack
+      if (mTopScreen != null && newTop != null) {
+        // there was some other screen attached before
+        int transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+        if (!mScreenFragments.contains(mTopScreen) && newTop.getScreen().getReplaceAnimation() == Screen.ReplaceAnimation.POP) {
+          // if the previous top screen does not exist anymore and the new top was not on the stack before,
+          // probably replace was called, so we check the animation
+          transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
+        }
+        switch (newTop.getScreen().getStackAnimation()) {
+          case NONE:
+            transition = FragmentTransaction.TRANSIT_NONE;
+            break;
+          case FADE:
+            transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
+            break;
+          case SLIDE:
+            customAnimation = true;
+            getOrCreateTransaction().setCustomAnimations(R.anim.open_slide_in, R.anim.open_slide_out);
+            break;
+        }
+
+        if (!customAnimation) {
+          getOrCreateTransaction().setTransition(transition);
+        }
+      }
+    } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
+      // otherwise if we are performing top screen change we do "back animation"
+      int transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
+
+      switch (mTopScreen.getScreen().getStackAnimation()) {
+        case NONE:
+          transition = FragmentTransaction.TRANSIT_NONE;
+          break;
+        case FADE:
+          transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
+          break;
+        case SLIDE:
+          customAnimation = true;
+          getOrCreateTransaction().setCustomAnimations(R.anim.close_slide_in, R.anim.close_slide_out);
+          break;
+      }
+
+      if (!customAnimation) {
+        getOrCreateTransaction().setTransition(transition);
+      }
+    }
+
+    // remove all screens previously on stack
+    for (ScreenStackFragment screen : mStack) {
+      if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
+        getOrCreateTransaction().remove(screen);
       }
     }
 
@@ -187,43 +242,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         }
       });
     }
-
     if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
-    }
-
-    if (!mStack.contains(newTop)) {
-      // if new top screen wasn't on stack we do "open animation" so long it is not the very first screen on stack
-      if (mTopScreen != null && newTop != null) {
-        // there was some other screen attached before
-        int transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
-        if (!mScreenFragments.contains(mTopScreen) && newTop.getScreen().getReplaceAnimation() == Screen.ReplaceAnimation.POP) {
-          // if the previous top screen does not exist anymore and the new top was not on the stack before,
-          // probably replace was called, so we check the animation
-          transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
-        }
-        switch (newTop.getScreen().getStackAnimation()) {
-          case NONE:
-            transition = FragmentTransaction.TRANSIT_NONE;
-            break;
-          case FADE:
-            transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
-            break;
-        }
-        getOrCreateTransaction().setTransition(transition);
-      }
-    } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
-      // otherwise if we are performing top screen change we do "back animation"
-      int transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
-      switch (mTopScreen.getScreen().getStackAnimation()) {
-        case NONE:
-          transition = FragmentTransaction.TRANSIT_NONE;
-          break;
-        case FADE:
-          transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
-          break;
-      }
-      getOrCreateTransaction().setTransition(transition);
     }
 
     mTopScreen = newTop;
