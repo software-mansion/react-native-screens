@@ -2,6 +2,7 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <RNScreens/UIViewController+RNScreens.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -22,25 +23,6 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
-@interface RNScreensRootViewController: UIViewController
-@end
-
-@implementation RNScreensRootViewController
-
-- (UIViewController *)childViewControllerForStatusBarStyle
-{
-  UIViewController* lastViewController = [[self childViewControllers] lastObject];
-  return [lastViewController childViewControllerForStatusBarStyle] ?: lastViewController;
-}
-
-- (UIViewController *)childViewControllerForStatusBarHidden
-{
-  UIViewController* lastViewController = [[self childViewControllers] lastObject];
-  return [lastViewController childViewControllerForStatusBarHidden] ?: lastViewController;
-}
-
-@end
-
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -56,7 +38,7 @@ static void InitializeFlipper(UIApplication *application) {
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [RNScreensRootViewController new];
+  UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];

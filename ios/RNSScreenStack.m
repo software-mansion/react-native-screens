@@ -17,29 +17,23 @@
 
 @end
 
-@interface RNScreensNavigationController: UINavigationController
-@end
-
 @implementation RNScreensNavigationController
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.prefersStatusBarHidden : false;
-}
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarUpdateAnimation : UIStatusBarAnimationFade;
+  return [[self childViewControllers] lastObject].preferredStatusBarUpdateAnimation;
 }
 
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  // this method is not called in extension, probably due to being subclass of UINavigationController which uses his own implementation
+  return [[self childViewControllers] lastObject];
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  return [[self childViewControllers] lastObject];
+}
 
 @end
 
@@ -198,7 +192,9 @@
 
 - (void)maybeAddToParentAndUpdateContainer
 {
-  if (!self.window || !_hasLayout) {
+  BOOL wasScreenMounted = _controller.parentViewController != nil;
+  BOOL isScreenReadyForShowing = self.window && _hasLayout;
+  if (!isScreenReadyForShowing && !wasScreenMounted) {
     // We wait with adding to parent controller until the stack is mounted and has its initial
     // layout done.
     // If we add it before layout, some of the items (specifically items from the navigation bar),
@@ -210,7 +206,7 @@
     return;
   }
   [self updateContainer];
-  if (_controller.parentViewController == nil) {
+  if (!wasScreenMounted) {
     // when stack hasn't been added to parent VC yet we do two things:
     // 1) we run updateContainer (the one above) – we do this because we want push view controllers to
     // be installed before the VC is mounted. If we do that after it is added to parent the push
@@ -233,9 +229,7 @@
       if (parentView.reactViewController) {
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
-#if (TARGET_OS_IOS)
         _controller.interactivePopGestureRecognizer.delegate = self;
-#endif
         [controller didMoveToParentViewController:parentView.reactViewController];
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
         // get triggered when the navigation controller is instantiated. As the only thing we do in

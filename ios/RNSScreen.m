@@ -2,6 +2,7 @@
 
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
 #import <React/RCTUIManager.h>
@@ -164,7 +165,7 @@
 {
   if (statusBarAnimation != _statusBarAnimation) {
     if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
-      RCTLogError(@"If you want to change the style of status bar, you have to change \
+      RCTLogError(@"If you want to change the animation of status bar, you have to change \
       UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
     } else {
       _statusBarAnimation = statusBarAnimation;
@@ -177,7 +178,7 @@
 {
   if (statusBarHidden != _statusBarHidden) {
     if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
-      RCTLogError(@"If you want to change the style of status bar, you have to change \
+      RCTLogError(@"If you want to change the visibility of status bar, you have to change \
       UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
     } else {
       _statusBarHidden = statusBarHidden;
@@ -344,28 +345,47 @@
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
   UIViewController *child = [[self childViewControllers] lastObject];
-  if (child != nil) {
-    return child.preferredStatusBarStyle;
+  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
+    if ([child childViewControllerForStatusBarStyle]) {
+      return [child childViewControllerForStatusBarStyle].preferredStatusBarStyle;
+    }
   }
-  return ((RNSScreenView *)self.view).statusBarStyle;
+  // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
+  UIViewController *parent = [self parentViewController];
+  while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
+    parent = [parent parentViewController];
+  }
+  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarStyle : UIStatusBarStyleDefault;
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
   UIViewController *child = [[self childViewControllers] lastObject];
-  if (child != nil) {
+  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
     return child.preferredStatusBarUpdateAnimation;
   }
-  return ((RNSScreenView *)self.view).statusBarAnimation;
+  // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
+  UIViewController *parent = [self parentViewController];
+  while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
+    parent = [parent parentViewController];
+  }
+  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarAnimation : UIStatusBarAnimationFade;
 }
 
 - (BOOL)prefersStatusBarHidden
 {
   UIViewController *child = [[self childViewControllers] lastObject];
-  if (child != nil) {
-    return child.prefersStatusBarHidden;
+  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
+    if ([child childViewControllerForStatusBarHidden]) {
+      return [child childViewControllerForStatusBarHidden].prefersStatusBarHidden;
+    }
   }
-  return ((RNSScreenView *)self.view).statusBarHidden;
+  // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
+  UIViewController *parent = [self parentViewController];
+  while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
+    parent = [parent parentViewController];
+  }
+  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarHidden : NO;
 }
 
 - (void)viewDidLayoutSubviews

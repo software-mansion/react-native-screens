@@ -1,5 +1,6 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreen.h"
+#import "UIViewController+RNScreens.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerObserverCoordinator.h>
@@ -21,29 +22,7 @@
 
 @end
 
-@interface RNScreensViewController: UIViewController
-@end
-
 @implementation RNScreensViewController
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.prefersStatusBarHidden : false;
-}
-
-- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
-{
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarUpdateAnimation : UIStatusBarAnimationFade;
-}
-
 @end
 
 @implementation RNSScreenContainerView {
@@ -173,23 +152,12 @@
           // for screens that were already active we want to mimick the effect UINavigationController
           // has when willMoveToWindow:nil is triggered before the animation starts
           [self prepareDetach:screen];
-          // disable interactions for the duration of transition
-          screen.userInteractionEnabled = NO;
         } else {
           [self attachScreen:screen atIndex:index];
         }
         index += 1;
       }
     }
-  }
-
-  // if we are down to one active screen it means the transitioning is over and we want to notify
-  // the transition has finished
-  if ((activeScreenRemoved || activeScreenAdded) && _activeScreens.count == 1) {
-    RNSScreenView *singleActiveScreen = [_activeScreens anyObject];
-    // restore interactions
-    singleActiveScreen.userInteractionEnabled = YES;
-    [singleActiveScreen notifyFinishTransitioning];
   }
 
   if ((activeScreenRemoved || activeScreenAdded) && _controller.presentedViewController == nil && _controller.presentingViewController == nil) {

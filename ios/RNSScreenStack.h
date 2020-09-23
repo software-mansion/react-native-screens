@@ -11,6 +11,10 @@
 
 @end
 
+@interface RNScreensNavigationController: UINavigationController
+
+@end
+
 @interface RNSScreenStackManager : RCTViewManager <RCTInvalidating>
 
 @end
