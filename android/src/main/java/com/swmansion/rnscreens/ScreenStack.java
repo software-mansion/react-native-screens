@@ -150,13 +150,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
     ScreenStackFragment belowTop = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
 
-    boolean added = false;
-
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
       if (!mDismissed.contains(screen)) {
         if (newTop == null) {
-          added = true;
           newTop = screen;
           if (newTop.getScreen().getStackPresentation() != Screen.StackPresentation.TRANSPARENT_MODAL) {
             break;
