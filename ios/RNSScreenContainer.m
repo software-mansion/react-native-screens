@@ -23,6 +23,19 @@
 @end
 
 @implementation RNScreensViewController
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+  UIViewController *childVC =  [[self childViewControllers] lastObject];
+  return childVC ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  UIViewController *childVC =  [[self childViewControllers] lastObject];
+  return childVC ? childVC.preferredStatusBarUpdateAnimation : UIStatusBarAnimationFade;
+}
+
 @end
 
 @implementation RNSScreenContainerView {

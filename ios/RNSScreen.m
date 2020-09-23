@@ -156,7 +156,9 @@
       UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
     } else {
       _statusBarStyle = statusBarStyle;
-      [_controller setNeedsStatusBarAppearanceUpdate];
+      [UIView animateWithDuration:0.5 animations:^{
+        [self->_controller setNeedsStatusBarAppearanceUpdate];
+      }];
     }
   }
 }
@@ -169,7 +171,9 @@
       UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
     } else {
       _statusBarAnimation = statusBarAnimation;
-      [_controller setNeedsStatusBarAppearanceUpdate];
+      [UIView animateWithDuration:0.5 animations:^{
+        [self->_controller setNeedsStatusBarAppearanceUpdate];
+      }];
     }
   }
 }
@@ -346,9 +350,7 @@
 {
   UIViewController *child = [[self childViewControllers] lastObject];
   if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    if ([child childViewControllerForStatusBarStyle]) {
-      return [child childViewControllerForStatusBarStyle].preferredStatusBarStyle;
-    }
+    return child.preferredStatusBarStyle;
   }
   // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
   UIViewController *parent = [self parentViewController];
@@ -426,7 +428,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-
+  [UIView animateWithDuration:0.5 animations:^{
+    [self setNeedsStatusBarAppearanceUpdate];
+  }];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 

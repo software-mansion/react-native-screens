@@ -9,32 +9,29 @@
 
 - (UIViewController *)RNSChildViewControllerForStatusBarStyle
 {
-  if ([self isKindOfClass:[RNSScreen class]]) {
-    return nil;
-  }
   UIViewController* lastViewController = [[self childViewControllers] lastObject];
   if ([lastViewController isKindOfClass:[RNScreensNavigationController class]] || [lastViewController isKindOfClass:[RNScreensViewController class]] || [lastViewController isKindOfClass:[RNSScreen class]]) {
-    return [lastViewController childViewControllerForStatusBarStyle] ?: lastViewController;
+    return lastViewController;
   }
   return [self RNSChildViewControllerForStatusBarStyle];
 }
 
 - (UIViewController *)RNSChildViewControllerForStatusBarHidden
 {
-  if ([self isKindOfClass:[RNSScreen class]]) {
-    return nil;
-  }
   UIViewController* lastViewController = [[self childViewControllers] lastObject];
   if ([lastViewController isKindOfClass:[RNScreensNavigationController class]] || [lastViewController isKindOfClass:[RNScreensViewController class]] || [lastViewController isKindOfClass:[RNSScreen class]]) {
-    return [lastViewController childViewControllerForStatusBarHidden] ?: lastViewController;
+    return lastViewController;
   }
   return [self RNSChildViewControllerForStatusBarHidden];
 }
 
 - (UIStatusBarAnimation)RNSPreferredStatusBarUpdateAnimation
 {
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarUpdateAnimation : UIStatusBarAnimationFade;
+  UIViewController* lastViewController = [[self childViewControllers] lastObject];
+  if ([lastViewController isKindOfClass:[RNScreensNavigationController class]] || [lastViewController isKindOfClass:[RNScreensViewController class]] || [lastViewController isKindOfClass:[RNSScreen class]]) {
+    return lastViewController.preferredStatusBarUpdateAnimation;
+  }
+  return [self RNSPreferredStatusBarUpdateAnimation];
 }
 
 + (void)load

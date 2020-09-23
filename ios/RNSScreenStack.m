@@ -1,6 +1,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "UIViewController+RNScreens.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -19,20 +20,22 @@
 
 @implementation RNScreensNavigationController
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+  UIViewController *childVC =  [[self childViewControllers] lastObject];
+  return [childVC isKindOfClass:[RNSScreen class]] ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
+}
+
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
   return [[self childViewControllers] lastObject].preferredStatusBarUpdateAnimation;
 }
 
+
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-  // this method is not called in extension, probably due to being subclass of UINavigationController which uses his own implementation
-  return [[self childViewControllers] lastObject];
-}
-
-- (UIViewController *)childViewControllerForStatusBarHidden
-{
-  return [[self childViewControllers] lastObject];
+  // this method is not called in category, probably due to being subclass of UINavigationController and not UIViewController and having own implementation
+  return nil;
 }
 
 @end
