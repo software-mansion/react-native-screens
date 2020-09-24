@@ -156,6 +156,7 @@
       UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
     } else {
       _statusBarStyle = statusBarStyle;
+      _controller.modalPresentationCapturesStatusBarAppearance = YES;
       [UIView animateWithDuration:0.5 animations:^{
         [self->_controller setNeedsStatusBarAppearanceUpdate];
       }];
@@ -171,6 +172,7 @@
       UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
     } else {
       _statusBarAnimation = statusBarAnimation;
+      _controller.modalPresentationCapturesStatusBarAppearance = YES;
       [UIView animateWithDuration:0.5 animations:^{
         [self->_controller setNeedsStatusBarAppearanceUpdate];
       }];
@@ -186,6 +188,7 @@
       UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
     } else {
       _statusBarHidden = statusBarHidden;
+      _controller.modalPresentationCapturesStatusBarAppearance = YES;
       [UIView animateWithDuration:0.5 animations:^{
         [self->_controller setNeedsStatusBarAppearanceUpdate];
       }];
@@ -357,7 +360,7 @@
   while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
     parent = [parent parentViewController];
   }
-  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarStyle : UIStatusBarStyleDefault;
+  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarStyle : ((RNSScreenView *)self.view).statusBarStyle;
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
@@ -371,7 +374,7 @@
   while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
     parent = [parent parentViewController];
   }
-  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarAnimation : UIStatusBarAnimationFade;
+  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarAnimation : ((RNSScreenView *)self.view).statusBarAnimation;
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -387,7 +390,7 @@
   while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
     parent = [parent parentViewController];
   }
-  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarHidden : NO;
+  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarHidden : ((RNSScreenView *)self.view).statusBarHidden;
 }
 
 - (void)viewDidLayoutSubviews
