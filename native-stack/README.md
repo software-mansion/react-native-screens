@@ -188,9 +188,9 @@ With `native-stack`, the status bar can be managed by `UIViewController` on iOS.
 
 #### `statusBarStyle`
 
-Sets the status bar color (similar to the `StatusBar` component). Possible values: `default`, `light-content`, `dark-content`.
+Sets the status bar color (similar to the `StatusBar` component). Possible values: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`.
 
-Defaults to `default`.
+Defaults to `auto`.
 
 #### `statusBarAnimation`
 
