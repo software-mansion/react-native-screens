@@ -183,7 +183,7 @@ Defaults to `default`.
 
 With `native-stack`, the status bar can be managed by `UIViewController` on iOS. It requires:
 
-1. Enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (and so disables the option to use React Native's `StatusBar` component). 
+1. Enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
 2. Adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
 
 #### `statusBarStyle`
