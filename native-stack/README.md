@@ -179,12 +179,12 @@ How the given screen should appear/disappear when pushed or popped at the top of
 
 Defaults to `default`.
 
-### Status bar managment
+### Status bar and orientation managment
 
-With `native-stack`, the status bar can be managed by `UIViewController` on iOS. It requires:
+With `native-stack`, the status bar and current screen orientation mask can be managed by `UIViewController` on iOS. It requires:
 
-1. Enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (and so disables the option to use React Native's `StatusBar` component). 
-2. Adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
+1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
+2. For both status abr and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
 
 #### `statusBarStyle`
 
@@ -203,6 +203,21 @@ Defaults to `fade`.
 Boolean saying if the status bar for this screen is hidden.
 
 Defaults to `false`.
+
+#### `stackOrientationMask`
+
+Sets the current screen's orientation mask and forces rotation if current orientation is not included in the mask. Possible values:
+
+- `default` - it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc)
+- `all`
+- `portrait`
+- `portrait_up`
+- `portrait_down`
+- `landscape`
+- `landscape_left`
+- `landscape_right`
+
+Defaults to `default`.
 
 ### Events
 

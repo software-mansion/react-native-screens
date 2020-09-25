@@ -31,6 +31,7 @@
     _statusBarStyle = RNSStatusBarStyleAuto;
     _statusBarAnimation = UIStatusBarAnimationFade;
     _statusBarHidden = NO;
+    _stackOrientationMask = RNSScreenOrientationMaskDefault;
 #endif
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
@@ -194,6 +195,12 @@
       }];
     }
   }
+}
+
+- (void)setStackOrientationMask:(RNSScreenOrientationMask)stackOrientationMask
+{
+  _stackOrientationMask = stackOrientationMask;
+  [RNSScreen enforceDesiredDeviceOrientationWithOrientationMask:[RNSScreen interfaceOrientationMaskForStackOrientationMask:_stackOrientationMask]];
 }
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
@@ -402,6 +409,23 @@
   return screenView.statusBarHidden;
 }
 
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  UIViewController *presentedVC = [self presentedViewController];
+  if ([presentedVC isKindOfClass:[RNSScreen class]]) {
+    return presentedVC.supportedInterfaceOrientations;
+  }
+  
+  UIViewController *child = [[self childViewControllers] lastObject];
+  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
+    return child.supportedInterfaceOrientations;
+  }
+  RNSScreenView *screenView = [self findScreenViewForScreenProps];
+  
+  UIInterfaceOrientationMask orientationMask = [RNSScreen interfaceOrientationMaskForStackOrientationMask:screenView.stackOrientationMask];
+  return orientationMask;
+}
+
 - (RNSScreenView *)findScreenViewForScreenProps
 {
   // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
@@ -505,6 +529,81 @@
   _previousFirstResponder = nil;
 }
 
++ (UIInterfaceOrientationMask)interfaceOrientationMaskForStackOrientationMask:(RNSScreenOrientationMask)stackOrientationMask
+{
+  switch (stackOrientationMask) {
+    case RNSScreenOrientationMaskDefault:
+      return UIInterfaceOrientationMaskAllButUpsideDown;
+    case RNSScreenOrientationMaskAll:
+      return UIInterfaceOrientationMaskAll;
+    case RNSScreenOrientationMaskPortrait:
+      return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+    case RNSScreenOrientationMaskPortraitUp:
+      return UIInterfaceOrientationMaskPortrait;
+    case RNSScreenOrientationMaskPortraitDown:
+      return UIInterfaceOrientationMaskPortraitUpsideDown;
+    case RNSScreenOrientationMaskLandscape:
+      return UIInterfaceOrientationMaskLandscape;
+    case RNSScreenOrientationMaskLandscapeLeft:
+      return UIInterfaceOrientationMaskLandscapeLeft;
+    case RNSScreenOrientationMaskLandscapeRight:
+      return UIInterfaceOrientationMaskLandscapeRight;
+    default:
+      return UIInterfaceOrientationMaskAllButUpsideDown;
+  }
+}
+
++ (UIInterfaceOrientation)defaultOrientationForOrientationMask:(UIInterfaceOrientationMask)orientationMask
+{
+  if (UIInterfaceOrientationMaskPortrait & orientationMask) {
+    return UIInterfaceOrientationPortrait;
+  } else if (UIInterfaceOrientationMaskLandscapeLeft & orientationMask) {
+    return UIInterfaceOrientationLandscapeLeft;
+  } else if (UIInterfaceOrientationMaskLandscapeRight & orientationMask) {
+    return UIInterfaceOrientationLandscapeRight;
+  } else if (UIInterfaceOrientationMaskPortraitUpsideDown & orientationMask) {
+    return UIInterfaceOrientationPortraitUpsideDown;
+  }
+  return UIInterfaceOrientationUnknown;
+}
+
++ (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation
+{
+   switch (deviceOrientation) {
+     case UIDeviceOrientationPortrait:
+       return UIInterfaceOrientationPortrait;
+     case UIDeviceOrientationPortraitUpsideDown:
+       return UIInterfaceOrientationPortraitUpsideDown;
+     // UIDevice and UIInterface landscape orientations are switched
+     case UIDeviceOrientationLandscapeLeft:
+       return UIInterfaceOrientationLandscapeRight;
+     case UIDeviceOrientationLandscapeRight:
+       return UIInterfaceOrientationLandscapeLeft;
+     default:
+       return UIInterfaceOrientationUnknown;
+   }
+}
+  
++ (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation
+{
+  return 1 << orientation;
+}
+
++ (void)enforceDesiredDeviceOrientationWithOrientationMask:(UIInterfaceOrientationMask)orientationMask
+{
+  UIInterfaceOrientation currentDeviceOrientation = [RNSScreen interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
+  // if current sreen orientation isn't part of the mask, we have to change orientation to default one included in mask, in order up-left-right-down
+  if (!([RNSScreen maskFromOrientation:currentDeviceOrientation] & orientationMask)) {
+    UIInterfaceOrientation newOrientation = [RNSScreen defaultOrientationForOrientationMask:orientationMask];
+    if (newOrientation != UIInterfaceOrientationUnknown) {
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
+        [UIViewController attemptRotationToDeviceOrientation];
+      });
+    }
+  }
+}
+
 @end
 
 @implementation RNSScreenManager
@@ -519,6 +618,7 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(stackOrientationMask, RNSScreenOrientationMask)
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
@@ -555,6 +655,17 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
                                                   @"push": @(RNSScreenReplaceAnimationPush),
                                                   @"pop": @(RNSScreenReplaceAnimationPop),
                                                   }), RNSScreenReplaceAnimationPop, integerValue)
+
+RCT_ENUM_CONVERTER(RNSScreenOrientationMask, (@{
+                                                  @"default": @(RNSScreenOrientationMaskDefault),
+                                                  @"all": @(RNSScreenOrientationMaskAll),
+                                                  @"portrait": @(RNSScreenOrientationMaskPortrait),
+                                                  @"portrait_up": @(RNSScreenOrientationMaskPortraitUp),
+                                                  @"portrait_down": @(RNSScreenOrientationMaskPortraitDown),
+                                                  @"landscape": @(RNSScreenOrientationMaskLandscape),
+                                                  @"landscape_left": @(RNSScreenOrientationMaskLandscapeLeft),
+                                                  @"landscape_right": @(RNSScreenOrientationMaskLandscapeRight),
+                                                  }), RNSScreenOrientationMaskAll, integerValue)
 
 RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
                                                   @"auto": @(RNSStatusBarStyleAuto),

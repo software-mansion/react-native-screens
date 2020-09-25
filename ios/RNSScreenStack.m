@@ -38,6 +38,11 @@
   return nil;
 }
 
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  return [[self childViewControllers] lastObject].supportedInterfaceOrientations;
+}
+
 @end
 
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>

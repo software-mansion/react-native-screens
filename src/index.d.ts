@@ -46,6 +46,15 @@ declare module 'react-native-screens' {
     | 'systemThickMaterialDark'
     | 'systemChromeMaterialDark';
   export type ScreenReplaceTypes = 'push' | 'pop';
+  export type StackOrientationMaskTypes =
+    | 'default'
+    | 'all'
+    | 'portrait'
+    | 'portrait_up'
+    | 'portrait_down'
+    | 'landscape'
+    | 'landscape_left'
+    | 'landscape_right';
 
   export interface ScreenProps extends ViewProps {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
@@ -114,6 +123,18 @@ declare module 'react-native-screens' {
      * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
      */
     statusBarHidden?: boolean;
+    /**
+     * @description Controls in which orientation should the screen appear.
+     * @type "default" - resolves to "all" without "portrait_down"
+     * @type "all" – all orientations are permitted
+     * @type "portrait" – portrait orientations are permitted
+     * @type "portrait_up" – right-side portrait orientation is permitted
+     * @type "portrait_down" – upside-down portrait orientation is permitted
+     * @type "landscape" – landscape orientations are permitted
+     * @type "landscape_left" – landscape-left orientation is permitted
+     * @type "landscape_right" – landscape-right orientation is permitted
+     */
+    stackOrientationMask?: StackOrientationMaskTypes;
     /**
      * @description When set to false the back swipe gesture will be disabled when the parent Screen is on top of the stack. The default value is true.
      */

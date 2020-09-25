@@ -282,6 +282,19 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   statusBarHidden?: boolean;
+  /**
+   * In which orientation should the screen appear.
+   * The following values are currently supported:
+   * - "default" - resolves to "all" without "portrait_down".
+   * - "all" – all orientations are permitted
+   * - "portrait" – portrait orientations are permitted
+   * - "portrait_up" – right-side portrait orientation is permitted
+   * - "portrait_down" – upside-down portrait orientation is permitted
+   * - "landscape" – landscape orientations are permitted
+   * - "landscape_left" – landscape-left orientation is permitted
+   * - "landscape_right" – landscape-right orientation is permitted
+   */
+  stackOrientationMask?: ScreenProps['stackOrientationMask'];
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

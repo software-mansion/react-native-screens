@@ -65,6 +65,7 @@ export default function NativeStackView({
           statusBarStyle,
           statusBarAnimation,
           statusBarHidden,
+          stackOrientationMask,
           contentStyle,
         } = options;
 
@@ -87,6 +88,7 @@ export default function NativeStackView({
             statusBarAnimation={statusBarAnimation}
             statusBarHidden={statusBarHidden}
             statusBarStyle={statusBarStyle}
+            stackOrientationMask={stackOrientationMask}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',

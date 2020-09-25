@@ -34,6 +34,15 @@
   return [self RNSPreferredStatusBarUpdateAnimation];
 }
 
+- (UIInterfaceOrientationMask)RNSSupportedInterfaceOrientations
+{
+  UIViewController* lastViewController = [[self childViewControllers] lastObject];
+  if ([lastViewController isKindOfClass:[RNScreensNavigationController class]] || [lastViewController isKindOfClass:[RNScreensViewController class]] || [lastViewController isKindOfClass:[RNSScreen class]]) {
+    return lastViewController.supportedInterfaceOrientations;
+  }
+  return [self RNSSupportedInterfaceOrientations];
+}
+
 + (void)load
 {
   Class uiVCClass = [UIViewController class];
@@ -46,6 +55,8 @@
   
   method_exchangeImplementations(class_getInstanceMethod(uiVCClass, @selector(preferredStatusBarUpdateAnimation)),
                                  class_getInstanceMethod(uiVCClass, @selector(RNSPreferredStatusBarUpdateAnimation)));
+  method_exchangeImplementations(class_getInstanceMethod(uiVCClass, @selector(supportedInterfaceOrientations)),
+                                 class_getInstanceMethod(uiVCClass, @selector(RNSSupportedInterfaceOrientations)));
 }
 
 @end
