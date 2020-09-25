@@ -379,9 +379,16 @@
   // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
   UIViewController *parent = [self parentViewController];
   while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
-    parent = [parent parentViewController];
+    if ([parent parentViewController] == nil && [parent isKindOfClass:[RNSScreen class]]) {
+      // we are at the top of hierarchy and the controller is RNSScreen so we are in modal screen
+      break;
+    } else {
+      parent = [parent parentViewController];
+    }
   }
-  RNSScreenView *screenView = [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]) : ((RNSScreenView *)self.view);
+  RNSScreenView *screenView = [parent isKindOfClass:[RNScreensNavigationController class]]
+    ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view])
+    : [parent isKindOfClass:[RNSScreen class]] ? ((RNSScreenView *)parent.view) : ((RNSScreenView *)self.view);
   return [screenView statusBarStyleForRNSStatusBarStyle];
 }
 
@@ -394,9 +401,17 @@
   // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
   UIViewController *parent = [self parentViewController];
   while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
-    parent = [parent parentViewController];
+    if ([parent parentViewController] == nil && [parent isKindOfClass:[RNSScreen class]]) {
+      // we are at the top of hierarchy and the controller is RNSScreen so we are in modal screen
+      break;
+    } else {
+      parent = [parent parentViewController];
+    }
   }
-  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarAnimation : ((RNSScreenView *)self.view).statusBarAnimation;
+  RNSScreenView *screenView = [parent isKindOfClass:[RNScreensNavigationController class]]
+    ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view])
+    : [parent isKindOfClass:[RNSScreen class]] ? ((RNSScreenView *)parent.view) : ((RNSScreenView *)self.view);
+  return screenView.statusBarAnimation;
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -410,9 +425,17 @@
   // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
   UIViewController *parent = [self parentViewController];
   while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
-    parent = [parent parentViewController];
+    if ([parent parentViewController] == nil && [parent isKindOfClass:[RNSScreen class]]) {
+      // we are at the top of hierarchy and the controller is RNSScreen so we are in modal screen
+      break;
+    } else {
+      parent = [parent parentViewController];
+    }
   }
-  return [parent isKindOfClass:[RNScreensNavigationController class]] ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view]).statusBarHidden : ((RNSScreenView *)self.view).statusBarHidden;
+  RNSScreenView *screenView = [parent isKindOfClass:[RNScreensNavigationController class]]
+    ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view])
+    : [parent isKindOfClass:[RNSScreen class]] ? ((RNSScreenView *)parent.view) : ((RNSScreenView *)self.view);
+  return screenView.statusBarHidden;
 }
 
 - (void)viewDidLayoutSubviews
