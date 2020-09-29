@@ -101,7 +101,7 @@ Function which returns a React Element to display in the center of the header.
 
 #### `headerTranslucent`
 
-Boolean indicating whether the navigation bar is translucent. Only supported on iOS.
+Boolean indicating whether the navigation bar is translucent.
 
 #### `headerTopInsetEnabled`
 

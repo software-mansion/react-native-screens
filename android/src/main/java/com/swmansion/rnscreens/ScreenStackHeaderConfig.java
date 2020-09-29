@@ -39,6 +39,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mDestroyed;
   private boolean mBackButtonInCustomView;
   private boolean mIsTopInsetEnabled = true;
+  private boolean mIsTranslucent;
   private int mTintColor;
   private final Toolbar mToolbar;
 
@@ -215,6 +216,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     // shadow
     getScreenFragment().setToolbarShadowHidden(mIsShadowHidden);
 
+    // translucent
+    getScreenFragment().setToolbarTranslucent(mIsTranslucent);
+
     // title
     actionBar.setTitle(mTitle);
     if (TextUtils.isEmpty(mTitle)) {
@@ -238,7 +242,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
 
     // background
-    if (mBackgroundColor != 0) {
+    if (mBackgroundColor != -1) {
       mToolbar.setBackgroundColor(mBackgroundColor);
     }
 
@@ -377,6 +381,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   public void setHidden(boolean hidden) {
     mIsHidden = hidden;
+  }
+
+  public void setTranslucent(boolean translucent) {
+    mIsTranslucent = translucent;
   }
 
   public void setBackButtonInCustomView(boolean backButtonInCustomView) { mBackButtonInCustomView = backButtonInCustomView; }
