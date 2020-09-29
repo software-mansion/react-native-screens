@@ -153,6 +153,9 @@ public class Screen extends ViewGroup {
     }
     mTransitioning = transitioning;
     boolean isWebViewInScreen = hasWebView(this);
+    if (isWebViewInScreen && getLayerType() != View.LAYER_TYPE_HARDWARE) {
+      return;
+    }
     super.setLayerType(transitioning && !isWebViewInScreen ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE, null);
   }
 
