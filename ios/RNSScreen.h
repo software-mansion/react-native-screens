@@ -35,13 +35,13 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 };
 
 
-
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
 + (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
+
 @end
 
 @interface RNSScreen : UIViewController

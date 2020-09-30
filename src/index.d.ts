@@ -124,7 +124,7 @@ declare module 'react-native-screens' {
      */
     statusBarHidden?: boolean;
     /**
-     * @description Controls in which orientation should the screen appear.
+     * @description Controls in which orientation should the screen appear. Defaults to `default`.
      * @type "default" - resolves to "all" without "portrait_down"
      * @type "all" – all orientations are permitted
      * @type "portrait" – portrait orientations are permitted

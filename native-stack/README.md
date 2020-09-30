@@ -181,10 +181,10 @@ Defaults to `default`.
 
 ### Status bar and orientation managment
 
-With `native-stack`, the status bar and current screen orientation mask can be managed by `UIViewController` on iOS. It requires:
+With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. It requires:
 
 1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
-2. For both status abr and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
+2. For both status bar and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
 
 #### `statusBarStyle`
 
