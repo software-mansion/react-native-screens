@@ -41,6 +41,7 @@ class App extends Component {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
+        <TextInput placeholder="Hello" style={styles.textInput} />
       </View>
     );
   };

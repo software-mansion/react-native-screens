@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Button,
   View,
+  TextInput,
   Animated,
   Image,
 } from 'react-native';
@@ -36,6 +37,7 @@ const DetailsScreen = ({ navigation, route }) => {
     outputRange: ['0deg', '360deg'],
   });
   const [count, setCount] = useState(1);
+  const [text, setText] = useState('');
 
   useEffect(() => {
     navigation.setOptions({
@@ -67,6 +69,12 @@ const DetailsScreen = ({ navigation, route }) => {
             })
           }
         />
+        <TextInput
+          placeholder="Hello"
+          style={styles.textInput}
+          onChangeText={(text) => setText(text)}
+          text={text}
+        />
         <Animated.View
           style={{
             transform: [
@@ -93,5 +101,15 @@ const App = () => (
   </Stack.Navigator>
 );
 
+const styles = StyleSheet.create({
+  textInput: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    padding: 10,
+    marginHorizontal: 20,
+    alignSelf: 'stretch',
+    borderColor: 'black',
+  },
+});
 
 export default App;

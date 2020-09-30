@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Button,
   View,
+  TextInput,
 } from 'react-native';
 import {
   Screen,
@@ -106,6 +107,7 @@ class App extends Component {
         {pop && <Button title="Pop" onPress={pop} />}
         {push && <Button title="Push" onPress={push} />}
         {remove && <Button title="Remove middle screen" onPress={remove} />}
+        <TextInput placeholder="Hello" style={styles.textInput} />
         <View style={{ height: 100, backgroundColor: 'red', width: '70%' }} />
       </View>
     );
