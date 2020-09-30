@@ -34,17 +34,6 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
   RNSStatusBarStyleDark,
 };
 
-typedef NS_ENUM(NSInteger, RNSScreenOrientationMask) {
-  RNSScreenOrientationMaskDefault,
-  RNSScreenOrientationMaskAll,
-  RNSScreenOrientationMaskPortrait,
-  RNSScreenOrientationMaskPortraitUp,
-  RNSScreenOrientationMaskPortraitDown,
-  RNSScreenOrientationMaskLandscape,
-  RNSScreenOrientationMaskLandscapeLeft,
-  RNSScreenOrientationMaskLandscapeRight,
-};
-
 
 
 @interface RCTConvert (RNSScreen)
@@ -52,15 +41,13 @@ typedef NS_ENUM(NSInteger, RNSScreenOrientationMask) {
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
 + (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
-+ (RNSScreenOrientationMask)RNSScreenOrientationMask:(id)json;
-
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
 @end
 
 @interface RNSScreen : UIViewController
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
-+ (UIInterfaceOrientationMask)interfaceOrientationMaskForStackOrientationMask:(RNSScreenOrientationMask)stackOrientationMask;
 + (UIInterfaceOrientation)defaultOrientationForOrientationMask:(UIInterfaceOrientationMask)orientationMask;
 + (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation;
 + (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation;
@@ -89,7 +76,7 @@ typedef NS_ENUM(NSInteger, RNSScreenOrientationMask) {
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
 @property (nonatomic) UIStatusBarAnimation statusBarAnimation;
 @property (nonatomic) BOOL statusBarHidden;
-@property (nonatomic) RNSScreenOrientationMask stackOrientationMask;
+@property (nonatomic) UIInterfaceOrientationMask screenOrientation;
 
 - (void)notifyFinishTransitioning;
 

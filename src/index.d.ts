@@ -46,7 +46,7 @@ declare module 'react-native-screens' {
     | 'systemThickMaterialDark'
     | 'systemChromeMaterialDark';
   export type ScreenReplaceTypes = 'push' | 'pop';
-  export type StackOrientationMaskTypes =
+  export type ScreenOrientationTypes =
     | 'default'
     | 'all'
     | 'portrait'
@@ -134,7 +134,7 @@ declare module 'react-native-screens' {
      * @type "landscape_left" – landscape-left orientation is permitted
      * @type "landscape_right" – landscape-right orientation is permitted
      */
-    stackOrientationMask?: StackOrientationMaskTypes;
+    screenOrientation?: ScreenOrientationTypes;
     /**
      * @description When set to false the back swipe gesture will be disabled when the parent Screen is on top of the stack. The default value is true.
      */

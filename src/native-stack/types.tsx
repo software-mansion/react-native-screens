@@ -294,7 +294,7 @@ export type NativeStackNavigationOptions = {
    * - "landscape_left" – landscape-left orientation is permitted
    * - "landscape_right" – landscape-right orientation is permitted
    */
-  stackOrientationMask?: ScreenProps['stackOrientationMask'];
+  screenOrientation?: ScreenProps['screenOrientation'];
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

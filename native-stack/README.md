@@ -204,9 +204,9 @@ Boolean saying if the status bar for this screen is hidden.
 
 Defaults to `false`.
 
-#### `stackOrientationMask`
+#### `screenOrientation`
 
-Sets the current screen's orientation mask and forces rotation if current orientation is not included in the mask. Possible values:
+Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
 
 - `default` - it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc)
 - `all`

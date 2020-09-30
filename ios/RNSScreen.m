@@ -31,7 +31,7 @@
     _statusBarStyle = RNSStatusBarStyleAuto;
     _statusBarAnimation = UIStatusBarAnimationFade;
     _statusBarHidden = NO;
-    _stackOrientationMask = RNSScreenOrientationMaskDefault;
+    _screenOrientation = UIInterfaceOrientationMaskAllButUpsideDown;
 #endif
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
@@ -197,10 +197,10 @@
   }
 }
 
-- (void)setStackOrientationMask:(RNSScreenOrientationMask)stackOrientationMask
+- (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
 {
-  _stackOrientationMask = stackOrientationMask;
-  [RNSScreen enforceDesiredDeviceOrientationWithOrientationMask:[RNSScreen interfaceOrientationMaskForStackOrientationMask:_stackOrientationMask]];
+  _screenOrientation = screenOrientation;
+  [RNSScreen enforceDesiredDeviceOrientationWithOrientationMask:_screenOrientation];
 }
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
@@ -422,7 +422,7 @@
   }
   RNSScreenView *screenView = [self findScreenViewForScreenProps];
   
-  UIInterfaceOrientationMask orientationMask = [RNSScreen interfaceOrientationMaskForStackOrientationMask:screenView.stackOrientationMask];
+  UIInterfaceOrientationMask orientationMask = screenView.screenOrientation;
   return orientationMask;
 }
 
@@ -529,30 +529,6 @@
   _previousFirstResponder = nil;
 }
 
-+ (UIInterfaceOrientationMask)interfaceOrientationMaskForStackOrientationMask:(RNSScreenOrientationMask)stackOrientationMask
-{
-  switch (stackOrientationMask) {
-    case RNSScreenOrientationMaskDefault:
-      return UIInterfaceOrientationMaskAllButUpsideDown;
-    case RNSScreenOrientationMaskAll:
-      return UIInterfaceOrientationMaskAll;
-    case RNSScreenOrientationMaskPortrait:
-      return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
-    case RNSScreenOrientationMaskPortraitUp:
-      return UIInterfaceOrientationMaskPortrait;
-    case RNSScreenOrientationMaskPortraitDown:
-      return UIInterfaceOrientationMaskPortraitUpsideDown;
-    case RNSScreenOrientationMaskLandscape:
-      return UIInterfaceOrientationMaskLandscape;
-    case RNSScreenOrientationMaskLandscapeLeft:
-      return UIInterfaceOrientationMaskLandscapeLeft;
-    case RNSScreenOrientationMaskLandscapeRight:
-      return UIInterfaceOrientationMaskLandscapeRight;
-    default:
-      return UIInterfaceOrientationMaskAllButUpsideDown;
-  }
-}
-
 + (UIInterfaceOrientation)defaultOrientationForOrientationMask:(UIInterfaceOrientationMask)orientationMask
 {
   if (UIInterfaceOrientationMaskPortrait & orientationMask) {
@@ -618,7 +594,7 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(stackOrientationMask, RNSScreenOrientationMask)
+RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
@@ -656,22 +632,34 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
                                                   @"pop": @(RNSScreenReplaceAnimationPop),
                                                   }), RNSScreenReplaceAnimationPop, integerValue)
 
-RCT_ENUM_CONVERTER(RNSScreenOrientationMask, (@{
-                                                  @"default": @(RNSScreenOrientationMaskDefault),
-                                                  @"all": @(RNSScreenOrientationMaskAll),
-                                                  @"portrait": @(RNSScreenOrientationMaskPortrait),
-                                                  @"portrait_up": @(RNSScreenOrientationMaskPortraitUp),
-                                                  @"portrait_down": @(RNSScreenOrientationMaskPortraitDown),
-                                                  @"landscape": @(RNSScreenOrientationMaskLandscape),
-                                                  @"landscape_left": @(RNSScreenOrientationMaskLandscapeLeft),
-                                                  @"landscape_right": @(RNSScreenOrientationMaskLandscapeRight),
-                                                  }), RNSScreenOrientationMaskAll, integerValue)
-
 RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
                                                   @"auto": @(RNSStatusBarStyleAuto),
                                                   @"inverted": @(RNSStatusBarStyleInverted),
                                                   @"light": @(RNSStatusBarStyleLight),
                                                   @"dark": @(RNSStatusBarStyleDark),
                                                   }), RNSStatusBarStyleAuto, integerValue)
+
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
+{
+  json = [self NSString:json];
+  if ([json isEqualToString:@"default"]) {
+    return UIInterfaceOrientationMaskAllButUpsideDown;
+  } else if ([json isEqualToString:@"all"]) {
+    return UIInterfaceOrientationMaskAll;
+  } else if ([json isEqualToString:@"portrait"]) {
+    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"portrait_up"]) {
+    return UIInterfaceOrientationMaskPortrait;
+  } else if ([json isEqualToString:@"portrait_down"]) {
+    return UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"landscape"]) {
+    return UIInterfaceOrientationMaskLandscape;
+  } else if ([json isEqualToString:@"landscape_left"]) {
+    return UIInterfaceOrientationMaskLandscapeLeft;
+  } else if ([json isEqualToString:@"landscape_right"]) {
+    return UIInterfaceOrientationMaskLandscapeRight;
+  }
+  return UIInterfaceOrientationMaskAllButUpsideDown;
+}
 
 @end
