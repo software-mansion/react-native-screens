@@ -7,31 +7,31 @@
 
 @implementation UIViewController (RNScreens)
 
-- (UIViewController *)RNSChildViewControllerForStatusBarStyle
+- (UIViewController *)reactNativeScreensChildViewControllerForStatusBarStyle
 {
   UIViewController* lastViewController = [[self childViewControllers] lastObject];
   if ([lastViewController isKindOfClass:[RNScreensNavigationController class]] || [lastViewController isKindOfClass:[RNScreensViewController class]] || [lastViewController isKindOfClass:[RNSScreen class]]) {
     return lastViewController;
   }
-  return [self RNSChildViewControllerForStatusBarStyle];
+  return [self reactNativeScreensChildViewControllerForStatusBarStyle];
 }
 
-- (UIViewController *)RNSChildViewControllerForStatusBarHidden
+- (UIViewController *)reactNativeScreensChildViewControllerForStatusBarHidden
 {
   UIViewController* lastViewController = [[self childViewControllers] lastObject];
   if ([lastViewController isKindOfClass:[RNScreensNavigationController class]] || [lastViewController isKindOfClass:[RNScreensViewController class]] || [lastViewController isKindOfClass:[RNSScreen class]]) {
     return lastViewController;
   }
-  return [self RNSChildViewControllerForStatusBarHidden];
+  return [self reactNativeScreensChildViewControllerForStatusBarHidden];
 }
 
-- (UIStatusBarAnimation)RNSPreferredStatusBarUpdateAnimation
+- (UIStatusBarAnimation)reactNativeScreensPreferredStatusBarUpdateAnimation
 {
   UIViewController* lastViewController = [[self childViewControllers] lastObject];
   if ([lastViewController isKindOfClass:[RNScreensNavigationController class]] || [lastViewController isKindOfClass:[RNScreensViewController class]] || [lastViewController isKindOfClass:[RNSScreen class]]) {
     return lastViewController.preferredStatusBarUpdateAnimation;
   }
-  return [self RNSPreferredStatusBarUpdateAnimation];
+  return [self reactNativeScreensPreferredStatusBarUpdateAnimation];
 }
 
 + (void)load
@@ -39,13 +39,13 @@
   Class uiVCClass = [UIViewController class];
 
   method_exchangeImplementations(class_getInstanceMethod(uiVCClass, @selector(childViewControllerForStatusBarStyle)),
-                                 class_getInstanceMethod(uiVCClass, @selector(RNSChildViewControllerForStatusBarStyle)));
+                                 class_getInstanceMethod(uiVCClass, @selector(reactNativeScreensChildViewControllerForStatusBarStyle)));
 
   method_exchangeImplementations(class_getInstanceMethod(uiVCClass, @selector(childViewControllerForStatusBarHidden)),
-                                 class_getInstanceMethod(uiVCClass, @selector(RNSChildViewControllerForStatusBarHidden)));
+                                 class_getInstanceMethod(uiVCClass, @selector(reactNativeScreensChildViewControllerForStatusBarHidden)));
   
   method_exchangeImplementations(class_getInstanceMethod(uiVCClass, @selector(preferredStatusBarUpdateAnimation)),
-                                 class_getInstanceMethod(uiVCClass, @selector(RNSPreferredStatusBarUpdateAnimation)));
+                                 class_getInstanceMethod(uiVCClass, @selector(reactNativeScreensPreferredStatusBarUpdateAnimation)));
 }
 
 @end
