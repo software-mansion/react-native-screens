@@ -2,6 +2,7 @@ package com.swmansion.rnscreens;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -326,7 +327,11 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     // need to flush them here such that Fragment#isAdded checks reflect the
     // reality and that we don't have enqueued fragment add commands that will
     // execute shortly and cause "Fragment already added" crash.
-    mFragmentManager.executePendingTransactions();
+    try {
+        mFragmentManager.executePendingTransactions();
+    } catch (Exception e){
+        Log.e("ScreenContainer", "Error while executePendingTransactions with " + e.toString());
+    }
 
     performUpdate();
   }
