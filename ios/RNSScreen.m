@@ -485,6 +485,7 @@
   [UIView animateWithDuration:0.5 animations:^{
     [self setNeedsStatusBarAppearanceUpdate];
   }];
+  [RNSScreen enforceDesiredDeviceOrientationWithOrientationMask:self.supportedInterfaceOrientations];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -567,17 +568,51 @@
 
 + (void)enforceDesiredDeviceOrientationWithOrientationMask:(UIInterfaceOrientationMask)orientationMask
 {
-  UIInterfaceOrientation currentDeviceOrientation = [RNSScreen interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
-  // if current sreen orientation isn't part of the mask, we have to change orientation to default one included in mask, in order up-left-right-down
-  if (!([RNSScreen maskFromOrientation:currentDeviceOrientation] & orientationMask)) {
-    UIInterfaceOrientation newOrientation = [RNSScreen defaultOrientationForOrientationMask:orientationMask];
-    if (newOrientation != UIInterfaceOrientationUnknown) {
-      dispatch_async(dispatch_get_main_queue(), ^{
-        [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
-        [UIViewController attemptRotationToDeviceOrientation];
-      });
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UIInterfaceOrientation currentDeviceOrientation = [RNSScreen interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
+    UIInterfaceOrientation currentInterfaceOrientation = [RNSScreen interfaceOrientation];
+    UIInterfaceOrientation newOrientation = UIInterfaceOrientationUnknown;
+    if ([RNSScreen maskFromOrientation:currentDeviceOrientation] & orientationMask) {
+      if (!([RNSScreen maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
+        // if the device orientation is in the mask, but interface orientation is not, we rotate to device's orientation
+        newOrientation = currentDeviceOrientation;
+      } else {
+        if (currentDeviceOrientation != currentInterfaceOrientation) {
+          // if both device orientation and interface orientation are in the mask, but in different orientations, we rotate to device's orientation
+          newOrientation = currentDeviceOrientation;
+        }
+      }
+    } else {
+      if (!([RNSScreen maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
+        // if both device orientation and interface orientation are not in the mask, we rotate to closest available rotation from mask
+        newOrientation = [RNSScreen defaultOrientationForOrientationMask:orientationMask];
+      } else {
+        // if the device orientation is not in the mask, but interface orientation is in the mask, do nothing
+      }
     }
-  }
+    if (newOrientation != UIInterfaceOrientationUnknown) {
+      [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
+      [UIViewController attemptRotationToDeviceOrientation];
+    }
+  });
+}
+
+// based on https://stackoverflow.com/questions/57965701/statusbarorientation-was-deprecated-in-ios-13-0-when-attempting-to-get-app-ori/61249908#61249908
++ (UIInterfaceOrientation)interfaceOrientation
+{
+    if (@available(iOS 13.0, *)) {
+        UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+        if (firstWindow == nil) {
+          return UIInterfaceOrientationUnknown;
+        }
+        UIWindowScene *windowScene = firstWindow.windowScene;
+        if (windowScene == nil) {
+          return UIInterfaceOrientationUnknown;
+        }
+        return windowScene.interfaceOrientation;
+    } else {
+        return UIApplication.sharedApplication.statusBarOrientation;
+    }
 }
 
 @end
