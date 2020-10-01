@@ -73,7 +73,7 @@ const MainScreenStack = createStackNavigator();
 const ExampleApp = () => (
   <NavigationContainer>
     <MainScreenStack.Navigator>
-      <MainScreenStack.Screen name="Main" component={MainScreen} />
+      <MainScreenStack.Screen name="📱 React Native Screens Examples" component={MainScreen} />
       {Object.keys(SCREENS).map((name) => {
         const { Screen, title } = SCREENS[name];
         return (

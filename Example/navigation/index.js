@@ -64,7 +64,7 @@ const DetailsScreen = ({ navigation, route }) => {
         <Button
           title="More details"
           onPress={() =>
-              navigation.push('Details', {
+            navigation.push('Details', {
               index: index + 1,
             })
           }

@@ -51,7 +51,6 @@ export class Stack extends Component {
         style={style}
         key={key}
         stackAnimation="fade"
-        active={1}
         onDismissed={() => this.removeByKey(key)}>
         <ScreenStackHeaderConfig title={key}>
           <ScreenStackHeaderRightView>
