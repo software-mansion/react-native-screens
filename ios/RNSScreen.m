@@ -4,6 +4,7 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "UIViewController+RNScreens.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
@@ -151,48 +152,44 @@
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
   if (statusBarStyle != _statusBarStyle) {
-    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
-      RCTLogError(@"If you want to change the style of status bar, you have to change \
-      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-    } else {
-      _statusBarStyle = statusBarStyle;
-      _controller.modalPresentationCapturesStatusBarAppearance = YES;
-      [UIView animateWithDuration:0.5 animations:^{
-        [self->_controller setNeedsStatusBarAppearanceUpdate];
-      }];
-    }
+    [RNSScreenView checkUIVCBasedStatusBarAppearance];
+    _statusBarStyle = statusBarStyle;
+    _controller.modalPresentationCapturesStatusBarAppearance = YES;
+    [UIView animateWithDuration:0.5 animations:^{
+      [self->_controller setNeedsStatusBarAppearanceUpdate];
+    }];
   }
 }
 
 - (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
 {
   if (statusBarAnimation != _statusBarAnimation) {
-    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
-      RCTLogError(@"If you want to change the animation of status bar, you have to change \
-      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-    } else {
-      _statusBarAnimation = statusBarAnimation;
-      _controller.modalPresentationCapturesStatusBarAppearance = YES;
-      [UIView animateWithDuration:0.5 animations:^{
-        [self->_controller setNeedsStatusBarAppearanceUpdate];
-      }];
-    }
+    [RNSScreenView checkUIVCBasedStatusBarAppearance];
+    _statusBarAnimation = statusBarAnimation;
+    _controller.modalPresentationCapturesStatusBarAppearance = YES;
+    [UIView animateWithDuration:0.5 animations:^{
+      [self->_controller setNeedsStatusBarAppearanceUpdate];
+    }];
   }
 }
 
 - (void)setStatusBarHidden:(BOOL)statusBarHidden
 {
   if (statusBarHidden != _statusBarHidden) {
-    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
-      RCTLogError(@"If you want to change the visibility of status bar, you have to change \
-      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-    } else {
-      _statusBarHidden = statusBarHidden;
-      _controller.modalPresentationCapturesStatusBarAppearance = YES;
-      [UIView animateWithDuration:0.5 animations:^{
-        [self->_controller setNeedsStatusBarAppearanceUpdate];
-      }];
-    }
+    [RNSScreenView checkUIVCBasedStatusBarAppearance];
+    _statusBarHidden = statusBarHidden;
+    _controller.modalPresentationCapturesStatusBarAppearance = YES;
+    [UIView animateWithDuration:0.5 animations:^{
+      [self->_controller setNeedsStatusBarAppearanceUpdate];
+    }];
+  }
+}
+
++ (void)checkUIVCBasedStatusBarAppearance
+{
+  if (viewControllerStatusBarDisabled) {
+    RCTLogError(@"If you want to change the appearance of status bar, you have to change \
+    UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
   }
 }
 

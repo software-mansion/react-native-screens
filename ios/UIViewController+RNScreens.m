@@ -5,6 +5,10 @@
 
 #import <objc/runtime.h>
 
+static dispatch_once_t checkViewControllerStatusBarOnce;
+
+bool viewControllerStatusBarDisabled;
+
 @implementation UIViewController (RNScreens)
 
 - (UIViewController *)reactNativeScreensChildViewControllerForStatusBarStyle
@@ -37,6 +41,10 @@
 + (void)load
 {
   Class uiVCClass = [UIViewController class];
+
+  dispatch_once(&checkViewControllerStatusBarOnce, ^{
+    viewControllerStatusBarDisabled = ![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue];
+  });
 
   method_exchangeImplementations(class_getInstanceMethod(uiVCClass, @selector(childViewControllerForStatusBarStyle)),
                                  class_getInstanceMethod(uiVCClass, @selector(reactNativeScreensChildViewControllerForStatusBarStyle)));
