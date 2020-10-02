@@ -124,6 +124,7 @@ declare module 'react-native-screens' {
      */
     statusBarHidden?: boolean;
     /**
+     * @host (iOS only)
      * @description Controls in which orientation should the screen appear. Defaults to `default`.
      * @type "default" - resolves to "all" without "portrait_down"
      * @type "all" – all orientations are permitted
@@ -232,6 +233,19 @@ declare module 'react-native-screens' {
      *@description Controls whether the stack should be in rtl or ltr form.
      */
     direction?: 'rtl' | 'ltr';
+    /**
+     * @host (Android only)
+     * @description Controls in which orientation should the screen appear. Defaults to `default`.
+     * @type "default" - lets the system decide the best orientation
+     * @type "all" – all orientations are permitted
+     * @type "portrait" – portrait orientations are permitted
+     * @type "portrait_up" – right-side portrait orientation is permitted
+     * @type "portrait_down" – upside-down portrait orientation is permitted
+     * @type "landscape" – landscape orientations are permitted
+     * @type "landscape_left" – landscape-left orientation is permitted
+     * @type "landscape_right" – landscape-right orientation is permitted
+     */
+    screenOrientation?: ScreenOrientationTypes;
     /**
      * @host (iOS only)
      * @description Customize font family to be used for the large title.
