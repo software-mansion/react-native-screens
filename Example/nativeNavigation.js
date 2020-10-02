@@ -58,8 +58,7 @@ const App = () => (
       options={{
         title: 'Start',
         headerTintColor: 'black',
-        statusBarStyle: 'dark-content',
-        statusBarHidden: false,
+        statusBarStyle: 'auto',
       }}
     />
     <AppStack.Screen
@@ -75,7 +74,7 @@ const App = () => (
     <AppStack.Screen
       name="Modal"
       component={PushScreen}
-      options={{ stackPresentation: 'modal' }}
+      options={{ stackPresentation: 'modal', statusBarStyle: 'light' }}
     />
   </AppStack.Navigator>
 );

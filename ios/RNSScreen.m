@@ -495,7 +495,7 @@ viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryK
   _previousFirstResponder = nil;
 }
 
-// duration based on "Programming iOS 13" implementation
+// duration based on "Programming iOS 13" p. 311 implementation
 - (void)updateStatusBarAppearance
 {
   self.modalPresentationCapturesStatusBarAppearance = YES;
