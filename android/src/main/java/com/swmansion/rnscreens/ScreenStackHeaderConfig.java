@@ -137,7 +137,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     return null;
   }
 
-  private ScreenStackFragment getScreenFragment() {
+  protected ScreenStackFragment getScreenFragment() {
     ViewParent screen = getParent();
     if (screen instanceof Screen) {
       Fragment fragment = ((Screen) screen).getFragment();
@@ -170,8 +170,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       }
     }
 
-    // orientation
-    activity.setRequestedOrientation(mScreenOrientation);
+//    if (mScreenOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
+      activity.setRequestedOrientation(mScreenOrientation);
+//    }
 
     if (mIsHidden) {
       if (mToolbar.getParent() != null) {
@@ -243,7 +244,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
 
     // background
-    if (mBackgroundColor != 0) {
+    if (mBackgroundColor != -1) {
       mToolbar.setBackgroundColor(mBackgroundColor);
     }
 
@@ -344,6 +345,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       }
     }
     return null;
+  }
+
+  public int getScreenOrientation(){
+    return mScreenOrientation;
   }
 
   public void setTitle(String title) {

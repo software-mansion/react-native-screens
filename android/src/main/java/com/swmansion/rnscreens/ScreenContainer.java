@@ -374,6 +374,30 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       }
       screenFragment.getScreen().setTransitioning(transitioning);
     }
+
     tryCommitTransaction();
+
+    ScreenStackHeaderConfig config = findHeaderConfig(this);
+    if (config != null) {
+      if ( config.getScreenFragment().getActivity() != null) {
+        config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
+      }
+    }
+  }
+
+  private ScreenStackHeaderConfig findHeaderConfig(ViewGroup viewGroup){
+    ViewParent parent = viewGroup.getParent();
+    while(parent != null) {
+      if (parent instanceof Screen) {
+        for (int i = 0; i < ((Screen) parent).getChildCount(); i++) {
+          View child = ((Screen)parent).getChildAt(i);
+          if (child instanceof ScreenStackHeaderConfig) {
+            return (ScreenStackHeaderConfig)child;
+          }
+        }
+      }
+      parent = parent.getParent();
+    }
+    return null;
   }
 }
