@@ -4,7 +4,6 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
-#import "UIViewController+RNScreens.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
@@ -152,7 +151,7 @@
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
   if (statusBarStyle != _statusBarStyle) {
-    [RNSScreenView checkUIVCBasedStatusBarAppearance];
+    [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
     _statusBarStyle = statusBarStyle;
     _controller.modalPresentationCapturesStatusBarAppearance = YES;
     [UIView animateWithDuration:0.5 animations:^{
@@ -164,7 +163,7 @@
 - (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
 {
   if (statusBarAnimation != _statusBarAnimation) {
-    [RNSScreenView checkUIVCBasedStatusBarAppearance];
+    [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
     _statusBarAnimation = statusBarAnimation;
     _controller.modalPresentationCapturesStatusBarAppearance = YES;
     [UIView animateWithDuration:0.5 animations:^{
@@ -176,7 +175,7 @@
 - (void)setStatusBarHidden:(BOOL)statusBarHidden
 {
   if (statusBarHidden != _statusBarHidden) {
-    [RNSScreenView checkUIVCBasedStatusBarAppearance];
+    [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
     _statusBarHidden = statusBarHidden;
     _controller.modalPresentationCapturesStatusBarAppearance = YES;
     [UIView animateWithDuration:0.5 animations:^{
@@ -185,12 +184,17 @@
   }
 }
 
-+ (void)checkUIVCBasedStatusBarAppearance
++ (void)assertViewControllerBasedStatusBarAppearenceSet
 {
-  if (viewControllerStatusBarDisabled) {
-    RCTLogError(@"If you want to change the appearance of status bar, you have to change \
-    UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-  }
+    static dispatch_once_t once;
+    static bool viewControllerBasedAppearence;
+    dispatch_once(&once, ^{
+viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue];
+    });
+    if (!viewControllerBasedAppearence) {
+      RCTLogError(@"If you want to change the appearance of status bar, you have to change \
+      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
+    }
 }
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
