@@ -46,6 +46,7 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
+- (void)updateStatusBarAppearance;
 
 @end
 

@@ -153,10 +153,7 @@
   if (statusBarStyle != _statusBarStyle) {
     [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
     _statusBarStyle = statusBarStyle;
-    _controller.modalPresentationCapturesStatusBarAppearance = YES;
-    [UIView animateWithDuration:0.5 animations:^{
-      [self->_controller setNeedsStatusBarAppearanceUpdate];
-    }];
+    [_controller updateStatusBarAppearance];
   }
 }
 
@@ -165,10 +162,7 @@
   if (statusBarAnimation != _statusBarAnimation) {
     [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
     _statusBarAnimation = statusBarAnimation;
-    _controller.modalPresentationCapturesStatusBarAppearance = YES;
-    [UIView animateWithDuration:0.5 animations:^{
-      [self->_controller setNeedsStatusBarAppearanceUpdate];
-    }];
+    [_controller updateStatusBarAppearance];
   }
 }
 
@@ -177,10 +171,7 @@
   if (statusBarHidden != _statusBarHidden) {
     [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
     _statusBarHidden = statusBarHidden;
-    _controller.modalPresentationCapturesStatusBarAppearance = YES;
-    [UIView animateWithDuration:0.5 animations:^{
-      [self->_controller setNeedsStatusBarAppearanceUpdate];
-    }];
+    [_controller updateStatusBarAppearance];
   }
 }
 
@@ -459,9 +450,7 @@ viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryK
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [UIView animateWithDuration:0.5 animations:^{
-    [self setNeedsStatusBarAppearanceUpdate];
-  }];
+  [self updateStatusBarAppearance];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -504,6 +493,15 @@ viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryK
 {
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
+}
+
+// duration based on "Programming iOS 13" implementation
+- (void)updateStatusBarAppearance
+{
+  self.modalPresentationCapturesStatusBarAppearance = YES;
+  [UIView animateWithDuration:0.4 animations:^{
+    [self setNeedsStatusBarAppearanceUpdate];
+  }];
 }
 
 @end
