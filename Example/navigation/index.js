@@ -51,7 +51,7 @@ const DetailsScreen = ({ navigation, route }) => {
       })
     ).start();
     setInterval(() => setCount(count + 1 ), 1000);
-  },[]); 
+  },[navigation]); 
 
   const getIndex = () => {
     return route.params && route.params.index ? route.params.index : 0;

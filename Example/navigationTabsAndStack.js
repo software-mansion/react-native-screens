@@ -11,7 +11,7 @@ const DetailsScreen = ({ navigation, route }) => {
     navigation.setOptions({
       title: `Details screen #${getIndex}`,
     });
-  },[]);
+  },[navigation]);
 
   const getIndex = () => {
     return route.params && route.params.index ? route.params.index : 0;
