@@ -378,10 +378,8 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     tryCommitTransaction();
 
     ScreenStackHeaderConfig config = findHeaderConfig(this);
-    if (config != null) {
-      if ( config.getScreenFragment().getActivity() != null) {
-        config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
-      }
+    if (config != null && config.getScreenFragment().getActivity() != null) {
+      config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
     }
   }
 
