@@ -242,9 +242,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
 
     // background
-    if (mBackgroundColor != -1) {
-      mToolbar.setBackgroundColor(mBackgroundColor);
-    }
+    mToolbar.setBackgroundColor(mBackgroundColor);
 
     // color
     if (mTintColor != 0) {
