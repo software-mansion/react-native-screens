@@ -304,7 +304,7 @@
     return child.preferredStatusBarStyle;
   }
   RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
-  return config ? [self statusBarStyleForRNSStatusBarStyle:config.statusBarStyle] : [self statusBarStyleForRNSStatusBarStyle:RNSStatusBarStyleAuto];
+  return config && config.statusBarStyle ? [self statusBarStyleForRNSStatusBarStyle:config.statusBarStyle] : [self statusBarStyleForRNSStatusBarStyle:RNSStatusBarStyleAuto];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
@@ -314,7 +314,7 @@
     return child.preferredStatusBarUpdateAnimation;
   }
   RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
-  return config ? config.statusBarAnimation : UIStatusBarAnimationFade;
+  return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -326,7 +326,7 @@
     }
   }
   RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
-  return config ? config.statusBarHidden : NO;
+  return config && config.statusBarHidden ? config.statusBarHidden : NO;
 }
 
 - (RNSScreenStackHeaderConfig *)findConfigForScreen
