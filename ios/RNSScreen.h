@@ -39,10 +39,6 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
-+ (UIInterfaceOrientation)defaultOrientationForOrientationMask:(UIInterfaceOrientationMask)orientationMask;
-+ (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation;
-+ (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation;
-+ (void)enforceDesiredDeviceOrientationWithOrientationMask:(UIInterfaceOrientationMask)orientationMask;
 - (void)updateStatusBarAppearance;
 
 @end

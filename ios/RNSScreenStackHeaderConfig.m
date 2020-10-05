@@ -371,7 +371,7 @@
     [(RNSScreen *)vc updateStatusBarAppearance];
   }
   if (config.screenOrientation) {
-    [RNSScreen enforceDesiredDeviceOrientationWithOrientationMask:vc.supportedInterfaceOrientations];
+    [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientationWithOrientationMask:vc.supportedInterfaceOrientations];
   }
 #endif
 
@@ -508,6 +508,92 @@
   }
 }
 
++ (UIInterfaceOrientation)defaultOrientationForOrientationMask:(UIInterfaceOrientationMask)orientationMask
+{
+  if (UIInterfaceOrientationMaskPortrait & orientationMask) {
+    return UIInterfaceOrientationPortrait;
+  } else if (UIInterfaceOrientationMaskLandscapeLeft & orientationMask) {
+    return UIInterfaceOrientationLandscapeLeft;
+  } else if (UIInterfaceOrientationMaskLandscapeRight & orientationMask) {
+    return UIInterfaceOrientationLandscapeRight;
+  } else if (UIInterfaceOrientationMaskPortraitUpsideDown & orientationMask) {
+    return UIInterfaceOrientationPortraitUpsideDown;
+  }
+  return UIInterfaceOrientationUnknown;
+}
+
++ (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation
+{
+  switch (deviceOrientation) {
+    case UIDeviceOrientationPortrait:
+      return UIInterfaceOrientationPortrait;
+    case UIDeviceOrientationPortraitUpsideDown:
+      return UIInterfaceOrientationPortraitUpsideDown;
+    // UIDevice and UIInterface landscape orientations are switched
+    case UIDeviceOrientationLandscapeLeft:
+      return UIInterfaceOrientationLandscapeRight;
+    case UIDeviceOrientationLandscapeRight:
+      return UIInterfaceOrientationLandscapeLeft;
+    default:
+      return UIInterfaceOrientationUnknown;
+  }
+}
+  
++ (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation
+{
+  return 1 << orientation;
+}
+
++ (void)enforceDesiredDeviceOrientationWithOrientationMask:(UIInterfaceOrientationMask)orientationMask
+{
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UIInterfaceOrientation currentDeviceOrientation = [RNSScreenStackHeaderConfig interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
+    UIInterfaceOrientation currentInterfaceOrientation = [RNSScreenStackHeaderConfig interfaceOrientation];
+    UIInterfaceOrientation newOrientation = UIInterfaceOrientationUnknown;
+    if ([RNSScreenStackHeaderConfig maskFromOrientation:currentDeviceOrientation] & orientationMask) {
+      if (!([RNSScreenStackHeaderConfig maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
+        // if the device orientation is in the mask, but interface orientation is not, we rotate to device's orientation
+        newOrientation = currentDeviceOrientation;
+      } else {
+        if (currentDeviceOrientation != currentInterfaceOrientation) {
+          // if both device orientation and interface orientation are in the mask, but in different orientations, we rotate to device's orientation
+          newOrientation = currentDeviceOrientation;
+        }
+      }
+    } else {
+      if (!([RNSScreenStackHeaderConfig maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
+        // if both device orientation and interface orientation are not in the mask, we rotate to closest available rotation from mask
+        newOrientation = [RNSScreenStackHeaderConfig defaultOrientationForOrientationMask:orientationMask];
+      } else {
+        // if the device orientation is not in the mask, but interface orientation is in the mask, do nothing
+      }
+    }
+    if (newOrientation != UIInterfaceOrientationUnknown) {
+      [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
+      [UIViewController attemptRotationToDeviceOrientation];
+    }
+  });
+}
+
+// based on https://stackoverflow.com/questions/57965701/statusbarorientation-was-deprecated-in-ios-13-0-when-attempting-to-get-app-ori/61249908#61249908
++ (UIInterfaceOrientation)interfaceOrientation
+{
+  if (@available(iOS 13.0, *)) {
+    UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+    if (firstWindow == nil) {
+      return UIInterfaceOrientationUnknown;
+    }
+    UIWindowScene *windowScene = firstWindow.windowScene;
+    if (windowScene == nil) {
+      return UIInterfaceOrientationUnknown;
+    }
+    return windowScene.interfaceOrientation;
+  } else {
+    return UIApplication.sharedApplication.statusBarOrientation;
+  }
+}
+
+
 @end
 
 @implementation RNSScreenStackHeaderConfigManager
@@ -564,7 +650,6 @@ RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
     [blurEffects addEntriesFromDictionary:@{
       @"regular": @(UIBlurEffectStyleRegular),
       @"prominent": @(UIBlurEffectStyleProminent),
-
     }];
   }
 #if defined(__IPHONE_13_0) && TARGET_OS_IOS
