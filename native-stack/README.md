@@ -208,7 +208,7 @@ Defaults to `false`.
 
 Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
 
-- `default` - it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc)
+- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
 - `all`
 - `portrait`
 - `portrait_up`
