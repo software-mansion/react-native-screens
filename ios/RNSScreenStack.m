@@ -31,7 +31,6 @@
   return [[self childViewControllers] lastObject].preferredStatusBarUpdateAnimation;
 }
 
-
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
   // this method is not called in category, probably due to being subclass of UINavigationController and not UIViewController and having own implementation
