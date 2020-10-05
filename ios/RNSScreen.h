@@ -27,13 +27,6 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
   RNSScreenReplaceAnimationPush,
 };
 
-typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
-  RNSStatusBarStyleAuto,
-  RNSStatusBarStyleInverted,
-  RNSStatusBarStyleLight,
-  RNSStatusBarStyleDark,
-};
-
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;

@@ -3,6 +3,13 @@
 
 #import "RNSScreen.h"
 
+typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
+  RNSStatusBarStyleAuto,
+  RNSStatusBarStyleInverted,
+  RNSStatusBarStyleLight,
+  RNSStatusBarStyleDark,
+};
+
 @interface RNSScreenStackHeaderConfig : UIView
 
 @property (nonatomic, weak) RNSScreenView *screenView;
