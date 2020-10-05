@@ -369,6 +369,7 @@
   if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
     [RNSScreenStackHeaderConfig assertViewControllerBasedStatusBarAppearenceSet];
     [(RNSScreen *)vc updateStatusBarAppearance];
+    vc.modalPresentationCapturesStatusBarAppearance = YES;
   }
 #endif
 
