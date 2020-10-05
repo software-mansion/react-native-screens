@@ -122,7 +122,7 @@
   // It is workaround for loading custom back icon when transitioning from a screen without header to the screen which has one.
   // This action fails when navigating to the screen with header for the second time and loads default back button.
   // It looks like changing the tint color of navbar triggers an update of the items belonging to it and it seems to load the custom back image
-  // so we change the tint color's alpha by a very small amount and then set it to the one it should have.  
+  // so we change the tint color's alpha by a very small amount and then set it to the one it should have.
   [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
@@ -365,6 +365,16 @@
     navctr.navigationBar.semanticContentAttribute = config.direction;
   }
 
+#if (TARGET_OS_IOS)
+  if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
+    [RNSScreenStackHeaderConfig assertViewControllerBasedStatusBarAppearenceSet];
+    [(RNSScreen *)vc updateStatusBarAppearance];
+  }
+  if (config.screenOrientation) {
+    [RNSScreen enforceDesiredDeviceOrientationWithOrientationMask:vc.supportedInterfaceOrientations];
+  }
+#endif
+
   navitem.title = config.title;
 #if (TARGET_OS_IOS)
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
@@ -485,6 +495,19 @@
   }
 }
 
++ (void)assertViewControllerBasedStatusBarAppearenceSet
+{
+  static dispatch_once_t once;
+  static bool viewControllerBasedAppearence;
+  dispatch_once(&once, ^{
+    viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue];
+  });
+  if (!viewControllerBasedAppearence) {
+    RCTLogError(@"If you want to change the appearance of status bar, you have to change \
+    UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
+  }
+}
+
 @end
 
 @implementation RNSScreenStackHeaderConfigManager
@@ -519,6 +542,10 @@ RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
+RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
+RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
 
 @end
 
@@ -565,20 +592,50 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 }
 
 RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
-   @"back": @(RNSScreenStackHeaderSubviewTypeBackButton),
-   @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
-   @"right": @(RNSScreenStackHeaderSubviewTypeRight),
-   @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
-   @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
-   }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
+  @"back": @(RNSScreenStackHeaderSubviewTypeBackButton),
+  @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
+  @"right": @(RNSScreenStackHeaderSubviewTypeRight),
+  @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
+  @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
+  }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
 RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
-   @"ltr": @(UISemanticContentAttributeForceLeftToRight),
-   @"rtl": @(UISemanticContentAttributeForceRightToLeft),
-   }), UISemanticContentAttributeUnspecified, integerValue)
+  @"ltr": @(UISemanticContentAttributeForceLeftToRight),
+  @"rtl": @(UISemanticContentAttributeForceRightToLeft),
+  }), UISemanticContentAttributeUnspecified, integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
   
+RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
+  @"auto": @(RNSStatusBarStyleAuto),
+  @"inverted": @(RNSStatusBarStyleInverted),
+  @"light": @(RNSStatusBarStyleLight),
+  @"dark": @(RNSStatusBarStyleDark),
+  }), RNSStatusBarStyleAuto, integerValue)
+
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
+{
+  json = [self NSString:json];
+  if ([json isEqualToString:@"default"]) {
+    return UIInterfaceOrientationMaskAllButUpsideDown;
+  } else if ([json isEqualToString:@"all"]) {
+    return UIInterfaceOrientationMaskAll;
+  } else if ([json isEqualToString:@"portrait"]) {
+    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"portrait_up"]) {
+    return UIInterfaceOrientationMaskPortrait;
+  } else if ([json isEqualToString:@"portrait_down"]) {
+    return UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"landscape"]) {
+    return UIInterfaceOrientationMaskLandscape;
+  } else if ([json isEqualToString:@"landscape_left"]) {
+    return UIInterfaceOrientationMaskLandscapeLeft;
+  } else if ([json isEqualToString:@"landscape_right"]) {
+    return UIInterfaceOrientationMaskLandscapeRight;
+  }
+  return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager

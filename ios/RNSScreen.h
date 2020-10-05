@@ -27,20 +27,11 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
   RNSScreenReplaceAnimationPush,
 };
 
-typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
-  RNSStatusBarStyleAuto,
-  RNSStatusBarStyleInverted,
-  RNSStatusBarStyleLight,
-  RNSStatusBarStyleDark,
-};
-
 
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
 + (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
-+ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
-+ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
 
 @end
 
@@ -52,6 +43,7 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 + (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation;
 + (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation;
 + (void)enforceDesiredDeviceOrientationWithOrientationMask:(UIInterfaceOrientationMask)orientationMask;
+- (void)updateStatusBarAppearance;
 
 @end
 
@@ -73,10 +65,6 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
-@property (nonatomic) RNSStatusBarStyle statusBarStyle;
-@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
-@property (nonatomic) BOOL statusBarHidden;
-@property (nonatomic) UIInterfaceOrientationMask screenOrientation;
 
 - (void)notifyFinishTransitioning;
 

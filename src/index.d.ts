@@ -110,32 +110,6 @@ declare module 'react-native-screens' {
      */
     replaceAnimation?: ScreenReplaceTypes;
     /**
-     * @host (iOS only)
-     * @description Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
-     */
-    statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
-    /**
-     * @host (iOS only)
-     * @description Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
-     */
-    statusBarAnimation?: 'none' | 'fade' | 'slide';
-    /**
-     * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
-     */
-    statusBarHidden?: boolean;
-    /**
-     * @description Controls in which orientation should the screen appear. Defaults to `default`.
-     * @type "default" - resolves to "all" without "portrait_down"
-     * @type "all" – all orientations are permitted
-     * @type "portrait" – portrait orientations are permitted
-     * @type "portrait_up" – right-side portrait orientation is permitted
-     * @type "portrait_down" – upside-down portrait orientation is permitted
-     * @type "landscape" – landscape orientations are permitted
-     * @type "landscape_left" – landscape-left orientation is permitted
-     * @type "landscape_right" – landscape-right orientation is permitted
-     */
-    screenOrientation?: ScreenOrientationTypes;
-    /**
      * @description When set to false the back swipe gesture will be disabled when the parent Screen is on top of the stack. The default value is true.
      */
     gestureEnabled?: boolean;
@@ -264,6 +238,33 @@ declare module 'react-native-screens' {
      * @description Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
      */
     blurEffect?: BlurEffectTypes;
+    /**
+     * @host (iOS only)
+     * @description Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
+     */
+    statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
+    /**
+     * @host (iOS only)
+     * @description Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+     */
+    statusBarAnimation?: 'none' | 'fade' | 'slide';
+    /**
+     * @host (iOS only)
+     * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
+     */
+    statusBarHidden?: boolean;
+    /**
+     * @description Controls in which orientation should the screen appear.
+     * @type "default" - resolves to "all" without "portrait_down" on iOS.
+     * @type "all" – all orientations are permitted
+     * @type "portrait" – portrait orientations are permitted
+     * @type "portrait_up" – right-side portrait orientation is permitted
+     * @type "portrait_down" – upside-down portrait orientation is permitted
+     * @type "landscape" – landscape orientations are permitted
+     * @type "landscape_left" – landscape-left orientation is permitted
+     * @type "landscape_right" – landscape-right orientation is permitted
+     */
+    screenOrientation?: ScreenOrientationTypes;
   }
 
   export const Screen: ComponentClass<ScreenProps>;

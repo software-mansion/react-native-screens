@@ -3,6 +3,13 @@
 
 #import "RNSScreen.h"
 
+typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
+  RNSStatusBarStyleAuto,
+  RNSStatusBarStyleInverted,
+  RNSStatusBarStyleLight,
+  RNSStatusBarStyleDark,
+};
+
 @interface RNSScreenStackHeaderConfig : UIView
 
 @property (nonatomic, weak) RNSScreenView *screenView;
@@ -29,6 +36,10 @@
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
 @property (nonatomic) UISemanticContentAttribute direction;
+@property (nonatomic) RNSStatusBarStyle statusBarStyle;
+@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
+@property (nonatomic) BOOL statusBarHidden;
+@property (nonatomic) UIInterfaceOrientationMask screenOrientation;
 
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
 
@@ -50,7 +61,9 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
-+ (UISemanticContentAttribute)RNSScreenDirection:(id)json;
++ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
++ (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
 
 @end
 

@@ -27,12 +27,6 @@
     _controller = [[RNSScreen alloc] initWithView:self];
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
-#if (TARGET_OS_IOS)
-    _statusBarStyle = RNSStatusBarStyleAuto;
-    _statusBarAnimation = UIStatusBarAnimationFade;
-    _statusBarHidden = NO;
-    _screenOrientation = UIInterfaceOrientationMaskAllButUpsideDown;
-#endif
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
@@ -149,59 +143,6 @@
   }
 }
 
-- (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
-{
-  if (statusBarStyle != _statusBarStyle) {
-    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
-      RCTLogError(@"If you want to change the style of status bar, you have to change \
-      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-    } else {
-      _statusBarStyle = statusBarStyle;
-      _controller.modalPresentationCapturesStatusBarAppearance = YES;
-      [UIView animateWithDuration:0.5 animations:^{
-        [self->_controller setNeedsStatusBarAppearanceUpdate];
-      }];
-    }
-  }
-}
-
-- (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
-{
-  if (statusBarAnimation != _statusBarAnimation) {
-    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
-      RCTLogError(@"If you want to change the animation of status bar, you have to change \
-      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-    } else {
-      _statusBarAnimation = statusBarAnimation;
-      _controller.modalPresentationCapturesStatusBarAppearance = YES;
-      [UIView animateWithDuration:0.5 animations:^{
-        [self->_controller setNeedsStatusBarAppearanceUpdate];
-      }];
-    }
-  }
-}
-
-- (void)setStatusBarHidden:(BOOL)statusBarHidden
-{
-  if (statusBarHidden != _statusBarHidden) {
-    if (![[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue]) {
-      RCTLogError(@"If you want to change the visibility of status bar, you have to change \
-      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-    } else {
-      _statusBarHidden = statusBarHidden;
-      _controller.modalPresentationCapturesStatusBarAppearance = YES;
-      [UIView animateWithDuration:0.5 animations:^{
-        [self->_controller setNeedsStatusBarAppearanceUpdate];
-      }];
-    }
-  }
-}
-
-- (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
-{
-  _screenOrientation = screenOrientation;
-  [RNSScreen enforceDesiredDeviceOrientationWithOrientationMask:_screenOrientation];
-}
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
 {
@@ -341,27 +282,6 @@
   _controller = nil;
 }
 
-- (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle
-{
-#ifdef __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    switch (_statusBarStyle) {
-      case RNSStatusBarStyleAuto:
-          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
-      case RNSStatusBarStyleInverted:
-          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleLight:
-          return UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleDark:
-          return UIStatusBarStyleDarkContent;
-      default:
-        return UIStatusBarStyleLightContent;
-    }
-  }
-#endif
-  return UIStatusBarStyleLightContent;
-}
-
 @end
 
 @implementation RNSScreen {
@@ -383,8 +303,8 @@
   if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
     return child.preferredStatusBarStyle;
   }
-  RNSScreenView *screenView = [self findScreenViewForScreenProps];
-  return [screenView statusBarStyleForRNSStatusBarStyle];
+  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  return [self statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
@@ -393,8 +313,8 @@
   if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
     return child.preferredStatusBarUpdateAnimation;
   }
-  RNSScreenView *screenView = [self findScreenViewForScreenProps];
-  return screenView.statusBarAnimation;
+  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -405,8 +325,8 @@
       return [child childViewControllerForStatusBarHidden].prefersStatusBarHidden;
     }
   }
-  RNSScreenView *screenView = [self findScreenViewForScreenProps];
-  return screenView.statusBarHidden;
+  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  return config && config.statusBarHidden ? config.statusBarHidden : NO;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -415,18 +335,16 @@
   if ([presentedVC isKindOfClass:[RNSScreen class]]) {
     return presentedVC.supportedInterfaceOrientations;
   }
-  
+
   UIViewController *child = [[self childViewControllers] lastObject];
   if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
     return child.supportedInterfaceOrientations;
   }
-  RNSScreenView *screenView = [self findScreenViewForScreenProps];
-  
-  UIInterfaceOrientationMask orientationMask = screenView.screenOrientation;
-  return orientationMask;
+  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  return config && config.screenOrientation ? config.screenOrientation : UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
-- (RNSScreenView *)findScreenViewForScreenProps
+- (RNSScreenStackHeaderConfig *)findConfigForScreen
 {
   // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
   UIViewController *parent = [self parentViewController];
@@ -441,7 +359,14 @@
   RNSScreenView *screenView = [parent isKindOfClass:[RNScreensNavigationController class]]
     ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view])
     : [parent isKindOfClass:[RNSScreen class]] ? ((RNSScreenView *)parent.view) : ((RNSScreenView *)self.view);
-  return screenView;
+  RNSScreenStackHeaderConfig *config = nil;
+  for (UIView *subview in screenView.reactSubviews) {
+    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      config = (RNSScreenStackHeaderConfig*) subview;
+      break;
+    }
+  }
+  return config;
 }
 
 - (void)viewDidLayoutSubviews
@@ -482,9 +407,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [UIView animateWithDuration:0.5 animations:^{
-    [self setNeedsStatusBarAppearanceUpdate];
-  }];
+  [self updateStatusBarAppearance];
   [RNSScreen enforceDesiredDeviceOrientationWithOrientationMask:self.supportedInterfaceOrientations];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
@@ -615,6 +538,36 @@
     }
 }
 
+// duration based on "Programming iOS 13" p. 311 implementation
+- (void)updateStatusBarAppearance
+{
+  self.modalPresentationCapturesStatusBarAppearance = YES;
+  [UIView animateWithDuration:0.4 animations:^{
+    [self setNeedsStatusBarAppearanceUpdate];
+  }];
+}
+
+- (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
+{
+#ifdef __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    switch (statusBarStyle) {
+      case RNSStatusBarStyleAuto:
+          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
+      case RNSStatusBarStyleInverted:
+          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
+      case RNSStatusBarStyleLight:
+          return UIStatusBarStyleLightContent;
+      case RNSStatusBarStyleDark:
+          return UIStatusBarStyleDarkContent;
+      default:
+        return UIStatusBarStyleLightContent;
+    }
+  }
+#endif
+  return UIStatusBarStyleLightContent;
+}
+
 @end
 
 @implementation RNSScreenManager
@@ -626,10 +579,6 @@ RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
-RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
-RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
-RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
@@ -666,35 +615,5 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
                                                   @"push": @(RNSScreenReplaceAnimationPush),
                                                   @"pop": @(RNSScreenReplaceAnimationPop),
                                                   }), RNSScreenReplaceAnimationPop, integerValue)
-
-RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
-                                                  @"auto": @(RNSStatusBarStyleAuto),
-                                                  @"inverted": @(RNSStatusBarStyleInverted),
-                                                  @"light": @(RNSStatusBarStyleLight),
-                                                  @"dark": @(RNSStatusBarStyleDark),
-                                                  }), RNSStatusBarStyleAuto, integerValue)
-
-+ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
-{
-  json = [self NSString:json];
-  if ([json isEqualToString:@"default"]) {
-    return UIInterfaceOrientationMaskAllButUpsideDown;
-  } else if ([json isEqualToString:@"all"]) {
-    return UIInterfaceOrientationMaskAll;
-  } else if ([json isEqualToString:@"portrait"]) {
-    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
-  } else if ([json isEqualToString:@"portrait_up"]) {
-    return UIInterfaceOrientationMaskPortrait;
-  } else if ([json isEqualToString:@"portrait_down"]) {
-    return UIInterfaceOrientationMaskPortraitUpsideDown;
-  } else if ([json isEqualToString:@"landscape"]) {
-    return UIInterfaceOrientationMaskLandscape;
-  } else if ([json isEqualToString:@"landscape_left"]) {
-    return UIInterfaceOrientationMaskLandscapeLeft;
-  } else if ([json isEqualToString:@"landscape_right"]) {
-    return UIInterfaceOrientationMaskLandscapeRight;
-  }
-  return UIInterfaceOrientationMaskAllButUpsideDown;
-}
 
 @end
