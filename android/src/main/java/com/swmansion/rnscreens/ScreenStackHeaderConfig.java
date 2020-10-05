@@ -170,9 +170,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       }
     }
 
-//    if (mScreenOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
-      activity.setRequestedOrientation(mScreenOrientation);
-//    }
+    // orientation
+    activity.setRequestedOrientation(mScreenOrientation);
 
     if (mIsHidden) {
       if (mToolbar.getParent() != null) {
