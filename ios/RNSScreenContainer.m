@@ -175,8 +175,8 @@
     }
   }
 
-  // if we are down to one active screen it means the transitioning is over and we want to notify	
-  // the transition has finished	
+  // if we are down to one active screen it means the transitioning is over and we want to notify
+  // the transition has finished
   if ((activeScreenRemoved || activeScreenAdded) && _activeScreens.count == 1) {
     RNSScreenView *singleActiveScreen = [_activeScreens anyObject];
     // restore interactions

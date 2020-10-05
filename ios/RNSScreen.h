@@ -43,6 +43,7 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 @end
 
 @interface RNSScreenManager : RCTViewManager
+
 @end
 
 @interface RNSScreenView : RCTView
