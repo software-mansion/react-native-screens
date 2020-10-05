@@ -385,7 +385,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
   private ScreenStackHeaderConfig findHeaderConfig(ViewGroup viewGroup){
     ViewParent parent = viewGroup.getParent();
-    while(parent != null) {
+    while (parent != null) {
       if (parent instanceof Screen) {
         for (int i = 0; i < ((Screen) parent).getChildCount(); i++) {
           View child = ((Screen)parent).getChildAt(i);
