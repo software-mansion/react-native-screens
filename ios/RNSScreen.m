@@ -446,6 +446,27 @@
   }];
 }
 
+- (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
+{
+#ifdef __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    switch (statusBarStyle) {
+      case RNSStatusBarStyleAuto:
+          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
+      case RNSStatusBarStyleInverted:
+          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
+      case RNSStatusBarStyleLight:
+          return UIStatusBarStyleLightContent;
+      case RNSStatusBarStyleDark:
+          return UIStatusBarStyleDarkContent;
+      default:
+        return UIStatusBarStyleLightContent;
+    }
+  }
+#endif
+  return UIStatusBarStyleLightContent;
+}
+
 @end
 
 @implementation RNSScreenManager
