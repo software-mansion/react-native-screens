@@ -38,6 +38,9 @@ export default function HeaderConfig({
   headerShown,
   backButtonInCustomView,
   direction,
+  statusBarAnimation,
+  statusBarHidden,
+  statusBarStyle,
 }: Props): JSX.Element {
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
@@ -63,6 +66,9 @@ export default function HeaderConfig({
       largeTitleFontFamily={headerLargeTitleStyle.fontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleHideShadow={headerLargeTitleHideShadow}
+      statusBarAnimation={statusBarAnimation}
+      statusBarHidden={statusBarHidden}
+      statusBarStyle={statusBarStyle}
       title={
         headerTitle !== undefined
           ? headerTitle

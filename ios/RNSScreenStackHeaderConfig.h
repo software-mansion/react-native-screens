@@ -29,6 +29,9 @@
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
 @property (nonatomic) UISemanticContentAttribute direction;
+@property (nonatomic) RNSStatusBarStyle statusBarStyle;
+@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
+@property (nonatomic) BOOL statusBarHidden;
 
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
 
@@ -50,7 +53,8 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
-+ (UISemanticContentAttribute)RNSScreenDirection:(id)json;
++ (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
++ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 
 @end
 

@@ -27,11 +27,6 @@
     _controller = [[RNSScreen alloc] initWithView:self];
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
-#if (TARGET_OS_IOS)
-    _statusBarStyle = RNSStatusBarStyleAuto;
-    _statusBarAnimation = UIStatusBarAnimationFade;
-    _statusBarHidden = NO;
-#endif
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
@@ -148,45 +143,6 @@
   }
 }
 
-- (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
-{
-  if (statusBarStyle != _statusBarStyle) {
-    [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
-    _statusBarStyle = statusBarStyle;
-    [_controller updateStatusBarAppearance];
-  }
-}
-
-- (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
-{
-  if (statusBarAnimation != _statusBarAnimation) {
-    [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
-    _statusBarAnimation = statusBarAnimation;
-    [_controller updateStatusBarAppearance];
-  }
-}
-
-- (void)setStatusBarHidden:(BOOL)statusBarHidden
-{
-  if (statusBarHidden != _statusBarHidden) {
-    [RNSScreenView assertViewControllerBasedStatusBarAppearenceSet];
-    _statusBarHidden = statusBarHidden;
-    [_controller updateStatusBarAppearance];
-  }
-}
-
-+ (void)assertViewControllerBasedStatusBarAppearenceSet
-{
-    static dispatch_once_t once;
-    static bool viewControllerBasedAppearence;
-    dispatch_once(&once, ^{
-viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue];
-    });
-    if (!viewControllerBasedAppearence) {
-      RCTLogError(@"If you want to change the appearance of status bar, you have to change \
-      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-    }
-}
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
 {
@@ -326,27 +282,6 @@ viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryK
   _controller = nil;
 }
 
-- (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle
-{
-#ifdef __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    switch (_statusBarStyle) {
-      case RNSStatusBarStyleAuto:
-          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
-      case RNSStatusBarStyleInverted:
-          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleLight:
-          return UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleDark:
-          return UIStatusBarStyleDarkContent;
-      default:
-        return UIStatusBarStyleLightContent;
-    }
-  }
-#endif
-  return UIStatusBarStyleLightContent;
-}
-
 @end
 
 @implementation RNSScreen {
@@ -368,8 +303,8 @@ viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryK
   if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
     return child.preferredStatusBarStyle;
   }
-  RNSScreenView *screenView = [self findScreenViewForScreenProps];
-  return [screenView statusBarStyleForRNSStatusBarStyle];
+  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  return config ? [self statusBarStyleForRNSStatusBarStyle:config.statusBarStyle] : [self statusBarStyleForRNSStatusBarStyle:RNSStatusBarStyleAuto];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
@@ -378,8 +313,8 @@ viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryK
   if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
     return child.preferredStatusBarUpdateAnimation;
   }
-  RNSScreenView *screenView = [self findScreenViewForScreenProps];
-  return screenView.statusBarAnimation;
+  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  return config ? config.statusBarAnimation : UIStatusBarAnimationFade;
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -390,11 +325,11 @@ viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryK
       return [child childViewControllerForStatusBarHidden].prefersStatusBarHidden;
     }
   }
-  RNSScreenView *screenView = [self findScreenViewForScreenProps];
-  return screenView.statusBarHidden;
+  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  return config ? config.statusBarHidden : NO;
 }
 
-- (RNSScreenView *)findScreenViewForScreenProps
+- (RNSScreenStackHeaderConfig *)findConfigForScreen
 {
   // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
   UIViewController *parent = [self parentViewController];
@@ -409,7 +344,14 @@ viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryK
   RNSScreenView *screenView = [parent isKindOfClass:[RNScreensNavigationController class]]
     ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view])
     : [parent isKindOfClass:[RNSScreen class]] ? ((RNSScreenView *)parent.view) : ((RNSScreenView *)self.view);
-  return screenView;
+  RNSScreenStackHeaderConfig *config = nil;
+  for (UIView *subview in screenView.reactSubviews) {
+    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      config = (RNSScreenStackHeaderConfig*) subview;
+      break;
+    }
+  }
+  return config;
 }
 
 - (void)viewDidLayoutSubviews
@@ -515,9 +457,6 @@ RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
-RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
-RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
-RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
@@ -554,12 +493,5 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
                                                   @"push": @(RNSScreenReplaceAnimationPush),
                                                   @"pop": @(RNSScreenReplaceAnimationPop),
                                                   }), RNSScreenReplaceAnimationPop, integerValue)
-
-RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
-                                                  @"auto": @(RNSStatusBarStyleAuto),
-                                                  @"inverted": @(RNSStatusBarStyleInverted),
-                                                  @"light": @(RNSStatusBarStyleLight),
-                                                  @"dark": @(RNSStatusBarStyleDark),
-                                                  }), RNSStatusBarStyleAuto, integerValue)
 
 @end

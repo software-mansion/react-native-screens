@@ -365,6 +365,13 @@
     navctr.navigationBar.semanticContentAttribute = config.direction;
   }
 
+#if (TARGET_OS_IOS)
+  if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
+    [RNSScreenStackHeaderConfig assertViewControllerBasedStatusBarAppearenceSet];
+    [(RNSScreen *)vc updateStatusBarAppearance];
+  }
+#endif
+
   navitem.title = config.title;
 #if (TARGET_OS_IOS)
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
@@ -485,6 +492,19 @@
   }
 }
 
++ (void)assertViewControllerBasedStatusBarAppearenceSet
+{
+    static dispatch_once_t once;
+    static bool viewControllerBasedAppearence;
+    dispatch_once(&once, ^{
+viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue];
+    });
+    if (!viewControllerBasedAppearence) {
+      RCTLogError(@"If you want to change the appearance of status bar, you have to change \
+      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
+    }
+}
+
 @end
 
 @implementation RNSScreenStackHeaderConfigManager
@@ -519,6 +539,9 @@ RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
+RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
+RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 
 @end
 
@@ -579,6 +602,13 @@ RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
   
+RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
+                                                  @"auto": @(RNSStatusBarStyleAuto),
+                                                  @"inverted": @(RNSStatusBarStyleInverted),
+                                                  @"light": @(RNSStatusBarStyleLight),
+                                                  @"dark": @(RNSStatusBarStyleDark),
+                                                  }), RNSStatusBarStyleAuto, integerValue)
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager

@@ -38,7 +38,6 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
 + (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
-+ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 
 @end
 
@@ -68,9 +67,6 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
-@property (nonatomic) RNSStatusBarStyle statusBarStyle;
-@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
-@property (nonatomic) BOOL statusBarHidden;
 
 - (void)notifyFinishTransitioning;
 

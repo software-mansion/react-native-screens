@@ -101,20 +101,6 @@ declare module 'react-native-screens' {
      */
     replaceAnimation?: ScreenReplaceTypes;
     /**
-     * @host (iOS only)
-     * @description Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
-     */
-    statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
-    /**
-     * @host (iOS only)
-     * @description Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
-     */
-    statusBarAnimation?: 'none' | 'fade' | 'slide';
-    /**
-     * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
-     */
-    statusBarHidden?: boolean;
-    /**
      * @description When set to false the back swipe gesture will be disabled when the parent Screen is on top of the stack. The default value is true.
      */
     gestureEnabled?: boolean;
@@ -243,6 +229,21 @@ declare module 'react-native-screens' {
      * @description Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
      */
     blurEffect?: BlurEffectTypes;
+    /**
+     * @host (iOS only)
+     * @description Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
+     */
+    statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
+    /**
+     * @host (iOS only)
+     * @description Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+     */
+    statusBarAnimation?: 'none' | 'fade' | 'slide';
+    /**
+     * @host (iOS only)
+     * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
+     */
+    statusBarHidden?: boolean;
   }
 
   export const Screen: ComponentClass<ScreenProps>;
