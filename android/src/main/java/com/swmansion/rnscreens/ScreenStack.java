@@ -171,8 +171,20 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
 
-    for (ScreenStackFragment screen : mScreenFragments) {
-      // detach all screens that should not be visible
+    // detach all screens that should not be visible
+    for (int i = 0; i < mScreenFragments.size(); i++) {
+      ScreenStackFragment screen = mScreenFragments.get(i);
+
+      // Stop detaching screens if next screen is a transparent modal. This is needed to be able to
+      // see all screens above and including the last non transparent screen
+      boolean hasNextScreen = i < mScreenFragments.size() - 1;
+      if(hasNextScreen){
+        ScreenStackFragment nextScreen = mScreenFragments.get(i + 1);
+        if(nextScreen.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL){
+          break;
+        }
+      }
+
       if (screen != newTop && screen != belowTop && !mDismissed.contains(screen)) {
         getOrCreateTransaction().remove(screen);
       }
