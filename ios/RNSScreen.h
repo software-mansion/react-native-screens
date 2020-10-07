@@ -54,7 +54,7 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
-@property (nonatomic) BOOL active;
+@property (nonatomic) int active;
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;

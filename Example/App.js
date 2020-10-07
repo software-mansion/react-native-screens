@@ -1,120 +1,138 @@
-import React from 'react';
+import * as React from 'react';
 import {
-  Text,
   View,
-  FlatList,
   StyleSheet,
-  TouchableHighlight,
+  Text,
+  TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 import { enableScreens } from 'react-native-screens';
-
-import Stack from './stack';
-import NativeStack from './nativeStack';
-import Tabs from './tabs';
-import Navigation from './navigation';
-import NativeNavigation from './nativeNavigation';
-import NavigationTabsAndStack from './navigationTabsAndStack';
 
 enableScreens();
 
-const SCREENS = {
-  Stack: { Screen: Stack, title: 'Screen container based stack' },
-  NativeStack: { Screen: NativeStack, title: 'Native stack example' },
-  Tabs: { Screen: Tabs, title: 'Tabs example' },
-  NativeNavigation: {
-    Screen: NativeNavigation,
-    title: 'Native stack bindings for RNN',
-  },
-  Navigation: {
-    Screen: Navigation,
-    title: 'React Navigation with screen enabled',
-  },
-  NavigationTabsAndStack: {
-    Screen: NavigationTabsAndStack,
-    title: 'React Navigation Tabs + Stack',
-  },
-};
-
-class MainScreen extends React.Component {
-  static navigationOptions = {
-    title: '📱 React Native Screens Examples',
-  };
-  render() {
-    const data = Object.keys(SCREENS).map((key) => ({ key }));
-    return (
-      <FlatList
-        style={styles.list}
-        data={data}
-        ItemSeparatorComponent={ItemSeparator}
-        renderItem={(props) => (
-          <MainScreenItem
-            {...props}
-            onPressItem={({ key }) => this.props.navigation.navigate(key)}
-          />
-        )}
-      />
-    );
-  }
+function First({ navigation }) {
+  return (
+    <View style={styles.verticalContainer}>
+      <View style={styles.centeredContainer}>
+        <TouchableOpacity
+          style={[styles.centeredContainer, styles.buttonExtras]}
+          onPress={() => navigation.navigate('Second')}>
+          <Text style={styles.buttonText}>Tap me for second screen</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.centeredContainer}>
+        <Text>Hi I'm the SECOND screen</Text>
+        <TextInput
+          placeholder={'Password'}
+          autoCompleteType={'password'}
+          secureTextEntry={true}
+        />
+      </View>
+      <View style={styles.centeredContainer}>
+        <TouchableOpacity
+          style={[styles.centeredContainer, styles.buttonExtras]}
+          onPress={() => navigation.popToTop()}>
+          <Text style={styles.buttonText}>Pop to top</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.flexOne} />
+      <View style={styles.flexOne}>
+        <TouchableOpacity
+          style={[styles.centeredContainer, styles.buttonExtras]}
+          onPress={() => navigation.navigate('Second')}>
+          <Text style={styles.buttonText}>Tap me for second screen</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
-const ItemSeparator = () => <View style={styles.separator} />;
-
-class MainScreenItem extends React.Component {
-  _onPress = () => this.props.onPressItem(this.props.item);
-  render() {
-    const { key } = this.props.item;
-    return (
-      <TouchableHighlight onPress={this._onPress}>
-        <View style={styles.button}>
-          <Text style={styles.buttonText}>{SCREENS[key].title || key}</Text>
-        </View>
-      </TouchableHighlight>
-    );
-  }
+function Second({ navigation }) {
+  return (
+    <View style={styles.verticalContainer}>
+      <View style={styles.centeredContainer}>
+        <TouchableOpacity
+          style={[styles.centeredContainer, styles.buttonExtras]}
+          onPress={() => navigation.navigate('Second')}>
+          <Text style={styles.buttonText}>Tap me for second screen</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.centeredContainer}>
+        <Text>Hi I'm the SECOND screen</Text>
+        <TextInput
+          placeholder={'Password'}
+          autoCompleteType={'password'}
+          secureTextEntry={true}
+        />
+      </View>
+      <View style={styles.centeredContainer}>
+        <TouchableOpacity
+          style={[styles.centeredContainer, styles.buttonExtras]}
+          onPress={() => navigation.popToTop()}>
+          <Text style={styles.buttonText}>Pop to top</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.flexOne} />
+      <View style={styles.flexOne}>
+        <TouchableOpacity
+          style={[styles.centeredContainer, styles.buttonExtras]}
+          onPress={() => navigation.push('Second')}>
+          <Text style={styles.buttonText}>Tap me for second screen</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
-const MainScreenStack = createStackNavigator();
+const Stack = createStackNavigator();
 
-const ExampleApp = () => (
-  <NavigationContainer>
-    <MainScreenStack.Navigator>
-      <MainScreenStack.Screen name="Main" component={MainScreen} />
-      {Object.keys(SCREENS).map((name) => {
-        const { Screen, title } = SCREENS[name];
-        return (
-          <MainScreenStack.Screen
-            key={name}
-            name={name}
-            component={Screen}
-            options={{ title }}
-          />
-        );
-      })}
-    </MainScreenStack.Navigator>
-  </NavigationContainer>
-);
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        // mode="modal"
+        // activeLimit={5}
+        screensEnabled={true}
+        screenOptions={{
+          animationEnabled: true,
+          transparentCard: true,
+          // cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
+          headerStyle: { backgroundColor: 'red' },
+          gestureEnabled: true,
+        }}>
+        <Stack.Screen name="First" component={First} />
+        <Stack.Screen name="Second" component={Second} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
 const styles = StyleSheet.create({
-  list: {
-    backgroundColor: '#EFEFF4',
+  verticalContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'pink',
   },
-  separator: {
-    height: 1,
-    backgroundColor: '#DBDBE0',
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  flexOne: {
+    flex: 1,
+  },
+  buttonExtras: {
+    backgroundColor: '#3A8EED',
+    borderRadius: 20,
+    margin: 20,
   },
   buttonText: {
-    backgroundColor: 'transparent',
-  },
-  button: {
-    flex: 1,
-    height: 60,
-    padding: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
-
-export default ExampleApp;

@@ -58,11 +58,16 @@
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 }
 
-- (void)setActive:(BOOL)active
+- (void)setActive:(int)active
 {
   if (active != _active) {
+    NSLog(@"%@: active: %d", self.reactTag, active);
     _active = active;
+    self.userInteractionEnabled = NO;
     [_reactSuperview markChildUpdated];
+    if (_active == 2) {
+      self.userInteractionEnabled = YES;
+    }
   }
 }
 
@@ -384,7 +389,7 @@
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_VIEW_PROPERTY(active, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(active, int)
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)

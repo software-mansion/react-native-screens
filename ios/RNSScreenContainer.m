@@ -99,6 +99,7 @@
   [screen removeFromSuperview];
   [detachController removeFromParentViewController];
   [_activeScreens removeObject:screen];
+  NSLog(@"detach: %@", screen.reactTag);
 }
 
 - (void)attachScreen:(RNSScreenView *)screen atIndex:(NSInteger)index
@@ -119,7 +120,7 @@
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
   for (RNSScreenView *screen in _reactSubviews) {
-    if (!screen.active && [_activeScreens containsObject:screen]) {
+    if (screen.active == 0 && [_activeScreens containsObject:screen]) {
       activeScreenRemoved = YES;
       [self detachScreen:screen];
     }
@@ -133,7 +134,7 @@
   // detect if new screen is going to be activated
   BOOL activeScreenAdded = NO;
   for (RNSScreenView *screen in _reactSubviews) {
-    if (screen.active && ![_activeScreens containsObject:screen]) {
+    if (screen.active != 0 && ![_activeScreens containsObject:screen]) {
       activeScreenAdded = YES;
     }
   }
@@ -143,28 +144,24 @@
     // add new screens in order they are placed in subviews array
     NSInteger index = 0;
     for (RNSScreenView *screen in _reactSubviews) {
-      if (screen.active) {
-        if ([_activeScreens containsObject:screen]) {
+      if (screen.active != 0) {
+        if ([_activeScreens containsObject:screen] && screen.active != 2) {
           // for screens that were already active we want to mimick the effect UINavigationController
           // has when willMoveToWindow:nil is triggered before the animation starts
           [self prepareDetach:screen];
-          // disable interactions for the duration of transition
-          screen.userInteractionEnabled = NO;
+          NSLog(@"dis: %@", screen.reactTag);
+//          screen.userInteractionEnabled = NO;
         } else {
+          NSLog(@"attach: %@", screen.reactTag);
           [self attachScreen:screen atIndex:index];
         }
         index += 1;
       }
+      if (screen.active == 2) {
+        NSLog(@"ena: %@", screen.reactTag);
+        [screen notifyFinishTransitioning];
+      }
     }
-  }
-
-  // if we are down to one active screen it means the transitioning is over and we want to notify
-  // the transition has finished
-  if ((activeScreenRemoved || activeScreenAdded) && _activeScreens.count == 1) {
-    RNSScreenView *singleActiveScreen = [_activeScreens anyObject];
-    // restore interactions
-    singleActiveScreen.userInteractionEnabled = YES;
-    [singleActiveScreen notifyFinishTransitioning];
   }
 
   if ((activeScreenRemoved || activeScreenAdded) && _controller.presentedViewController == nil && _controller.presentingViewController == nil) {

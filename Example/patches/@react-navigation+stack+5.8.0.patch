@@ -1,0 +1,210 @@
+diff --git a/node_modules/@react-navigation/stack/src/views/Screens.tsx b/node_modules/@react-navigation/stack/src/views/Screens.tsx
+index 1d5bdc1..50129f9 100644
+--- a/node_modules/@react-navigation/stack/src/views/Screens.tsx
++++ b/node_modules/@react-navigation/stack/src/views/Screens.tsx
+@@ -17,7 +17,7 @@ class WebScreen extends React.Component<
+     active: number;
+     children: React.ReactNode;
+   }
+-> {
++  > {
+   render() {
+     const { active, style, ...rest } = this.props;
+ 
+@@ -54,7 +54,7 @@ export const MaybeScreen = ({
+   ...rest
+ }: ViewProps & {
+   enabled: boolean;
+-  active: 0 | 1 | Animated.AnimatedInterpolation;
++  active: 0 | 1 | 2 | Animated.AnimatedInterpolation;
+   children: React.ReactNode;
+ }) => {
+   if (enabled && Platform.OS === 'web') {
+diff --git a/node_modules/@react-navigation/stack/src/views/Stack/CardStack.tsx b/node_modules/@react-navigation/stack/src/views/Stack/CardStack.tsx
+index ae29193..6b40b68 100755
+--- a/node_modules/@react-navigation/stack/src/views/Stack/CardStack.tsx
++++ b/node_modules/@react-navigation/stack/src/views/Stack/CardStack.tsx
+@@ -4,7 +4,6 @@ import {
+   StyleSheet,
+   LayoutChangeEvent,
+   Dimensions,
+-  Platform,
+ } from 'react-native';
+ import type { EdgeInsets } from 'react-native-safe-area-context';
+ import type { Route, StackNavigationState } from '@react-navigation/native';
+@@ -63,6 +62,8 @@ type Props = {
+   onGestureStart?: (props: { route: Route<string> }) => void;
+   onGestureEnd?: (props: { route: Route<string> }) => void;
+   onGestureCancel?: (props: { route: Route<string> }) => void;
++  screensEnabled?: boolean;
++  activeLimit?: number;
+ };
+ 
+ type State = {
+@@ -169,7 +170,7 @@ export default class CardStack extends React.Component<Props, State> {
+         state.gestures[curr.key] ||
+         new Animated.Value(
+           props.openingRouteKeys.includes(curr.key) &&
+-          animationEnabled !== false
++            animationEnabled !== false
+             ? getDistanceFromOptions(props.mode, state.layout, descriptor)
+             : 0
+         );
+@@ -216,19 +217,19 @@ export default class CardStack extends React.Component<Props, State> {
+             ),
+             next: nextGesture
+               ? getProgressFromGesture(
+-                  props.mode,
+-                  nextGesture,
+-                  state.layout,
+-                  nextDescriptor
+-                )
++                props.mode,
++                nextGesture,
++                state.layout,
++                nextDescriptor
++              )
+               : undefined,
+             previous: previousGesture
+               ? getProgressFromGesture(
+-                  props.mode,
+-                  previousGesture,
+-                  state.layout,
+-                  previousDescriptor
+-                )
++                props.mode,
++                previousGesture,
++                state.layout,
++                previousDescriptor
++              )
+               : undefined,
+           },
+           __memo: [
+@@ -378,6 +379,8 @@ export default class CardStack extends React.Component<Props, State> {
+       onGestureStart,
+       onGestureEnd,
+       onGestureCancel,
++      screensEnabled = true,
++      activeLimit = mode === 'modal' ? 2 : 1,
+     } = this.props;
+ 
+     const { scenes, layout, gestures, headerHeights } = this.state;
+@@ -403,29 +406,25 @@ export default class CardStack extends React.Component<Props, State> {
+       left = insets.left,
+     } = focusedOptions.safeAreaInsets || {};
+ 
+-    // Screens is buggy on iOS and web, so we only enable it on Android
+-    // For modals, usually we want the screen underneath to be visible, so also disable it there
+-    const isScreensEnabled = Platform.OS !== 'ios' && mode !== 'modal';
+-
+     return (
+       <HeaderShownContext.Consumer>
+         {(isParentHeaderShown) => {
+           const isFloatHeaderAbsolute =
+             headerMode === 'float'
+               ? this.state.scenes.slice(-2).some((scene) => {
+-                  const { descriptor } = scene;
+-                  const options = descriptor ? descriptor.options : {};
+-                  const {
+-                    headerTransparent,
+-                    headerShown = isParentHeaderShown === false,
+-                  } = options;
+-
+-                  if (headerTransparent || headerShown === false) {
+-                    return true;
+-                  }
+-
+-                  return false;
+-                })
++                const { descriptor } = scene;
++                const options = descriptor ? descriptor.options : {};
++                const {
++                  headerTransparent,
++                  headerShown = isParentHeaderShown === false,
++                } = options;
++
++                if (headerTransparent || headerShown === false) {
++                  return true;
++                }
++
++                return false;
++              })
+               : false;
+ 
+           const floatingHeader =
+@@ -459,7 +458,7 @@ export default class CardStack extends React.Component<Props, State> {
+             <React.Fragment>
+               {isFloatHeaderAbsolute ? null : floatingHeader}
+               <MaybeScreenContainer
+-                enabled={isScreensEnabled}
++                enabled={screensEnabled}
+                 style={styles.container}
+                 onLayout={this.handleLayout}
+               >
+@@ -468,13 +467,28 @@ export default class CardStack extends React.Component<Props, State> {
+                   const gesture = gestures[route.key];
+                   const scene = scenes[index];
+ 
+-                  const isScreenActive = scene.progress.next
+-                    ? scene.progress.next.interpolate({
++                  let isScreenActive = 1;
++
++
++                  if (index < self.length - activeLimit - 1) {
++                    // screen should be inactive because it is too deep in the stack
++                    isScreenActive = 0;
++                  } else {
++                    const sceneForActivity = scenes[self.length - 1];
++                    const outputValue = index === self.length - 1
++                      ? 2  // the screen is on top after the transition
++                      : index >= self.length - activeLimit
++                        ? 1  // the screen should stay active after the transition, it is not on top but is in activeLimit
++                        : 0; // the screen should be active only during the transition
++                    isScreenActive = sceneForActivity
++                      ? sceneForActivity.progress.current.interpolate({
+                         inputRange: [0, 1 - EPSILON, 1],
+-                        outputRange: [1, 1, 0],
++                        outputRange: [1, 1, outputValue],
+                         extrapolate: 'clamp',
+                       })
+-                    : 1;
++                      : 1;
++
++                  }
+ 
+                   const {
+                     safeAreaInsets,
+@@ -494,8 +508,8 @@ export default class CardStack extends React.Component<Props, State> {
+                       : defaultTransitionPreset.cardStyleInterpolator,
+                     headerStyleInterpolator = defaultTransitionPreset.headerStyleInterpolator,
+                   } = scene.descriptor
+-                    ? scene.descriptor.options
+-                    : ({} as StackNavigationOptions);
++                      ? scene.descriptor.options
++                      : ({} as StackNavigationOptions);
+ 
+                   let transitionConfig = {
+                     gestureDirection,
+@@ -523,8 +537,8 @@ export default class CardStack extends React.Component<Props, State> {
+                           : defaultTransitionPreset.cardStyleInterpolator,
+                         headerStyleInterpolator = defaultTransitionPreset.headerStyleInterpolator,
+                       } = nextScene.descriptor
+-                        ? nextScene.descriptor.options
+-                        : ({} as StackNavigationOptions);
++                          ? nextScene.descriptor.options
++                          : ({} as StackNavigationOptions);
+ 
+                       transitionConfig = {
+                         gestureDirection,
+@@ -551,8 +565,10 @@ export default class CardStack extends React.Component<Props, State> {
+                     <MaybeScreen
+                       key={route.key}
+                       style={StyleSheet.absoluteFill}
+-                      enabled={isScreensEnabled}
++                      enabled={screensEnabled}
++                      // transitioning={transitioning}
+                       active={isScreenActive}
++                      // isTop={index === self.length - 1}
+                       pointerEvents="box-none"
+                     >
+                       <CardContainer
