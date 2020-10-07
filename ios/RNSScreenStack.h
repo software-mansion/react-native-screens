@@ -11,7 +11,7 @@
 
 @end
 
-@interface RNScreensNavigationController: UINavigationController
+@interface RNScreensNavigationController: UINavigationController <RNScreensViewControllerDelegate>
 
 @end
 

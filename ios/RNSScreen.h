@@ -34,7 +34,7 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 
 @end
 
-@interface RNSScreen : UIViewController
+@interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
@@ -43,6 +43,7 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 @end
 
 @interface RNSScreenManager : RCTViewManager
+
 @end
 
 @interface RNSScreenView : RCTView
@@ -52,7 +53,7 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
 @property (nonatomic, copy) RCTDirectEventBlock onWillAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
-@property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
+@property (weak, nonatomic) UIView <RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) BOOL active;

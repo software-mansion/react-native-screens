@@ -1,7 +1,6 @@
 #import "RNSScreenStack.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
-#import "UIViewController+RNScreens.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -22,19 +21,23 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
+  UIViewController *childVC =  [self topViewController];
   return [childVC isKindOfClass:[RNSScreen class]] ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  return [[self childViewControllers] lastObject].preferredStatusBarUpdateAnimation;
+  return [self topViewController].preferredStatusBarUpdateAnimation;
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+  return [self topViewController].prefersStatusBarHidden;
+}
 
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-  // this method is not called in category, probably due to being subclass of UINavigationController and not UIViewController and having own implementation
+  // it has to be implemented otherwise it won't use self preferredStatusBarStyle (https://stackoverflow.com/a/21215160/13006595)
   return nil;
 }
 

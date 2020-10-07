@@ -6,8 +6,14 @@
 
 @end
 
-@interface RNScreensViewController: UIViewController
+@protocol RNScreensViewControllerDelegate
+
+@end
+
+@interface RNScreensViewController: UIViewController <RNScreensViewControllerDelegate>
+
 @end
 
 @interface RNSScreenContainerView : UIView <RNSScreenContainerDelegate>
+
 @end

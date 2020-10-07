@@ -143,7 +143,6 @@
   }
 }
 
-
 - (void)setGestureEnabled:(BOOL)gestureEnabled
 {
   #ifdef __IPHONE_13_0
@@ -304,7 +303,7 @@
     return child.preferredStatusBarStyle;
   }
   RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
-  return config && config.statusBarStyle ? [self statusBarStyleForRNSStatusBarStyle:config.statusBarStyle] : [self statusBarStyleForRNSStatusBarStyle:RNSStatusBarStyleAuto];
+  return [self statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
@@ -321,9 +320,7 @@
 {
   UIViewController *child = [[self childViewControllers] lastObject];
   if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    if ([child childViewControllerForStatusBarHidden]) {
-      return [child childViewControllerForStatusBarHidden].prefersStatusBarHidden;
-    }
+    return child.prefersStatusBarHidden;
   }
   RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
   return config && config.statusBarHidden ? config.statusBarHidden : NO;
@@ -341,9 +338,14 @@
       parent = [parent parentViewController];
     }
   }
-  RNSScreenView *screenView = [parent isKindOfClass:[RNScreensNavigationController class]]
-    ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view])
-    : [parent isKindOfClass:[RNSScreen class]] ? ((RNSScreenView *)parent.view) : ((RNSScreenView *)self.view);
+  RNSScreenView *screenView = (RNSScreenView *)self.view;
+  if ([parent isKindOfClass:[RNScreensNavigationController class]] && [((RNScreensNavigationController *)parent).topViewController isKindOfClass:[RNSScreen class]]) {
+    // we found RNSScreenStack's controller so we take the child's configuration
+    screenView = ((RNSScreenView *)((RNScreensNavigationController *)parent).topViewController.view);
+  } else if ([parent isKindOfClass:[RNSScreen class]]) {
+    // we are probably in modal screen since no parent navigator for RNSScreen
+    screenView = ((RNSScreenView *)parent.view);
+  }
   RNSScreenStackHeaderConfig *config = nil;
   for (UIView *subview in screenView.reactSubviews) {
     if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
@@ -437,11 +439,10 @@
   _previousFirstResponder = nil;
 }
 
-// duration based on "Programming iOS 13" p. 311 implementation
 - (void)updateStatusBarAppearance
 {
   self.modalPresentationCapturesStatusBarAppearance = YES;
-  [UIView animateWithDuration:0.4 animations:^{
+  [UIView animateWithDuration:0.4 animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
     [self setNeedsStatusBarAppearanceUpdate];
   }];
 }
