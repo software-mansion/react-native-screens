@@ -177,7 +177,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
       // Stop detaching screens if next screen is a transparent modal. This is needed to be able to
       // see all screens above and including the last non transparent screen
-      boolean hasNextScreen = i < mScreenFragments.size() - 1;
+      boolean hasNextScreen = i + 1 < mScreenFragments.size();
       if(hasNextScreen){
         ScreenStackFragment nextScreen = mScreenFragments.get(i + 1);
         if(nextScreen.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL){
