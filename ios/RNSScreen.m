@@ -37,7 +37,7 @@
 - (void)reactSetFrame:(CGRect)frame
 {
   if (![self.reactViewController.parentViewController
-        isKindOfClass:[UINavigationController class]]) {
+        isKindOfClass:[UINavigationController class]] && self.stackPresentation != RNSScreenStackPresentationModal) {
     [super reactSetFrame:frame];
   }
   // when screen is mounted under UINavigationController it's size is controller
