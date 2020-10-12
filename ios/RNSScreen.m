@@ -298,10 +298,13 @@
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-    return lastViewController;
-  }
   return [lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)] ? lastViewController : nil;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+  RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
+  return [self statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
 }
 
 - (UIViewController *)childViewControllerForStatusBarHidden
@@ -310,10 +313,10 @@
   return [lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)] ? lastViewController : nil;
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle
+- (BOOL)prefersStatusBarHidden
 {
   RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
-  return [self statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
+  return config && config.statusBarHidden ? config.statusBarHidden : NO;
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
@@ -325,12 +328,6 @@
   
   RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
   return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-  RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
-  return config && config.statusBarHidden ? config.statusBarHidden : NO;
 }
 
 - (RNSScreenStackHeaderConfig *)findClosestScreenConfig
