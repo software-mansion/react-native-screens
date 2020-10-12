@@ -122,7 +122,7 @@
   // It is workaround for loading custom back icon when transitioning from a screen without header to the screen which has one.
   // This action fails when navigating to the screen with header for the second time and loads default back button.
   // It looks like changing the tint color of navbar triggers an update of the items belonging to it and it seems to load the custom back image
-  // so we change the tint color's alpha by a very small amount and then set it to the one it should have.  
+  // so we change the tint color's alpha by a very small amount and then set it to the one it should have.
   [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
@@ -495,15 +495,15 @@
 
 + (void)assertViewControllerBasedStatusBarAppearenceSet
 {
-    static dispatch_once_t once;
-    static bool viewControllerBasedAppearence;
-    dispatch_once(&once, ^{
-viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue];
-    });
-    if (!viewControllerBasedAppearence) {
-      RCTLogError(@"If you want to change the appearance of status bar, you have to change \
-      UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
-    }
+  static dispatch_once_t once;
+  static bool viewControllerBasedAppearence;
+  dispatch_once(&once, ^{
+    viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue];
+  });
+  if (!viewControllerBasedAppearence) {
+    RCTLogError(@"If you want to change the appearance of status bar, you have to change \
+    UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
+  }
 }
 
 @end
@@ -561,7 +561,6 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
     [blurEffects addEntriesFromDictionary:@{
       @"regular": @(UIBlurEffectStyleRegular),
       @"prominent": @(UIBlurEffectStyleProminent),
-
     }];
   }
 #if defined(__IPHONE_13_0) && TARGET_OS_IOS
@@ -589,26 +588,26 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 }
 
 RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
-   @"back": @(RNSScreenStackHeaderSubviewTypeBackButton),
-   @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
-   @"right": @(RNSScreenStackHeaderSubviewTypeRight),
-   @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
-   @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
-   }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
+  @"back": @(RNSScreenStackHeaderSubviewTypeBackButton),
+  @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
+  @"right": @(RNSScreenStackHeaderSubviewTypeRight),
+  @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
+  @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
+  }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
 RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
-   @"ltr": @(UISemanticContentAttributeForceLeftToRight),
-   @"rtl": @(UISemanticContentAttributeForceRightToLeft),
-   }), UISemanticContentAttributeUnspecified, integerValue)
+  @"ltr": @(UISemanticContentAttributeForceLeftToRight),
+  @"rtl": @(UISemanticContentAttributeForceRightToLeft),
+  }), UISemanticContentAttributeUnspecified, integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
   
 RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
-                                                  @"auto": @(RNSStatusBarStyleAuto),
-                                                  @"inverted": @(RNSStatusBarStyleInverted),
-                                                  @"light": @(RNSStatusBarStyleLight),
-                                                  @"dark": @(RNSStatusBarStyleDark),
-                                                  }), RNSStatusBarStyleAuto, integerValue)
+  @"auto": @(RNSStatusBarStyleAuto),
+  @"inverted": @(RNSStatusBarStyleInverted),
+  @"light": @(RNSStatusBarStyleLight),
+  @"dark": @(RNSStatusBarStyleDark),
+  }), RNSStatusBarStyleAuto, integerValue)
 
 @end
 

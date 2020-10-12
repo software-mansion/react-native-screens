@@ -1,6 +1,5 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreen.h"
-#import "UIViewController+RNScreens.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerObserverCoordinator.h>
@@ -22,22 +21,6 @@
 
 @end
 
-@implementation RNScreensViewController
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
-}
-
-- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
-{
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarUpdateAnimation : UIStatusBarAnimationFade;
-}
-
-@end
-
 @implementation RNSScreenContainerView {
   BOOL _needUpdate;
   __weak RNSScreenContainerManager *_manager;
@@ -48,7 +31,7 @@
   if (self = [super init]) {
     _activeScreens = [NSMutableSet new];
     _reactSubviews = [NSMutableArray new];
-    _controller = [[RNScreensViewController alloc] init];
+    _controller = [[UIViewController alloc] init];
     _needUpdate = NO;
     _manager = manager;
     [self addSubview:_controller.view];

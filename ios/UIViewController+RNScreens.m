@@ -1,6 +1,4 @@
 #import "UIViewController+RNScreens.h"
-#import "RNSScreenContainer.h"
-#import "RNSScreenStack.h"
 #import "RNSScreen.h"
 
 #import <objc/runtime.h>
@@ -9,29 +7,32 @@
 
 - (UIViewController *)reactNativeScreensChildViewControllerForStatusBarStyle
 {
-  UIViewController* lastViewController = [[self childViewControllers] lastObject];
-  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-    return lastViewController;
-  }
-  return [self reactNativeScreensChildViewControllerForStatusBarStyle];
+  RNSScreen *screenVC = [self findChildScreen];
+  return screenVC ?: [self reactNativeScreensChildViewControllerForStatusBarStyle];
 }
 
 - (UIViewController *)reactNativeScreensChildViewControllerForStatusBarHidden
 {
-  UIViewController* lastViewController = [[self childViewControllers] lastObject];
-  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-    return lastViewController;
-  }
-  return [self reactNativeScreensChildViewControllerForStatusBarHidden];
+  RNSScreen *screenVC = [self findChildScreen];
+  return screenVC ?: [self reactNativeScreensChildViewControllerForStatusBarHidden];
 }
 
 - (UIStatusBarAnimation)reactNativeScreensPreferredStatusBarUpdateAnimation
 {
-  UIViewController* lastViewController = [[self childViewControllers] lastObject];
-  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-    return lastViewController.preferredStatusBarUpdateAnimation;
+  RNSScreen *screenVC = [self findChildScreen];
+  return screenVC ? screenVC.preferredStatusBarUpdateAnimation : [self reactNativeScreensPreferredStatusBarUpdateAnimation];
+}
+
+- (RNSScreen *)findChildScreen
+{
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  while (lastViewController != nil) {
+    if ([lastViewController isKindOfClass:[RNSScreen class]]) {
+      return (RNSScreen *)lastViewController;
+    }
+    lastViewController = [[lastViewController childViewControllers] lastObject];
   }
-  return [self reactNativeScreensPreferredStatusBarUpdateAnimation];
+  return nil;
 }
 
 + (void)load

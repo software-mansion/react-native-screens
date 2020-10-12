@@ -34,7 +34,7 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 
 @end
 
-@interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
+@interface RNSScreen : UIViewController
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;

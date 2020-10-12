@@ -298,60 +298,40 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-  UIViewController *child = [[self childViewControllers] lastObject];
-  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    return child.preferredStatusBarStyle;
-  }
-  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  RNSScreenStackHeaderConfig *config = [self findDeepestScreenConfig];
   return [self statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  UIViewController *child = [[self childViewControllers] lastObject];
-  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    return child.preferredStatusBarUpdateAnimation;
-  }
-  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  RNSScreenStackHeaderConfig *config = [self findDeepestScreenConfig];
   return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
 }
 
 - (BOOL)prefersStatusBarHidden
 {
-  UIViewController *child = [[self childViewControllers] lastObject];
-  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    return child.prefersStatusBarHidden;
-  }
-  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  RNSScreenStackHeaderConfig *config = [self findDeepestScreenConfig];
   return config && config.statusBarHidden ? config.statusBarHidden : NO;
 }
 
-- (RNSScreenStackHeaderConfig *)findConfigForScreen
+- (RNSScreenStackHeaderConfig *)findDeepestScreenConfig
 {
-  // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
-  UIViewController *parent = [self parentViewController];
-  while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
-    if ([parent parentViewController] == nil && [parent isKindOfClass:[RNSScreen class]]) {
-      // we are at the top of hierarchy and the controller is RNSScreen so we are in modal screen
-      break;
-    } else {
-      parent = [parent parentViewController];
-    }
-  }
-  RNSScreenView *screenView = (RNSScreenView *)self.view;
-  if ([parent isKindOfClass:[RNScreensNavigationController class]] && [((RNScreensNavigationController *)parent).topViewController isKindOfClass:[RNSScreen class]]) {
-    // we found RNSScreenStack's controller so we take the child's configuration
-    screenView = ((RNSScreenView *)((RNScreensNavigationController *)parent).topViewController.view);
-  } else if ([parent isKindOfClass:[RNSScreen class]]) {
-    // we are probably in modal screen since no parent navigator for RNSScreen
-    screenView = ((RNSScreenView *)parent.view);
+  UIViewController *vc = self;
+  // sometimes we don't call this method from the top-most VC, so we first make sure that we are on top of the VC hierarchy
+  while (vc.parentViewController != nil) {
+    vc = vc.parentViewController;
   }
   RNSScreenStackHeaderConfig *config = nil;
-  for (UIView *subview in screenView.reactSubviews) {
-    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      config = (RNSScreenStackHeaderConfig*) subview;
-      break;
+  while (vc != nil) {
+    if ([vc isKindOfClass:[RNSScreen class]]) {
+      for (UIView *subview in vc.view.reactSubviews) {
+        if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+          config = (RNSScreenStackHeaderConfig *)subview;
+          break;
+        }
+      }
     }
+    vc = [[vc childViewControllers] lastObject];
   }
   return config;
 }
