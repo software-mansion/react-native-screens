@@ -368,8 +368,8 @@
 #if (TARGET_OS_IOS)
   if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
     [RNSScreenStackHeaderConfig assertViewControllerBasedStatusBarAppearenceSet];
-    [(RNSScreen *)vc updateStatusBarAppearance];
     vc.modalPresentationCapturesStatusBarAppearance = YES;
+    [(RNSScreen *)vc updateStatusBarAppearance];
   }
 #endif
 
