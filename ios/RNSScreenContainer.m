@@ -21,6 +21,43 @@
 
 @end
 
+@implementation RNScreensViewController
+
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  for (UIViewController *childVC in self.childViewControllers) {
+    // condition should be changed when activityState is introduced to check for activityState == 2
+    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).active) {
+      return childVC;
+    }
+  }
+  return [[self childViewControllers] lastObject];
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  for (UIViewController *childVC in self.childViewControllers) {
+    // condition should be changed when activityState is introduced to check for activityState == 2
+    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).active) {
+      return childVC.preferredStatusBarUpdateAnimation;
+    }
+  }
+  return [[self childViewControllers] lastObject].preferredStatusBarUpdateAnimation;
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  for (UIViewController *childVC in self.childViewControllers) {
+    // condition should be changed when activityState is introduced to check for activityState == 2
+    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).active) {
+      return childVC;
+    }
+  }
+  return [[self childViewControllers] lastObject];
+}
+
+@end
+
 @implementation RNSScreenContainerView {
   BOOL _needUpdate;
   __weak RNSScreenContainerManager *_manager;
@@ -31,7 +68,7 @@
   if (self = [super init]) {
     _activeScreens = [NSMutableSet new];
     _reactSubviews = [NSMutableArray new];
-    _controller = [[UIViewController alloc] init];
+    _controller = [[RNScreensViewController alloc] init];
     _needUpdate = NO;
     _manager = manager;
     [self addSubview:_controller.view];

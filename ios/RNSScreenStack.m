@@ -17,6 +17,25 @@
 
 @end
 
+@implementation RNScreensNavigationController
+
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  return [self topViewController];
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  return [self topViewController].preferredStatusBarUpdateAnimation;
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  return [self topViewController];
+}
+
+@end
+
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation;
 @end
@@ -35,7 +54,7 @@
     _manager = manager;
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
-    _controller = [[UINavigationController alloc] init];
+    _controller = [[RNScreensNavigationController alloc] init];
     _controller.delegate = self;
 
     // we have to initialize viewControllers with a non empty array for

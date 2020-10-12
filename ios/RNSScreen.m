@@ -2,6 +2,7 @@
 
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenContainer.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
@@ -294,44 +295,59 @@
   return self;
 }
 
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+    return lastViewController;
+  }
+  return [lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)] ? lastViewController : nil;
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  return [lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)] ? lastViewController : nil;
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-  RNSScreenStackHeaderConfig *config = [self findDeepestScreenConfig];
+  RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
   return [self statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  RNSScreenStackHeaderConfig *config = [self findDeepestScreenConfig];
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+    return lastViewController.preferredStatusBarUpdateAnimation;
+  }
+  
+  RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
   return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
 }
 
 - (BOOL)prefersStatusBarHidden
 {
-  RNSScreenStackHeaderConfig *config = [self findDeepestScreenConfig];
+  RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
   return config && config.statusBarHidden ? config.statusBarHidden : NO;
 }
 
-- (RNSScreenStackHeaderConfig *)findDeepestScreenConfig
+- (RNSScreenStackHeaderConfig *)findClosestScreenConfig
 {
   UIViewController *vc = self;
-  // sometimes we don't call this method from the top-most VC, so we first make sure that we are on top of the VC hierarchy
-  while (vc.parentViewController != nil) {
-    vc = vc.parentViewController;
-  }
-  RNSScreenStackHeaderConfig *config = nil;
+  // we should always be at the bottom of the RNScreens VC hierarchy when calling this, so we look for config up the hierarchy
   while (vc != nil) {
     if ([vc isKindOfClass:[RNSScreen class]]) {
       for (UIView *subview in vc.view.reactSubviews) {
         if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-          config = (RNSScreenStackHeaderConfig *)subview;
-          break;
+          return (RNSScreenStackHeaderConfig *)subview;
         }
       }
     }
-    vc = [[vc childViewControllers] lastObject];
+    vc = vc.parentViewController;
   }
-  return config;
+  return nil;
 }
 
 - (void)viewDidLayoutSubviews
@@ -415,6 +431,8 @@
 {
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
+  // the correct Screen for appearance is set after the transition
+  [self updateStatusBarAppearance];
 }
 
 - (void)updateStatusBarAppearance

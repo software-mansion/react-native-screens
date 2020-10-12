@@ -1,5 +1,5 @@
 #import "UIViewController+RNScreens.h"
-#import "RNSScreen.h"
+#import "RNSScreenContainer.h"
 
 #import <objc/runtime.h>
 
@@ -7,30 +7,27 @@
 
 - (UIViewController *)reactNativeScreensChildViewControllerForStatusBarStyle
 {
-  RNSScreen *screenVC = [self findChildScreen];
-  return screenVC ?: [self reactNativeScreensChildViewControllerForStatusBarStyle];
+  UIViewController *childVC = [self findChildRNScreensViewController];
+  return childVC ?: [self reactNativeScreensChildViewControllerForStatusBarStyle];
 }
 
 - (UIViewController *)reactNativeScreensChildViewControllerForStatusBarHidden
 {
-  RNSScreen *screenVC = [self findChildScreen];
-  return screenVC ?: [self reactNativeScreensChildViewControllerForStatusBarHidden];
+  UIViewController *childVC = [self findChildRNScreensViewController];
+  return childVC ?: [self reactNativeScreensChildViewControllerForStatusBarHidden];
 }
 
 - (UIStatusBarAnimation)reactNativeScreensPreferredStatusBarUpdateAnimation
 {
-  RNSScreen *screenVC = [self findChildScreen];
-  return screenVC ? screenVC.preferredStatusBarUpdateAnimation : [self reactNativeScreensPreferredStatusBarUpdateAnimation];
+  UIViewController *childVC = [self findChildRNScreensViewController];
+  return childVC ? childVC.preferredStatusBarUpdateAnimation : [self reactNativeScreensPreferredStatusBarUpdateAnimation];
 }
 
-- (RNSScreen *)findChildScreen
+- (UIViewController *)findChildRNScreensViewController
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  while (lastViewController != nil) {
-    if ([lastViewController isKindOfClass:[RNSScreen class]]) {
-      return (RNSScreen *)lastViewController;
-    }
-    lastViewController = [[lastViewController childViewControllers] lastObject];
+  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+    return lastViewController;
   }
   return nil;
 }
