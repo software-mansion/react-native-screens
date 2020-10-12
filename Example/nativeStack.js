@@ -19,31 +19,35 @@ const COLORS = ['azure', 'pink', 'cyan'];
 export class Stack extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       stack: ['azure'],
       transitioning: 0,
     };
   }
+
   push(key) {
     this.setState({ stack: [...this.state.stack, key], transitioning: 1 });
   }
+
   pop() {
     this.setState({
       transitioning: 0,
       stack: this.state.stack.slice(0, -1),
     });
   }
+
   remove(index) {
     this.setState({
       stack: this.state.stack.filter((v, idx) => idx !== index),
     });
   }
+
   removeByKey(key) {
     this.setState({
       stack: this.state.stack.filter(v => key !== v),
     });
   }
+
   renderScreen = (key) => {
     let style = StyleSheet.absoluteFill;
     return (

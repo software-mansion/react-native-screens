@@ -3,39 +3,39 @@ import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
 const SomeScreen = ({ navigation }) => {
-    return (
-      <ScrollView style={styles.screen}>
-        <Button
-          onPress={() => navigation.push('Push')}
-          title="Push"
-        />
-        <Button
-          onPress={() => navigation.navigate('Modal')}
-          title="Modal"
-        />
-        <Button onPress={() => navigation.pop()} title="Back" />
-        <View style={styles.leftTop} />
-        <View style={styles.bottomRight} />
-      </ScrollView>
-    );
+  return (
+    <ScrollView style={styles.screen}>
+      <Button
+        onPress={() => navigation.push('Push')}
+        title="Push"
+      />
+      <Button
+        onPress={() => navigation.navigate('Modal')}
+        title="Modal"
+      />
+      <Button onPress={() => navigation.pop()} title="Back" />
+      <View style={styles.leftTop} />
+      <View style={styles.bottomRight} />
+    </ScrollView>
+  );
 }
 
 const PushScreen = ({ navigation }) => {
-    return (
-      <View style={styles.screen}>
-        <TextInput placeholder="Hello" style={styles.textInput} />
-        <Button
-          onPress={() => navigation.goBack()}
-          title="Go back"
-        />
-        <Button
-          onPress={() => navigation.push('Push')}
-          title="Push more"
-        />
-        <View style={styles.leftTop} />
-        <View style={styles.bottomRight} />
-      </View>
-    );
+  return (
+    <View style={styles.screen}>
+      <TextInput placeholder="Hello" style={styles.textInput} />
+      <Button
+        onPress={() => navigation.goBack()}
+        title="Go back"
+      />
+      <Button
+        onPress={() => navigation.push('Push')}
+        title="Push more"
+      />
+      <View style={styles.leftTop} />
+      <View style={styles.bottomRight} />
+    </View>
+  );
 }
 
 const AppStack = createNativeStackNavigator();

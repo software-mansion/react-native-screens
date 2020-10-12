@@ -31,7 +31,7 @@ const Background = ({ index }) => (
 );
 
 const DetailsScreen = ({ navigation, route }) => {
-  animvalue = new Animated.Value(0);
+ const animvalue = new Animated.Value(0);
   rotation = animvalue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],

@@ -57,7 +57,7 @@ const MainScreen = ({ navigation }) => {
 const ItemSeparator = () => <View style={styles.separator} />;
 
 const MainScreenItem = (props) => {
-  _onPress = () => props.onPressItem(props.item);
+ const _onPress = () => props.onPressItem(props.item);
     const { key } = props.item;
     return (
       <TouchableHighlight onPress={_onPress}>
