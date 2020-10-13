@@ -75,18 +75,29 @@ export type NativeStackNavigationConfig = Record<string, unknown>;
 
 export type NativeStackNavigationOptions = {
   /**
-   * String that can be displayed in the header as a fallback for `headerTitle`.
-   */
-  title?: string;
-  /**
-   * String to display in the header as title. Defaults to scene `title`.
-   */
-  headerTitle?: string;
-  /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
    */
   backButtonImage?: ImageSourcePropType;
+  /**
+   * Whether to show the back button with custom left side of the header.
+   */
+  backButtonInCustomView?: boolean;
+  /**
+   * Style object for the scene content.
+   */
+  contentStyle?: StyleProp<ViewStyle>;
+  /**
+   * Whether the stack should be in rtl or ltr form.
+   */
+  direction?: 'rtl' | 'ltr';
+  /**
+   * Whether you can use gestures to dismiss this screen. Defaults to `true`.
+   * Only supported on iOS.
+   *
+   * @platform ios
+   */
+  gestureEnabled?: boolean;
   /**
    * Title to display in the back button.
    * Only supported on iOS.
@@ -95,6 +106,19 @@ export type NativeStackNavigationOptions = {
    */
   headerBackTitle?: string;
   /**
+   * Style object for header back title. Supported properties:
+   * - fontFamily
+   * - fontSize
+   *
+   * Only supported on iOS.
+   *
+   * @platform ios
+   */
+  headerBackTitleStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+  };
+  /**
    * Whether the back button title should be visible or not. Defaults to `true`.
    * Only supported on iOS.
    *
@@ -102,46 +126,9 @@ export type NativeStackNavigationOptions = {
    */
   headerBackTitleVisible?: boolean;
   /**
-   * Whether to show the header.
-   */
-  headerShown?: boolean;
-  /**
-   * Whether to show the back button with custom left side of the header.
-   */
-  backButtonInCustomView?: boolean;
-  /**
-   * Boolean indicating whether the navigation bar is translucent.
-   */
-  headerTranslucent?: boolean;
-  /**
-   * Boolean to set native property to prefer large title header (like in iOS setting).
-   * For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`.
-   * If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
-   * Only supported on iOS.
-   *
-   * @platform ios
-   */
-  headerLargeTitle?: boolean;
-  /**
-   * Whether the stack should be in rtl or ltr form.
-   */
-  direction?: 'rtl' | 'ltr';
-  /**
-   * Function which returns a React Element to display on the right side of the header.
-   */
-  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
-  /**
-   * Function which returns a React Element to display on the left side of the header.
-   */
-  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
-  /**
    * Function which returns a React Element to display in the center of the header.
    */
   headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
-  /**
-   * Tint color for the header. Changes the color of back button and title.
-   */
-  headerTintColor?: string;
   /**
    * Boolean indicating whether to hide the back button in header.
    * Only supported on Android.
@@ -154,19 +141,6 @@ export type NativeStackNavigationOptions = {
    */
   headerHideShadow?: boolean;
   /**
-   * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
-   */
-  headerLargeTitleHideShadow?: boolean;
-  /**
-   * Style object for header title. Supported properties:
-   * - backgroundColor
-   * - blurEffect
-   */
-  headerStyle?: {
-    backgroundColor?: string;
-    blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
-  };
-  /**
    * Controls the style of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar. Supported properties:
    * - backgroundColor
    *
@@ -176,16 +150,18 @@ export type NativeStackNavigationOptions = {
     backgroundColor?: string;
   };
   /**
-   * Style object for header title. Supported properties:
-   * - fontFamily
-   * - fontSize
-   * - color
+   * Boolean to set native property to prefer large title header (like in iOS setting).
+   * For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`.
+   * If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
+   * Only supported on iOS.
+   *
+   * @platform ios
    */
-  headerTitleStyle?: {
-    fontFamily?: string;
-    fontSize?: number;
-    color?: string;
-  };
+  headerLargeTitle?: boolean;
+  /**
+   * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+   */
+  headerLargeTitleHideShadow?: boolean;
   /**
    * Style object for header large title. Supported properties:
    * - fontFamily
@@ -201,17 +177,44 @@ export type NativeStackNavigationOptions = {
     color?: string;
   };
   /**
-   * Style object for header back title. Supported properties:
+   * Function which returns a React Element to display on the left side of the header.
+   */
+  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
+  /**
+   * Function which returns a React Element to display on the right side of the header.
+   */
+  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
+  /**
+   * Whether to show the header.
+   */
+  headerShown?: boolean;
+  /**
+   * Style object for header title. Supported properties:
+   * - backgroundColor
+   * - blurEffect
+   */
+  headerStyle?: {
+    backgroundColor?: string;
+    blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
+  };
+  /**
+   * Tint color for the header. Changes the color of back button and title.
+   */
+  headerTintColor?: string;
+  /**
+   * String to display in the header as title. Defaults to scene `title`.
+   */
+  headerTitle?: string;
+  /**
+   * Style object for header title. Supported properties:
    * - fontFamily
    * - fontSize
-   *
-   * Only supported on iOS.
-   *
-   * @platform ios
+   * - color
    */
-  headerBackTitleStyle?: {
+  headerTitleStyle?: {
     fontFamily?: string;
     fontSize?: number;
+    color?: string;
   };
   /**
    * A flag to that lets you opt out of insetting the header. You may want to
@@ -223,16 +226,9 @@ export type NativeStackNavigationOptions = {
    */
   headerTopInsetEnabled?: boolean;
   /**
-   * Style object for the scene content.
+   * Boolean indicating whether the navigation bar is translucent.
    */
-  contentStyle?: StyleProp<ViewStyle>;
-  /**
-   * Whether you can use gestures to dismiss this screen. Defaults to `true`.
-   * Only supported on iOS.
-   *
-   * @platform ios
-   */
-  gestureEnabled?: boolean;
+  headerTranslucent?: boolean;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
@@ -240,6 +236,15 @@ export type NativeStackNavigationOptions = {
    * - "pop" – the new screen will perform pop animation.
    */
   replaceAnimation?: ScreenProps['replaceAnimation'];
+  /**
+   * How the screen should appear/disappear when pushed or popped at the top of the stack.
+   * The following values are currently supported:
+   * - "default" – uses a platform default animation
+   * - "fade" – fades screen in or out
+   * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+   * - "none" – the screen appears/dissapears without an animation
+   */
+  stackAnimation?: ScreenProps['stackAnimation'];
   /**
    * How should the screen be presented.
    * The following values are currently supported:
@@ -253,14 +258,9 @@ export type NativeStackNavigationOptions = {
    */
   stackPresentation?: ScreenProps['stackPresentation'];
   /**
-   * How the screen should appear/disappear when pushed or popped at the top of the stack.
-   * The following values are currently supported:
-   * - "default" – uses a platform default animation
-   * - "fade" – fades screen in or out
-   * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
-   * - "none" – the screen appears/dissapears without an animation
+   * String that can be displayed in the header as a fallback for `headerTitle`.
    */
-  stackAnimation?: ScreenProps['stackAnimation'];
+  title?: string;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

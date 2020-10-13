@@ -128,6 +128,7 @@ Tint color for the header. Changes the color of the back button and title.
 Style object for the header. Supported properties:
 
 - `backgroundColor`
+- `blurEffect` (iOS only). Possible values can be checked in `index.d.ts` file.
 
 #### `headerTitleStyle`
 
