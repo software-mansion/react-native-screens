@@ -39,33 +39,33 @@ const SCREENS = {
 
 const MainScreen = ({ navigation }) => {
     const data = Object.keys(SCREENS).map((key) => ({ key }));
-    return (
-      <FlatList
-        style={styles.list}
-        data={data}
-        ItemSeparatorComponent={ItemSeparator}
-        renderItem={(props) => (
-          <MainScreenItem
-            {...props}
-            onPressItem={({ key }) => navigation.navigate(key)}
-          />
-        )}
-      />
-    );
+     return (
+       <FlatList
+         style={styles.list}
+         data={data}
+         ItemSeparatorComponent={ItemSeparator}
+         renderItem={(props) => (
+           <MainScreenItem
+             {...props}
+             onPressItem={({ key }) => navigation.navigate(key)}
+           />
+         )}
+       />
+     );
 }
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
 const MainScreenItem = (props) => {
- const _onPress = () => props.onPressItem(props.item);
+  const _onPress = () => props.onPressItem(props.item);
     const { key } = props.item;
-    return (
-      <TouchableHighlight onPress={_onPress}>
-        <View style={styles.button}>
-          <Text style={styles.buttonText}>{SCREENS[key].title || key}</Text>
-        </View>
-      </TouchableHighlight>
-    );
+     return (
+       <TouchableHighlight onPress={_onPress}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>{SCREENS[key].title || key}</Text>
+         </View>
+       </TouchableHighlight>
+     );
 }
 
 const MainScreenStack = createStackNavigator();
