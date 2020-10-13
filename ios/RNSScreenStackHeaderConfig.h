@@ -41,6 +41,8 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic) BOOL statusBarHidden;
 
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
++ (void)updateStatusBarAppearance;
++ (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle;
 
 @end
 

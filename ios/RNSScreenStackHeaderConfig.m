@@ -368,8 +368,9 @@
 #if (TARGET_OS_IOS)
   if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
     [RNSScreenStackHeaderConfig assertViewControllerBasedStatusBarAppearenceSet];
-    vc.modalPresentationCapturesStatusBarAppearance = YES;
-    [(RNSScreen *)vc updateStatusBarAppearance];
+    if ([vc isKindOfClass:[RNSScreen class]]) {
+      [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+    }
   }
 #endif
 
@@ -504,6 +505,41 @@
     RCTLogError(@"If you want to change the appearance of status bar, you have to change \
     UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
   }
+}
+
++ (void)updateStatusBarAppearance
+{
+  [UIView animateWithDuration:0.4 animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
+    if (@available(iOS 13, *)) {
+      UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+      if (firstWindow != nil) {
+        [[firstWindow rootViewController] setNeedsStatusBarAppearanceUpdate];
+      }
+    } else {
+      [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
+    }
+  }];
+}
+
++ (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
+{
+#ifdef __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    switch (statusBarStyle) {
+      case RNSStatusBarStyleAuto:
+          return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
+      case RNSStatusBarStyleInverted:
+          return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
+      case RNSStatusBarStyleLight:
+          return UIStatusBarStyleLightContent;
+      case RNSStatusBarStyleDark:
+          return UIStatusBarStyleDarkContent;
+      default:
+        return UIStatusBarStyleLightContent;
+    }
+  }
+#endif
+  return UIStatusBarStyleLightContent;
 }
 
 @end

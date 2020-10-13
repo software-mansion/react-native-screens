@@ -39,7 +39,6 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
-- (void)updateStatusBarAppearance;
 
 @end
 

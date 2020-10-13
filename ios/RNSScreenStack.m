@@ -98,10 +98,8 @@
   UIView *screenView = presentationController.presentedViewController.view;
   if ([screenView isKindOfClass:[RNSScreenView class]]) {
     // we trigger the update of status bar's appearance here because there is no other lifecycle method
-    // that can handle it when dismissing a modal. Animation's duration explained in RNSScreen's `updateStatusBarAppearance`
-    [UIView animateWithDuration:0.4 animations:^{
-      [presentationController.presentingViewController setNeedsStatusBarAppearanceUpdate];
-    }];
+    // that can handle it when dismissing a modal
+    [RNSScreenStackHeaderConfig updateStatusBarAppearance];
     [_presentedModals removeObject:presentationController.presentedViewController];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the

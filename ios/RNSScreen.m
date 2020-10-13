@@ -297,52 +297,77 @@
 
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-  UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  return [lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)] ? lastViewController : nil;
+  UIViewController *vc = [self findChildVCForConfig];
+  return vc == self ? nil : vc;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-  RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
-  return [self statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
+  return [RNSScreenStackHeaderConfig statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
 }
 
 - (UIViewController *)childViewControllerForStatusBarHidden
 {
-  UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  return [lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)] ? lastViewController : nil;
+  UIViewController *vc = [self findChildVCForConfig];
+  return vc == self ? nil : vc;
 }
 
 - (BOOL)prefersStatusBarHidden
 {
-  RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
   return config && config.statusBarHidden ? config.statusBarHidden : NO;
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-    return lastViewController.preferredStatusBarUpdateAnimation;
+  UIViewController *vc = [self findChildVCForConfig];
+  if (vc != self && vc != nil) {
+    return vc.preferredStatusBarUpdateAnimation;
   }
   
-  RNSScreenStackHeaderConfig *config = [self findClosestScreenConfig];
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
   return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
 }
 
-- (RNSScreenStackHeaderConfig *)findClosestScreenConfig
+// if the returned vc is a child, it means that it can provide config;
+// if the returned vc is self, it means that there is no child for config and self has config to provide,
+// so we return nil which results in asking self for preferredStatusBarStyle;
+// if the returned vc is nil, it means none of children could provide config and self does not have config either,
+// so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
+- (UIViewController *)findChildVCForConfig
 {
-  UIViewController *vc = self;
-  // we should always be at the bottom of the RNScreens VC hierarchy when calling this, so we look for config up the hierarchy
-  while (vc != nil) {
-    if ([vc isKindOfClass:[RNSScreen class]]) {
-      for (UIView *subview in vc.view.reactSubviews) {
-        if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-          return (RNSScreenStackHeaderConfig *)subview;
-        }
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  if (self.presentedViewController != nil) {
+    lastViewController = self.presentedViewController;
+    // setting this makes the modal vc first vc to be asked for appearance
+    lastViewController.modalPresentationCapturesStatusBarAppearance = YES;
+  }
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
+  if (lastViewController == nil) {
+    return config ? self : nil;
+  } else {
+    if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+      // If there is a child that wants to provide a config, we return it as the one that should take precedence
+      // we use `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
+      if ([lastViewController childViewControllerForStatusBarStyle] != nil) {
+        return lastViewController;
+      } else {
+        return config ? self : nil;
       }
+    } else {
+      // child vc is not from this package, so we don't ask it
+      return config ? self : nil;
     }
-    vc = vc.parentViewController;
+  }
+}
+
+- (RNSScreenStackHeaderConfig *)findScreenConfig
+{
+  for (UIView *subview in self.view.reactSubviews) {
+    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      return (RNSScreenStackHeaderConfig *)subview;
+    }
   }
   return nil;
 }
@@ -385,7 +410,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [self updateStatusBarAppearance];
+  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -429,36 +454,7 @@
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
   // the correct Screen for appearance is set after the transition
-  [self updateStatusBarAppearance];
-}
-
-- (void)updateStatusBarAppearance
-{
-  self.modalPresentationCapturesStatusBarAppearance = YES;
-  [UIView animateWithDuration:0.4 animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
-    [self setNeedsStatusBarAppearanceUpdate];
-  }];
-}
-
-- (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
-{
-#ifdef __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    switch (statusBarStyle) {
-      case RNSStatusBarStyleAuto:
-          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
-      case RNSStatusBarStyleInverted:
-          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleLight:
-          return UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleDark:
-          return UIStatusBarStyleDarkContent;
-      default:
-        return UIStatusBarStyleLightContent;
-    }
-  }
-#endif
-  return UIStatusBarStyleLightContent;
+  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
 }
 
 @end
