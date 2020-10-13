@@ -25,27 +25,21 @@
 
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-  for (UIViewController *childVC in self.childViewControllers) {
-    // condition should be changed when activityState is introduced to check for activityState == 2
-    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).active) {
-      return childVC;
-    }
-  }
-  return [[self childViewControllers] lastObject];
+  return [self findActiveChildVC];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  for (UIViewController *childVC in self.childViewControllers) {
-    // condition should be changed when activityState is introduced to check for activityState == 2
-    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).active) {
-      return childVC.preferredStatusBarUpdateAnimation;
-    }
-  }
-  return [[self childViewControllers] lastObject].preferredStatusBarUpdateAnimation;
+  return [self findActiveChildVC].preferredStatusBarUpdateAnimation;
 }
 
 - (UIViewController *)childViewControllerForStatusBarHidden
+{
+  return [self findActiveChildVC];
+
+}
+
+- (UIViewController *)findActiveChildVC
 {
   for (UIViewController *childVC in self.childViewControllers) {
     // condition should be changed when activityState is introduced to check for activityState == 2
