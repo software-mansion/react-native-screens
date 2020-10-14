@@ -171,6 +171,7 @@
 				A73D6623F5213E78782B8867 /* Pods-ScreensExample.release.xcconfig */,
 			);
 			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
