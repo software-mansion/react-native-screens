@@ -356,6 +356,18 @@
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
 
+#if (TARGET_OS_IOS)
+  // we put it before check with return because we want to apply changes to status bar even if the header is hidden
+  if (config != nil) {
+    if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
+      [RNSScreenStackHeaderConfig assertViewControllerBasedStatusBarAppearenceSet];
+      if ([vc isKindOfClass:[RNSScreen class]]) {
+        [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+      }
+    }
+  }
+#endif
+
   if (shouldHide) {
     return;
   }
@@ -364,15 +376,6 @@
     navctr.view.semanticContentAttribute = config.direction;
     navctr.navigationBar.semanticContentAttribute = config.direction;
   }
-
-#if (TARGET_OS_IOS)
-  if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
-    [RNSScreenStackHeaderConfig assertViewControllerBasedStatusBarAppearenceSet];
-    if ([vc isKindOfClass:[RNSScreen class]]) {
-      [RNSScreenStackHeaderConfig updateStatusBarAppearance];
-    }
-  }
-#endif
 
   navitem.title = config.title;
 #if (TARGET_OS_IOS)
