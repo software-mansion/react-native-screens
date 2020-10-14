@@ -17,19 +17,19 @@ const DetailsScreen = ({ navigation, route }) => {
     return route.params && route.params.index ? route.params.index : 0;
   }
 
-    const index = getIndex();
-     return (
-       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-         <Button
-           title={`More details ${index}`}
-           onPress={() =>
-             navigation.push('Details', {
-               index: index + 1,
-             })
-           }
-         />
-       </View>
-     );
+  const index = getIndex();
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+     <Button
+       title={`More details ${index}`}
+       onPress={() =>
+         navigation.push('Details', {
+           index: index + 1,
+          })
+        }
+      />
+    </View>
+  );
 }
 
 const createStack = () => {

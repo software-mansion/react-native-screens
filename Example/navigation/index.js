@@ -31,7 +31,7 @@ const Background = ({ index }) => (
 );
 
 const DetailsScreen = ({ navigation, route }) => {
-   const animvalue = new Animated.Value(0);
+  const animvalue = new Animated.Value(0);
   const rotation = animvalue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
@@ -57,40 +57,40 @@ const DetailsScreen = ({ navigation, route }) => {
     return route.params && route.params.index ? route.params.index : 0;
   }
 
-    const index = getIndex();
-    return (
-     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-       <Background index={index} />
-       <Button
-         title="More details"
-         onPress={() =>
-           navigation.push('Details', {
-             index: index + 1,
-           })
-         }
-       />
-       <TextInput
-         placeholder="Hello"
-         style={styles.textInput}
-         onChangeText={(text) => setText(text)}
-         text={text}
-       />
-       <Animated.View
-         style={{
-           transform: [
-             {
-               rotate: rotation,
-             },
-           ],
-           marginTop: 20,
-           borderColor: 'blue',
-           borderWidth: 3,
-           width: 20,
-           height: 20,
-         }}
-       />
-     </View>
-   );
+  const index = getIndex();
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Background index={index} />
+      <Button
+        title="More details"
+        onPress={() =>
+          navigation.push('Details', {
+          index: index + 1,
+          })
+        }
+      />
+      <TextInput
+        placeholder="Hello"
+        style={styles.textInput}
+        onChangeText={(text) => setText(text)}
+        text={text}
+      />
+      <Animated.View
+        style={{
+          transform: [
+            {
+            rotate: rotation,
+          },
+        ],
+        marginTop: 20,
+        borderColor: 'blue',
+        borderWidth: 3,
+        width: 20,
+        height: 20,
+      }}
+      />
+    </View>
+  );
 }
 
 const Stack = createStackNavigator();
