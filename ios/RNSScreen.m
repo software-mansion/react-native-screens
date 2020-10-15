@@ -332,7 +332,7 @@
 
 // if the returned vc is a child, it means that it can provide config;
 // if the returned vc is self, it means that there is no child for config and self has config to provide,
-// so we return nil which results in asking self for preferredStatusBarStyle;
+// so we return self which results in asking self for preferredStatusBarStyle;
 // if the returned vc is nil, it means none of children could provide config and self does not have config either,
 // so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
 - (UIViewController *)findChildVCForConfig
@@ -340,24 +340,30 @@
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if (self.presentedViewController != nil) {
     lastViewController = self.presentedViewController;
-    // setting this makes the modal vc first vc to be asked for appearance
+    // setting this makes the modal vc being asked for appearance,
+    // so it doesn't matter what we return here since the modal's root screen will be asked
     lastViewController.modalPresentationCapturesStatusBarAppearance = YES;
+    return nil;
   }
-  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
+  
+  UIViewController *selfOrNil = [self findScreenConfig] != nil ? self : nil;
   if (lastViewController == nil) {
-    return config ? self : nil;
+    return selfOrNil;
   } else {
     if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-      // If there is a child that wants to provide a config, we return it as the one that should take precedence
+      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide config,
+      // we recursively go into its findChildVCForConfig, and if one of the children has the config, we return it,
+      // otherwise we return self if this VC has config, and nil if it doesn't
       // we use `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
-      if ([lastViewController childViewControllerForStatusBarStyle] != nil) {
-        return lastViewController;
+      UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
+      if ([childScreen isKindOfClass:[RNSScreen class]]) {
+        return [(RNSScreen *)childScreen findChildVCForConfig] ?: selfOrNil;
       } else {
-        return config ? self : nil;
+        return selfOrNil;
       }
     } else {
-      // child vc is not from this package, so we don't ask it
-      return config ? self : nil;
+      // child vc is not from this library, so we don't ask it
+      return selfOrNil;
     }
   }
 }
