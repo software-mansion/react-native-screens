@@ -78,8 +78,30 @@ public class Screen extends ViewGroup {
     setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION));
   }
 
+  private boolean iSChildrenFocus(View view) {
+    Object tag = view.getTag(R.id.view_tag_native_id);
+    //workaround to allow child focusing in case of problems like on the player
+    if (tag instanceof String && ((String) tag).contains("descendentsfocus")) {
+      return true;
+    }
+    if (view instanceof ViewGroup) {
+      ViewGroup viewGroup = (ViewGroup) view;
+      for(int i = 0; i < viewGroup.getChildCount(); i++) {
+        View v = viewGroup.getChildAt(i);
+        if (v != null && iSChildrenFocus(v)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   @Override
   protected boolean onRequestFocusInDescendants(final int dir, final Rect rect) {
+    boolean isChildFocus = iSChildrenFocus(this);
+    if (isChildFocus) {
+      return super.onRequestFocusInDescendants(dir, rect);
+    }
     return false;
   }
 
