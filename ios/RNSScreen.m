@@ -334,6 +334,10 @@
 {
   [super viewWillAppear:animated];
 
+  UIViewController *parentVC = [self parentViewController];
+  if ([parentVC isKindOfClass:[UINavigationController class]]) {
+    [((UINavigationController *)parentVC).navigationBar sizeToFit];
+  }
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
