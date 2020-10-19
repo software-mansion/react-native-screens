@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Button,
-  View,
-  TextInput,
-} from 'react-native';
+import { StyleSheet, Button, View, TextInput } from 'react-native';
 import {
   Screen,
   ScreenStack,
@@ -12,7 +7,6 @@ import {
   ScreenStackHeaderCenterView,
   ScreenStackHeaderRightView,
 } from 'react-native-screens';
-
 
 const COLORS = ['azure', 'pink', 'cyan'];
 
@@ -44,15 +38,14 @@ export class Stack extends Component {
 
   removeByKey(key) {
     this.setState({
-      stack: this.state.stack.filter(v => key !== v),
+      stack: this.state.stack.filter((v) => key !== v),
     });
   }
 
   renderScreen = (key) => {
-    let style = StyleSheet.absoluteFill;
     return (
       <Screen
-        style={style}
+        style={StyleSheet.absoluteFill}
         key={key}
         stackAnimation="fade"
         onDismissed={() => this.removeByKey(key)}>
@@ -76,6 +69,7 @@ export class Stack extends Component {
       </Screen>
     );
   };
+
   render() {
     const screens = this.state.stack.map(this.renderScreen);
     return <ScreenStack style={styles.container}>{screens}</ScreenStack>;
@@ -83,7 +77,7 @@ export class Stack extends Component {
 }
 
 class App extends Component {
-  renderScreen = key => {
+  renderScreen = (key) => {
     const index = COLORS.indexOf(key);
     const color = key;
     const pop = index > 0 ? () => this.stack.pop() : null;
@@ -115,10 +109,11 @@ class App extends Component {
       </View>
     );
   };
+
   render() {
     return (
       <Stack
-        ref={stack => (this.stack = stack)}
+        ref={(stack) => (this.stack = stack)}
         renderScreen={this.renderScreen}
       />
     );

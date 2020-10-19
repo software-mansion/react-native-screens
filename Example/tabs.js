@@ -7,6 +7,7 @@ export class LazyTabs extends Component {
     screens: ['azure'],
     active: 'azure',
   };
+
   goto(key) {
     let { screens } = this.state;
     if (screens.indexOf(key) === -1) {
@@ -14,6 +15,7 @@ export class LazyTabs extends Component {
     }
     this.setState({ active: key, screens });
   }
+
   renderScreen = (key, index) => {
     const active = key === this.state.active ? 1 : 0;
     return (
@@ -22,6 +24,7 @@ export class LazyTabs extends Component {
       </Screen>
     );
   };
+
   render() {
     const screens = this.state.screens.map(this.renderScreen);
     return (
@@ -31,7 +34,7 @@ export class LazyTabs extends Component {
 }
 
 class App extends Component {
-  renderScreen = key => {
+  renderScreen = (key) => {
     const color = key;
     return (
       <View
@@ -45,11 +48,12 @@ class App extends Component {
       </View>
     );
   };
+
   render() {
     return (
       <View style={styles.container}>
         <LazyTabs
-          ref={tabs => (this.tabs = tabs)}
+          ref={(tabs) => (this.tabs = tabs)}
           renderScreen={this.renderScreen}
         />
         <View style={styles.tabbar}>

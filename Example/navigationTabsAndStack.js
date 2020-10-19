@@ -7,39 +7,41 @@ import { createStackNavigator } from '@react-navigation/stack';
 enableScreens();
 
 const DetailsScreen = ({ navigation, route }) => {
-  useEffect(() => { 
+  useEffect(() => {
     navigation.setOptions({
       title: `Details screen #${getIndex}`,
     });
-  },[navigation]);
+  }, [navigation]);
 
   const getIndex = () => {
     return route.params && route.params.index ? route.params.index : 0;
-  }
+  };
 
   const index = getIndex();
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-     <Button
-       title={`More details ${index}`}
-       onPress={() =>
-         navigation.push('Details', {
-           index: index + 1,
+      <Button
+        title={`More details ${index}`}
+        onPress={() =>
+          navigation.push('Details', {
+            index: index + 1,
           })
         }
       />
     </View>
   );
-}
+};
 
 const createStack = () => {
   const Stack = createStackNavigator();
 
-  return () => (
+  const makeStack = () => (
     <Stack.Navigator>
       <Stack.Screen name="Details" component={DetailsScreen} />
     </Stack.Navigator>
   );
+
+  return makeStack;
 };
 
 const AStack = createStack();
