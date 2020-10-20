@@ -41,11 +41,15 @@ const PushScreen = ({ navigation }) => {
 const AppStack = createNativeStackNavigator();
 
 const App = () => (
-  <AppStack.Navigator>
+  <AppStack.Navigator screenProps={{ statusBarAnimation: 'fade' }}>
     <AppStack.Screen
       name="Some"
       component={SomeScreen}
-      options={{ title: 'Start', headerTintColor: 'black' }}
+      options={{
+        title: 'Start',
+        headerTintColor: 'black',
+        statusBarStyle: 'auto',
+      }}
     />
     <AppStack.Screen
       name="Push"
@@ -54,12 +58,13 @@ const App = () => (
         title: 'Pushed',
         headerStyle: { backgroundColor: '#3da4ab' },
         headerTintColor: 'black',
+        statusBarHidden: true,
       }}
     />
     <AppStack.Screen
       name="Modal"
       component={PushScreen}
-      options={{ stackPresentation: 'modal' }}
+      options={{ stackPresentation: 'modal', statusBarStyle: 'light' }}
     />
   </AppStack.Navigator>
 );

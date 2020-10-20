@@ -122,7 +122,7 @@
   // It is workaround for loading custom back icon when transitioning from a screen without header to the screen which has one.
   // This action fails when navigating to the screen with header for the second time and loads default back button.
   // It looks like changing the tint color of navbar triggers an update of the items belonging to it and it seems to load the custom back image
-  // so we change the tint color's alpha by a very small amount and then set it to the one it should have.  
+  // so we change the tint color's alpha by a very small amount and then set it to the one it should have.
   [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
@@ -356,6 +356,18 @@
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
 
+#if (TARGET_OS_IOS)
+  // we put it before check with return because we want to apply changes to status bar even if the header is hidden
+  if (config != nil) {
+    if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
+      [RNSScreenStackHeaderConfig assertViewControllerBasedStatusBarAppearenceSet];
+      if ([vc isKindOfClass:[RNSScreen class]]) {
+        [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+      }
+    }
+  }
+#endif
+
   if (shouldHide) {
     return;
   }
@@ -485,6 +497,54 @@
   }
 }
 
++ (void)assertViewControllerBasedStatusBarAppearenceSet
+{
+  static dispatch_once_t once;
+  static bool viewControllerBasedAppearence;
+  dispatch_once(&once, ^{
+    viewControllerBasedAppearence = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"] boolValue];
+  });
+  if (!viewControllerBasedAppearence) {
+    RCTLogError(@"If you want to change the appearance of status bar, you have to change \
+    UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
+  }
+}
+
++ (void)updateStatusBarAppearance
+{
+  [UIView animateWithDuration:0.4 animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
+    if (@available(iOS 13, *)) {
+      UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+      if (firstWindow != nil) {
+        [[firstWindow rootViewController] setNeedsStatusBarAppearanceUpdate];
+      }
+    } else {
+      [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
+    }
+  }];
+}
+
++ (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
+{
+#ifdef __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    switch (statusBarStyle) {
+      case RNSStatusBarStyleAuto:
+          return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
+      case RNSStatusBarStyleInverted:
+          return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
+      case RNSStatusBarStyleLight:
+          return UIStatusBarStyleLightContent;
+      case RNSStatusBarStyleDark:
+          return UIStatusBarStyleDarkContent;
+      default:
+        return UIStatusBarStyleLightContent;
+    }
+  }
+#endif
+  return UIStatusBarStyleLightContent;
+}
+
 @end
 
 @implementation RNSScreenStackHeaderConfigManager
@@ -519,6 +579,9 @@ RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
+RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
+RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 
 @end
 
@@ -537,7 +600,6 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
     [blurEffects addEntriesFromDictionary:@{
       @"regular": @(UIBlurEffectStyleRegular),
       @"prominent": @(UIBlurEffectStyleProminent),
-
     }];
   }
 #if defined(__IPHONE_13_0) && TARGET_OS_IOS
@@ -565,20 +627,27 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 }
 
 RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
-   @"back": @(RNSScreenStackHeaderSubviewTypeBackButton),
-   @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
-   @"right": @(RNSScreenStackHeaderSubviewTypeRight),
-   @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
-   @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
-   }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
+  @"back": @(RNSScreenStackHeaderSubviewTypeBackButton),
+  @"left": @(RNSScreenStackHeaderSubviewTypeLeft),
+  @"right": @(RNSScreenStackHeaderSubviewTypeRight),
+  @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
+  @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
+  }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
 RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
-   @"ltr": @(UISemanticContentAttributeForceLeftToRight),
-   @"rtl": @(UISemanticContentAttributeForceRightToLeft),
-   }), UISemanticContentAttributeUnspecified, integerValue)
+  @"ltr": @(UISemanticContentAttributeForceLeftToRight),
+  @"rtl": @(UISemanticContentAttributeForceRightToLeft),
+  }), UISemanticContentAttributeUnspecified, integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
   
+RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
+  @"auto": @(RNSStatusBarStyleAuto),
+  @"inverted": @(RNSStatusBarStyleInverted),
+  @"light": @(RNSStatusBarStyleLight),
+  @"dark": @(RNSStatusBarStyleDark),
+  }), RNSStatusBarStyleAuto, integerValue)
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager

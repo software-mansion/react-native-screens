@@ -258,6 +258,23 @@ export type NativeStackNavigationOptions = {
    */
   stackPresentation?: ScreenProps['stackPresentation'];
   /**
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   *
+   * @platform ios
+   */
+  statusBarAnimation?: ScreenStackHeaderConfigProps['statusBarAnimation'];
+  /**
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   *
+   * @platform ios
+   */
+  statusBarHidden?: boolean;
+  /** Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   *
+   * @platform ios
+   */
+  statusBarStyle?: ScreenStackHeaderConfigProps['statusBarStyle'];
+  /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;

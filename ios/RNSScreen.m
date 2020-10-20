@@ -1,8 +1,8 @@
 #import <UIKit/UIKit.h>
 
 #import "RNSScreen.h"
-#import "RNSScreenContainer.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenContainer.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
@@ -295,6 +295,89 @@
   return self;
 }
 
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  UIViewController *vc = [self findChildVCForConfig];
+  return vc == self ? nil : vc;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
+  return [RNSScreenStackHeaderConfig statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  UIViewController *vc = [self findChildVCForConfig];
+  return vc == self ? nil : vc;
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
+  return config && config.statusBarHidden ? config.statusBarHidden : NO;
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  UIViewController *vc = [self findChildVCForConfig];
+  if (vc != self && vc != nil) {
+    return vc.preferredStatusBarUpdateAnimation;
+  }
+  
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
+  return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
+}
+
+// if the returned vc is a child, it means that it can provide config;
+// if the returned vc is self, it means that there is no child for config and self has config to provide,
+// so we return self which results in asking self for preferredStatusBarStyle;
+// if the returned vc is nil, it means none of children could provide config and self does not have config either,
+// so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
+- (UIViewController *)findChildVCForConfig
+{
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  if (self.presentedViewController != nil) {
+    lastViewController = self.presentedViewController;
+    // setting this makes the modal vc being asked for appearance,
+    // so it doesn't matter what we return here since the modal's root screen will be asked
+    lastViewController.modalPresentationCapturesStatusBarAppearance = YES;
+    return nil;
+  }
+  
+  UIViewController *selfOrNil = [self findScreenConfig] != nil ? self : nil;
+  if (lastViewController == nil) {
+    return selfOrNil;
+  } else {
+    if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide config,
+      // we recursively go into its findChildVCForConfig, and if one of the children has the config, we return it,
+      // otherwise we return self if this VC has config, and nil if it doesn't
+      // we use `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
+      UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
+      if ([childScreen isKindOfClass:[RNSScreen class]]) {
+        return [(RNSScreen *)childScreen findChildVCForConfig] ?: selfOrNil;
+      } else {
+        return selfOrNil;
+      }
+    } else {
+      // child vc is not from this library, so we don't ask it
+      return selfOrNil;
+    }
+  }
+}
+
+- (RNSScreenStackHeaderConfig *)findScreenConfig
+{
+  for (UIView *subview in self.view.reactSubviews) {
+    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      return (RNSScreenStackHeaderConfig *)subview;
+    }
+  }
+  return nil;
+}
+
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
@@ -333,7 +416,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-
+  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -376,6 +459,8 @@
 {
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
+  // the correct Screen for appearance is set after the transition
+  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
 }
 
 @end
@@ -426,6 +511,4 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
                                                   @"pop": @(RNSScreenReplaceAnimationPop),
                                                   }), RNSScreenReplaceAnimationPop, integerValue)
 
-
 @end
-

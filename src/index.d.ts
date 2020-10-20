@@ -201,6 +201,21 @@ declare module 'react-native-screens' {
      */
     largeTitleHideShadow?: boolean;
     /**
+     * @host (iOS only)
+     * @description Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+     */
+    statusBarAnimation?: 'none' | 'fade' | 'slide';
+    /**
+     * @host (iOS only)
+     * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
+     */
+    statusBarHidden?: boolean;
+    /**
+     * @host (iOS only)
+     * @description Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
+     */
+    statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
+    /**
      * @description String that representing screen title that will get rendered in the middle section of the header. On iOS the title is centered on the header while on Android it is aligned to the left and placed next to back button (if one is present).
      */
     title?: string;

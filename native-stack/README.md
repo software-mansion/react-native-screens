@@ -180,6 +180,31 @@ Defaults to `push`.
 
 A string that can be used as a fallback for `headerTitle`.
 
+### Status bar managment
+
+With `native-stack`, the status bar can be managed by `UIViewController` on iOS. It requires:
+
+1. Enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
+2. Adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
+
+#### `statusBarStyle`
+
+Sets the status bar color (similar to the `StatusBar` component). Possible values: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`.
+
+Defaults to `auto`.
+
+#### `statusBarAnimation`
+
+Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`.
+
+Defaults to `fade`.
+
+#### `statusBarHidden`
+
+Boolean saying if the status bar for this screen is hidden.
+
+Defaults to `false`.
+
 ### Events
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:
