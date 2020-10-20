@@ -20,48 +20,27 @@ enableScreens();
 
 ## API Definition
 
-To use this navigator, import it from `react-native-screens/native-stack`:
+To use this navigator, import it from `react-native-screens/createNativeStackNavigator`:
 
 ```js
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';	
 
-const Stack = createNativeStackNavigator();
-
-function MyStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Notifications" component={Notifications} />
-      <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="Settings" component={Settings} />
-    </Stack.Navigator>
-  );
-}
+const RootStack = createNativeStackNavigator(
+  {
+    Home: HomeScreen,
+    Details: DetailsScreen,
+  },
+  {
+    initialRouteName: 'Home',
+  }
+);
 ```
 
-### Props
-
-The `Stack.Navigator` component accepts following props:
-
-#### `initialRouteName`
-
-The name of the route to render on the first load of the navigator.
-
-#### `screenOptions`
-
-Default options to use for the screens in the navigator.
-
-### Options
-
-The `options` prop can be used to configure individual screens inside the navigator. Supported options are:
+### `navigationOptions` for screens inside of the navigator
 
 #### `backButtonInCustomView`
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
-
-#### `contentStyle`
-
-Style object for the scene content.
 
 #### `direction`
 
@@ -88,26 +67,6 @@ Style object for header back title. Supported properties:
 
 Whether the back button title should be visible or not. Defaults to `true`. Only supported on iOS.
 
-#### `headerCenter`
-
-Function which returns a React Element to display in the center of the header.
-
-#### `headerHideBackButton`
-
-Boolean indicating whether to hide the back button in the header. Only supported on Android.
-
-#### `headerHideShadow`
-
-Boolean indicating whether to hide the elevation shadow on the header.
-
-#### `headerLargeTitle`
-
-Boolean used to set a native property to prefer a large title header (like in iOS setting).
-
-For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
-
-Only supported on iOS.
-
 #### `headerLeft`
 
 Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
@@ -116,9 +75,9 @@ Function which returns a React Element to display on the left side of the header
 
 Function which returns a React Element to display on the right side of the header.
 
-#### `headerShown`
+#### `headerHideBackButton`
 
-Whether to show or hide the header for the screen. The header is shown by default. Setting this to `false` hides the header.
+Boolean indicating whether to hide the back button in the header. Only supported on Android.
 
 #### `headerStyle`
 
@@ -147,9 +106,17 @@ Style object for header title. Supported properties:
 
 A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque. Only supported on Android.
 
-#### `headerTranslucent`
+#### `hideShadow`
 
-Boolean indicating whether the navigation bar is translucent.
+Boolean indicating whether to hide the elevation shadow on the header.
+
+#### `largeTitle`
+
+Boolean used to set a native property to prefer a large title header (like in iOS setting).
+
+For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
+
+Only supported on iOS.
 
 #### `stackAnimation`
 
@@ -180,101 +147,9 @@ Defaults to `push`.
 
 A string that can be used as a fallback for `headerTitle`.
 
-### Events
+#### `translucent`
 
-The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:
-
-#### `appear`
-
-Event which fires when the screen appears.
-
-Example:
-
-```js
-React.useEffect(
-  () => {
-    const unsubscribe = navigation.addListener('appear', e => {
-      // Do something
-    });
-
-    return unsubscribe;
-  },
-  [navigation]
-);
-```
-
-#### `dismiss`
-
-Event which fires when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
-
-Example:
-
-```js
-React.useEffect(
-  () => {
-    const unsubscribe = navigation.addListener('dismiss', e => {
-      // Do something
-    });
-
-    return unsubscribe;
-  },
-  [navigation]
-);
-```
-
-#### `transitionStart`
-
-Event which fires when a transition animation starts.
-
-Event data:
-
-- `closing` - Whether the screen will be dismissed or will appear.
-
-Example:
-
-```js
-React.useEffect(
-  () => {
-    const unsubscribe = navigation.addListener('transitionStart', e => {
-      if (e.data.closing) {
-        // Will be dismissed
-      } else {
-        // Will appear
-      }
-    });
-
-    return unsubscribe;
-  },
-  [navigation]
-);
-```
-
-#### `transitionEnd`
-
-Event which fires when a transition animation ends.
-
-Event data:
-
-- `closing` - Whether the screen was dismissed or did appear.
-
-Example:
-
-```js
-React.useEffect(
-  () => {
-    const unsubscribe = navigation.addListener('transitionEnd', e => {
-      if (e.data.closing) {
-        // Was dismissed
-      } else {
-        // Did appear
-      }
-    });
-
-    return unsubscribe;
-  },
-  [navigation]
-);
-```
+Boolean indicating whether the navigation bar is translucent.
 
 ### Helpers
 
@@ -288,7 +163,7 @@ Pushes a new screen to the top of the stack and navigate to it. The method accep
 - `params` - _object_ - Screen params to merge into the destination route (found in the pushed screen through `route.params`).
 
 ```js
-navigation.push('Profile', { name: 'Michaś' });
+navigation.push('Profile', { name: 'Wojtek' });
 ```
 
 #### `pop`
@@ -323,46 +198,3 @@ const largeHeaderInset = statusBarInset + 96; // inset to use for a large header
 ```
 
 You can also see an example of using these values with a `ScrollView` here: https://snack.expo.io/@wolewicki/ios-header-height.
-
-
-## Example
-
-```js
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
-
-const Stack = createNativeStackNavigator();
-
-function MyStack() {
-  return (
-    <Stack.Navigator
-      initialRouteName="Home"
-      screenOptions={{
-        headerShown: false,
-        headerTintColor: 'white',
-        headerStyle: { backgroundColor: 'tomato' },
-      }}>
-      <Stack.Screen
-        name="Home"
-        component={Home}
-        options={{
-          title: 'Awesome app',
-        }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          title: 'My profile',
-        }}
-      />
-      <Stack.Screen
-        name="Settings"
-        component={Settings}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-```

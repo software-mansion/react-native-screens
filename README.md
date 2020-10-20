@@ -17,10 +17,10 @@ For most people using an app built from the react-native template, that means ed
 You should add this code, which specifically discards any Activity state persisted during the Activity restart process, to avoid inconsistencies that lead to crashes.
 
 ```java
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(null);
-    }
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(null);
+}
 ```
 
 For people that must handle cases like this, there is [a more detailed discussion of the difficulties in a series of related comments](https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704633).
@@ -66,7 +66,7 @@ Note that the above code needs to execute before the first render of a navigatio
 
 ### Using createNativeStackNavigator with React Navigation
 
-To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack). Note that this depends on React Navigation v5.
+To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) for React Navigation v5 and [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator) for older versions. 
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
