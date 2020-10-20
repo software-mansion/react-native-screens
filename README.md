@@ -2,6 +2,29 @@
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
+## Installation
+
+### iOS
+
+Installation on iOS should be completely handled with auto-linking, if you have insured pods are installed after adding this module, no other actions should be necessary
+
+### Android
+
+On Android the View state is not persisted consistently across Activity restarts, which can lead to crashes in those cases. It is recommended to override the native Android method called on Activity restarts in your main Activity, to avoid these crashes.
+
+For most people using an app built from the react-native template, that means editing `MainActivity.java`, likely located in `android/app/src/main/java/<your package name>/MainActivity.java`
+
+You should add this code, which specifically discards any Activity state persisted during the Activity restart process, to avoid inconsistencies that lead to crashes.
+
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(null);
+}
+```
+
+For people that must handle cases like this, there is [a more detailed discussion of the difficulties in a series of related comments](https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704633).
+
 ## How can I take advantage of that?
 
 Screens are already integrated with the React Native's most popular navigation library [react-navigation](https://github.com/react-navigation/react-navigation) and [Expo](https://expo.io).
@@ -43,7 +66,7 @@ Note that the above code needs to execute before the first render of a navigatio
 
 ### Using createNativeStackNavigator with React Navigation
 
-To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack). Note that this depends on React Navigation v5.
+To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) for React Navigation v5 and [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator) for older versions. 
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
@@ -109,27 +132,27 @@ Allows for the customization of how the given screen should appear/disappear whe
 
 Defines how the method that should be used to present the given screen. It is a separate property from `stackAnimation` as the presentation mode can carry additional semantic. The allowed values are:
 
- - `push` – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
- - `modal` – Explained below.
- - `transparentModal` – Explained below.
- - `containedModal` – Explained below.
- - `containedTransparentModal` – Explained below.
- - `fullScreenModal` – Explained below.
- - `formSheet` – Explained below.
+- `push` – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
+- `modal` – Explained below.
+- `transparentModal` – Explained below.
+- `containedModal` – Explained below.
+- `containedTransparentModal` – Explained below.
+- `fullScreenModal` – Explained below.
+- `formSheet` – Explained below.
 
- For iOS:
- - `modal` will use [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc) on iOS 13 and later, and will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc) on iOS 12 and earlier.
- - `fullScreenModal` will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc)
- - `formSheet` will use [`UIModalPresentationFormSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationformsheet?language=objc)
- - `transparentModal` will use [`UIModalPresentationOverFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationoverfullscreen?language=objc)
- - `containedModal` will use [`UIModalPresentationCurrentContext`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationcurrentcontext?language=objc)
- - `containedTransparentModal` will use [`UIModalPresentationOverCurrentContext`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationovercurrentcontext?language=objc)
+For iOS:
+- `modal` will use [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc) on iOS 13 and later, and will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc) on iOS 12 and earlier.
+- `fullScreenModal` will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc)
+- `formSheet` will use [`UIModalPresentationFormSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationformsheet?language=objc)
+- `transparentModal` will use [`UIModalPresentationOverFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationoverfullscreen?language=objc)
+- `containedModal` will use [`UIModalPresentationCurrentContext`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationcurrentcontext?language=objc)
+- `containedTransparentModal` will use [`UIModalPresentationOverCurrentContext`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationovercurrentcontext?language=objc)
 
- For Android:
+For Android:
 
- `modal`, `containedModal`, `fullScreenModal`, `formSheet` will use `Screen.StackPresentation.MODAL`.
+`modal`, `containedModal`, `fullScreenModal`, `formSheet` will use `Screen.StackPresentation.MODAL`.
 
- `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
+`transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
 ### `<ScreenStackHeaderConfig>`
 
@@ -191,9 +214,9 @@ String that applies `rtl` or `ltr` form to the stack.
 
 When set to `false` the back swipe gesture will be disabled when the parent `Screen` is on top of the stack. The default value is `true`.
 
-#### `translucent` (iOS only)
+#### `translucent`
 
-When set to `true`, it makes native navigation bar on iOS semi-transparent with blur effect. It is a common way of presenting a navigation bar introduced in iOS 11. The default value is `false`.
+When set to `true`, it allows the content to go under the navigation header, not bellow. If you want to create a transparent header, you should also set `backgroundColor` to `transparent`. The default value is `false`.
 
 #### `backTitle` (iOS only)
 
