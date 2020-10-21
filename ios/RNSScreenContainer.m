@@ -1,6 +1,5 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreen.h"
-#import "UIViewController+RNScreens.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerObserverCoordinator.h>
@@ -24,16 +23,35 @@
 
 @implementation RNScreensViewController
 
-- (UIStatusBarStyle)preferredStatusBarStyle
+- (UIViewController *)childViewControllerForStatusBarStyle
 {
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
+  return [self findActiveChildVC];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return childVC ? childVC.preferredStatusBarUpdateAnimation : UIStatusBarAnimationFade;
+  return [self findActiveChildVC].preferredStatusBarUpdateAnimation;
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  return [self findActiveChildVC];
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  return [self findActiveChildVC].supportedInterfaceOrientations;
+}
+
+- (UIViewController *)findActiveChildVC
+{
+  for (UIViewController *childVC in self.childViewControllers) {
+    // condition should be changed when activityState is introduced to check for activityState == 2
+    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).active) {
+      return childVC;
+    }
+  }
+  return [[self childViewControllers] lastObject];
 }
 
 @end

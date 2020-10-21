@@ -1,6 +1,11 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTUIManagerObserverCoordinator.h>
+
 #import "RNSScreenContainer.h"
+
+@interface RNScreensNavigationController: UINavigationController <RNScreensViewControllerDelegate>
+
+@end
 
 @interface RNSScreenStackView : UIView <RNSScreenContainerDelegate, RCTInvalidating>
 
@@ -8,10 +13,6 @@
 
 - (void)markChildUpdated;
 - (void)didUpdateChildren;
-
-@end
-
-@interface RNScreensNavigationController: UINavigationController
 
 @end
 

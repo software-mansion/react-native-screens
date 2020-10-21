@@ -35,6 +35,8 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
+@property (nonatomic) BOOL hasSearch;
+@property (nonatomic, retain) NSString *searchPlaceholder;
 @property (nonatomic) UISemanticContentAttribute direction;
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
 @property (nonatomic) UIStatusBarAnimation statusBarAnimation;
@@ -42,10 +44,12 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic) UIInterfaceOrientationMask screenOrientation;
 
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
++ (void)updateStatusBarAppearance;
++ (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle;
 + (UIInterfaceOrientation)defaultOrientationForOrientationMask:(UIInterfaceOrientationMask)orientationMask;
 + (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation;
 + (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation;
-+ (void)enforceDesiredDeviceOrientationWithOrientationMask:(UIInterfaceOrientationMask)orientationMask;
++ (void)enforceDesiredDeviceOrientation;
 
 @end
 
@@ -65,8 +69,8 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
-+ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 + (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
++ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
 
 @end

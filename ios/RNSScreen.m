@@ -1,9 +1,9 @@
 #import <UIKit/UIKit.h>
 
 #import "RNSScreen.h"
+#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenStack.h"
-#import "RNSScreenStackHeaderConfig.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
@@ -38,7 +38,7 @@
 - (void)reactSetFrame:(CGRect)frame
 {
   if (![self.reactViewController.parentViewController
-        isKindOfClass:[UINavigationController class]]) {
+        isKindOfClass:[UINavigationController class]] && self.stackPresentation != RNSScreenStackPresentationModal) {
     [super reactSetFrame:frame];
   }
   // when screen is mounted under UINavigationController it's size is controller
@@ -296,76 +296,99 @@
   return self;
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle
+- (UIViewController *)childViewControllerForStatusBarStyle
 {
-  UIViewController *child = [[self childViewControllers] lastObject];
-  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    return child.preferredStatusBarStyle;
-  }
-  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
-  return [self statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
+  UIViewController *vc = [self findChildVCForConfig];
+  return vc == self ? nil : vc;
 }
 
-- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+- (UIStatusBarStyle)preferredStatusBarStyle
 {
-  UIViewController *child = [[self childViewControllers] lastObject];
-  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    return child.preferredStatusBarUpdateAnimation;
-  }
-  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
-  return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
+  return [RNSScreenStackHeaderConfig statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  UIViewController *vc = [self findChildVCForConfig];
+  return vc == self ? nil : vc;
 }
 
 - (BOOL)prefersStatusBarHidden
 {
-  UIViewController *child = [[self childViewControllers] lastObject];
-  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    if ([child childViewControllerForStatusBarHidden]) {
-      return [child childViewControllerForStatusBarHidden].prefersStatusBarHidden;
-    }
-  }
-  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
+  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
   return config && config.statusBarHidden ? config.statusBarHidden : NO;
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  UIViewController *vc = [self findChildVCForConfig];
+  
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
+    return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
+  }
+  return UIStatusBarAnimationFade;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-  UIViewController *presentedVC = [self presentedViewController];
-  if ([presentedVC isKindOfClass:[RNSScreen class]]) {
-    return presentedVC.supportedInterfaceOrientations;
-  }
+  UIViewController *vc = [self findChildVCForConfig];
 
-  UIViewController *child = [[self childViewControllers] lastObject];
-  if ([child isKindOfClass:[RNScreensNavigationController class]] || [child isKindOfClass:[RNScreensViewController class]]) {
-    return child.supportedInterfaceOrientations;
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
+    return config && config.screenOrientation ? config.screenOrientation : UIInterfaceOrientationMaskAllButUpsideDown;
   }
-  RNSScreenStackHeaderConfig *config = [self findConfigForScreen];
-  return config && config.screenOrientation ? config.screenOrientation : UIInterfaceOrientationMaskAllButUpsideDown;
+  return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
-- (RNSScreenStackHeaderConfig *)findConfigForScreen
+// if the returned vc is a child, it means that it can provide config;
+// if the returned vc is self, it means that there is no child for config and self has config to provide,
+// so we return self which results in asking self for preferredStatusBarStyle;
+// if the returned vc is nil, it means none of children could provide config and self does not have config either,
+// so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
+- (UIViewController *)findChildVCForConfig
 {
-  // if there is no child navigator and the parent is `RNSScreenContainer`, we should fallback to the parent's (that is not `RNSScreenContainer`) option
-  UIViewController *parent = [self parentViewController];
-  while ([parent isKindOfClass:[RNScreensViewController class]] || [parent isKindOfClass:[RNSScreen class]]) {
-    if ([parent parentViewController] == nil && [parent isKindOfClass:[RNSScreen class]]) {
-      // we are at the top of hierarchy and the controller is RNSScreen so we are in modal screen
-      break;
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  if (self.presentedViewController != nil && [self.presentedViewController isKindOfClass:[RNSScreen class]]) {
+    lastViewController = self.presentedViewController;
+    // setting this makes the modal vc being asked for appearance,
+    // so it doesn't matter what we return here since the modal's root screen will be asked
+    lastViewController.modalPresentationCapturesStatusBarAppearance = YES;
+    // for screen orientation, we need to start the search again from that modal
+    return [(RNSScreen *)lastViewController findChildVCForConfig] ?: lastViewController;
+  }
+  
+  UIViewController *selfOrNil = [self findScreenConfig] != nil ? self : nil;
+  if (lastViewController == nil) {
+    return selfOrNil;
+  } else {
+    if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide config,
+      // we recursively go into its findChildVCForConfig, and if one of the children has the config, we return it,
+      // otherwise we return self if this VC has config, and nil if it doesn't
+      // we use `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
+      UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
+      if ([childScreen isKindOfClass:[RNSScreen class]]) {
+        return [(RNSScreen *)childScreen findChildVCForConfig] ?: selfOrNil;
+      } else {
+        return selfOrNil;
+      }
     } else {
-      parent = [parent parentViewController];
+      // child vc is not from this library, so we don't ask it
+      return selfOrNil;
     }
   }
-  RNSScreenView *screenView = [parent isKindOfClass:[RNScreensNavigationController class]]
-    ? ((RNSScreenView *)[[[parent childViewControllers] lastObject] view])
-    : [parent isKindOfClass:[RNSScreen class]] ? ((RNSScreenView *)parent.view) : ((RNSScreenView *)self.view);
-  RNSScreenStackHeaderConfig *config = nil;
-  for (UIView *subview in screenView.reactSubviews) {
+}
+
+- (RNSScreenStackHeaderConfig *)findScreenConfig
+{
+  for (UIView *subview in self.view.reactSubviews) {
     if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      config = (RNSScreenStackHeaderConfig*) subview;
-      break;
+      return (RNSScreenStackHeaderConfig *)subview;
     }
   }
-  return config;
+  return nil;
 }
 
 - (void)viewDidLayoutSubviews
@@ -406,8 +429,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [self updateStatusBarAppearance];
-  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientationWithOrientationMask:self.supportedInterfaceOrientations];
+  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -450,36 +473,9 @@
 {
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
-}
-
-// duration based on "Programming iOS 13" p. 311 implementation
-- (void)updateStatusBarAppearance
-{
-  self.modalPresentationCapturesStatusBarAppearance = YES;
-  [UIView animateWithDuration:0.4 animations:^{
-    [self setNeedsStatusBarAppearanceUpdate];
-  }];
-}
-
-- (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
-{
-#ifdef __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    switch (statusBarStyle) {
-      case RNSStatusBarStyleAuto:
-          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
-      case RNSStatusBarStyleInverted:
-          return [[self traitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleLight:
-          return UIStatusBarStyleLightContent;
-      case RNSStatusBarStyleDark:
-          return UIStatusBarStyleDarkContent;
-      default:
-        return UIStatusBarStyleLightContent;
-    }
-  }
-#endif
-  return UIStatusBarStyleLightContent;
+  // the correct Screen for appearance is set after the transition, same for orientation.
+  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
 }
 
 @end

@@ -1,7 +1,6 @@
 #import "RNSScreenStack.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
-#import "UIViewController+RNScreens.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -20,26 +19,24 @@
 
 @implementation RNScreensNavigationController
 
-- (UIStatusBarStyle)preferredStatusBarStyle
+- (UIViewController *)childViewControllerForStatusBarStyle
 {
-  UIViewController *childVC =  [[self childViewControllers] lastObject];
-  return [childVC isKindOfClass:[RNSScreen class]] ? childVC.preferredStatusBarStyle : UIStatusBarStyleDefault;
+  return [self topViewController];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  return [[self childViewControllers] lastObject].preferredStatusBarUpdateAnimation;
+  return [self topViewController].preferredStatusBarUpdateAnimation;
 }
 
-- (UIViewController *)childViewControllerForStatusBarStyle
+- (UIViewController *)childViewControllerForStatusBarHidden
 {
-  // this method is not called in category, probably due to being subclass of UINavigationController and not UIViewController and having own implementation
-  return nil;
+  return [self topViewController];
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-  return [[self childViewControllers] lastObject].supportedInterfaceOrientations;
+  return [self topViewController].supportedInterfaceOrientations;
 }
 
 @end
@@ -107,10 +104,8 @@
   if ([screenView isKindOfClass:[RNSScreenView class]]) {
     // we trigger the update of status bar's appearance here because there is no other lifecycle method
     // that can handle it when dismissing a modal, the same for orientation
-    [UIView animateWithDuration:0.4 animations:^{
-      [presentationController.presentingViewController setNeedsStatusBarAppearanceUpdate];
-    }];
-    [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientationWithOrientationMask:presentationController.presentingViewController.supportedInterfaceOrientations];
+    [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+    [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
     [_presentedModals removeObject:presentationController.presentedViewController];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the

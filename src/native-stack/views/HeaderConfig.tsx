@@ -8,43 +8,54 @@ import {
   ScreenStackHeaderRightView,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
+import { processFonts } from './FontProcessor';
 
 type Props = NativeStackNavigationOptions & {
   route: Route<string>;
 };
 
 export default function HeaderConfig({
-  route,
-  title,
-  headerRight,
-  headerLeft,
-  headerCenter,
-  headerTitle,
-  headerBackTitle,
-  headerBackTitleVisible = true,
   backButtonImage,
-  headerHideBackButton,
-  headerHideShadow,
-  headerLargeTitleHideShadow,
-  headerTintColor,
-  headerTopInsetEnabled = true,
-  headerLargeTitle,
-  headerTranslucent,
-  headerStyle = {},
-  headerLargeStyle = {},
-  headerTitleStyle = {},
-  headerLargeTitleStyle = {},
-  headerBackTitleStyle = {},
-  headerShown,
   backButtonInCustomView,
   direction,
+  headerBackTitle,
+  headerBackTitleStyle = {},
+  headerBackTitleVisible = true,
+  headerCenter,
+  headerHideBackButton,
+  headerHideShadow,
+  headerLargeStyle = {},
+  headerLargeTitle,
+  headerLargeTitleHideShadow,
+  headerLargeTitleStyle = {},
+  headerLeft,
+  headerRight,
+  headerShown,
+  headerStyle = {},
+  headerTintColor,
+  headerTitle,
+  headerTitleStyle = {},
+  headerTopInsetEnabled = true,
+  headerTranslucent,
+  route,
   screenOrientation,
   statusBarAnimation,
   statusBarHidden,
   statusBarStyle,
+  title,
 }: Props): JSX.Element {
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
+
+  const [
+    backTitleFontFamily,
+    largeTitleFontFamily,
+    titleFontFamily,
+  ] = processFonts([
+    headerBackTitleStyle.fontFamily,
+    headerLargeTitleStyle.fontFamily,
+    headerTitleStyle.fontFamily,
+  ]);
 
   return (
     <ScreenStackHeaderConfig
@@ -53,7 +64,7 @@ export default function HeaderConfig({
         headerStyle.backgroundColor ? headerStyle.backgroundColor : colors.card
       }
       backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
-      backTitleFontFamily={headerBackTitleStyle.fontFamily}
+      backTitleFontFamily={backTitleFontFamily}
       backTitleFontSize={headerBackTitleStyle.fontSize}
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
@@ -64,13 +75,13 @@ export default function HeaderConfig({
       largeTitle={headerLargeTitle}
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}
       largeTitleColor={headerLargeTitleStyle.color}
-      largeTitleFontFamily={headerLargeTitleStyle.fontFamily}
+      largeTitleFontFamily={largeTitleFontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleHideShadow={headerLargeTitleHideShadow}
+      screenOrientation={screenOrientation}
       statusBarAnimation={statusBarAnimation}
       statusBarHidden={statusBarHidden}
       statusBarStyle={statusBarStyle}
-      screenOrientation={screenOrientation}
       title={
         headerTitle !== undefined
           ? headerTitle
@@ -85,7 +96,7 @@ export default function HeaderConfig({
           ? headerTintColor
           : colors.text
       }
-      titleFontFamily={headerTitleStyle.fontFamily}
+      titleFontFamily={titleFontFamily}
       titleFontSize={headerTitleStyle.fontSize}
       topInsetEnabled={headerTopInsetEnabled}
       translucent={headerTranslucent === true}>
