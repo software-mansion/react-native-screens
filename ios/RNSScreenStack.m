@@ -19,6 +19,7 @@
 
 @implementation RNScreensNavigationController
 
+#if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
   return [self topViewController];
@@ -33,6 +34,12 @@
 {
   return [self topViewController];
 }
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  return [self topViewController].supportedInterfaceOrientations;
+}
+#endif
 
 @end
 
@@ -100,8 +107,9 @@
   UIView *screenView = presentationController.presentedViewController.view;
   if ([screenView isKindOfClass:[RNSScreenView class]]) {
     // we trigger the update of status bar's appearance here because there is no other lifecycle method
-    // that can handle it when dismissing a modal
+    // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+    [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
     [_presentedModals removeObject:presentationController.presentedViewController];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the

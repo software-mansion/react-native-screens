@@ -300,6 +300,7 @@
   return self;
 }
 
+#if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
   UIViewController *vc = [self findChildVCForConfig];
@@ -327,12 +328,23 @@
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
   UIViewController *vc = [self findChildVCForConfig];
-  if (vc != self && vc != nil) {
-    return vc.preferredStatusBarUpdateAnimation;
+  
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
+    return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
   }
+  return UIStatusBarAnimationFade;
+}
 
-  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
-  return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  UIViewController *vc = [self findChildVCForConfig];
+
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
+    return config && config.screenOrientation ? config.screenOrientation : UIInterfaceOrientationMaskAllButUpsideDown;
+  }
+  return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
 // if the returned vc is a child, it means that it can provide config;
@@ -343,12 +355,13 @@
 - (UIViewController *)findChildVCForConfig
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  if (self.presentedViewController != nil) {
+  if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
     // setting this makes the modal vc being asked for appearance,
     // so it doesn't matter what we return here since the modal's root screen will be asked
     lastViewController.modalPresentationCapturesStatusBarAppearance = YES;
-    return nil;
+    // for screen orientation, we need to start the search again from that modal
+    return [(RNSScreen *)lastViewController findChildVCForConfig] ?: lastViewController;
   }
 
   UIViewController *selfOrNil = [self findScreenConfig] != nil ? self : nil;
@@ -372,6 +385,7 @@
     }
   }
 }
+#endif
 
 - (RNSScreenStackHeaderConfig *)findScreenConfig
 {
@@ -429,6 +443,7 @@
 {
   [super viewWillAppear:animated];
   [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -471,8 +486,9 @@
 {
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
-  // the correct Screen for appearance is set after the transition
+  // the correct Screen for appearance is set after the transition, same for orientation.
   [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
 }
 
 @end

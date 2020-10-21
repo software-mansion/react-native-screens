@@ -23,6 +23,7 @@
 
 @implementation RNScreensViewController
 
+#if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
   return [self findActiveChildVC];
@@ -36,7 +37,11 @@
 - (UIViewController *)childViewControllerForStatusBarHidden
 {
   return [self findActiveChildVC];
+}
 
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  return [self findActiveChildVC].supportedInterfaceOrientations;
 }
 
 - (UIViewController *)findActiveChildVC
@@ -48,6 +53,7 @@
   }
   return [[self childViewControllers] lastObject];
 }
+#endif
 
 @end
 

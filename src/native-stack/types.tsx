@@ -220,6 +220,19 @@ export type NativeStackNavigationOptions = {
    */
   replaceAnimation?: ScreenProps['replaceAnimation'];
   /**
+   * In which orientation should the screen appear.
+   * The following values are currently supported:
+   * - "default" - resolves to "all" without "portrait_down".
+   * - "all" – all orientations are permitted
+   * - "portrait" – portrait orientations are permitted
+   * - "portrait_up" – right-side portrait orientation is permitted
+   * - "portrait_down" – upside-down portrait orientation is permitted
+   * - "landscape" – landscape orientations are permitted
+   * - "landscape_left" – landscape-left orientation is permitted
+   * - "landscape_right" – landscape-right orientation is permitted
+   */
+  screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
