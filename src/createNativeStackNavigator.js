@@ -80,6 +80,9 @@ class StackView extends React.Component {
       headerTopInsetEnabled = true,
       hideShadow,
       largeTitle,
+      statusBarAnimation,
+      statusBarHidden,
+      statusBarStyle,
       title,
       translucent,
     } = options;
@@ -110,6 +113,9 @@ class StackView extends React.Component {
         headerLargeTitleStyle && headerLargeTitleStyle.fontFamily,
       largeTitleFontSize:
         headerLargeTitleStyle && headerLargeTitleStyle.fontSize,
+      statusBarAnimation,
+      statusBarHidden,
+      statusBarStyle,
       title,
       titleColor:
         (headerTitleStyle && headerTitleStyle.color) || headerTintColor,
