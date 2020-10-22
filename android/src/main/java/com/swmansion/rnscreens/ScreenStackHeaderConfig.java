@@ -40,6 +40,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mDestroyed;
   private boolean mBackButtonInCustomView;
   private boolean mIsTopInsetEnabled = true;
+  private boolean mIsTranslucent;	
   private int mTintColor;
   private final Toolbar mToolbar;
   private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
