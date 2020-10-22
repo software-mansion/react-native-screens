@@ -29,7 +29,8 @@ public class Screen extends ViewGroup {
     DEFAULT,
     NONE,
     FADE,
-    SLIDE
+    SLIDE,
+    SLIDE_RTL
   }
 
   public enum ReplaceAnimation {

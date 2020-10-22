@@ -23,7 +23,7 @@ declare module 'react-native-screens' {
     | 'containedTransparentModal'
     | 'fullScreenModal'
     | 'formSheet';
-  export type StackAnimationTypes = 'default' | 'fade' | 'flip' | 'none' | 'slide';
+  export type StackAnimationTypes = 'default' | 'fade' | 'flip' | 'none' | 'slide' | 'slide_rtl';
   export type BlurEffectTypes =
     | 'extraLight'
     | 'light'
