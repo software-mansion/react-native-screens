@@ -223,7 +223,7 @@ export type NativeStackNavigationOptions = {
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
-   * - "default" - resolves to "all" without "portrait_down".
+   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
    * - "all" – all orientations are permitted
    * - "portrait" – portrait orientations are permitted
    * - "portrait_up" – right-side portrait orientation is permitted

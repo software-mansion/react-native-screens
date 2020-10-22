@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -39,9 +40,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mDestroyed;
   private boolean mBackButtonInCustomView;
   private boolean mIsTopInsetEnabled = true;
-  private boolean mIsTranslucent;
   private int mTintColor;
   private final Toolbar mToolbar;
+  private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
 
   private boolean mIsAttachedToWindow = false;
 
@@ -136,7 +137,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     return null;
   }
 
-  private ScreenStackFragment getScreenFragment() {
+  protected ScreenStackFragment getScreenFragment() {
     ViewParent screen = getParent();
     if (screen instanceof Screen) {
       Fragment fragment = ((Screen) screen).getFragment();
@@ -168,6 +169,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         mToolbar.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
       }
     }
+
+    // orientation
+    activity.setRequestedOrientation(mScreenOrientation);
 
     if (mIsHidden) {
       if (mToolbar.getParent() != null) {
@@ -345,6 +349,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     return null;
   }
 
+  public int getScreenOrientation(){
+    return mScreenOrientation;
+  }
+
   public void setTitle(String title) {
     mTitle = title;
   }
@@ -391,5 +399,39 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   public void setDirection(String direction) {
     mDirection = direction;
+  }
+
+  public void setScreenOrientation(String screenOrientation) {
+    if (screenOrientation == null) {
+      mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+      return;
+    }
+
+    switch (screenOrientation) {
+      case "all":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
+        break;
+      case "portrait":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
+        break;
+      case "portrait_up":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        break;
+      case "portrait_down":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+        break;
+      case "landscape":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+        break;
+      case "landscape_left":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+        break;
+      case "landscape_right":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        break;
+      default:
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        break;
+    }
   }
 }

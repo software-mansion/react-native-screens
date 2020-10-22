@@ -66,6 +66,32 @@ public class ScreenFragment extends Fragment {
     return mScreenView;
   }
 
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    ScreenStackHeaderConfig config = findHeaderConfig();
+    if (config != null && config.getScreenFragment().getActivity() != null) {
+      config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
+    }
+  }
+
+  private ScreenStackHeaderConfig findHeaderConfig() {
+    ViewParent parent = getScreen();
+    while (parent != null) {
+      if (parent instanceof Screen) {
+        for (int i = 0; i < ((Screen) parent).getChildCount(); i++) {
+          View child = ((Screen) parent).getChildAt(i);
+          if (child instanceof ScreenStackHeaderConfig) {
+            return (ScreenStackHeaderConfig) child;
+          }
+        }
+      }
+      parent = parent.getParent();
+    }
+    return null;
+  }
+
   protected void dispatchOnWillAppear() {
     ((ReactContext) mScreenView.getContext())
         .getNativeModule(UIManagerModule.class)
