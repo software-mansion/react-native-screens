@@ -90,6 +90,8 @@ declare module 'react-native-screens' {
      *  @type "default" – uses a platform default animation
      *  @type "fade" – fades screen in or out
      *  @type "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+     *  @type "slide" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
+     *  @type "slide_rtl" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
      *  @type "none" – the screen appears/dissapears without an animation
      */
     stackAnimation?: StackAnimationTypes;
