@@ -382,7 +382,7 @@
 {
   [super viewDidLayoutSubviews];
 
-  if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+  if ([self.parentViewController isKindOfClass:[UINavigationController class]] && !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
     [((RNSScreenView *)self.viewIfLoaded) updateBounds];
   }
