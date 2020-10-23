@@ -28,6 +28,12 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
   RNSScreenReplaceAnimationPush,
 };
 
+typedef NS_ENUM(NSInteger, RNSActivityState) {
+  RNSActivityStateInactive = 0,
+  RNSActivityStateTransitioningOrBelowTop = 1,
+  RNSActivityStateOnTop = 2
+};
+
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;

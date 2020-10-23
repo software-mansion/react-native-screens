@@ -150,7 +150,7 @@
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
   for (RNSScreenView *screen in _reactSubviews) {
-    if (screen.activityState == 0 && [_activeScreens containsObject:screen]) {
+    if (screen.activityState == RNSActivityStateInactive && [_activeScreens containsObject:screen]) {
       activeScreenRemoved = YES;
       [self detachScreen:screen];
     }
@@ -164,22 +164,17 @@
   // detect if new screen is going to be activated
   BOOL activeScreenAdded = NO;
   for (RNSScreenView *screen in _reactSubviews) {
-    if (screen.activityState != 0 && ![_activeScreens containsObject:screen]) {
+    if (screen.activityState != RNSActivityStateInactive && ![_activeScreens containsObject:screen]) {
       activeScreenAdded = YES;
     }
-  }
-
-  if (activeScreenRemoved || activeScreenAdded) {
-    // we disable interaction for during the transition until one of the screens has active == 2
-    self.userInteractionEnabled = NO;
   }
 
   if (activeScreenAdded) {
     // add new screens in order they are placed in subviews array
     NSInteger index = 0;
     for (RNSScreenView *screen in _reactSubviews) {
-      if (screen.activityState != 0) {
-        if ([_activeScreens containsObject:screen] && screen.activityState == 1) {
+      if (screen.activityState != RNSActivityStateInactive) {
+        if ([_activeScreens containsObject:screen] && screen.activityState == RNSActivityStateTransitioningOrBelowTop) {
           // for screens that were already active we want to mimick the effect UINavigationController
           // has when willMoveToWindow:nil is triggered before the animation starts
           [self prepareDetach:screen];
@@ -191,10 +186,13 @@
     }
   }
 
-  // if there is a screen with active == 2, it means the transition has ended, so we restore interactions
   if (activeScreenRemoved || activeScreenAdded) {
+    // we disable interaction for during the transition until one of the screens has active == 2
+    self.userInteractionEnabled = NO;
+    
     for (RNSScreenView *screen in _reactSubviews) {
-      if (screen.activityState == 2) {
+      if (screen.activityState == RNSActivityStateOnTop) {
+        // if there is a screen with active == 2, it means the transition has ended, so we restore interactions
         self.userInteractionEnabled = YES;
         [screen notifyFinishTransitioning];
       }
