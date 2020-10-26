@@ -116,7 +116,7 @@ class Screen extends React.Component {
         let { enabled, active, activityState, ...rest } = this.props;
         if (active !== undefined && activityState === undefined) {
           console.warn(
-            'You are using old React Navigation version. Update your React Navigation navigators to use the best working solution.'
+            'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
           );
           activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
         }
