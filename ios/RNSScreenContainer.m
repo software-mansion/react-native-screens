@@ -42,8 +42,7 @@
 - (UIViewController *)findActiveChildVC
 {
   for (UIViewController *childVC in self.childViewControllers) {
-    // condition should be changed when activityState is introduced to check for activityState == 2
-    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).active) {
+    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
       return childVC;
     }
   }
