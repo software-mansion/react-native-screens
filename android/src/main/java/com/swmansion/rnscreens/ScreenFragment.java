@@ -66,10 +66,7 @@ public class ScreenFragment extends Fragment {
     return mScreenView;
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-
+  public void onContainerUpdate() {
     ScreenStackHeaderConfig config = findHeaderConfig();
     if (config != null && config.getScreenFragment().getActivity() != null) {
       config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
