@@ -1,4 +1,4 @@
-name: Build Android and iOS
+name: Lint
 
 on:
   push:
