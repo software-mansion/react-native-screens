@@ -44,10 +44,10 @@ This snippet should be as minimal as possible and ready to be pasted into editor
 
 - [ ] Included code example that can be used to test this change
 - [ ] Updated TS types
-- Updated documentation: <!-- For adding new props to native-stack -->
-- [ ] https://github.com/software-mansion/react-native-screens/blob/master/README.md
-- [ ] https://github.com/software-mansion/react-native-screens/blob/master/native-stack/README.md
-- [ ] https://github.com/software-mansion/react-native-screens/blob/master/createNativeStackNavigator/README.md
-- [ ] https://github.com/software-mansion/react-native-screens/blob/master/src/index.d.ts
-- [ ] https://github.com/software-mansion/react-native-screens/blob/master/src/native-stack/types.tsx
+- [ ] Updated documentation: <!-- For adding new props to native-stack -->
+  - [ ] https://github.com/software-mansion/react-native-screens/blob/master/README.md
+  - [ ] https://github.com/software-mansion/react-native-screens/blob/master/native-stack/README.md
+  - [ ] https://github.com/software-mansion/react-native-screens/blob/master/createNativeStackNavigator/README.md
+  - [ ] https://github.com/software-mansion/react-native-screens/blob/master/src/index.d.ts
+  - [ ] https://github.com/software-mansion/react-native-screens/blob/master/src/native-stack/types.tsx
 - [ ] Ensured that CI passes
