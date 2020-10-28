@@ -14,9 +14,7 @@ import {
   SceneView,
   StackActions,
   StackRouter,
-  // eslint-disable-next-line import/no-unresolved
 } from 'react-navigation';
-// eslint-disable-next-line import/no-unresolved
 import { HeaderBackButton } from 'react-navigation-stack';
 
 function renderComponentOrThunk(componentOrThunk, props) {
