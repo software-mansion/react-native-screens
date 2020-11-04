@@ -5,11 +5,11 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "npm run format && npm run lint && npm run test:unit",
-    "test:unit": "jest",
+    "test": "yarn format && yarn lint && yarn test:unit",
+    "test:unit": "jest --passWithNoTests",
     "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src && npm run check-types",
-    "precommit": "lint-staged",
+    "precommit": "yarn test",
     "release": "npm login && release-it",
     "prepare": "bob build"
   },
@@ -81,6 +81,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "^0.63.2",
+    "react-navigation": "^4.4.3",
+    "react-navigation-stack": "^2.9.0",
     "react-test-renderer": "^16.13.1",
     "release-it": "^13.5.2",
     "typescript": "^3.9.7"
