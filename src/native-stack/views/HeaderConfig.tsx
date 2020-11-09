@@ -15,30 +15,33 @@ type Props = NativeStackNavigationOptions & {
 };
 
 export default function HeaderConfig({
-  route,
-  title,
-  headerRight,
-  headerLeft,
-  headerCenter,
-  headerTitle,
-  headerBackTitle,
-  headerBackTitleVisible = true,
   backButtonImage,
-  headerHideBackButton,
-  headerHideShadow,
-  headerLargeTitleHideShadow,
-  headerTintColor,
-  headerTopInsetEnabled = true,
-  headerLargeTitle,
-  headerTranslucent,
-  headerStyle = {},
-  headerLargeStyle = {},
-  headerTitleStyle = {},
-  headerLargeTitleStyle = {},
-  headerBackTitleStyle = {},
-  headerShown,
   backButtonInCustomView,
   direction,
+  headerBackTitle,
+  headerBackTitleStyle = {},
+  headerBackTitleVisible = true,
+  headerCenter,
+  headerHideBackButton,
+  headerHideShadow,
+  headerLargeStyle = {},
+  headerLargeTitle,
+  headerLargeTitleHideShadow,
+  headerLargeTitleStyle = {},
+  headerLeft,
+  headerRight,
+  headerShown,
+  headerStyle = {},
+  headerTintColor,
+  headerTitle,
+  headerTitleStyle = {},
+  headerTopInsetEnabled = true,
+  headerTranslucent,
+  route,
+  statusBarAnimation,
+  statusBarHidden,
+  statusBarStyle,
+  title,
 }: Props): JSX.Element {
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
@@ -74,6 +77,9 @@ export default function HeaderConfig({
       largeTitleFontFamily={largeTitleFontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleHideShadow={headerLargeTitleHideShadow}
+      statusBarAnimation={statusBarAnimation}
+      statusBarHidden={statusBarHidden}
+      statusBarStyle={statusBarStyle}
       title={
         headerTitle !== undefined
           ? headerTitle

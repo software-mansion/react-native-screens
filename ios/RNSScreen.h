@@ -1,6 +1,7 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTView.h>
 #import <React/RCTComponent.h>
+
 #import "RNSScreenContainer.h"
 
 @class RNSScreenContainerView;
@@ -34,7 +35,7 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 
 @end
 
-@interface RNSScreen : UIViewController
+@interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
@@ -42,6 +43,7 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 @end
 
 @interface RNSScreenManager : RCTViewManager
+
 @end
 
 @interface RNSScreenView : RCTView

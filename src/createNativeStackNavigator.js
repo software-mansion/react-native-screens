@@ -67,19 +67,24 @@ class StackView extends React.Component {
     const { headerMode } = navigationConfig;
 
     const {
-      title,
-      headerStyle,
-      headerTitleStyle,
-      headerBackTitleStyle,
-      headerBackTitle,
-      headerBackTitleVisible,
-      headerTintColor,
-      largeTitle,
-      headerLargeTitleStyle,
-      translucent,
-      hideShadow,
-      headerTopInsetEnabled = true,
+      backButtonInCustomView,
       direction,
+      headerBackTitle,
+      headerBackTitleStyle,
+      headerBackTitleVisible,
+      headerHideBackButton,
+      headerLargeTitleStyle,
+      headerStyle,
+      headerTintColor,
+      headerTitleStyle,
+      headerTopInsetEnabled = true,
+      hideShadow,
+      largeTitle,
+      statusBarAnimation,
+      statusBarHidden,
+      statusBarStyle,
+      title,
+      translucent,
     } = options;
 
     const scene = {
@@ -90,28 +95,33 @@ class StackView extends React.Component {
     };
 
     const headerOptions = {
-      translucent: translucent === undefined ? false : translucent,
-      title,
-      titleFontFamily: headerTitleStyle && headerTitleStyle.fontFamily,
-      titleColor:
-        (headerTitleStyle && headerTitleStyle.color) || headerTintColor,
-      titleFontSize: headerTitleStyle && headerTitleStyle.fontSize,
+      backButtonInCustomView,
       backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
       backTitleFontFamily:
         headerBackTitleStyle && headerBackTitleStyle.fontFamily,
       backTitleFontSize: headerBackTitleStyle && headerBackTitleStyle.fontSize,
       color: headerTintColor,
+      direction,
+      topInsetEnabled: headerTopInsetEnabled,
+      hideBackButton: headerHideBackButton,
+      hideShadow,
       largeTitle,
+      largeTitleBackgroundColor:
+        headerLargeTitleStyle && headerLargeTitleStyle.backgroundColor,
+      largeTitleColor: headerLargeTitleStyle && headerLargeTitleStyle.color,
       largeTitleFontFamily:
         headerLargeTitleStyle && headerLargeTitleStyle.fontFamily,
       largeTitleFontSize:
         headerLargeTitleStyle && headerLargeTitleStyle.fontSize,
-      largeTitleColor: headerLargeTitleStyle && headerLargeTitleStyle.color,
-      largeTitleBackgroundColor:
-        headerLargeTitleStyle && headerLargeTitleStyle.backgroundColor,
-      hideShadow,
-      headerTopInsetEnabled,
-      direction,
+      statusBarAnimation,
+      statusBarHidden,
+      statusBarStyle,
+      title,
+      titleColor:
+        (headerTitleStyle && headerTitleStyle.color) || headerTintColor,
+      titleFontFamily: headerTitleStyle && headerTitleStyle.fontFamily,
+      titleFontSize: headerTitleStyle && headerTitleStyle.fontSize,
+      translucent: translucent === undefined ? false : translucent,
     };
 
     const hasHeader = headerMode !== 'none' && options.header !== null;

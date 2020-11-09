@@ -2,9 +2,11 @@ import {
   createNavigatorFactory,
   EventArg,
   StackActions,
+  StackActionHelpers,
   StackNavigationState,
   StackRouter,
   StackRouterOptions,
+  ParamListBase,
   useNavigationBuilder,
 } from '@react-navigation/native';
 import * as React from 'react';
@@ -29,8 +31,9 @@ function NativeStackNavigator({
   }
 
   const { state, descriptors, navigation } = useNavigationBuilder<
-    StackNavigationState,
+    StackNavigationState<ParamListBase>,
     StackRouterOptions,
+    StackActionHelpers<ParamListBase>,
     NativeStackNavigationOptions,
     NativeStackNavigationEventMap
   >(StackRouter, {
@@ -75,7 +78,7 @@ function NativeStackNavigator({
 }
 
 export default createNavigatorFactory<
-  StackNavigationState,
+  StackNavigationState<ParamListBase>,
   NativeStackNavigationOptions,
   NativeStackNavigationEventMap,
   typeof NativeStackNavigator

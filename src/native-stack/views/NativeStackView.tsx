@@ -1,4 +1,5 @@
 import {
+  ParamListBase,
   StackActions,
   StackNavigationState,
   useTheme,
@@ -40,7 +41,7 @@ if (__DEV__) {
 }
 
 type Props = {
-  state: StackNavigationState;
+  state: StackNavigationState<ParamListBase>;
   navigation: NativeStackNavigationHelpers;
   descriptors: NativeStackDescriptorMap;
 };

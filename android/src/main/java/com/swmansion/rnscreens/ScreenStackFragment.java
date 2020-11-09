@@ -154,7 +154,7 @@ public class ScreenStackFragment extends ScreenFragment {
   }
 
   private void notifyViewAppearTransitionEnd() {
-    ViewParent screenStack = getView().getParent();
+    ViewParent screenStack = getView() != null ? getView().getParent() : null;
     if (screenStack instanceof ScreenStack) {
       ((ScreenStack) screenStack).onViewAppearTransitionEnd();
     }

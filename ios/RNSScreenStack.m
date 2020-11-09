@@ -17,6 +17,25 @@
 
 @end
 
+@implementation RNScreensNavigationController
+
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  return [self topViewController];
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  return [self topViewController].preferredStatusBarUpdateAnimation;
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  return [self topViewController];
+}
+
+@end
+
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation;
 @end
@@ -35,7 +54,7 @@
     _manager = manager;
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
-    _controller = [[UINavigationController alloc] init];
+    _controller = [[RNScreensNavigationController alloc] init];
     _controller.delegate = self;
 
     // we have to initialize viewControllers with a non empty array for
@@ -78,6 +97,9 @@
   // forward certain calls to the container (Stack).
   UIView *screenView = presentationController.presentedViewController.view;
   if ([screenView isKindOfClass:[RNSScreenView class]]) {
+    // we trigger the update of status bar's appearance here because there is no other lifecycle method
+    // that can handle it when dismissing a modal
+    [RNSScreenStackHeaderConfig updateStatusBarAppearance];
     [_presentedModals removeObject:presentationController.presentedViewController];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
