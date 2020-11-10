@@ -239,10 +239,6 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     return screenFragment.getScreen().getActivityState();
   }
 
-  protected boolean isScreenActive(ScreenFragment screenFragment) {
-    return getActivityState(screenFragment) != Screen.ActivityState.INACTIVE;
-  }
-
   protected boolean hasScreen(ScreenFragment screenFragment) {
     return mScreenFragments.contains(screenFragment);
   }
@@ -339,8 +335,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     Set<Fragment> orphaned = new HashSet<>(mFragmentManager.getFragments());
     for (int i = 0, size = mScreenFragments.size(); i < size; i++) {
       ScreenFragment screenFragment = mScreenFragments.get(i);
-      boolean isActive = isScreenActive(screenFragment);
-      if (!isActive && screenFragment.isAdded()) {
+      if (getActivityState(screenFragment) == Screen.ActivityState.INACTIVE && screenFragment.isAdded()) {
         detachScreen(screenFragment);
       }
       orphaned.remove(screenFragment);
@@ -360,9 +355,8 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
     for (int i = 0, size = mScreenFragments.size(); i < size; i++) {
       ScreenFragment screenFragment = mScreenFragments.get(i);
-      Screen.ActivityState active = getActivityState(screenFragment);
-      if (active == Screen.ActivityState.ON_TOP) {
-        // top screen gets the active value of 2 after the end of transition
+      if (getActivityState(screenFragment) == Screen.ActivityState.ON_TOP) {
+        // if there is an "onTop" screen it means the transition has ended
         transitioning = false;
       }
     }
@@ -371,11 +365,11 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     boolean addedBefore = false;
     for (int i = 0, size = mScreenFragments.size(); i < size; i++) {
       ScreenFragment screenFragment = mScreenFragments.get(i);
-      boolean isActive = isScreenActive(screenFragment);
-      if (isActive && !screenFragment.isAdded()) {
+      Screen.ActivityState activityState = getActivityState(screenFragment);
+      if (activityState != Screen.ActivityState.INACTIVE && !screenFragment.isAdded()) {
         addedBefore = true;
         attachScreen(screenFragment);
-      } else if (isActive && addedBefore) {
+      } else if (activityState != Screen.ActivityState.INACTIVE && addedBefore) {
         moveToFront(screenFragment);
       }
       screenFragment.getScreen().setTransitioning(transitioning);

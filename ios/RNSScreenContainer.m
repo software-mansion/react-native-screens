@@ -145,30 +145,30 @@
 - (void)updateContainer
 {
   _needUpdate = NO;
-  BOOL activeScreenRemoved = NO;
+  BOOL screenRemoved = NO;
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
   for (RNSScreenView *screen in _reactSubviews) {
     if (screen.activityState == RNSActivityStateInactive && [_activeScreens containsObject:screen]) {
-      activeScreenRemoved = YES;
+      screenRemoved = YES;
       [self detachScreen:screen];
     }
     [orphaned removeObject:screen];
   }
   for (RNSScreenView *screen in orphaned) {
-    activeScreenRemoved = YES;
+    screenRemoved = YES;
     [self detachScreen:screen];
   }
 
   // detect if new screen is going to be activated
-  BOOL activeScreenAdded = NO;
+  BOOL screenAdded = NO;
   for (RNSScreenView *screen in _reactSubviews) {
     if (screen.activityState != RNSActivityStateInactive && ![_activeScreens containsObject:screen]) {
-      activeScreenAdded = YES;
+      screenAdded = YES;
     }
   }
 
-  if (activeScreenAdded) {
+  if (screenAdded) {
     // add new screens in order they are placed in subviews array
     NSInteger index = 0;
     for (RNSScreenView *screen in _reactSubviews) {
@@ -185,20 +185,20 @@
     }
   }
 
-  if (activeScreenRemoved || activeScreenAdded) {
-    // we disable interaction for during the transition until one of the screens has active == 2
+  if (screenRemoved || screenAdded) {
+    // we disable interaction for the duration of the transition until one of the screens changes its state to "onTop"
     self.userInteractionEnabled = NO;
     
     for (RNSScreenView *screen in _reactSubviews) {
       if (screen.activityState == RNSActivityStateOnTop) {
-        // if there is a screen with active == 2, it means the transition has ended, so we restore interactions
+        // if there is an "onTop" screen it means the transition has ended so we restore interactions
         self.userInteractionEnabled = YES;
         [screen notifyFinishTransitioning];
       }
     }
   }
 
-  if ((activeScreenRemoved || activeScreenAdded) && _controller.presentedViewController == nil && _controller.presentingViewController == nil) {
+  if ((screenRemoved || screenAdded) && _controller.presentedViewController == nil && _controller.presentingViewController == nil) {
     // if user has reachability enabled (one hand use) and the window is slided down the below
     // method will force it to slide back up as it is expected to happen with UINavController when
     // we push or pop views.

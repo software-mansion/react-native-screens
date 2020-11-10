@@ -229,6 +229,5 @@ module.exports = {
   enableScreens,
   useScreens,
   screensEnabled,
-
   shouldUseActivityState,
 };
