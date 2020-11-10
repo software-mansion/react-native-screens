@@ -23,6 +23,7 @@
     "@react-native-community/eslint-config": "^1.1.0",
     "babel-jest": "^25.1.0",
     "babel-plugin-module-resolver": "^4.0.0",
+    "babel-preset-expo": "^8.3.0",
     "glob-to-regexp": "^0.4.1",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.61.0",

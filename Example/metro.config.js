@@ -9,11 +9,6 @@ function getBlacklist() {
     glob(
       `${path.resolve(
         __dirname
-      )}/node_modules/*/node_modules/hoist-non-react-statics/*`
-    ),
-    glob(
-      `${path.resolve(
-        __dirname
       )}/node_modules/react-native/node_modules/@babel/*`
     ),
   ];
