@@ -50,7 +50,6 @@ declare module 'react-native-screens' {
   export interface ScreenProps extends ViewProps {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
     activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
-    onComponentRef?: (view: any) => void;
     children?: React.ReactNode;
     /**
      * @description All children screens should have the same value of their "enabled" prop as their container.
