@@ -6,6 +6,7 @@ import {
   ParamListBase,
   StackNavigationState,
   StackRouterOptions,
+  StackActionHelpers,
 } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
@@ -42,29 +43,8 @@ export type NativeStackNavigationProp<
   StackNavigationState<ParamList>,
   NativeStackNavigationOptions,
   NativeStackNavigationEventMap
-> & {
-  /**
-   * Push a new screen onto the stack.
-   *
-   * @param name Name of the route for the tab.
-   * @param [params] Params object for the route.
-   */
-  push<RouteName extends keyof ParamList>(
-    ...args: ParamList[RouteName] extends undefined | unknown
-      ? [RouteName] | [RouteName, ParamList[RouteName]]
-      : [RouteName, ParamList[RouteName]]
-  ): void;
-
-  /**
-   * Pop a screen from the stack.
-   */
-  pop(count?: number): void;
-
-  /**
-   * Pop to the first route in the stack, dismissing all other screens.
-   */
-  popToTop(): void;
-};
+> &
+  StackActionHelpers<ParamList>;
 
 export type NativeStackNavigationHelpers = NavigationHelpers<
   ParamListBase,
