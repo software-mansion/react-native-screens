@@ -27,6 +27,9 @@ function enableScreens(shouldEnableScreens = true) {
   }
 }
 
+// const that tells if the library should use new implementation, will be undefined for older versions
+const shouldUseActivityState = true;
+
 // we should remove this at some point
 function useScreens(shouldUseScreens = true) {
   console.warn('Method `useScreens` is deprecated, please use `enableScreens`');
@@ -110,8 +113,20 @@ class Screen extends React.Component {
 
       // When using RN from master version is 0.0.0
       if (version.minor >= 57 || version.minor === 0) {
-        const { enabled, ...rest } = this.props;
-        return <AnimatedNativeScreen {...rest} ref={this.setRef} />;
+        let { enabled, active, activityState, ...rest } = this.props;
+        if (active !== undefined && activityState === undefined) {
+          console.warn(
+            'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
+          );
+          activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
+        }
+        return (
+          <AnimatedNativeScreen
+            {...rest}
+            activityState={activityState}
+            ref={this.setRef}
+          />
+        );
       } else {
         // On RN version below 0.57 we need to wrap screen's children with an
         // additional View because of a bug fixed in react-native/pull/20658 which
@@ -214,4 +229,5 @@ module.exports = {
   enableScreens,
   useScreens,
   screensEnabled,
+  shouldUseActivityState,
 };

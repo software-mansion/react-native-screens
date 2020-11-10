@@ -49,6 +49,7 @@ declare module 'react-native-screens' {
 
   export interface ScreenProps extends ViewProps {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
+    activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
     children?: React.ReactNode;
     /**
      * @description All children screens should have the same value of their "enabled" prop as their container.
@@ -252,4 +253,5 @@ declare module 'react-native-screens' {
   export const ScreenStackHeaderRightView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderCenterView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderConfig: ComponentClass<ScreenStackHeaderConfigProps>;
+  export const shouldUseActivityState: boolean;
 }
