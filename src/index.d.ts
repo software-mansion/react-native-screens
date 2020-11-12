@@ -232,6 +232,10 @@ declare module 'react-native-screens' {
      */
     titleFontSize?: number;
     /**
+     * @description Customize the weight of the font to be used for the title.
+     */
+    titleFontWeight?: string;
+    /**
      * @host (Android only)
      * @description A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
      */
