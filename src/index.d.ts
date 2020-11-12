@@ -11,7 +11,6 @@ declare module 'react-native-screens' {
     ViewProps,
   } from 'react-native';
 
-  export function useScreens(shouldUseScreens?: boolean): void;
   export function enableScreens(shouldEnableScreens?: boolean): void;
   export function screensEnabled(): boolean;
 
