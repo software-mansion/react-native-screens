@@ -153,8 +153,9 @@
       }
 
       NSNumber *size = config.titleFontSize ?: @17;
+      NSString *weight = config.titleFontWeight ?: nil;
       if (config.titleFontFamily) {
-        attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
+        attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
@@ -559,6 +560,7 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_VIEW_PROPERTY(title, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(titleFontWeight, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
