@@ -96,6 +96,7 @@ export default function HeaderConfig({
       }
       titleFontFamily={titleFontFamily}
       titleFontSize={headerTitleStyle.fontSize}
+      titleFontWeight={headerTitleStyle.fontWeight}
       topInsetEnabled={headerTopInsetEnabled}
       translucent={headerTranslucent === true}>
       {headerRight !== undefined ? (

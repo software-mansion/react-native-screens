@@ -300,8 +300,9 @@
     }
 
     NSNumber *size = config.titleFontSize ?: @17;
+    NSString *weight = config.titleFontWeight ?: nil;
     if (config.titleFontFamily) {
-      attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
+      attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
     } else {
       attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
     }

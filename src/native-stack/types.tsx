@@ -194,6 +194,7 @@ export type NativeStackNavigationOptions = {
   headerTitleStyle?: {
     fontFamily?: string;
     fontSize?: number;
+    fontWeight?: string;
     color?: string;
   };
   /**
