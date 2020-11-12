@@ -18,6 +18,7 @@ import com.facebook.react.bridge.JavaScriptExecutorFactory;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
+import com.swmansion.rnscreens.RNScreensPackage;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       @SuppressWarnings("UnnecessaryLocalVariable")
       List<ReactPackage> packages = new PackageList(this).getPackages();
-       packages.add(new MyPackage());
+       packages.add(new RNScreensPackage());
       return packages;
     }
 
