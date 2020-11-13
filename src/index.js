@@ -32,3 +32,5 @@ export const Screen = Animated.createAnimatedComponent(NativeScreen);
 export const ScreenContainer = View;
 
 export const NativeScreenContainer = View;
+
+export const shouldUseActivityState = false;
