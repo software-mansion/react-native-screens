@@ -4,7 +4,7 @@
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "check-types": "tsc --noEmit",
-    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start": "react-native start",
     "test": "yarn format && yarn lint && yarn test:unit",
     "test:unit": "jest --passWithNoTests",
     "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
