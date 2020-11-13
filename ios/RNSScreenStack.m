@@ -45,12 +45,14 @@
   NSMutableArray<RNSScreenView *> *_reactSubviews;
   __weak RNSScreenStackManager *_manager;
   BOOL _hasLayout;
+  BOOL _invalidated;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager*)manager
 {
   if (self = [super init]) {
     _hasLayout = NO;
+    _invalidated = NO;
     _manager = manager;
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
@@ -189,7 +191,12 @@
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-  [self maybeAddToParentAndUpdateContainer];
+  if (!_invalidated) {
+    // We check whether the view has been invalidated before running side-effects in didMoveToWindow
+    // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
+    // to a window despite the fact it has been removed from the React Native view hierarchy.
+    [self maybeAddToParentAndUpdateContainer];
+  }
 }
 
 - (void)maybeAddToParentAndUpdateContainer
@@ -473,6 +480,7 @@
 
 - (void)invalidate
 {
+  _invalidated = YES;
   for (UIViewController *controller in _presentedModals) {
     [controller dismissViewControllerAnimated:NO completion:nil];
   }
