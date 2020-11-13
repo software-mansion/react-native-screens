@@ -12,27 +12,12 @@ import {
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createDrawerNavigator} from '@react-navigation/drawer';
 
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
-
-//
-
-function First({navigation}) {
+function First() {
   const NestedStack = createBottomTabNavigator();
 
   return (
-    <NestedStack.Navigator
-      // mode="modal"
-      // activeLimit={5}
-      // screensEnabled={true}
-      screenOptions={{
-        animationEnabled: true,
-        transparentCard: true,
-        // cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
-        headerStyle: {backgroundColor: 'red'},
-        gestureEnabled: true,
-      }}>
+    <NestedStack.Navigator>
       <NestedStack.Screen name="NestedFirst" component={NestedFirst} />
       <NestedStack.Screen name="NestedSecond" component={NestedSecond} />
     </NestedStack.Navigator>
@@ -40,22 +25,6 @@ function First({navigation}) {
 }
 
 function SecondScreen({navigation}) {
-  // React.useLayoutEffect(() => {
-  //   const unsubscribe = navigation.addListener('transitionStart', (e) => {
-  //     console.warn(e);
-  //   });
-
-  //   return unsubscribe;
-  // }, [navigation]);
-
-  // React.useLayoutEffect(() => {
-  //   const unsubscribe = navigation.addListener('transitionEnd', (e) => {
-  //     console.warn(e);
-  //   });
-
-  //   return unsubscribe;
-  // }, [navigation]);
-
   return (
     <View style={styles.verticalContainer}>
       <View style={styles.centeredContainer}>
@@ -191,7 +160,6 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator
         mode="modal"
-        statusBarStyle={'dark-content'}
         detachInactiveScreens={true}
         screenOptions={{
           animationEnabled: true,
