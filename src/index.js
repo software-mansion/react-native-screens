@@ -13,13 +13,20 @@ export function screensEnabled() {
 
 export class NativeScreen extends React.Component {
   render() {
-    const { active, style, enabled = true, ...rest } = this.props;
-
+    let { active, activityState, style, enabled = true, ...rest } = this.props;
+    if (active !== undefined && activityState === undefined) {
+      console.warn(
+        'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
+      );
+      activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
+    }
     return (
       <View
         style={[
           style,
-          ENABLE_SCREENS && enabled && !active ? { display: 'none' } : null,
+          ENABLE_SCREENS && enabled && activityState !== 2
+            ? { display: 'none' }
+            : null,
         ]}
         {...rest}
       />
@@ -33,4 +40,4 @@ export const ScreenContainer = View;
 
 export const NativeScreenContainer = View;
 
-export const shouldUseActivityState = false;
+export const shouldUseActivityState = true;
