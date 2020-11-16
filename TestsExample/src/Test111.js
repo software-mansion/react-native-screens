@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, Button} from 'react-native';
 
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 
 const Screen2 = () => {
   const navigation = useNavigation();
@@ -35,9 +35,7 @@ const Screen1 = () => {
       }}>
       <Button
         title="Go to Screen 2"
-        onPress={() => navigation.navigate('Screen2')}>
-        <Text>to screen 2</Text>
-      </Button>
+        onPress={() => navigation.navigate('Screen2')} />
     </View>
   );
 };
@@ -48,12 +46,11 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        mode="modal"
+        // mode="modal"
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,
-          gestureDirection: 'horizontal',
-          animationEnabled: true,
+          ...TransitionPresets.ModalSlideFromBottomIOS,
         }}>
         <Stack.Screen name="Screen1" component={Screen1} />
         <Stack.Screen name="Screen2" component={Screen2} />
