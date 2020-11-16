@@ -11,11 +11,10 @@ const Stack = createNativeStackNavigator();
 function HomeScreen({navigation}) {
   return (
     <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      style={styles.scrollView}>
+      contentInsetAdjustmentBehavior="automatic">
       <Button
-        title="Home1"
-        onPress={() => navigation.navigate('Home1')}
+        title="TabNavigator"
+        onPress={() => navigation.navigate('TabNavigator')}
       />
     </ScrollView>
   );

@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   View,
   Text,
+  Button,
 } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 
@@ -20,16 +21,16 @@ function First({navigation}) {
   );
 }
 
-function First({navigation}) {
+function Modal({navigation}) {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text style={{fontSize: 30}}>This is a first screen!</Text>
-      <Button onPress={() => navigation.navigate('Modal')} title="Modal"/>
+      <Text style={{fontSize: 30}}>This is a modal screen!</Text>
+      <Button onPress={() => navigation.navigate('Tab2')} title="Tab2"/>
     </View>
   );
 }
 
-function Second({navigation}) {
+function Second() {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Text style={{fontSize: 30}}>This is a second screen!</Text>

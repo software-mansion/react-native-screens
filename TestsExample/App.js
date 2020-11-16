@@ -22,5 +22,5 @@ import Test713 from './src/Test713';
 enableScreens();
 
 export default () => {
-  return <Test42 />;
+  return <Test713 />;
 };

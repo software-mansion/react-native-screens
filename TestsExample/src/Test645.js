@@ -14,8 +14,8 @@ function HomeScreen({navigation}) {
         title="Go to Details"
       />
       <Button
-        onPress={() => navigation.navigate('MyModal')}
-        title="Open Modal"
+        onPress={() => navigation.navigate('Second')}
+        title="Go to Second"
       />
     </View>
   );
@@ -57,21 +57,21 @@ const Tabs = createBottomTabNavigator();
 function MainStackScreen() {
   return (
     <MainStack.Navigator screenOptions={{headerLargeTitle: true}}>
-      <MainStack.Screen name="Home" component={HomeScreen} />
+      <MainStack.Screen name="Main" component={TabsScreen} />
       <MainStack.Screen name="Details" component={DetailsScreen} />
       <MainStack.Screen name="Settings" component={SettingsScreen} />
     </MainStack.Navigator>
   );
 }
 
-function RootStackScreen() {
+function TabsScreen() {
   return (
     <Tabs.Navigator
       detachInactiveScreens={true}
       screenOptions={{detachPreviousScreen: false}}>
       <Tabs.Screen
-        name="Main"
-        component={MainStackScreen}
+        name="Home"
+        component={HomeScreen}
       />
       <Tabs.Screen name="Second" component={SecondScreen} />
     </Tabs.Navigator>
@@ -81,7 +81,7 @@ function RootStackScreen() {
 export default function App() {
   return (
     <NavigationContainer>
-      <RootStackScreen />
+      <MainStackScreen />
     </NavigationContainer>
   );
 }
