@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {enableScreens} from 'react-native-screens';
 
@@ -5,6 +6,7 @@ import Test42 from './src/Test42';
 import Test111 from './src/Test111';
 import Test263 from './src/Test263';
 import Test349 from './src/Test349';
+import Test364 from './src/Test364';
 import Test528 from './src/Test528';
 import Test556 from './src/Test556';
 import Test564 from './src/Test564';
@@ -21,6 +23,6 @@ import Test713 from './src/Test713';
 
 enableScreens();
 
-export default () => {
-  return <Test111 />;
+export default function App() {
+  return <Test42 />;
 };
