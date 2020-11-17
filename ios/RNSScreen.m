@@ -58,9 +58,10 @@
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 }
 
-- (void)setActivityState:(int)activityState
+- (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
 {
-  if (activityState != _activityState) {
+  int activityState = [activityStateOrNil intValue];
+  if (activityStateOrNil != nil && activityState != _activityState) {
     _activityState = activityState;
     [_reactSuperview markChildUpdated];
   }
@@ -476,7 +477,7 @@
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_VIEW_PROPERTY(activityState, int)
+RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
