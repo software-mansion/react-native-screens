@@ -15,10 +15,7 @@ export class NativeScreen extends React.Component {
   render() {
     let { active, activityState, style, enabled = true, ...rest } = this.props;
     if (active !== undefined && activityState === undefined) {
-      console.warn(
-        'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
-      );
-      activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
+      activityState = active !== 0 ? 2 : 0; // change taken from index.native.js
     }
     return (
       <View
