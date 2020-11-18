@@ -26,7 +26,9 @@ const isAndroid = Platform.OS === 'android';
 let Container = View;
 
 if (__DEV__) {
-  const DebugContainer = (props: ViewProps & { stackPresentation: StackPresentationTypes }) => {
+  const DebugContainer = (
+    props: ViewProps & { stackPresentation: StackPresentationTypes }
+  ) => {
     const { stackPresentation, ...rest } = props;
     if (Platform.OS === 'ios' && stackPresentation !== 'push') {
       return (
