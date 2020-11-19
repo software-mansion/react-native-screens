@@ -31,8 +31,8 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
     if (activityState == null) {
       // Null will be provided when activityState is set as an animated value and we change
       // it from JS to be a plain value (non animated).
-      // In this scenario we first trigger the code which resets it to the default, which is null.
-      // In that case we want to ignore such update because soon after we get the actual, valid state passed from JS.
+      // In case when null is received, we want to ignore such value and not make
+      // any updates as the actual non-null value will follow immediately.
       return;
     }
     if (activityState == 0) {

@@ -60,10 +60,8 @@
 
 // Nil will be provided when activityState is set as an animated value and we change
 // it from JS to be a plain value (non animated).
-// In this scenario we first trigger the code which resets it to the default,
-// which is nil, and which maps to 0 meaning Inactive.
-// In that case we want to ignore such update
-// because soon after we get the actual, valid state passed from JS.
+// In case when nil is received, we want to ignore such value and not make
+// any updates as the actual non-nil value will follow immediately.
 - (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
 {
   int activityState = [activityStateOrNil intValue];
