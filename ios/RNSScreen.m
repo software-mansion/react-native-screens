@@ -58,6 +58,12 @@
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 }
 
+// Nil will be provided when activityState is set as an animated value and we change
+// it from JS to be a plain value (non animated).
+// In this scenario we first trigger the code which resets it to the default,
+// which is nil, and which maps to 0 meaning Inactive.
+// In that case we want to ignore such update
+// because soon after we get the actual, valid state passed from JS.
 - (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
 {
   int activityState = [activityStateOrNil intValue];
@@ -477,6 +483,7 @@
 
 RCT_EXPORT_MODULE()
 
+// we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
