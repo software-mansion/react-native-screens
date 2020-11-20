@@ -11,7 +11,6 @@ declare module 'react-native-screens' {
     ViewProps,
   } from 'react-native';
 
-  export function useScreens(shouldUseScreens?: boolean): void;
   export function enableScreens(shouldEnableScreens?: boolean): void;
   export function screensEnabled(): boolean;
 
@@ -55,6 +54,7 @@ declare module 'react-native-screens' {
 
   export interface ScreenProps extends ViewProps {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
+    activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
     children?: React.ReactNode;
     /**
      * @description All children screens should have the same value of their "enabled" prop as their container.
@@ -68,7 +68,7 @@ declare module 'react-native-screens' {
      * @description A callback that gets called when the current screen appears.
      */
     onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
-    onComponentRef?: (view: any) => void;
+    onComponentRef?: (view: unknown) => void;
     /**
      * @description A callback that gets called when the current screen disappears.
      */
@@ -260,4 +260,5 @@ declare module 'react-native-screens' {
   export const ScreenStackHeaderRightView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderCenterView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderConfig: ComponentClass<ScreenStackHeaderConfigProps>;
+  export const shouldUseActivityState: boolean;
 }

@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
-    "test": "jest",
-    "postinstall": "rm -rf node_modules/react-native-screens/{.git,node_modules,Example}"
+    "test": "jest"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
@@ -16,14 +15,16 @@
     "react-native": "0.63.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-reanimated": "^1.10.1",
-    "react-native-safe-area-context": "^3.1.1",
-    "react-native-screens": "file:.."
+    "react-native-safe-area-context": "^3.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
     "@babel/runtime": "^7.10.5",
     "@react-native-community/eslint-config": "^1.1.0",
     "babel-jest": "^25.1.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "babel-preset-expo": "^8.3.0",
+    "glob-to-regexp": "^0.4.1",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.61.0",
     "react-test-renderer": "16.13.1"

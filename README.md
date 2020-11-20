@@ -17,6 +17,8 @@ For most people using an app built from the react-native template, that means ed
 You should add this code, which specifically discards any Activity state persisted during the Activity restart process, to avoid inconsistencies that lead to crashes.
 
 ```java
+import android.os.Bundle;
+
 @Override
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(null);

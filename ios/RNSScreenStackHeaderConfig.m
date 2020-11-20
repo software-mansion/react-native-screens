@@ -172,7 +172,7 @@
         if (config.largeTitleFontFamily) {
           largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.largeTitleFontFamily size:largeSize weight:nil style:nil variant:nil scaleMultiplier:1.0];
         } else {
-          largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[largeSize floatValue]];
+          largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
         }
         [navbar setLargeTitleTextAttributes:largeAttrs];
       }
@@ -277,7 +277,7 @@
   } else {
     [appearance configureWithOpaqueBackground];
   }
-  
+
   // set background color if specified
   if (config.backgroundColor) {
     appearance.backgroundColor = config.backgroundColor;
@@ -318,7 +318,7 @@
     if (config.largeTitleFontFamily) {
       largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.largeTitleFontFamily size:largeSize weight:nil style:nil variant:nil scaleMultiplier:1.0];
     } else {
-      largeAttrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[largeSize floatValue]];
+      largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
     }
 
     appearance.largeTitleTextAttributes = largeAttrs;
@@ -371,7 +371,7 @@
   if (shouldHide) {
     return;
   }
-  
+
   if (config.direction == UISemanticContentAttributeForceLeftToRight || config.direction == UISemanticContentAttributeForceRightToLeft) {
     navctr.view.semanticContentAttribute = config.direction;
     navctr.navigationBar.semanticContentAttribute = config.direction;
@@ -595,7 +595,7 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
     @"light": @(UIBlurEffectStyleLight),
     @"dark": @(UIBlurEffectStyleDark),
   }];
-  
+
   if (@available(iOS 10.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
       @"regular": @(UIBlurEffectStyleRegular),
@@ -640,7 +640,7 @@ RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
   }), UISemanticContentAttributeUnspecified, integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
-  
+
 RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
   @"auto": @(RNSStatusBarStyleAuto),
   @"inverted": @(RNSStatusBarStyleInverted),
