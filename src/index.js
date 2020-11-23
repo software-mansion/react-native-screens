@@ -13,13 +13,17 @@ export function screensEnabled() {
 
 export class NativeScreen extends React.Component {
   render() {
-    const { active, style, enabled = true, ...rest } = this.props;
-
+    let { active, activityState, style, enabled = true, ...rest } = this.props;
+    if (active !== undefined && activityState === undefined) {
+      activityState = active !== 0 ? 2 : 0; // change taken from index.native.js
+    }
     return (
       <View
         style={[
           style,
-          ENABLE_SCREENS && enabled && !active ? { display: 'none' } : null,
+          ENABLE_SCREENS && enabled && activityState !== 2
+            ? { display: 'none' }
+            : null,
         ]}
         {...rest}
       />
@@ -32,3 +36,5 @@ export const Screen = Animated.createAnimatedComponent(NativeScreen);
 export const ScreenContainer = View;
 
 export const NativeScreenContainer = View;
+
+export const shouldUseActivityState = true;
