@@ -15,6 +15,7 @@ import Test619 from './src/Test619';
 import Test624 from './src/Test624';
 import Test640 from './src/Test640';
 import Test645 from './src/Test645';
+import Test648 from './src/Test648';
 import Test649 from './src/Test649';
 import Test654 from './src/Test654';
 import Test691 from './src/Test691';
@@ -24,5 +25,5 @@ import Test713 from './src/Test713';
 enableScreens();
 
 export default function App() {
-  return <Test42 />;
+  return <Test648 />;
 };
