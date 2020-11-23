@@ -1,7 +1,7 @@
 // connected PRs: #679, #675
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {ScrollView, StyleSheet, Text, View, Button} from 'react-native';
+import {ScrollView, StyleSheet, View, Button} from 'react-native';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -22,7 +22,7 @@ export default function NativeNavigation() {
           }}
         />
         <Stack.Screen
-          name="Profile"
+          name="TabNavigator"
           component={TabNavigator}
           options={{
             screenOrientation: 'landscape',
@@ -41,14 +41,6 @@ const TabNavigator = (props) => (
     <Tab.Screen name="Tab2" component={Inner} />
     <Tab.Screen name="Tab3" component={Home} />
   </Tab.Navigator>
-);
-
-const NestedTab = createBottomTabNavigator();
-
-const NestedTabNavigator = (props) => (
-  <NestedTab.Navigator screensEnabled={true}>
-    <NestedTab.Screen name="Tab1" component={Home} />
-  </NestedTab.Navigator>
 );
 
 const InnerStack = createNativeStackNavigator();
@@ -71,9 +63,9 @@ function Home({navigation}) {
       >
       <View style={styles.leftTop} />
       <Button
-        title="Profile"
+        title="TabNavigator"
         onPress={() => {
-          navigation.push('Profile');
+          navigation.push('TabNavigator');
         }}
       />
       <Button
@@ -81,36 +73,6 @@ function Home({navigation}) {
         onPress={() => {
           navigation.setOptions({
             screenOrientation: Math.random() > 0.5 ? 'portrait' : 'landscape',
-          });
-          setYes(!yes);
-        }}
-      />
-    </ScrollView>
-  );
-}
-
-function Profile({navigation}) {
-  const [yes, setYes] = React.useState(true);
-  return (
-    <ScrollView style={{backgroundColor: 'red'}}>
-      <Text>Profile</Text>
-      <Button
-        title="Home"
-        onPress={() => {
-          navigation.navigate('Home');
-        }}
-      />
-      <Button
-        title="One more Profile"
-        onPress={() => {
-          navigation.push('Profile');
-        }}
-      />
-      <Button
-        title="status bar style"
-        onPress={() => {
-          navigation.setOptions({
-            statusBarHidden: yes,
           });
           setYes(!yes);
         }}
