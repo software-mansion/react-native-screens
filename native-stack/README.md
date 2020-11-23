@@ -158,6 +158,8 @@ How the given screen should appear/disappear when pushed or popped at the top of
 - `default` - Uses a platform default animation.
 - `fade` - Fades screen in or out.
 - `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only).
+- `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
+- `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
 - `none` - The screen appears/disappears without an animation.
 
 Defaults to `default`.
