@@ -374,7 +374,7 @@
 
   if (config.direction == UISemanticContentAttributeForceLeftToRight || config.direction == UISemanticContentAttributeForceRightToLeft) {
     navctr.view.semanticContentAttribute = config.direction;
-    navctr.navigationBar.semanticContentAttribute = config.direction;
+    [RNSScreenStackHeaderConfig updateSubviews:navctr.navigationBar withDirection:config.direction];
   }
 
   navitem.title = config.title;
@@ -543,6 +543,14 @@
   }
 #endif
   return UIStatusBarStyleLightContent;
+}
+
++ (void)updateSubviews:(UIView*)view withDirection:(UISemanticContentAttribute)direction
+{
+  view.semanticContentAttribute = direction;
+  [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [RNSScreenStackHeaderConfig updateSubviews:obj withDirection:direction];
+  }];
 }
 
 @end

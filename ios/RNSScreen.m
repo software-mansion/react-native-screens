@@ -425,9 +425,28 @@
   }
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+  [self relayoutHeader];
+}
+
+- (void)relayoutHeader
+{
+  double delayInSeconds = 0.1;
+  dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+  dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+    [self.view.reactSubviews enumerateObjectsUsingBlock:^(UIView * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
+      if ([view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+        [RNSScreenStackHeaderConfig willShowViewController:self animated:NO withConfig:(RNSScreenStackHeaderConfig *)view];
+      }
+    }];
+  });
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+  [self relayoutHeader];
   [RNSScreenStackHeaderConfig updateStatusBarAppearance];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
