@@ -23,6 +23,7 @@
 
 @implementation RNScreensViewController
 
+#if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
   return [self findActiveChildVC];
@@ -36,8 +37,8 @@
 - (UIViewController *)childViewControllerForStatusBarHidden
 {
   return [self findActiveChildVC];
-
 }
+#endif
 
 - (UIViewController *)findActiveChildVC
 {

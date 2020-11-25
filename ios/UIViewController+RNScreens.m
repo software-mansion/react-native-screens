@@ -5,6 +5,7 @@
 
 @implementation UIViewController (RNScreens)
 
+#if !TARGET_OS_TV
 - (UIViewController *)reactNativeScreensChildViewControllerForStatusBarStyle
 {
   UIViewController *childVC = [self findChildRNScreensViewController];
@@ -48,5 +49,6 @@
                                   class_getInstanceMethod(uiVCClass, @selector(reactNativeScreensPreferredStatusBarUpdateAnimation)));
   });
 }
+#endif
 
 @end

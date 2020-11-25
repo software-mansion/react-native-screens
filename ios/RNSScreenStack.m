@@ -19,6 +19,7 @@
 
 @implementation RNScreensNavigationController
 
+#if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
   return [self topViewController];
@@ -33,6 +34,7 @@
 {
   return [self topViewController];
 }
+#endif
 
 @end
 
@@ -238,7 +240,7 @@
       if (parentView.reactViewController) {
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
         [controller didMoveToParentViewController:parentView.reactViewController];
@@ -338,10 +340,11 @@
         UIViewController *next = controllers[i];
         BOOL lastModal = (i == controllers.count - 1);
 
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
         if (@available(iOS 13.0, *)) {
           // Inherit UI style from its parent - solves an issue with incorrect style being applied to some UIKit views like date picker or segmented control.
-          next.overrideUserInterfaceStyle = _controller.overrideUserInterfaceStyle;
+          next.overrideUserInterfaceStyle = self->_controller.overrideUserInterfaceStyle;
         }
 #endif
 

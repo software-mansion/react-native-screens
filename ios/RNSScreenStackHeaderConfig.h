@@ -36,13 +36,19 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
 @property (nonatomic) UISemanticContentAttribute direction;
+
+#if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
 @property (nonatomic) UIStatusBarAnimation statusBarAnimation;
 @property (nonatomic) BOOL statusBarHidden;
+#endif
 
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
 + (void)updateStatusBarAppearance;
+
+#if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle;
+#endif
 
 @end
 

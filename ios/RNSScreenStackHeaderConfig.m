@@ -126,7 +126,8 @@
   [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     // font customized on the navigation item level, so nothing to do here
   } else
@@ -161,7 +162,7 @@
       [navbar setTitleTextAttributes:attrs];
     }
 
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
     if (@available(iOS 11.0, *)) {
       if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
@@ -246,7 +247,7 @@
             // in order for new back button image to be loaded we need to trigger another change
             // in back button props that'd make UIKit redraw the button. Otherwise the changes are
             // not reflected. Here we change back button visibility which is then immediately restored
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
             vc.navigationItem.hidesBackButton = YES;
 #endif
             [config updateViewControllerIfNeeded];
@@ -266,9 +267,10 @@
   [self updateViewController:vc withConfig:config animated:animated];
 }
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 + (UINavigationBarAppearance*)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
-{
+API_AVAILABLE(ios(13.0)){
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
   if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
@@ -356,7 +358,7 @@
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
 
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
   // we put it before check with return because we want to apply changes to status bar even if the header is hidden
   if (config != nil) {
     if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
@@ -378,7 +380,7 @@
   }
 
   navitem.title = config.title;
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
                                   initWithTitle:config.backTitle ?: prevItem.title
@@ -407,7 +409,8 @@
   }
 #endif
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
     navitem.standardAppearance = appearance;
@@ -424,7 +427,7 @@
   } else
 #endif
   {
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
     // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
     // to update it before the navigation starts.
     UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
@@ -437,7 +440,7 @@
     }
 #endif
   }
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
@@ -446,7 +449,7 @@
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
@@ -463,6 +466,8 @@
         navitem.titleView = subview;
         break;
       }
+      case RNSScreenStackHeaderSubviewTypeBackButton:
+        break;
     }
   }
 
@@ -497,6 +502,7 @@
   }
 }
 
+#if !TARGET_OS_TV
 + (void)assertViewControllerBasedStatusBarAppearenceSet
 {
   static dispatch_once_t once;
@@ -509,9 +515,11 @@
     UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
   }
 }
+#endif
 
 + (void)updateStatusBarAppearance
 {
+#if !TARGET_OS_TV
   [UIView animateWithDuration:0.4 animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
     if (@available(iOS 13, *)) {
       UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
@@ -522,11 +530,14 @@
       [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
     }
   }];
+#endif
 }
 
+#if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     switch (statusBarStyle) {
       case RNSStatusBarStyleAuto:
@@ -544,6 +555,7 @@
 #endif
   return UIStatusBarStyleLightContent;
 }
+#endif
 
 @end
 
@@ -579,9 +591,12 @@ RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+
+#if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
+#endif
 
 @end
 
@@ -602,7 +617,8 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
       @"prominent": @(UIBlurEffectStyleProminent),
     }];
   }
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
       @"systemUltraThinMaterial": @(UIBlurEffectStyleSystemUltraThinMaterial),
