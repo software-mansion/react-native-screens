@@ -30,7 +30,8 @@ public class Screen extends ViewGroup {
     NONE,
     FADE,
     SLIDE_FROM_RIGHT,
-    SLIDE_FROM_LEFT
+    SLIDE_FROM_LEFT,
+    SLIDE_FROM_BOTTOM
   }
 
   public enum ReplaceAnimation {

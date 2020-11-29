@@ -192,6 +192,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             customAnimation = true;
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
             break;
+          case SLIDE_FROM_BOTTOM:
+            customAnimation = true;
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_slide_out_to_bottom);
+            break;
         }
 
         if (!customAnimation) {
@@ -216,6 +220,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         case SLIDE_FROM_LEFT:
           customAnimation = true;
           getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+          break;
+        case SLIDE_FROM_BOTTOM:
+          customAnimation = true;
+          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_slide_out_to_bottom);
           break;
       }
 
