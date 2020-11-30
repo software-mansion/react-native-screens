@@ -61,7 +61,8 @@ declare module 'react-native-screens' {
      */
     enabled?: boolean;
     /**
-     * @description When set to false the back swipe gesture will be disabled when the parent Screen is on top of the stack. The default value is true.
+     * @host (iOS only)
+     * @description When set to false the back swipe gesture will be disabled. The default value is true.
      */
     gestureEnabled?: boolean;
     /**
