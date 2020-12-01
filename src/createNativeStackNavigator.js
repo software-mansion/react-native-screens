@@ -110,7 +110,8 @@ class StackView extends React.Component {
       hideShadow,
       largeTitle,
       largeTitleBackgroundColor:
-        headerLargeStyle && headerLargeStyle.backgroundColor,
+        (headerLargeStyle && headerLargeStyle.backgroundColor) ||
+        (headerLargeTitleStyle && headerLargeTitleStyle.backgroundColor),
       largeTitleColor: headerLargeTitleStyle && headerLargeTitleStyle.color,
       largeTitleFontFamily:
         headerLargeTitleStyle && headerLargeTitleStyle.fontFamily,
