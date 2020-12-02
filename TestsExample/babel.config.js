@@ -7,7 +7,6 @@ module.exports = {
       {
         alias: {
           'react-native-screens': '../src',
-          'react-native-screens/native-stack': '../src/native-stack',
           'react': './node_modules/react',
           'react-native': './node_modules/react-native',
           '@babel': './node_modules/@babel',
