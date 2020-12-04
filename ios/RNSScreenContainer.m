@@ -53,6 +53,7 @@
 
 @implementation RNSScreenContainerView {
   BOOL _needUpdate;
+  BOOL _invalidated;
   __weak RNSScreenContainerManager *_manager;
 }
 
@@ -63,6 +64,7 @@
     _reactSubviews = [NSMutableArray new];
     _controller = [[RNScreensViewController alloc] init];
     _needUpdate = NO;
+    _invalidated = NO;
     _manager = manager;
     [self addSubview:_controller.view];
   }
@@ -188,13 +190,13 @@
   if (screenRemoved || screenAdded) {
     // we disable interaction for the duration of the transition until one of the screens changes its state to "onTop"
     self.userInteractionEnabled = NO;
-    
-    for (RNSScreenView *screen in _reactSubviews) {
-      if (screen.activityState == RNSActivityStateOnTop) {
-        // if there is an "onTop" screen it means the transition has ended so we restore interactions
-        self.userInteractionEnabled = YES;
-        [screen notifyFinishTransitioning];
-      }
+  }
+
+  for (RNSScreenView *screen in _reactSubviews) {
+    if (screen.activityState == RNSActivityStateOnTop) {
+      // if there is an "onTop" screen it means the transition has ended so we restore interactions
+      self.userInteractionEnabled = YES;
+      [screen notifyFinishTransitioning];
     }
   }
 
@@ -216,13 +218,17 @@
 
 - (void)didMoveToWindow
 {
-  if (self.window) {
+  if (self.window && !_invalidated) {
+    // We check whether the view has been invalidated before running side-effects in didMoveToWindow
+    // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
+    // to a window despite the fact it has been removed from the React Native view hierarchy.
     [self reactAddControllerToClosestParent:_controller];
   }
 }
 
 - (void)invalidate
 {
+  _invalidated = YES;
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
 }

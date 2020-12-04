@@ -22,7 +22,13 @@ declare module 'react-native-screens' {
     | 'containedTransparentModal'
     | 'fullScreenModal'
     | 'formSheet';
-  export type StackAnimationTypes = 'default' | 'fade' | 'flip' | 'none';
+  export type StackAnimationTypes =
+    | 'default'
+    | 'fade'
+    | 'flip'
+    | 'none'
+    | 'slide_from_right'
+    | 'slide_from_left';
   export type BlurEffectTypes =
     | 'extraLight'
     | 'light'
@@ -90,6 +96,8 @@ declare module 'react-native-screens' {
      *  @type "default" – uses a platform default animation
      *  @type "fade" – fades screen in or out
      *  @type "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+     *  @type "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
+     *  @type "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
      *  @type "none" – the screen appears/dissapears without an animation
      */
     stackAnimation?: StackAnimationTypes;
