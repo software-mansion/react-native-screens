@@ -18,7 +18,7 @@ function HomeScreen({navigation}) {
 function DetailsScreen() {
   return (
     <View>
-      <Text>Details screen with a 'thin' title</Text>
+      <Text>Details screen with a 'light' title</Text>
     </View>
   );
 }
@@ -29,13 +29,13 @@ function RootStackScreen() {
   return (
     <RootStack.Navigator
       screenOptions={{
-        headerTitleStyle: {fontFamily: 'System', fontWeight: '900'},
+        headerTitleStyle: {fontWeight: '900'},
       }}>
       <RootStack.Screen name="Home" component={HomeScreen} />
       <RootStack.Screen
         name="Details"
         component={DetailsScreen}
-        options={{headerTitleStyle: {fontFamily: 'System', fontWeight: '100'}}}
+        options={{headerTitleStyle: {fontWeight: '100'}}}
       />
     </RootStack.Navigator>
   );

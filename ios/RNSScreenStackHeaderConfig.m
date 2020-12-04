@@ -145,17 +145,18 @@
     [navbar setTranslucent:config.translucent];
     [navbar setValue:@(hideShadow ? YES : NO) forKey:@"hidesShadow"];
 
-    if (config.titleFontFamily || config.titleFontSize || config.titleColor) {
+    if (config.titleFontFamily || config.titleFontSize || config.titleFontWeight || config.titleColor) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
 
       if (config.titleColor) {
         attrs[NSForegroundColorAttributeName] = config.titleColor;
       }
 
+      NSString *family = config.titleFontFamily ?: nil;
       NSNumber *size = config.titleFontSize ?: @17;
       NSString *weight = config.titleFontWeight ?: nil;
-      if (config.titleFontFamily) {
-        attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
+      if (config.titleFontFamily || config.titleFontWeight) {
+        attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:family size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
@@ -292,16 +293,17 @@
     appearance.shadowColor = nil;
   }
 
-  if (config.titleFontFamily || config.titleFontSize || config.titleColor) {
+  if (config.titleFontFamily || config.titleFontSize || config.titleFontWeight || config.titleColor) {
     NSMutableDictionary *attrs = [NSMutableDictionary new];
 
     if (config.titleColor) {
       attrs[NSForegroundColorAttributeName] = config.titleColor;
     }
 
+    NSString *family = config.titleFontFamily ?: nil;
     NSNumber *size = config.titleFontSize ?: @17;
     NSString *weight = config.titleFontWeight ?: nil;
-    if (config.titleFontFamily) {
+    if (config.titleFontFamily || config.titleFontWeight) {
       attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
     } else {
       attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
