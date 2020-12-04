@@ -100,6 +100,7 @@ Style object for header title. Supported properties:
 
 - `fontFamily`
 - `fontSize`
+- `fontWeight`
 - `color`
 
 #### `headerTopInsetEnabled`
