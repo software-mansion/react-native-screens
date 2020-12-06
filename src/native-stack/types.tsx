@@ -224,6 +224,7 @@ export type NativeStackNavigationOptions = {
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "slide_from_bottom" - slide in the new screen from bottom to top (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: ScreenProps['stackAnimation'];
