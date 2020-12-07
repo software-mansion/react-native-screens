@@ -368,13 +368,14 @@
   }
 #endif
 
-  if (shouldHide) {
-    return;
-  }
-
   if (config.direction == UISemanticContentAttributeForceLeftToRight || config.direction == UISemanticContentAttributeForceRightToLeft) {
+    // we do it before check for `shouldHide` since we may want the `rtl` screen transition (line below) without header present.
     navctr.view.semanticContentAttribute = config.direction;
     [RNSScreenStackHeaderConfig updateSubviews:navctr.navigationBar withDirection:config.direction];
+  }
+
+  if (shouldHide) {
+    return;
   }
 
   navitem.title = config.title;
