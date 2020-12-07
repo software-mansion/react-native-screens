@@ -113,6 +113,8 @@ class StackView extends React.Component {
         headerLargeTitleStyle && headerLargeTitleStyle.fontFamily,
       largeTitleFontSize:
         headerLargeTitleStyle && headerLargeTitleStyle.fontSize,
+      largeTitleFontWeight:
+        headerLargeTitleStyle && headerLargeTitleStyle.fontWeight,
       statusBarAnimation,
       statusBarHidden,
       statusBarStyle,
@@ -121,6 +123,7 @@ class StackView extends React.Component {
         (headerTitleStyle && headerTitleStyle.color) || headerTintColor,
       titleFontFamily: headerTitleStyle && headerTitleStyle.fontFamily,
       titleFontSize: headerTitleStyle && headerTitleStyle.fontSize,
+      titleFontWeight: headerTitleStyle && headerTitleStyle.fontWeight,
       translucent: translucent === undefined ? false : translucent,
     };
 

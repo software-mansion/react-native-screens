@@ -205,6 +205,11 @@ declare module 'react-native-screens' {
      */
     largeTitleFontSize?: number;
     /**
+     * @host (iOS only)
+     * @description Customize the weight of the font to be used for the large title.
+     */
+    largeTitleFontWeight?: string;
+    /**
      * @description Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
      */
     largeTitleHideShadow?: boolean;
@@ -239,6 +244,11 @@ declare module 'react-native-screens' {
      * @description Customize the size of the font to be used for the title.
      */
     titleFontSize?: number;
+    /**
+     * * @host (iOS only)
+     * @description Customize the weight of the font to be used for the title.
+     */
+    titleFontWeight?: string;
     /**
      * @host (Android only)
      * @description A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.

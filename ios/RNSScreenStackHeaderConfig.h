@@ -17,6 +17,7 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *titleFontFamily;
 @property (nonatomic, retain) NSNumber *titleFontSize;
+@property (nonatomic, retain) NSString *titleFontWeight;
 @property (nonatomic, retain) UIColor *titleColor;
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) NSString *backTitleFontFamily;
@@ -28,6 +29,7 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic) BOOL largeTitle;
 @property (nonatomic, retain) NSString *largeTitleFontFamily;
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
+@property (nonatomic, retain) NSString *largeTitleFontWeight;
 @property (nonatomic, retain) UIColor *largeTitleBackgroundColor;
 @property (nonatomic) BOOL largeTitleHideShadow;
 @property (nonatomic, retain) UIColor *largeTitleColor;

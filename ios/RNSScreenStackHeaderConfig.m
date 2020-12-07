@@ -145,16 +145,18 @@
     [navbar setTranslucent:config.translucent];
     [navbar setValue:@(hideShadow ? YES : NO) forKey:@"hidesShadow"];
 
-    if (config.titleFontFamily || config.titleFontSize || config.titleColor) {
+    if (config.titleFontFamily || config.titleFontSize || config.titleFontWeight || config.titleColor) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
 
       if (config.titleColor) {
         attrs[NSForegroundColorAttributeName] = config.titleColor;
       }
 
+      NSString *family = config.titleFontFamily ?: nil;
       NSNumber *size = config.titleFontSize ?: @17;
-      if (config.titleFontFamily) {
-        attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
+      NSString *weight = config.titleFontWeight ?: nil;
+      if (family || weight) {
+        attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:family size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
@@ -163,14 +165,16 @@
 
 #if (TARGET_OS_IOS)
     if (@available(iOS 11.0, *)) {
-      if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor)) {
+      if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight || config.largeTitleColor || config.titleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
         if (config.largeTitleColor || config.titleColor) {
           largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
         }
+        NSString *largeFamily = config.largeTitleFontFamily ?: nil;
         NSNumber *largeSize = config.largeTitleFontSize ?: @34;
-        if (config.largeTitleFontFamily) {
-          largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.largeTitleFontFamily size:largeSize weight:nil style:nil variant:nil scaleMultiplier:1.0];
+        NSNumber *largeWeight = config.largeTitleFontWeight ?: nil;
+        if (largeFamily || largeWeight) {
+          largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:largeFamily size:largeSize weight:largeWeight style:nil variant:nil scaleMultiplier:1.0];
         } else {
           largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
         }
@@ -291,32 +295,36 @@
     appearance.shadowColor = nil;
   }
 
-  if (config.titleFontFamily || config.titleFontSize || config.titleColor) {
+  if (config.titleFontFamily || config.titleFontSize || config.titleFontWeight || config.titleColor) {
     NSMutableDictionary *attrs = [NSMutableDictionary new];
 
     if (config.titleColor) {
       attrs[NSForegroundColorAttributeName] = config.titleColor;
     }
 
+    NSString *family = config.titleFontFamily ?: nil;
     NSNumber *size = config.titleFontSize ?: @17;
-    if (config.titleFontFamily) {
-      attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:nil style:nil variant:nil scaleMultiplier:1.0];
+    NSString *weight = config.titleFontWeight ?: nil;
+    if (family || weight) {
+      attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
     } else {
       attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
     }
     appearance.titleTextAttributes = attrs;
   }
 
-  if (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleColor || config.titleColor) {
+  if (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight || config.largeTitleColor || config.titleColor) {
     NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
 
     if (config.largeTitleColor || config.titleColor) {
       largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
     }
 
+    NSString *largeFamily = config.largeTitleFontFamily ?: nil;
     NSNumber *largeSize = config.largeTitleFontSize ?: @34;
-    if (config.largeTitleFontFamily) {
-      largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.largeTitleFontFamily size:largeSize weight:nil style:nil variant:nil scaleMultiplier:1.0];
+    NSString *largeWeight = config.largeTitleFontWeight ?: nil;
+    if (largeFamily || largeWeight) {
+      largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:largeFamily size:largeSize weight:largeWeight style:nil variant:nil scaleMultiplier:1.0];
     } else {
       largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
     }
@@ -559,6 +567,7 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_VIEW_PROPERTY(title, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(titleFontWeight, NSString)
 RCT_EXPORT_VIEW_PROPERTY(titleColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
@@ -570,6 +579,7 @@ RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)
 RCT_EXPORT_VIEW_PROPERTY(largeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(largeTitleFontWeight, NSString)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleBackgroundColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(largeTitleHideShadow, BOOL)

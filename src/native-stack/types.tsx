@@ -154,6 +154,7 @@ export type NativeStackNavigationOptions = {
   headerLargeTitleStyle?: {
     fontFamily?: string;
     fontSize?: number;
+    fontWeight?: string;
     color?: string;
   };
   /**
@@ -189,11 +190,13 @@ export type NativeStackNavigationOptions = {
    * Style object for header title. Supported properties:
    * - fontFamily
    * - fontSize
+   * - fontWeight (iOS only)
    * - color
    */
   headerTitleStyle?: {
     fontFamily?: string;
     fontSize?: number;
+    fontWeight?: string;
     color?: string;
   };
   /**

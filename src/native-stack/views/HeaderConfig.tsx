@@ -76,6 +76,7 @@ export default function HeaderConfig({
       largeTitleColor={headerLargeTitleStyle.color}
       largeTitleFontFamily={largeTitleFontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
+      largeTitleFontWeight={headerLargeTitleStyle.fontWeight}
       largeTitleHideShadow={headerLargeTitleHideShadow}
       statusBarAnimation={statusBarAnimation}
       statusBarHidden={statusBarHidden}
@@ -96,6 +97,7 @@ export default function HeaderConfig({
       }
       titleFontFamily={titleFontFamily}
       titleFontSize={headerTitleStyle.fontSize}
+      titleFontWeight={headerTitleStyle.fontWeight}
       topInsetEnabled={headerTopInsetEnabled}
       translucent={headerTranslucent === true}>
       {headerRight !== undefined ? (

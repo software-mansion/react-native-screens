@@ -190,6 +190,10 @@ Customize the font family to be used for the title.
 
 Customize the size of the font to be used for the title.
 
+#### `titleFontWeight` (iOS only)
+
+Customize the weight of the font to be used for the title.
+
 #### `titleColor`
 
 Allows for setting text color of the title.
