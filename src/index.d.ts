@@ -245,6 +245,7 @@ declare module 'react-native-screens' {
      */
     titleFontSize?: number;
     /**
+     * * @host (iOS only)
      * @description Customize the weight of the font to be used for the title.
      */
     titleFontWeight?: string;

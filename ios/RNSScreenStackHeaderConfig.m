@@ -155,7 +155,7 @@
       NSString *family = config.titleFontFamily ?: nil;
       NSNumber *size = config.titleFontSize ?: @17;
       NSString *weight = config.titleFontWeight ?: nil;
-      if (config.titleFontFamily || config.titleFontWeight) {
+      if (family || weight) {
         attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:family size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
@@ -173,7 +173,7 @@
         NSString *largeFamily = config.largeTitleFontFamily ?: nil;
         NSNumber *largeSize = config.largeTitleFontSize ?: @34;
         NSNumber *largeWeight = config.largeTitleFontWeight ?: nil;
-        if (config.largeTitleFontFamily || config.largeTitleFontWeight) {
+        if (largeFamily || largeWeight) {
           largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:largeFamily size:largeSize weight:largeWeight style:nil variant:nil scaleMultiplier:1.0];
         } else {
           largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
@@ -305,7 +305,7 @@
     NSString *family = config.titleFontFamily ?: nil;
     NSNumber *size = config.titleFontSize ?: @17;
     NSString *weight = config.titleFontWeight ?: nil;
-    if (config.titleFontFamily || config.titleFontWeight) {
+    if (family || weight) {
       attrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:config.titleFontFamily size:size weight:weight style:nil variant:nil scaleMultiplier:1.0];
     } else {
       attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
@@ -323,7 +323,7 @@
     NSString *largeFamily = config.largeTitleFontFamily ?: nil;
     NSNumber *largeSize = config.largeTitleFontSize ?: @34;
     NSString *largeWeight = config.largeTitleFontWeight ?: nil;
-    if (config.largeTitleFontFamily || config.largeTitleFontWeight) {
+    if (largeFamily || largeWeight) {
       largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:largeFamily size:largeSize weight:largeWeight style:nil variant:nil scaleMultiplier:1.0];
     } else {
       largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
