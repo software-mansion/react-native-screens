@@ -154,6 +154,7 @@ export type NativeStackNavigationOptions = {
   headerLargeTitleStyle?: {
     fontFamily?: string;
     fontSize?: number;
+    fontWeight?: string;
     color?: string;
   };
   /**
@@ -263,9 +264,7 @@ export type NativeStackNavigationOptions = {
   title?: string;
 };
 
-export type NativeStackNavigatorProps = DefaultNavigatorOptions<
-  NativeStackNavigationOptions
-> &
+export type NativeStackNavigatorProps = DefaultNavigatorOptions<NativeStackNavigationOptions> &
   StackRouterOptions &
   NativeStackNavigationConfig;
 

@@ -76,6 +76,7 @@ export default function HeaderConfig({
       largeTitleColor={headerLargeTitleStyle.color}
       largeTitleFontFamily={largeTitleFontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
+      largeTitleFontWeight={headerLargeTitleStyle.fontWeight}
       largeTitleHideShadow={headerLargeTitleHideShadow}
       statusBarAnimation={statusBarAnimation}
       statusBarHidden={statusBarHidden}
