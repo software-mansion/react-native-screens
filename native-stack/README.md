@@ -141,7 +141,7 @@ Style object for header title. Supported properties:
 
 - `fontFamily`
 - `fontSize`
-- `fontWeight`
+- `fontWeight` (iOS only).
 - `color`
 
 #### `headerTopInsetEnabled`

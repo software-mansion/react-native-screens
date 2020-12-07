@@ -26,5 +26,5 @@ import Test713 from './src/Test713';
 enableScreens();
 
 export default function App() {
-  return <Test706 />;
+  return <Test42 />;
 }
