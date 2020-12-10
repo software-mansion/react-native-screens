@@ -24,6 +24,7 @@
     "createNativeStackNavigator/",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
+    "android/src/main/res",
     "android/build.gradle",
     "ios/",
     "RNScreens.podspec",
