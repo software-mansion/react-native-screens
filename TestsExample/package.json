@@ -28,7 +28,7 @@
     "react-native-safe-area-context": "^3.1.9",
     "react-native-search-bar": "^3.5.1",
     "react-native-vector-icons": "^7.1.0",
-    "react-native-webview": "^10.10.2",
+    "react-native-webview": "^11.0.0",
     "react-navigation": "^4.4.3",
     "react-navigation-material-bottom-tabs": "^2.3.3",
     "react-navigation-stack": "^2.10.1",
