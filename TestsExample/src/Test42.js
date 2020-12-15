@@ -1,7 +1,7 @@
 // connected PRs: #679, #675
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {ScrollView, StyleSheet, View, Button} from 'react-native';
+import {ScrollView, StyleSheet, View, Button, Text} from 'react-native';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
@@ -83,6 +83,7 @@ function Home({navigation}) {
           setYes(!yes);
         }}
       />
+      <Text>Go to `TabNavigator` and then go to second tab there. Spot the difference between dismissing modal with a swipe and with a `Pop to top` button. </Text> 
     </ScrollView>
   );
 }

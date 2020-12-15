@@ -126,7 +126,8 @@
   [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     // font customized on the navigation item level, so nothing to do here
   } else
@@ -163,7 +164,7 @@
       [navbar setTitleTextAttributes:attrs];
     }
 
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
     if (@available(iOS 11.0, *)) {
       if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight || config.largeTitleColor || config.titleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
@@ -172,7 +173,7 @@
         }
         NSString *largeFamily = config.largeTitleFontFamily ?: nil;
         NSNumber *largeSize = config.largeTitleFontSize ?: @34;
-        NSNumber *largeWeight = config.largeTitleFontWeight ?: nil;
+        NSString *largeWeight = config.largeTitleFontWeight ?: nil;
         if (largeFamily || largeWeight) {
           largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:largeFamily size:largeSize weight:largeWeight style:nil variant:nil scaleMultiplier:1.0];
         } else {
@@ -191,9 +192,7 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
   [button setTitleTextAttributes:attrs forState:UIControlStateDisabled];
   [button setTitleTextAttributes:attrs forState:UIControlStateSelected];
-  if (@available(iOS 9.0, *)) {
-    [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
-  }
+  [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
 + (UIImage*)loadBackButtonImageInViewController:(UIViewController *)vc
@@ -250,7 +249,7 @@
             // in order for new back button image to be loaded we need to trigger another change
             // in back button props that'd make UIKit redraw the button. Otherwise the changes are
             // not reflected. Here we change back button visibility which is then immediately restored
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
             vc.navigationItem.hidesBackButton = YES;
 #endif
             [config updateViewControllerIfNeeded];
@@ -270,9 +269,10 @@
   [self updateViewController:vc withConfig:config animated:animated];
 }
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 + (UINavigationBarAppearance*)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
-{
+API_AVAILABLE(ios(13.0)){
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
   if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
@@ -389,7 +389,7 @@
   }
 
   navitem.title = config.title;
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
                                   initWithTitle:config.backTitle ?: prevItem.title
@@ -418,7 +418,8 @@
   }
 #endif
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
     navitem.standardAppearance = appearance;
@@ -435,7 +436,7 @@
   } else
 #endif
   {
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
     // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
     // to update it before the navigation starts.
     UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
@@ -448,7 +449,7 @@
     }
 #endif
   }
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
@@ -457,7 +458,7 @@
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
@@ -472,6 +473,9 @@
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle: {
         navitem.titleView = subview;
+        break;
+      }
+      case RNSScreenStackHeaderSubviewTypeBackButton: {
         break;
       }
     }
@@ -542,7 +546,8 @@
 #if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     switch (statusBarStyle) {
       case RNSStatusBarStyleAuto:
@@ -576,9 +581,7 @@
   }
   return UIInterfaceOrientationUnknown;
 }
-#endif
 
-#if !TARGET_OS_TV
 + (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation
 {
    switch (deviceOrientation) {
@@ -595,9 +598,7 @@
        return UIInterfaceOrientationUnknown;
    }
 }
-#endif
 
-#if !TARGET_OS_TV
 + (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation
 {
   return 1 << orientation;
@@ -650,6 +651,8 @@
 // based on https://stackoverflow.com/questions/57965701/statusbarorientation-was-deprecated-in-ios-13-0-when-attempting-to-get-app-ori/61249908#61249908
 + (UIInterfaceOrientation)interfaceOrientation
 {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
     if (firstWindow == nil) {
@@ -660,7 +663,9 @@
       return UIInterfaceOrientationUnknown;
     }
     return windowScene.interfaceOrientation;
-  } else {
+  } else
+#endif
+  {
     return UIApplication.sharedApplication.statusBarOrientation;
   }
 }
@@ -702,6 +707,7 @@ RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
@@ -728,7 +734,8 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
       @"prominent": @(UIBlurEffectStyleProminent),
     }];
   }
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
       @"systemUltraThinMaterial": @(UIBlurEffectStyleSystemUltraThinMaterial),
