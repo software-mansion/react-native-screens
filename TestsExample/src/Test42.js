@@ -69,7 +69,13 @@ function Home({navigation}) {
         }}
       />
       <Button
-        title="status bar style"
+        title="Pop to top"
+        onPress={() => {
+          navigation.popToTop();
+        }}
+      />
+      <Button
+        title="Randomly change screen orientation"
         onPress={() => {
           navigation.setOptions({
             screenOrientation: Math.random() > 0.5 ? 'portrait' : 'landscape',
