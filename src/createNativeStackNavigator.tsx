@@ -1,7 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
+// @ts-nocheck it is not ready yet
 import React from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { NativeSyntheticEvent, NativeTouchEvent, Platform, StyleSheet } from 'react-native';
 import {
   Screen,
   ScreenStack,
@@ -10,6 +9,7 @@ import {
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
+  StackPresentationTypes,
 } from 'react-native-screens';
 import {
   createNavigator,
@@ -17,11 +17,17 @@ import {
   StackActions,
   StackRouter,
   NavigationRouteConfigMap,
-  NavigationNavigator,
+  CreateNavigatorConfig,
+  NavigationStackRouterConfig,
+  NavigationParams,
+  NavigationRoute,
+  NavigationDescriptor
 } from 'react-navigation';
+import {NativeStackNavigationOptions} from './native-stack/types';
 import { HeaderBackButton } from 'react-navigation-stack';
+import { StackNavigationHelpers, StackNavigationConfig, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 
-function renderComponentOrThunk(componentOrThunk, props) {
+function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
   if (typeof componentOrThunk === 'function') {
     return componentOrThunk(props);
   }
@@ -30,8 +36,21 @@ function renderComponentOrThunk(componentOrThunk, props) {
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
-class StackView extends React.Component {
-  _removeScene = (route) => {
+type NativeStackDescriptor = NavigationDescriptor<NavigationParams, NativeStackNavigationOptions>;
+
+type NativeStackDescriptorMap = {
+  [key: string]: NativeStackDescriptor;
+};
+
+
+type Props = {
+  navigation: StackNavigationHelpers;
+  descriptors: NativeStackDescriptorMap;
+  navigationConfig: StackNavigationConfig;
+  screenProps: unknown;
+};
+class StackView extends React.Component<Props> {
+  private removeScene = (route: NavigationRoute<NavigationParams>) => {
     this.props.navigation.dispatch({
       type: REMOVE_ACTION,
       immediate: true,
@@ -39,7 +58,7 @@ class StackView extends React.Component {
     });
   };
 
-  _onAppear = (route, descriptor) => {
+  private onAppear = (route: NavigationRoute<NavigationParams>, descriptor: NativeStackDescriptor) => {
     descriptor.options?.onAppear?.();
     this.props.navigation.dispatch(
       StackActions.completeTransition({
@@ -49,7 +68,7 @@ class StackView extends React.Component {
     );
   };
 
-  _onFinishTransitioning = () => {
+  private onFinishTransitioning: ((e: NativeSyntheticEvent<NativeTouchEvent>) => void) | undefined = () => {
     const { routes } = this.props.navigation.state;
     const lastRoute = routes?.length && routes[routes.length - 1];
 
@@ -63,7 +82,7 @@ class StackView extends React.Component {
     }
   };
 
-  _renderHeaderConfig = (index, route, descriptor) => {
+  private renderHeaderConfig = (index: number, route: NavigationRoute<NavigationParams>, descriptor: NativeStackDescriptor) => {
     const { navigationConfig } = this.props;
     const { options } = descriptor;
     const { headerMode } = navigationConfig;
@@ -213,12 +232,12 @@ class StackView extends React.Component {
     return <ScreenStackHeaderConfig {...headerOptions} />;
   };
 
-  _renderScene = (index, route, descriptor) => {
+  private renderScene = (index: number, route: NavigationRoute<NavigationParams>, descriptor: NativeStackDescriptor) => {
     const { navigation, getComponent, options } = descriptor;
     const { mode, transparentCard } = this.props.navigationConfig;
     const SceneComponent = getComponent();
 
-    let stackPresentation = 'push';
+    let stackPresentation: StackPresentationTypes = 'push';
     if (mode === 'modal' || mode === 'containedModal') {
       stackPresentation = mode;
       if (transparentCard || options.cardTransparent) {
@@ -258,9 +277,9 @@ class StackView extends React.Component {
             ? true
             : options.gestureEnabled
         }
-        onAppear={() => this._onAppear(route, descriptor)}
-        onDismissed={() => this._removeScene(route)}>
-        {this._renderHeaderConfig(index, route, descriptor)}
+        onAppear={() => this.onAppear(route, descriptor)}
+        onDismissed={() => this.removeScene(route)}>
+        {this.renderHeaderConfig(index, route, descriptor)}
         <SceneView
           screenProps={screenProps}
           navigation={navigation}
@@ -276,9 +295,9 @@ class StackView extends React.Component {
     return (
       <ScreenStack
         style={styles.scenes}
-        onFinishTransitioning={this._onFinishTransitioning}>
+        onFinishTransitioning={this.onFinishTransitioning}>
         {navigation.state.routes.map((route, i) =>
-          this._renderScene(i, route, descriptors[route.key])
+          this.renderScene(i, route, descriptors[route.key])
         )}
       </ScreenStack>
     );
@@ -289,18 +308,18 @@ const styles = StyleSheet.create({
   scenes: { flex: 1 },
 });
 
-function createStackNavigator<
-  Options,
-  NavigationScreenPropType,
-  ScreenPropsType
->(
+function createStackNavigator(
   routeConfigMap: NavigationRouteConfigMap<
-    Options,
-    NavigationScreenPropType,
-    ScreenPropsType
+    NativeStackNavigationOptions,
+    StackNavigationProp
   >,
-  stackConfig = {}
-): NavigationNavigator<Options, NavigationProp<NavigationState>> {
+  stackConfig: CreateNavigatorConfig<
+    StackNavigationConfig,
+    NavigationStackRouterConfig,
+    NativeStackNavigationOptions,
+    StackNavigationProp
+  > = {}
+) {
   const router = StackRouter(routeConfigMap, stackConfig);
 
   // belowe we override getStateForAction method in order to add handling for
@@ -316,7 +335,7 @@ function createStackNavigator<
       const { key, immediate } = action;
       let backRouteIndex = state.index;
       if (key) {
-        const backRoute = state.routes.find((route) => route.key === key);
+        const backRoute = state.routes.find((route: NavigationRoute<NavigationParams>) => route.key === key);
         backRouteIndex = state.routes.indexOf(backRoute);
       }
 
@@ -334,7 +353,7 @@ function createStackNavigator<
     return superGetStateForAction(action, state);
   };
   // Create a navigator with StackView as the view
-  return createNavigator<ScreenPropsType, Options>(
+  return createNavigator(
     StackView,
     router,
     stackConfig
