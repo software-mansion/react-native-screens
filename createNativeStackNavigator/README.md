@@ -154,12 +154,12 @@ A string that can be used as a fallback for `headerTitle`.
 
 Boolean indicating whether the navigation bar is translucent.
 
-### Status bar managment
+### Status bar and orientation managment
 
-With `native-stack`, the status bar can be managed by `UIViewController` on iOS. It requires:
+With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. It requires:
 
-1. Enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
-2. Adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
+1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
+2. For both status bar and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
 
 #### `statusBarStyle`
 
@@ -178,6 +178,21 @@ Defaults to `fade`.
 Boolean saying if the status bar for this screen is hidden.
 
 Defaults to `false`.
+
+#### `screenOrientation`
+
+Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
+
+- `default` - it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc)
+- `all`
+- `portrait`
+- `portrait_up`
+- `portrait_down`
+- `landscape`
+- `landscape_left`
+- `landscape_right`
+
+Defaults to `default`.
 
 ### Helpers
 

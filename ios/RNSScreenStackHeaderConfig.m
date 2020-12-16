@@ -126,7 +126,8 @@
   [navbar setTintColor:[config.color colorWithAlphaComponent:CGColorGetAlpha(config.color.CGColor) - 0.01]];
   [navbar setTintColor:config.color];
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     // font customized on the navigation item level, so nothing to do here
   } else
@@ -163,7 +164,7 @@
       [navbar setTitleTextAttributes:attrs];
     }
 
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
     if (@available(iOS 11.0, *)) {
       if (config.largeTitle && (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight || config.largeTitleColor || config.titleColor)) {
         NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
@@ -172,7 +173,7 @@
         }
         NSString *largeFamily = config.largeTitleFontFamily ?: nil;
         NSNumber *largeSize = config.largeTitleFontSize ?: @34;
-        NSNumber *largeWeight = config.largeTitleFontWeight ?: nil;
+        NSString *largeWeight = config.largeTitleFontWeight ?: nil;
         if (largeFamily || largeWeight) {
           largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil withFamily:largeFamily size:largeSize weight:largeWeight style:nil variant:nil scaleMultiplier:1.0];
         } else {
@@ -191,9 +192,7 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateHighlighted];
   [button setTitleTextAttributes:attrs forState:UIControlStateDisabled];
   [button setTitleTextAttributes:attrs forState:UIControlStateSelected];
-  if (@available(iOS 9.0, *)) {
-    [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
-  }
+  [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
 + (UIImage*)loadBackButtonImageInViewController:(UIViewController *)vc
@@ -250,7 +249,7 @@
             // in order for new back button image to be loaded we need to trigger another change
             // in back button props that'd make UIKit redraw the button. Otherwise the changes are
             // not reflected. Here we change back button visibility which is then immediately restored
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
             vc.navigationItem.hidesBackButton = YES;
 #endif
             [config updateViewControllerIfNeeded];
@@ -270,9 +269,10 @@
   [self updateViewController:vc withConfig:config animated:animated];
 }
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 + (UINavigationBarAppearance*)buildAppearance:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
-{
+API_AVAILABLE(ios(13.0)){
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
   if (config.backgroundColor && CGColorGetAlpha(config.backgroundColor.CGColor) == 0.) {
@@ -364,7 +364,7 @@
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
 
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
   // we put it before check with return because we want to apply changes to status bar even if the header is hidden
   if (config != nil) {
     if (config.statusBarStyle || config.statusBarAnimation || config.statusBarHidden) {
@@ -372,6 +372,9 @@
       if ([vc isKindOfClass:[RNSScreen class]]) {
         [RNSScreenStackHeaderConfig updateStatusBarAppearance];
       }
+    }
+    if (config.screenOrientation) {
+      [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
     }
   }
 #endif
@@ -386,7 +389,7 @@
   }
 
   navitem.title = config.title;
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
     prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
                                   initWithTitle:config.backTitle ?: prevItem.title
@@ -415,7 +418,8 @@
   }
 #endif
 
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
     navitem.standardAppearance = appearance;
@@ -432,7 +436,7 @@
   } else
 #endif
   {
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
     // updating backIndicatotImage does not work when called during transition. On iOS pre 13 we need
     // to update it before the navigation starts.
     UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
@@ -445,7 +449,7 @@
     }
 #endif
   }
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
@@ -454,7 +458,7 @@
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
@@ -469,6 +473,9 @@
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle: {
         navitem.titleView = subview;
+        break;
+      }
+      case RNSScreenStackHeaderSubviewTypeBackButton: {
         break;
       }
     }
@@ -505,6 +512,7 @@
   }
 }
 
+#if !TARGET_OS_TV
 + (void)assertViewControllerBasedStatusBarAppearenceSet
 {
   static dispatch_once_t once;
@@ -517,24 +525,33 @@
     UIViewControllerBasedStatusBarAppearance key in the Info.plist to YES");
   }
 }
+#endif
 
 + (void)updateStatusBarAppearance
 {
+#if !TARGET_OS_TV
   [UIView animateWithDuration:0.4 animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
     if (@available(iOS 13, *)) {
       UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
       if (firstWindow != nil) {
         [[firstWindow rootViewController] setNeedsStatusBarAppearanceUpdate];
       }
-    } else {
+    } else
+#endif
+    {
       [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
     }
   }];
+#endif
 }
 
+#if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     switch (statusBarStyle) {
       case RNSStatusBarStyleAuto:
@@ -552,6 +569,121 @@
 #endif
   return UIStatusBarStyleLightContent;
 }
+#endif
+
+#if !TARGET_OS_TV
++ (UIInterfaceOrientation)defaultOrientationForOrientationMask:(UIInterfaceOrientationMask)orientationMask
+{
+  if (UIInterfaceOrientationMaskPortrait & orientationMask) {
+    return UIInterfaceOrientationPortrait;
+  } else if (UIInterfaceOrientationMaskLandscapeLeft & orientationMask) {
+    return UIInterfaceOrientationLandscapeLeft;
+  } else if (UIInterfaceOrientationMaskLandscapeRight & orientationMask) {
+    return UIInterfaceOrientationLandscapeRight;
+  } else if (UIInterfaceOrientationMaskPortraitUpsideDown & orientationMask) {
+    return UIInterfaceOrientationPortraitUpsideDown;
+  }
+  return UIInterfaceOrientationUnknown;
+}
+
++ (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation
+{
+   switch (deviceOrientation) {
+     case UIDeviceOrientationPortrait:
+       return UIInterfaceOrientationPortrait;
+     case UIDeviceOrientationPortraitUpsideDown:
+       return UIInterfaceOrientationPortraitUpsideDown;
+     // UIDevice and UIInterface landscape orientations are switched
+     case UIDeviceOrientationLandscapeLeft:
+       return UIInterfaceOrientationLandscapeRight;
+     case UIDeviceOrientationLandscapeRight:
+       return UIInterfaceOrientationLandscapeLeft;
+     default:
+       return UIInterfaceOrientationUnknown;
+   }
+}
+
++ (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation
+{
+  return 1 << orientation;
+}
+#endif
+
++ (void)enforceDesiredDeviceOrientation
+{
+#if !TARGET_OS_TV
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskAllButUpsideDown;
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+    if (@available(iOS 13, *)) {
+      UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+      if (firstWindow != nil) {
+        orientationMask = [firstWindow rootViewController].supportedInterfaceOrientations;
+      }
+    } else
+#endif
+    {
+      orientationMask = UIApplication.sharedApplication.keyWindow.rootViewController.supportedInterfaceOrientations;
+    }
+    UIInterfaceOrientation currentDeviceOrientation = [RNSScreenStackHeaderConfig interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
+    UIInterfaceOrientation currentInterfaceOrientation = [RNSScreenStackHeaderConfig interfaceOrientation];
+    UIInterfaceOrientation newOrientation = UIInterfaceOrientationUnknown;
+    if ([RNSScreenStackHeaderConfig maskFromOrientation:currentDeviceOrientation] & orientationMask) {
+      if (!([RNSScreenStackHeaderConfig maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
+        // if the device orientation is in the mask, but interface orientation is not, we rotate to device's orientation
+        newOrientation = currentDeviceOrientation;
+      } else {
+        if (currentDeviceOrientation != currentInterfaceOrientation) {
+          // if both device orientation and interface orientation are in the mask, but in different orientations, we rotate to device's orientation
+          newOrientation = currentDeviceOrientation;
+        }
+      }
+    } else {
+      if (!([RNSScreenStackHeaderConfig maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
+        // if both device orientation and interface orientation are not in the mask, we rotate to closest available rotation from mask
+        newOrientation = [RNSScreenStackHeaderConfig defaultOrientationForOrientationMask:orientationMask];
+      } else {
+        // if the device orientation is not in the mask, but interface orientation is in the mask, do nothing
+      }
+    }
+    if (newOrientation != UIInterfaceOrientationUnknown) {
+      [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
+      [UIViewController attemptRotationToDeviceOrientation];
+    }
+  });
+#endif
+}
+
++ (void)updateWindowTraits
+{
+  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
+}
+
+#if !TARGET_OS_TV
+// based on https://stackoverflow.com/questions/57965701/statusbarorientation-was-deprecated-in-ios-13-0-when-attempting-to-get-app-ori/61249908#61249908
++ (UIInterfaceOrientation)interfaceOrientation
+{
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+    if (firstWindow == nil) {
+      return UIInterfaceOrientationUnknown;
+    }
+    UIWindowScene *windowScene = firstWindow.windowScene;
+    if (windowScene == nil) {
+      return UIInterfaceOrientationUnknown;
+    }
+    return windowScene.interfaceOrientation;
+  } else
+#endif
+  {
+    return UIApplication.sharedApplication.statusBarOrientation;
+  }
+}
+#endif
 
 @end
 
@@ -589,9 +721,13 @@ RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
+
+#if !TARGET_OS_TV
+RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
+#endif
 
 @end
 
@@ -612,7 +748,8 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
       @"prominent": @(UIBlurEffectStyleProminent),
     }];
   }
-#if defined(__IPHONE_13_0) && TARGET_OS_IOS
+#if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
       @"systemUltraThinMaterial": @(UIBlurEffectStyleSystemUltraThinMaterial),
@@ -651,12 +788,37 @@ RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
 
+#if !TARGET_OS_TV
 RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
   @"auto": @(RNSStatusBarStyleAuto),
   @"inverted": @(RNSStatusBarStyleInverted),
   @"light": @(RNSStatusBarStyleLight),
   @"dark": @(RNSStatusBarStyleDark),
   }), RNSStatusBarStyleAuto, integerValue)
+
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
+{
+  json = [self NSString:json];
+  if ([json isEqualToString:@"default"]) {
+    return UIInterfaceOrientationMaskAllButUpsideDown;
+  } else if ([json isEqualToString:@"all"]) {
+    return UIInterfaceOrientationMaskAll;
+  } else if ([json isEqualToString:@"portrait"]) {
+    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"portrait_up"]) {
+    return UIInterfaceOrientationMaskPortrait;
+  } else if ([json isEqualToString:@"portrait_down"]) {
+    return UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"landscape"]) {
+    return UIInterfaceOrientationMaskLandscape;
+  } else if ([json isEqualToString:@"landscape_left"]) {
+    return UIInterfaceOrientationMaskLandscapeLeft;
+  } else if ([json isEqualToString:@"landscape_right"]) {
+    return UIInterfaceOrientationMaskLandscapeRight;
+  }
+  return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+#endif
 
 @end
 

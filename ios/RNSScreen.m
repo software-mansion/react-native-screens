@@ -81,7 +81,8 @@
 {
   switch (stackPresentation) {
     case RNSScreenStackPresentationModal:
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
       if (@available(iOS 13.0, *)) {
         _controller.modalPresentationStyle = UIModalPresentationAutomatic;
       } else {
@@ -94,7 +95,7 @@
     case RNSScreenStackPresentationFullScreenModal:
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
       break;
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
     case RNSScreenStackPresentationFormSheet:
       _controller.modalPresentationStyle = UIModalPresentationFormSheet;
       break;
@@ -135,7 +136,7 @@
     case RNSScreenStackAnimationFade:
       _controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
       break;
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
     case RNSScreenStackAnimationFlip:
       _controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
       break;
@@ -149,11 +150,12 @@
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
 {
-  #ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-      _controller.modalInPresentation = !gestureEnabled;
-    }
-  #endif
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    _controller.modalInPresentation = !gestureEnabled;
+  }
+#endif
 
   _gestureEnabled = gestureEnabled;
 }
@@ -300,6 +302,7 @@
   return self;
 }
 
+#if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
   UIViewController *vc = [self findChildVCForConfig];
@@ -327,12 +330,23 @@
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
   UIViewController *vc = [self findChildVCForConfig];
-  if (vc != self && vc != nil) {
-    return vc.preferredStatusBarUpdateAnimation;
+  
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
+    return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
   }
+  return UIStatusBarAnimationFade;
+}
 
-  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
-  return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  UIViewController *vc = [self findChildVCForConfig];
+
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
+    return config && config.screenOrientation ? config.screenOrientation : UIInterfaceOrientationMaskAllButUpsideDown;
+  }
+  return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
 // if the returned vc is a child, it means that it can provide config;
@@ -343,12 +357,13 @@
 - (UIViewController *)findChildVCForConfig
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  if (self.presentedViewController != nil) {
+  if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
     // setting this makes the modal vc being asked for appearance,
     // so it doesn't matter what we return here since the modal's root screen will be asked
     lastViewController.modalPresentationCapturesStatusBarAppearance = YES;
-    return nil;
+    // for screen orientation, we need to start the search again from that modal
+    return [(RNSScreen *)lastViewController findChildVCForConfig] ?: lastViewController;
   }
 
   UIViewController *selfOrNil = [self findScreenConfig] != nil ? self : nil;
@@ -372,6 +387,7 @@
     }
   }
 }
+#endif
 
 - (RNSScreenStackHeaderConfig *)findScreenConfig
 {
@@ -428,7 +444,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+  [RNSScreenStackHeaderConfig updateWindowTraits];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -471,8 +487,8 @@
 {
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
-  // the correct Screen for appearance is set after the transition
-  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+  // the correct Screen for appearance is set after the transition, same for orientation.
+  [RNSScreenStackHeaderConfig updateWindowTraits];
 }
 
 @end
