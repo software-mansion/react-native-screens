@@ -91,6 +91,7 @@ module.exports = {
           'error',
           {
             'ts-ignore': 'allow-with-description',
+            'ts-nocheck': 'allow-with-description',
           },
         ],
       },
