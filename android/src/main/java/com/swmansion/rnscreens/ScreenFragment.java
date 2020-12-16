@@ -68,7 +68,7 @@ public class ScreenFragment extends Fragment {
 
   public void onContainerUpdate() {
     ScreenStackHeaderConfig config = findHeaderConfig();
-    boolean configInChild = checkIfChildWithConfig(getScreen());
+    boolean configInChild = isChildScreenWithConfig(getScreen());
     if (!configInChild && config != null && config.getScreenFragment().getActivity() != null) {
       // if there is no child with config, we look for a parent with config to set the orientation
       config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
@@ -91,16 +91,18 @@ public class ScreenFragment extends Fragment {
     return null;
   }
 
-  protected static boolean checkIfChildWithConfig(View view) {
-    if (view instanceof ViewGroup) {
-      for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-        View child = ((ViewGroup) view).getChildAt(i);
-        if (child instanceof ScreenStackHeaderConfig) {
-          return true;
-        } else {
-          if (checkIfChildWithConfig(child)) {
+  protected boolean isChildScreenWithConfig(Screen screen) {
+    for (ScreenContainer sc : mChildScreenContainers) {
+      if (sc.getScreenCount() > 0) {
+        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
+        for (int i = 0; i < topScreen.getChildCount(); i++) {
+          View child = screen.getChildAt(i);
+          if (child instanceof ScreenStackHeaderConfig) {
             return true;
           }
+        }
+        if (isChildScreenWithConfig(topScreen)) {
+          return true;
         }
       }
     }

@@ -172,8 +172,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
 
     // orientation
-    if (!ScreenFragment.checkIfChildWithConfig(getScreen() != null ? getScreen().getChildAt(1) : null)) {
-      // we check if there is no child that provides config, since then we shouldn't change orientation here (child with index 0 is this header config)
+    if (getScreen() == null || !getScreenFragment().isChildScreenWithConfig(getScreen())) {
+      // we check if there is no child that provides config, since then we shouldn't change orientation here
       activity.setRequestedOrientation(mScreenOrientation);
     }
 
@@ -353,7 +353,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     return null;
   }
 
-  public int getScreenOrientation(){
+  public int getScreenOrientation() {
     return mScreenOrientation;
   }
 
