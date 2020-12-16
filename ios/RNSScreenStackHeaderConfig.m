@@ -655,6 +655,12 @@ API_AVAILABLE(ios(13.0)){
 #endif
 }
 
++ (void)updateWindowTraits
+{
+  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
+  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
+}
+
 #if !TARGET_OS_TV
 // based on https://stackoverflow.com/questions/57965701/statusbarorientation-was-deprecated-in-ios-13-0-when-attempting-to-get-app-ori/61249908#61249908
 + (UIInterfaceOrientation)interfaceOrientation

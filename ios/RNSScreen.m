@@ -444,8 +444,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
-  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
+  [RNSScreenStackHeaderConfig updateWindowTraits];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -489,8 +488,7 @@
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
   // the correct Screen for appearance is set after the transition, same for orientation.
-  [RNSScreenStackHeaderConfig updateStatusBarAppearance];
-  [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
+  [RNSScreenStackHeaderConfig updateWindowTraits];
 }
 
 @end

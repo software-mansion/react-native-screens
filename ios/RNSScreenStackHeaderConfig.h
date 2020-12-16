@@ -48,6 +48,8 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
 + (void)updateStatusBarAppearance;
++ (void)enforceDesiredDeviceOrientation;
++ (void)updateWindowTraits;
 
 #if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle;
@@ -55,7 +57,6 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 + (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation;
 + (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation;
 #endif
-+ (void)enforceDesiredDeviceOrientation;
 
 @end
 
