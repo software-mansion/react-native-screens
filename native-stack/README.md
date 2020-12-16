@@ -212,7 +212,7 @@ A string that can be used as a fallback for `headerTitle`.
 
 ### Status bar and orientation managment
 
-With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. It requires:
+With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. On Android, the screen orientation can be managed by `FragmentActivity`. On iOS, it requires:
 
 1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
 2. For both status bar and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
