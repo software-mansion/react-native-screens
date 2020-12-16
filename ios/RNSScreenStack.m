@@ -324,6 +324,7 @@
       weakSelf.scheduleModalsUpdate = NO;
       [weakSelf updateContainer];
     }
+    [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
   };
 
   void (^finish)(void) = ^{
