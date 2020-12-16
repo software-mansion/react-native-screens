@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import {
@@ -14,6 +16,8 @@ import {
   SceneView,
   StackActions,
   StackRouter,
+  NavigationRouteConfigMap,
+  NavigationNavigator,
 } from 'react-navigation';
 import { HeaderBackButton } from 'react-navigation-stack';
 
@@ -36,9 +40,7 @@ class StackView extends React.Component {
   };
 
   _onAppear = (route, descriptor) => {
-    descriptor.options &&
-      descriptor.options.onAppear &&
-      descriptor.options.onAppear();
+    descriptor.options?.onAppear?.();
     this.props.navigation.dispatch(
       StackActions.completeTransition({
         toChildKey: route.key,
@@ -100,9 +102,8 @@ class StackView extends React.Component {
     const headerOptions = {
       backButtonInCustomView,
       backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
-      backTitleFontFamily:
-        headerBackTitleStyle && headerBackTitleStyle.fontFamily,
-      backTitleFontSize: headerBackTitleStyle && headerBackTitleStyle.fontSize,
+      backTitleFontFamily: headerBackTitleStyle?.fontFamily,
+      backTitleFontSize: headerBackTitleStyle?.fontSize,
       color: headerTintColor,
       direction,
       topInsetEnabled: headerTopInsetEnabled,
@@ -125,11 +126,10 @@ class StackView extends React.Component {
       statusBarHidden,
       statusBarStyle,
       title,
-      titleColor:
-        (headerTitleStyle && headerTitleStyle.color) || headerTintColor,
-      titleFontFamily: headerTitleStyle && headerTitleStyle.fontFamily,
-      titleFontSize: headerTitleStyle && headerTitleStyle.fontSize,
-      titleFontWeight: headerTitleStyle && headerTitleStyle.fontWeight,
+      titleColor: headerTitleStyle?.color || headerTintColor,
+      titleFontFamily: headerTitleStyle?.fontFamily,
+      titleFontSize: headerTitleStyle?.fontSize,
+      titleFontWeight: headerTitleStyle?.fontWeight,
       translucent: translucent === undefined ? false : translucent,
     };
 
@@ -289,7 +289,18 @@ const styles = StyleSheet.create({
   scenes: { flex: 1 },
 });
 
-function createStackNavigator(routeConfigMap, stackConfig = {}) {
+function createStackNavigator<
+  Options,
+  NavigationScreenPropType,
+  ScreenPropsType
+>(
+  routeConfigMap: NavigationRouteConfigMap<
+    Options,
+    NavigationScreenPropType,
+    ScreenPropsType
+  >,
+  stackConfig = {}
+): NavigationNavigator<Options, NavigationProp<NavigationState>> {
   const router = StackRouter(routeConfigMap, stackConfig);
 
   // belowe we override getStateForAction method in order to add handling for
@@ -323,7 +334,11 @@ function createStackNavigator(routeConfigMap, stackConfig = {}) {
     return superGetStateForAction(action, state);
   };
   // Create a navigator with StackView as the view
-  return createNavigator(StackView, router, stackConfig);
+  return createNavigator<ScreenPropsType, Options>(
+    StackView,
+    router,
+    stackConfig
+  );
 }
 
 export default createStackNavigator;
