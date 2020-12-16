@@ -108,7 +108,7 @@ export type NativeStackNavigationOptions = {
   /**
    * Function which returns a React Element to display in the center of the header.
    */
-  headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
+  headerCenter?: (props: { tintColor?: string | symbol }) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
    * Only supported on Android.
@@ -127,7 +127,7 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   headerLargeStyle?: {
-    backgroundColor?: string;
+    backgroundColor?: string | symbol;
   };
   /**
    * Boolean to set native property to prefer large title header (like in iOS setting).
@@ -155,16 +155,16 @@ export type NativeStackNavigationOptions = {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
+    color?: string | symbol;
   };
   /**
    * Function which returns a React Element to display on the left side of the header.
    */
-  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
+  headerLeft?: (props: { tintColor?: string | symbol }) => React.ReactNode;
   /**
    * Function which returns a React Element to display on the right side of the header.
    */
-  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
+  headerRight?: (props: { tintColor?: string | symbol }) => React.ReactNode;
   /**
    * Whether to show the header.
    */
@@ -175,13 +175,13 @@ export type NativeStackNavigationOptions = {
    * - blurEffect
    */
   headerStyle?: {
-    backgroundColor?: string;
+    backgroundColor?: string | symbol;
     blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
   };
   /**
    * Tint color for the header. Changes the color of back button and title.
    */
-  headerTintColor?: string;
+  headerTintColor?: string | symbol;
   /**
    * String to display in the header as title. Defaults to scene `title`.
    */
@@ -197,7 +197,7 @@ export type NativeStackNavigationOptions = {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
+    color?: string | symbol;
   };
   /**
    * A flag to that lets you opt out of insetting the header. You may want to

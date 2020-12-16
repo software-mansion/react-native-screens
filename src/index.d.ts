@@ -135,7 +135,7 @@ declare module 'react-native-screens' {
     /**
      * @description Controls the color of the navigation header.
      */
-    backgroundColor?: string;
+    backgroundColor?: string | symbol;
     /**
      * @host (iOS only)
      * @description Allows for controlling the string to be rendered next to back button. By default iOS uses the title of the previous screen.
@@ -171,7 +171,7 @@ declare module 'react-native-screens' {
     /**
      * @description Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
      */
-    color?: string;
+    color?: string | symbol;
     /**
      * @description If set to true the back button will not be rendered as a part of navigation header.
      */
@@ -188,12 +188,12 @@ declare module 'react-native-screens' {
     /**
      *@description Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
      */
-    largeTitleBackgroundColor?: string;
+    largeTitleBackgroundColor?: string | symbol;
     /**
      * @host (iOS only)
      * @description Customize the color to be used for the large title. By default uses the titleColor property.
      */
-    largeTitleColor?: string;
+    largeTitleColor?: string | symbol;
     /**
      * @host (iOS only)
      * @description Customize font family to be used for the large title.
@@ -235,7 +235,7 @@ declare module 'react-native-screens' {
     /**
      * @description Allows for setting text color of the title.
      */
-    titleColor?: string;
+    titleColor?: string | symbol;
     /**
      * @description Customize font family to be used for the title.
      */
