@@ -531,12 +531,16 @@ API_AVAILABLE(ios(13.0)){
 {
 #if !TARGET_OS_TV
   [UIView animateWithDuration:0.4 animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
     if (@available(iOS 13, *)) {
       UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
       if (firstWindow != nil) {
         [[firstWindow rootViewController] setNeedsStatusBarAppearanceUpdate];
       }
-    } else {
+    } else
+#endif
+    {
       [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
     }
   }];
@@ -610,12 +614,16 @@ API_AVAILABLE(ios(13.0)){
 #if !TARGET_OS_TV
   dispatch_async(dispatch_get_main_queue(), ^{
     UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskAllButUpsideDown;
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
     if (@available(iOS 13, *)) {
       UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
       if (firstWindow != nil) {
         orientationMask = [firstWindow rootViewController].supportedInterfaceOrientations;
       }
-    } else {
+    } else
+#endif
+    {
       orientationMask = UIApplication.sharedApplication.keyWindow.rootViewController.supportedInterfaceOrientations;
     }
     UIInterfaceOrientation currentDeviceOrientation = [RNSScreenStackHeaderConfig interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
@@ -734,7 +742,7 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
       @"prominent": @(UIBlurEffectStyleProminent),
     }];
   }
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+#if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     [blurEffects addEntriesFromDictionary:@{
