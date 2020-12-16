@@ -18,7 +18,7 @@ export default function NativeNavigation() {
           name="Home"
           component={Home}
           options={{
-            statusBarStyle: 'auto',
+            statusBarStyle: 'light',
           }}
         />
         <Stack.Screen
@@ -78,9 +78,9 @@ function Home({navigation}) {
         }}
       />
       <Button
-        title="Go back"
+        title="Pop one modal"
         onPress={() => {
-          navigation.goBack();
+          navigation.pop();
         }}
       />
     </ScrollView>

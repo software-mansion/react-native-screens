@@ -69,9 +69,9 @@ function Home({navigation}) {
         }}
       />
       <Button
-        title="Pop to top"
+        title="Pop one modal"
         onPress={() => {
-          navigation.popToTop();
+          navigation.pop();
         }}
       />
       <Button

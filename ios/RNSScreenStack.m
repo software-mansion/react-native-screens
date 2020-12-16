@@ -324,6 +324,9 @@
       weakSelf.scheduleModalsUpdate = NO;
       [weakSelf updateContainer];
     }
+    // we trigger the update of orientation here because, when dismissing the modal from JS,
+    // neither `viewWillAppear` nor `presentationControllerDidDismiss` are called, same for status bar.
+    [RNSScreenStackHeaderConfig updateStatusBarAppearance];
     [RNSScreenStackHeaderConfig enforceDesiredDeviceOrientation];
   };
 
