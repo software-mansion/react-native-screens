@@ -1,6 +1,11 @@
 // @ts-nocheck it is not ready yet
 import React from 'react';
-import { NativeSyntheticEvent, NativeTouchEvent, Platform, StyleSheet } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  NativeTouchEvent,
+  Platform,
+  StyleSheet,
+} from 'react-native';
 import {
   Screen,
   ScreenStack,
@@ -21,11 +26,15 @@ import {
   NavigationStackRouterConfig,
   NavigationParams,
   NavigationRoute,
-  NavigationDescriptor
+  NavigationDescriptor,
 } from 'react-navigation';
-import {NativeStackNavigationOptions} from './native-stack/types';
+import { NativeStackNavigationOptions } from './native-stack/types';
 import { HeaderBackButton } from 'react-navigation-stack';
-import { StackNavigationHelpers, StackNavigationConfig, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import {
+  StackNavigationHelpers,
+  StackNavigationConfig,
+  StackNavigationProp,
+} from 'react-navigation-stack/lib/typescript/src/vendor/types';
 
 function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
   if (typeof componentOrThunk === 'function') {
@@ -36,12 +45,14 @@ function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
-type NativeStackDescriptor = NavigationDescriptor<NavigationParams, NativeStackNavigationOptions>;
+type NativeStackDescriptor = NavigationDescriptor<
+  NavigationParams,
+  NativeStackNavigationOptions
+>;
 
 type NativeStackDescriptorMap = {
   [key: string]: NativeStackDescriptor;
 };
-
 
 type Props = {
   navigation: StackNavigationHelpers;
@@ -58,7 +69,10 @@ class StackView extends React.Component<Props> {
     });
   };
 
-  private onAppear = (route: NavigationRoute<NavigationParams>, descriptor: NativeStackDescriptor) => {
+  private onAppear = (
+    route: NavigationRoute<NavigationParams>,
+    descriptor: NativeStackDescriptor
+  ) => {
     descriptor.options?.onAppear?.();
     this.props.navigation.dispatch(
       StackActions.completeTransition({
@@ -68,7 +82,9 @@ class StackView extends React.Component<Props> {
     );
   };
 
-  private onFinishTransitioning: ((e: NativeSyntheticEvent<NativeTouchEvent>) => void) | undefined = () => {
+  private onFinishTransitioning:
+    | ((e: NativeSyntheticEvent<NativeTouchEvent>) => void)
+    | undefined = () => {
     const { routes } = this.props.navigation.state;
     const lastRoute = routes?.length && routes[routes.length - 1];
 
@@ -82,7 +98,11 @@ class StackView extends React.Component<Props> {
     }
   };
 
-  private renderHeaderConfig = (index: number, route: NavigationRoute<NavigationParams>, descriptor: NativeStackDescriptor) => {
+  private renderHeaderConfig = (
+    index: number,
+    route: NavigationRoute<NavigationParams>,
+    descriptor: NativeStackDescriptor
+  ) => {
     const { navigationConfig } = this.props;
     const { options } = descriptor;
     const { headerMode } = navigationConfig;
@@ -232,7 +252,11 @@ class StackView extends React.Component<Props> {
     return <ScreenStackHeaderConfig {...headerOptions} />;
   };
 
-  private renderScene = (index: number, route: NavigationRoute<NavigationParams>, descriptor: NativeStackDescriptor) => {
+  private renderScene = (
+    index: number,
+    route: NavigationRoute<NavigationParams>,
+    descriptor: NativeStackDescriptor
+  ) => {
     const { navigation, getComponent, options } = descriptor;
     const { mode, transparentCard } = this.props.navigationConfig;
     const SceneComponent = getComponent();
@@ -335,7 +359,9 @@ function createStackNavigator(
       const { key, immediate } = action;
       let backRouteIndex = state.index;
       if (key) {
-        const backRoute = state.routes.find((route: NavigationRoute<NavigationParams>) => route.key === key);
+        const backRoute = state.routes.find(
+          (route: NavigationRoute<NavigationParams>) => route.key === key
+        );
         backRouteIndex = state.routes.indexOf(backRoute);
       }
 
@@ -353,11 +379,7 @@ function createStackNavigator(
     return superGetStateForAction(action, state);
   };
   // Create a navigator with StackView as the view
-  return createNavigator(
-    StackView,
-    router,
-    stackConfig
-  );
+  return createNavigator(StackView, router, stackConfig);
 }
 
 export default createStackNavigator;
