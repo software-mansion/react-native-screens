@@ -1,13 +1,11 @@
 package com.swmansion.rnscreens;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import com.facebook.react.bridge.ReactContext;
@@ -68,7 +66,7 @@ public class ScreenFragment extends Fragment {
 
   public void onContainerUpdate() {
     ScreenStackHeaderConfig config = findHeaderConfig();
-    boolean configInChild = isChildScreenWithConfig(getScreen());
+    boolean configInChild = hasChildScreenWithConfig(getScreen());
     if (!configInChild && config != null && config.getScreenFragment().getActivity() != null) {
       // if there is no child with config, we look for a parent with config to set the orientation
       config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
@@ -79,11 +77,9 @@ public class ScreenFragment extends Fragment {
     ViewParent parent = getScreen().getContainer();
     while (parent != null) {
       if (parent instanceof Screen) {
-        for (int i = 0; i < ((Screen) parent).getChildCount(); i++) {
-          View child = ((Screen) parent).getChildAt(i);
-          if (child instanceof ScreenStackHeaderConfig) {
-            return (ScreenStackHeaderConfig) child;
-          }
+        ScreenStackHeaderConfig headerConfig = getHeaderConfig((Screen)parent);
+        if (headerConfig != null) {
+          return headerConfig;
         }
       }
       parent = parent.getParent();
@@ -91,22 +87,45 @@ public class ScreenFragment extends Fragment {
     return null;
   }
 
-  protected boolean isChildScreenWithConfig(Screen screen) {
-    for (ScreenContainer sc : mChildScreenContainers) {
-      if (sc.getScreenCount() > 0) {
-        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
-        for (int i = 0; i < topScreen.getChildCount(); i++) {
-          View child = screen.getChildAt(i);
-          if (child instanceof ScreenStackHeaderConfig) {
+  protected boolean hasChildScreenWithConfig(View view) {
+    if (view instanceof ViewGroup) {
+      for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+        View child = ((ViewGroup) view).getChildAt(i);
+        if (child instanceof ScreenStackHeaderConfig) {
+          return true;
+        } else {
+          if (hasChildScreenWithConfig(child)) {
             return true;
           }
         }
-        if (isChildScreenWithConfig(topScreen)) {
+      }
+      if (view instanceof ScreenStack) {
+        // we check only the top screen of stack for header config
+        View child = ((ScreenStack) view).getScreenAt(((ScreenStack) view).getScreenCount() - 1);
+        if (hasChildScreenWithConfig(child)) {
           return true;
+        }
+      } else if (view instanceof ScreenContainer) {
+        // we check only the screen that is on top
+        for (int i = 0; i < ((ScreenContainer) view).getScreenCount(); i++) {
+          Screen screen = ((ScreenContainer) view).getScreenAt(i);
+          if (screen.getActivityState() == Screen.ActivityState.ON_TOP) {
+            if (hasChildScreenWithConfig(screen)) {
+              return true;
+            }
+          }
         }
       }
     }
     return false;
+  }
+
+  protected ScreenStackHeaderConfig getHeaderConfig(Screen screen) {
+    View child = screen.getChildAt(0);
+    if (child instanceof ScreenStackHeaderConfig) {
+      return (ScreenStackHeaderConfig) child;
+    }
+    return null;
   }
 
   protected void dispatchOnWillAppear() {

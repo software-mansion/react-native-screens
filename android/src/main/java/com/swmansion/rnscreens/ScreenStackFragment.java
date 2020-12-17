@@ -111,9 +111,9 @@ public class ScreenStackFragment extends ScreenFragment {
 
   @Override
   public void onContainerUpdate() {
-    View child = mScreenView.getChildAt(0);
-    if (child instanceof ScreenStackHeaderConfig) {
-      ((ScreenStackHeaderConfig) child).onUpdate();
+    ScreenStackHeaderConfig headerConfig = getHeaderConfig(getScreen());
+    if (headerConfig != null) {
+      headerConfig.onUpdate();
     }
   }
 

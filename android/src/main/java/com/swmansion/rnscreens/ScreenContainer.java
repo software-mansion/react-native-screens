@@ -382,7 +382,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   protected void updateChildFragments() {
     for (int i = 0, size = mScreenFragments.size(); i < size; i++) {
       ScreenFragment screenFragment = mScreenFragments.get(i);
-      screenFragment.onContainerUpdate();
+      if (getActivityState(screenFragment) == Screen.ActivityState.ON_TOP) {
+        screenFragment.onContainerUpdate();
+      }
     }
   }
 }
