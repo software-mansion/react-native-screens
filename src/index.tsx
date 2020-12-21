@@ -1,17 +1,27 @@
 import React from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, View, ViewProps } from 'react-native';
 
 let ENABLE_SCREENS = true;
 
-export function enableScreens(shouldEnableScreens = true) {
+export function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = shouldEnableScreens;
 }
 
-export function screensEnabled() {
+export function screensEnabled(): boolean {
   return ENABLE_SCREENS;
 }
 
-export class NativeScreen extends React.Component {
+interface WebScreenProps extends ViewProps {
+  active?: 0 | 1 | Animated.AnimatedInterpolation;
+  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
+  children?: React.ReactNode;
+  /**
+   * @description All children screens should have the same value of their "enabled" prop as their container.
+   */
+  enabled?: boolean;
+}
+
+export class NativeScreen extends React.Component<WebScreenProps> {
   render() {
     let { active, activityState, style, enabled = true, ...rest } = this.props;
     if (active !== undefined && activityState === undefined) {

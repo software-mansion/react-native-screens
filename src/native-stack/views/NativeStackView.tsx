@@ -8,12 +8,8 @@ import * as React from 'react';
 import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
-import {
-  Screen as ScreenComponent,
-  ScreenProps,
-  ScreenStack,
-  StackPresentationTypes,
-} from 'react-native-screens';
+import { ScreenProps, StackPresentationTypes } from '../../types';
+import { Screen as ScreenComponent, ScreenStack } from '../../index.native';
 import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
