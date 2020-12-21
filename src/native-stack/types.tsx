@@ -10,10 +10,7 @@ import {
 } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
-import {
-  ScreenProps,
-  ScreenStackHeaderConfigProps,
-} from '../types';
+import { ScreenProps, ScreenStackHeaderConfigProps } from '../types';
 
 export type NativeStackNavigationEventMap = {
   /**
