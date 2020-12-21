@@ -236,6 +236,10 @@ export type NativeStackNavigationOptions = {
    */
   screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
   /**
+   * Function which returns a React Element to display on the right side of the header.
+   */
+  searchBar?: (props: { tintColor?: string }) => React.ReactNode;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation

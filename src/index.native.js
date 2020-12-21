@@ -170,6 +170,14 @@ const ScreenStackHeaderCenterView = (props) => (
   />
 );
 
+const ScreenStackHeaderSearchBarView = (props) => (
+  <ScreensNativeModules.NativeScreenStackHeaderSubview
+    {...props}
+    type="searchBar"
+    style={styles.headerSubview}
+  />
+);
+
 module.exports = {
   ScreenContainer,
   Screen,
@@ -194,6 +202,7 @@ module.exports = {
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderCenterView,
+  ScreenStackHeaderSearchBarView,
 
   enableScreens,
   screensEnabled,

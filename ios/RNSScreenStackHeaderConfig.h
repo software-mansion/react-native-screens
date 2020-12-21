@@ -68,6 +68,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
   RNSScreenStackHeaderSubviewTypeRight,
   RNSScreenStackHeaderSubviewTypeTitle,
   RNSScreenStackHeaderSubviewTypeCenter,
+  RNSScreenStackHeaderSubviewTypeSearchBar,
 };
 
 @interface RCTConvert (RNSScreenStackHeader)
