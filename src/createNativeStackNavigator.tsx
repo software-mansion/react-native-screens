@@ -1,4 +1,4 @@
-// @ts-nocheck it is not ready yet
+// @ts-nocheck not ready yet
 import React from 'react';
 import {
   NativeSyntheticEvent,
@@ -6,6 +6,7 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native';
+import { ScreenStackHeaderConfigProps, StackPresentationTypes } from './types';
 import {
   Screen,
   ScreenStack,
@@ -14,8 +15,7 @@ import {
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
-  StackPresentationTypes,
-} from 'react-native-screens';
+} from './index';
 import {
   createNavigator,
   SceneView,
@@ -27,6 +27,9 @@ import {
   NavigationParams,
   NavigationRoute,
   NavigationDescriptor,
+  NavigationState,
+  NavigationProp,
+  NavigationNavigator,
 } from 'react-navigation';
 import { NativeStackNavigationOptions } from './native-stack/types';
 import { HeaderBackButton } from 'react-navigation-stack';
@@ -34,7 +37,7 @@ import {
   StackNavigationHelpers,
   StackNavigationConfig,
   StackNavigationProp,
-} from 'react-navigation-stack/lib/typescript/src/vendor/types';
+} from 'react-navigation-stack/src/vendor/types';
 
 function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
   if (typeof componentOrThunk === 'function') {
@@ -43,11 +46,24 @@ function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
   return componentOrThunk;
 }
 
+type ExtendedNativeStackNavigationOptions = NativeStackNavigationOptions & {
+  onWillAppear: () => void;
+  onAppear: () => void;
+  onWillDisappear: () => void;
+  onDisappear: () => void;
+  /** @deprecated Use headerHideShadow */
+  hideShadow: boolean;
+  /** @deprecated Use headerLargeTitle */
+  largeTitle: boolean;
+  /** @deprecated Use headerTranslucent */
+  translucent: boolean;
+};
+
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
 type NativeStackDescriptor = NavigationDescriptor<
   NavigationParams,
-  NativeStackNavigationOptions
+  ExtendedNativeStackNavigationOptions
 >;
 
 type NativeStackDescriptorMap = {
@@ -138,7 +154,7 @@ class StackView extends React.Component<Props> {
       descriptor,
     };
 
-    const headerOptions = {
+    const headerOptions: ScreenStackHeaderConfigProps = {
       backButtonInCustomView,
       backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
       backTitleFontFamily: headerBackTitleStyle?.fontFamily,
@@ -302,6 +318,9 @@ class StackView extends React.Component<Props> {
             : options.gestureEnabled
         }
         onAppear={() => this.onAppear(route, descriptor)}
+        onWillAppear={() => descriptor.options?.onWillAppear?.()}
+        onWillDisappear={() => descriptor.options?.onWillDisappear?.()}
+        onDisappear={() => descriptor.options?.onDisappear?.()}
         onDismissed={() => this.removeScene(route)}>
         {this.renderHeaderConfig(index, route, descriptor)}
         <SceneView
@@ -334,16 +353,19 @@ const styles = StyleSheet.create({
 
 function createStackNavigator(
   routeConfigMap: NavigationRouteConfigMap<
-    NativeStackNavigationOptions,
+    ExtendedNativeStackNavigationOptions,
     StackNavigationProp
   >,
   stackConfig: CreateNavigatorConfig<
     StackNavigationConfig,
     NavigationStackRouterConfig,
-    NativeStackNavigationOptions,
+    ExtendedNativeStackNavigationOptions,
     StackNavigationProp
   > = {}
-) {
+): NavigationNavigator<
+  ExtendedNativeStackNavigationOptions,
+  NavigationProp<NavigationState>
+> {
   const router = StackRouter(routeConfigMap, stackConfig);
 
   // belowe we override getStateForAction method in order to add handling for

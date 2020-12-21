@@ -6,7 +6,7 @@ import {
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
-} from 'react-native-screens';
+} from '../../index.native';
 import { NativeStackNavigationOptions } from '../types';
 import { processFonts } from './FontProcessor';
 
