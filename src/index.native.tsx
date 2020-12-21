@@ -180,13 +180,15 @@ export const ScreenStackHeaderCenterView = (props) => (
   />
 );
 
-export const ScreenStackHeaderConfig = (props: ScreenStackHeaderConfigProps): JSX.Element => (
+export const ScreenStackHeaderConfig = (
+  props: ScreenStackHeaderConfigProps
+): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderConfig {...props} />
-)
+);
 
 export const ScreenStack = (props: ScreenStackProps): JSX.Element => (
   <ScreensNativeModules.NativeScreenStack {...props} />
-)
+);
 
 module.exports = {
   get NativeScreen(): React.Component<ScreenProps> {
