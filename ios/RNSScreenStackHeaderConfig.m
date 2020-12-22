@@ -567,7 +567,11 @@ API_AVAILABLE(ios(13.0)){
     }
   }
 #endif
-  return UIStatusBarStyleLightContent;
+  // it is the only non-default style available for iOS < 13
+  if (statusBarStyle == RNSStatusBarStyleLight) {
+    return UIStatusBarStyleLightContent;
+  }
+  return UIStatusBarStyleDefault;
 }
 #endif
 
