@@ -71,7 +71,7 @@ String that applies `rtl` or `ltr` form to the stack. On Android, you have to ad
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`,
 
-Gestures are only supported on iOS. They can be disabled only when `stackPresentation` is `push`.
+Gestures are only supported on iOS.
 
 #### `headerBackTitle`
 
@@ -100,6 +100,12 @@ Boolean indicating whether to hide the back button in the header. Only supported
 
 Boolean indicating whether to hide the elevation shadow on the header.
 
+#### `headerLargeStyle` (iOS only)
+
+Style object for the large header. Supported properties:
+
+- `backgroundColor`
+
 #### `headerLargeTitle`
 
 Boolean used to set a native property to prefer a large title header (like in iOS setting).
@@ -107,6 +113,18 @@ Boolean used to set a native property to prefer a large title header (like in iO
 For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
 
 Only supported on iOS.
+
+#### `headerLargeTitleHideShadow` (iOS only)
+
+Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+
+#### `headerLargeTitleStyle` (iOS only)
+
+Style object for header large title. Supported properties:
+
+- `fontFamily`
+- `fontSize`
+- `color`
 
 #### `headerLeft`
 
@@ -152,6 +170,15 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
+#### `replaceAnimation`
+
+How should the screen replacing another screen animate.
+The following values are currently supported:
+  - `push` – the new screen will perform push animation.
+  - `pop` – the new screen will perform pop animation.
+
+Defaults to `pop`.
+
 #### `stackAnimation`
 
 How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
@@ -183,7 +210,7 @@ Defaults to `push`.
 
 A string that can be used as a fallback for `headerTitle`.
 
-	### Status bar and orientation managment
+### Status bar and orientation managment
 
 With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. It requires:
 

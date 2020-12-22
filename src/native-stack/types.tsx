@@ -146,6 +146,7 @@ export type NativeStackNavigationOptions = {
    * Style object for header large title. Supported properties:
    * - fontFamily
    * - fontSize
+   * - color
    *
    * Only supported on iOS.
    *

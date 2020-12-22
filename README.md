@@ -88,8 +88,8 @@ To do that react-native-screens provides you with two components documented belo
 This component is a container for one or more `Screen` components.
 It does not accept other component types as direct children.
 The role of the container is to control which of its children's screens should be attached to the view hierarchy.
-It does that by monitoring the `active` property of each of its children.
-It is possible to have as many `active` children as you'd like but for the component to be the most efficient, we should keep the number of active screens to a minimum.
+It does that by monitoring the `activityState` property of each of its children.
+It is possible to have as many active children as you'd like but for the component to be the most efficient, we should keep the number of active screens to a minimum.
 In the case of a stack navigator or tabs navigator, we only want to have one active screen (the topmost view on a stack or the selected tab).
 While transitioning between views we may want to activate a second screen for the duration of the transition, and then go back to just one active screen.
 
@@ -97,29 +97,54 @@ While transitioning between views we may want to activate a second screen for th
 
 This component is a container for views we want to display on a navigation screen.
 It is designed to only be rendered as a direct child of `ScreenContainer`.
-In addition to plain React Native [View props](http://facebook.github.io/react-native/docs/view#props) this component only accepts a single additional property called `active`.
-When `active` is set to `0`, the parent container will detach its views from the native view hierarchy.
-Otherwise, the views will be attached as long as the parent container is attached too.
+In addition to plain React Native [View props](http://facebook.github.io/react-native/docs/view#props) this component only accepts a single additional property called `activityState`.
+When `activityState` is set to `0`, the parent container will detach its views from the native view hierarchy. When `activityState` is set to `1`, the `Screen` will stay attached, but on iOS it will not respond to touches. We only want to set `activityState` to `1` for during the transition or e.g. for modal presentation, where the previous screen should be visible, but not interactive. When `activityState` is set to `2`, the views will be attached and will respond to touches as long as the parent container is attached too. When one of the `Screen` components get the `activityState` value set to `2`, we interpret it as the end of the transition.
 
 #### Example
 
 ```js
 <ScreenContainer>
   <Screen>{tab1}</Screen>
-  <Screen active={1}>{tab2}</Screen>
+  <Screen activityState={2}>{tab2}</Screen>
   <Screen>{tab3}</Screen>
 </ScreenContainer>
 ```
 
 ### `<ScreenStack>`
 
-Screen stack component expects one or more `Screen` components as direct children and renders them in a platform-native stack container (for iOS it is `UINavigationController` and for Android inside `Fragment` container). For `Screen` components placed as children of `ScreenStack` the `active` property is ignored and instead the screen that corresponds to the last child is rendered as active. All types of updates done to the list of children are acceptable when the top element is exchanged the container will use platform default (unless customized) animation to transition between screens.
+Screen stack component expects one or more `Screen` components as direct children and renders them in a platform-native stack container (for iOS it is `UINavigationController` and for Android inside `Fragment` container). For `Screen` components placed as children of `ScreenStack` the `activityState` property is ignored and instead the screen that corresponds to the last child is rendered as active. All types of updates done to the list of children are acceptable when the top element is exchanged the container will use platform default (unless customized) animation to transition between screens.
 
-`StackScreen` extends the capabilities of the `Screen` component to allow additional customizations and to make it possible to handle events such as using hardware back or back gesture to dismiss the top screen. Below is the list of additional properties that can be used for `Screen` component:
+Below is the list of additional properties that can be used for `Screen` component:
+
+#### `gestureEnabled` (iOS only)
+
+When set to `false` the back swipe gesture will be disabled. The default value is `true`.
+
+#### `onAppear`
+
+A callback that gets called when the current screen appears.
+
+#### `onDisappear`
+
+A callback that gets called when the current screen disappears.
 
 #### `onDismissed`
 
 A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+
+#### `onWillAppear`
+
+A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
+
+#### `onWillDisappear`
+
+A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
+
+#### `replaceAnimation`
+
+Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
+- `push` – performs push animation
+- `pop` – performs pop animation (default)
 
 #### `stackAnimation`
 
@@ -170,21 +195,106 @@ Along with this component's properties that can be used to customize header beha
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
 
+
+#### `backButtonInCustomView`
+
+Whether to show the back button with a custom left side of the header.
+
+#### `backgroundColor`
+
+Controls the color of the navigation header.
+
+#### `backTitle` (iOS only)
+
+Allows for controlling the string to be rendered next to back button. By default iOS uses the title of the previous screen.
+
+#### `backTitleFontFamily` (iOS only)
+
+Allows for customizing font family to be used for back button title on iOS.
+
+#### `backTitleFontSize` (iOS only)
+
+Allows for customizing font size to be used for back button title on iOS.
+
+#### `blurEffect` (iOS only)
+
+Blur effect to be applied to the header. Works with `backgroundColor`'s alpha < 1.
+
+#### `children`
+
+Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenStackHeaderLeftView`, `ScreenStackHeaderCenterView`.
+
+#### `direction`
+
+Controls whether the stack should be in `rtl` or `ltr` form.
+
 #### `hidden`
 
 When set to `true` the header will be hidden while the parent `Screen` is on the top of the stack. The default value is `false`.
 
 #### `color`
 
-Controls the color of items rendered on the header. This includes a back icon, back text (iOS only) and title text. If you want the title to have a different color use `titleColor` property.
+Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color, use `titleColor` property.
+
+#### `hideBackButton`
+
+If set to `true` the back button will not be rendered as a part of navigation header.
+
+#### `hideShadow`
+
+Boolean that allows for disabling drop shadow under navigation header. The default value is `true`.
+
+#### `largeTitle` (iOS only)
+
+When set to `true`, it makes the title display using the large title effect.
+
+#### `titleColor`
+
+Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+
+#### `largeTitleColor` (iOS only)
+
+Customize the color to be used for the large title. By default uses the `titleColor` property.
+
+#### `largeTitleFontFamily` (iOS only)
+
+Customize font family to be used for the large title.
+
+#### `largeTitleFontSize` (iOS only)
+
+Customize the size of the font to be used for the large title.
+
+#### `largeTitleFontWeight` (iOS only)
+
+Customize the weight of the font to be used for the large title.
+
+#### `largeTitleHideShadow` (iOS only)
+
+Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+
+#### `statusBarAnimation` (iOS only)
+
+Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+
+#### `statusBarHidden` (iOS only)
+
+When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
+
+#### `statusBarStyle` (iOS only)
+
+Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
 
 #### `title`
 
-A string representing screen title that will get rendered in the middle section of the header. On iOS, the title is centered on the header while on Android it is aligned to the left and placed next to the back button (if one is present).
+String representing screen title that will get rendered in the middle section of the header. On iOS the title is centered on the header while on Android it is aligned to the left and placed next to back button (if one is present).
+
+#### `titleColor`
+
+Customize text color of the title.
 
 #### `titleFontFamily`
 
-Customize the font family to be used for the title.
+Customize font family to be used for the title.
 
 #### `titleFontSize`
 
@@ -194,61 +304,13 @@ Customize the size of the font to be used for the title.
 
 Customize the weight of the font to be used for the title.
 
-#### `titleColor`
+#### `topInsetEnabled` (Android only)
 
-Allows for setting text color of the title.
-
-#### `backgroundColor`
-
-Controls the color of the navigation header.
-
-#### `hideShadow`
-
-Boolean that allows for disabling drop shadow under navigation header. The default value is `true`.
-
-#### `hideBackButton`
-
-If set to `true` the back button will not be rendered as a part of the navigation header.
-
-#### `backButtonInCustomView`
-
-If set to `true` the back button will also be rendered while using `headerLeft` function.
-
-#### `direction`
-
-String that applies `rtl` or `ltr` form to the stack.
-
-#### `gestureEnabled` (iOS only)
-
-When set to `false` the back swipe gesture will be disabled when the parent `Screen` is on top of the stack. The default value is `true`.
+A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 
 #### `translucent`
 
-When set to `true`, it allows the content to go under the navigation header, not bellow. If you want to create a transparent header, you should also set `backgroundColor` to `transparent`. The default value is `false`.
-
-#### `backTitle` (iOS only)
-
-Allows for controlling the string to be rendered next to the back button. By default, iOS uses the title of the previous screen.
-
-#### `backTitleFontFamily` (iOS only)
-
-Allows for customizing font family to be used for the back button title on iOS.
-
-#### `backTitleFontSize` (iOS only)
-
-Allows for customizing font size to be used for the back button title on iOS.
-
-#### `largeTitle` (iOS only)
-
-When set to `true` it makes the title display using the large title effect.
-
-#### `largeTitleFontFamily` (iOS only)
-
-Customize the font family to be used for the large title.
-
-#### `largeTitleFontSize` (iOS only)
-
-Customize the size of the font to be used for the large title.
+When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.
 
 ## Guide for native component authors
 
@@ -256,11 +318,11 @@ If you are adding a new native component to be used from the React Native app, y
 
 A good example is a map component that shows the current user location. When the component is on the top-most screen, it should register for location updates and display the user's location on the map. But if we navigate away from a screen that has a map, e.g. by pushing a new screen on top of it or if it is in one of the tabs, and the user just switched to the previous app, we may want to stop listening to location updates.
 
-To achieve that, we need to know at the native component level when our native view goes out of sight. With react-native-screens you can do that in the following way:
+To achieve that, we need to know at the native component level when our native view goes out of sight. With `react-native-screens`, you can do that in the following way:
 
 ### Navigation lifecycle on iOS
 
-In order for your native view on iOS to be notified when its parent navigation container goes into background override `didMoveToWindow` method:
+In order for your native view on iOS to be notified when its parent navigation container goes into background, override `didMoveToWindow` method:
 
 ```objective-c
 - (void)didMoveToWindow

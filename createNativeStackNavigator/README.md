@@ -50,7 +50,7 @@ String that applies `rtl` or `ltr` form to the stack. On Android, you have to ad
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`,
 
-Gestures are only supported on iOS. They can be disabled only when `stackPresentation` is `push`.
+Gestures are only supported on iOS.
 
 #### `headerBackTitle`
 
@@ -67,6 +67,16 @@ Style object for header back title. Supported properties:
 
 Whether the back button title should be visible or not. Defaults to `true`. Only supported on iOS.
 
+#### `headerHideBackButton`
+
+Boolean indicating whether to hide the back button in the header. Only supported on Android.
+
+#### `headerLargeStyle` (iOS only)
+
+Style object for the large header. Supported properties:
+
+- `backgroundColor`
+
 #### `headerLeft`
 
 Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
@@ -74,10 +84,6 @@ Function which returns a React Element to display on the left side of the header
 #### `headerRight`
 
 Function which returns a React Element to display on the right side of the header.
-
-#### `headerHideBackButton`
-
-Boolean indicating whether to hide the back button in the header. Only supported on Android.
 
 #### `headerStyle`
 
@@ -118,6 +124,19 @@ Boolean used to set a native property to prefer a large title header (like in iO
 For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
 
 Only supported on iOS.
+
+#### `largeTitleHideShadow` (iOS only)
+
+Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+
+#### `replaceAnimation`
+
+How should the screen replacing another screen animate.
+The following values are currently supported:
+  - `push` – the new screen will perform push animation.
+  - `pop` – the new screen will perform pop animation.
+
+Defaults to `pop`.
 
 #### `stackAnimation`
 
