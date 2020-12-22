@@ -1,8 +1,9 @@
 // @ts-nocheck not ready yet
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import {
   Animated,
   Image,
+  ImageProps,
   requireNativeComponent,
   StyleSheet,
   UIManager,
@@ -37,12 +38,12 @@ export function screensEnabled(): boolean {
 
 // We initialize these lazily so that importing the module doesn't throw error when not linked
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
-let NativeScreenValue;
-let NativeScreenContainerValue;
-let NativeScreenStack;
-let NativeScreenStackHeaderConfig;
-let NativeScreenStackHeaderSubview;
-let AnimatedNativeScreen;
+let NativeScreenValue: React.ComponentType<ScreenProps>;
+let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
+let NativeScreenStack: React.ComponentType<ScreenStackProps>;
+let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
+let NativeScreenStackHeaderSubview: React.ComponentType<HeaderSubviewType>;
+let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -148,7 +149,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export const ScreenStackHeaderBackButtonImage = (props) => (
+type HeaderSubviewType = ViewProps & {
+  type: 'back' | 'right' | 'left' | 'center';
+  children?: React.ReactNode;
+};
+
+export const ScreenStackHeaderBackButtonImage = (props: ImageProps) => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
     style={styles.headerSubview}>
@@ -156,7 +162,9 @@ export const ScreenStackHeaderBackButtonImage = (props) => (
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 
-export const ScreenStackHeaderRightView = (props) => (
+export const ScreenStackHeaderRightView: React.ComponentType<HeaderSubviewType> = (
+  props: PropsWithChildren<ViewProps>
+) => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="right"
@@ -164,7 +172,9 @@ export const ScreenStackHeaderRightView = (props) => (
   />
 );
 
-export const ScreenStackHeaderLeftView = (props) => (
+export const ScreenStackHeaderLeftView: React.ComponentType<HeaderSubviewType> = (
+  props: PropsWithChildren<ViewProps>
+) => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="left"
@@ -172,7 +182,9 @@ export const ScreenStackHeaderLeftView = (props) => (
   />
 );
 
-export const ScreenStackHeaderCenterView = (props) => (
+export const ScreenStackHeaderCenterView: React.ComponentType<HeaderSubviewType> = (
+  props: PropsWithChildren<ViewProps>
+) => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="center"
@@ -191,21 +203,23 @@ export const ScreenStack = (props: ScreenStackProps): JSX.Element => (
 );
 
 module.exports = {
-  get NativeScreen(): React.Component<ScreenProps> {
+  get NativeScreen(): React.ComponentType<ScreenProps> {
     return ScreensNativeModules.NativeScreen;
   },
 
-  get NativeScreenContainer(): React.Component<ScreenContainerProps> {
+  get NativeScreenContainer(): React.ComponentType<ScreenContainerProps> {
     return ScreensNativeModules.NativeScreenContainer;
   },
 
-  get ScreenStack(): React.Component<ScreenStackProps> {
+  get ScreenStack(): React.ComponentType<ScreenStackProps> {
     return ScreensNativeModules.NativeScreenStack;
   },
-  get ScreenStackHeaderConfig(): React.Component<ScreenStackHeaderConfigProps> {
+  get ScreenStackHeaderConfig(): React.ComponentType<
+    ScreenStackHeaderConfigProps
+  > {
     return ScreensNativeModules.NativeScreenStackHeaderConfig;
   },
-  get ScreenStackHeaderSubview(): React.Component<ViewProps> {
+  get ScreenStackHeaderSubview(): React.ComponentType<HeaderSubviewType> {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
 };
