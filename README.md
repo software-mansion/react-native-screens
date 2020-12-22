@@ -218,11 +218,11 @@ Allows for customizing font size to be used for back button title on iOS.
 
 #### `blurEffect` (iOS only)
 
-Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
+Blur effect to be applied to the header. Works with `backgroundColor`'s alpha < 1.
 
-#### `blurEffect`
+#### `children`
 
-Pass HeaderLeft, HeaderRight and HeaderTitle
+Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenStackHeaderLeftView`, `ScreenStackHeaderCenterView`.
 
 #### `direction`
 
@@ -230,23 +230,23 @@ Controls whether the stack should be in `rtl` or `ltr` form.
 
 #### `hidden`
 
-When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
+When set to `true` the header will be hidden while the parent `Screen` is on the top of the stack. The default value is `false`.
 
 #### `color`
 
-Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
+Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color, use `titleColor` property.
 
 #### `hideBackButton`
 
-If set to true the back button will not be rendered as a part of navigation header.
+If set to `true` the back button will not be rendered as a part of navigation header.
 
 #### `hideShadow`
 
-Boolean that allows for disabling drop shadow under navigation header. The default value is true.
+Boolean that allows for disabling drop shadow under navigation header. The default value is `true`.
 
 #### `largeTitle` (iOS only)
 
-When set to true it makes the title display using the large title effect.
+When set to `true`, it makes the title display using the large title effect.
 
 #### `titleColor`
 
@@ -254,7 +254,7 @@ Controls the color of the navigation header when the edge of any scrollable cont
 
 #### `largeTitleColor` (iOS only)
 
-Customize the color to be used for the large title. By default uses the titleColor property.
+Customize the color to be used for the large title. By default uses the `titleColor` property.
 
 #### `largeTitleFontFamily` (iOS only)
 
@@ -263,6 +263,10 @@ Customize font family to be used for the large title.
 #### `largeTitleFontSize` (iOS only)
 
 Customize the size of the font to be used for the large title.
+
+#### `largeTitleFontWeight` (iOS only)
+
+Customize the weight of the font to be used for the large title.
 
 #### `largeTitleHideShadow` (iOS only)
 
@@ -282,11 +286,11 @@ Sets the status bar color (similar to the `StatusBar` component). Requires enabl
 
 #### `title`
 
-String that representing screen title that will get rendered in the middle section of the header. On iOS the title is centered on the header while on Android it is aligned to the left and placed next to back button (if one is present).
+String representing screen title that will get rendered in the middle section of the header. On iOS the title is centered on the header while on Android it is aligned to the left and placed next to back button (if one is present).
 
 #### `titleColor`
 
-Allows for setting text color of the title.
+Customize text color of the title.
 
 #### `titleFontFamily`
 
@@ -304,9 +308,9 @@ Customize the weight of the font to be used for the title.
 
 A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
 
-#### `translucent` (Android only)
+#### `translucent`
 
-When set to true, it makes native navigation bar on iOS semi transparent with blur effect. It is a common way of presenting navigation bar introduced in iOS 11. The default value is false
+When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.
 
 ## Guide for native component authors
 
@@ -314,11 +318,11 @@ If you are adding a new native component to be used from the React Native app, y
 
 A good example is a map component that shows the current user location. When the component is on the top-most screen, it should register for location updates and display the user's location on the map. But if we navigate away from a screen that has a map, e.g. by pushing a new screen on top of it or if it is in one of the tabs, and the user just switched to the previous app, we may want to stop listening to location updates.
 
-To achieve that, we need to know at the native component level when our native view goes out of sight. With react-native-screens you can do that in the following way:
+To achieve that, we need to know at the native component level when our native view goes out of sight. With `react-native-screens`, you can do that in the following way:
 
 ### Navigation lifecycle on iOS
 
-In order for your native view on iOS to be notified when its parent navigation container goes into background override `didMoveToWindow` method:
+In order for your native view on iOS to be notified when its parent navigation container goes into background, override `didMoveToWindow` method:
 
 ```objective-c
 - (void)didMoveToWindow

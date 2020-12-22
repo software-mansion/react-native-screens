@@ -210,7 +210,7 @@ Defaults to `push`.
 
 A string that can be used as a fallback for `headerTitle`.
 
-	### Status bar and orientation managment
+### Status bar and orientation managment
 
 With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. It requires:
 

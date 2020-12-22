@@ -158,7 +158,7 @@ declare module 'react-native-screens' {
      */
     blurEffect?: BlurEffectTypes;
     /**
-     * Pass HeaderLeft, HeaderRight and HeaderTitle
+     * Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenStackHeaderLeftView`, `ScreenStackHeaderCenterView`.
      */
     children?: React.ReactNode;
     /**
@@ -268,7 +268,7 @@ declare module 'react-native-screens' {
      */
     topInsetEnabled?: boolean;
     /**
-     * @description When set to true, it makes native navigation bar on iOS semi transparent with blur effect. It is a common way of presenting navigation bar introduced in iOS 11. The default value is false
+     * @description When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.
      */
     translucent?: boolean;
   }
