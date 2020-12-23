@@ -77,7 +77,7 @@ public class ScreenFragment extends Fragment {
     ViewParent parent = getScreen().getContainer();
     while (parent != null) {
       if (parent instanceof Screen) {
-        ScreenStackHeaderConfig headerConfig = getHeaderConfig((Screen)parent);
+        ScreenStackHeaderConfig headerConfig = ((Screen) parent).getHeaderConfig();
         if (headerConfig != null) {
           return headerConfig;
         }
@@ -87,30 +87,27 @@ public class ScreenFragment extends Fragment {
     return null;
   }
 
-  protected boolean hasChildScreenWithConfig(View view) {
-    if (view instanceof ViewGroup) {
-      for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-        View child = ((ViewGroup) view).getChildAt(i);
-        if (child instanceof ScreenStackHeaderConfig) {
-          return true;
-        } else {
-          if (hasChildScreenWithConfig(child)) {
-            return true;
-          }
-        }
-      }
-      if (view instanceof ScreenStack) {
+  protected boolean hasChildScreenWithConfig(Screen screen) {
+    if (screen == null) {
+      return false;
+    }
+    for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
+      if (sc instanceof ScreenStack) {
         // we check only the top screen of stack for header config
-        View child = ((ScreenStack) view).getScreenAt(((ScreenStack) view).getScreenCount() - 1);
-        if (hasChildScreenWithConfig(child)) {
+        Screen topScreen = ((ScreenStack) sc).getTopScreen();
+        ScreenStackHeaderConfig headerConfig = topScreen.getHeaderConfig();
+        if (headerConfig != null) {
           return true;
         }
-      } else if (view instanceof ScreenContainer) {
-        // we check only the screen that is on top
-        for (int i = 0; i < ((ScreenContainer) view).getScreenCount(); i++) {
-          Screen screen = ((ScreenContainer) view).getScreenAt(i);
-          if (screen.getActivityState() == Screen.ActivityState.ON_TOP) {
-            if (hasChildScreenWithConfig(screen)) {
+        if (hasChildScreenWithConfig(topScreen)) {
+          return true;
+        }
+      } else {
+        // in ScreenContainer we check only the screen that is on top
+        for (int i = 0; i < sc.getScreenCount(); i++) {
+          Screen childScreen = sc.getScreenAt(i);
+          if (childScreen.getActivityState() == Screen.ActivityState.ON_TOP) {
+            if (hasChildScreenWithConfig(childScreen)) {
               return true;
             }
           }
@@ -120,12 +117,8 @@ public class ScreenFragment extends Fragment {
     return false;
   }
 
-  protected ScreenStackHeaderConfig getHeaderConfig(Screen screen) {
-    View child = screen.getChildAt(0);
-    if (child instanceof ScreenStackHeaderConfig) {
-      return (ScreenStackHeaderConfig) child;
-    }
-    return null;
+  public List<ScreenContainer> getChildScreenContainers() {
+    return mChildScreenContainers;
   }
 
   protected void dispatchOnWillAppear() {

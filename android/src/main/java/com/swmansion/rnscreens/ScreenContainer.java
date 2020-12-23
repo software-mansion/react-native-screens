@@ -153,7 +153,6 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
   private void setFragmentManager(FragmentManager fm) {
     mFragmentManager = fm;
-    updateIfNeeded();
   }
 
   private void setupFragmentManager() {
@@ -169,6 +168,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       setFragmentManager(screenFragment.getChildFragmentManager());
       mParentScreenFragment = screenFragment;
       mParentScreenFragment.registerChildScreenContainer(this);
+      updateIfNeeded();
       return;
     }
 
@@ -191,6 +191,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
               "In order to use RNScreens components your app's activity need to extend ReactFragmentActivity or ReactCompatActivity");
     }
     setFragmentManager(((FragmentActivity) context).getSupportFragmentManager());
+    updateIfNeeded();
   }
 
   protected FragmentTransaction getOrCreateTransaction() {

@@ -150,6 +150,14 @@ public class Screen extends ViewGroup {
     }
   }
 
+  protected ScreenStackHeaderConfig getHeaderConfig() {
+    View child = getChildAt(0);
+    if (child instanceof ScreenStackHeaderConfig) {
+      return (ScreenStackHeaderConfig) child;
+    }
+    return null;
+  }
+
   /**
    * While transitioning this property allows to optimize rendering behavior on Android and provide
    * a correct blending options for the animated screen. It is turned on automatically by the container
