@@ -95,7 +95,7 @@ public class ScreenFragment extends Fragment {
       if (sc instanceof ScreenStack) {
         // we check only the top screen of stack for header config
         Screen topScreen = ((ScreenStack) sc).getTopScreen();
-        ScreenStackHeaderConfig headerConfig = topScreen.getHeaderConfig();
+        ScreenStackHeaderConfig headerConfig = topScreen != null ? topScreen.getHeaderConfig(): null;
         if (headerConfig != null) {
           return true;
         }
