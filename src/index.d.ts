@@ -52,6 +52,16 @@ declare module 'react-native-screens' {
     | 'systemChromeMaterialDark';
   export type ScreenReplaceTypes = 'push' | 'pop';
 
+  export type ScreenOrientationTypes =
+    | 'default'
+    | 'all'
+    | 'portrait'
+    | 'portrait_up'
+    | 'portrait_down'
+    | 'landscape'
+    | 'landscape_left'
+    | 'landscape_right';
+
   export interface ScreenProps extends ViewProps {
     active?: 0 | 1 | Animated.AnimatedInterpolation;
     activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
