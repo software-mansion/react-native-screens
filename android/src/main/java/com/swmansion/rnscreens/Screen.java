@@ -29,6 +29,7 @@ public class Screen extends ViewGroup {
     DEFAULT,
     NONE,
     FADE,
+    SIMPLE_PUSH,
     SLIDE_FROM_RIGHT,
     SLIDE_FROM_LEFT
   }
