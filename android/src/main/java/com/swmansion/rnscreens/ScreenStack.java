@@ -144,37 +144,14 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   @Override
   protected void performUpdate() {
 
+    ArrayList<ScreenStackFragment> nonDismissedScreens = getNonDismissedScreens();
+
     // When going back from a nested stack with a single screen on it, we may hit an edge case
     // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
     // handle the case of newTop being NULL, which happens in several places below
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
-    ArrayList<ScreenStackFragment> visibleScreensBelowTop = new ArrayList<>();
-
-    for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
-      ScreenStackFragment screen = mScreenFragments.get(i);
-      if (!mDismissed.contains(screen)) {
-
-        // set newTop variable first iteration
-        if (newTop == null) {
-          newTop = screen;
-
-          // no need to continue if top is not a transparent modal since no other screens will be visible
-          if (newTop.getScreen().getStackPresentation() != Screen.StackPresentation.TRANSPARENT_MODAL) {
-            break;
-          }
-        }
-
-        else {
-          // as long as next screen is a transparent modal, it is visible
-          if (screen.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL) {
-            visibleScreensBelowTop.add(screen);
-          }
-          else {
-            visibleScreensBelowTop.add(screen);
-            break;
-          }
-        }
-      }
+    if(nonDismissedScreens.size() > 0) {
+      newTop = nonDismissedScreens.get(nonDismissedScreens.size() - 1);
     }
 
     boolean customAnimation = false;
@@ -243,6 +220,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
 
+    ArrayList<ScreenStackFragment> visibleScreensBelowTop = getVisibleScreensBelowTop();
+
     for (ScreenStackFragment screen : mScreenFragments) {
       // detach all screens that should not be visible
       if (screen != newTop && !visibleScreensBelowTop.contains(screen) && !mDismissed.contains(screen)) {
@@ -263,6 +242,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         });
       }
     }
+
     if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
     }
@@ -329,4 +309,47 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
     }
   }
+
+  private boolean isTransparent(ScreenStackFragment fragment){
+    return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
+  }
+
+
+  private ArrayList<ScreenStackFragment> getNonDismissedScreens() {
+    ArrayList<ScreenStackFragment> nonDismissedScreens = new ArrayList<>();
+    for(ScreenStackFragment screen : mScreenFragments){
+      if(!mDismissed.contains(screen)){
+        nonDismissedScreens.add(screen);
+      }
+    }
+    return nonDismissedScreens;
+  }
+
+  private ArrayList<ScreenStackFragment> getVisibleScreensBelowTop() {
+    ArrayList<ScreenStackFragment> nonDismissedScreens = getNonDismissedScreens();
+    ArrayList<ScreenStackFragment> visibleScreensBelowTop = new ArrayList<>();
+
+    int topScreenIndex = nonDismissedScreens.size() - 1;
+    for (int i = topScreenIndex; i >= 0; i--) {
+      ScreenStackFragment screen = nonDismissedScreens.get(i);
+
+      // No need to continue if top is not a transparent modal since no other screens will be visible
+      if (topScreenIndex == i) {
+        if (!isTransparent(screen)) break;
+      }
+
+      else if (isTransparent(screen)) {
+        visibleScreensBelowTop.add(screen);
+      }
+
+      // When finding first screen that isn't transparent, that will be the last visible screen.
+      // Add it and stop looking for visible screens.
+      else {
+        visibleScreensBelowTop.add(screen);
+        break;
+      }
+    }
+    return visibleScreensBelowTop;
+  }
+
 }
