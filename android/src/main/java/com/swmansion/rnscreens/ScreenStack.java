@@ -148,19 +148,31 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
     // handle the case of newTop being NULL, which happens in several places below
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
-    ScreenStackFragment belowTop = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+    ArrayList<ScreenStackFragment> visibleScreensBelowTop = new ArrayList<>();
 
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
       if (!mDismissed.contains(screen)) {
+
+        // set newTop variable first iteration
         if (newTop == null) {
           newTop = screen;
+
+          // no need to continue if top is not a transparent modal since no other screens will be visible
           if (newTop.getScreen().getStackPresentation() != Screen.StackPresentation.TRANSPARENT_MODAL) {
             break;
           }
-        } else {
-          belowTop = screen;
-          break;
+        }
+
+        else {
+          // as long as next screen is a transparent modal, it is visible
+          if (screen.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL) {
+            visibleScreensBelowTop.add(screen);
+          }
+          else {
+            visibleScreensBelowTop.add(screen);
+            break;
+          }
         }
       }
     }
@@ -233,19 +245,23 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
     for (ScreenStackFragment screen : mScreenFragments) {
       // detach all screens that should not be visible
-      if (screen != newTop && screen != belowTop && !mDismissed.contains(screen)) {
+      if (screen != newTop && !visibleScreensBelowTop.contains(screen) && !mDismissed.contains(screen)) {
         getOrCreateTransaction().remove(screen);
       }
     }
-    // attach "below top" screen if set
-    if (belowTop != null && !belowTop.isAdded()) {
-      final ScreenStackFragment top = newTop;
-      getOrCreateTransaction().add(getId(), belowTop).runOnCommit(new Runnable() {
-        @Override
-        public void run() {
-          top.getScreen().bringToFront();
-        }
-      });
+    // attach screens visible below top
+    for (int i = visibleScreensBelowTop.size() - 1; i >= 0; i--){
+      ScreenStackFragment belowTop = visibleScreensBelowTop.get(i);
+      belowTop.getScreen().bringToFront();
+      if (!belowTop.isAdded()) {
+        final ScreenStackFragment top = belowTop;
+        getOrCreateTransaction().add(getId(), belowTop).runOnCommit(new Runnable() {
+          @Override
+          public void run() {
+            top.getScreen().bringToFront();
+          }
+        });
+      }
     }
     if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
