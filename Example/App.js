@@ -37,42 +37,35 @@ const SCREENS = {
   },
 };
 
-class MainScreen extends React.Component {
-  static navigationOptions = {
-    title: '📱 React Native Screens Examples',
-  };
-  render() {
-    const data = Object.keys(SCREENS).map((key) => ({ key }));
-    return (
-      <FlatList
-        style={styles.list}
-        data={data}
-        ItemSeparatorComponent={ItemSeparator}
-        renderItem={(props) => (
-          <MainScreenItem
-            {...props}
-            onPressItem={({ key }) => this.props.navigation.navigate(key)}
-          />
-        )}
-      />
-    );
-  }
+const MainScreen = ({ navigation }) => {
+  const data = Object.keys(SCREENS).map((key) => ({ key }));
+  return (
+    <FlatList
+      style={styles.list}
+      data={data}
+      ItemSeparatorComponent={ItemSeparator}
+      renderItem={(props) => (
+        <MainScreenItem
+          {...props}
+          onPressItem={({ key }) => navigation.navigate(key)}
+        />
+      )}
+    />
+  );
 }
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-class MainScreenItem extends React.Component {
-  _onPress = () => this.props.onPressItem(this.props.item);
-  render() {
-    const { key } = this.props.item;
-    return (
-      <TouchableHighlight onPress={this._onPress}>
-        <View style={styles.button}>
-          <Text style={styles.buttonText}>{SCREENS[key].title || key}</Text>
-        </View>
-      </TouchableHighlight>
-    );
-  }
+const MainScreenItem = (props) => {
+  const _onPress = () => props.onPressItem(props.item);
+  const { key } = props.item;
+  return (
+    <TouchableHighlight onPress={_onPress}>
+      <View style={styles.button}>
+        <Text style={styles.buttonText}>{SCREENS[key].title || key}</Text>
+      </View>
+    </TouchableHighlight>
+  );
 }
 
 const MainScreenStack = createStackNavigator();
@@ -80,7 +73,7 @@ const MainScreenStack = createStackNavigator();
 const ExampleApp = () => (
   <NavigationContainer>
     <MainScreenStack.Navigator>
-      <MainScreenStack.Screen name="Main" component={MainScreen} />
+      <MainScreenStack.Screen name="Main" options={{title: '📱 React Native Screens Examples'}} component={MainScreen} />
       {Object.keys(SCREENS).map((name) => {
         const { Screen, title } = SCREENS[name];
         return (

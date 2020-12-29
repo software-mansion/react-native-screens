@@ -6,6 +6,8 @@ platform :ios, '10.0'
 target 'ScreensExample' do
   config = use_native_modules!
 
+  pod 'RNScreens', :path => '../../'
+  
   use_react_native!(:path => config["reactNativePath"])
 
   # Enables Flipper.

@@ -2,59 +2,43 @@ import React from 'react';
 import { TextInput, StyleSheet, Button, View, ScrollView } from 'react-native';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
-class SomeScreen extends React.Component {
-  render() {
-    return (
-      <ScrollView style={styles.screen}>
-        <Button
-          onPress={() => this.props.navigation.push('Push')}
-          title="Push"
-        />
-        <Button
-          onPress={() => this.props.navigation.navigate('Modal')}
-          title="Modal"
-        />
-        <Button onPress={() => this.props.navigation.pop()} title="Back" />
-        <View style={styles.leftTop} />
-        <View style={styles.bottomRight} />
-      </ScrollView>
-    );
-  }
-}
+const SomeScreen = ({ navigation }) => {
+  return (
+    <ScrollView style={styles.screen}>
+      <Button onPress={() => navigation.push('Push')} title="Push" />
+      <Button onPress={() => navigation.navigate('Modal')} title="Modal" />
+      <Button onPress={() => navigation.pop()} title="Back" />
+      <View style={styles.leftTop} />
+      <View style={styles.bottomRight} />
+    </ScrollView>
+  );
+};
 
-class PushScreen extends React.Component {
-  static route = {
-    navigationBar: {
-      visible: false,
-    },
-  };
-  render() {
-    return (
-      <View style={styles.screen}>
-        <TextInput placeholder="Hello" style={styles.textInput} />
-        <Button
-          onPress={() => this.props.navigation.goBack()}
-          title="Go back"
-        />
-        <Button
-          onPress={() => this.props.navigation.push('Push')}
-          title="Push more"
-        />
-        <View style={styles.leftTop} />
-        <View style={styles.bottomRight} />
-      </View>
-    );
-  }
-}
+const PushScreen = ({ navigation }) => {
+  return (
+    <View style={styles.screen}>
+      <TextInput placeholder="Hello" style={styles.textInput} />
+      <Button onPress={() => navigation.goBack()} title="Go back" />
+      <Button onPress={() => navigation.push('Push')} title="Push more" />
+      <View style={styles.leftTop} />
+      <View style={styles.bottomRight} />
+    </View>
+  );
+};
 
 const AppStack = createNativeStackNavigator();
 
 const App = () => (
-  <AppStack.Navigator>
+  <AppStack.Navigator screenProps={{ statusBarAnimation: 'fade' }}>
     <AppStack.Screen
       name="Some"
       component={SomeScreen}
-      options={{ title: 'Start', headerTintColor: 'black' }}
+      options={{
+        title: 'Start',
+        headerTintColor: 'black',
+        statusBarStyle: 'auto',
+        screenOrientation: 'portrait',
+      }}
     />
     <AppStack.Screen
       name="Push"
@@ -63,12 +47,17 @@ const App = () => (
         title: 'Pushed',
         headerStyle: { backgroundColor: '#3da4ab' },
         headerTintColor: 'black',
+        statusBarHidden: true,
       }}
     />
     <AppStack.Screen
       name="Modal"
       component={PushScreen}
-      options={{ stackPresentation: 'modal' }}
+      options={{
+        stackPresentation: 'modal',
+        statusBarStyle: 'light',
+        screenOrientation: 'portrait_up',
+      }}
     />
   </AppStack.Navigator>
 );

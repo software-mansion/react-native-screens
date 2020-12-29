@@ -55,57 +55,56 @@ Default options to use for the screens in the navigator.
 
 The `options` prop can be used to configure individual screens inside the navigator. Supported options are:
 
-#### `title`
-
-A string that can be used as a fallback for `headerTitle`.
-
-#### `headerShown`
-
-Whether to show or hide the header for the screen. The header is shown by default. Setting this to `false` hides the header.
-
-#### `headerHideBackButton`
-
-Boolean indicating whether to hide the back button in the header. Only supported on Android.
-
 #### `backButtonInCustomView`
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
 
-#### `headerHideShadow`
+#### `contentStyle`
 
-Boolean indicating whether to hide the elevation shadow on the header.
+Style object for the scene content.
 
-#### `headerTitle`
+#### `direction`
 
-String to be used by the header as title string. Defaults to scene `title`.
+String that applies `rtl` or `ltr` form to the stack. On Android, you have to add `android:supportsRtl="true"` in the manifest of your app to enable `rtl`. On Android, if you set the above flag in the manifest, the orientation changes without the need to do it programmatically if the phone has `rtl` direction enabled. On iOS, the direction defaults to `ltr`, and only way to change it is via this prop.
+
+#### `gestureEnabled`
+
+Whether you can use gestures to dismiss this screen. Defaults to `true`,
+
+Gestures are only supported on iOS.
 
 #### `headerBackTitle`
 
 Title string used by the back button on iOS. Defaults to the previous scene's `headerTitle`.
 
+#### `headerBackTitleStyle`
+
+Style object for header back title. Supported properties:
+
+- `fontFamily`
+- `fontSize`
+
 #### `headerBackTitleVisible`
 
 Whether the back button title should be visible or not. Defaults to `true`. Only supported on iOS.
-
-#### `headerRight`
-
-Function which returns a React Element to display on the right side of the header.
-
-#### `headerLeft`
-
-Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
 
 #### `headerCenter`
 
 Function which returns a React Element to display in the center of the header.
 
-#### `headerTranslucent`
+#### `headerHideBackButton`
 
-Boolean indicating whether the navigation bar is translucent.
+Boolean indicating whether to hide the back button in the header. Only supported on Android.
 
-#### `headerTopInsetEnabled`
+#### `headerHideShadow`
 
-A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque. Only supported on Android.
+Boolean indicating whether to hide the elevation shadow on the header.
+
+#### `headerLargeStyle` (iOS only)
+
+Style object for the large header. Supported properties:
+
+- `backgroundColor`
 
 #### `headerLargeTitle`
 
@@ -115,19 +114,44 @@ For the large title to collapse on scroll, the content of the screen should be w
 
 Only supported on iOS.
 
-#### `direction`
+#### `headerLargeTitleHideShadow` (iOS only)
 
-String that applies `rtl` or `ltr` form to the stack. On Android, you have to add `android:supportsRtl="true"` in the manifest of your app to enable `rtl`. On Android, if you set the above flag in the manifest, the orientation changes without the need to do it programmatically if the phone has `rtl` direction enabled. On iOS, the direction defaults to `ltr`, and only way to change it is via this prop.
+Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
 
-#### `headerTintColor`
+#### `headerLargeTitleStyle` (iOS only)
 
-Tint color for the header. Changes the color of the back button and title.
+Style object for header large title. Supported properties:
+
+- `fontFamily`
+- `fontSize`
+- `color`
+
+#### `headerLeft`
+
+Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
+
+#### `headerRight`
+
+Function which returns a React Element to display on the right side of the header.
+
+#### `headerShown`
+
+Whether to show or hide the header for the screen. The header is shown by default. Setting this to `false` hides the header.
 
 #### `headerStyle`
 
 Style object for the header. Supported properties:
 
 - `backgroundColor`
+- `blurEffect` (iOS only). Possible values can be checked in `index.d.ts` file.
+
+#### `headerTintColor`
+
+Tint color for the header. Changes the color of the back button and title.
+
+#### `headerTitle`
+
+String to be used by the header as title string. Defaults to scene `title`.
 
 #### `headerTitleStyle`
 
@@ -135,24 +159,38 @@ Style object for header title. Supported properties:
 
 - `fontFamily`
 - `fontSize`
+- `fontWeight` (iOS only).
 - `color`
 
-#### `headerBackTitleStyle`
+#### `headerTopInsetEnabled`
 
-Style object for header back title. Supported properties:
+A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque. Only supported on Android.
 
-- `fontFamily`
-- `fontSize`
+#### `headerTranslucent`
 
-#### `contentStyle`
+Boolean indicating whether the navigation bar is translucent.
 
-Style object for the scene content.
+#### `replaceAnimation`
 
-#### `gestureEnabled`
+How should the screen replacing another screen animate.
+The following values are currently supported:
+  - `push` – the new screen will perform push animation.
+  - `pop` – the new screen will perform pop animation.
 
-Whether you can use gestures to dismiss this screen. Defaults to `true`,
+Defaults to `pop`.
 
-Gestures are only supported on iOS. They can be disabled only when `stackPresentation` is `push`.
+#### `stackAnimation`
+
+How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
+
+- `default` - Uses a platform default animation.
+- `fade` - Fades screen in or out.
+- `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only).
+- `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
+- `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+- `none` - The screen appears/disappears without an animation.
+
+Defaults to `default`.
 
 #### `stackPresentation`
 
@@ -168,14 +206,47 @@ How the screen should be presented. Possible values:
 
 Defaults to `push`.
 
-#### `stackAnimation`
+#### `title`
 
-How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
+A string that can be used as a fallback for `headerTitle`.
 
-- `default` - Uses a platform default animation.
-- `fade` - Fades screen in or out.
-- `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only).
-- `none` - The screen appears/disappears without an animation.
+### Status bar and orientation managment
+
+With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. It requires:
+
+1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
+2. For both status bar and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
+
+#### `statusBarStyle`
+
+Sets the status bar color (similar to the `StatusBar` component). Possible values: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`.
+
+Defaults to `auto`.
+
+#### `statusBarAnimation`
+
+Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`.
+
+Defaults to `fade`.
+
+#### `statusBarHidden`
+
+Boolean saying if the status bar for this screen is hidden.
+
+Defaults to `false`.
+
+#### `screenOrientation`
+
+Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
+
+- `default` - it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc)
+- `all`
+- `portrait`
+- `portrait_up`
+- `portrait_down`
+- `landscape`
+- `landscape_left`
+- `landscape_right`
 
 Defaults to `default`.
 

@@ -43,6 +43,7 @@ export class Stack extends Component {
       backSlideOut,
     };
   }
+
   push(key) {
     this.setState({ stack: [...this.state.stack, key], transitioning: 1 });
     this.state.progress.setValue(0);
@@ -55,6 +56,7 @@ export class Stack extends Component {
       this.setState({ transitioning: 0 });
     });
   }
+
   pop() {
     this.setState({ transitioning: -1 });
     this.state.progress.setValue(0);
@@ -70,6 +72,7 @@ export class Stack extends Component {
       });
     });
   }
+
   renderScreen = (key, index) => {
     let style = StyleSheet.absoluteFill;
     const { stack, transitioning } = this.state;
@@ -107,6 +110,7 @@ export class Stack extends Component {
       </Screen>
     );
   };
+
   render() {
     const screens = this.state.stack.map(this.renderScreen);
     return (
@@ -116,7 +120,7 @@ export class Stack extends Component {
 }
 
 class App extends Component {
-  renderScreen = key => {
+  renderScreen = (key) => {
     const index = COLORS.indexOf(key);
     const color = key;
     const pop = index > 0 ? () => this.stack.pop() : null;
@@ -135,10 +139,11 @@ class App extends Component {
       </View>
     );
   };
+
   render() {
     return (
       <Stack
-        ref={stack => (this.stack = stack)}
+        ref={(stack) => (this.stack = stack)}
         renderScreen={this.renderScreen}
       />
     );

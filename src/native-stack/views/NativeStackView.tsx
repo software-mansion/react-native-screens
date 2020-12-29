@@ -1,4 +1,5 @@
 import {
+  ParamListBase,
   StackActions,
   StackNavigationState,
   useTheme,
@@ -11,6 +12,7 @@ import {
   Screen as ScreenComponent,
   ScreenProps,
   ScreenStack,
+  StackPresentationTypes,
 } from 'react-native-screens';
 import {
   NativeStackDescriptorMap,
@@ -24,9 +26,11 @@ const isAndroid = Platform.OS === 'android';
 let Container = View;
 
 if (__DEV__) {
-  const DebugContainer = (props: ViewProps & { stackAnimation: string }) => {
-    const { stackAnimation, ...rest } = props;
-    if (Platform.OS === 'ios' && stackAnimation !== 'push') {
+  const DebugContainer = (
+    props: ViewProps & { stackPresentation: StackPresentationTypes }
+  ) => {
+    const { stackPresentation, ...rest } = props;
+    if (Platform.OS === 'ios' && stackPresentation !== 'push') {
       return (
         <AppContainer>
           <View {...rest} />
@@ -40,7 +44,7 @@ if (__DEV__) {
 }
 
 type Props = {
-  state: StackNavigationState;
+  state: StackNavigationState<ParamListBase>;
   navigation: NativeStackNavigationHelpers;
   descriptors: NativeStackDescriptorMap;
 };

@@ -17,6 +17,32 @@
 
 @end
 
+@implementation RNScreensNavigationController
+
+#if !TARGET_OS_TV
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  return [self topViewController];
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  return [self topViewController].preferredStatusBarUpdateAnimation;
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  return [self topViewController];
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  return [self topViewController].supportedInterfaceOrientations;
+}
+#endif
+
+@end
+
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation;
 @end
@@ -26,16 +52,18 @@
   NSMutableArray<RNSScreenView *> *_reactSubviews;
   __weak RNSScreenStackManager *_manager;
   BOOL _hasLayout;
+  BOOL _invalidated;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager*)manager
 {
   if (self = [super init]) {
     _hasLayout = NO;
+    _invalidated = NO;
     _manager = manager;
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
-    _controller = [[UINavigationController alloc] init];
+    _controller = [[RNScreensNavigationController alloc] init];
     _controller.delegate = self;
 
     // we have to initialize viewControllers with a non empty array for
@@ -78,6 +106,9 @@
   // forward certain calls to the container (Stack).
   UIView *screenView = presentationController.presentedViewController.view;
   if ([screenView isKindOfClass:[RNSScreenView class]]) {
+    // we trigger the update of status bar's appearance here because there is no other lifecycle method
+    // that can handle it when dismissing a modal, the same for orientation
+    [RNSScreenStackHeaderConfig updateWindowTraits];
     [_presentedModals removeObject:presentationController.presentedViewController];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
@@ -167,7 +198,12 @@
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-  [self maybeAddToParentAndUpdateContainer];
+  if (!_invalidated) {
+    // We check whether the view has been invalidated before running side-effects in didMoveToWindow
+    // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
+    // to a window despite the fact it has been removed from the React Native view hierarchy.
+    [self maybeAddToParentAndUpdateContainer];
+  }
 }
 
 - (void)maybeAddToParentAndUpdateContainer
@@ -209,7 +245,7 @@
       if (parentView.reactViewController) {
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
-#if (TARGET_OS_IOS)
+#if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
         [controller didMoveToParentViewController:parentView.reactViewController];
@@ -287,6 +323,9 @@
       weakSelf.scheduleModalsUpdate = NO;
       [weakSelf updateContainer];
     }
+    // we trigger the update of orientation here because, when dismissing the modal from JS,
+    // neither `viewWillAppear` nor `presentationControllerDidDismiss` are called, same for status bar.
+    [RNSScreenStackHeaderConfig updateWindowTraits];
   };
 
   void (^finish)(void) = ^{
@@ -309,10 +348,11 @@
         UIViewController *next = controllers[i];
         BOOL lastModal = (i == controllers.count - 1);
 
-#ifdef __IPHONE_13_0
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
         if (@available(iOS 13.0, *)) {
           // Inherit UI style from its parent - solves an issue with incorrect style being applied to some UIKit views like date picker or segmented control.
-          next.overrideUserInterfaceStyle = _controller.overrideUserInterfaceStyle;
+          next.overrideUserInterfaceStyle = self->_controller.overrideUserInterfaceStyle;
         }
 #endif
 
@@ -451,6 +491,7 @@
 
 - (void)invalidate
 {
+  _invalidated = YES;
   for (UIViewController *controller in _presentedModals) {
     [controller dismissViewControllerAnimated:NO completion:nil];
   }

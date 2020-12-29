@@ -32,7 +32,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private String mTitleFontFamily;
   private String mDirection;
   private float mTitleFontSize;
-  private int mBackgroundColor;
+  private Integer mBackgroundColor;
   private boolean mIsHidden;
   private boolean mIsBackButtonHidden;
   private boolean mIsShadowHidden;
@@ -242,7 +242,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
 
     // background
-    if (mBackgroundColor != -1) {
+    if (mBackgroundColor != null) {
       mToolbar.setBackgroundColor(mBackgroundColor);
     }
 
@@ -367,7 +367,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   public void setTopInsetEnabled(boolean topInsetEnabled) { mIsTopInsetEnabled = topInsetEnabled; }
 
-  public void setBackgroundColor(int color) {
+  public void setBackgroundColor(Integer color) {
     mBackgroundColor = color;
   }
 

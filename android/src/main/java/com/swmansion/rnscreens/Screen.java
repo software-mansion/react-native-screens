@@ -28,12 +28,20 @@ public class Screen extends ViewGroup {
   public enum StackAnimation {
     DEFAULT,
     NONE,
-    FADE
+    FADE,
+    SLIDE_FROM_RIGHT,
+    SLIDE_FROM_LEFT
   }
 
   public enum ReplaceAnimation {
     PUSH,
     POP
+  }
+
+  public enum ActivityState {
+    INACTIVE,
+    TRANSITIONING_OR_BELOW_TOP,
+    ON_TOP
   }
 
   private static OnAttachStateChangeListener sShowSoftKeyboardOnAttach = new OnAttachStateChangeListener() {
@@ -54,7 +62,7 @@ public class Screen extends ViewGroup {
 
   private @Nullable ScreenFragment mFragment;
   private @Nullable ScreenContainer mContainer;
-  private boolean mActive;
+  private ActivityState mActivityState;
   private boolean mTransitioning;
   private StackPresentation mStackPresentation = StackPresentation.PUSH;
   private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.POP;
@@ -222,18 +230,18 @@ public class Screen extends ViewGroup {
     return mContainer;
   }
 
-  public void setActive(boolean active) {
-    if (active == mActive) {
+  public void setActivityState(ActivityState activityState) {
+    if (activityState == mActivityState) {
       return;
     }
-    mActive = active;
+    mActivityState = activityState;
     if (mContainer != null) {
       mContainer.notifyChildUpdate();
     }
   }
 
-  public boolean isActive() {
-    return mActive;
+  public ActivityState getActivityState() {
+    return mActivityState;
   }
 
   public boolean isGestureEnabled() {
