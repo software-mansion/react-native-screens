@@ -6,7 +6,24 @@ const SomeScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.screen}>
       <Button onPress={() => navigation.push('Push')} title="Push" />
-      <Button onPress={() => navigation.navigate('Modal')} title="Modal" />
+      <Button onPress={() => navigation.push('Modal')} title="Modal" />
+      <Button onPress={() => navigation.push('TransparentModal')} title="Transparent Modal" />
+      <Button onPress={() => navigation.pop()} title="Back" />
+      <View style={styles.leftTop} />
+      <View style={styles.bottomRight} />
+    </ScrollView>
+  );
+};
+
+const SmallScreen = ({ navigation }) => {
+  const addedRoutes = navigation.dangerouslyGetState().routes.length - 1;
+  const margin = addedRoutes * 20; 
+  const backgroundColor = colors[addedRoutes % colors.length]
+  return (
+    <ScrollView style={[styles.screen, {left: margin, top: margin, right: margin, bottom: margin, borderWidth: 2, backgroundColor}]}>
+      <Button onPress={() => navigation.push('Push')} title="Push" />
+      <Button onPress={() => navigation.push('Modal')} title="Modal" />
+      <Button onPress={() => navigation.push('TransparentModal')} title="Transparent Modal" />
       <Button onPress={() => navigation.pop()} title="Back" />
       <View style={styles.leftTop} />
       <View style={styles.bottomRight} />
@@ -52,10 +69,21 @@ const App = () => (
     />
     <AppStack.Screen
       name="Modal"
-      component={PushScreen}
+      component={SomeScreen}
       options={{
         stackPresentation: 'modal',
         statusBarStyle: 'light',
+        screenOrientation: 'portrait_up',
+      }}
+    />
+     <AppStack.Screen
+      name="TransparentModal"
+      component={SmallScreen}
+      options={{
+        stackPresentation: 'transparentModal',        
+        headerShown: false,
+        statusBarStyle: 'light',
+        headerMode: 'none',
         screenOrientation: 'portrait_up',
       }}
     />
@@ -102,5 +130,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
   },
 });
+
+const colors = ['darkviolet', 'slateblue', 'mediumseagreen', 'khaki', 'orange', 'indianred']
 
 export default App;
