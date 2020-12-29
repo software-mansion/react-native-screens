@@ -230,14 +230,12 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
     // attach screens visible below top
     for (int i = visibleScreensBelowTop.size() - 1; i >= 0; i--){
-      ScreenStackFragment belowTop = visibleScreensBelowTop.get(i);
-      belowTop.getScreen().bringToFront();
+      final ScreenStackFragment belowTop = visibleScreensBelowTop.get(i);
       if (!belowTop.isAdded()) {
-        final ScreenStackFragment top = belowTop;
         getOrCreateTransaction().add(getId(), belowTop).runOnCommit(new Runnable() {
           @Override
           public void run() {
-            top.getScreen().bringToFront();
+            belowTop.getScreen().bringToFront();
           }
         });
       }
