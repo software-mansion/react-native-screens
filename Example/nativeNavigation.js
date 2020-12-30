@@ -6,7 +6,7 @@ const SomeScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.screen}>
       <Button onPress={() => navigation.push('Push')} title="Push" />
-      <Button onPress={() => navigation.navigate('Modal')} title="Modal" />
+      <Button onPress={() => navigation.navigate('Modal')} title="Transparent Modal" />
       <Button onPress={() => navigation.pop()} title="Back" />
       <View style={styles.leftTop} />
       <View style={styles.bottomRight} />
@@ -16,7 +16,7 @@ const SomeScreen = ({ navigation }) => {
 
 const PushScreen = ({ navigation }) => {
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, {width: 400, borderWidth: 8, alignSelf: 'center', left: undefined, right: undefined, top: 100, height: 500}]}>
       <TextInput placeholder="Hello" style={styles.textInput} />
       <Button onPress={() => navigation.goBack()} title="Go back" />
       <Button onPress={() => navigation.push('Push')} title="Push more" />
@@ -37,7 +37,7 @@ const App = () => (
         title: 'Start',
         headerTintColor: 'black',
         statusBarStyle: 'auto',
-        screenOrientation: 'portrait',
+        // screenOrientation: 'portrait',
       }}
     />
     <AppStack.Screen
@@ -46,15 +46,17 @@ const App = () => (
       options={{
         title: 'Pushed',
         headerStyle: { backgroundColor: '#3da4ab' },
+        blurEffect: 'dark',
         headerTintColor: 'black',
         statusBarHidden: true,
+        gestureEnabled: true,
       }}
     />
     <AppStack.Screen
       name="Modal"
       component={PushScreen}
       options={{
-        stackPresentation: 'modal',
+        stackPresentation: 'transparentModal',
         statusBarStyle: 'light',
         screenOrientation: 'portrait_up',
       }}

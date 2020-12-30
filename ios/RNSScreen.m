@@ -444,6 +444,35 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+    
+    
+    
+
+    if(self.modalPresentationStyle == UIModalPresentationOverFullScreen){
+        
+        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+
+          //only apply the blur if the user hasn't disabled transparency effects
+          if (!UIAccessibilityIsReduceTransparencyEnabled()) {
+            self.view.backgroundColor = [UIColor clearColor];
+            UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+            UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+            blurEffectView.frame = self.parentViewController.view.bounds;
+            blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+              
+              [self.view insertSubview:blurEffectView atIndex:0];
+
+              [blurEffectView setAlpha:0.0];
+                [UIView animateWithDuration:0.5
+                                 animations:^{
+                                    blurEffectView.alpha = 1;
+                                 }
+                                 completion:^(BOOL finished){ }];
+          } else {
+              self.view.backgroundColor = [UIColor blackColor];
+          }
+    }
+
   [RNSScreenStackHeaderConfig updateWindowTraits];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
@@ -458,6 +487,8 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
+
+    
   [((RNSScreenView *)self.view) notifyAppear];
 }
 
