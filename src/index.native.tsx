@@ -199,6 +199,8 @@ export const ScreenStack = ScreensNativeModules.NativeScreenStack;
 
 export const NativeScreenContainer = ScreensNativeModules.NativeScreenContainer;
 
-export const ScreenStackHeaderConfig = ScreensNativeModules.NativeScreenStackHeaderConfig;
+export const ScreenStackHeaderConfig =
+  ScreensNativeModules.NativeScreenStackHeaderConfig;
 
-export const ScreenStackHeaderSubview = ScreensNativeModules.NativeScreenStackHeaderSubview;
+export const ScreenStackHeaderSubview =
+  ScreensNativeModules.NativeScreenStackHeaderSubview;
