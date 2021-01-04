@@ -42,8 +42,18 @@ export type BlurEffectTypes =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 export type ScreenReplaceTypes = 'push' | 'pop';
-
+export type ScreenOrientationTypes =
+| 'default'
+| 'all'
+| 'portrait'
+| 'portrait_up'
+| 'portrait_down'
+| 'landscape'
+| 'landscape_left'
+| 'landscape_right';
+export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
 export interface ScreenProps extends ViewProps {
+  ref?: unknown;
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
@@ -82,6 +92,18 @@ export interface ScreenProps extends ViewProps {
    *  @type "pop" – performs pop animation (default)
    */
   replaceAnimation?: ScreenReplaceTypes;
+  /**
+   * @description Controls in which orientation should the screen appear.
+   * @type "default" - resolves to "all" without "portrait_down"
+   * @type "all" – all orientations are permitted
+   * @type "portrait" – portrait orientations are permitted
+   * @type "portrait_up" – right-side portrait orientation is permitted
+   * @type "portrait_down" – upside-down portrait orientation is permitted
+   * @type "landscape" – landscape orientations are permitted
+   * @type "landscape_left" – landscape-left orientation is permitted
+   * @type "landscape_right" – landscape-right orientation is permitted
+   */
+  screenOrientation?: ScreenOrientationTypes;
   /**
    * @description Allows for the customization of how the given screen should appear/dissapear when pushed or popped at the top of the stack. The following values are currently supported:
    *  @type "default" – uses a platform default animation
@@ -206,6 +228,18 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @description Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean;
+  /**
+   * @description Controls in which orientation should the screen appear.
+   * @type "default" - resolves to "all" without "portrait_down"
+   * @type "all" – all orientations are permitted
+   * @type "portrait" – portrait orientations are permitted
+   * @type "portrait_up" – right-side portrait orientation is permitted
+   * @type "portrait_down" – upside-down portrait orientation is permitted
+   * @type "landscape" – landscape orientations are permitted
+   * @type "landscape_left" – landscape-left orientation is permitted
+   * @type "landscape_right" – landscape-right orientation is permitted
+   */
+  screenOrientation?: ScreenOrientationTypes;
   /**
    * @host (iOS only)
    * @description Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.

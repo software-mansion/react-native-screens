@@ -22,7 +22,7 @@ interface WebScreenProps extends ViewProps {
 }
 
 export class NativeScreen extends React.Component<WebScreenProps> {
-  render() {
+  render(): JSX.Element {
     let { active, activityState, style, enabled = true, ...rest } = this.props;
     if (active !== undefined && activityState === undefined) {
       activityState = active !== 0 ? 2 : 0; // change taken from index.native.js
