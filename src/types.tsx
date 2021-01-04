@@ -53,6 +53,7 @@ export type ScreenOrientationTypes =
   | 'landscape_left'
   | 'landscape_right';
 export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
+
 export interface ScreenProps extends ViewProps {
   ref?: React.Ref<View>;
   active?: 0 | 1 | Animated.AnimatedInterpolation;
