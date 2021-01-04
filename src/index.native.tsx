@@ -42,7 +42,9 @@ let NativeScreenValue: React.ComponentType<ScreenProps>;
 let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenStack: React.ComponentType<ScreenStackProps>;
 let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
-let NativeScreenStackHeaderSubview: React.ComponentType<PropsWithChildren<ViewProps & {type: HeaderSubviewTypes}>>;
+let NativeScreenStackHeaderSubview: React.ComponentType<PropsWithChildren<
+  ViewProps & { type: HeaderSubviewTypes }
+>>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 
 const ScreensNativeModules = {
@@ -151,7 +153,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
+export const ScreenStackHeaderBackButtonImage = (
+  props: ImageProps
+): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
     style={styles.headerSubview}>
@@ -171,7 +175,7 @@ export const ScreenStackHeaderRightView = (
 
 export const ScreenStackHeaderLeftView = (
   props: PropsWithChildren<ViewProps>
-): JSX.Element  => (
+): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="left"
@@ -216,7 +220,9 @@ module.exports = {
   > {
     return ScreensNativeModules.NativeScreenStackHeaderConfig;
   },
-  get ScreenStackHeaderSubview(): React.ComponentType<PropsWithChildren<ViewProps & {type: HeaderSubviewTypes}>> {
+  get ScreenStackHeaderSubview(): React.ComponentType<
+    PropsWithChildren<ViewProps & { type: HeaderSubviewTypes }>
+  > {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
 };
