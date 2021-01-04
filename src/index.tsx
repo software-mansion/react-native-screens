@@ -1,5 +1,12 @@
 import React from 'react';
-import { Animated, View, ViewProps } from 'react-native';
+import { Animated, View, ViewProps, ImageProps, Image } from 'react-native';
+import {
+  ScreenProps,
+  ScreenContainerProps,
+  ScreenStackProps,
+  ScreenStackHeaderConfigProps,
+  HeaderSubviewTypes,
+} from './types';
 
 let ENABLE_SCREENS = true;
 
@@ -11,17 +18,7 @@ export function screensEnabled(): boolean {
   return ENABLE_SCREENS;
 }
 
-interface WebScreenProps extends ViewProps {
-  active?: 0 | 1 | Animated.AnimatedInterpolation;
-  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
-  children?: React.ReactNode;
-  /**
-   * @description All children screens should have the same value of their "enabled" prop as their container.
-   */
-  enabled?: boolean;
-}
-
-export class NativeScreen extends React.Component<WebScreenProps> {
+export class NativeScreen extends React.Component<ScreenProps> {
   render(): JSX.Element {
     let { active, activityState, style, enabled = true, ...rest } = this.props;
     if (active !== undefined && activityState === undefined) {
@@ -43,20 +40,36 @@ export class NativeScreen extends React.Component<WebScreenProps> {
 
 export const Screen = Animated.createAnimatedComponent(NativeScreen);
 
-export const ScreenContainer = View;
+export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
-export const NativeScreenContainer = View;
+export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
-export const ScreenStack = View;
+export const ScreenStack: React.ComponentType<ScreenStackProps> = View;
 
-export const ScreenStackHeaderBackButtonImage = View;
+export const ScreenStackHeaderBackButtonImage = (
+  props: ImageProps
+): JSX.Element => (
+  <View>
+    <Image resizeMode="center" fadeDuration={0} {...props} />
+  </View>
+);
 
-export const ScreenStackHeaderLeftView = View;
+export const ScreenStackHeaderRightView = (
+  props: React.PropsWithChildren<ViewProps>
+): JSX.Element => <View {...props} />;
 
-export const ScreenStackHeaderRightView = View;
+export const ScreenStackHeaderLeftView = (
+  props: React.PropsWithChildren<ViewProps>
+): JSX.Element => <View {...props} />;
 
-export const ScreenStackHeaderCenterView = View;
+export const ScreenStackHeaderCenterView = (
+  props: React.PropsWithChildren<ViewProps>
+): JSX.Element => <View {...props} />;
 
-export const ScreenStackHeaderConfig = View;
+export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> = View;
+
+export const ScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
+  ViewProps & { type?: HeaderSubviewTypes }
+>> = View;
 
 export const shouldUseActivityState = true;
