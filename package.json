@@ -28,8 +28,7 @@
     "ios/",
     "RNScreens.podspec",
     "README.md",
-    "!**/__tests__",
-    "types"
+    "!**/__tests__"
   ],
   "repository": {
     "type": "git",
