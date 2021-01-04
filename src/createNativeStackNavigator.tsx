@@ -32,6 +32,7 @@ import {
   NavigationDescriptor,
   NavigationState,
   NavigationNavigator,
+  NavigationAction,
 } from 'react-navigation';
 import { NativeStackNavigationOptions } from './native-stack/types';
 import { HeaderBackButton } from 'react-navigation-stack';
@@ -41,6 +42,8 @@ import {
   Layout,
 } from 'react-navigation-stack/src/vendor/types';
 
+const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
+
 function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
   if (typeof componentOrThunk === 'function') {
     return componentOrThunk(props);
@@ -48,21 +51,29 @@ function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
   return componentOrThunk;
 }
 
-type ExtendedNativeStackNavigationOptions = StackNavigatorOptions &  NativeStackNavigationOptions & BackButtonProps & {
-  onWillAppear: () => void;
-  onAppear: () => void;
-  onWillDisappear: () => void;
-  onDisappear: () => void;
-  // these props differ from the ones used in v5 `native-stack`, and we would like to keep the API consistent between versions
-  /** @deprecated Use headerHideShadow */
-  hideShadow: boolean;
-  /** @deprecated Use headerLargeTitle */
-  largeTitle: boolean;
-  /** @deprecated Use headerLargeTitleHideShadow */
-  largeTitleHideShadow: boolean;
-  /** @deprecated Use headerTranslucent */
-  translucent: boolean;
+type NativeStackRemoveNavigationAction = {
+  type: 'NativeStackNavigator/REMOVE';
+  immediate: boolean;
+  key?: string;
 };
+
+type ExtendedNativeStackNavigationOptions = StackNavigatorOptions &
+  NativeStackNavigationOptions &
+  BackButtonProps & {
+    onWillAppear: () => void;
+    onAppear: () => void;
+    onWillDisappear: () => void;
+    onDisappear: () => void;
+    // these props differ from the ones used in v5 `native-stack`, and we would like to keep the API consistent between versions
+    /** @deprecated Use headerHideShadow */
+    hideShadow: boolean;
+    /** @deprecated Use headerLargeTitle */
+    largeTitle: boolean;
+    /** @deprecated Use headerLargeTitleHideShadow */
+    largeTitleHideShadow: boolean;
+    /** @deprecated Use headerTranslucent */
+    translucent: boolean;
+  };
 
 // these are adopted from `stack` navigator, and probably should be changed to the ones used by v5 `native-stack`
 type StackNavigatorOptions = {
@@ -73,13 +84,11 @@ type StackNavigatorOptions = {
   /** @deprecated This is an option from `stackNavigator` and will be removed, please use `stackAnimation.none` */
   animationEnabled?: boolean;
   cardStyle?: StyleProp<ViewStyle>;
-}
+};
 
 // these are the props used for rendering back button taken from `react-navigation-stack`
 type BackButtonProps = {
-  headerBackImage: (props: {
-    tintColor: string;
-}) => React.ReactNode;
+  headerBackImage: (props: { tintColor: string }) => React.ReactNode;
   headerPressColorAndroid?: string;
   headerTintColor?: string;
   backButtonTitle?: string;
@@ -88,8 +97,6 @@ type BackButtonProps = {
   headerBackTitleStyle?: Animated.WithAnimatedValue<StyleProp<TextStyle>>;
   layoutPreset?: Layout;
 };
-
-const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
 type NativeStackDescriptor = NavigationDescriptor<
   NavigationParams,
@@ -102,13 +109,13 @@ type NativeStackDescriptorMap = {
 
 // these are the props used for rendering back button taken from `react-navigation-stack`
 type NativeStackNavigationConfig = {
-    /** @deprecated This is an option from `stackNavigator` and will be removed, please use proper `stackPresentation` */
-    mode?: "modal" | "containedModal";
-    /** @deprecated This is an option from `stackNavigator` and will be removed, please use `headerShown` */
-    headerMode?: "none";
-    /** @deprecated This is an option from `stackNavigator` and will be removed, please use proper `stackPresentation` */
-    transparentCard?: boolean;
-}
+  /** @deprecated This is an option from `stackNavigator` and will be removed, please use proper `stackPresentation` */
+  mode?: 'modal' | 'containedModal';
+  /** @deprecated This is an option from `stackNavigator` and will be removed, please use `headerShown` */
+  headerMode?: 'none';
+  /** @deprecated This is an option from `stackNavigator` and will be removed, please use proper `stackPresentation` */
+  transparentCard?: boolean;
+};
 
 type Props = {
   navigation: StackNavigationHelpers;
@@ -119,7 +126,7 @@ type Props = {
 class StackView extends React.Component<Props> {
   private removeScene = (route: NavigationRoute<NavigationParams>) => {
     this.props.navigation.dispatch({
-      // @ts-ignore TODO(TS): Check why is this string used
+      // @ts-ignore special navigation action for native stack
       type: REMOVE_ACTION,
       immediate: true,
       key: route.key,
@@ -209,16 +216,13 @@ class StackView extends React.Component<Props> {
       hideShadow,
       largeTitle,
       largeTitleBackgroundColor:
-        (headerLargeStyle?.backgroundColor) ||
+        headerLargeStyle?.backgroundColor ||
         // @ts-ignore old implementation, to be removed when depracated options are removed
-        (headerLargeTitleStyle?.backgroundColor),
+        headerLargeTitleStyle?.backgroundColor,
       largeTitleColor: headerLargeTitleStyle?.color,
-      largeTitleFontFamily:
-        headerLargeTitleStyle?.fontFamily,
-      largeTitleFontSize:
-        headerLargeTitleStyle?.fontSize,
-      largeTitleFontWeight:
-        headerLargeTitleStyle?.fontWeight,
+      largeTitleFontFamily: headerLargeTitleStyle?.fontFamily,
+      largeTitleFontSize: headerLargeTitleStyle?.fontSize,
+      largeTitleFontWeight: headerLargeTitleStyle?.fontWeight,
       largeTitleHideShadow: largeTitleHideShadow || headerLargeTitleHideShadow,
       screenOrientation,
       statusBarAnimation,
@@ -232,7 +236,8 @@ class StackView extends React.Component<Props> {
       translucent: translucent === undefined ? false : translucent,
     };
 
-    const hasHeader = headerShown !== false && headerMode !== 'none' && options.header !== null;
+    const hasHeader =
+      headerShown !== false && headerMode !== 'none' && options.header !== null;
     if (!hasHeader) {
       return <ScreenStackHeaderConfig {...headerOptions} hidden />;
     }
@@ -411,7 +416,10 @@ function createStackNavigator(
     ExtendedNativeStackNavigationOptions,
     StackNavigationProp
   > = {}
-): NavigationNavigator<NativeStackNavigationConfig, StackNavigationProp<NavigationState>> {
+): NavigationNavigator<
+  NativeStackNavigationConfig,
+  StackNavigationProp<NavigationState>
+> {
   const router = StackRouter(routeConfigMap, stackConfig);
 
   // belowe we override getStateForAction method in order to add handling for
@@ -422,8 +430,11 @@ function createStackNavigator(
   // call REMOVE on b, only b will be removed from the stack and the resulting
   // state will be [a, c]
   const superGetStateForAction = router.getStateForAction;
-  router.getStateForAction = (action, state) => {
-    // @ts-ignore TODO(TS): Check why is this string used
+  // @ts-ignore TODO(TS): Check why is this string used
+  router.getStateForAction = (
+    action: NavigationAction | NativeStackRemoveNavigationAction,
+    state
+  ) => {
     if (action.type === REMOVE_ACTION) {
       const { key, immediate } = action;
       let backRouteIndex = state.index;
@@ -445,7 +456,7 @@ function createStackNavigator(
         };
       }
     }
-    return superGetStateForAction(action, state);
+    return superGetStateForAction(action as NavigationAction, state);
   };
   // Create a navigator with StackView as the view
   return createNavigator(StackView, router, stackConfig);

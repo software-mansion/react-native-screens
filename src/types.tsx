@@ -43,14 +43,14 @@ export type BlurEffectTypes =
   | 'systemChromeMaterialDark';
 export type ScreenReplaceTypes = 'push' | 'pop';
 export type ScreenOrientationTypes =
-| 'default'
-| 'all'
-| 'portrait'
-| 'portrait_up'
-| 'portrait_down'
-| 'landscape'
-| 'landscape_left'
-| 'landscape_right';
+  | 'default'
+  | 'all'
+  | 'portrait'
+  | 'portrait_up'
+  | 'portrait_down'
+  | 'landscape'
+  | 'landscape_left'
+  | 'landscape_right';
 export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
 export interface ScreenProps extends ViewProps {
   ref?: unknown;
