@@ -3,6 +3,7 @@ import {
   NativeSyntheticEvent,
   NativeTouchEvent,
   ViewProps,
+  View,
 } from 'react-native';
 
 export type StackPresentationTypes =
@@ -53,7 +54,7 @@ export type ScreenOrientationTypes =
   | 'landscape_right';
 export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
 export interface ScreenProps extends ViewProps {
-  ref?: unknown;
+  ref?: React.Ref<View>;
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
