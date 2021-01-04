@@ -193,36 +193,12 @@ export const ScreenStackHeaderCenterView = (
   />
 );
 
-export const ScreenStackHeaderConfig = (
-  props: ScreenStackHeaderConfigProps
-): JSX.Element => (
-  <ScreensNativeModules.NativeScreenStackHeaderConfig {...props} />
-);
+export const NativeScreen = ScreensNativeModules.NativeScreen;
 
-export const ScreenStack = (props: ScreenStackProps): JSX.Element => (
-  <ScreensNativeModules.NativeScreenStack {...props} />
-);
+export const ScreenStack = ScreensNativeModules.NativeScreenStack;
 
-module.exports = {
-  get NativeScreen(): React.ComponentType<ScreenProps> {
-    return ScreensNativeModules.NativeScreen;
-  },
+export const NativeScreenContainer = ScreensNativeModules.NativeScreenContainer;
 
-  get NativeScreenContainer(): React.ComponentType<ScreenContainerProps> {
-    return ScreensNativeModules.NativeScreenContainer;
-  },
+export const ScreenStackHeaderConfig = ScreensNativeModules.NativeScreenStackHeaderConfig;
 
-  get ScreenStack(): React.ComponentType<ScreenStackProps> {
-    return ScreensNativeModules.NativeScreenStack;
-  },
-  get ScreenStackHeaderConfig(): React.ComponentType<
-    ScreenStackHeaderConfigProps
-  > {
-    return ScreensNativeModules.NativeScreenStackHeaderConfig;
-  },
-  get ScreenStackHeaderSubview(): React.ComponentType<
-    PropsWithChildren<ViewProps & { type: HeaderSubviewTypes }>
-  > {
-    return ScreensNativeModules.NativeScreenStackHeaderSubview;
-  },
-};
+export const ScreenStackHeaderSubview = ScreensNativeModules.NativeScreenStackHeaderSubview;
