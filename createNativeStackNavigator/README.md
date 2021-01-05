@@ -36,7 +36,40 @@ const RootStack = createNativeStackNavigator(
 );
 ```
 
+### StackNavigatorConfig
+
+Visual options:
+
+- `mode` - it is an option from `stackNavigator` and controls the stack presentation along with `cardTransparent` prop. Use `stackPresentation` instead to be consistent with v5 `native-stack`. Available options are: `'modal'`, `'containedModal'`.
+- `headerMode` - it is an option from `stackNavigator` and it hides the header when set to `none`. Use `headerShown` instead to be consistent with v5 `native-stack`. Available option is: `'none'`.
+- `transparentCard` - This is a boolean from `stackNavigator` that controls the stack presentation along with `mode` prop. Use `stackPresentation` instead to be consistent with v5 `native-stack`.
+
 ### `navigationOptions` for screens inside of the navigator
+
+Options from `stack` navigator:
+
+- `header` - makes the header hide when set to `null`. Use `headerShown` instead to be consistent with v5 `native-stack`.
+- `cardTransparent` - boolean that controls the stack presentation along with `mode` prop. Use `stackPresentation` instead to be consistent with v5 `native-stack`.
+- `animationEnabled`- boolean that sets stack animation to none when `false` passed. Use `stackAnimation: 'none'` instead to be consistent with v5 `native-stack`.
+- `cardStyle` - style prop for `Screen` component.
+
+Options for back button taken from `react-navigation-stack`:
+
+- `headerBackImage` - maps to [`headerBackImage`](https://reactnavigation.org/docs/4.x/stack-navigator#headerbackimage)
+- `headerPressColorAndroid` - maps to [`headerPressColorAndroid`](https://reactnavigation.org/docs/4.x/stack-navigator#headerpresscolorandroid)
+- `headerTintColor` - maps to [`headerTintColor`](https://reactnavigation.org/docs/4.x/stack-navigator#headertintcolor)
+- `backButtonTitle` - maps to [`headerBackTitle`](https://reactnavigation.org/docs/4.x/stack-navigator#headerbacktitle)
+- `truncatedBackButtonTitle` - maps to [`headerTruncatedBackTitle`](https://reactnavigation.org/docs/4.x/stack-navigator#headertruncatedbacktitle)
+- `backTitleVisible` - maps to [`headerBackTitleVisible`](https://reactnavigation.org/docs/4.x/stack-navigator#headerbacktitlevisible)
+- `headerBackTitleStyle` - maps to [`headerBackTitleStyle`](https://reactnavigation.org/docs/4.x/stack-navigator#headerbacktitlestyle)
+- `layoutPreset` - Layout of the title element in the header.
+
+Legacy options (these props differ from the ones used in v5 `native-stack`, and we would like to keep the API consistent between versions):
+
+- `hideShadow` - see `headerHideShadow`.
+- `largeTitle` - see `headerLargeTitle`.
+- `largeTitleHideShadow` - see `headerLargeTitleHideShadow`.
+- `translucent` - see `headerTranslucent`.
 
 #### `backButtonInCustomView`
 
@@ -71,11 +104,36 @@ Whether the back button title should be visible or not. Defaults to `true`. Only
 
 Boolean indicating whether to hide the back button in the header. Only supported on Android.
 
+#### `headerHideShadow`
+
+Boolean indicating whether to hide the elevation shadow on the header.
+
 #### `headerLargeStyle` (iOS only)
 
 Style object for the large header. Supported properties:
 
 - `backgroundColor`
+
+#### `headerLargeTitle`
+
+Boolean used to set a native property to prefer a large title header (like in iOS setting).
+
+For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
+
+Only supported on iOS.
+
+#### `headerLargeTitleHideShadow` (iOS only)
+
+Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+
+#### `headerLargeTitleStyle` (iOS only)
+
+Style object for header large title. Supported properties:
+
+- `color`
+- `fontFamily`
+- `fontSize`
+- `fontWeight`
 
 #### `headerLeft`
 
@@ -84,6 +142,10 @@ Function which returns a React Element to display on the left side of the header
 #### `headerRight`
 
 Function which returns a React Element to display on the right side of the header.
+
+#### `headerShown`
+
+Whether to show or hide the header for the screen. The header is shown by default. Setting this to `false` hides the header.
 
 #### `headerStyle`
 
@@ -113,21 +175,9 @@ Style object for header title. Supported properties:
 
 A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque. Only supported on Android.
 
-#### `hideShadow`
+#### `headerTranslucent`
 
-Boolean indicating whether to hide the elevation shadow on the header.
-
-#### `largeTitle`
-
-Boolean used to set a native property to prefer a large title header (like in iOS setting).
-
-For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
-
-Only supported on iOS.
-
-#### `largeTitleHideShadow` (iOS only)
-
-Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+Boolean indicating whether the navigation bar is translucent.
 
 #### `replaceAnimation`
 
@@ -168,10 +218,6 @@ Defaults to `push`.
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.
-
-#### `translucent`
-
-Boolean indicating whether the navigation bar is translucent.
 
 ### Status bar and orientation managment
 
