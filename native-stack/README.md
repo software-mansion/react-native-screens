@@ -122,9 +122,10 @@ Boolean that allows for disabling drop shadow under navigation header when the e
 
 Style object for header large title. Supported properties:
 
+- `color`
 - `fontFamily`
 - `fontSize`
-- `color`
+- `fontWeight`
 
 #### `headerLeft`
 

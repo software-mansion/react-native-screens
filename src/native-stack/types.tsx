@@ -141,19 +141,20 @@ export type NativeStackNavigationOptions = {
   headerLargeTitleHideShadow?: boolean;
   /**
    * Style object for header large title. Supported properties:
+   * - color
    * - fontFamily
    * - fontSize
-   * - color
+   * - fontWeight
    *
    * Only supported on iOS.
    *
    * @platform ios
    */
   headerLargeTitleStyle?: {
+    color?: string;
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
   };
   /**
    * Function which returns a React Element to display on the left side of the header.
@@ -186,16 +187,16 @@ export type NativeStackNavigationOptions = {
   headerTitle?: string;
   /**
    * Style object for header title. Supported properties:
+   * - color
    * - fontFamily
    * - fontSize
    * - fontWeight (iOS only)
-   * - color
    */
   headerTitleStyle?: {
+    color?: string;
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
   };
   /**
    * A flag to that lets you opt out of insetting the header. You may want to
