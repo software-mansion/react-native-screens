@@ -232,7 +232,14 @@
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *source = imageView.imageSources[0];
-        image = [subview.bridge.imageLoader.imageCache
+        RCTImageLoader *imageloader = nil;
+        if ([subview.bridge respondsToSelector:@selector(moduleForClass:)]) {
+            imageloader = [subview.bridge moduleForClass:[RCTImageLoader class]];
+        }
+        else {
+            imageloader = subview.bridge.imageLoader;
+        }
+        image = [imageloader.imageCache
                  imageForUrl:source.request.URL.absoluteString
                  size:source.size
                  scale:source.scale
