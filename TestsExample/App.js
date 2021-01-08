@@ -2,7 +2,6 @@
 import React from 'react';
 import {enableScreens} from 'react-native-screens';
 
-import Testv4 from './src/Testv4';
 import Test42 from './src/Test42';
 import Test111 from './src/Test111';
 import Test263 from './src/Test263';
@@ -24,6 +23,7 @@ import Test691 from './src/Test691';
 import Test702 from './src/Test702';
 import Test706 from './src/Test706';
 import Test713 from './src/Test713';
+import Testv4 from './src/Testv4';
 
 enableScreens();
 
