@@ -33,8 +33,9 @@ import {
   NavigationState,
   NavigationNavigator,
   NavigationAction,
+  NavigationProp,
 } from 'react-navigation';
-import { NativeStackNavigationOptions } from './native-stack/types';
+import { NativeStackNavigationOptions as NativeStackNavigationOptionsV5 } from './native-stack/types';
 import { HeaderBackButton } from 'react-navigation-stack';
 import {
   StackNavigationHelpers,
@@ -57,28 +58,28 @@ type NativeStackRemoveNavigationAction = {
   key?: string;
 };
 
-type ExtendedNativeStackNavigationOptions = StackNavigatorOptions &
-  NativeStackNavigationOptions &
+export type NativeStackNavigationOptions = StackNavigatorOptions &
+  NativeStackNavigationOptionsV5 &
   BackButtonProps & {
-    onWillAppear: () => void;
-    onAppear: () => void;
-    onWillDisappear: () => void;
-    onDisappear: () => void;
+    onWillAppear?: () => void;
+    onAppear?: () => void;
+    onWillDisappear?: () => void;
+    onDisappear?: () => void;
     // these props differ from the ones used in v5 `native-stack`, and we would like to keep the API consistent between versions
     /** Use `headerHideShadow` to be consistent with v5 `native-stack` */
-    hideShadow: boolean;
+    hideShadow?: boolean;
     /** Use `headerLargeTitle` to be consistent with v5 `native-stack` */
-    largeTitle: boolean;
+    largeTitle?: boolean;
     /** Use `headerLargeTitleHideShadow` to be consistent with v5 `native-stack` */
-    largeTitleHideShadow: boolean;
+    largeTitleHideShadow?: boolean;
     /** Use `headerTranslucent` to be consistent with v5 `native-stack` */
-    translucent: boolean;
+    translucent?: boolean;
   };
 
 // these are adopted from `stack` navigator
 type StackNavigatorOptions = {
   /** This is an option from `stackNavigator` and it hides the header when set to `null`. Use `headerShown` instead to be consistent with v5 `native-stack`. */
-  header: React.ComponentType<Record<string, unknown>>;
+  header?: React.ComponentType<Record<string, unknown>>;
   /** This is an option from `stackNavigator` and it controls the stack presentation along with `mode` prop. Use `stackPresentation` instead to be consistent with v5 `native-stack` */
   cardTransparent?: boolean;
   /** This is an option from `stackNavigator` and it sets stack animation to none when `false` passed. Use `stackAnimation: 'none'` instead to be consistent with v5 `native-stack` */
@@ -88,7 +89,7 @@ type StackNavigatorOptions = {
 
 // these are the props used for rendering back button taken from `react-navigation-stack`
 type BackButtonProps = {
-  headerBackImage: (props: { tintColor: string }) => React.ReactNode;
+  headerBackImage?: (props: { tintColor: string }) => React.ReactNode;
   headerPressColorAndroid?: string;
   headerTintColor?: string;
   backButtonTitle?: string;
@@ -100,7 +101,7 @@ type BackButtonProps = {
 
 type NativeStackDescriptor = NavigationDescriptor<
   NavigationParams,
-  ExtendedNativeStackNavigationOptions
+  NativeStackNavigationOptions
 >;
 
 type NativeStackDescriptorMap = {
@@ -415,18 +416,18 @@ const styles = StyleSheet.create({
 
 function createStackNavigator(
   routeConfigMap: NavigationRouteConfigMap<
-    ExtendedNativeStackNavigationOptions,
+    NativeStackNavigationOptions,
     StackNavigationProp
   >,
   stackConfig: CreateNavigatorConfig<
     NativeStackNavigationConfig,
     NavigationStackRouterConfig,
-    ExtendedNativeStackNavigationOptions,
+    NativeStackNavigationOptions,
     StackNavigationProp
   > = {}
 ): NavigationNavigator<
-  NativeStackNavigationConfig,
-  StackNavigationProp<NavigationState>
+  Record<string, unknown>,
+  NavigationProp<NavigationState>
 > {
   const router = StackRouter(routeConfigMap, stackConfig);
 
