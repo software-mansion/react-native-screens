@@ -283,7 +283,6 @@ class StackView extends React.Component<Props> {
 
       children.push(
         <ScreenStackHeaderLeftView key="left">
-          {/* many breaking changes in this component to be discussed, but this API was not public */}
           <HeaderBackButton
             onPress={goBack}
             pressColorAndroid={options.headerPressColorAndroid}
