@@ -56,7 +56,7 @@ function makeStacks() {
 					stackAnimation: 'fade',
 					cardStyle: {
 						backgroundColor: 'blue',
-					},
+          },
 				},
 			},
 		},

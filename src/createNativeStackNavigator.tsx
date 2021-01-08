@@ -79,7 +79,7 @@ export type NativeStackNavigationOptions = StackNavigatorOptions &
 // these are adopted from `stack` navigator
 type StackNavigatorOptions = {
   /** This is an option from `stackNavigator` and it hides the header when set to `null`. Use `headerShown` instead to be consistent with v5 `native-stack`. */
-  header?: React.ComponentType<Record<string, unknown>>;
+  header?: React.ComponentType<Record<string, unknown>> | null;
   /** This is an option from `stackNavigator` and it controls the stack presentation along with `mode` prop. Use `stackPresentation` instead to be consistent with v5 `native-stack` */
   cardTransparent?: boolean;
   /** This is an option from `stackNavigator` and it sets stack animation to none when `false` passed. Use `stackAnimation: 'none'` instead to be consistent with v5 `native-stack` */
