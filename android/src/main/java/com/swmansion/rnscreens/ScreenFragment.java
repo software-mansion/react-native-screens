@@ -65,14 +65,16 @@ public class ScreenFragment extends Fragment {
   }
 
   public void onContainerUpdate() {
-    ScreenStackHeaderConfig config = findHeaderConfig();
-    boolean configInChild = hasChildScreenWithConfig(getScreen());
-    if (!configInChild && config != null && config.getScreenFragment().getActivity() != null) {
+    if (!hasChildScreenWithConfig(getScreen())) {
       // if there is no child with config, we look for a parent with config to set the orientation
-      config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
+      ScreenStackHeaderConfig config = findHeaderConfig();
+      if (config != null && config.getScreenFragment().getActivity() != null) {
+        config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
+      }
     }
   }
 
+  @Nullable
   private ScreenStackHeaderConfig findHeaderConfig() {
     ViewParent parent = getScreen().getContainer();
     while (parent != null) {
@@ -92,26 +94,13 @@ public class ScreenFragment extends Fragment {
       return false;
     }
     for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
-      if (sc instanceof ScreenStack) {
-        // we check only the top screen of stack for header config
-        Screen topScreen = ((ScreenStack) sc).getTopScreen();
-        ScreenStackHeaderConfig headerConfig = topScreen != null ? topScreen.getHeaderConfig(): null;
-        if (headerConfig != null) {
-          return true;
-        }
-        if (hasChildScreenWithConfig(topScreen)) {
-          return true;
-        }
-      } else {
-        // in ScreenContainer we check only the screen that is on top
-        for (int i = 0; i < sc.getScreenCount(); i++) {
-          Screen childScreen = sc.getScreenAt(i);
-          if (childScreen.getActivityState() == Screen.ActivityState.ON_TOP) {
-            if (hasChildScreenWithConfig(childScreen)) {
-              return true;
-            }
-          }
-        }
+      Screen topScreen = sc.getTopScreen();
+      ScreenStackHeaderConfig headerConfig = topScreen != null ? topScreen.getHeaderConfig(): null;
+      if (headerConfig != null) {
+        return true;
+      }
+      if (hasChildScreenWithConfig(topScreen)) {
+        return true;
       }
     }
     return false;

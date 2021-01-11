@@ -3,6 +3,7 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -54,6 +55,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     markUpdated();
   }
 
+  @Nullable
+  @Override
   public Screen getTopScreen() {
     return mTopScreen != null ? mTopScreen.getScreen() : null;
   }
@@ -264,7 +267,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   @Override
-  protected void updateChildFragments() {
+  protected void notifyContainerUpdate() {
     for (ScreenStackFragment screen : mStack) {
       screen.onContainerUpdate();
     }
