@@ -94,6 +94,7 @@ public class ScreenFragment extends Fragment {
       return false;
     }
     for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
+      // we check only the top screen for header config
       Screen topScreen = sc.getTopScreen();
       ScreenStackHeaderConfig headerConfig = topScreen != null ? topScreen.getHeaderConfig(): null;
       if (headerConfig != null) {

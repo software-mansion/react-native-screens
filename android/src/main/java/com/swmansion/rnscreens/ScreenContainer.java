@@ -366,6 +366,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
     Screen topScreen = getTopScreen();
     if (topScreen != null) {
+      // if there is an "onTop" screen it means the transition has ended
       transitioning = false;
     }
 
