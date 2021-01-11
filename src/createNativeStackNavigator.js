@@ -8,6 +8,7 @@ import {
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
+  ScreenStackHeaderSearchBarView,
 } from 'react-native-screens';
 import {
   createNavigator,
@@ -203,6 +204,14 @@ class StackView extends React.Component {
         <ScreenStackHeaderRightView key="right">
           {renderComponentOrThunk(options.headerRight, { scene })}
         </ScreenStackHeaderRightView>
+      );
+    }
+
+    if (options.searchBar) {
+      children.push(
+        <ScreenStackHeaderSearchBarView>
+          {renderComponentOrThunk(options.searchBar, { scene })}
+        </ScreenStackHeaderSearchBarView>
       );
     }
 
