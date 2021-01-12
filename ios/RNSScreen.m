@@ -204,7 +204,7 @@
     self.onWillAppear(nil);
   }
   // we do it here too because at this moment the `parentViewController` is already not nil,
-  // so if it is not UINavCtr, the frame will be updated to the correct one.
+  // so if the parent is not UINavCtr, the frame will be updated to the correct one.
   [self reactSetFrame:_reactFrame];
 }
 
