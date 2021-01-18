@@ -268,12 +268,11 @@ RCT_EXPORT_MODULE()
 
 - (void)markUpdated:(RNSScreenContainerView *)screen
 {
-  RCTAssertMainQueue();
   [_markedContainers addObject:screen];
   if ([_markedContainers count] == 1) {
     // we enqueue updates to be run on the main queue in order to make sure that
     // all this updates (new screens attached etc) are executed in one batch
-    RCTExecuteOnMainQueue(^{
+    dispatch_async(dispatch_get_main_queue(), ^{
       for (RNSScreenContainerView *container in self->_markedContainers) {
         [container updateContainer];
       }
