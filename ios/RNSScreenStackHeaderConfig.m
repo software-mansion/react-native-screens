@@ -123,7 +123,8 @@
   // This action fails when navigating to the screen with header for the second time and loads default back button.
   // It looks like changing the tint color of navbar triggers an update of the items belonging to it and it seems to load the custom back image
   // so we change the tint color's alpha by a very small amount and then set it to the one it should have.
-#if defined(__IPHONE_14_0) && TARGET_OS_IOS
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
   // it brakes the behavior of `headerRight` in iOS 14, where the bug desribed above seems to be fixed, so we do nothing in iOS 14
   if (@available(iOS 14.0, *)) {} else
 #endif

@@ -26,10 +26,10 @@ function RootStackScreen() {
   return (
     <RootStack.Navigator
       screenOptions={{
-    backButtonImage: require('./backButton.png'),
-    headerBackTitleVisible: false,
-    headerTintColor: 'red',
-  }}>
+        backButtonImage: require('./backButton.png'),
+        headerBackTitleVisible: false,
+        headerTintColor: 'red',
+      }}>
       <RootStack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
       <RootStack.Screen
         name="Details"
