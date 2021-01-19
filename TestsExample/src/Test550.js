@@ -26,7 +26,7 @@ function RootStackScreen() {
   return (
     <RootStack.Navigator
       screenOptions={{
-        backButtonImage: require('./backButton.png'),
+        backButtonImage: require('../assets/backButton.png'),
         headerBackTitleVisible: false,
         headerTintColor: 'red',
       }}>
