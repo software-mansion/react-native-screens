@@ -131,7 +131,7 @@
   } else if (operation == UINavigationControllerOperationPop) {
     screen = (RNSScreenView *) fromVC.view;
   }
-  if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone)) {
+  if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationUpDown || screen.stackAnimation == RNSScreenStackAnimationNone)) {
     return  [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -572,22 +572,54 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
   UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
   toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
 
+  RNSScreenView *screen;
   if (_operation == UINavigationControllerOperationPush) {
-    [[transitionContext containerView] addSubview:toViewController.view];
-    toViewController.view.alpha = 0.0;
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-      toViewController.view.alpha = 1.0;
-    } completion:^(BOOL finished) {
-      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-    }];
-  } else if (_operation == UINavigationControllerOperationPop) {
-    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+     screen = (RNSScreenView *)toViewController.view;
+   } else if (_operation == UINavigationControllerOperationPop) {
+     screen = (RNSScreenView *)fromViewController.view;
+   }
 
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-      fromViewController.view.alpha = 0.0;
-    } completion:^(BOOL finished) {
-      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-    }];
+  if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationUpDown) {
+    CGAffineTransform topDownTransform = CGAffineTransformMakeTranslation(0, transitionContext.containerView.bounds.size.height);
+
+     if (_operation == UINavigationControllerOperationPush) {
+       toViewController.view.transform = topDownTransform;
+       [[transitionContext containerView] addSubview:toViewController.view];
+       [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+         fromViewController.view.transform = CGAffineTransformIdentity;
+         toViewController.view.transform = CGAffineTransformIdentity;
+       } completion:^(BOOL finished) {
+         fromViewController.view.transform = CGAffineTransformIdentity;
+         [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+       }];
+     } else if (_operation == UINavigationControllerOperationPop) {
+       toViewController.view.transform = CGAffineTransformIdentity;
+       [[transitionContext containerView] insertSubview:toViewController.view belowSubview: fromViewController.view];
+       [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+           toViewController.view.transform = CGAffineTransformIdentity;
+           fromViewController.view.transform = topDownTransform;
+       } completion:^(BOOL finished) {
+         [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+       }];
+     }
+  } else {
+    if (_operation == UINavigationControllerOperationPush) {
+     [[transitionContext containerView] addSubview:toViewController.view];
+     toViewController.view.alpha = 0.0;
+     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+       toViewController.view.alpha = 1.0;
+     } completion:^(BOOL finished) {
+       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+     }];
+    } else if (_operation == UINavigationControllerOperationPop) {
+     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+       fromViewController.view.alpha = 0.0;
+     } completion:^(BOOL finished) {
+       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+     }];
+    }
   }
 }
 
