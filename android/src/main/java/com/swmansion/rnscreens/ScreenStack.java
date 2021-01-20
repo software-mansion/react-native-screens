@@ -55,9 +55,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     markUpdated();
   }
 
-  @Nullable
   @Override
-  public Screen getTopScreen() {
+  public @Nullable Screen getTopScreen() {
     return mTopScreen != null ? mTopScreen.getScreen() : null;
   }
 

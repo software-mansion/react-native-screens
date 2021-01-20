@@ -151,8 +151,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     return mScreenFragments.get(index).getScreen();
   }
 
-  @Nullable
-  public Screen getTopScreen() {
+  public @Nullable Screen getTopScreen() {
     for (ScreenFragment screenFragment: mScreenFragments) {
       if (getActivityState(screenFragment) == Screen.ActivityState.ON_TOP) {
         return screenFragment.getScreen();

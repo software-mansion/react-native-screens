@@ -74,8 +74,7 @@ public class ScreenFragment extends Fragment {
     }
   }
 
-  @Nullable
-  private ScreenStackHeaderConfig findHeaderConfig() {
+  private @Nullable ScreenStackHeaderConfig findHeaderConfig() {
     ViewParent parent = getScreen().getContainer();
     while (parent != null) {
       if (parent instanceof Screen) {
