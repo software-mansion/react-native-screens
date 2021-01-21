@@ -14,6 +14,7 @@ import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -138,7 +139,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     return null;
   }
 
-  protected ScreenStackFragment getScreenFragment() {
+  protected @Nullable ScreenStackFragment getScreenFragment() {
     ViewParent screen = getParent();
     if (screen instanceof Screen) {
       Fragment fragment = ((Screen) screen).getFragment();
@@ -175,6 +176,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     if (getScreenFragment() == null || !getScreenFragment().hasChildScreenWithConfig(getScreen())) {
       // we check if there is no child that provides config, since then we shouldn't change orientation here
       activity.setRequestedOrientation(mScreenOrientation);
+      if (getScreenFragment() != null) {
+        getScreenFragment().markParentFragments(true);
+      }
     }
 
     if (mIsHidden) {
