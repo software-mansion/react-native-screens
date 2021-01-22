@@ -146,8 +146,17 @@
   UIView *parent = _controller.view;
   while (parent != nil && ![parent isKindOfClass:[RCTRootContentView class]]) parent = parent.superview;
   RCTRootContentView *rootView = (RCTRootContentView *)parent;
-  [rootView.touchHandler cancel];
-
+  if (rootView != nil) {
+    [rootView.touchHandler cancel];
+  } else {
+    // if rootView is nil, it means we are in modal. We then replicate the above behavior
+    // on the highest screen in the modal's hierarchy
+    UIViewController *parentVC = _controller;
+    while (parentVC.parentViewController != nil) parentVC = parentVC.parentViewController;
+    RNSScreenView *screenView = (RNSScreenView *)parentVC.view;
+    [screenView.reactTouchHandler cancel];
+  }
+  
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
   return _controller.viewControllers.count > 1 && topScreen.gestureEnabled;

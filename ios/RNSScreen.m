@@ -274,6 +274,11 @@
   [_touchHandler reset];
 }
 
+- (RCTTouchHandler *)reactTouchHandler
+{
+  return _touchHandler;
+}
+
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
   return _gestureEnabled;
