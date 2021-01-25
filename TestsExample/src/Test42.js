@@ -4,6 +4,7 @@ import React from 'react';
 import {ScrollView, StyleSheet, View, Button, Text} from 'react-native';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,8 +23,8 @@ export default function NativeNavigation() {
           }}
         />
         <Stack.Screen
-          name="TabNavigator"
-          component={TabNavigator}
+          name="NestedNavigator"
+          component={NestedNavigator}
           options={{
             screenOrientation: 'landscape',
           }}
@@ -33,13 +34,14 @@ export default function NativeNavigation() {
   );
 }
 
+// change to createStackNavigator to test with stack in the middle
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = (props) => (
+const NestedNavigator = (props) => (
   <Tab.Navigator screensEnabled={true}>
-    <Tab.Screen name="Tab1" component={Home} />
-    <Tab.Screen name="Tab2" component={Inner} />
-    <Tab.Screen name="Tab3" component={Home} />
+    <Tab.Screen name="Screen1" component={Home} />
+    <Tab.Screen name="Screen2" component={Inner} />
+    <Tab.Screen name="Screen3" component={Home} />
   </Tab.Navigator>
 );
 
@@ -63,9 +65,15 @@ function Home({navigation}) {
       >
       <View style={styles.leftTop} />
       <Button
-        title="TabNavigator"
+        title="NestedNavigator"
         onPress={() => {
-          navigation.push('TabNavigator');
+          navigation.push('NestedNavigator');
+        }}
+      />
+      <Button
+        title="Screen2"
+        onPress={() => {
+          navigation.navigate('Screen2');
         }}
       />
       <Button
