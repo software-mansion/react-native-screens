@@ -226,7 +226,7 @@ declare module 'react-native-screens' {
     largeTitleHideShadow?: boolean;
     /**
      * @description Controls in which orientation should the screen appear.
-     * @type "default" - resolves to "all" without "portrait_down"
+     * @type "default" - on iOS, it resolves to "all" without "portrait_down" and on Android it lets the system decide the best orientation
      * @type "all" – all orientations are permitted
      * @type "portrait" – portrait orientations are permitted
      * @type "portrait_up" – right-side portrait orientation is permitted
