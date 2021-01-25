@@ -32,5 +32,5 @@ import Testv4 from './src/Testv4';
 enableScreens();
 
 export default function App() {
-  return <Testv4 />;
+  return <Test42 />;
 }
