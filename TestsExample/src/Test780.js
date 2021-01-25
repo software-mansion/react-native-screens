@@ -8,12 +8,8 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
-import {enableScreens} from 'react-native-screens';
+import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
-
-enableScreens();
-
-const Stack = createNativeStackNavigator();
 
 const HomeScreen = ({navigation}) => (
   <ScrollView>
@@ -53,9 +49,11 @@ const NestedScreen = () => {
   );
 };
 
+const NativeStack = createNativeStackNavigator();
+
 const HomeStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen
+  <NativeStack.Navigator>
+    <NativeStack.Screen
       name="home"
       options={{
         title: 'Home',
@@ -66,13 +64,15 @@ const HomeStack = () => (
       }}
       component={HomeScreen}
     />
-    <Stack.Screen
+    <NativeStack.Screen
       name="nestedScreen"
       options={{title: 'Nested'}}
       component={NestedScreen}
     />
-  </Stack.Navigator>
+  </NativeStack.Navigator>
 );
+
+const Stack = createStackNavigator();
 
 const ModalStack = ({navigation}) => (
   <Stack.Navigator>
@@ -94,15 +94,13 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator
         headerMode="none"
+        detachInactiveScreens={false}
         screenOptions={{
           stackPresentation: 'modal',
         }}>
         <Stack.Screen
           name="home"
-          options={{
-            headerShown: false,
-          }}
-          component={HomeStack}
+          component={HomeScreen}
         />
         <Stack.Screen
           name="nestedScreen"
