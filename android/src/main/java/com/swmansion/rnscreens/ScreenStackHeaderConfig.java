@@ -176,9 +176,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     if (getScreenFragment() == null || !getScreenFragment().hasChildScreenWithConfig(getScreen())) {
       // we check if there is no child that provides config, since then we shouldn't change orientation here
       activity.setRequestedOrientation(mScreenOrientation);
-      if (getScreenFragment() != null) {
-        getScreenFragment().markParentFragments(true);
-      }
     }
 
     if (mIsHidden) {

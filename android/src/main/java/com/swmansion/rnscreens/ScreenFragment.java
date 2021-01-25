@@ -36,7 +36,6 @@ public class ScreenFragment extends Fragment {
   }
 
   protected Screen mScreenView;
-  protected boolean mHasChildWithConfig = false;
   private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
 
   public ScreenFragment() {
@@ -66,9 +65,7 @@ public class ScreenFragment extends Fragment {
   }
 
   public void onContainerUpdate() {
-    mHasChildWithConfig = hasChildScreenWithConfig(getScreen());
-    markParentFragments(mHasChildWithConfig);
-    if (!mHasChildWithConfig) {
+    if (!hasChildScreenWithConfig(getScreen())) {
       // if there is no child with config, we look for a parent with config to set the orientation
       ScreenStackHeaderConfig config = findHeaderConfig();
       if (config != null && config.getScreenFragment().getActivity() != null) {
@@ -85,10 +82,8 @@ public class ScreenFragment extends Fragment {
         if (headerConfig != null) {
           return headerConfig;
         }
-        parent = ((Screen) parent).getContainer();
-      } else {
-        parent = parent.getParent();
       }
+      parent = parent.getParent();
     }
     return null;
   }
@@ -104,23 +99,11 @@ public class ScreenFragment extends Fragment {
       if (headerConfig != null) {
         return true;
       }
-      if (topScreen.getFragment().mHasChildWithConfig) {
+      if (hasChildScreenWithConfig(topScreen)) {
         return true;
       }
     }
     return false;
-  }
-
-  protected void markParentFragments(boolean hasChildWithConfig) {
-    ViewParent parent = getScreen().getContainer();
-    while (parent != null) {
-      if (parent instanceof Screen) {
-        ((Screen) parent).getFragment().mHasChildWithConfig = hasChildWithConfig;
-        parent = ((Screen) parent).getContainer();
-      } else {
-        parent = parent.getParent();
-      }
-    }
   }
 
   public List<ScreenContainer> getChildScreenContainers() {
