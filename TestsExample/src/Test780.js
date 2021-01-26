@@ -45,70 +45,54 @@ const NestedScreen = () => {
         onPress={() => setCount(count + 1)}>
         <Text>{`Press count: ${count}`}</Text>
       </TouchableHighlight>
+      <Text>Change nested stacks to "normal" stack navigators to spot buggy behavior in native-stack's modal</Text>
     </View>
   );
 };
 
-const NativeStack = createNativeStackNavigator();
+const NestedStack = createNativeStackNavigator();
 
 const HomeStack = () => (
-  <NativeStack.Navigator>
-    <NativeStack.Screen
+  <NestedStack.Navigator>
+    <NestedStack.Screen
       name="home"
-      options={{
-        title: 'Home',
-        headerLargeTitle: true,
-        headerStyle: {
-          headerLargeTitle: true,
-        },
-      }}
       component={HomeScreen}
     />
-    <NativeStack.Screen
+    <NestedStack.Screen
       name="nestedScreen"
-      options={{title: 'Nested'}}
       component={NestedScreen}
     />
-  </NativeStack.Navigator>
+  </NestedStack.Navigator>
 );
-
-const Stack = createStackNavigator();
 
 const ModalStack = ({navigation}) => (
-  <Stack.Navigator>
-    <Stack.Screen
+  <NestedStack.Navigator>
+    <NestedStack.Screen
       name="modalScreen"
-      options={{title: 'Modal', statusBarStyle: 'light'}}
       component={ModalScreen}
     />
-    <Stack.Screen
+    <NestedStack.Screen
       name="modalNestedScreen"
-      options={{title: 'Nested', statusBarStyle: 'light'}}
       component={NestedScreen}
     />
-  </Stack.Navigator>
+  </NestedStack.Navigator>
 );
+
+const MainStack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        headerMode="none"
-        detachInactiveScreens={false}
+      <MainStack.Navigator
         screenOptions={{
           stackPresentation: 'modal',
         }}>
-        <Stack.Screen
+        <MainStack.Screen
           name="home"
-          component={HomeScreen}
+          component={HomeStack}
         />
-        <Stack.Screen
-          name="nestedScreen"
-          options={{title: 'Nested'}}
-          component={NestedScreen}
-        />
-        <Stack.Screen name="modalScreen" component={ModalStack} />
-      </Stack.Navigator>
+        <MainStack.Screen name="modalScreen" component={ModalStack} />
+      </MainStack.Navigator>
     </NavigationContainer>
   );
 };

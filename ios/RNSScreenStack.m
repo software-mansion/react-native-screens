@@ -144,17 +144,11 @@
   // Without the below code the Touchable will remain active (highlighted) for the duration of back
   // gesture and onPress may fire when we release the finger.
   UIView *parent = _controller.view;
-  while (parent != nil && ![parent isKindOfClass:[RCTRootContentView class]]) parent = parent.superview;
-  RCTRootContentView *rootView = (RCTRootContentView *)parent;
-  if (rootView != nil) {
-    [rootView.touchHandler cancel];
-  } else {
-    // if rootView is nil, it means we are in modal. We then replicate the above behavior
-    // on the highest screen in the modal's hierarchy
-    UIViewController *parentVC = _controller;
-    while (parentVC.parentViewController != nil) parentVC = parentVC.parentViewController;
-    RNSScreenView *screenView = (RNSScreenView *)parentVC.view;
-    [screenView.reactTouchHandler cancel];
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) parent = parent.superview;
+  if (parent != nil) {
+    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler cancel];
+    [touchHandler reset];
   }
   
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
