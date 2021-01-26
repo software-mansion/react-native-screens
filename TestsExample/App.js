@@ -33,5 +33,5 @@ import Test780 from './src/Test780';
 enableScreens();
 
 export default function App() {
-  return <Test780 />;
+  return <Test42 />;
 }
