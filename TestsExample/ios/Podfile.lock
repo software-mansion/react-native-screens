@@ -308,7 +308,7 @@ PODS:
     - React
   - RNReanimated (1.13.1):
     - React
-  - RNScreens (2.16.1):
+  - RNScreens (2.17.0):
     - React-Core
   - RNSearchBar (3.5.1):
     - React
