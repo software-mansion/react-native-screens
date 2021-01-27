@@ -45,7 +45,7 @@ const NestedScreen = () => {
         onPress={() => setCount(count + 1)}>
         <Text>{`Press count: ${count}`}</Text>
       </TouchableHighlight>
-      <Text>Change nested stacks to "normal" stack navigators to spot buggy behavior in native-stack's modal</Text>
+      <Text>Change nested stacks to "normal" stack navigators to spot buggy behavior in native-stack's modal if fix in RNGH (#1323) not applied</Text>
     </View>
   );
 };
