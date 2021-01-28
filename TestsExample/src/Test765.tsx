@@ -6,9 +6,9 @@ import {
   createAppContainer,
 } from 'react-navigation';
 
-import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';	
+import createNativeStackNavigator, {NativeStackNavigationOptions} from 'react-native-screens/createNativeStackNavigator';	
 
-const DEFAULT_STACK_OPTIONS
+const DEFAULT_STACK_OPTIONS : NativeStackNavigationOptions
  = {
 	headerBackTitleVisible: false,
 	headerTintColor: 'black',
@@ -87,6 +87,7 @@ export default createAppContainer(makeStacks());
 
 function Home() {
   return (
-    <View style={{ flex: 1, backgroundColor: 'red' }} />
+    <View style={{ flex: 1, backgroundColor: 'red' }}>
+    </View>
   );
 }

@@ -2,8 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-screens": ["./src/screens.d.ts"],
-      "react-native-screens/native-stack": ["./src/native-stack/index.tsx"]
+      "react-native-screens": ["./src/index.d.ts"],
+      "react-native-screens/native-stack": ["./src/native-stack/index.tsx"],
+      "react-native-screens/createNativeStackNavigator": ["./src/createNativeStackNavigator.tsx"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

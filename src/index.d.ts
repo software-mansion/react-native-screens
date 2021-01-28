@@ -96,6 +96,7 @@ declare module 'react-native-screens' {
      * @description A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
      */
     onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    ref?: React.Ref<View>;
     /**
      * @description Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
      *  @type "push" – performs push animation
