@@ -7,7 +7,7 @@
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
     "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
-    "lint": "eslint --ext '.js,.ts,.tsx' --fix src && npm run check-types",
+    "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types",
     "precommit": "yarn format && yarn lint",
     "release": "npm login && release-it",
     "prepare": "bob build"

@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "react-native-screens": ["./src/screens.d.ts"],
+      "react-native-screens/native-stack": ["./src/native-stack/index.tsx"]
+    },
+  "exclude": ["node_modules"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
+  }
+}

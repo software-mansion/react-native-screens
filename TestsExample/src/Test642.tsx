@@ -37,7 +37,7 @@ export default function App(): JSX.Element {
           component={Home}
           options={{
             statusBarStyle: 'light',
-            stackPresentation: "containedTransparentModal",
+            stackPresentation: "fullScreenModal",
           }}
         />
       </Stack.Navigator>
