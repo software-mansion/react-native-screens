@@ -97,7 +97,7 @@
     nextVC = nav.topViewController;
   }
 
-  if (vc != nil && nextVC == vc) {
+  if (vc != nil && (nav == nil || nextVC == vc)) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller
                                           withConfig:self
                                             animated:YES];
