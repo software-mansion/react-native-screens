@@ -365,8 +365,9 @@
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
     // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
-    // and it is not possible if `modalPresentationCapturesStatusBarAppearance` not set to YES, so even
-    // if we went into a modal here and ask it, it wouldn't take any effect
+    // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
+    // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
+    // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
     return !includingModals ? nil : [(RNSScreen *)lastViewController findChildVCForConfigIncludingModals:includingModals] ?: lastViewController;
   }
