@@ -11,18 +11,21 @@ import {
 } from 'react-native';
 
 import {
-  ScreenContainerProps,
-  ScreenProps,
-  ScreenStackHeaderConfigProps,
-  ScreenStackProps,
+  StackPresentationTypes,
+  StackAnimationTypes,
+  BlurEffectTypes,
+  ScreenReplaceTypes,
+  ScreenOrientationTypes,
   HeaderSubviewTypes,
+  ScreenProps,
+  ScreenContainerProps,
+  ScreenStackProps,
+  ScreenStackHeaderConfigProps,
 } from './types';
-
-export * from './types';
 
 let ENABLE_SCREENS = false;
 
-export function enableScreens(shouldEnableScreens = true): void {
+function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = shouldEnableScreens;
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
     console.error(
@@ -32,9 +35,9 @@ export function enableScreens(shouldEnableScreens = true): void {
 }
 
 // const that tells if the library should use new implementation, will be undefined for older versions
-export const shouldUseActivityState = true;
+const shouldUseActivityState = true;
 
-export function screensEnabled(): boolean {
+function screensEnabled(): boolean {
   return ENABLE_SCREENS;
 }
 
@@ -84,7 +87,7 @@ const ScreensNativeModules = {
   },
 };
 
-export class Screen extends React.Component<ScreenProps> {
+class Screen extends React.Component<ScreenProps> {
   private ref: React.ElementRef<typeof View> | null = null;
 
   setNativeProps(props: ScreenProps): void {
@@ -132,7 +135,7 @@ export class Screen extends React.Component<ScreenProps> {
   }
 }
 
-export class ScreenContainer extends React.Component<ScreenContainerProps> {
+class ScreenContainer extends React.Component<ScreenContainerProps> {
   render(): JSX.Element {
     const { enabled = true, ...rest } = this.props;
 
@@ -155,9 +158,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const ScreenStackHeaderBackButtonImage = (
-  props: ImageProps
-): JSX.Element => (
+const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
     style={styles.headerSubview}>
@@ -165,7 +166,7 @@ export const ScreenStackHeaderBackButtonImage = (
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 
-export const ScreenStackHeaderRightView = (
+const ScreenStackHeaderRightView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
@@ -175,7 +176,7 @@ export const ScreenStackHeaderRightView = (
   />
 );
 
-export const ScreenStackHeaderLeftView = (
+const ScreenStackHeaderLeftView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
@@ -185,7 +186,7 @@ export const ScreenStackHeaderLeftView = (
   />
 );
 
-export const ScreenStackHeaderCenterView = (
+const ScreenStackHeaderCenterView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
@@ -195,14 +196,51 @@ export const ScreenStackHeaderCenterView = (
   />
 );
 
-export const NativeScreen = ScreensNativeModules.NativeScreen;
+export type {
+  StackPresentationTypes,
+  StackAnimationTypes,
+  BlurEffectTypes,
+  ScreenReplaceTypes,
+  ScreenOrientationTypes,
+  HeaderSubviewTypes,
+  ScreenProps,
+  ScreenContainerProps,
+  ScreenStackProps,
+  ScreenStackHeaderConfigProps,
+};
 
-export const ScreenStack = ScreensNativeModules.NativeScreenStack;
+module.exports = {
+  // these are classes so they are not evaluated until used
+  // so no need to use getters for them
+  Screen,
+  ScreenContainer,
 
-export const NativeScreenContainer = ScreensNativeModules.NativeScreenContainer;
+  get NativeScreen() {
+    return ScreensNativeModules.NativeScreen;
+  },
 
-export const ScreenStackHeaderConfig =
-  ScreensNativeModules.NativeScreenStackHeaderConfig;
+  get NativeScreenContainer() {
+    return ScreensNativeModules.NativeScreenContainer;
+  },
 
-export const ScreenStackHeaderSubview =
-  ScreensNativeModules.NativeScreenStackHeaderSubview;
+  get ScreenStack() {
+    return ScreensNativeModules.NativeScreenStack;
+  },
+  get ScreenStackHeaderConfig() {
+    return ScreensNativeModules.NativeScreenStackHeaderConfig;
+  },
+  get ScreenStackHeaderSubview() {
+    return ScreensNativeModules.NativeScreenStackHeaderSubview;
+  },
+
+  // these are functions and will not be evaluated until used
+  // so no need to use getters for them
+  ScreenStackHeaderBackButtonImage,
+  ScreenStackHeaderRightView,
+  ScreenStackHeaderLeftView,
+  ScreenStackHeaderCenterView,
+
+  enableScreens,
+  screensEnabled,
+  shouldUseActivityState,
+};
