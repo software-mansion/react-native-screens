@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "react-native-screens": ["./src"],
+      "react-native-screens/native-stack": ["./src/native-stack/index.tsx"]
+    },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
@@ -18,6 +22,5 @@
     "strict": true,
     "target": "esnext"
   },
-  "exclude": ["node_modules"],
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }
