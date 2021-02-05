@@ -79,6 +79,10 @@ declare module 'react-native-screens' {
      * @description A callback that gets called when the current screen appears.
      */
     onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    /**
+     * @description A callback that gets called when the native header back button is clicked on Android. It enables the option to prevent going back.
+     */
+    onBackButtonClicked?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     onComponentRef?: (view: unknown) => void;
     /**
      * @description A callback that gets called when the current screen disappears.

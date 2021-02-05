@@ -73,10 +73,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         if (stack != null && stack.getRootScreen() == fragment.getScreen()) {
           Fragment parentFragment = fragment.getParentFragment();
           if (parentFragment instanceof ScreenStackFragment) {
-            ((ScreenStackFragment) parentFragment).dismiss();
+            ((ScreenStackFragment) parentFragment).dispatchOnBackButtonClicked();
           }
         } else {
-          fragment.dismiss();
+          fragment.dispatchOnBackButtonClicked();
         }
       }
     }

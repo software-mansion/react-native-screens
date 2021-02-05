@@ -102,6 +102,8 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
             MapBuilder.of("registrationName", "onWillDisappear"),
             ScreenDisappearEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDisappear"),
+            BackButtonClickedEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onBackButtonClicked"),
             StackFinishTransitioningEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onFinishTransitioning"));
   }

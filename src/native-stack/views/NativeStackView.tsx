@@ -117,6 +117,18 @@ export default function NativeStackView({
                 target: route.key,
               });
             }}
+            onBackButtonClicked={() => {
+              navigation.emit({
+                type: 'dismiss',
+                target: route.key,
+              });
+
+              navigation.dispatch({
+                ...StackActions.pop(),
+                source: route.key,
+                target: key,
+              });
+            }}
             onDismissed={() => {
               navigation.emit({
                 type: 'dismiss',
