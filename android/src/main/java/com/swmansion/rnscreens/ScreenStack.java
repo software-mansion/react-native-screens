@@ -80,7 +80,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     if (mFragmentManager != null) {
       mFragmentManager.removeOnBackStackChangedListener(mBackStackListener);
       mFragmentManager.unregisterFragmentLifecycleCallbacks(mLifecycleCallbacks);
-      if (!mFragmentManager.isStateSaved()) {
+      if (!mFragmentManager.isStateSaved() && !mFragmentManager.isDestroyed()) {
         // state save means that the container where fragment manager was installed has been unmounted.
         // This could happen as a result of dismissing nested stack. In such a case we don't need to
         // reset back stack as it'd result in a crash caused by the fact the fragment manager is no
