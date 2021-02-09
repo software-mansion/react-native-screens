@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ScrollView, Text, StyleSheet } from 'react-native';
+import { Button, ScrollView } from 'react-native';
 import {NavigationContainer, NavigationProp, ParamListBase} from '@react-navigation/native';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { SearchBar } from 'react-native-screens';
@@ -47,7 +47,7 @@ function First({navigation}: {navigation: NavigationProp<ParamListBase>}) {
 
   const [search, setSearch] = React.useState('');
 
-  const items = ['Apples', 'Pie', 'Juice', 'Cake', 'Nuggets', 'Some', 'Other', 'Stuff'];
+  const items = ['Apples', 'Pie', 'Juice', 'Cake', 'Nuggets', 'Some', 'Other', 'Stuff', 'To', 'Fill', 'The', 'Scrolling', 'Space'];
 
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
@@ -56,11 +56,9 @@ function First({navigation}: {navigation: NavigationProp<ParamListBase>}) {
         onPress={() => navigation.navigate('Second')}
       />
       {items
-          .filter(a => a.toLowerCase().indexOf(search.toLowerCase()) !== -1)
-          .map(a => (
-            <Text style={styles.listItem} key={a}>
-              {a}
-            </Text>
+          .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+          .map(item => (
+            <Button title={item} key={item} onPress={() => console.warn(`${item} clicked`)} />
       ))}
     </ScrollView>
   );
@@ -76,12 +74,3 @@ function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  listItem: {
-    paddingHorizontal: 15,
-    paddingVertical: 30,
-    fontSize: 30,
-    backgroundColor: '#fff',
-  },
-});
