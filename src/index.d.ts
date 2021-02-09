@@ -283,6 +283,55 @@ declare module 'react-native-screens' {
     translucent?: boolean;
   }
 
+  export interface SearchBarProps {
+    /**
+     * Indicates whether to to obscure the underlying content
+     */
+    obscureBackground?: boolean;
+    /**
+     * Indicates whether to hide the navigation bar
+     */
+    hideNavigationBar?: boolean;
+    /**
+     * Indicates whether to hide the search bar when scrolling
+     */
+    hideWhenScrolling?: boolean;
+    /**
+     * The auto-capitalization behavior
+     */
+    autoCapitalize?: 'none' | 'words' | 'sentences' | 'allCharacters';
+    /**
+     * Text displayed when search field is empty
+     */
+    placeholder?: string;
+    /**
+     * The search field background color
+     */
+    barTintColor?: string;
+    /**
+     * Event fired when the text changes. It receives the current text value of the search bar.
+     */
+    onChangeText?: (text: NativeSyntheticEvent<{ text: string }>) => void;
+    /**
+     * Event fired when the cancel button is pressed
+     */
+    onCancelButtonPress?: () => void;
+    /**
+     * Event fired when the search button is pressed. It receives the current text value of the search bar.
+     */
+    onSearchButtonPress?: (
+      text: NativeSyntheticEvent<{ text: string }>
+    ) => void;
+    /**
+     * Handles text change events
+     */
+    onFocus?: (text: NativeSyntheticEvent<{ text: string }>) => void;
+    /**
+     * Handles text change events
+     */
+    onBlur?: (text: NativeSyntheticEvent<{ text: string }>) => void;
+  }
+
   export const Screen: ComponentClass<ScreenProps>;
   export const ScreenContainer: ComponentClass<ScreenContainerProps>;
   export const NativeScreen: ComponentClass<ScreenProps>;
@@ -294,5 +343,6 @@ declare module 'react-native-screens' {
   export const ScreenStackHeaderCenterView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderSearchBarView: ComponentClass<ViewProps>;
   export const ScreenStackHeaderConfig: ComponentClass<ScreenStackHeaderConfigProps>;
+  export const SearchBar: ComponentClass<SearchBarProps>;
   export const shouldUseActivityState: boolean;
 }

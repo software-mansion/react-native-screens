@@ -1,5 +1,6 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreen.h"
+#import "RNSSearchBar.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -485,13 +486,11 @@ API_AVAILABLE(ios(13.0)){
         break;
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
-        if ([subview.subviews[0] isKindOfClass:[UISearchBar class]]) {
+        if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
           if (@available(iOS 11.0, *)) {
-            navitem.searchController = [UISearchController new];
-            UISearchBar *searchBar = subview.subviews[0];
-            navitem.searchController.searchBar.delegate = searchBar;
-            navitem.searchController.searchBar.placeholder = searchBar.placeholder;
-
+            RNSSearchBar *searchBar = subview.subviews[0];
+            navitem.searchController = searchBar.controller;
+            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
           }
         }
       }

@@ -13,6 +13,7 @@ import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -236,9 +237,11 @@ export type NativeStackNavigationOptions = {
    */
   screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
   /**
-   * Function which returns a React Element to display on the right side of the header.
+   * Function which returns a native iOS search bar. You have to use `SearchBar` component provided by `react-native-screens` for it to work correctly.
+   *
+   * @platform ios
    */
-  searchBar?: (props: { tintColor?: string }) => React.ReactNode;
+  searchBar?: () => React.ReactElement<SearchBarProps>;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

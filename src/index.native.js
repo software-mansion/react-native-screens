@@ -34,6 +34,7 @@ let NativeScreenStack;
 let NativeScreenStackHeaderConfig;
 let NativeScreenStackHeaderSubview;
 let AnimatedNativeScreen;
+let NativeSearchBar;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -67,6 +68,12 @@ const ScreensNativeModules = {
       NativeScreenStackHeaderSubview ||
       requireNativeComponent('RNSScreenStackHeaderSubview', null);
     return NativeScreenStackHeaderSubview;
+  },
+
+  get NativeSearchBar() {
+    NativeSearchBar =
+      NativeSearchBar || requireNativeComponent('RNSSearchBar', null);
+    return NativeSearchBar;
   },
 };
 
@@ -197,6 +204,9 @@ module.exports = {
   },
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
+  },
+  get SearchBar() {
+    return ScreensNativeModules.NativeSearchBar;
   },
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderRightView,

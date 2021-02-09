@@ -127,7 +127,7 @@ export default function HeaderConfig({
       ) : null}
       {searchBar !== undefined ? (
         <ScreenStackHeaderSearchBarView>
-          {searchBar({ tintColor })}
+          {searchBar()}
         </ScreenStackHeaderSearchBarView>
       ) : null}
     </ScreenStackHeaderConfig>

@@ -2,6 +2,7 @@
 #import <React/RCTConvert.h>
 
 #import "RNSScreen.h"
+#import "RNSSearchBar.h"
 
 typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
   RNSStatusBarStyleAuto,
