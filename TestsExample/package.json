@@ -6,7 +6,9 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",

@@ -1,24 +1,28 @@
 // connected PRs: #679, #675
-import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {ScrollView, StyleSheet, View, Button} from 'react-native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import {ScrollView, View, Button} from 'react-native';
+import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}
 
 const Stack = createNativeStackNavigator();
 
-export default function NativeNavigation() {
+export default function App(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackPresentation: 'modal',
+          stackPresentation: "modal",
         }}>
         <Stack.Screen
           name="Home"
           component={Home}
           options={{
-            statusBarStyle: 'light',
+            statusBarStyle: 'dark',
           }}
         />
         <Stack.Screen
@@ -28,6 +32,14 @@ export default function NativeNavigation() {
             statusBarStyle: 'dark',
           }}
         />
+        <Stack.Screen
+          name="Home2"
+          component={Home}
+          options={{
+            statusBarStyle: 'light',
+            stackPresentation: "fullScreenModal",
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -35,8 +47,8 @@ export default function NativeNavigation() {
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = (props) => (
-  <Tab.Navigator screensEnabled={true}>
+const TabNavigator = () => (
+  <Tab.Navigator>
     <Tab.Screen name="Tab1" component={Home} />
     <Tab.Screen name="Tab2" component={Inner} />
     <Tab.Screen name="Tab3" component={Home} />
@@ -45,7 +57,7 @@ const TabNavigator = (props) => (
 
 const InnerStack = createNativeStackNavigator();
 
-const Inner = (props) => (
+const Inner = () => (
   <InnerStack.Navigator
     screenOptions={{
       statusBarStyle: 'dark',
@@ -54,14 +66,14 @@ const Inner = (props) => (
   </InnerStack.Navigator>
 );
 
-function Home({navigation}) {
+function Home({navigation}: Props) {
   const [yes, setYes] = React.useState(true);
   return (
     <ScrollView
-      style={{backgroundColor: 'yellow'}}
+      style={{backgroundColor: 'rgba(255,255,0,0.5)'}}
       contentInsetAdjustmentBehavior="automatic"
       >
-      <View style={styles.leftTop} />
+      <View />
       <Button
         title="TabNavigator"
         onPress={() => {
@@ -69,10 +81,25 @@ function Home({navigation}) {
         }}
       />
       <Button
+        title="Home2"
+        onPress={() => {
+          navigation.push('Home2');
+        }}
+      />
+      <Button
         title="status bar style"
         onPress={() => {
           navigation.setOptions({
-            statusBarStyle: Math.random() > 0.5 ? 'light' : 'dark',
+            statusBarStyle: yes ? 'light' : 'dark',
+          });
+          setYes(!yes);
+        }}
+      />
+      <Button
+        title="Change title"
+        onPress={() => {
+          navigation.setOptions({
+            title: yes ? 'Home' : 'NotHome',
           });
           setYes(!yes);
         }}
@@ -86,11 +113,3 @@ function Home({navigation}) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

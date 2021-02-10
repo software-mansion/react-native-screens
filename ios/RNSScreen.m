@@ -310,7 +310,7 @@
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-  UIViewController *vc = [self findChildVCForConfig];
+  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
   return vc == self ? nil : vc;
 }
 
@@ -322,7 +322,7 @@
 
 - (UIViewController *)childViewControllerForStatusBarHidden
 {
-  UIViewController *vc = [self findChildVCForConfig];
+  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
   return vc == self ? nil : vc;
 }
 
@@ -334,7 +334,7 @@
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  UIViewController *vc = [self findChildVCForConfig];
+  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
   
   if ([vc isKindOfClass:[RNSScreen class]]) {
     RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
@@ -345,7 +345,7 @@
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-  UIViewController *vc = [self findChildVCForConfig];
+  UIViewController *vc = [self findChildVCForConfigIncludingModals:YES];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
     RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
@@ -356,19 +356,20 @@
 
 // if the returned vc is a child, it means that it can provide config;
 // if the returned vc is self, it means that there is no child for config and self has config to provide,
-// so we return self which results in asking self for preferredStatusBarStyle;
+// so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
 // if the returned vc is nil, it means none of children could provide config and self does not have config either,
 // so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
-- (UIViewController *)findChildVCForConfig
+- (UIViewController *)findChildVCForConfigIncludingModals:(BOOL)includingModals
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
-    // setting this makes the modal vc being asked for appearance,
-    // so it doesn't matter what we return here since the modal's root screen will be asked
-    lastViewController.modalPresentationCapturesStatusBarAppearance = YES;
+    // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
+    // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
+    // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
+    // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
-    return [(RNSScreen *)lastViewController findChildVCForConfig] ?: lastViewController;
+    return !includingModals ? nil : [(RNSScreen *)lastViewController findChildVCForConfigIncludingModals:includingModals] ?: lastViewController;
   }
 
   UIViewController *selfOrNil = [self findScreenConfig] != nil ? self : nil;
@@ -382,7 +383,7 @@
       // we use `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
       UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
       if ([childScreen isKindOfClass:[RNSScreen class]]) {
-        return [(RNSScreen *)childScreen findChildVCForConfig] ?: selfOrNil;
+        return [(RNSScreen *)childScreen findChildVCForConfigIncludingModals:includingModals] ?: selfOrNil;
       } else {
         return selfOrNil;
       }
