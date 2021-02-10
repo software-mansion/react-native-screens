@@ -274,6 +274,19 @@
   [_touchHandler reset];
 }
 
+- (RCTTouchHandler *)touchHandler
+{
+  if (_touchHandler != nil) {
+    return _touchHandler;
+  }
+  UIView *parent = [self superview];
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) parent = parent.superview;
+  if (parent != nil) {
+    return [parent performSelector:@selector(touchHandler)];
+  }
+  return nil;
+}
+
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
   return _gestureEnabled;

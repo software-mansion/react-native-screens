@@ -144,10 +144,13 @@
   // Without the below code the Touchable will remain active (highlighted) for the duration of back
   // gesture and onPress may fire when we release the finger.
   UIView *parent = _controller.view;
-  while (parent != nil && ![parent isKindOfClass:[RCTRootContentView class]]) parent = parent.superview;
-  RCTRootContentView *rootView = (RCTRootContentView *)parent;
-  [rootView.touchHandler cancel];
-
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) parent = parent.superview;
+  if (parent != nil) {
+    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler cancel];
+    [touchHandler reset];
+  }
+  
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
   return _controller.viewControllers.count > 1 && topScreen.gestureEnabled;
