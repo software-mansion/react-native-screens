@@ -8,10 +8,10 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
-import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationContainer} from '@react-navigation/native';
+// import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer, NavigationProp, ParamListBase} from '@react-navigation/native';
 
-const HomeScreen = ({navigation}) => (
+const HomeScreen = ({navigation}: {navigation: NavigationProp<ParamListBase>}) => (
   <ScrollView>
     <View style={styles.screen}>
       <Button
@@ -26,7 +26,7 @@ const HomeScreen = ({navigation}) => (
   </ScrollView>
 );
 
-const ModalScreen = ({navigation}) => (
+const ModalScreen = ({navigation}: {navigation: NavigationProp<ParamListBase>}) => (
   <View style={styles.screen}>
     <Button
       onPress={() => navigation.navigate('modalNestedScreen')}
@@ -65,7 +65,7 @@ const HomeStack = () => (
   </NestedStack.Navigator>
 );
 
-const ModalStack = ({navigation}) => (
+const ModalStack = () => (
   <NestedStack.Navigator>
     <NestedStack.Screen
       name="modalScreen"

@@ -1,7 +1,6 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTView.h>
 #import <React/RCTComponent.h>
-#import <React/RCTTouchHandler.h>
 
 #import "RNSScreenContainer.h"
 
@@ -70,7 +69,6 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 
 - (void)notifyFinishTransitioning;
-- (RCTTouchHandler *)reactTouchHandler;
 
 @end
 
