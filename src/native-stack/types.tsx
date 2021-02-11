@@ -51,7 +51,9 @@ export type NativeStackNavigationHelpers = NavigationHelpers<
   NativeStackNavigationEventMap
 >;
 
-export type NativeStackNavigationConfig = Record<string, unknown>;
+// We want it to be an empty object beacuse navigator does not have any additional config
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
