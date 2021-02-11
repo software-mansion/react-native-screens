@@ -4,11 +4,11 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
-public class BackButtonClickedEvent extends Event<BackButtonClickedEvent> {
+public class GoingBackPreventedEvent extends Event<GoingBackPreventedEvent> {
 
-    public static final String EVENT_NAME = "backButtonClicked";
+    public static final String EVENT_NAME = "topGoingBackPrevented";
 
-    public BackButtonClickedEvent(int viewId) {
+    public GoingBackPreventedEvent(int viewId) {
         super(viewId);
     }
 

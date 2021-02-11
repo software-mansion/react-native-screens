@@ -68,6 +68,7 @@ public class Screen extends ViewGroup {
   private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.POP;
   private StackAnimation mStackAnimation = StackAnimation.DEFAULT;
   private boolean mGestureEnabled = true;
+  private boolean mPreventGoingBack = false;
 
   @Override
   protected void onAnimationStart() {
@@ -205,6 +206,10 @@ public class Screen extends ViewGroup {
     mGestureEnabled = gestureEnabled;
   }
 
+  public void setPreventGoingBack(boolean preventGoingBack) {
+    mPreventGoingBack = preventGoingBack;
+  }
+
   public StackAnimation getStackAnimation() {
     return mStackAnimation;
   }
@@ -254,5 +259,9 @@ public class Screen extends ViewGroup {
 
   public boolean isGestureEnabled() {
     return mGestureEnabled;
+  }
+
+  public boolean preventsGoingBack() {
+    return mPreventGoingBack;
   }
 }

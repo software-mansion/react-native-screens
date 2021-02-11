@@ -214,6 +214,11 @@ export type NativeStackNavigationOptions = {
    */
   headerTranslucent?: boolean;
   /**
+   * Boolean indicating whether the navigation should be performed only on the JS side to be able to prevent it.
+   * Affects header back button behavior on Android. On iOS, it affects swipe gesture, header back button (TBD) and modal dismissal. Works only with `gestureEnabled` set to `true` for modal and swipe.
+   */
+  preventGoingBack?: boolean;
+  /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
    * - "push" – the new screen will perform push animation.

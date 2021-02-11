@@ -246,6 +246,7 @@ class StackView extends React.Component {
             ? 'pop'
             : options.replaceAnimation
         }
+        preventGoingBack={options.preventGoingBack}
         pointerEvents={
           index === this.props.navigation.state.routes.length - 1
             ? 'auto'

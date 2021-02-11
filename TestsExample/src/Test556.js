@@ -8,11 +8,12 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{stackPresentation: 'push', preventGoingBack: true}}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen
           name="Second"
           component={Second}
+          options={{gestureEnabled: true, headerBackTitle: 'Back'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

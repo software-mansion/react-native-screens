@@ -67,6 +67,7 @@ export default function NativeStackView({
           stackPresentation = 'push',
           stackAnimation,
           contentStyle,
+          preventGoingBack = false,
         } = options;
 
         const viewStyles = [
@@ -82,6 +83,7 @@ export default function NativeStackView({
             key={route.key}
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
+            preventGoingBack={preventGoingBack}
             replaceAnimation={replaceAnimation}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
@@ -117,7 +119,7 @@ export default function NativeStackView({
                 target: route.key,
               });
             }}
-            onBackButtonClicked={() => {
+            onGoingBackPrevented={() => {
               navigation.emit({
                 type: 'dismiss',
                 target: route.key,

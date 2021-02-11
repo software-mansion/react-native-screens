@@ -79,6 +79,11 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
     view.setGestureEnabled(gestureEnabled);
   }
 
+  @ReactProp(name = "preventGoingBack")
+  public void setPreventGoingBack(Screen view, boolean preventGoingBack) {
+    view.setPreventGoingBack(preventGoingBack);
+  }
+
   @ReactProp(name = "replaceAnimation")
   public void setReplaceAnimation(Screen view, String animation) {
     if (animation == null || "pop".equals(animation)) {
@@ -102,8 +107,8 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
             MapBuilder.of("registrationName", "onWillDisappear"),
             ScreenDisappearEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDisappear"),
-            BackButtonClickedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onBackButtonClicked"),
+            GoingBackPreventedEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onGoingBackPrevented"),
             StackFinishTransitioningEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onFinishTransitioning"));
   }

@@ -93,6 +93,10 @@ declare module 'react-native-screens' {
      */
     onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
     /**
+     * @description A callback that gets called when the current screen is prevented from dismissing by setting `preventGoingBack` to `true`. The callback takes no arguments.
+     */
+    onGoingBackPrevented?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    /**
      * @description A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
      */
     onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
@@ -100,6 +104,10 @@ declare module 'react-native-screens' {
      * @description A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
      */
     onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    /**
+     * @description Boolean indicating whether the navigation should be performed only on the JS side to be able to prevent it. Affects header back button behavior on Android. On iOS, it affects swipe gesture, header back button (TBD) and modal dismissal. Works only with `gestureEnabled` set to `true` for modal and swipe.
+     */
+    preventGoingBack?: boolean;
     /**
      * @description Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
      *  @type "push" – performs push animation
