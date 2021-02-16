@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ScrollView } from 'react-native';
+import { Button, NativeSyntheticEvent, ScrollView } from 'react-native';
 import {NavigationContainer, NavigationProp, ParamListBase} from '@react-navigation/native';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { SearchBar } from 'react-native-screens';
@@ -36,7 +36,7 @@ function First({navigation}: {navigation: NavigationProp<ParamListBase>}) {
           hideNavigationBar={false} 
           autoCapitalize={'sentences'} 
           placeholder={"Some text"} 
-          onChangeText={(e) => setSearch(e.nativeEvent.text)}
+          onChangeText={(e: NativeSyntheticEvent<{ text: string }>) => setSearch(e.nativeEvent.text)}
           onCancelButtonPress={() => console.warn("Cancel button pressed")}
           onSearchButtonPress={() => console.warn("Search button pressed")}
           onFocus={() => console.warn("onFocus event")}
@@ -66,7 +66,7 @@ function First({navigation}: {navigation: NavigationProp<ParamListBase>}) {
 
 function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
   return (
-    <ScrollView>
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
         title="Tap me for first screen"
         onPress={() => navigation.navigate('First')}
