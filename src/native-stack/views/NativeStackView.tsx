@@ -129,9 +129,20 @@ export default function NativeStackView({
                 target: key,
               });
             }}>
+            <HeaderConfig
+              {...options}
+              route={route}
+              headerShown={stackPresentation === 'push' && options.headerShown}
+            />
             <ScreenStack style={styles.container}>
               <Screen style={StyleSheet.absoluteFill}>
-                <HeaderConfig {...options} route={route} />
+                <HeaderConfig
+                  {...options}
+                  route={route}
+                  headerShown={
+                    stackPresentation !== 'push' && options.headerShown
+                  }
+                />
                 <Container
                   style={viewStyles}
                   // @ts-ignore Wrong props passed to View
