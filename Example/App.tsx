@@ -1,27 +1,41 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 import {enableScreens} from 'react-native-screens';
+import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 
-import {MainScreen} from './src/screens';
+import {MainScreen, NativeStack} from './src/screens';
 
 enableScreens();
 
-type MainStackParamList = {
-  Main: undefined;
+const SCREENS = {
+  NativeStack: {title: 'Native Stack', component: NativeStack},
 };
 
-const MainStack = createStackNavigator<MainStackParamList>();
+type RootStackParamList = {
+  Main: undefined;
+} & {
+  [P in keyof typeof SCREENS]: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = (): JSX.Element => (
   <NavigationContainer>
-    <MainStack.Navigator>
-      <MainStack.Screen
+    <Stack.Navigator>
+      <Stack.Screen
         name="Main"
-        options={{title: '📱 React Native Screens Examples'}}
-        component={MainScreen}
-      />
-    </MainStack.Navigator>
+        options={{title: '📱 React Native Screens Examples'}}>
+        {(props) => <MainScreen {...props} screens={SCREENS} />}
+      </Stack.Screen>
+      {(Object.keys(SCREENS) as (keyof typeof SCREENS)[]).map((name) => (
+        <Stack.Screen
+          key={name}
+          name={name}
+          getComponent={() => SCREENS[name].component}
+          options={{title: SCREENS[name].title}}
+        />
+      ))}
+    </Stack.Navigator>
   </NavigationContainer>
 );
 
