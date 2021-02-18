@@ -129,13 +129,17 @@ export default function NativeStackView({
                 target: key,
               });
             }}>
-            <HeaderConfig {...options} route={route} />
-            <Container
-              style={viewStyles}
-              // @ts-ignore Wrong props passed to View
-              stackPresentation={stackPresentation}>
-              {renderScene()}
-            </Container>
+            <ScreenStack style={styles.container}>
+              <Screen style={StyleSheet.absoluteFill}>
+                <HeaderConfig {...options} route={route} />
+                <Container
+                  style={viewStyles}
+                  // @ts-ignore Wrong props passed to View
+                  stackPresentation={stackPresentation}>
+                  {renderScene()}
+                </Container>
+              </Screen>
+            </ScreenStack>
           </Screen>
         );
       })}
