@@ -59,15 +59,22 @@ export default function NativeStackView({
 
   return (
     <ScreenStack style={styles.container}>
-      {routes.map((route) => {
+      {routes.map((route, index) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
           gestureEnabled,
           replaceAnimation = 'pop',
-          stackPresentation = 'push',
           stackAnimation,
           contentStyle,
         } = options;
+
+        let { stackPresentation = 'push' } = options;
+
+        if (index === 0) {
+          // first screen should always be treated as `push`, it resolves problems with no header animation
+          // for navigator with first screen as `modal` and the next as `push`
+          stackPresentation = 'push';
+        }
 
         const viewStyles = [
           styles.container,
@@ -76,6 +83,9 @@ export default function NativeStackView({
           },
           contentStyle,
         ];
+
+        const isHeaderInModal = stackPresentation !== 'push';
+        const isHeaderInPush = stackPresentation === 'push';
 
         return (
           <Screen
@@ -129,19 +139,13 @@ export default function NativeStackView({
                 target: key,
               });
             }}>
-            <HeaderConfig
-              {...options}
-              route={route}
-              headerShown={stackPresentation === 'push' && options.headerShown}
-            />
-            <ScreenStack style={styles.container}>
-              <Screen style={StyleSheet.absoluteFill}>
+            <HeaderConfig {...options} route={route} enabled={isHeaderInPush} />
+            <ScreenStack style={styles.container} enabled={isHeaderInModal}>
+              <Screen style={StyleSheet.absoluteFill} enabled={isHeaderInModal}>
                 <HeaderConfig
                   {...options}
                   route={route}
-                  headerShown={
-                    stackPresentation !== 'push' && options.headerShown
-                  }
+                  enabled={isHeaderInModal}
                 />
                 <Container
                   style={viewStyles}

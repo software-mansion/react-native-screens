@@ -16,9 +16,13 @@ export default function App() {
         screenOptions={{
           stackPresentation: 'modal',
           headerRight: () => <View style={styles.headerView} />,
+          headerTitleStyle: {
+            color: 'cyan',
+          },
+          headerShown: true,
         }}>
         <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} />
+        <Stack.Screen name="Second" component={Second} options={{stackPresentation: 'push'}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

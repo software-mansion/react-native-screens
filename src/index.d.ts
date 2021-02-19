@@ -136,6 +136,10 @@ declare module 'react-native-screens' {
      * @description A callback that gets called when the current screen finishes its transition.
      */
     onFinishTransitioning?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+    /**
+     * @description A prop that disables usage of native component for the ScreenStack. Only for internal usage.
+     */
+    enabled?: boolean;
   }
 
   export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -172,17 +176,21 @@ declare module 'react-native-screens' {
      */
     children?: React.ReactNode;
     /**
+     * @description Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
+     */
+    color?: string;
+    /**
      *@description Controls whether the stack should be in rtl or ltr form.
      */
     direction?: 'rtl' | 'ltr';
     /**
+     * @description A prop that disables usage of native component for the header. Only for internal usage.
+     */
+    enabled?: boolean;
+    /**
      * @description When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
      */
     hidden?: boolean;
-    /**
-     * @description Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
-     */
-    color?: string;
     /**
      * @description If set to true the back button will not be rendered as a part of navigation header.
      */
