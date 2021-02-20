@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-ignore: No declaration available
 import ReactNativeStyleAttributes from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 export function processFonts(
