@@ -11,6 +11,7 @@ import {MenuItem} from './src/shared';
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import NativeNavigation from './src/screens/NativeNavigation';
 import StackPresentation from './src/screens/StackPresentation';
+import HeaderOptions from './src/screens/HeaderOptions';
 
 const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
   SimpleNativeStack: {
@@ -22,6 +23,7 @@ const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
     title: 'Stack Presentation',
     component: StackPresentation,
   },
+  HeaderOptions: {title: 'Header Options', component: HeaderOptions},
 };
 
 type RootStackParamList = {
