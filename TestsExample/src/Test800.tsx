@@ -9,7 +9,7 @@ import {
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+export default function App(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -22,7 +22,7 @@ export default function App() {
           headerShown: true,
         }}>
         <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} options={{stackPresentation: 'push'}}/>
+        <Stack.Screen name="Second" component={Second} options={{headerShown: true}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -35,7 +35,7 @@ function First({
 }) {
   return (
     <Button
-      title="Tap me for second screen"
+      title="Tap me for the second screen"
       onPress={() => navigation.navigate('Second')}
     />
   );
@@ -48,7 +48,7 @@ function Second({
 }) {
   return (
     <Button
-      title="Tap me for second screen"
+      title="Tap me for the first screen"
       onPress={() => navigation.navigate('First')}
     />
   );

@@ -12,14 +12,12 @@ import { processFonts } from './FontProcessor';
 
 type Props = NativeStackNavigationOptions & {
   route: Route<string>;
-  enabled?: boolean;
 };
 
 export default function HeaderConfig({
   backButtonImage,
   backButtonInCustomView,
   direction,
-  enabled,
   headerBackTitle,
   headerBackTitleStyle = {},
   headerBackTitleVisible = true,
@@ -71,7 +69,6 @@ export default function HeaderConfig({
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
       direction={direction}
-      enabled={enabled}
       hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}

@@ -3,9 +3,17 @@ import {
   StackActions,
   StackNavigationState,
   useTheme,
+  Route,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { Platform, StyleSheet, View, ViewProps } from 'react-native';
+import {
+  Platform,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewProps,
+  ViewStyle,
+} from 'react-native';
 // @ts-ignore Getting private component
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import {
@@ -17,6 +25,7 @@ import {
 import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
+  NativeStackNavigationOptions,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 
@@ -43,6 +52,38 @@ if (__DEV__) {
   Container = DebugContainer;
 }
 
+const maybeRenderNestedStack = (
+  options: NativeStackNavigationOptions,
+  route: Route<string>,
+  renderScene: () => JSX.Element,
+  isHeaderInModal: boolean,
+  viewStyles: StyleProp<ViewStyle>
+): JSX.Element => {
+  if (isHeaderInModal) {
+    return (
+      <ScreenStack style={styles.container}>
+        <Screen style={StyleSheet.absoluteFill}>
+          <HeaderConfig {...options} route={route} />
+          <Container
+            style={viewStyles}
+            // @ts-ignore Wrong props passed to View
+            stackPresentation={options.stackPresentation}>
+            {renderScene()}
+          </Container>
+        </Screen>
+      </ScreenStack>
+    );
+  }
+  return (
+    <Container
+      style={viewStyles}
+      // @ts-ignore Wrong props passed to View
+      stackPresentation={options.stackPresentation}>
+      {renderScene()}
+    </Container>
+  );
+};
+
 type Props = {
   state: StackNavigationState<ParamListBase>;
   navigation: NativeStackNavigationHelpers;
@@ -62,10 +103,11 @@ export default function NativeStackView({
       {routes.map((route, index) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
+          contentStyle,
           gestureEnabled,
+          headerShown,
           replaceAnimation = 'pop',
           stackAnimation,
-          contentStyle,
         } = options;
 
         let { stackPresentation = 'push' } = options;
@@ -84,8 +126,10 @@ export default function NativeStackView({
           contentStyle,
         ];
 
-        const isHeaderInModal = stackPresentation !== 'push';
-        const isHeaderInPush = stackPresentation === 'push';
+        const isHeaderInModal =
+          stackPresentation !== 'push' && headerShown === true;
+        const isHeaderInPush =
+          stackPresentation === 'push' && headerShown === true;
 
         return (
           <Screen
@@ -139,22 +183,18 @@ export default function NativeStackView({
                 target: key,
               });
             }}>
-            <HeaderConfig {...options} route={route} enabled={isHeaderInPush} />
-            <ScreenStack style={styles.container} enabled={isHeaderInModal}>
-              <Screen style={StyleSheet.absoluteFill} enabled={isHeaderInModal}>
-                <HeaderConfig
-                  {...options}
-                  route={route}
-                  enabled={isHeaderInModal}
-                />
-                <Container
-                  style={viewStyles}
-                  // @ts-ignore Wrong props passed to View
-                  stackPresentation={stackPresentation}>
-                  {renderScene()}
-                </Container>
-              </Screen>
-            </ScreenStack>
+            <HeaderConfig
+              {...options}
+              route={route}
+              headerShown={isHeaderInPush}
+            />
+            {maybeRenderNestedStack(
+              options,
+              route,
+              renderScene,
+              isHeaderInModal,
+              viewStyles
+            )}
           </Screen>
         );
       })}

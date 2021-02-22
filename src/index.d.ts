@@ -136,10 +136,6 @@ declare module 'react-native-screens' {
      * @description A callback that gets called when the current screen finishes its transition.
      */
     onFinishTransitioning?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
-    /**
-     * @description A prop that disables usage of native component for the ScreenStack. Only for internal usage.
-     */
-    enabled?: boolean;
   }
 
   export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -183,10 +179,6 @@ declare module 'react-native-screens' {
      *@description Controls whether the stack should be in rtl or ltr form.
      */
     direction?: 'rtl' | 'ltr';
-    /**
-     * @description A prop that disables usage of native component for the header. Only for internal usage.
-     */
-    enabled?: boolean;
     /**
      * @description When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
      */

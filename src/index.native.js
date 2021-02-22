@@ -127,32 +127,6 @@ class ScreenContainer extends React.Component {
   }
 }
 
-class ScreenStack extends React.Component {
-  render() {
-    const { enabled = true, ...rest } = this.props;
-
-    if (!enabled) {
-      return <View {...rest} />;
-    } else {
-      return <ScreensNativeModules.NativeScreenStack {...this.props} />;
-    }
-  }
-}
-
-class ScreenStackHeaderConfig extends React.Component {
-  render() {
-    const { enabled = true, ...rest } = this.props;
-
-    if (!enabled) {
-      return <View {...rest} />;
-    } else {
-      return (
-        <ScreensNativeModules.NativeScreenStackHeaderConfig {...this.props} />
-      );
-    }
-  }
-}
-
 const styles = StyleSheet.create({
   headerSubview: {
     position: 'absolute',
@@ -199,14 +173,19 @@ const ScreenStackHeaderCenterView = (props) => (
 module.exports = {
   ScreenContainer,
   Screen,
-  ScreenStack,
-  ScreenStackHeaderConfig,
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
   },
 
   get NativeScreenContainer() {
     return ScreensNativeModules.NativeScreenContainer;
+  },
+
+  get ScreenStack() {
+    return ScreensNativeModules.NativeScreenStack;
+  },
+  get ScreenStackHeaderConfig() {
+    return ScreensNativeModules.NativeScreenStackHeaderConfig;
   },
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
