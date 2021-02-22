@@ -11,7 +11,6 @@ export const MenuItem = ({title, onPress}: Props): JSX.Element => {
     <TouchableOpacity onPress={onPress}>
       <View style={styles.container}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.chevron}>{'>'}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -21,12 +20,11 @@ const styles = StyleSheet.create({
   container: {
     height: 50,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
     backgroundColor: 'white',
-    borderBottomColor: 'gray',
-    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
   },
   title: {
     color: 'black',
