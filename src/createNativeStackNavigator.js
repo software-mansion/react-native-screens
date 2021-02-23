@@ -213,6 +213,38 @@ class StackView extends React.Component {
     return <ScreenStackHeaderConfig {...headerOptions} />;
   };
 
+  _maybeRenderNestedStack = (
+    isHeaderInModal,
+    screenProps,
+    route,
+    navigation,
+    SceneComponent,
+    index,
+    descriptor
+  ) => {
+    if (isHeaderInModal) {
+      return (
+        <ScreenStack style={styles.scenes}>
+          <Screen style={StyleSheet.absoluteFill}>
+            {this._renderHeaderConfig(index, route, descriptor)}
+            <SceneView
+              screenProps={screenProps}
+              navigation={navigation}
+              component={SceneComponent}
+            />
+          </Screen>
+        </ScreenStack>
+      );
+    }
+    return (
+      <SceneView
+        screenProps={screenProps}
+        navigation={navigation}
+        component={SceneComponent}
+      />
+    );
+  };
+
   _renderScene = (index, route, descriptor) => {
     const { navigation, getComponent, options } = descriptor;
     const { mode, transparentCard } = this.props.navigationConfig;
@@ -233,6 +265,13 @@ class StackView extends React.Component {
     if (options.animationEnabled === false) {
       stackAnimation = 'none';
     }
+
+    const hasHeader =
+      this.props.navigationConfig?.headerMode !== 'none' &&
+      options.header !== null;
+
+    const isHeaderInModal = stackPresentation !== 'push' && hasHeader;
+    const isHeaderInPush = stackPresentation === 'push' && hasHeader;
 
     const { screenProps } = this.props;
     return (
@@ -260,12 +299,16 @@ class StackView extends React.Component {
         }
         onAppear={() => this._onAppear(route, descriptor)}
         onDismissed={() => this._removeScene(route)}>
-        {this._renderHeaderConfig(index, route, descriptor)}
-        <SceneView
-          screenProps={screenProps}
-          navigation={navigation}
-          component={SceneComponent}
-        />
+        {isHeaderInPush && this._renderHeaderConfig(index, route, descriptor)}
+        {this._maybeRenderNestedStack(
+          isHeaderInModal,
+          screenProps,
+          route,
+          navigation,
+          SceneComponent,
+          index,
+          descriptor
+        )}
       </Screen>
     );
   };
