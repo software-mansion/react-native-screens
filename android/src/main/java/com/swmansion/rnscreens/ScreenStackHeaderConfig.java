@@ -318,16 +318,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
   }
 
-  @Override
-  public View getChildAt(int index) {
-    return getConfigSubview(index);
+  public Toolbar getToolbar() {
+    return mToolbar;
   }
-
-  @Override
-  public int getChildCount() {
-    return getConfigSubviewsCount();
-  }
-
 
   public ScreenStackHeaderSubview getConfigSubview(int index) {
     return mConfigSubviews.get(index);
