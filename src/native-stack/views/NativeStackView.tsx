@@ -127,9 +127,9 @@ export default function NativeStackView({
         ];
 
         const isHeaderInModal =
-          stackPresentation !== 'push' && headerShown === true;
+          stackPresentation !== 'push' && headerShown !== false;
         const isHeaderInPush =
-          stackPresentation === 'push' && headerShown === true;
+          stackPresentation === 'push' && headerShown !== false;
 
         return (
           <Screen
