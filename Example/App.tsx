@@ -12,6 +12,7 @@ import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import NativeNavigation from './src/screens/NativeNavigation';
 import StackPresentation from './src/screens/StackPresentation';
 import HeaderOptions from './src/screens/HeaderOptions';
+import StatusBar from './src/screens/StatusBar';
 
 const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
   SimpleNativeStack: {
@@ -24,6 +25,7 @@ const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
     component: StackPresentation,
   },
   HeaderOptions: {title: 'Header Options', component: HeaderOptions},
+  StatusBar: {title: 'Status bar (iOS)', component: StatusBar},
 };
 
 type RootStackParamList = {
