@@ -388,15 +388,15 @@ API_AVAILABLE(ios(13.0)){
   }
 #endif
 
-  if (shouldHide) {
-    return;
-  }
-
   if (config.direction == UISemanticContentAttributeForceLeftToRight || config.direction == UISemanticContentAttributeForceRightToLeft) {
     navctr.view.semanticContentAttribute = config.direction;
     navctr.navigationBar.semanticContentAttribute = config.direction;
   }
 
+  if (shouldHide) {
+    return;
+  }
+  
   navitem.title = config.title;
 #if !TARGET_OS_TV
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
