@@ -14,7 +14,7 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 
-import {SettingsPicker, SettingsSwitch, Square} from '../shared';
+import {SettingsInput, SettingsPicker, SettingsSwitch, Square} from '../shared';
 
 enableScreens();
 
@@ -32,7 +32,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
     <ScrollView>
       <Button
         onPress={() => navigation.navigate('Settings')}
-        title="Go to new screen"
+        title="Go to next screen"
       />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </ScrollView>
@@ -44,11 +44,14 @@ interface SettingsScreenProps {
 }
 
 const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
+  const [headerTitle, setHeaderTitle] = useState('Settings');
   const [backButtonVisible, setBackButtonVisible] = useState(true);
   const [headerShown, setHeaderShown] = useState(true);
   const [headerLargeTitle, setHeaderLargeTitle] = useState(false);
-
   const [headerItem, setHeaderItem] = useState('right');
+  const [headerBackTitle, setHeaderBackTitle] = useState('Back');
+  const [headerHideShadow, setHeaderHideShadow] = useState(false);
+  const [headerTranslucent, setHeaderTranslucent] = useState(false);
 
   const square = (props: {tintColor?: string}) => (
     <Square {...props} color="green" size={20} />
@@ -56,24 +59,37 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitle,
       headerBackTitleVisible: backButtonVisible, // iOS
       headerHideBackButton: !backButtonVisible, // android
       headerShown,
       headerRight: headerItem === 'right' ? square : undefined,
       headerCenter: headerItem === 'center' ? square : undefined,
       headerLeft: headerItem === 'left' ? square : undefined,
-      headerLargeTitle,
+      headerLargeTitle, // iOS
+      headerBackTitle, // iOS
+      headerHideShadow,
+      headerTranslucent,
     });
   }, [
     navigation,
+    headerTitle,
     backButtonVisible,
     headerItem,
     headerShown,
     headerLargeTitle,
+    headerBackTitle,
+    headerHideShadow,
+    headerTranslucent,
   ]);
 
   return (
     <SafeAreaView style={styles.container}>
+      <SettingsInput
+        label="Header title"
+        value={headerTitle}
+        onValueChange={setHeaderTitle}
+      />
       <SettingsSwitch
         label="Back button visible"
         value={backButtonVisible}
@@ -83,6 +99,16 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
         label="Header shown"
         value={headerShown}
         onPress={() => setHeaderShown(!headerShown)}
+      />
+      <SettingsSwitch
+        label="Header hide shadow"
+        value={headerHideShadow}
+        onPress={() => setHeaderHideShadow(!headerHideShadow)}
+      />
+      <SettingsSwitch
+        label="Header translusent"
+        value={headerTranslucent}
+        onPress={() => setHeaderTranslucent(!headerTranslucent)}
       />
       <SettingsPicker
         label="Header item"
@@ -97,6 +123,11 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
             label="Header large title"
             value={headerLargeTitle}
             onPress={() => setHeaderLargeTitle(!headerLargeTitle)}
+          />
+          <SettingsInput
+            label="Header back title"
+            value={headerBackTitle}
+            onValueChange={setHeaderBackTitle}
           />
         </>
       ) : null}
@@ -116,7 +147,16 @@ const App = (): JSX.Element => (
       }}
       component={MainScreen}
     />
-    <Stack.Screen name="Settings" component={SettingsScreen} />
+    <Stack.Screen
+      name="Settings"
+      component={SettingsScreen}
+      options={{
+        headerTintColor: 'magenta',
+        headerStyle: {
+          backgroundColor: 'darkblue',
+        },
+      }}
+    />
   </Stack.Navigator>
 );
 

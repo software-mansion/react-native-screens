@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 
 type Props = {
@@ -25,6 +25,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderRadius: 5,
+    borderColor: '#039be5',
+    backgroundColor: 'white',
   },
   label: {
     fontSize: 16,
