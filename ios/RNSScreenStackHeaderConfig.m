@@ -43,13 +43,13 @@
 
 @end
 
-@interface RNSUIBarBackButtonItem : UIBarButtonItem
+@interface RNSUIBarButtonItem : UIBarButtonItem
 
 @property (nonatomic) BOOL menuHidden;
 
 @end
 
-@implementation RNSUIBarBackButtonItem
+@implementation RNSUIBarButtonItem
 
 -(void)setMenuHidden:(BOOL)menuHidden
 {
@@ -59,9 +59,11 @@
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
 - (void)setMenu:(UIMenu *)menu {
+  if (@available(iOS 14.0, *)) {
     if (!_menuHidden) {
         super.menu = menu;
     }
+  }
 }
 #endif
 
@@ -424,19 +426,14 @@ API_AVAILABLE(ios(13.0)){
   navitem.title = config.title;
 #if !TARGET_OS_TV
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize || config.backButtonMenuHidden) {
-    RNSUIBarBackButtonItem *backBarButtonItem = [[RNSUIBarBackButtonItem alloc]
+    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc]
                                                  initWithTitle:config.backTitle ?: prevItem.title
                                                  style:UIBarButtonItemStylePlain
                                                  target:nil
                                                  action:nil];
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
-    if (@available(iOS 14.0, *)) {
-      if (config.backButtonMenuHidden) {
-        [backBarButtonItem setMenuHidden:YES];
-      }
+    if (config.backButtonMenuHidden) {
+      [backBarButtonItem setMenuHidden:YES];
     }
-#endif
     prevItem.backBarButtonItem = backBarButtonItem;
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];

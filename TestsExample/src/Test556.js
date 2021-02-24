@@ -8,15 +8,11 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{backButtonMenuHidden: true}}>
+      <Stack.Navigator>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen
           name="Second"
           component={Second}
-        />
-        <Stack.Screen
-          name="Third"
-          component={Third}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -32,12 +28,7 @@ function First({navigation}) {
 
 function Second({navigation}) {
   return (
-    <Button title="Tap me for third screen" onPress={() => navigation.navigate('Third')} />
+    <Button title="Tap me for second screen" onPress={() => navigation.navigate('First')} />
   );
 }
 
-function Third({navigation}) {
-  return (
-    <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
-  );
-}

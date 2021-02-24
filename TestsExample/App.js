@@ -30,6 +30,7 @@ import Test750 from './src/Test750';
 import Test765 from './src/Test765';
 import Test780 from './src/Test780';
 import Test817 from './src/Test817';
+import Test830 from './src/Test830';
 import Test831 from './src/Test831';
 
 enableScreens();
