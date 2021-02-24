@@ -66,6 +66,13 @@ export type NativeStackNavigationOptions = {
    */
   backButtonInCustomView?: boolean;
   /**
+   * Whether to hide the iOS >= 14 menu of back button.
+   * Only supported on iOS.
+   *
+   * @platform ios
+   */
+  backButtonMenuHidden?: boolean;
+  /**
    * Style object for the scene content.
    */
   contentStyle?: StyleProp<ViewStyle>;

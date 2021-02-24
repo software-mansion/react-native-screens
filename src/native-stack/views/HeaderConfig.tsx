@@ -17,6 +17,7 @@ type Props = NativeStackNavigationOptions & {
 export default function HeaderConfig({
   backButtonImage,
   backButtonInCustomView,
+  backButtonMenuHidden,
   direction,
   headerBackTitle,
   headerBackTitleStyle = {},
@@ -60,6 +61,7 @@ export default function HeaderConfig({
   return (
     <ScreenStackHeaderConfig
       backButtonInCustomView={backButtonInCustomView}
+      backButtonMenuHidden={backButtonMenuHidden}
       backgroundColor={
         headerStyle.backgroundColor ? headerStyle.backgroundColor : colors.card
       }

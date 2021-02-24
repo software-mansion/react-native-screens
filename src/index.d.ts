@@ -144,6 +144,11 @@ declare module 'react-native-screens' {
      */
     backButtonInCustomView?: boolean;
     /**
+     * @host (iOS only)
+     * @description Whether to hide the iOS >= 14 menu of back button.
+     */
+    backButtonMenuHidden?: boolean;
+    /**
      * @description Controls the color of the navigation header.
      */
     backgroundColor?: string;

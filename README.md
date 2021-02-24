@@ -200,6 +200,10 @@ Below is a list of properties that can be set with `ScreenStackHeaderConfig` com
 
 Whether to show the back button with a custom left side of the header.
 
+#### `backButtonMenuHidden` (iOS only)
+
+Whether to hide the iOS >= 14 menu of back button.
+
 #### `backgroundColor`
 
 Controls the color of the navigation header.

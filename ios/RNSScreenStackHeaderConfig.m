@@ -43,6 +43,30 @@
 
 @end
 
+@interface RNSUIBarBackButtonItem : UIBarButtonItem
+
+@property (nonatomic) BOOL menuHidden;
+
+@end
+
+@implementation RNSUIBarBackButtonItem
+
+-(void)setMenuHidden:(BOOL)menuHidden
+{
+  _menuHidden = menuHidden;
+}
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
+- (void)setMenu:(UIMenu *)menu {
+    if (!_menuHidden) {
+        super.menu = menu;
+    }
+}
+#endif
+
+@end
+
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 }
@@ -399,12 +423,21 @@ API_AVAILABLE(ios(13.0)){
   
   navitem.title = config.title;
 #if !TARGET_OS_TV
-  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
-    prevItem.backBarButtonItem = [[UIBarButtonItem alloc]
-                                  initWithTitle:config.backTitle ?: prevItem.title
-                                  style:UIBarButtonItemStylePlain
-                                  target:nil
-                                  action:nil];
+  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize || config.backButtonMenuHidden) {
+    RNSUIBarBackButtonItem *backBarButtonItem = [[RNSUIBarBackButtonItem alloc]
+                                                 initWithTitle:config.backTitle ?: prevItem.title
+                                                 style:UIBarButtonItemStylePlain
+                                                 target:nil
+                                                 action:nil];
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
+    if (@available(iOS 14.0, *)) {
+      if (config.backButtonMenuHidden) {
+        [backBarButtonItem setMenuHidden:YES];
+      }
+    }
+#endif
+    prevItem.backBarButtonItem = backBarButtonItem;
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
@@ -731,6 +764,7 @@ RCT_EXPORT_VIEW_PROPERTY(largeTitleHideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(backButtonMenuHidden, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)

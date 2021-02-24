@@ -68,6 +68,7 @@ class StackView extends React.Component {
 
     const {
       backButtonInCustomView,
+      backButtonMenuHidden,
       direction,
       headerBackTitle,
       headerBackTitleStyle,
@@ -99,6 +100,7 @@ class StackView extends React.Component {
 
     const headerOptions = {
       backButtonInCustomView,
+      backButtonMenuHidden,
       backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
       backTitleFontFamily:
         headerBackTitleStyle && headerBackTitleStyle.fontFamily,

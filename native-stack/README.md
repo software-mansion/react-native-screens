@@ -59,6 +59,10 @@ The `options` prop can be used to configure individual screens inside the naviga
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
 
+#### `backButtonMenuHidden`
+
+Boolean indicating whether to hide the iOS >= 14 menu of back button. Only supported on iOS.
+
 #### `contentStyle`
 
 Style object for the scene content.
