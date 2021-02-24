@@ -4,12 +4,16 @@ import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 type Props = {
   label: string;
   value: boolean;
-  onPress: (value: boolean) => void;
+  onValueChange: (value: boolean) => void;
 };
 
-export const SettingsSwitch = ({label, value, onPress}: Props): JSX.Element => {
+export const SettingsSwitch = ({
+  label,
+  value,
+  onValueChange,
+}: Props): JSX.Element => {
   return (
-    <TouchableOpacity onPress={() => onPress(!value)}>
+    <TouchableOpacity onPress={() => onValueChange(!value)}>
       <View style={styles.container}>
         <Text>{`${label}: ${value}`}</Text>
       </View>

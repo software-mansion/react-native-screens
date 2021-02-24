@@ -93,22 +93,22 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
       <SettingsSwitch
         label="Back button visible"
         value={backButtonVisible}
-        onPress={() => setBackButtonVisible(!backButtonVisible)}
+        onValueChange={setBackButtonVisible}
       />
       <SettingsSwitch
         label="Header shown"
         value={headerShown}
-        onPress={() => setHeaderShown(!headerShown)}
+        onValueChange={setHeaderShown}
       />
       <SettingsSwitch
         label="Header hide shadow"
         value={headerHideShadow}
-        onPress={() => setHeaderHideShadow(!headerHideShadow)}
+        onValueChange={setHeaderHideShadow}
       />
       <SettingsSwitch
         label="Header translusent"
         value={headerTranslucent}
-        onPress={() => setHeaderTranslucent(!headerTranslucent)}
+        onValueChange={setHeaderTranslucent}
       />
       <SettingsPicker
         label="Header item"
@@ -122,7 +122,7 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
           <SettingsSwitch
             label="Header large title"
             value={headerLargeTitle}
-            onPress={() => setHeaderLargeTitle(!headerLargeTitle)}
+            onValueChange={setHeaderLargeTitle}
           />
           <SettingsInput
             label="Header back title"
