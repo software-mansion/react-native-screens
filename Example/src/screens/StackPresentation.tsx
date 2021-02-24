@@ -1,6 +1,7 @@
 import React from 'react';
 import {ScrollView, StyleSheet, Button, SafeAreaView} from 'react-native';
 import {enableScreens} from 'react-native-screens';
+import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -26,7 +27,7 @@ type StackParamList = {
 };
 
 interface MainScreenProps {
-  navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
@@ -58,7 +59,10 @@ const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        statusBarStyle: 'dark',
+      }}>
       <Stack.Screen
         name="Main"
         component={MainScreen}

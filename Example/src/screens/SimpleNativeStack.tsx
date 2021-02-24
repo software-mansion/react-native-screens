@@ -40,7 +40,10 @@ const DetailScreen = ({navigation}: DetailScreenProps): JSX.Element => (
 const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
-  <Stack.Navigator>
+  <Stack.Navigator
+    screenOptions={{
+      statusBarStyle: 'dark',
+    }}>
     <Stack.Screen
       name="Main"
       component={MainScreen}

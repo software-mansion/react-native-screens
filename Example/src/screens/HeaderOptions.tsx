@@ -139,7 +139,10 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
 const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
-  <Stack.Navigator>
+  <Stack.Navigator
+    screenOptions={{
+      statusBarStyle: 'dark',
+    }}>
     <Stack.Screen
       name="Main"
       options={{
@@ -152,9 +155,6 @@ const App = (): JSX.Element => (
       component={SettingsScreen}
       options={{
         headerTintColor: 'magenta',
-        headerStyle: {
-          backgroundColor: 'darkblue',
-        },
       }}
     />
   </Stack.Navigator>
@@ -163,6 +163,8 @@ const App = (): JSX.Element => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'white',
   },
   heading: {
     marginLeft: 10,
