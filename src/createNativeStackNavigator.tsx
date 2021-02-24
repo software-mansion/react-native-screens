@@ -294,6 +294,13 @@ class StackView extends React.Component<Props> {
             labelVisible={options.backTitleVisible}
             labelStyle={options.headerBackTitleStyle}
             titleLayout={options.layoutPreset}
+            // @ts-ignore old props kept for very old version of `react-navigation-stack`
+            title={options.backButtonTitle}
+            truncatedTitle={options.truncatedBackButtonTitle}
+            backTitleVisible={options.backTitleVisible}
+            titleStyle={options.headerBackTitleStyle}
+            layoutPreset={options.layoutPreset}
+            scene={scene}
           />
         </ScreenStackHeaderLeftView>
       );
