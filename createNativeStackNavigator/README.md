@@ -165,6 +165,8 @@ How the screen should be presented. Possible values:
 
 Defaults to `push`.
 
+Using `containedModal` and `containedTransparentModal` with other types of modals in one native stack navigator is not recommended and can result in a freeze or a crash of the application.
+
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.
