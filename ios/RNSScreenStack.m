@@ -9,7 +9,7 @@
 #import <React/RCTRootContentView.h>
 #import <React/RCTTouchHandler.h>
 
-@interface RNSScreenStackView () <UINavigationControllerDelegate, UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate>
+@interface RNSScreenStackView () <UINavigationControllerDelegate, UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate, UIViewControllerTransitioningDelegate>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -43,8 +43,18 @@
 
 @end
 
+@interface RNSScreenStackInteractiveAnimator : UIPercentDrivenInteractiveTransition
+
+@property (nonatomic) BOOL interactionInProgress;
+
+- (instancetype)initWithViewController:(UIViewController *)viewController;
+
+@end
+
 @interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
-- (instancetype)initWithOperation:(UINavigationControllerOperation)operation;
+- (instancetype)initWithOperation:(UINavigationControllerOperation)operation interactionController:(nullable RNSScreenStackInteractiveAnimator *)interactionController;
+
+@property (nonatomic) RNSScreenStackInteractiveAnimator *interactionController;
 @end
 
 @implementation RNSScreenStackView {
@@ -132,7 +142,18 @@
     screen = (RNSScreenView *) fromVC.view;
   }
   if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationSimplePush || screen.stackAnimation == RNSScreenStackAnimationNone)) {
-    return  [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+    if (screen.stackAnimation == RNSScreenStackAnimationSimplePush && operation == UINavigationControllerOperationPop) {
+      return [[RNSScreenStackAnimator alloc] initWithOperation:operation interactionController:[[RNSScreenStackInteractiveAnimator alloc] initWithViewController:fromVC]];
+    }
+    return [[RNSScreenStackAnimator alloc] initWithOperation:operation interactionController:nil];
+  }
+  return nil;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController
+{
+  if ([animationController isKindOfClass:[RNSScreenStackAnimator class]] && ((RNSScreenStackAnimator *) animationController).interactionController.interactionInProgress) {
+    return ((RNSScreenStackAnimator *) animationController).interactionController;
   }
   return nil;
 }
@@ -544,10 +565,11 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
   UINavigationControllerOperation _operation;
 }
 
-- (instancetype)initWithOperation:(UINavigationControllerOperation)operation
+- (instancetype)initWithOperation:(UINavigationControllerOperation)operation interactionController:(nullable RNSScreenStackInteractiveAnimator *)interactionController
 {
   if (self = [super init]) {
     _operation = operation;
+    _interactionController = interactionController;
   }
   return self;
 }
@@ -624,6 +646,71 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
       }
+  }
+}
+
+@end
+
+@implementation RNSScreenStackInteractiveAnimator {
+  BOOL _shouldCompleteTransition;
+  UIViewController *_controller;
+}
+
+- (instancetype)initWithViewController:(UIViewController *)viewController
+{
+  self = [super init];
+  if (self) {
+    _controller = viewController;
+    [self prepareGestureRecognizerForView:viewController.view];
+  }
+  return self;
+}
+
+- (void)prepareGestureRecognizerForView:(UIView *)view
+{
+  UIScreenEdgePanGestureRecognizer *gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
+  [gestureRecognizer setEdges:UIRectEdgeLeft];
+
+  [view addGestureRecognizer:gestureRecognizer];
+}
+
+- (void)handleGesture:(UIScreenEdgePanGestureRecognizer *)gestureRecognizer {
+  
+  CGPoint translation = [gestureRecognizer translationInView:gestureRecognizer.view.superview];
+  double progress = (translation.x / 200);
+//  progress = CGFloat(fminf(fmaxf(Float(progress), 0.0), 1.0));
+  
+  switch (gestureRecognizer.state) {
+  
+    case UIGestureRecognizerStateBegan: {
+      _interactionInProgress = YES;
+      [_controller dismissViewControllerAnimated:YES completion:nil];
+      break;
+    }
+
+    case UIGestureRecognizerStateChanged: {
+      _shouldCompleteTransition = progress > 0.5;
+      [self updateInteractiveTransition:progress];
+      break;
+    }
+
+    case UIGestureRecognizerStateCancelled: {
+      _interactionInProgress = NO;
+      [self cancelInteractiveTransition];
+      break;
+    }
+      
+    case UIGestureRecognizerStateEnded: {
+      _interactionInProgress = NO;
+      if (_shouldCompleteTransition) {
+        [self finishInteractiveTransition];
+      } else {
+        [self cancelInteractiveTransition];
+      }
+    }
+    default: {
+      break;
+    }
   }
 }
 
