@@ -1,12 +1,13 @@
 import * as React from 'react';
 import {
+  Button,
   View,
 } from 'react-native';
 import {
   createAppContainer,
 } from 'react-navigation';
 
-import createNativeStackNavigator, {NativeStackNavigationOptions} from 'react-native-screens/createNativeStackNavigator';	
+import createNativeStackNavigator, {NativeStackNavigationOptions, NativeStackNavigationProp} from 'react-native-screens/createNativeStackNavigator';	
 
 const DEFAULT_STACK_OPTIONS : NativeStackNavigationOptions
  = {
@@ -85,9 +86,11 @@ function makeStacks() {
 
 export default createAppContainer(makeStacks());
 
-function Home() {
+function Home({navigation}: {navigation: NativeStackNavigationProp}) {
   return (
     <View style={{ flex: 1, backgroundColor: 'red' }}>
+      <Button title="Go forward" onPress={() => navigation.navigate("Home5")} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
 }

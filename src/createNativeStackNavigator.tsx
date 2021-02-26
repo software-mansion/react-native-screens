@@ -59,6 +59,8 @@ type NativeStackRemoveNavigationAction = {
   key?: string;
 };
 
+export type NativeStackNavigationProp = StackNavigationProp;
+
 export type NativeStackNavigationOptions = StackNavigatorOptions &
   NativeStackNavigationOptionsV5 &
   BackButtonProps & {
