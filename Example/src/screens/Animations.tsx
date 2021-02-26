@@ -33,7 +33,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
   return (
     <View style={styles.container}>
       <SettingsPicker
-        label="Replace animation"
+        label="Stack animation"
         value={stackAnimation}
         onValueChange={setStackAnimation}
         items={[
