@@ -3,7 +3,6 @@ import React, {useState, useLayoutEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  Button,
   ScrollView,
   Text,
   Platform,
@@ -14,7 +13,13 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 
-import {SettingsInput, SettingsPicker, SettingsSwitch, Square} from '../shared';
+import {
+  SettingsInput,
+  SettingsPicker,
+  SettingsSwitch,
+  Square,
+  Button,
+} from '../shared';
 
 enableScreens();
 

@@ -19,7 +19,7 @@ export const SettingsPicker = ({
     <TouchableOpacity
       style={styles.container}
       onPress={() => setIsOpen(!isOpen)}>
-      <Text>{`${label}: ${value}`}</Text>
+      <Text style={styles.label}>{`${label}: ${value}`}</Text>
       {isOpen
         ? items.map((item) => (
             <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   label: {
-    fontSize: 16,
+    fontSize: 15,
+    color: 'black',
   },
   picker: {
     height: 50,
@@ -59,5 +60,6 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 5,
     paddingHorizontal: 20,
+    color: 'black',
   },
 });

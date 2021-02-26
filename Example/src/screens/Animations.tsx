@@ -1,11 +1,11 @@
 import React, {useState, useLayoutEffect} from 'react';
-import {View, StyleSheet, Button} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {SettingsPicker, Spacer} from '../shared';
+import {SettingsPicker, Button} from '../shared';
 
 enableScreens();
 
@@ -45,33 +45,20 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
           'none',
         ]}
       />
-      <Spacer>
-        <Button
-          title="Replace with pop animation"
-          onPress={() => navigation.replace('Pop')}
-        />
-      </Spacer>
-      <Spacer>
-        <Button
-          title="Replace with push animation"
-          onPress={() => navigation.replace('Push')}
-        />
-      </Spacer>
-      <Spacer>
-        <Button
-          title="New screen"
-          onPress={() => navigation.navigate('Screen')}
-        />
-      </Spacer>
-      <Spacer>
-        <Button
-          title="Open modal"
-          onPress={() => navigation.navigate('Modal')}
-        />
-      </Spacer>
-      <Spacer>
-        <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
-      </Spacer>
+      <Button
+        title="Replace with pop animation"
+        onPress={() => navigation.replace('Pop')}
+      />
+      <Button
+        title="Replace with push animation"
+        onPress={() => navigation.replace('Push')}
+      />
+      <Button
+        title="New screen"
+        onPress={() => navigation.navigate('Screen')}
+      />
+      <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
+      <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </View>
   );
 };

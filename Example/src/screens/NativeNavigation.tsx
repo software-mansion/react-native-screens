@@ -1,10 +1,11 @@
 import React from 'react';
-import {TextInput, StyleSheet, Button, View, ScrollView} from 'react-native';
+import {TextInput, StyleSheet, View, ScrollView} from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
+import {Button} from '../shared';
 
 enableScreens();
 

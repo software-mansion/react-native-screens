@@ -1,12 +1,12 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Button, SafeAreaView} from 'react-native';
+import {ScrollView, StyleSheet, SafeAreaView} from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {Spacer} from '../shared';
+import {Button} from '../shared';
 
 enableScreens();
 
@@ -34,13 +34,13 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
   return (
     <ScrollView style={styles.container}>
       {Object.keys(SCREENS).map((screen) => (
-        <Spacer key={screen}>
-          <Button title={screen} onPress={() => navigation.navigate(screen)} />
-        </Spacer>
+        <Button
+          key={screen}
+          title={screen}
+          onPress={() => navigation.navigate(screen)}
+        />
       ))}
-      <Spacer>
-        <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
-      </Spacer>
+      <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </ScrollView>
   );
 };
@@ -50,7 +50,7 @@ interface SimpleScreenProps {
 }
 
 const SimpleScreen = ({navigation}: SimpleScreenProps): JSX.Element => (
-  <SafeAreaView style={styles.center}>
+  <SafeAreaView style={styles.container}>
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </SafeAreaView>
 );
@@ -83,11 +83,7 @@ const App = (): JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingTop: 100,
   },
 });
 

@@ -22,7 +22,7 @@ export const SettingsInput = ({
   return (
     <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
       <View style={styles.container}>
-        <Text>{`${label}: ${value}`}</Text>
+        <Text style={styles.label}>{`${label}: ${value}`}</Text>
         {isOpen ? (
           <TextInput
             style={styles.input}
@@ -49,7 +49,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   label: {
-    fontSize: 16,
+    fontSize: 15,
+    color: 'black',
   },
   input: {
     height: 40,

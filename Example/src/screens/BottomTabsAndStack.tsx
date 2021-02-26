@@ -1,5 +1,5 @@
 import React, {useLayoutEffect} from 'react';
-import {SafeAreaView, Button, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
@@ -7,7 +7,7 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {RouteProp} from '@react-navigation/native';
-import {Spacer} from '../shared';
+import {Button} from '../shared';
 
 enableScreens();
 
@@ -34,19 +34,12 @@ const DetailsScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <Spacer>
-        <Button
-          title={`More details ${index}`}
-          onPress={() => navigation.push('Details', {index: index + 1})}
-        />
-      </Spacer>
+      <Button
+        title={`More details ${index}`}
+        onPress={() => navigation.push('Details', {index: index + 1})}
+      />
       {index === 0 ? (
-        <Spacer>
-          <Button
-            onPress={() => navigation.pop()}
-            title="🔙 Back to Examples"
-          />
-        </Spacer>
+        <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
       ) : null}
     </SafeAreaView>
   );

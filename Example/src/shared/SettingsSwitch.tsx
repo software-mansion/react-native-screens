@@ -15,7 +15,7 @@ export const SettingsSwitch = ({
   return (
     <TouchableOpacity onPress={() => onValueChange(!value)}>
       <View style={styles.container}>
-        <Text>{`${label}: ${value}`}</Text>
+        <Text style={styles.label}>{`${label}: ${value}`}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   label: {
-    fontSize: 16,
+    fontSize: 15,
+    color: 'black',
   },
 });

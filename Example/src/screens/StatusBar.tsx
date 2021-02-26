@@ -1,11 +1,11 @@
 import React, {useLayoutEffect, useState} from 'react';
-import {View, StyleSheet, Button, Platform, Text} from 'react-native';
+import {View, StyleSheet, Platform, Text} from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {SettingsPicker, SettingsSwitch} from '../shared';
+import {SettingsPicker, SettingsSwitch, Button, Spacer} from '../shared';
 
 enableScreens();
 
@@ -53,9 +53,9 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
           />
         </>
       ) : Platform.OS === 'android' ? (
-        <View>
+        <Spacer>
           <Text>StatusBar options have no effect on Android.</Text>
-        </View>
+        </Spacer>
       ) : null}
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </View>
