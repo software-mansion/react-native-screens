@@ -55,7 +55,6 @@ export type ScreenOrientationTypes =
 export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
 
 export interface ScreenProps extends ViewProps {
-  ref?: React.Ref<View>;
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
@@ -89,6 +88,7 @@ export interface ScreenProps extends ViewProps {
    * @description A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
   onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  ref?: React.Ref<View>;
   /**
    * @description Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
    *  @type "push" – performs push animation
