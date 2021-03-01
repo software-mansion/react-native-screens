@@ -15,7 +15,6 @@ import HeaderOptions from './src/screens/HeaderOptions';
 import StatusBar from './src/screens/StatusBar';
 import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
-// @ts-ignore react-navigation v4 example
 import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 
 const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
@@ -37,6 +36,7 @@ const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
   },
   StackReactNavigation4: {
     title: 'Stack Example react-navigation v4',
+    // @ts-ignore react-navigation v4 AppNavigator type
     component: StackReactNavigation4,
   },
 };

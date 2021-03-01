@@ -2,19 +2,20 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
 import {enableScreens} from 'react-native-screens';
+import {NavigationStackProp} from 'react-navigation-stack';
 import {createCompatNavigatorFactory} from '@react-navigation/compat';
 
 // in this example we use compatibility layer to show v4 syntax within v5 project
 // but normally with v4 you would use different import
-// import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';	
+// import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 // more information about compatibility layer https://reactnavigation.org/docs/compatibility/
 
 import {Button} from '../shared';
 
-enableScreens()
+enableScreens();
 
-class HomeScreen extends React.Component {
+class HomeScreen extends React.Component<{navigation: NavigationStackProp}> {
   render() {
     return (
       <View style={styles.container}>
@@ -32,7 +33,7 @@ class HomeScreen extends React.Component {
   }
 }
 
-class DetailsScreen extends React.Component {
+class DetailsScreen extends React.Component<{navigation: NavigationStackProp}> {
   render() {
     return (
       <View style={styles.container}>
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-  }
+  },
 });
 
 export default AppNavigator;
