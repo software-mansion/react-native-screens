@@ -13,6 +13,7 @@
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/bottom-tabs": "^5.11.7",
+    "@react-navigation/compat": "^5.3.14",
     "@react-navigation/drawer": "^5.12.3",
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
@@ -25,7 +26,9 @@
     "react-native-safe-area-context": "^3.1.9",
     "react-native-search-bar": "^3.5.1",
     "react-native-vector-icons": "^8.0.0",
-    "react-native-webview": "^11.2.3"
+    "react-native-webview": "^11.2.3",
+    "react-navigation": "^4.4.4",
+    "react-navigation-stack": "^2.10.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

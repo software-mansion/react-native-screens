@@ -1,17 +1,31 @@
 import React from 'react';
-import {View, Text, Button} from 'react-native';
-import {createAppContainer} from 'react-navigation';
+import {View, Text, StyleSheet} from 'react-native';
 
-import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
+import {enableScreens} from 'react-native-screens';
+import {createCompatNavigatorFactory} from '@react-navigation/compat';
+
+// in this example we use compatibility layer to show v4 syntax within v5 project
+// but normally with v4 you would use different import
+// import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';	
+import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+// more information about compatibility layer https://reactnavigation.org/docs/compatibility/
+
+import {Button} from '../shared';
+
+enableScreens()
 
 class HomeScreen extends React.Component {
   render() {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Home Screen</Text>
+      <View style={styles.container}>
+        <Text style={styles.text}>Home Screen</Text>
         <Button
           title="Go to Details"
           onPress={() => this.props.navigation.navigate('Details')}
+        />
+        <Button
+          title="🔙 Back to Examples"
+          onPress={() => this.props.navigation.goBack()}
         />
       </View>
     );
@@ -21,8 +35,8 @@ class HomeScreen extends React.Component {
 class DetailsScreen extends React.Component {
   render() {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Details Screen</Text>
+      <View style={styles.container}>
+        <Text style={styles.text}>Details Screen</Text>
         <Button
           title="Go to Details... again"
           onPress={() => this.props.navigation.push('Details')}
@@ -36,7 +50,10 @@ class DetailsScreen extends React.Component {
   }
 }
 
-const AppNavigator = createNativeStackNavigator(
+// we run it with compatibilty layer to use react-navigation v5 in project
+// normally in v4 it would be just
+// const AppNavigator = createNativeStackNavigator(
+const AppNavigator = createCompatNavigatorFactory(createNativeStackNavigator)(
   {
     Home: HomeScreen,
     Details: DetailsScreen,
@@ -56,4 +73,14 @@ const AppNavigator = createNativeStackNavigator(
   },
 );
 
-export default createAppContainer(AppNavigator);
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 100,
+  },
+  text: {
+    textAlign: 'center',
+  }
+});
+
+export default AppNavigator;

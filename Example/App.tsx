@@ -15,6 +15,8 @@ import HeaderOptions from './src/screens/HeaderOptions';
 import StatusBar from './src/screens/StatusBar';
 import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
+// @ts-ignore react-navigation v4 example
+import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 
 const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
   SimpleNativeStack: {
@@ -32,6 +34,10 @@ const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
   BottomTabsAndStack: {
     title: 'Bottom tabs and native stack',
     component: BottomTabsAndStack,
+  },
+  StackReactNavigation4: {
+    title: 'Stack Example react-navigation v4',
+    component: StackReactNavigation4,
   },
 };
 
