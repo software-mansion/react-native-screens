@@ -87,6 +87,7 @@ module.exports = {
         'no-unused-vars': 'off',
         'no-array-constructor': 'off',
         'no-use-before-define': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/ban-ts-comment': [
           'error',
           {

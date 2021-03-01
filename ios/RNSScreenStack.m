@@ -386,7 +386,7 @@
   }
 }
 
-- (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
+- (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers behindModal:(BOOL)behindModal
 {
   // when there is no change we return immediately
   if ([_controller.viewControllers isEqualToArray:controllers]) {
@@ -423,7 +423,8 @@
   // controller is still there
   BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreen class]];
 
-  BOOL shouldAnimate = !firstTimePush && ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
+  // we don't animate the push (or pop) screen changes occuring behind the modal since pushing them too fast can cause crashes with same VC pushed twice
+  BOOL shouldAnimate = !firstTimePush && ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone && !behindModal;
 
   if (firstTimePush) {
     // nothing pushed yet
@@ -482,7 +483,7 @@
     }
   }
 
-  [self setPushViewControllers:pushControllers];
+  [self setPushViewControllers:pushControllers behindModal:modalControllers.count > 0];
   [self setModalViewControllers:modalControllers];
 }
 
