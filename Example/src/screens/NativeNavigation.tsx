@@ -43,6 +43,20 @@ const PushScreen = ({navigation}: PushScreenProps): JSX.Element => (
   </View>
 );
 
+interface ModalScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Modal'>;
+}
+
+const ModalScreen = ({navigation}: ModalScreenProps): JSX.Element => (
+  <View style={styles.screen}>
+    <TextInput placeholder="Hello" style={styles.textInput} />
+    <Button onPress={() => navigation.goBack()} title="Go back" />
+    <Button onPress={() => navigation.push('Modal')} title="Open modal" />
+    <View style={styles.leftTop} />
+    <View style={styles.bottomRight} />
+  </View>
+);
+
 const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
@@ -69,7 +83,7 @@ const App = (): JSX.Element => (
     />
     <Stack.Screen
       name="Modal"
-      component={PushScreen}
+      component={ModalScreen}
       options={{
         stackPresentation: 'modal',
         statusBarStyle: 'light',
