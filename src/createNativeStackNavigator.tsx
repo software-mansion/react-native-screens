@@ -54,7 +54,7 @@ function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
 }
 
 type NativeStackRemoveNavigationAction = {
-  type: 'NativeStackNavigator/REMOVE';
+  type: typeof REMOVE_ACTION;
   immediate: boolean;
   key?: string;
 };
@@ -240,12 +240,7 @@ class StackView extends React.Component<Props> {
       titleFontFamily: headerTitleStyle?.fontFamily,
       titleFontSize: headerTitleStyle?.fontSize,
       titleFontWeight: headerTitleStyle?.fontWeight,
-      translucent:
-        headerTranslucent === undefined
-          ? translucent === undefined
-            ? false
-            : translucent
-          : headerTranslucent,
+      translucent: headerTranslucent || translucent || false,
     };
 
     const hasHeader =
