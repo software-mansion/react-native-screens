@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, SafeAreaView} from 'react-native';
+import {ScrollView, SafeAreaView, StyleSheet, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -17,28 +17,47 @@ import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
 import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 
-const SCREENS: Record<string, {title: string; component: () => JSX.Element}> = {
+const SCREENS: Record<
+  string,
+  {title: string; component: () => JSX.Element; type: 'example' | 'playground'}
+> = {
   SimpleNativeStack: {
     title: 'Simple Native Stack',
     component: SimpleNativeStack,
+    type: 'example',
   },
-  NativeNavigation: {title: 'Native Navigation', component: NativeNavigation},
+  NativeNavigation: {
+    title: 'Native Navigation',
+    component: NativeNavigation,
+    type: 'example',
+  },
   StackPresentation: {
     title: 'Stack Presentation',
     component: StackPresentation,
+    type: 'example',
   },
-  HeaderOptions: {title: 'Header Options', component: HeaderOptions},
-  StatusBar: {title: 'Status bar (iOS)', component: StatusBar},
-  Animations: {title: 'Animations', component: Animations},
   BottomTabsAndStack: {
     title: 'Bottom tabs and native stack',
     component: BottomTabsAndStack,
+    type: 'example',
   },
   StackReactNavigation4: {
-    title: 'Stack Example react-navigation v4',
+    title: 'Stack react-navigation v4',
     // @ts-ignore react-navigation v4 AppNavigator type
     component: StackReactNavigation4,
+    type: 'example',
   },
+  HeaderOptions: {
+    title: 'Header Options',
+    component: HeaderOptions,
+    type: 'playground',
+  },
+  StatusBar: {
+    title: 'Status bar (iOS)',
+    component: StatusBar,
+    type: 'playground',
+  },
+  Animations: {title: 'Animations', component: Animations, type: 'playground'},
 };
 
 type RootStackParamList = {
@@ -56,13 +75,26 @@ interface MainScreenProps {
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
   <ScrollView>
     <SafeAreaView>
-      {Object.keys(SCREENS).map((name) => (
-        <MenuItem
-          key={name}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-        />
-      ))}
+      <Text style={styles.label}>Examples</Text>
+      {Object.keys(SCREENS)
+        .filter((name) => SCREENS[name].type === 'example')
+        .map((name) => (
+          <MenuItem
+            key={name}
+            title={SCREENS[name].title}
+            onPress={() => navigation.navigate(name)}
+          />
+        ))}
+      <Text style={styles.label}>Playgrounds</Text>
+      {Object.keys(SCREENS)
+        .filter((name) => SCREENS[name].type === 'playground')
+        .map((name) => (
+          <MenuItem
+            key={name}
+            title={SCREENS[name].title}
+            onPress={() => navigation.navigate(name)}
+          />
+        ))}
     </SafeAreaView>
   </ScrollView>
 );
@@ -86,5 +118,14 @@ const ExampleApp = (): JSX.Element => (
     </Stack.Navigator>
   </NavigationContainer>
 );
+
+const styles = StyleSheet.create({
+  label: {
+    fontSize: 15,
+    color: 'black',
+    margin: 10,
+    marginTop: 15,
+  },
+});
 
 export default ExampleApp;
