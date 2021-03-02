@@ -318,6 +318,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
   }
 
+  public Toolbar getToolbar() {
+    return mToolbar;
+  }
+
   public ScreenStackHeaderSubview getConfigSubview(int index) {
     return mConfigSubviews.get(index);
   }
