@@ -19,11 +19,15 @@ type StackParamList = {
 
 interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+  stackAnimation: string;
+  setStackAnimation: (value: string) => void;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
-  const [stackAnimation, setStackAnimation] = useState('default');
-
+const MainScreen = ({
+  navigation,
+  stackAnimation,
+  setStackAnimation,
+}: MainScreenProps): JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
       stackAnimation,
@@ -65,60 +69,106 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
 
 interface ReplaceScreenProps {
   navigation: NativeStackNavigationProp<StackParamList>;
+  stackAnimation: string;
 }
 
-const ReplaceScreen = ({navigation}: ReplaceScreenProps): JSX.Element => (
-  <View style={styles.container}>
-    <Button title="Go back" onPress={() => navigation.replace('Main')} />
-  </View>
-);
+const ReplaceScreen = ({
+  navigation,
+  stackAnimation,
+}: ReplaceScreenProps): JSX.Element => {
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      stackAnimation,
+    });
+  }, [navigation, stackAnimation]);
+
+  return (
+    <View style={styles.container}>
+      <Button title="Go back" onPress={() => navigation.replace('Main')} />
+    </View>
+  );
+};
 
 interface NavigateScreenProps {
   navigation: NativeStackNavigationProp<StackParamList>;
+  stackAnimation: string;
 }
 
-const NavigateScreen = ({navigation}: NavigateScreenProps): JSX.Element => (
-  <View style={styles.container}>
-    <Button title="Go back" onPress={() => navigation.navigate('Main')} />
-  </View>
-);
+const NavigateScreen = ({
+  navigation,
+  stackAnimation,
+}: NavigateScreenProps): JSX.Element => {
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      stackAnimation,
+    });
+  }, [navigation, stackAnimation]);
+
+  return (
+    <View style={styles.container}>
+      <Button title="Go back" onPress={() => navigation.navigate('Main')} />
+    </View>
+  );
+};
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
-  <Stack.Navigator
-    screenOptions={{
-      statusBarStyle: 'dark',
-    }}>
-    <Stack.Screen
-      name="Main"
-      component={MainScreen}
-      options={{title: 'Animations'}}
-    />
-    <Stack.Screen
-      name="Push"
-      component={ReplaceScreen}
-      options={{
-        replaceAnimation: 'push',
-      }}
-    />
-    <Stack.Screen
-      name="Pop"
-      component={ReplaceScreen}
-      options={{
-        replaceAnimation: 'pop',
-      }}
-    />
-    <Stack.Screen
-      name="Modal"
-      component={NavigateScreen}
-      options={{
-        stackPresentation: 'modal',
-      }}
-    />
-    <Stack.Screen name="Screen" component={NavigateScreen} />
-  </Stack.Navigator>
-);
+const App = (): JSX.Element => {
+  const [stackAnimation, setStackAnimation] = useState('default');
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        statusBarStyle: 'dark',
+      }}>
+      <Stack.Screen name="Main" options={{title: 'Animations'}}>
+        {({navigation}) => (
+          <MainScreen
+            navigation={navigation}
+            stackAnimation={stackAnimation}
+            setStackAnimation={setStackAnimation}
+          />
+        )}
+      </Stack.Screen>
+      <Stack.Screen
+        name="Push"
+        options={{
+          replaceAnimation: 'push',
+        }}>
+        {({navigation}) => (
+          <ReplaceScreen
+            navigation={navigation}
+            stackAnimation={stackAnimation}
+          />
+        )}
+      </Stack.Screen>
+      <Stack.Screen
+        name="Pop"
+        options={{
+          replaceAnimation: 'pop',
+        }}>
+        {({navigation}) => (
+          <ReplaceScreen
+            navigation={navigation}
+            stackAnimation={stackAnimation}
+          />
+        )}
+      </Stack.Screen>
+      <Stack.Screen
+        name="Modal"
+        options={{
+          stackPresentation: 'modal',
+        }}>
+        {({navigation}) => (
+          <NavigateScreen
+            navigation={navigation}
+            stackAnimation={stackAnimation}
+          />
+        )}
+      </Stack.Screen>
+      <Stack.Screen name="Screen" component={NavigateScreen} />
+    </Stack.Navigator>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
