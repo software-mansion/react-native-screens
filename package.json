@@ -81,6 +81,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "^0.63.2",
+    "react-native-safe-area-context": "^3.1.9",
     "react-navigation": "^4.4.3",
     "react-navigation-stack": "^2.9.0",
     "react-test-renderer": "^16.13.1",

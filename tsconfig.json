@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "react-native-screens": ["./src"],
-      "react-native-screens/native-stack": ["./src/native-stack/index.tsx"]
+      "react-native-screens/native-stack": ["./src/native-stack/index.tsx"],
+      "react-native-screens/createNativeStackNavigator": ["./src/createNativeStackNavigator.tsx"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
