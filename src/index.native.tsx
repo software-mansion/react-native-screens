@@ -2,15 +2,30 @@ import React from 'react';
 import {
   Animated,
   Image,
+  ImageProps,
   requireNativeComponent,
   StyleSheet,
   UIManager,
   View,
+  ViewProps,
 } from 'react-native';
+
+import {
+  StackPresentationTypes,
+  StackAnimationTypes,
+  BlurEffectTypes,
+  ScreenReplaceTypes,
+  ScreenOrientationTypes,
+  HeaderSubviewTypes,
+  ScreenProps,
+  ScreenContainerProps,
+  ScreenStackProps,
+  ScreenStackHeaderConfigProps,
+} from './types';
 
 let ENABLE_SCREENS = false;
 
-function enableScreens(shouldEnableScreens = true) {
+function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = shouldEnableScreens;
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
     console.error(
@@ -22,62 +37,66 @@ function enableScreens(shouldEnableScreens = true) {
 // const that tells if the library should use new implementation, will be undefined for older versions
 const shouldUseActivityState = true;
 
-function screensEnabled() {
+function screensEnabled(): boolean {
   return ENABLE_SCREENS;
 }
 
 // We initialize these lazily so that importing the module doesn't throw error when not linked
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
-let NativeScreenValue;
-let NativeScreenContainerValue;
-let NativeScreenStack;
-let NativeScreenStackHeaderConfig;
-let NativeScreenStackHeaderSubview;
-let AnimatedNativeScreen;
+let NativeScreenValue: React.ComponentType<ScreenProps>;
+let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
+let NativeScreenStack: React.ComponentType<ScreenStackProps>;
+let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
+let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
+  ViewProps & { type?: HeaderSubviewTypes }
+>>;
+let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
     NativeScreenValue =
-      NativeScreenValue || requireNativeComponent('RNSScreen', null);
+      NativeScreenValue || requireNativeComponent('RNSScreen');
     return NativeScreenValue;
   },
 
   get NativeScreenContainer() {
     NativeScreenContainerValue =
       NativeScreenContainerValue ||
-      requireNativeComponent('RNSScreenContainer', null);
+      requireNativeComponent('RNSScreenContainer');
     return NativeScreenContainerValue;
   },
 
   get NativeScreenStack() {
     NativeScreenStack =
-      NativeScreenStack || requireNativeComponent('RNSScreenStack', null);
+      NativeScreenStack || requireNativeComponent('RNSScreenStack');
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
     NativeScreenStackHeaderConfig =
       NativeScreenStackHeaderConfig ||
-      requireNativeComponent('RNSScreenStackHeaderConfig', null);
+      requireNativeComponent('RNSScreenStackHeaderConfig');
     return NativeScreenStackHeaderConfig;
   },
 
   get NativeScreenStackHeaderSubview() {
     NativeScreenStackHeaderSubview =
       NativeScreenStackHeaderSubview ||
-      requireNativeComponent('RNSScreenStackHeaderSubview', null);
+      requireNativeComponent('RNSScreenStackHeaderSubview');
     return NativeScreenStackHeaderSubview;
   },
 };
 
-class Screen extends React.Component {
-  setNativeProps(props) {
-    this._ref.setNativeProps(props);
+class Screen extends React.Component<ScreenProps> {
+  private ref: React.ElementRef<typeof View> | null = null;
+
+  setNativeProps(props: ScreenProps): void {
+    this.ref?.setNativeProps(props);
   }
 
-  setRef = (ref) => {
-    this._ref = ref;
-    this.props.onComponentRef && this.props.onComponentRef(ref);
+  setRef = (ref: React.ElementRef<typeof View> | null): void => {
+    this.ref = ref;
+    this.props.onComponentRef?.(ref);
   };
 
   render() {
@@ -87,8 +106,9 @@ class Screen extends React.Component {
       // Filter out active prop in this case because it is unused and
       // can cause problems depending on react-native version:
       // https://github.com/react-navigation/react-navigation/issues/4886
+      // same for enabled prop
 
-      /* eslint-disable no-unused-vars */
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { active, enabled, onComponentRef, ...rest } = this.props;
 
       return <Animated.View {...rest} ref={this.setRef} />;
@@ -97,6 +117,8 @@ class Screen extends React.Component {
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
 
+      // same reason as above
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let { enabled, active, activityState, ...rest } = this.props;
       if (active !== undefined && activityState === undefined) {
         console.warn(
@@ -115,7 +137,7 @@ class Screen extends React.Component {
   }
 }
 
-class ScreenContainer extends React.Component {
+class ScreenContainer extends React.Component<ScreenContainerProps> {
   render() {
     const { enabled = true, ...rest } = this.props;
 
@@ -138,7 +160,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ScreenStackHeaderBackButtonImage = (props) => (
+const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
     style={styles.headerSubview}>
@@ -146,7 +168,9 @@ const ScreenStackHeaderBackButtonImage = (props) => (
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 
-const ScreenStackHeaderRightView = (props) => (
+const ScreenStackHeaderRightView = (
+  props: React.PropsWithChildren<ViewProps>
+): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="right"
@@ -154,7 +178,9 @@ const ScreenStackHeaderRightView = (props) => (
   />
 );
 
-const ScreenStackHeaderLeftView = (props) => (
+const ScreenStackHeaderLeftView = (
+  props: React.PropsWithChildren<ViewProps>
+): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="left"
@@ -162,7 +188,9 @@ const ScreenStackHeaderLeftView = (props) => (
   />
 );
 
-const ScreenStackHeaderCenterView = (props) => (
+const ScreenStackHeaderCenterView = (
+  props: React.PropsWithChildren<ViewProps>
+): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     {...props}
     type="center"
@@ -170,9 +198,25 @@ const ScreenStackHeaderCenterView = (props) => (
   />
 );
 
+export type {
+  StackPresentationTypes,
+  StackAnimationTypes,
+  BlurEffectTypes,
+  ScreenReplaceTypes,
+  ScreenOrientationTypes,
+  HeaderSubviewTypes,
+  ScreenProps,
+  ScreenContainerProps,
+  ScreenStackProps,
+  ScreenStackHeaderConfigProps,
+};
+
 module.exports = {
-  ScreenContainer,
+  // these are classes so they are not evaluated until used
+  // so no need to use getters for them
   Screen,
+  ScreenContainer,
+
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
   },
@@ -190,6 +234,9 @@ module.exports = {
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
+
+  // these are functions and will not be evaluated until used
+  // so no need to use getters for them
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
