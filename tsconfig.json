@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-screens": ["./src/screens.d.ts"],
+      "react-native-screens": ["./src"],
       "react-native-screens/native-stack": ["./src/native-stack/index.tsx"]
     },
     "allowUnreachableCode": false,
