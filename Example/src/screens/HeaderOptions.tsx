@@ -111,7 +111,7 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
         onValueChange={setHeaderHideShadow}
       />
       <SettingsSwitch
-        label="Header translusent"
+        label="Header translucent"
         value={headerTranslucent}
         onValueChange={setHeaderTranslucent}
       />
