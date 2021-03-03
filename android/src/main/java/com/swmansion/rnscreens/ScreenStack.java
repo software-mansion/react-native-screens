@@ -144,14 +144,27 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   @Override
   protected void performUpdate() {
 
-    ArrayList<ScreenStackFragment> nonDismissedScreens = getNonDismissedScreens();
-
     // When going back from a nested stack with a single screen on it, we may hit an edge case
     // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
     // handle the case of newTop being NULL, which happens in several places below
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
-    if(nonDismissedScreens.size() > 0) {
-      newTop = nonDismissedScreens.get(nonDismissedScreens.size() - 1);
+    ScreenStackFragment visibleBottom = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+
+    for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
+      ScreenStackFragment screen = mScreenFragments.get(i);
+      if (!mDismissed.contains(screen)) {
+        if (newTop == null) {
+          newTop = screen;
+          if (!isTransparent(newTop)) {
+            break;
+          }
+        } else {
+          visibleBottom = screen;
+          if(!isTransparent(screen)){
+            break;
+          }
+        }
+      }
     }
 
     boolean customAnimation = false;
@@ -220,28 +233,42 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
 
-    ArrayList<ScreenStackFragment> visibleScreensBelowTop = getVisibleScreensBelowTop();
-
     for (ScreenStackFragment screen : mScreenFragments) {
       // detach all screens that should not be visible
-      if (screen != newTop && !visibleScreensBelowTop.contains(screen) && !mDismissed.contains(screen)) {
+      if (screen != newTop && screen != visibleBottom && !mDismissed.contains(screen)) {
         getOrCreateTransaction().remove(screen);
       }
+      // Stop detaching screens when reaching visible bottom. All screens above bottom should be
+      // visible.
+      if(screen == visibleBottom) {
+        break;
+      }
     }
-    // attach screens visible below top
-    for (int i = visibleScreensBelowTop.size() - 1; i >= 0; i--){
-      final ScreenStackFragment belowTop = visibleScreensBelowTop.get(i);
-      if (!belowTop.isAdded()) {
-        getOrCreateTransaction().add(getId(), belowTop).runOnCommit(new Runnable() {
+
+    // attach screens that just became visible
+    if (visibleBottom != null && !visibleBottom.isAdded()) {
+      final ScreenStackFragment top = newTop;
+      boolean beneathVisibleBottom = true;
+
+      for (ScreenStackFragment screen : mScreenFragments) {
+        // ignore all screens beneath the visible bottom
+        if(beneathVisibleBottom){
+          if(screen == visibleBottom){
+            beneathVisibleBottom = false;
+          }
+          else continue;
+        }
+        // when founding first visible screen, make all screens after that visible
+        getOrCreateTransaction().add(getId(), screen).runOnCommit(new Runnable() {
           @Override
           public void run() {
-            belowTop.getScreen().bringToFront();
+            top.getScreen().bringToFront();
           }
         });
       }
     }
 
-    if (newTop != null && !newTop.isAdded()) {
+    else if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
     }
 
@@ -308,46 +335,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
   }
 
-  private boolean isTransparent(ScreenStackFragment fragment){
+  private static boolean isTransparent(ScreenStackFragment fragment){
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
-
-
-  private ArrayList<ScreenStackFragment> getNonDismissedScreens() {
-    ArrayList<ScreenStackFragment> nonDismissedScreens = new ArrayList<>();
-    for(ScreenStackFragment screen : mScreenFragments){
-      if(!mDismissed.contains(screen)){
-        nonDismissedScreens.add(screen);
-      }
-    }
-    return nonDismissedScreens;
-  }
-
-  private ArrayList<ScreenStackFragment> getVisibleScreensBelowTop() {
-    ArrayList<ScreenStackFragment> nonDismissedScreens = getNonDismissedScreens();
-    ArrayList<ScreenStackFragment> visibleScreensBelowTop = new ArrayList<>();
-
-    int topScreenIndex = nonDismissedScreens.size() - 1;
-    for (int i = topScreenIndex; i >= 0; i--) {
-      ScreenStackFragment screen = nonDismissedScreens.get(i);
-
-      // No need to continue if top is not a transparent modal since no other screens will be visible
-      if (topScreenIndex == i) {
-        if (!isTransparent(screen)) break;
-      }
-
-      else if (isTransparent(screen)) {
-        visibleScreensBelowTop.add(screen);
-      }
-
-      // When finding first screen that isn't transparent, that will be the last visible screen.
-      // Add it and stop looking for visible screens.
-      else {
-        visibleScreensBelowTop.add(screen);
-        break;
-      }
-    }
-    return visibleScreensBelowTop;
-  }
-
 }
