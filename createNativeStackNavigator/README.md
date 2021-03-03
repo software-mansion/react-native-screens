@@ -36,7 +36,40 @@ const RootStack = createNativeStackNavigator(
 );
 ```
 
+### StackNavigatorConfig
+
+Visual options:
+
+- `mode` - it is an option from `stackNavigator` and controls the stack presentation along with `cardTransparent` prop. Use `stackPresentation` instead to be consistent with v5 `native-stack`. Available options are: `'modal'`, `'containedModal'`.
+- `headerMode` - it is an option from `stackNavigator` and it hides the header when set to `none`. Use `headerShown` instead to be consistent with v5 `native-stack`. Available option is: `'none'`.
+- `transparentCard` - This is a boolean from `stackNavigator` that controls the stack presentation along with `mode` prop. Use `stackPresentation` instead to be consistent with v5 `native-stack`.
+
 ### `navigationOptions` for screens inside of the navigator
+
+Options from `stack` navigator:
+
+- `header` - makes the header hide when set to `null`. Use `headerShown` instead to be consistent with v5 `native-stack`.
+- `cardTransparent` - boolean that controls the stack presentation along with `mode` prop. Use `stackPresentation` instead to be consistent with v5 `native-stack`.
+- `animationEnabled`- boolean that sets stack animation to none when `false` passed. Use `stackAnimation: 'none'` instead to be consistent with v5 `native-stack`.
+- `cardStyle` - style prop for `Screen` component.
+
+Options for back button taken from `react-navigation-stack`:
+
+- `headerBackImage` - maps to [`headerBackImage`](https://reactnavigation.org/docs/4.x/stack-navigator#headerbackimage)
+- `headerPressColorAndroid` - maps to [`headerPressColorAndroid`](https://reactnavigation.org/docs/4.x/stack-navigator#headerpresscolorandroid)
+- `headerTintColor` - maps to [`headerTintColor`](https://reactnavigation.org/docs/4.x/stack-navigator#headertintcolor)
+- `backButtonTitle` - maps to [`headerBackTitle`](https://reactnavigation.org/docs/4.x/stack-navigator#headerbacktitle)
+- `truncatedBackButtonTitle` - maps to [`headerTruncatedBackTitle`](https://reactnavigation.org/docs/4.x/stack-navigator#headertruncatedbacktitle)
+- `backTitleVisible` - maps to [`headerBackTitleVisible`](https://reactnavigation.org/docs/4.x/stack-navigator#headerbacktitlevisible)
+- `headerBackTitleStyle` - maps to [`headerBackTitleStyle`](https://reactnavigation.org/docs/4.x/stack-navigator#headerbacktitlestyle)
+- `layoutPreset` - Layout of the title element in the header.
+
+Legacy options (these props differ from the ones used in v5 `native-stack`, and we would like to keep the API consistent between versions):
+
+- `hideShadow` - see `headerHideShadow`.
+- `largeTitle` - see `headerLargeTitle`.
+- `largeTitleHideShadow` - see `headerLargeTitleHideShadow`.
+- `translucent` - see `headerTranslucent`.
 
 #### `backButtonInCustomView`
 
@@ -50,7 +83,7 @@ String that applies `rtl` or `ltr` form to the stack. On Android, you have to ad
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`,
 
-Gestures are only supported on iOS. They can be disabled only when `stackPresentation` is `push`.
+Gestures are only supported on iOS.
 
 #### `headerBackTitle`
 
@@ -67,6 +100,41 @@ Style object for header back title. Supported properties:
 
 Whether the back button title should be visible or not. Defaults to `true`. Only supported on iOS.
 
+#### `headerHideBackButton`
+
+Boolean indicating whether to hide the back button in the header. Only supported on Android.
+
+#### `headerHideShadow`
+
+Boolean indicating whether to hide the elevation shadow on the header.
+
+#### `headerLargeStyle` (iOS only)
+
+Style object for the large header. Supported properties:
+
+- `backgroundColor`
+
+#### `headerLargeTitle`
+
+Boolean used to set a native property to prefer a large title header (like in iOS setting).
+
+For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
+
+Only supported on iOS.
+
+#### `headerLargeTitleHideShadow` (iOS only)
+
+Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+
+#### `headerLargeTitleStyle` (iOS only)
+
+Style object for header large title. Supported properties:
+
+- `color`
+- `fontFamily`
+- `fontSize`
+- `fontWeight`
+
 #### `headerLeft`
 
 Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
@@ -75,9 +143,9 @@ Function which returns a React Element to display on the left side of the header
 
 Function which returns a React Element to display on the right side of the header.
 
-#### `headerHideBackButton`
+#### `headerShown`
 
-Boolean indicating whether to hide the back button in the header. Only supported on Android.
+Whether to show or hide the header for the screen. The header is shown by default. Setting this to `false` hides the header.
 
 #### `headerStyle`
 
@@ -100,23 +168,25 @@ Style object for header title. Supported properties:
 
 - `fontFamily`
 - `fontSize`
+- `fontWeight` (iOS only).
 - `color`
 
 #### `headerTopInsetEnabled`
 
 A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque. Only supported on Android.
 
-#### `hideShadow`
+#### `headerTranslucent`
 
-Boolean indicating whether to hide the elevation shadow on the header.
+Boolean indicating whether the navigation bar is translucent.
 
-#### `largeTitle`
+#### `replaceAnimation`
 
-Boolean used to set a native property to prefer a large title header (like in iOS setting).
+How should the screen replacing another screen animate.
+The following values are currently supported:
+  - `push` – the new screen will perform push animation.
+  - `pop` – the new screen will perform pop animation.
 
-For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
-
-Only supported on iOS.
+Defaults to `pop`.
 
 #### `stackAnimation`
 
@@ -146,38 +216,53 @@ How the screen should be presented. Possible values:
 
 Defaults to `push`.
 
+Using `containedModal` and `containedTransparentModal` with other types of modals in one native stack navigator is not recommended and can result in a freeze or a crash of the application.
+
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.
 
-#### `translucent`
+### Status bar and orientation managment
 
-Boolean indicating whether the navigation bar is translucent.
+With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. On Android, the screen orientation can be managed by `FragmentActivity`. On iOS, it requires:
 
-### Status bar managment
+1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
+2. For both status bar and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
 
-With `native-stack`, the status bar can be managed by `UIViewController` on iOS. It requires:
-
-1. Enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
-2. Adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
+On Android, no additional setup is required.
 
 #### `statusBarStyle`
 
-Sets the status bar color (similar to the `StatusBar` component). Possible values: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`.
+Sets the status bar color (similar to the `StatusBar` component). Possible values: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. Only supported on iOS.
 
 Defaults to `auto`.
 
 #### `statusBarAnimation`
 
-Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`.
+Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`. Only supported on iOS.
 
 Defaults to `fade`.
 
 #### `statusBarHidden`
 
-Boolean saying if the status bar for this screen is hidden.
+Boolean saying if the status bar for this screen is hidden. Only supported on iOS.
 
 Defaults to `false`.
+
+#### `screenOrientation`
+
+Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
+
+- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
+- `all`
+- `portrait`
+- `portrait_up`
+- `portrait_down`
+- `landscape`
+- `landscape_left`
+- `landscape_right`
+
+Defaults to `default`.
 
 ### Helpers
 

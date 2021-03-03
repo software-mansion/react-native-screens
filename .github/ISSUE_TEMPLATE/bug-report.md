@@ -1,10 +1,15 @@
 ---
 name: "\U0001F41E Bug report"
-about: Report an issue with Screens
+about: Report an issue with Screens.
 title: ''
 labels: "\U0001F41E Bug"
 assignees: ''
 ---
+
+<!--
+NOTE: please submit only bug reports here, any new questions or feature requests should be submitted in Discussions:
+https://github.com/software-mansion/react-native-screens/discussions
+ -->
 
 ## Description
 

@@ -18,4 +18,4 @@ jobs:
           yarn
       - name: Test formatting and linting
         run: |
-          yarn test
+          yarn format && yarn lint

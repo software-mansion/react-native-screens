@@ -38,6 +38,7 @@ export default function HeaderConfig({
   headerTopInsetEnabled = true,
   headerTranslucent,
   route,
+  screenOrientation,
   statusBarAnimation,
   statusBarHidden,
   statusBarStyle,
@@ -76,7 +77,9 @@ export default function HeaderConfig({
       largeTitleColor={headerLargeTitleStyle.color}
       largeTitleFontFamily={largeTitleFontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
+      largeTitleFontWeight={headerLargeTitleStyle.fontWeight}
       largeTitleHideShadow={headerLargeTitleHideShadow}
+      screenOrientation={screenOrientation}
       statusBarAnimation={statusBarAnimation}
       statusBarHidden={statusBarHidden}
       statusBarStyle={statusBarStyle}
@@ -96,6 +99,7 @@ export default function HeaderConfig({
       }
       titleFontFamily={titleFontFamily}
       titleFontSize={headerTitleStyle.fontSize}
+      titleFontWeight={headerTitleStyle.fontWeight}
       topInsetEnabled={headerTopInsetEnabled}
       translucent={headerTranslucent === true}>
       {headerRight !== undefined ? (
