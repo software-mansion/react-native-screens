@@ -20,7 +20,8 @@ export type StackAnimationTypes =
   | 'flip'
   | 'none'
   | 'slide_from_right'
-  | 'slide_from_left';
+  | 'slide_from_left'
+  | 'slide_from_bottom';
 export type BlurEffectTypes =
   | 'extraLight'
   | 'light'
@@ -102,6 +103,7 @@ export interface ScreenProps extends ViewProps {
    *  @type "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
    *  @type "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    *  @type "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   *  @type "slide_from_bottom" - slide in the new screen from bottom to top (Android only, resolves to default transition on iOS)
    *  @type "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: StackAnimationTypes;
