@@ -69,7 +69,10 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 
+@property (nonatomic, copy) RCTBubblingEventBlock onTransitionProgress;
+
 - (void)notifyFinishTransitioning;
+- (void)notifyTransitionProgress:(double)progress;
 
 @end
 

@@ -67,6 +67,7 @@ export default function NativeStackView({
           stackPresentation = 'push',
           stackAnimation,
           contentStyle,
+          onTransitionProgress,
         } = options;
 
         const viewStyles = [
@@ -109,6 +110,11 @@ export default function NativeStackView({
                 data: { closing: false },
                 target: route.key,
               });
+            }}
+            onTransitionProgress={(event) => {
+              if (onTransitionProgress) {
+                onTransitionProgress(event);
+              }
             }}
             onDisappear={() => {
               navigation.emit({

@@ -1,6 +1,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenStackAnimator.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -43,18 +44,10 @@
 
 @end
 
-@interface RNSScreenStackInteractiveAnimator : UIPercentDrivenInteractiveTransition
-
-@property (nonatomic) BOOL interactionInProgress;
-
-- (instancetype)initWithViewController:(UIViewController *)viewController;
-
+@interface RNSGestureRecognizer: UIScreenEdgePanGestureRecognizer
 @end
 
-@interface RNSScreenStackAnimator : NSObject <UIViewControllerAnimatedTransitioning>
-- (instancetype)initWithOperation:(UINavigationControllerOperation)operation interactionController:(nullable RNSScreenStackInteractiveAnimator *)interactionController;
-
-@property (nonatomic) RNSScreenStackInteractiveAnimator *interactionController;
+@implementation RNSGestureRecognizer
 @end
 
 @implementation RNSScreenStackView {
@@ -63,6 +56,9 @@
   __weak RNSScreenStackManager *_manager;
   BOOL _hasLayout;
   BOOL _invalidated;
+  UIPercentDrivenInteractiveTransition *_interactionController;
+  RNSScreenView *_topScreenView;
+  RNSScreenView *_belowScreenView;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager*)manager
@@ -75,6 +71,12 @@
     _presentedModals = [NSMutableArray new];
     _controller = [[RNScreensNavigationController alloc] init];
     _controller.delegate = self;
+    
+    // gesture recognizer for custom stack animations
+    RNSGestureRecognizer *edgeSwipeGestureRecognizer = [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+    edgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
+    edgeSwipeGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:edgeSwipeGestureRecognizer];
 
     // we have to initialize viewControllers with a non empty array for
     // largeTitle header to render in the opened state. If it is empty
@@ -83,6 +85,48 @@
     [_controller setViewControllers:@[[UIViewController new]]];
   }
   return self;
+}
+
+- (void)handleSwipe:(RNSGestureRecognizer *)gestureRecognizer {
+  CGPoint translation = [gestureRecognizer translationInView:gestureRecognizer.view];
+  double progress = (translation.x / gestureRecognizer.view.bounds.size.width);
+  
+  switch (gestureRecognizer.state) {
+  
+    case UIGestureRecognizerStateBegan: {
+      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      _topScreenView = (RNSScreenView *)[_controller popViewControllerAnimated:YES].view;
+      _belowScreenView = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+      break;
+    }
+
+    case UIGestureRecognizerStateChanged: {
+      [_interactionController updateInteractiveTransition:progress];
+      break;
+    }
+
+    case UIGestureRecognizerStateCancelled: {
+      [_interactionController cancelInteractiveTransition];
+      break;
+    }
+      
+    case UIGestureRecognizerStateEnded: {
+      if (progress > 0.7) {
+        [_interactionController finishInteractiveTransition];
+      } else {
+        [_interactionController cancelInteractiveTransition];
+      }
+      _topScreenView = nil;
+      _belowScreenView = nil;
+      _interactionController = nil;
+    }
+    default: {
+      break;
+    }
+  }
+  
+  [_topScreenView notifyTransitionProgress:progress];
+  [_belowScreenView notifyTransitionProgress:progress];
 }
 
 - (UIViewController *)reactViewController
@@ -142,20 +186,19 @@
     screen = (RNSScreenView *) fromVC.view;
   }
   if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationSimplePush || screen.stackAnimation == RNSScreenStackAnimationNone)) {
-    if (screen.stackAnimation == RNSScreenStackAnimationSimplePush && operation == UINavigationControllerOperationPop) {
-      return [[RNSScreenStackAnimator alloc] initWithOperation:operation interactionController:[[RNSScreenStackInteractiveAnimator alloc] initWithViewController:fromVC]];
-    }
-    return [[RNSScreenStackAnimator alloc] initWithOperation:operation interactionController:nil];
+    return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
 }
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController
 {
-  if ([animationController isKindOfClass:[RNSScreenStackAnimator class]] && ((RNSScreenStackAnimator *) animationController).interactionController.interactionInProgress) {
-    return ((RNSScreenStackAnimator *) animationController).interactionController;
-  }
-  return nil;
+  return _interactionController;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id<UIViewControllerAnimatedTransitioning>)animator
+{
+  return _interactionController;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -173,8 +216,16 @@
   }
   
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
-
-  return _controller.viewControllers.count > 1 && topScreen.gestureEnabled;
+  
+  if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
+    return NO;
+  }
+  
+  if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
+    return topScreen.stackAnimation == RNSScreenStackAnimationSimplePush;
+  } else {
+    return topScreen.stackAnimation != RNSScreenStackAnimationSimplePush;
+  }
 }
 
 - (void)markChildUpdated
@@ -557,161 +608,6 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
    [stack dismissOnReload];
  }
  _stacks = nil;
-}
-
-@end
-
-@implementation RNSScreenStackAnimator {
-  UINavigationControllerOperation _operation;
-}
-
-- (instancetype)initWithOperation:(UINavigationControllerOperation)operation interactionController:(nullable RNSScreenStackInteractiveAnimator *)interactionController
-{
-  if (self = [super init]) {
-    _operation = operation;
-    _interactionController = interactionController;
-  }
-  return self;
-}
-
-- (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext
-{
-  RNSScreenView *screen;
-  if (_operation == UINavigationControllerOperationPush) {
-    UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    screen = (RNSScreenView *)toViewController.view;
-  } else if (_operation == UINavigationControllerOperationPop) {
-    UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    screen = (RNSScreenView *)fromViewController.view;
-  }
-
-  if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
-    return 0;
-  }
-  return 0.35; // default duration
-}
-
-- (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
-{
-  UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-  UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-  toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
-
-  RNSScreenView *screen;
-  if (_operation == UINavigationControllerOperationPush) {
-    screen = (RNSScreenView *)toViewController.view;
-  } else if (_operation == UINavigationControllerOperationPop) {
-    screen = (RNSScreenView *)fromViewController.view;
-  }
-
-  if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationSimplePush) {
-    CGAffineTransform rightTransform = CGAffineTransformMakeTranslation(transitionContext.containerView.bounds.size.width, 0);
-    CGAffineTransform leftTransform = CGAffineTransformMakeTranslation(-transitionContext.containerView.bounds.size.width, 0);
-
-    if (_operation == UINavigationControllerOperationPush) {
-      toViewController.view.transform = rightTransform;
-      [[transitionContext containerView] addSubview:toViewController.view];
-      [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-        fromViewController.view.transform = leftTransform;
-        toViewController.view.transform = CGAffineTransformIdentity;
-      } completion:^(BOOL finished) {
-        fromViewController.view.transform = CGAffineTransformIdentity;
-        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-      }];
-    } else if (_operation == UINavigationControllerOperationPop) {
-      toViewController.view.transform = leftTransform;
-      [[transitionContext containerView] insertSubview:toViewController.view belowSubview: fromViewController.view];
-      [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-          toViewController.view.transform = CGAffineTransformIdentity;
-          fromViewController.view.transform = rightTransform;
-      } completion:^(BOOL finished) {
-        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-      }];
-    }
-  } else {
-      if (_operation == UINavigationControllerOperationPush) {
-        [[transitionContext containerView] addSubview:toViewController.view];
-        toViewController.view.alpha = 0.0;
-        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-          toViewController.view.alpha = 1.0;
-        } completion:^(BOOL finished) {
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
-      } else if (_operation == UINavigationControllerOperationPop) {
-        [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
-    
-        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-          fromViewController.view.alpha = 0.0;
-        } completion:^(BOOL finished) {
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
-      }
-  }
-}
-
-@end
-
-@implementation RNSScreenStackInteractiveAnimator {
-  BOOL _shouldCompleteTransition;
-  UIViewController *_controller;
-}
-
-- (instancetype)initWithViewController:(UIViewController *)viewController
-{
-  self = [super init];
-  if (self) {
-    _controller = viewController;
-    [self prepareGestureRecognizerForView:viewController.view];
-  }
-  return self;
-}
-
-- (void)prepareGestureRecognizerForView:(UIView *)view
-{
-  UIScreenEdgePanGestureRecognizer *gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)];
-  [gestureRecognizer setEdges:UIRectEdgeLeft];
-
-  [view addGestureRecognizer:gestureRecognizer];
-}
-
-- (void)handleGesture:(UIScreenEdgePanGestureRecognizer *)gestureRecognizer {
-  
-  CGPoint translation = [gestureRecognizer translationInView:gestureRecognizer.view.superview];
-  double progress = (translation.x / 200);
-//  progress = CGFloat(fminf(fmaxf(Float(progress), 0.0), 1.0));
-  
-  switch (gestureRecognizer.state) {
-  
-    case UIGestureRecognizerStateBegan: {
-      _interactionInProgress = YES;
-      [_controller dismissViewControllerAnimated:YES completion:nil];
-      break;
-    }
-
-    case UIGestureRecognizerStateChanged: {
-      _shouldCompleteTransition = progress > 0.5;
-      [self updateInteractiveTransition:progress];
-      break;
-    }
-
-    case UIGestureRecognizerStateCancelled: {
-      _interactionInProgress = NO;
-      [self cancelInteractiveTransition];
-      break;
-    }
-      
-    case UIGestureRecognizerStateEnded: {
-      _interactionInProgress = NO;
-      if (_shouldCompleteTransition) {
-        [self finishInteractiveTransition];
-      } else {
-        [self cancelInteractiveTransition];
-      }
-    }
-    default: {
-      break;
-    }
-  }
 }
 
 @end

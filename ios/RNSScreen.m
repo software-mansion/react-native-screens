@@ -233,6 +233,15 @@
   }
 }
 
+- (void)notifyTransitionProgress:(double)progress
+{
+  if (self.onTransitionProgress) {
+    self.onTransitionProgress(@{
+      @"progress": @(progress),
+    });
+  }
+}
+
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
@@ -527,6 +536,7 @@ RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTBubblingEventBlock);
 
 - (UIView *)view
 {
