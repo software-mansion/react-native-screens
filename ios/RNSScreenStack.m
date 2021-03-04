@@ -72,11 +72,16 @@
     _controller = [[RNScreensNavigationController alloc] init];
     _controller.delegate = self;
     
-    // gesture recognizer for custom stack animations
-    RNSGestureRecognizer *edgeSwipeGestureRecognizer = [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-    edgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
-    edgeSwipeGestureRecognizer.delegate = self;
-    [self addGestureRecognizer:edgeSwipeGestureRecognizer];
+    // gesture recognizers for custom stack animations
+    RNSGestureRecognizer *leftEdgeSwipeGestureRecognizer = [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+    leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
+    leftEdgeSwipeGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
+    
+    RNSGestureRecognizer *rightEdgeSwipeGestureRecognizer = [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+    rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
+    rightEdgeSwipeGestureRecognizer.delegate = self;
+    [self addGestureRecognizer:rightEdgeSwipeGestureRecognizer];
 
     // we have to initialize viewControllers with a non empty array for
     // largeTitle header to render in the opened state. If it is empty
@@ -88,8 +93,11 @@
 }
 
 - (void)handleSwipe:(RNSGestureRecognizer *)gestureRecognizer {
-  CGPoint translation = [gestureRecognizer translationInView:gestureRecognizer.view];
-  _transitionProgress = (translation.x / gestureRecognizer.view.bounds.size.width);
+  float translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
+  if (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
+    translation = -translation;
+  }
+  _transitionProgress = (translation / gestureRecognizer.view.bounds.size.width);
   
   switch (gestureRecognizer.state) {
   
@@ -125,6 +133,8 @@
       break;
     }
   }
+  
+  _transitionProgress = fmin(1.0, fmax(0.0, _transitionProgress));
   
   [_topScreenView notifyTransitionProgress:_transitionProgress];
   [_belowScreenView notifyTransitionProgress:_transitionProgress];

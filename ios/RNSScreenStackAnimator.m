@@ -69,6 +69,11 @@
   CGAffineTransform rightTransform = CGAffineTransformMakeTranslation(transitionContext.containerView.bounds.size.width, 0);
   CGAffineTransform leftTransform = CGAffineTransformMakeTranslation(-transitionContext.containerView.bounds.size.width, 0);
   
+  if (toViewController.navigationController.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
+    rightTransform = CGAffineTransformMakeTranslation(-transitionContext.containerView.bounds.size.width, 0);
+    leftTransform = CGAffineTransformMakeTranslation(transitionContext.containerView.bounds.size.width, 0);
+  }
+  
   CADisplayLink *animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
   _animationStartTime = CACurrentMediaTime();
   _isInteractive = [transitionContext isInteractive];
@@ -83,7 +88,6 @@
       fromViewController.view.transform = leftTransform;
       toViewController.view.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished) {
-      NSLog(@"%d, %d", finished, [transitionContext transitionWasCancelled]);
       fromViewController.view.transform = CGAffineTransformIdentity;
       [animationTimer setPaused:YES];
       [animationTimer invalidate];
