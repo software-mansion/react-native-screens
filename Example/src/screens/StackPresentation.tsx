@@ -1,14 +1,11 @@
 import React from 'react';
 import {ScrollView, StyleSheet, SafeAreaView} from 'react-native';
-import {enableScreens} from 'react-native-screens';
 import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {Button} from '../shared';
-
-enableScreens();
 
 const SCREENS = {
   push: 'push',

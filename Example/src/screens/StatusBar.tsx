@@ -1,13 +1,10 @@
 import React, {useLayoutEffect, useState} from 'react';
 import {View, StyleSheet, Platform, Text} from 'react-native';
-import {enableScreens} from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {SettingsPicker, SettingsSwitch, Button, Spacer} from '../shared';
-
-enableScreens();
 
 type StackParamList = {
   Main: undefined;

@@ -1,13 +1,10 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {enableScreens} from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {Button} from '../shared';
-
-enableScreens();
 
 type StackParamList = {
   Main: undefined;

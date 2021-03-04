@@ -1,10 +1,8 @@
 import React from 'react';
 import {ScrollView, SafeAreaView, StyleSheet, Text} from 'react-native';
+import {enableScreens} from 'react-native-screens';
 import {NavigationContainer} from '@react-navigation/native';
-import {
-  createStackNavigator,
-  StackNavigationProp,
-} from '@react-navigation/stack';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 import {MenuItem} from './src/shared';
 
@@ -15,6 +13,9 @@ import StatusBar from './src/screens/StatusBar';
 import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
 import StackReactNavigation4 from './src/screens/StackReactNavigation4';
+import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+
+enableScreens();
 
 const SCREENS: Record<
   string,
@@ -68,7 +69,7 @@ type RootStackParamList = {
   [P in keyof typeof SCREENS]: undefined;
 };
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 interface MainScreenProps {
   navigation: StackNavigationProp<RootStackParamList, 'Main'>;
@@ -103,7 +104,10 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
 
 const ExampleApp = (): JSX.Element => (
   <NavigationContainer>
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        statusBarStyle: 'dark',
+      }}>
       <Stack.Screen
         name="Main"
         options={{title: '📱 React Native Screens Examples'}}

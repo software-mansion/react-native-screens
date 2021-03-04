@@ -7,7 +7,6 @@ import {
   Text,
   Platform,
 } from 'react-native';
-import {enableScreens} from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -20,8 +19,6 @@ import {
   Square,
   Button,
 } from '../shared';
-
-enableScreens();
 
 type StackParamList = {
   Main: undefined;

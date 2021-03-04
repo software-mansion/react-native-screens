@@ -1,7 +1,5 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-
-import {enableScreens} from 'react-native-screens';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {createCompatNavigatorFactory} from '@react-navigation/compat';
 
@@ -12,8 +10,6 @@ import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 // more information about compatibility layer https://reactnavigation.org/docs/compatibility/
 
 import {Button} from '../shared';
-
-enableScreens();
 
 class HomeScreen extends React.Component<{navigation: NavigationStackProp}> {
   render() {
@@ -33,7 +29,9 @@ class HomeScreen extends React.Component<{navigation: NavigationStackProp}> {
   }
 }
 
-class DetailsScreen extends React.Component<{navigation: NavigationStackProp}> {
+class DetailsScreen extends React.Component<{
+  navigation: NavigationStackProp;
+}> {
   render() {
     return (
       <View style={styles.container}>
@@ -51,7 +49,7 @@ class DetailsScreen extends React.Component<{navigation: NavigationStackProp}> {
   }
 }
 
-// we run it with compatibilty layer to use react-navigation v5 in project
+// we run it with compatibility layer to use react-navigation v5 in the project
 // normally in v4 it would be just
 // const AppNavigator = createNativeStackNavigator(
 const AppNavigator = createCompatNavigatorFactory(createNativeStackNavigator)(

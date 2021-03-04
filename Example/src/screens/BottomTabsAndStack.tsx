@@ -1,6 +1,5 @@
 import React, {useLayoutEffect} from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
-import {enableScreens} from 'react-native-screens';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
   createNativeStackNavigator,
@@ -8,8 +7,6 @@ import {
 } from 'react-native-screens/native-stack';
 import {RouteProp} from '@react-navigation/native';
 import {Button} from '../shared';
-
-enableScreens();
 
 type StackParamList = {
   Details: {index: number};
