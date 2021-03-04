@@ -145,6 +145,7 @@
 #endif
     case RNSScreenStackAnimationNone:
     case RNSScreenStackAnimationDefault:
+    case RNSScreenStackAnimationSimplePush:
       // Default
       break;
   }

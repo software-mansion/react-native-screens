@@ -86,7 +86,7 @@ export interface ScreenProps extends ViewProps {
    * @description A callback called every frame during the `simple_push` transition.
    */
   onTransitionProgress?: (
-    e: NativeSyntheticEvent<{ progress: string }>
+    e: NativeSyntheticEvent<{ progress: number }>
   ) => void;
   /**
    * @description A callback that gets called when the current screen will appear. This is called as soon as the transition begins.

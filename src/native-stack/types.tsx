@@ -226,7 +226,7 @@ export type NativeStackNavigationOptions = {
    * @platform android
    */
   onTransitionProgress?: (
-    e: NativeSyntheticEvent<{ progress: string }>
+    e: NativeSyntheticEvent<{ progress: number }>
   ) => void;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
