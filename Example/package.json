@@ -1,13 +1,13 @@
 {
   "name": "ScreensExample",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest",
-    "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types",
+    "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
+    "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types && yarn format",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
@@ -47,18 +47,7 @@
     "react-test-renderer": "16.13.1",
     "typescript": "^3.8.3"
   },
-  "resolutions": {
-    "@types/react": "^16"
-  },
   "jest": {
-    "preset": "react-native",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
+    "preset": "react-native"
   }
 }
