@@ -9,7 +9,6 @@ import {
 import {MenuItem} from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
-import NativeNavigation from './src/screens/NativeNavigation';
 import StackPresentation from './src/screens/StackPresentation';
 import HeaderOptions from './src/screens/HeaderOptions';
 import StatusBar from './src/screens/StatusBar';
@@ -19,16 +18,15 @@ import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 
 const SCREENS: Record<
   string,
-  {title: string; component: () => JSX.Element; type: 'example' | 'playground'}
+  {
+    title: string;
+    component: () => JSX.Element;
+    type: 'example' | 'playground';
+  }
 > = {
   SimpleNativeStack: {
     title: 'Simple Native Stack',
     component: SimpleNativeStack,
-    type: 'example',
-  },
-  NativeNavigation: {
-    title: 'Native Navigation',
-    component: NativeNavigation,
     type: 'example',
   },
   StackPresentation: {
@@ -57,7 +55,11 @@ const SCREENS: Record<
     component: StatusBar,
     type: 'playground',
   },
-  Animations: {title: 'Animations', component: Animations, type: 'playground'},
+  Animations: {
+    title: 'Animations',
+    component: Animations,
+    type: 'playground',
+  },
 };
 
 type RootStackParamList = {
