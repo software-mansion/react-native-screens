@@ -3,6 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
+  NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
 import {SettingsPicker, Button} from '../shared';
 
@@ -14,10 +15,15 @@ type StackParamList = {
   Modal: undefined;
 };
 
+type StackAnimation = Exclude<
+  NativeStackNavigationOptions['stackAnimation'],
+  undefined
+>;
+
 interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
-  stackAnimation: string;
-  setStackAnimation: (value: string) => void;
+  stackAnimation: StackAnimation;
+  setStackAnimation: (value: StackAnimation) => void;
 }
 
 const MainScreen = ({
@@ -33,7 +39,7 @@ const MainScreen = ({
 
   return (
     <View style={styles.container}>
-      <SettingsPicker
+      <SettingsPicker<StackAnimation>
         label="Stack animation"
         value={stackAnimation}
         onValueChange={setStackAnimation}
@@ -66,7 +72,7 @@ const MainScreen = ({
 
 interface ReplaceScreenProps {
   navigation: NativeStackNavigationProp<StackParamList>;
-  stackAnimation: string;
+  stackAnimation: StackAnimation;
 }
 
 const ReplaceScreen = ({
@@ -88,7 +94,7 @@ const ReplaceScreen = ({
 
 interface NavigateScreenProps {
   navigation: NativeStackNavigationProp<StackParamList>;
-  stackAnimation: string;
+  stackAnimation: StackAnimation;
 }
 
 const NavigateScreen = ({
@@ -111,7 +117,9 @@ const NavigateScreen = ({
 const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => {
-  const [stackAnimation, setStackAnimation] = useState('default');
+  const [stackAnimation, setStackAnimation] = useState<StackAnimation>(
+    'default',
+  );
   return (
     <Stack.Navigator
       screenOptions={{

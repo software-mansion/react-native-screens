@@ -1,12 +1,6 @@
 /* eslint-disable react/display-name */
 import React, {useState, useLayoutEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  Text,
-  Platform,
-} from 'react-native';
+import {SafeAreaView, StyleSheet, ScrollView, Text} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -41,6 +35,8 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
   );
 };
 
+type HeaderItemPosition = 'right' | 'center' | 'left';
+
 interface SettingsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Settings'>;
 }
@@ -50,7 +46,7 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
   const [backButtonVisible, setBackButtonVisible] = useState(true);
   const [headerShown, setHeaderShown] = useState(true);
   const [headerLargeTitle, setHeaderLargeTitle] = useState(false);
-  const [headerItem, setHeaderItem] = useState('right');
+  const [headerItem, setHeaderItem] = useState<HeaderItemPosition>('right');
   const [headerBackTitle, setHeaderBackTitle] = useState('Back');
   const [headerHideShadow, setHeaderHideShadow] = useState(false);
   const [headerTranslucent, setHeaderTranslucent] = useState(false);
@@ -62,14 +58,14 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle,
-      headerBackTitleVisible: backButtonVisible, // iOS
       headerHideBackButton: !backButtonVisible, // android
+      headerBackTitleVisible: backButtonVisible, // iOS
+      headerLargeTitle, // iOS
+      headerBackTitle, // iOS
       headerShown,
       headerRight: headerItem === 'right' ? square : undefined,
       headerCenter: headerItem === 'center' ? square : undefined,
       headerLeft: headerItem === 'left' ? square : undefined,
-      headerLargeTitle, // iOS
-      headerBackTitle, // iOS
       headerHideShadow,
       headerTranslucent,
     });
@@ -77,10 +73,10 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
     navigation,
     headerTitle,
     backButtonVisible,
-    headerItem,
-    headerShown,
     headerLargeTitle,
     headerBackTitle,
+    headerItem,
+    headerShown,
     headerHideShadow,
     headerTranslucent,
   ]);
@@ -112,27 +108,23 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
         value={headerTranslucent}
         onValueChange={setHeaderTranslucent}
       />
-      <SettingsPicker
+      <SettingsPicker<HeaderItemPosition>
         label="Header item"
         value={headerItem}
         onValueChange={setHeaderItem}
         items={['left', 'center', 'right']}
       />
-      {Platform.OS === 'ios' ? (
-        <>
-          <Text style={styles.heading}>iOS only</Text>
-          <SettingsSwitch
-            label="Header large title"
-            value={headerLargeTitle}
-            onValueChange={setHeaderLargeTitle}
-          />
-          <SettingsInput
-            label="Header back title"
-            value={headerBackTitle}
-            onValueChange={setHeaderBackTitle}
-          />
-        </>
-      ) : null}
+      <Text style={styles.heading}>iOS only</Text>
+      <SettingsSwitch
+        label="Header large title"
+        value={headerLargeTitle}
+        onValueChange={setHeaderLargeTitle}
+      />
+      <SettingsInput
+        label="Header back title"
+        value={headerBackTitle}
+        onValueChange={setHeaderBackTitle}
+      />
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </SafeAreaView>
   );
@@ -156,7 +148,7 @@ const App = (): JSX.Element => (
       name="Settings"
       component={SettingsScreen}
       options={{
-        headerTintColor: 'magenta',
+        headerTintColor: 'hotpink',
       }}
     />
   </Stack.Navigator>

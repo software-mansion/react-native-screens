@@ -3,6 +3,7 @@ import {View, StyleSheet, Platform, Text} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
+  NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
 import {SettingsPicker, SettingsSwitch, Button, Spacer} from '../shared';
 
@@ -10,14 +11,26 @@ type StackParamList = {
   Main: undefined;
 };
 
+type StatusBarStyle = Exclude<
+  NativeStackNavigationOptions['statusBarStyle'],
+  undefined
+>;
+
+type StatusBarAnimation = Exclude<
+  NativeStackNavigationOptions['statusBarAnimation'],
+  undefined
+>;
+
 interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
-  const [statusBarStyle, setStatusBarStyle] = useState('auto');
+  const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>('auto');
   const [statusBarHidden, setStatusBarHidden] = useState(false);
-  const [statusBarAnimation, setStatusBarAnimation] = useState('fade');
+  const [statusBarAnimation, setStatusBarAnimation] = useState<
+    StatusBarAnimation
+  >('fade');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -31,7 +44,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
     <View style={styles.container}>
       {Platform.OS === 'ios' ? (
         <>
-          <SettingsPicker
+          <SettingsPicker<StatusBarStyle>
             label="Status bar style"
             value={statusBarStyle}
             onValueChange={setStatusBarStyle}
@@ -42,7 +55,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
             value={statusBarHidden}
             onValueChange={setStatusBarHidden}
           />
-          <SettingsPicker
+          <SettingsPicker<StatusBarAnimation>
             label="Status bar animation"
             value={statusBarAnimation}
             onValueChange={setStatusBarAnimation}
