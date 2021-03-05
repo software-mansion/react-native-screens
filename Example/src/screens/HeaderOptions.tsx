@@ -1,5 +1,5 @@
-import React, {useState, useLayoutEffect} from 'react';
-import {SafeAreaView, StyleSheet, ScrollView, Text} from 'react-native';
+import React, {useState, useLayoutEffect, useEffect} from 'react';
+import {StyleSheet, ScrollView, Text} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -23,6 +23,10 @@ interface MainScreenProps {
 }
 
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
+  useEffect(() => {
+    navigation.navigate('Settings');
+  }, []);
+
   return (
     <ScrollView>
       <Button
@@ -81,7 +85,7 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
   ]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <SettingsInput
         label="Header title"
         value={headerTitle}
@@ -125,7 +129,7 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
         onValueChange={setHeaderBackTitle}
       />
       <Button title="Go back" onPress={() => navigation.goBack()} />
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 
