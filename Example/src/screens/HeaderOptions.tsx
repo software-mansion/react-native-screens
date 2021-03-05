@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import React, {useState, useLayoutEffect} from 'react';
 import {SafeAreaView, StyleSheet, ScrollView, Text} from 'react-native';
 import {
