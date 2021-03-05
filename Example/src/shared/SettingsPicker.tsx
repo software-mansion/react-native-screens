@@ -1,19 +1,19 @@
 import React, {useState} from 'react';
 import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-type Props = {
+type Props<Type = string> = {
   label: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  items: string[];
+  value: Type;
+  onValueChange: (value: Type) => void;
+  items: Type[];
 };
 
-export const SettingsPicker = ({
+export function SettingsPicker<T>({
   label,
   value,
   onValueChange,
   items,
-}: Props): JSX.Element => {
+}: Props<T>): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <TouchableOpacity
@@ -22,7 +22,9 @@ export const SettingsPicker = ({
       <Text style={styles.label}>{`${label}: ${value}`}</Text>
       {isOpen
         ? items.map((item) => (
-            <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
+            <TouchableOpacity
+              key={(item as unknown) as string}
+              onPress={() => onValueChange(item)}>
               <Text
                 style={
                   item === value
@@ -36,7 +38,7 @@ export const SettingsPicker = ({
         : null}
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
