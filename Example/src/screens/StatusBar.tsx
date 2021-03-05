@@ -8,7 +8,8 @@ import {
 import {SettingsPicker, SettingsSwitch, Button, Spacer} from '../shared';
 
 type StackParamList = {
-  Main: undefined;
+  First: undefined;
+  Second: undefined;
 };
 
 type StatusBarStyle = Exclude<
@@ -21,11 +22,11 @@ type StatusBarAnimation = Exclude<
   undefined
 >;
 
-interface MainScreenProps {
-  navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+interface FirstScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'First'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
+const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
   const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>('auto');
   const [statusBarHidden, setStatusBarHidden] = useState(false);
   const [statusBarAnimation, setStatusBarAnimation] = useState<
@@ -67,28 +68,45 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
           <Text>StatusBar options have no effect on Android.</Text>
         </Spacer>
       ) : null}
+      <Button
+        title="Go to second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </View>
   );
 };
 
+interface SecondScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Second'>;
+}
+
+const SecondScreen = ({navigation}: SecondScreenProps): JSX.Element => (
+  <View style={styles.container}>
+    <Button title="Go back" onPress={() => navigation.goBack()} />
+  </View>
+);
+
 const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
-  <Stack.Navigator>
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: 'gray',
+      },
+      headerTitleStyle: {
+        color: 'white',
+      },
+    }}>
     <Stack.Screen
-      name="Main"
-      component={MainScreen}
+      name="First"
+      component={FirstScreen}
       options={{
         title: 'Status bar (iOS)',
-        headerStyle: {
-          backgroundColor: 'gray',
-        },
-        headerTitleStyle: {
-          color: 'white',
-        },
       }}
     />
+    <Stack.Screen name="Second" component={SecondScreen} />
   </Stack.Navigator>
 );
 
