@@ -3,6 +3,7 @@ import {ScrollView, SafeAreaView, StyleSheet, Text} from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {NavigationContainer} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 
 import {MenuItem} from './src/shared';
 
@@ -13,7 +14,7 @@ import StatusBar from './src/screens/StatusBar';
 import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
 import StackReactNavigation4 from './src/screens/StackReactNavigation4';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import Modals from './src/screens/Modals';
 
 enableScreens();
 
@@ -38,6 +39,11 @@ const SCREENS: Record<
   BottomTabsAndStack: {
     title: 'Bottom tabs and native stack',
     component: BottomTabsAndStack,
+    type: 'example',
+  },
+  Modals: {
+    title: 'Modals',
+    component: Modals,
     type: 'example',
   },
   StackReactNavigation4: {
