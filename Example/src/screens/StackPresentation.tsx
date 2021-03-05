@@ -4,10 +4,16 @@ import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
+  NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
 import {Button} from '../shared';
 
-const SCREENS = {
+type StackPresentation = Exclude<
+  NativeStackNavigationOptions['stackPresentation'],
+  undefined
+>;
+
+const SCREENS: Record<StackPresentation, StackPresentation> = {
   push: 'push',
   modal: 'modal',
   transparentModal: 'transparentModal',
@@ -68,9 +74,9 @@ const App = (): JSX.Element => {
       {Object.keys(SCREENS).map((name) => (
         <Stack.Screen
           key={name}
-          name={name}
+          name={name as StackPresentation}
           component={SimpleScreen}
-          options={{stackPresentation: name}}
+          options={{stackPresentation: name as StackPresentation}}
         />
       ))}
     </Stack.Navigator>
