@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-type Props<Type = string> = {
+type Props<T = string> = {
   label: string;
-  value: Type;
-  onValueChange: (value: Type) => void;
-  items: Type[];
+  value: T;
+  onValueChange: (value: T) => void;
+  items: T[];
 };
 
-export function SettingsPicker<T>({
+export function SettingsPicker<T extends string>({
   label,
   value,
   onValueChange,
@@ -22,9 +22,7 @@ export function SettingsPicker<T>({
       <Text style={styles.label}>{`${label}: ${value}`}</Text>
       {isOpen
         ? items.map((item) => (
-            <TouchableOpacity
-              key={(item as unknown) as string}
-              onPress={() => onValueChange(item)}>
+            <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
               <Text
                 style={
                   item === value
