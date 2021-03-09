@@ -85,7 +85,9 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
   ]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={styles.container}>
       <SettingsInput
         label="Header title"
         value={headerTitle}
