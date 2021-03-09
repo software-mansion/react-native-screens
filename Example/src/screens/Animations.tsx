@@ -38,7 +38,7 @@ const MainScreen = ({
   }, [navigation, stackAnimation]);
 
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, backgroundColor: 'lightsteelblue'}}>
       <SettingsPicker<StackAnimation>
         label="Stack animation"
         value={stackAnimation}
@@ -86,7 +86,7 @@ const ReplaceScreen = ({
   }, [navigation, stackAnimation]);
 
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, backgroundColor: 'wheat'}}>
       <Button title="Go back" onPress={() => navigation.replace('Main')} />
     </View>
   );
@@ -108,7 +108,7 @@ const NavigateScreen = ({
   }, [navigation, stackAnimation]);
 
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, backgroundColor: 'pink'}}>
       <Button title="Go back" onPress={() => navigation.navigate('Main')} />
     </View>
   );

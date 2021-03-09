@@ -14,7 +14,7 @@ import {Button} from '../shared';
 class HomeScreen extends React.Component<{navigation: NavigationStackProp}> {
   render() {
     return (
-      <View style={styles.container}>
+      <View style={{...styles.container, backgroundColor: 'moccasin'}}>
         <Text style={styles.text}>Home Screen</Text>
         <Button
           title="Go to Details"
@@ -33,8 +33,21 @@ class DetailsScreen extends React.Component<{
   navigation: NavigationStackProp;
 }> {
   render() {
+    const colors = [
+      'skyblue',
+      'palevioletred',
+      'peachpuff',
+      'mistyrose',
+      'darkseagreen',
+      'lavender',
+    ];
     return (
-      <View style={styles.container}>
+      <View
+        style={{
+          ...styles.container,
+          backgroundColor:
+            colors[Math.floor(Math.random() * Math.floor(colors.length))],
+        }}>
         <Text style={styles.text}>Details Screen</Text>
         <Button
           title="Go to Details... again"

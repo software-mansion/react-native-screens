@@ -35,7 +35,7 @@ interface MainScreenProps {
 
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={{...styles.container, backgroundColor: 'thistle'}}>
       {Object.keys(SCREENS).map((screen) => (
         <Button
           key={screen}

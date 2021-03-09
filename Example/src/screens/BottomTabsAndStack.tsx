@@ -21,6 +21,18 @@ const DetailsScreen = ({
   navigation,
   route,
 }: DetailsScreenProps): JSX.Element => {
+  const colors = [
+    'snow',
+    'cornsilk',
+    'papayawhip',
+    'bisque',
+    'peachpuff',
+    'orange',
+    'coral',
+    'orangered',
+    'red',
+  ];
+
   const index = route.params?.index ? route.params?.index : 0;
 
   useLayoutEffect(() => {
@@ -29,8 +41,11 @@ const DetailsScreen = ({
     });
   }, [navigation]);
 
+  const currentColor =
+    index < colors.length ? colors[index] : colors[colors.length - 1];
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{...styles.container, backgroundColor: currentColor}}>
       <Button
         title={`More details ${index}`}
         onPress={() => navigation.push('Details', {index: index + 1})}

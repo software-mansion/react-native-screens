@@ -24,7 +24,7 @@ interface MainScreenProps {
 }
 
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
-  <View style={styles.container}>
+  <View style={{...styles.container, backgroundColor: 'bisque'}}>
     <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
     <Button
       title="Open fullscreen modal"
@@ -40,7 +40,7 @@ interface ModalScreenProps {
 }
 
 const ModalScreen = ({navigation}: ModalScreenProps): JSX.Element => (
-  <View style={styles.container}>
+  <View style={{...styles.container, backgroundColor: 'thistle'}}>
     <Button title="Open modal" onPress={() => navigation.push('Modal')} />
     <Button
       title="Open fullscreen modal"
