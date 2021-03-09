@@ -120,9 +120,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private void dispatchOnFinishTransitioning() {
     ((ReactContext) getContext())
-            .getNativeModule(UIManagerModule.class)
-            .getEventDispatcher()
-            .dispatchEvent(new StackFinishTransitioningEvent(getId()));
+        .getNativeModule(UIManagerModule.class)
+        .getEventDispatcher()
+        .dispatchEvent(new StackFinishTransitioningEvent(getId()));
   }
 
   @Override
@@ -162,7 +162,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           }
         } else {
           visibleBottom = screen;
-          if(!isTransparent(screen)){
+          if (!isTransparent(screen)) {
             break;
           }
         }
@@ -244,14 +244,13 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
 
     for (ScreenStackFragment screen : mScreenFragments) {
+      // don't detach screens that reached visible bottom. All screens above bottom should be visible.
+      if (screen == visibleBottom) {
+        break;
+      }
       // detach all screens that should not be visible
       if (screen != newTop && screen != visibleBottom && !mDismissed.contains(screen)) {
         getOrCreateTransaction().remove(screen);
-      }
-      // Stop detaching screens when reaching visible bottom. All screens above bottom should be
-      // visible.
-      if(screen == visibleBottom) {
-        break;
       }
     }
 
@@ -262,11 +261,12 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
       for (ScreenStackFragment screen : mScreenFragments) {
         // ignore all screens beneath the visible bottom
-        if(beneathVisibleBottom){
-          if(screen == visibleBottom){
+        if (beneathVisibleBottom) {
+          if (screen == visibleBottom) {
             beneathVisibleBottom = false;
+          } else {
+            continue;
           }
-          else continue;
         }
         // when founding first visible screen, make all screens after that visible
         getOrCreateTransaction().add(getId(), screen).runOnCommit(new Runnable() {
@@ -276,9 +276,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           }
         });
       }
-    }
-
-    else if (newTop != null && !newTop.isAdded()) {
+    } else if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
     }
 
@@ -337,18 +335,19 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         break;
       }
     }
+
     if (topScreen != firstScreen && topScreen.isDismissable()) {
       mFragmentManager
-              .beginTransaction()
-              .show(topScreen)
-              .addToBackStack(BACK_STACK_TAG)
-              .setPrimaryNavigationFragment(topScreen)
-              .commitAllowingStateLoss();
+          .beginTransaction()
+          .show(topScreen)
+          .addToBackStack(BACK_STACK_TAG)
+          .setPrimaryNavigationFragment(topScreen)
+          .commitAllowingStateLoss();
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
     }
   }
 
-  private static boolean isTransparent(ScreenStackFragment fragment){
+  private static boolean isTransparent(ScreenStackFragment fragment) {
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 }
