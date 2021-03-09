@@ -20,6 +20,7 @@ import Test645 from './src/Test645';
 import Test648 from './src/Test648';
 import Test649 from './src/Test649';
 import Test654 from './src/Test654';
+import Test658 from './src/Test658';
 import Test691 from './src/Test691';
 import Test702 from './src/Test702';
 import Test706 from './src/Test706';
