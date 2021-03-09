@@ -72,17 +72,8 @@
     _controller = [[RNScreensNavigationController alloc] init];
     _controller.delegate = self;
     
-    // gesture recognizers for custom stack animations
-    RNSGestureRecognizer *leftEdgeSwipeGestureRecognizer = [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-    leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
-    leftEdgeSwipeGestureRecognizer.delegate = self;
-    [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
+    [self setupGestureHandlers];
     
-    RNSGestureRecognizer *rightEdgeSwipeGestureRecognizer = [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-    rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
-    rightEdgeSwipeGestureRecognizer.delegate = self;
-    [self addGestureRecognizer:rightEdgeSwipeGestureRecognizer];
-
     // we have to initialize viewControllers with a non empty array for
     // largeTitle header to render in the opened state. If it is empty
     // the header will render in collapsed state which is perhaps a bug
@@ -90,63 +81,6 @@
     [_controller setViewControllers:@[[UIViewController new]]];
   }
   return self;
-}
-
-- (void)handleSwipe:(RNSGestureRecognizer *)gestureRecognizer {
-  float translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
-  if (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
-    translation = -translation;
-  }
-  _transitionProgress = (translation / gestureRecognizer.view.bounds.size.width);
-  
-  switch (gestureRecognizer.state) {
-  
-    case UIGestureRecognizerStateBegan: {
-      _interactionController = [UIPercentDrivenInteractiveTransition new];
-      _topScreenView = (RNSScreenView *)[_controller popViewControllerAnimated:YES].view;
-      _belowScreenView = (RNSScreenView *)_controller.viewControllers.lastObject.view;
-      break;
-    }
-
-    case UIGestureRecognizerStateChanged: {
-      [_interactionController updateInteractiveTransition:_transitionProgress];
-      break;
-    }
-
-    case UIGestureRecognizerStateCancelled: {
-      [_interactionController cancelInteractiveTransition];
-      break;
-    }
-      
-    case UIGestureRecognizerStateEnded: {
-      if (_transitionProgress > 0.7) {
-        [_interactionController finishInteractiveTransition];
-      } else {
-        [_interactionController cancelInteractiveTransition];
-      }
-      _gestureEndedTime = CACurrentMediaTime();
-      _animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-      [_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-      _interactionController = nil;
-    }
-    default: {
-      break;
-    }
-  }
-  
-  _transitionProgress = fmin(1.0, fmax(0.0, _transitionProgress));
-  
-  [_topScreenView notifyTransitionProgress:_transitionProgress];
-  [_belowScreenView notifyTransitionProgress:_transitionProgress];
-}
-
-- (void)handleAnimation
-{
-  double progress = _transitionProgress > 0.7
-    ? (fmin(1.0, ((CACurrentMediaTime() - _gestureEndedTime) / 0.35) + _transitionProgress))
-    : (fmax(0.0, (_transitionProgress - (CACurrentMediaTime() - _gestureEndedTime) / 0.35)));
-  [((RNSScreenView *)_topScreenView) notifyTransitionProgress:progress];
-  [((RNSScreenView *)_belowScreenView) notifyTransitionProgress:progress];
 }
 
 - (UIViewController *)reactViewController
@@ -194,57 +128,6 @@
         }
       });
     }
-  }
-}
-
-- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC
-{
-  RNSScreenView *screen;
-  if (operation == UINavigationControllerOperationPush) {
-    screen = (RNSScreenView *) toVC.view;
-  } else if (operation == UINavigationControllerOperationPop) {
-    screen = (RNSScreenView *) fromVC.view;
-  }
-  if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationSimplePush || screen.stackAnimation == RNSScreenStackAnimationNone)) {
-    return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
-  }
-  return nil;
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController
-{
-  return _interactionController;
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id<UIViewControllerAnimatedTransitioning>)animator
-{
-  return _interactionController;
-}
-
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
-{
-  // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
-  // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
-  // Without the below code the Touchable will remain active (highlighted) for the duration of back
-  // gesture and onPress may fire when we release the finger.
-  UIView *parent = _controller.view;
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) parent = parent.superview;
-  if (parent != nil) {
-    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-    [touchHandler cancel];
-    [touchHandler reset];
-  }
-  
-  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
-  
-  if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
-    return NO;
-  }
-  
-  if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
-    return topScreen.stackAnimation == RNSScreenStackAnimationSimplePush;
-  } else {
-    return topScreen.stackAnimation != RNSScreenStackAnimationSimplePush;
   }
 }
 
@@ -514,6 +397,10 @@
   // in the init function). Here, we need to detect if the initial empty
   // controller is still there
   BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreen class]];
+  
+  if (firstTimePush) {
+    [_controller.interactivePopGestureRecognizer addTarget:self action:@selector(handleDefaultSwipe:)];
+  }
 
   BOOL shouldAnimate = !firstTimePush && ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
 
@@ -600,6 +487,138 @@
   dispatch_async(dispatch_get_main_queue(), ^{
     [self invalidate];
   });
+}
+
+#pragma mark methods connected to transitioning
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC
+{
+  RNSScreenView *screen;
+  if (operation == UINavigationControllerOperationPush) {
+    screen = (RNSScreenView *) toVC.view;
+  } else if (operation == UINavigationControllerOperationPop) {
+    screen = (RNSScreenView *) fromVC.view;
+  }
+  if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationSimplePush || screen.stackAnimation == RNSScreenStackAnimationNone)) {
+    return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+  }
+  return nil;
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+  // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
+  // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
+  // Without the below code the Touchable will remain active (highlighted) for the duration of back
+  // gesture and onPress may fire when we release the finger.
+  UIView *parent = _controller.view;
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) parent = parent.superview;
+  if (parent != nil) {
+    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler cancel];
+    [touchHandler reset];
+  }
+  
+  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+  
+  if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
+    return NO;
+  }
+  
+  if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
+    return topScreen.stackAnimation == RNSScreenStackAnimationSimplePush;
+  } else {
+    return topScreen.stackAnimation != RNSScreenStackAnimationSimplePush;
+  }
+}
+
+- (void)setupGestureHandlers
+{
+  // gesture recognizers for custom stack animations
+  RNSGestureRecognizer *leftEdgeSwipeGestureRecognizer = [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
+  leftEdgeSwipeGestureRecognizer.delegate = self;
+  [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
+  
+  RNSGestureRecognizer *rightEdgeSwipeGestureRecognizer = [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
+  rightEdgeSwipeGestureRecognizer.delegate = self;
+  [self addGestureRecognizer:rightEdgeSwipeGestureRecognizer];
+}
+
+- (void)handleDefaultSwipe:(UIGestureRecognizer *)recognizer
+{
+  if (recognizer.state == UIGestureRecognizerStateEnded) {
+    NSLog(@"cancelled");
+  }
+  NSLog(@"%f", _controller.transitionCoordinator.percentComplete);
+}
+
+- (void)handleSwipe:(RNSGestureRecognizer *)gestureRecognizer {
+  float translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
+  if (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
+    translation = -translation;
+  }
+  _transitionProgress = (translation / gestureRecognizer.view.bounds.size.width);
+  
+  switch (gestureRecognizer.state) {
+  
+    case UIGestureRecognizerStateBegan: {
+      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      _topScreenView = (RNSScreenView *)[_controller popViewControllerAnimated:YES].view;
+      _belowScreenView = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+      break;
+    }
+
+    case UIGestureRecognizerStateChanged: {
+      [_interactionController updateInteractiveTransition:_transitionProgress];
+      break;
+    }
+
+    case UIGestureRecognizerStateCancelled: {
+      [_interactionController cancelInteractiveTransition];
+      break;
+    }
+      
+    case UIGestureRecognizerStateEnded: {
+      if (_transitionProgress > 0.7) {
+        [_interactionController finishInteractiveTransition];
+      } else {
+        [_interactionController cancelInteractiveTransition];
+      }
+      _gestureEndedTime = CACurrentMediaTime();
+      _animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+      [_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+      _interactionController = nil;
+    }
+    default: {
+      break;
+    }
+  }
+  
+  _transitionProgress = fmin(1.0, fmax(0.0, _transitionProgress));
+  
+  [_topScreenView notifyTransitionProgress:_transitionProgress];
+  [_belowScreenView notifyTransitionProgress:_transitionProgress];
+}
+
+- (void)handleAnimation
+{
+  double progress = _transitionProgress > 0.7
+    ? (fmin(1.0, ((CACurrentMediaTime() - _gestureEndedTime) / 0.35) + _transitionProgress))
+    : (fmax(0.0, (_transitionProgress - (CACurrentMediaTime() - _gestureEndedTime) / 0.35)));
+  [((RNSScreenView *)_topScreenView) notifyTransitionProgress:progress];
+  [((RNSScreenView *)_belowScreenView) notifyTransitionProgress:progress];
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController
+{
+  return _interactionController;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id<UIViewControllerAnimatedTransitioning>)animator
+{
+  return _interactionController;
 }
 
 @end

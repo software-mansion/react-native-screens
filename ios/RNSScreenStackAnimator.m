@@ -9,6 +9,7 @@
   UIViewController *_toViewController;
   UIViewController *_fromViewController;
   BOOL _isInteractive;
+  UIView *_fakeView;
 }
 
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation
@@ -80,11 +81,16 @@
   if (!_isInteractive) {
     [animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
   }
-
+  
+  // fake view for transition duration
+  _fakeView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 10, 10)];
+  _fakeView.alpha = 0.0;
+  
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = rightTransform;
     [[transitionContext containerView] addSubview:toViewController.view];
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+      self->_fakeView.alpha = 1.0;
       fromViewController.view.transform = leftTransform;
       toViewController.view.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished) {
@@ -127,7 +133,16 @@
 - (void)animateFadeWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
 {
   UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+  _toViewController = toViewController;
   UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+  _fromViewController = fromViewController;
+
+  CADisplayLink *animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+  _animationStartTime = CACurrentMediaTime();
+  _isInteractive = [transitionContext isInteractive];
+  if (!_isInteractive) {
+    [animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+  }
   
   if (_operation == UINavigationControllerOperationPush) {
     [[transitionContext containerView] addSubview:toViewController.view];
@@ -135,6 +150,10 @@
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
       toViewController.view.alpha = 1.0;
     } completion:^(BOOL finished) {
+      [animationTimer setPaused:YES];
+      [animationTimer invalidate];
+      self->_toViewController = nil;
+      self->_fromViewController = nil;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
   } else if (_operation == UINavigationControllerOperationPop) {
@@ -143,6 +162,10 @@
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
       fromViewController.view.alpha = 0.0;
     } completion:^(BOOL finished) {
+      [animationTimer setPaused:YES];
+      [animationTimer invalidate];
+      self->_toViewController = nil;
+      self->_fromViewController = nil;
       if (transitionContext.transitionWasCancelled) {
         toViewController.view.transform = CGAffineTransformIdentity;
       }
@@ -153,7 +176,10 @@
 
 - (void)handleAnimation
 {
+//  NSLog(@"%f", _toViewController.view.alpha);
+  NSLog(@"%@", _toViewController.view);
   double progress = (fmin(1.0, (CACurrentMediaTime() - _animationStartTime)/ _transitionDuration));
+//  NSLog(@"%f", progress);
   [((RNSScreenView *)_toViewController.view) notifyTransitionProgress:progress];
   [((RNSScreenView *)_fromViewController.view) notifyTransitionProgress:progress];
 }

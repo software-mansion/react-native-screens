@@ -13,7 +13,7 @@ type SimpleStackParams = {
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{stackAnimation: 'simple_push', direction: 'rtl'}}>
+      <Stack.Navigator screenOptions={{stackAnimation: 'simple_push', direction: 'ltr'}}>
         <Stack.Screen name="First" component={First} options={{gestureEnabled: false}}/>
         <Stack.Screen
           name="Second"
@@ -30,7 +30,7 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
-        console.warn(event.nativeEvent.progress);
+        // console.warn(event.nativeEvent.progress);
         setWidth(event.nativeEvent.progress * 50 + 50);
       }
     })
@@ -53,7 +53,7 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
   }, [navigation])
 
   return (
-    <View style={{backgroundColor: 'red', flex: 1}}>
+    <View style={{backgroundColor: 'yellow', flex: 1}}>
       <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
       <Animated.View style={{width, height: width, backgroundColor: 'black'}} />
     </View>
