@@ -10,6 +10,7 @@ import {SettingsPicker, SettingsSwitch, Button, Spacer} from '../shared';
 type StackParamList = {
   First: undefined;
   Second: undefined;
+  Modal: undefined;
 };
 
 type StatusBarStyle = Exclude<
@@ -29,9 +30,10 @@ interface FirstScreenProps {
 const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
   const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>('auto');
   const [statusBarHidden, setStatusBarHidden] = useState(false);
-  const [statusBarAnimation, setStatusBarAnimation] = useState<
-    StatusBarAnimation
-  >('fade');
+  const [
+    statusBarAnimation,
+    setStatusBarAnimation,
+  ] = useState<StatusBarAnimation>('fade');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -72,6 +74,7 @@ const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
         title="Go to second screen"
         onPress={() => navigation.navigate('Second')}
       />
+      <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </View>
   );
@@ -108,6 +111,11 @@ const App = (): JSX.Element => (
       }}
     />
     <Stack.Screen name="Second" component={SecondScreen} />
+    <Stack.Screen
+      name="Modal"
+      component={SecondScreen}
+      options={{stackPresentation: 'modal'}}
+    />
   </Stack.Navigator>
 );
 
