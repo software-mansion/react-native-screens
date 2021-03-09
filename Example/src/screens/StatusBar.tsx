@@ -29,10 +29,9 @@ interface FirstScreenProps {
 const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
   const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>('auto');
   const [statusBarHidden, setStatusBarHidden] = useState(false);
-  const [
-    statusBarAnimation,
-    setStatusBarAnimation,
-  ] = useState<StatusBarAnimation>('fade');
+  const [statusBarAnimation, setStatusBarAnimation] = useState<
+    StatusBarAnimation
+  >('fade');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -99,6 +98,7 @@ const App = (): JSX.Element => (
       headerTitleStyle: {
         color: 'white',
       },
+      headerHideBackButton: true,
     }}>
     <Stack.Screen
       name="First"

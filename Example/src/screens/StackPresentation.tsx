@@ -65,6 +65,7 @@ const App = (): JSX.Element => {
     <Stack.Navigator
       screenOptions={{
         statusBarStyle: 'dark',
+        headerHideBackButton: true,
       }}>
       <Stack.Screen
         name="Main"

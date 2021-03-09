@@ -81,6 +81,7 @@ const AppNavigator = createCompatNavigatorFactory(createNativeStackNavigator)(
         fontWeight: 'bold',
       },
       title: 'react-navigation v4',
+      headerHideBackButton: true,
     },
   },
 );
