@@ -176,7 +176,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       if (mTopScreen != null && newTop != null) {
         // there was some other screen attached before
         int transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
-        if (!mScreenFragments.contains(mTopScreen) && newTop.getScreen().getReplaceAnimation() == Screen.ReplaceAnimation.POP) {
+        if (!mScreenFragments.contains(mTopScreen) && isAnimationTypeForReplacePop(newTop)) {
           // if the previous top screen does not exist anymore and the new top was not on the stack before,
           // probably replace was called, so we check the animation
           transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
@@ -342,5 +342,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private static boolean isTransparent(ScreenStackFragment fragment){
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
+  }
+
+  private static boolean isAnimationTypeForReplacePop(ScreenStackFragment fragment) {
+    return fragment.getScreen().getReplaceAnimation() == Screen.ReplaceAnimation.POP
+        || fragment.getScreen().getAnimationTypeForReplace() == Screen.AnimationTypeForReplace.POP;
   }
 }

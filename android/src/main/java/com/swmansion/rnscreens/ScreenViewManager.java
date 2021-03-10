@@ -79,12 +79,22 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
     view.setGestureEnabled(gestureEnabled);
   }
 
+  // @deprecated use animationTypeForReplace
   @ReactProp(name = "replaceAnimation")
   public void setReplaceAnimation(Screen view, String animation) {
     if (animation == null || "pop".equals(animation)) {
       view.setReplaceAnimation(Screen.ReplaceAnimation.POP);
     } else if ("push".equals(animation)) {
       view.setReplaceAnimation(Screen.ReplaceAnimation.PUSH);
+    }
+  }
+
+  @ReactProp(name = "animationTypeForReplace")
+  public void setAnimationTypeForReplace(Screen view, String animation) {
+    if (animation == null || "pop".equals(animation)) {
+      view.setAnimationTypeForReplace(Screen.AnimationTypeForReplace.POP);
+    } else if ("push".equals(animation)) {
+      view.setAnimationTypeForReplace(Screen.AnimationTypeForReplace.PUSH);
     }
   }
 
