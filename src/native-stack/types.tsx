@@ -57,6 +57,13 @@ export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
+   * How should the screen replacing another screen animate. Defaults to `push`.
+   * The following values are currently supported:
+   * - "push" – the new screen will perform push animation.
+   * - "pop" – the new screen will perform pop animation.
+   */
+  animationTypeForReplace?: ScreenProps['animationTypeForReplace'];
+  /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
    */
@@ -220,6 +227,8 @@ export type NativeStackNavigationOptions = {
    * The following values are currently supported:
    * - "push" – the new screen will perform push animation.
    * - "pop" – the new screen will perform pop animation.
+   *
+   * @deprecated use `animationTypeForReplace` instead.
    */
   replaceAnimation?: ScreenProps['replaceAnimation'];
   /**

@@ -55,6 +55,15 @@ Default options to use for the screens in the navigator.
 
 The `options` prop can be used to configure individual screens inside the navigator. Supported options are:
 
+#### `animationTypeForReplace`
+
+How should the screen replacing another screen animate.
+The following values are currently supported:
+  - `push` – the new screen will perform push animation.
+  - `pop` – the new screen will perform pop animation.
+
+Defaults to `push`.
+
 #### `backButtonInCustomView`
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
@@ -170,7 +179,9 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
-#### `replaceAnimation`
+#### `replaceAnimation` 
+
+**Deprecated** - use animationTypeForReplace instead.
 
 How should the screen replacing another screen animate.
 The following values are currently supported:

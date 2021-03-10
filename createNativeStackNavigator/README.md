@@ -71,6 +71,15 @@ Legacy options (these props differ from the ones used in v5 `native-stack`, and 
 - `largeTitleHideShadow` - see `headerLargeTitleHideShadow`.
 - `translucent` - see `headerTranslucent`.
 
+#### `animationTypeForReplace`
+
+How should the screen replacing another screen animate.
+The following values are currently supported:
+  - `push` – the new screen will perform push animation.
+  - `pop` – the new screen will perform pop animation.
+
+Defaults to `push`.
+
 #### `backButtonInCustomView`
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
@@ -180,6 +189,8 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 Boolean indicating whether the navigation bar is translucent.
 
 #### `replaceAnimation`
+
+**Deprecated** - Use animationTypeForReplace instead.
 
 How should the screen replacing another screen animate.
 The following values are currently supported:

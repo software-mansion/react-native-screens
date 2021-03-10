@@ -372,6 +372,11 @@ class StackView extends React.Component<Props> {
             ? 'pop'
             : options.replaceAnimation
         }
+        animationTypeForReplace={
+          options.animationTypeForReplace === undefined
+            ? 'push'
+            : options.animationTypeForReplace
+        }
         pointerEvents={
           index === this.props.navigation.state.routes.length - 1
             ? 'auto'

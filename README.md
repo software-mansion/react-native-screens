@@ -142,6 +142,8 @@ A callback that gets called when the current screen will disappear. This is call
 
 #### `replaceAnimation`
 
+**Deprecated** - Use animationTypeForReplace instead.
+
 Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
 - `push` – performs push animation
 - `pop` – performs pop animation (default)

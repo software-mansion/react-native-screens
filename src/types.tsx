@@ -57,6 +57,12 @@ export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
+  /**
+   * @description Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
+   *  @type "push" – performs push animation (default)
+   *  @type "pop" – performs pop animation
+   */
+  animationTypeForReplace?: ScreenReplaceTypes;
   children?: React.ReactNode;
   /**
    * @description All children screens should have the same value of their "enabled" prop as their container.
@@ -93,6 +99,8 @@ export interface ScreenProps extends ViewProps {
    * @description Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
    *  @type "push" – performs push animation
    *  @type "pop" – performs pop animation (default)
+   *
+   *  @deprecated use `animationTypeForReplace` instead.
    */
   replaceAnimation?: ScreenReplaceTypes;
   /**
