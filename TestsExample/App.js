@@ -32,9 +32,10 @@ import Test765 from './src/Test765';
 import Test780 from './src/Test780';
 import Test817 from './src/Test817';
 import Test831 from './src/Test831';
+import Test844 from './src/Test844';
 
 enableScreens();
 
 export default function App() {
-  return <Test42 />;
+  return <Test844 />;
 }
