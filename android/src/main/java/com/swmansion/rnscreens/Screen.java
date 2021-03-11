@@ -33,13 +33,7 @@ public class Screen extends ViewGroup {
     SLIDE_FROM_LEFT
   }
 
-  // deprecated - use AnimationTypeForReplace
   public enum ReplaceAnimation {
-    PUSH,
-    POP
-  }
-
-  public enum AnimationTypeForReplace {
     PUSH,
     POP
   }
@@ -71,8 +65,7 @@ public class Screen extends ViewGroup {
   private ActivityState mActivityState;
   private boolean mTransitioning;
   private StackPresentation mStackPresentation = StackPresentation.PUSH;
-  private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.POP; // deprecated
-  private AnimationTypeForReplace mAnimationTypeForReplace = AnimationTypeForReplace.PUSH;
+  private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.POP;
   private StackAnimation mStackAnimation = StackAnimation.DEFAULT;
   private boolean mGestureEnabled = true;
 
@@ -204,13 +197,8 @@ public class Screen extends ViewGroup {
     mStackAnimation = stackAnimation;
   }
 
-  // deprecated
   public void setReplaceAnimation(ReplaceAnimation replaceAnimation) {
     mReplaceAnimation = replaceAnimation;
-  }
-
-  public void setAnimationTypeForReplace(AnimationTypeForReplace animationTypeForReplace) {
-    mAnimationTypeForReplace = animationTypeForReplace;
   }
 
   public void setGestureEnabled(boolean gestureEnabled) {
@@ -221,13 +209,8 @@ public class Screen extends ViewGroup {
     return mStackAnimation;
   }
 
-  // deprecated
   public ReplaceAnimation getReplaceAnimation() {
     return mReplaceAnimation;
-  }
-
-  public AnimationTypeForReplace getAnimationTypeForReplace() {
-    return mAnimationTypeForReplace;
   }
 
   public StackPresentation getStackPresentation() {
