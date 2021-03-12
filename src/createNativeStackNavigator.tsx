@@ -360,6 +360,17 @@ class StackView extends React.Component<Props> {
       stackAnimation = 'none';
     }
 
+    let animationTypeForReplace: NativeStackNavigationOptionsV5['animationTypeForReplace'];
+    if (options.animationTypeForReplace === undefined) {
+      if (options.replaceAnimation !== undefined) {
+        animationTypeForReplace = options.replaceAnimation;
+      } else {
+        animationTypeForReplace = 'pop';
+      }
+    } else {
+      animationTypeForReplace = options.animationTypeForReplace;
+    }
+
     const { screenProps } = this.props;
     return (
       <Screen
@@ -367,16 +378,7 @@ class StackView extends React.Component<Props> {
         style={[StyleSheet.absoluteFill, options.cardStyle]}
         stackAnimation={stackAnimation}
         stackPresentation={stackPresentation}
-        replaceAnimation={
-          options.replaceAnimation === undefined
-            ? 'pop'
-            : options.replaceAnimation
-        }
-        animationTypeForReplace={
-          options.animationTypeForReplace === undefined
-            ? 'push'
-            : options.animationTypeForReplace
-        }
+        replaceAnimation={animationTypeForReplace}
         pointerEvents={
           index === this.props.navigation.state.routes.length - 1
             ? 'auto'

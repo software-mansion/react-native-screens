@@ -59,8 +59,8 @@ export interface ScreenProps extends ViewProps {
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   /**
    * @description Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
-   *  @type "push" – performs push animation (default)
-   *  @type "pop" – performs pop animation
+   *  @type "push" – performs push animation
+   *  @type "pop" – performs pop animation (default)
    */
   animationTypeForReplace?: ScreenReplaceTypes;
   children?: React.ReactNode;

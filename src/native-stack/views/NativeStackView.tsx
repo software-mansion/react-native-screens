@@ -64,7 +64,7 @@ export default function NativeStackView({
         const {
           gestureEnabled,
           replaceAnimation = 'pop', // deprecated
-          animationTypeForReplace = 'push',
+          animationTypeForReplace,
           stackPresentation = 'push',
           stackAnimation,
           contentStyle,
@@ -83,8 +83,11 @@ export default function NativeStackView({
             key={route.key}
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
-            replaceAnimation={replaceAnimation} // deprecated
-            animationTypeForReplace={animationTypeForReplace}
+            replaceAnimation={
+              animationTypeForReplace === undefined
+                ? replaceAnimation
+                : animationTypeForReplace
+            }
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
             onWillAppear={() => {
