@@ -78,7 +78,7 @@ The following values are currently supported:
   - `push` – the new screen will perform push animation.
   - `pop` – the new screen will perform pop animation.
 
-Defaults to `push`.
+Defaults to `pop`.
 
 #### `backButtonInCustomView`
 
