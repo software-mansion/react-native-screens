@@ -190,7 +190,7 @@ Boolean indicating whether the navigation bar is translucent.
 
 #### `replaceAnimation`
 
-**Deprecated** - Use animationTypeForReplace instead.
+**Deprecated** - use animationTypeForReplace instead.
 
 How should the screen replacing another screen animate.
 The following values are currently supported:
