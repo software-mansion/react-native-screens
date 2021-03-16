@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, View } from 'react-native';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import {Button, View} from 'react-native';
+import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -17,8 +17,8 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          animationTypeForReplace: 'pop',
-          // replaceAnimation: 'pop',
+          animationTypeForReplace: 'push',
+          // replaceAnimation: 'push',
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
@@ -27,8 +27,8 @@ export default function App(): JSX.Element {
   );
 }
 
-const First = ({ navigation }: Props) => (
-  <View style={{ flex: 1, justifyContent: 'center' }}>
+const First = ({navigation}: Props) => (
+  <View style={{flex: 1, justifyContent: 'center'}}>
     <Button
       title="Tap me for second screen"
       onPress={() => navigation.replace('Second')}
@@ -36,8 +36,8 @@ const First = ({ navigation }: Props) => (
   </View>
 );
 
-const Second = ({ navigation }: Props) => (
-  <View style={{ flex: 1, justifyContent: 'center' }}>
+const Second = ({navigation}: Props) => (
+  <View style={{flex: 1, justifyContent: 'center'}}>
     <Button
       title="Tap me for first screen"
       onPress={() => navigation.replace('First')}
