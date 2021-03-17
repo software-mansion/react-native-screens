@@ -34,10 +34,22 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
   RNSActivityStateOnTop = 2
 };
 
+typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
+  RNSStatusBarStyleAuto,
+  RNSStatusBarStyleInverted,
+  RNSStatusBarStyleLight,
+  RNSStatusBarStyleDark,
+};
+
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
 + (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
+
+#if !TARGET_OS_TV
++ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
+#endif
 
 @end
 
@@ -67,6 +79,13 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+
+#if !TARGET_OS_TV
+@property (nonatomic) RNSStatusBarStyle statusBarStyle;
+@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
+@property (nonatomic) BOOL statusBarHidden;
+@property (nonatomic) UIInterfaceOrientationMask screenOrientation;
+#endif
 
 - (void)notifyFinishTransitioning;
 

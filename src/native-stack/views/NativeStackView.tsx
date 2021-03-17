@@ -62,11 +62,15 @@ export default function NativeStackView({
       {routes.map((route) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
+          contentStyle,
           gestureEnabled,
           replaceAnimation = 'pop',
+          screenOrientation,
           stackPresentation = 'push',
           stackAnimation,
-          contentStyle,
+          statusBarAnimation,
+          statusBarHidden,
+          statusBarStyle,
         } = options;
 
         const viewStyles = [
@@ -83,8 +87,12 @@ export default function NativeStackView({
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
             replaceAnimation={replaceAnimation}
-            stackPresentation={stackPresentation}
+            screenOrientation={screenOrientation}
             stackAnimation={stackAnimation}
+            stackPresentation={stackPresentation}
+            statusBarAnimation={statusBarAnimation}
+            statusBarHidden={statusBarHidden}
+            statusBarStyle={statusBarStyle}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',

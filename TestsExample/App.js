@@ -37,5 +37,5 @@ import Test844 from './src/Test844';
 enableScreens();
 
 export default function App() {
-  return <Test42 />;
+  return <Test642 />;
 }

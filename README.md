@@ -146,6 +146,21 @@ Allows for the customization of the type of animation to use when this screen re
 - `push` – performs push animation
 - `pop` – performs pop animation (default)
 
+#### `screenOrientation`
+
+Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
+
+- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
+- `all`
+- `portrait`
+- `portrait_up`
+- `portrait_down`
+- `landscape`
+- `landscape_left`
+- `landscape_right`
+
+Defaults to `default`.
+
 #### `stackAnimation`
 
 Allows for the customization of how the given screen should appear/disappear when pushed or popped at the top of the stack. The following values are currently supported:
@@ -184,6 +199,18 @@ For Android:
 `modal`, `containedModal`, `fullScreenModal`, `formSheet` will use `Screen.StackPresentation.MODAL`.
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
+
+#### `statusBarAnimation` (iOS only)
+
+Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+
+#### `statusBarHidden` (iOS only)
+
+When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
+
+#### `statusBarStyle` (iOS only)
+
+Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
 
 ### `<ScreenStackHeaderConfig>`
 
@@ -273,33 +300,6 @@ Customize the weight of the font to be used for the large title.
 #### `largeTitleHideShadow` (iOS only)
 
 Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
-
-#### `screenOrientation`
-
-Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
-
-- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
-- `all`
-- `portrait`
-- `portrait_up`
-- `portrait_down`
-- `landscape`
-- `landscape_left`
-- `landscape_right`
-
-Defaults to `default`.
-
-#### `statusBarAnimation` (iOS only)
-
-Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
-
-#### `statusBarHidden` (iOS only)
-
-When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
-
-#### `statusBarStyle` (iOS only)
-
-Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
 
 #### `title`
 
