@@ -171,7 +171,14 @@ const App = (): JSX.Element => {
           />
         )}
       </Stack.Screen>
-      <Stack.Screen name="Screen" component={NavigateScreen} />
+      <Stack.Screen name="Screen">
+        {({navigation}) => (
+          <NavigateScreen
+            navigation={navigation}
+            stackAnimation={stackAnimation}
+          />
+        )}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 };
