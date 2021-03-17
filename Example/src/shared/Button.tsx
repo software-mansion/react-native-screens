@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button as RNButton} from 'react-native';
-import {Spacer} from '.';
+import {Spacer} from './Spacer';
 
 interface Props {
   title: string;
