@@ -48,11 +48,11 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
   const [headerTitle, setHeaderTitle] = useState('Settings');
   const [backButtonVisible, setBackButtonVisible] = useState(true);
   const [headerShown, setHeaderShown] = useState(true);
-  const [headerLargeTitle, setHeaderLargeTitle] = useState(false);
+  const [headerLargeTitle, setHeaderLargeTitle] = useState(true);
   const [headerItem, setHeaderItem] = useState<HeaderItemPosition>('right');
   const [headerBackTitle, setHeaderBackTitle] = useState('Back');
-  const [headerHideShadow, setHeaderHideShadow] = useState(false);
-  const [headerTranslucent, setHeaderTranslucent] = useState(false);
+  const [headerHideShadow, setHeaderHideShadow] = useState(true);
+  const [headerTranslucent, setHeaderTranslucent] = useState(true);
 
   const square = (props: {tintColor?: string}) => (
     <Square {...props} color="green" size={20} />
