@@ -31,6 +31,7 @@
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
+    _hasWindowTraitsSet = NO;
   }
 
   return self;
@@ -172,19 +173,21 @@
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
   _statusBarStyle = statusBarStyle;
+  _hasWindowTraitsSet = YES;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
   [RNSScreenWindowTraits updateStatusBarAppearance];
 }
 
 - (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
 {
+  _hasWindowTraitsSet = YES;
   _statusBarAnimation = statusBarAnimation;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
-  [RNSScreenWindowTraits updateStatusBarAppearance];
 }
 
 - (void)setStatusBarHidden:(BOOL)statusBarHidden
 {
+  _hasWindowTraitsSet = YES;
   _statusBarHidden = statusBarHidden;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
   [RNSScreenWindowTraits updateStatusBarAppearance];
@@ -192,6 +195,7 @@
 
 - (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
 {
+  _hasWindowTraitsSet = YES;
   _screenOrientation = screenOrientation;
   [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
 }
@@ -411,7 +415,7 @@
     return !includingModals ? nil : [(RNSScreen *)lastViewController findChildVCForConfigIncludingModals:includingModals] ?: lastViewController;
   }
 
-  UIViewController *selfOrNil = [self findScreenConfig] != nil ? self : nil;
+  UIViewController *selfOrNil = ((RNSScreenView *)self.view).hasWindowTraitsSet ? self : nil;
   if (lastViewController == nil) {
     return selfOrNil;
   } else {
@@ -433,16 +437,6 @@
   }
 }
 #endif
-
-- (RNSScreenStackHeaderConfig *)findScreenConfig
-{
-  for (UIView *subview in self.view.reactSubviews) {
-    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      return (RNSScreenStackHeaderConfig *)subview;
-    }
-  }
-  return nil;
-}
 
 - (void)viewDidLayoutSubviews
 {
