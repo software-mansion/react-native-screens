@@ -1,32 +1,21 @@
 import React from 'react';
-import {ScrollView, StyleSheet, SafeAreaView} from 'react-native';
+import {ScrollView, StyleSheet, View, ImageBackground} from 'react-native';
 import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-  NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
-import {Button} from '../shared';
-
-type StackPresentation = Exclude<
-  NativeStackNavigationOptions['stackPresentation'],
-  undefined
->;
-
-const SCREENS: Record<StackPresentation, StackPresentation> = {
-  push: 'push',
-  modal: 'modal',
-  transparentModal: 'transparentModal',
-  containedModal: 'containedModal',
-  containedTransparentModal: 'containedTransparentModal',
-  fullScreenModal: 'fullScreenModal',
-  formSheet: 'formSheet',
-};
+import {Button, Form, Choose, Alert, Dialog} from '../shared';
 
 type StackParamList = {
   Main: undefined;
-} & {
-  [P in keyof typeof SCREENS]: undefined;
+  Push: undefined;
+  Modal: undefined;
+  TransparentModal: undefined;
+  ContainedModal: undefined;
+  ContainedTransparentModal: undefined;
+  FullScreenModal: undefined;
+  FormSheet: undefined;
 };
 
 interface MainScreenProps {
@@ -36,58 +25,131 @@ interface MainScreenProps {
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
   return (
     <ScrollView style={{...styles.container, backgroundColor: 'thistle'}}>
-      {Object.keys(SCREENS).map((screen) => (
-        <Button
-          key={screen}
-          title={screen}
-          onPress={() => navigation.navigate(screen)}
-        />
-      ))}
+      <Button title="push" onPress={() => navigation.navigate('Push')} />
+      <Button title="modal" onPress={() => navigation.navigate('Modal')} />
+      <Button
+        title="transparentModal"
+        onPress={() => navigation.navigate('TransparentModal')}
+      />
+      <Button
+        title="containedModal"
+        onPress={() => navigation.navigate('ContainedModal')}
+      />
+      <Button
+        title="containedTransparentModal"
+        onPress={() => navigation.navigate('ContainedTransparentModal')}
+      />
+      <Button
+        title="fullScreenModal"
+        onPress={() => navigation.navigate('FullScreenModal')}
+      />
+      <Button
+        title="formSheet"
+        onPress={() => navigation.navigate('FormSheet')}
+      />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </ScrollView>
   );
 };
 
-interface SimpleScreenProps {
-  navigation: NativeStackNavigationProp<StackParamList, keyof typeof SCREENS>;
+interface FormScreenProps {
+  navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const SimpleScreen = ({navigation}: SimpleScreenProps): JSX.Element => (
-  <SafeAreaView style={styles.container}>
+const FormScreen = ({navigation}: FormScreenProps): JSX.Element => (
+  <View style={{...styles.container, backgroundColor: 'white'}}>
+    <Form />
     <Button title="Go back" onPress={() => navigation.goBack()} />
-  </SafeAreaView>
+  </View>
+);
+
+interface ModalScreenProps {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}
+
+const ModalScreen = ({navigation}: ModalScreenProps): JSX.Element => (
+  <View style={styles.container}>
+    <Choose />
+    <Button title="Go back" onPress={() => navigation.goBack()} />
+  </View>
+);
+
+interface FullScreenModalProps {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}
+
+const FullScreenModalScreen = ({
+  navigation,
+}: FullScreenModalProps): JSX.Element => (
+  <View style={{flex: 1}}>
+    <ImageBackground
+      style={styles.image}
+      source={require('../assets/trees.jpg')}>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </ImageBackground>
+  </View>
 );
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        statusBarStyle: 'dark',
-        headerHideBackButton: true,
-      }}>
-      <Stack.Screen
-        name="Main"
-        component={MainScreen}
-        options={{title: 'Stack Presentation'}}
-      />
-      {Object.keys(SCREENS).map((name) => (
-        <Stack.Screen
-          key={name}
-          name={name as StackPresentation}
-          component={SimpleScreen}
-          options={{stackPresentation: name as StackPresentation}}
-        />
-      ))}
-    </Stack.Navigator>
-  );
-};
+const App = (): JSX.Element => (
+  <Stack.Navigator
+    screenOptions={{
+      statusBarStyle: 'dark',
+      headerHideBackButton: true,
+    }}>
+    <Stack.Screen
+      name="Main"
+      component={MainScreen}
+      options={{title: 'Stack Presentation'}}
+    />
+    <Stack.Screen
+      name="Push"
+      component={FormScreen}
+      options={{stackPresentation: 'push'}}
+    />
+    <Stack.Screen
+      name="Modal"
+      component={ModalScreen}
+      options={{stackPresentation: 'modal'}}
+    />
+    <Stack.Screen
+      name="TransparentModal"
+      component={Alert}
+      options={{stackPresentation: 'transparentModal', headerShown: false}}
+    />
+    <Stack.Screen
+      name="ContainedModal"
+      component={ModalScreen}
+      options={{stackPresentation: 'containedModal'}}
+    />
+    <Stack.Screen
+      name="ContainedTransparentModal"
+      component={Dialog}
+      options={{stackPresentation: 'containedTransparentModal'}}
+    />
+    <Stack.Screen
+      name="FullScreenModal"
+      component={FullScreenModalScreen}
+      options={{stackPresentation: 'containedTransparentModal'}}
+    />
+    <Stack.Screen
+      name="FormSheet"
+      component={FormScreen}
+      options={{stackPresentation: 'formSheet'}}
+    />
+  </Stack.Navigator>
+);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 100,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
 });
 

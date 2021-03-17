@@ -1,16 +1,10 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {Button} from '../shared';
+import {Button, Alert} from '../shared';
 
 type StackParamList = {
   Main: undefined;
@@ -51,30 +45,6 @@ const ModalScreen = ({navigation}: ModalScreenProps): JSX.Element => (
   </View>
 );
 
-interface AlertScreenProps {
-  navigation: NativeStackNavigationProp<StackParamList, 'Alert'>;
-}
-
-const AlertScreen = ({navigation}: AlertScreenProps): JSX.Element => {
-  const backgrounds = [
-    'darkviolet',
-    'slateblue',
-    'mediumseagreen',
-    'orange',
-    'indianred',
-  ];
-  const bgColor = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-
-  return (
-    <TouchableOpacity
-      onPress={() => navigation.goBack()}
-      style={{...styles.alert, backgroundColor: bgColor}}>
-      <Text style={styles.text}>Oh, hi! 👋</Text>
-      <Text style={styles.text}>Tap me</Text>
-    </TouchableOpacity>
-  );
-};
-
 const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
@@ -100,7 +70,7 @@ const App = (): JSX.Element => (
     />
     <Stack.Screen
       name="Alert"
-      component={AlertScreen}
+      component={Alert}
       options={{
         stackPresentation: 'transparentModal',
         headerShown: false,
@@ -113,21 +83,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 100,
-  },
-  alert: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 120,
-    width: Dimensions.get('screen').width - 40,
-    borderRadius: 20,
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-  },
-  text: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: 'white',
   },
 });
 

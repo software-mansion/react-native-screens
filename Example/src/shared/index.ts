@@ -5,3 +5,7 @@ export * from './SettingsSwitch';
 export * from './SettingsPicker';
 export * from './SettingsInput';
 export * from './Button';
+export * from './Alert';
+export * from './Form';
+export * from './Choose';
+export * from './Dialog';
