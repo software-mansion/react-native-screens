@@ -138,7 +138,7 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="FullScreenModal"
       component={FullScreenModalScreen}
-      options={{stackPresentation: 'containedTransparentModal'}}
+      options={{stackPresentation: 'fullScreenModal'}}
     />
     <Stack.Screen
       name="FormSheet"
