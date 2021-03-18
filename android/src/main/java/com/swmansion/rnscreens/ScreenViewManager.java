@@ -88,6 +88,11 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
     }
   }
 
+  @ReactProp(name = "screenOrientation")
+  public void setScreenOrientation(Screen view, String screenOrientation) {
+    view.setScreenOrientation(screenOrientation);
+  }
+
   @Nullable
   @Override
   public Map getExportedCustomDirectEventTypeConstants() {

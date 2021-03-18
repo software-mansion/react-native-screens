@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Paint;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -12,6 +13,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.react.bridge.GuardedRunnable;
 import com.facebook.react.bridge.ReactContext;
@@ -68,6 +70,8 @@ public class Screen extends ViewGroup {
   private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.POP;
   private StackAnimation mStackAnimation = StackAnimation.DEFAULT;
   private boolean mGestureEnabled = true;
+  private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+  private boolean mHasOrientationSet = false;
 
   @Override
   protected void onAnimationStart() {
@@ -254,5 +258,50 @@ public class Screen extends ViewGroup {
 
   public boolean isGestureEnabled() {
     return mGestureEnabled;
+  }
+
+  public void setScreenOrientation(String screenOrientation) {
+    if (screenOrientation == null) {
+      mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+      mHasOrientationSet = false;
+      return;
+    }
+
+    mHasOrientationSet = true;
+
+    switch (screenOrientation) {
+      case "all":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
+        break;
+      case "portrait":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
+        break;
+      case "portrait_up":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        break;
+      case "portrait_down":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+        break;
+      case "landscape":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+        break;
+      case "landscape_left":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+        break;
+      case "landscape_right":
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        break;
+      default:
+        mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        break;
+    }
+  }
+
+  public boolean hasOrientationSet() {
+    return mHasOrientationSet;
+  }
+
+  public int getScreenOrientation() {
+    return mScreenOrientation;
   }
 }
