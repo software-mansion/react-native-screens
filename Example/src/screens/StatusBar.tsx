@@ -1,5 +1,5 @@
 import React, {useLayoutEffect, useState} from 'react';
-import {View, StyleSheet, Platform, Text} from 'react-native';
+import {View, StyleSheet, Platform, Text, I18nManager} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -30,10 +30,9 @@ interface FirstScreenProps {
 const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
   const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>('auto');
   const [statusBarHidden, setStatusBarHidden] = useState(false);
-  const [
-    statusBarAnimation,
-    setStatusBarAnimation,
-  ] = useState<StatusBarAnimation>('fade');
+  const [statusBarAnimation, setStatusBarAnimation] = useState<
+    StatusBarAnimation
+  >('fade');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -102,6 +101,7 @@ const App = (): JSX.Element => (
         color: 'white',
       },
       headerHideBackButton: true,
+      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
     }}>
     <Stack.Screen
       name="First"

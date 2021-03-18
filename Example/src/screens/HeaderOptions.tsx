@@ -1,5 +1,5 @@
 import React, {useState, useLayoutEffect, useEffect} from 'react';
-import {StyleSheet, ScrollView, Text} from 'react-native';
+import {StyleSheet, ScrollView, Text, I18nManager} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -142,6 +142,7 @@ const App = (): JSX.Element => (
     screenOptions={{
       statusBarStyle: 'dark',
       headerHideBackButton: true,
+      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
     }}>
     <Stack.Screen
       name="Main"

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, I18nManager} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {createCompatNavigatorFactory} from '@react-navigation/compat';
 
@@ -82,6 +82,7 @@ const AppNavigator = createCompatNavigatorFactory(createNativeStackNavigator)(
       },
       title: 'react-navigation v4',
       headerHideBackButton: true,
+      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
     },
   },
 );

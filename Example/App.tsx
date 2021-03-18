@@ -1,11 +1,18 @@
 import React from 'react';
-import {ScrollView, SafeAreaView, StyleSheet, Text} from 'react-native';
+import {
+  ScrollView,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  I18nManager,
+} from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {NavigationContainer} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import RNRestart from 'react-native-restart';
 
-import {MenuItem} from './src/shared';
+import {MenuItem, SettingsSwitch} from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import StackPresentation from './src/screens/StackPresentation';
@@ -90,6 +97,15 @@ interface MainScreenProps {
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
   <ScrollView>
     <SafeAreaView>
+      <SettingsSwitch
+        style={styles.switch}
+        label="Right to left"
+        value={I18nManager.isRTL}
+        onValueChange={() => {
+          I18nManager.forceRTL(!I18nManager.isRTL);
+          RNRestart.Restart();
+        }}
+      />
       <Text style={styles.label}>Examples</Text>
       {Object.keys(SCREENS)
         .filter((name) => SCREENS[name].type === 'example')
@@ -142,6 +158,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'black',
     margin: 10,
+    marginTop: 15,
+  },
+  switch: {
     marginTop: 15,
   },
 });

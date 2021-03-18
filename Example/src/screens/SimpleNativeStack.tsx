@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, I18nManager} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -42,6 +42,7 @@ const App = (): JSX.Element => (
     screenOptions={{
       statusBarStyle: 'dark',
       headerHideBackButton: true,
+      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
     }}>
     <Stack.Screen
       name="Main"

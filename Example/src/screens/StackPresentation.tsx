@@ -1,5 +1,11 @@
 import React from 'react';
-import {ScrollView, StyleSheet, View, ImageBackground} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  ImageBackground,
+  I18nManager,
+} from 'react-native';
 import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -97,6 +103,7 @@ const App = (): JSX.Element => (
     screenOptions={{
       statusBarStyle: 'dark',
       headerHideBackButton: true,
+      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
     }}>
     <Stack.Screen
       name="Main"

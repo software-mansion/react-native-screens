@@ -6,7 +6,7 @@ type Props<T = string> = {
   value: T;
   onValueChange: (value: T) => void;
   items: T[];
-  style: ViewStyle;
+  style?: ViewStyle;
 };
 
 export function SettingsPicker<T extends string>({
@@ -14,7 +14,7 @@ export function SettingsPicker<T extends string>({
   value,
   onValueChange,
   items,
-  style,
+  style = {},
 }: Props<T>): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   return (

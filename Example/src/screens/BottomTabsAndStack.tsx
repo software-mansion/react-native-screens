@@ -1,5 +1,5 @@
 import React, {useLayoutEffect} from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {I18nManager, SafeAreaView, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
   createNativeStackNavigator,
@@ -61,7 +61,10 @@ const createStack = () => {
   const Stack = createNativeStackNavigator();
 
   const makeStack = () => (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      }}>
       <Stack.Screen name="Details" component={DetailsScreen} />
     </Stack.Navigator>
   );
