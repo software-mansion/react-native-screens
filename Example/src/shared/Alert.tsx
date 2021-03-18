@@ -1,5 +1,11 @@
 import React from 'react';
-import {Text, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 export const Alert = (): JSX.Element => {
@@ -16,14 +22,18 @@ export const Alert = (): JSX.Element => {
   return (
     <TouchableOpacity
       onPress={() => navigation.goBack()}
-      style={{...styles.alert, backgroundColor: bgColor}}>
-      <Text style={styles.text}>Oh, hi! 👋</Text>
-      <Text style={styles.text}>Tap me</Text>
+      style={styles.container}>
+      <View style={{...styles.alert, backgroundColor: bgColor}}>
+        <Text style={styles.text}>Oh, hi! 👋</Text>
+      </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   alert: {
     alignItems: 'center',
     justifyContent: 'center',
