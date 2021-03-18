@@ -15,6 +15,7 @@ import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
 import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 import Modals from './src/screens/Modals';
+import Orientation from './src/screens/Orientation';
 
 enableScreens();
 
@@ -65,6 +66,11 @@ const SCREENS: Record<
   Animations: {
     title: 'Animations',
     component: Animations,
+    type: 'playground',
+  },
+  Orientation: {
+    title: 'Orientation',
+    component: Orientation,
     type: 'playground',
   },
 };

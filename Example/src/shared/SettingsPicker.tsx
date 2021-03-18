@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 
 type Props<T = string> = {
   label: string;
   value: T;
   onValueChange: (value: T) => void;
   items: T[];
+  style: ViewStyle;
 };
 
 export function SettingsPicker<T extends string>({
@@ -13,11 +14,12 @@ export function SettingsPicker<T extends string>({
   value,
   onValueChange,
   items,
+  style,
 }: Props<T>): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={{...styles.container, ...style}}
       onPress={() => setIsOpen(!isOpen)}>
       <Text style={styles.label}>{`${label}: ${value}`}</Text>
       {isOpen
