@@ -66,14 +66,21 @@ public class ScreenFragment extends Fragment {
 
   public void onContainerUpdate() {
     if (!hasChildScreenWithOrientationSet(getScreen())) {
-      if (getScreen().hasOrientationSet() && getActivity() != null) {
-        getActivity().setRequestedOrientation(getScreen().getScreenOrientation());
-      }
-
-      // if this screen has no orientation set and there is no child with orientation set, we look for a parent that has the orientation set
-      Screen parent = findParentWithOrientationSet();
-      if (parent != null && parent.getFragment() != null && parent.getFragment().getActivity() != null) {
-        parent.getFragment().getActivity().setRequestedOrientation(parent.getScreenOrientation());
+      if (getScreen().hasOrientationSet()) {
+        if (getActivity() == null) {
+          // the activity of fragment is not set yet, so we take the base activity
+          if(mScreenView.getContext() != null && ((ReactContext) mScreenView.getContext()).getCurrentActivity() != null) {
+            ((ReactContext) mScreenView.getContext()).getCurrentActivity().setRequestedOrientation(getScreen().getScreenOrientation());
+          }
+        } else {
+          getActivity().setRequestedOrientation(getScreen().getScreenOrientation());
+        }
+      } else {
+        // if this screen has no orientation set and there is no child with orientation set, we look for a parent that has the orientation set
+        Screen parent = findParentWithOrientationSet();
+        if (parent != null && parent.getFragment() != null && parent.getFragment().getActivity() != null) {
+          parent.getFragment().getActivity().setRequestedOrientation(parent.getScreenOrientation());
+        }
       }
     }
   }
