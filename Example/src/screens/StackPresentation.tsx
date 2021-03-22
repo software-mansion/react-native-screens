@@ -132,7 +132,10 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="ContainedTransparentModal"
       component={Dialog}
-      options={{stackPresentation: 'containedTransparentModal'}}
+      options={{
+        stackPresentation: 'containedTransparentModal',
+        headerShown: false,
+      }}
     />
     <Stack.Screen
       name="FullScreenModal"
