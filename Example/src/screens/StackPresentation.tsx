@@ -5,6 +5,7 @@ import {
   View,
   ImageBackground,
   I18nManager,
+  Platform,
 } from 'react-native';
 import {ParamListBase} from '@react-navigation/native';
 import {
@@ -122,7 +123,12 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="TransparentModal"
       component={Alert}
-      options={{stackPresentation: 'transparentModal', headerShown: false}}
+      options={{
+        stackPresentation: 'transparentModal',
+        headerShown: false,
+        stackAnimation:
+          Platform.OS === 'android' ? 'slide_from_left' : 'default',
+      }}
     />
     <Stack.Screen
       name="ContainedModal"
