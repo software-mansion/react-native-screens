@@ -134,7 +134,7 @@ const ExampleApp = (): JSX.Element => (
   <NavigationContainer>
     <Stack.Navigator
       screenOptions={{
-        statusBarStyle: 'dark',
+        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
       }}>
       <Stack.Screen
         name="Main"

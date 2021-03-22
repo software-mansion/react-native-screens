@@ -123,7 +123,6 @@ const App = (): JSX.Element => {
   return (
     <Stack.Navigator
       screenOptions={{
-        statusBarStyle: 'dark',
         headerHideBackButton: true,
         direction: I18nManager.isRTL ? 'rtl' : 'ltr',
       }}>

@@ -50,7 +50,6 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const App = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
-      statusBarStyle: 'dark',
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
     }}>
