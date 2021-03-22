@@ -5,6 +5,8 @@ import {
   StyleSheet,
   Text,
   I18nManager,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import {enableScreens} from 'react-native-screens';
 import {NavigationContainer} from '@react-navigation/native';
@@ -17,7 +19,7 @@ import {MenuItem, SettingsSwitch} from './src/shared';
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import StackPresentation from './src/screens/StackPresentation';
 import HeaderOptions from './src/screens/HeaderOptions';
-import StatusBar from './src/screens/StatusBar';
+import StatusBarExample from './src/screens/StatusBar';
 import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
 import StackReactNavigation4 from './src/screens/StackReactNavigation4';
@@ -25,6 +27,10 @@ import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
 
 enableScreens();
+
+if (Platform.OS === 'android') {
+  StatusBar.setTranslucent(true);
+}
 
 const SCREENS: Record<
   string,
@@ -67,7 +73,7 @@ const SCREENS: Record<
   },
   StatusBar: {
     title: 'Status bar (iOS)',
-    component: StatusBar,
+    component: StatusBarExample,
     type: 'playground',
   },
   Animations: {
