@@ -141,6 +141,7 @@ const App = (): JSX.Element => (
       options={{
         stackPresentation: 'containedTransparentModal',
         headerShown: false,
+        stackAnimation: 'fade',
       }}
     />
     <Stack.Screen
