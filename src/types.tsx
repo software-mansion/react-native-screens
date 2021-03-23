@@ -133,6 +133,11 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarAnimation?: 'none' | 'fade' | 'slide';
   /**
+   * @host (Android only)
+   * @description Sets the status bar color (similar to the `StatusBar` component).
+   */
+  statusBarColor?: string;
+  /**
    * @host (iOS only)
    * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
    */
@@ -142,6 +147,13 @@ export interface ScreenProps extends ViewProps {
    * @description Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
    */
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
+  /**
+   * Sets the translucency of the status bar. Defaults to true.
+   *
+   * @host (Android only)
+   * @description Sets the translucency of the status bar. Defaults to true.
+   */
+  statusBarTranslucent?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {

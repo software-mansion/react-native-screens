@@ -93,6 +93,33 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
     view.setScreenOrientation(screenOrientation);
   }
 
+  @ReactProp(name = "statusBarAnimation")
+  public void setStatusBarAnimation(Screen view, String statusBarAnimation) {
+    boolean animated = statusBarAnimation != null && !"none".equals(statusBarAnimation);
+    view.setStatusBarAnimated(animated);
+  }
+
+  @ReactProp(name = "statusBarColor")
+  public void setStatusBarColor(Screen view, double statusBarColor) {
+    view.setStatusBarColor(statusBarColor);
+  }
+
+  @ReactProp(name = "statusBarStyle")
+  public void setStatusBarStyle(Screen view, String statusBarStyle) {
+    view.setStatusBarStyle(statusBarStyle);
+  }
+
+  @ReactProp(name = "statusBarTranslucent")
+  public void setStatusBarTranslucent(Screen view, boolean statusBarTranslucent) {
+    view.setStatusBarTranslucent(statusBarTranslucent);
+  }
+
+  @ReactProp(name = "statusBarHidden")
+  public void setStatusBarHidden(Screen view, boolean statusBarHidden) {
+    view.setStatusBarHidden(statusBarHidden);
+  }
+
+
   @Nullable
   @Override
   public Map getExportedCustomDirectEventTypeConstants() {

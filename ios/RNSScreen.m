@@ -31,7 +31,10 @@
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
-    _hasWindowTraitsSet = NO;
+    _hasStatusBarStyleSet = NO;
+    _hasStatusBarAnimationSet = NO;
+    _hasStatusBarHiddenSet = NO;
+    _hasOrientationSet = NO;
   }
 
   return self;
@@ -172,22 +175,22 @@
 #if !TARGET_OS_TV
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
+  _hasStatusBarStyleSet = YES;
   _statusBarStyle = statusBarStyle;
-  _hasWindowTraitsSet = YES;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
   [RNSScreenWindowTraits updateStatusBarAppearance];
 }
 
 - (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
 {
-  _hasWindowTraitsSet = YES;
+  _hasStatusBarAnimationSet = YES;
   _statusBarAnimation = statusBarAnimation;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
 }
 
 - (void)setStatusBarHidden:(BOOL)statusBarHidden
 {
-  _hasWindowTraitsSet = YES;
+  _hasStatusBarHiddenSet = YES;
   _statusBarHidden = statusBarHidden;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
   [RNSScreenWindowTraits updateStatusBarAppearance];
@@ -195,7 +198,7 @@
 
 - (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
 {
-  _hasWindowTraitsSet = YES;
+  _hasOrientationSet = YES;
   _screenOrientation = screenOrientation;
   [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
 }
@@ -357,7 +360,7 @@
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:@"style" includingModals:NO];
   return vc == self ? nil : vc;
 }
 
@@ -368,7 +371,7 @@
 
 - (UIViewController *)childViewControllerForStatusBarHidden
 {
-  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:@"hidden" includingModals:NO];
   return vc == self ? nil : vc;
 }
 
@@ -379,7 +382,7 @@
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:@"animation" includingModals:NO];
   
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreenView *)vc.view).statusBarAnimation;
@@ -389,7 +392,7 @@
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-  UIViewController *vc = [self findChildVCForConfigIncludingModals:YES];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:@"orientation" includingModals:YES];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreenView *)vc.view).screenOrientation;
@@ -402,7 +405,7 @@
 // so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
 // if the returned vc is nil, it means none of children could provide config and self does not have config either,
 // so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
-- (UIViewController *)findChildVCForConfigIncludingModals:(BOOL)includingModals
+- (UIViewController *)findChildVCForConfigAndTrait:(NSString *)trait includingModals:(BOOL)includingModals
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
@@ -412,10 +415,10 @@
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
     // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
-    return !includingModals ? nil : [(RNSScreen *)lastViewController findChildVCForConfigIncludingModals:includingModals] ?: lastViewController;
+    return !includingModals ? nil : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals] ?: lastViewController;
   }
 
-  UIViewController *selfOrNil = ((RNSScreenView *)self.view).hasWindowTraitsSet ? self : nil;
+  UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
   if (lastViewController == nil) {
     return selfOrNil;
   } else {
@@ -426,7 +429,7 @@
       // we use `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
       UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
       if ([childScreen isKindOfClass:[RNSScreen class]]) {
-        return [(RNSScreen *)childScreen findChildVCForConfigIncludingModals:includingModals] ?: selfOrNil;
+        return [(RNSScreen *)childScreen findChildVCForConfigAndTrait:trait includingModals:includingModals] ?: selfOrNil;
       } else {
         return selfOrNil;
       }
@@ -436,6 +439,21 @@
     }
   }
 }
+
+- (BOOL)hasTraitSet:(NSString *)trait
+{
+  if ([trait isEqualToString:@"style"]) {
+    return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
+  } else if ([trait isEqualToString:@"animation"]) {
+    return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
+  } else if ([trait isEqualToString:@"hidden"]) {
+    return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
+  } else if ([trait isEqualToString:@"orientation"]) {
+    return ((RNSScreenView *)self.view).hasOrientationSet;
+  }
+  return NO;
+}
+
 #endif
 
 - (void)viewDidLayoutSubviews

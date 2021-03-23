@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,32 +66,34 @@ public class ScreenFragment extends Fragment {
   }
 
   public void onContainerUpdate() {
-    if (!hasChildScreenWithOrientationSet(getScreen())) {
-      if (getScreen().hasOrientationSet()) {
-        if (getActivity() == null) {
-          // the activity of fragment is not set yet, so we take the base activity
-          if(mScreenView.getContext() != null && ((ReactContext) mScreenView.getContext()).getCurrentActivity() != null) {
-            ((ReactContext) mScreenView.getContext()).getCurrentActivity().setRequestedOrientation(getScreen().getScreenOrientation());
-          }
-        } else {
-          getActivity().setRequestedOrientation(getScreen().getScreenOrientation());
-        }
-      } else {
-        // if this screen has no orientation set and there is no child with orientation set, we look for a parent that has the orientation set
-        Screen parent = findParentWithOrientationSet();
-        if (parent != null && parent.getFragment() != null && parent.getFragment().getActivity() != null) {
-          parent.getFragment().getActivity().setRequestedOrientation(parent.getScreenOrientation());
-        }
-      }
-    }
+   updateWindowTraits();
   }
 
-  private @Nullable Screen findParentWithOrientationSet() {
+  private void updateWindowTraits() {
+    Screen screen = getScreen();
+    Activity activity = tryGetActivity();
+    ReactContext context = tryGetContext();
+    ScreenWindowTraits.setOrientation(ScreenWindowTraits.findScreenForTrait(screen, "orientation"), activity);
+    ScreenWindowTraits.setColor(ScreenWindowTraits.findScreenForTrait(screen, "color"), activity, context);
+    ScreenWindowTraits.setStyle(ScreenWindowTraits.findScreenForTrait(screen, "style"), activity, context);
+    ScreenWindowTraits.setTranslucent(ScreenWindowTraits.findScreenForTrait(screen, "translucent"), activity, context);
+    ScreenWindowTraits.setHidden(ScreenWindowTraits.findScreenForTrait(screen, "hidden"), activity);
+  }
+
+  private @Nullable Activity tryGetActivity() {
+    if (getActivity() != null) {
+      return getActivity();
+    }
+    if (getScreen().getContext() != null && ((ReactContext) getScreen().getContext()).getCurrentActivity() != null) {
+      return ((ReactContext) getScreen().getContext()).getCurrentActivity();
+    }
+
     ViewParent parent = getScreen().getContainer();
     while (parent != null) {
       if (parent instanceof Screen) {
-        if (((Screen) parent).hasOrientationSet()) {
-          return (Screen) parent;
+        ScreenFragment fragment = ((Screen) parent).getFragment();
+        if (fragment != null && fragment.getActivity() != null) {
+          return fragment.getActivity();
         }
       }
       parent = parent.getParent();
@@ -98,21 +101,24 @@ public class ScreenFragment extends Fragment {
     return null;
   }
 
-  protected boolean hasChildScreenWithOrientationSet(Screen screen) {
-    if (screen == null) {
-      return false;
+  private @Nullable ReactContext tryGetContext() {
+    if (getContext() != null) {
+      return ((ReactContext) getContext());
     }
-    for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
-      // we check only the top screen for header config
-      Screen topScreen = sc.getTopScreen();
-      if (topScreen != null && topScreen.hasOrientationSet()) {
-        return true;
-      }
-      if (hasChildScreenWithOrientationSet(topScreen)) {
-        return true;
-      }
+    if (getScreen().getContext() != null && ((ReactContext) getScreen().getContext()).getCurrentActivity() != null) {
+      return ((ReactContext) getScreen().getContext());
     }
-    return false;
+
+    ViewParent parent = getScreen().getContainer();
+    while (parent != null) {
+      if (parent instanceof Screen) {
+          if ((ReactContext) ((Screen) parent).getContext() != null) {
+            return (ReactContext) ((Screen) parent).getContext();
+          }
+        }
+      parent = parent.getParent();
+    }
+    return null;
   }
 
   public List<ScreenContainer> getChildScreenContainers() {

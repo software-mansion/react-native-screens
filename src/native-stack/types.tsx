@@ -259,22 +259,28 @@ export type NativeStackNavigationOptions = {
    */
   stackPresentation?: ScreenProps['stackPresentation'];
   /**
-   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    */
   statusBarAnimation?: ScreenProps['statusBarAnimation'];
-  /**
-   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+  /** Sets the status bar color (similar to the `StatusBar` component).
    *
-   * @platform ios
+   * @platform android
+   */
+  statusBarColor?: string;
+  /**
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    */
   statusBarHidden?: boolean;
-  /** Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    */
   statusBarStyle?: ScreenProps['statusBarStyle'];
+  /**
+   * Sets the translucency of the status bar. Defaults to `true`.
+   *
+   * @platform android
+   */
+  statusBarTranslucent?: boolean;
   /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */

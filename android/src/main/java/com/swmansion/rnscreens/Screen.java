@@ -1,8 +1,11 @@
 package com.swmansion.rnscreens;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Parcelable;
 import android.util.SparseArray;
 import android.view.View;
@@ -17,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.react.bridge.GuardedRunnable;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 
 public class Screen extends ViewGroup {
@@ -70,8 +74,12 @@ public class Screen extends ViewGroup {
   private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.POP;
   private StackAnimation mStackAnimation = StackAnimation.DEFAULT;
   private boolean mGestureEnabled = true;
-  private int mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
-  private boolean mHasOrientationSet = false;
+  private Integer mScreenOrientation;
+  private String mStatusBarStyle;
+  private Boolean mStatusBarHidden;
+  private Boolean mStatusBarTranslucent;
+  private Double mStatusBarColor;
+  private boolean mStatusBarAnimated;
 
   @Override
   protected void onAnimationStart() {
@@ -262,12 +270,9 @@ public class Screen extends ViewGroup {
 
   public void setScreenOrientation(String screenOrientation) {
     if (screenOrientation == null) {
-      mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
-      mHasOrientationSet = false;
+      mScreenOrientation = null;
       return;
     }
-
-    mHasOrientationSet = true;
 
     switch (screenOrientation) {
       case "all":
@@ -297,11 +302,47 @@ public class Screen extends ViewGroup {
     }
   }
 
-  public boolean hasOrientationSet() {
-    return mHasOrientationSet;
+  public Integer getScreenOrientation() {
+    return mScreenOrientation;
   }
 
-  public int getScreenOrientation() {
-    return mScreenOrientation;
+  public void setStatusBarStyle(String statusBarStyle) {
+    mStatusBarStyle = statusBarStyle;
+  }
+
+  public String getStatusBarStyle() {
+    return mStatusBarStyle;
+  }
+
+  public void setStatusBarHidden(boolean statusBarHidden) {
+    mStatusBarHidden = statusBarHidden;
+  }
+
+  public Boolean isStatusBarHidden() {
+    return mStatusBarHidden;
+  }
+
+  public void setStatusBarTranslucent(boolean statusBarTranslucent) {
+    mStatusBarTranslucent = statusBarTranslucent;
+  }
+
+  public Boolean isStatusBarTranslucent() {
+    return mStatusBarTranslucent;
+  }
+
+  public void setStatusBarColor(double statusBarColor) {
+    mStatusBarColor = statusBarColor;
+  }
+
+  public Double getStatusBarColor() {
+    return mStatusBarColor;
+  }
+
+  public boolean isStatusBarAnimated() {
+    return mStatusBarAnimated;
+  }
+
+  public void setStatusBarAnimated(boolean statusBarAnimated) {
+    mStatusBarAnimated = statusBarAnimated;
   }
 }

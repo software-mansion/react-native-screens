@@ -79,7 +79,10 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
-@property (nonatomic) BOOL hasWindowTraitsSet;
+@property (nonatomic) BOOL hasOrientationSet;
+@property (nonatomic) BOOL hasStatusBarStyleSet;
+@property (nonatomic) BOOL hasStatusBarAnimationSet;
+@property (nonatomic) BOOL hasStatusBarHiddenSet;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;

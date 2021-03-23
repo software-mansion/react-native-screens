@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.views.text.ReactFontManager;
 
 import java.util.ArrayList;
@@ -170,12 +171,40 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       }
     }
 
-    // orientation
-    if (getScreen().hasOrientationSet() && !getScreenFragment().hasChildScreenWithOrientationSet(getScreen())) {
-      // we check if there is no child that provides config, since then we shouldn't change orientation here
-      // we set the orientation here, not when the prop for Screen is passed
+    // orientation and status bar management
+    if (getScreen() != null) {
+      // we check if there is no child that provides config, since then we shouldn't change traits here
+      // we set the traits here, not when the prop for Screen is passed
       // because we don't have the Fragment and Activity available then yet
-      activity.setRequestedOrientation(getScreen().getScreenOrientation());
+
+      if (getScreen().getScreenOrientation() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "orientation")) {
+        ScreenWindowTraits.setOrientation(getScreen(), activity);
+      }
+      if (getScreen().getStatusBarColor() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "color")) {
+        ScreenWindowTraits.setColor(getScreen(), activity, (ReactContext) getContext());
+      }
+      if (getScreen().getStatusBarStyle() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "style")) {
+        ScreenWindowTraits.setStyle(getScreen(), activity, (ReactContext) getContext());
+      }
+      if (getScreen().isStatusBarTranslucent() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "translucent")) {
+        ScreenWindowTraits.setTranslucent(getScreen(), activity, (ReactContext) getContext());
+//        if (mIsTopInsetEnabled && getScreen().isStatusBarTranslucent()) {
+//          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            mToolbar.setPadding(0, getRootWindowInsets().getSystemWindowInsetTop(), 0, 0);
+//          } else {
+//            // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
+//            mToolbar.setPadding(0, (int) (25 * getResources().getDisplayMetrics().density), 0, 0);
+//          }
+//        } else {
+//          if (mToolbar.getPaddingTop() > 0) {
+//            mToolbar.setPadding(0, 0, 0, 0);
+//          }
+//        }
+      }
+      if (getScreen().isStatusBarHidden() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "hidden")) {
+        ScreenWindowTraits.setHidden(getScreen(), activity);
+      }
+
     }
 
     if (mIsHidden) {
