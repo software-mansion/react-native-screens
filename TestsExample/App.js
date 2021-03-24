@@ -34,6 +34,7 @@ import Test817 from './src/Test817';
 import Test831 from './src/Test831';
 import Test844 from './src/Test844';
 import Test860 from './src/Test860';
+import Test861 from './src/Test861';
 
 enableScreens();
 
