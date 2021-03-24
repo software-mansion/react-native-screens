@@ -80,11 +80,11 @@ public class ScreenFragment extends Fragment {
     ScreenWindowTraits.setHidden(ScreenWindowTraits.findScreenForTrait(screen, "hidden"), activity);
   }
 
-  private @Nullable Activity tryGetActivity() {
+  protected @Nullable Activity tryGetActivity() {
     if (getActivity() != null) {
       return getActivity();
     }
-    if (getScreen().getContext() != null && ((ReactContext) getScreen().getContext()).getCurrentActivity() != null) {
+    if (getScreen().getContext() instanceof ReactContext && ((ReactContext) getScreen().getContext()).getCurrentActivity() != null) {
       return ((ReactContext) getScreen().getContext()).getCurrentActivity();
     }
 
@@ -101,18 +101,18 @@ public class ScreenFragment extends Fragment {
     return null;
   }
 
-  private @Nullable ReactContext tryGetContext() {
-    if (getContext() != null) {
+  protected @Nullable ReactContext tryGetContext() {
+    if (getContext() instanceof ReactContext) {
       return ((ReactContext) getContext());
     }
-    if (getScreen().getContext() != null && ((ReactContext) getScreen().getContext()).getCurrentActivity() != null) {
+    if (getScreen().getContext() instanceof ReactContext) {
       return ((ReactContext) getScreen().getContext());
     }
 
     ViewParent parent = getScreen().getContainer();
     while (parent != null) {
       if (parent instanceof Screen) {
-          if ((ReactContext) ((Screen) parent).getContext() != null) {
+          if (((Screen) parent).getContext() instanceof ReactContext) {
             return (ReactContext) ((Screen) parent).getContext();
           }
         }

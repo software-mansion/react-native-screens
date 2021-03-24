@@ -300,6 +300,10 @@ public class Screen extends ViewGroup {
         mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
         break;
     }
+
+    if (getFragment() != null) {
+      ScreenWindowTraits.setOrientation(this, getFragment().tryGetActivity());
+    }
   }
 
   public Integer getScreenOrientation() {
@@ -308,6 +312,9 @@ public class Screen extends ViewGroup {
 
   public void setStatusBarStyle(String statusBarStyle) {
     mStatusBarStyle = statusBarStyle;
+    if (getFragment() != null) {
+      ScreenWindowTraits.setStyle(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+    }
   }
 
   public String getStatusBarStyle() {
@@ -316,6 +323,9 @@ public class Screen extends ViewGroup {
 
   public void setStatusBarHidden(boolean statusBarHidden) {
     mStatusBarHidden = statusBarHidden;
+    if (getFragment() != null) {
+      ScreenWindowTraits.setHidden(this, getFragment().tryGetActivity());
+    }
   }
 
   public Boolean isStatusBarHidden() {
@@ -324,6 +334,9 @@ public class Screen extends ViewGroup {
 
   public void setStatusBarTranslucent(boolean statusBarTranslucent) {
     mStatusBarTranslucent = statusBarTranslucent;
+    if (getFragment() != null) {
+      ScreenWindowTraits.setTranslucent(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+    }
   }
 
   public Boolean isStatusBarTranslucent() {
@@ -332,6 +345,9 @@ public class Screen extends ViewGroup {
 
   public void setStatusBarColor(double statusBarColor) {
     mStatusBarColor = statusBarColor;
+    if (getFragment() != null) {
+      ScreenWindowTraits.setColor(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+    }
   }
 
   public Double getStatusBarColor() {

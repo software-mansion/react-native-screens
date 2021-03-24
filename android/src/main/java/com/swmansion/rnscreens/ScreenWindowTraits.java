@@ -156,10 +156,10 @@ public class ScreenWindowTraits {
 
   protected static Screen findScreenForTrait(Screen screen, String trait) {
     if (!hasChildScreenWithTraitSet(screen, trait)) {
-      if (screen.getScreenOrientation() != null) {
+      if (checkTraitForScreen(screen, trait)) {
         return screen;
       } else {
-        // if this screen has no orientation set and there is no child with orientation set, we look for a parent that has the orientation set
+        // if this screen has no trait set and there is no child with trait set, we look for a parent that has the trait set
         return findParentWithTraitSet(screen, trait);
       }
     }
@@ -184,7 +184,7 @@ public class ScreenWindowTraits {
       return false;
     }
     for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
-      // we check only the top screen for header config
+      // we check only the top screen for the trait
       Screen topScreen = sc.getTopScreen();
       if (topScreen != null && checkTraitForScreen(topScreen, trait)) {
         return true;

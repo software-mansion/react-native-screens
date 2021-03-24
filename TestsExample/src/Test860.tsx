@@ -1,10 +1,9 @@
-// connected PRs: #679, #675
 import React from 'react';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {ScrollView, Button, Text} from 'react-native';
 import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-// import {createStackNavigator} from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +12,8 @@ export default function NativeNavigation() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackPresentation: 'modal',
+          stackPresentation: 'push',
+          stackAnimation: 'slide_from_right',
         }}>
         <Stack.Screen
           name="Home"
@@ -45,7 +45,7 @@ export default function NativeNavigation() {
 }
 
 // change to createStackNavigator to test with stack in the middle
-const Tab = createBottomTabNavigator();
+const Tab = createStackNavigator();
 
 const NestedNavigator = () => (
   <Tab.Navigator>
@@ -70,7 +70,6 @@ const Inner = () => (
 );
 
 function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
-  const [yes, setYes] = React.useState(true);
   return (
     <ScrollView
       style={{backgroundColor: 'yellow'}}
@@ -95,12 +94,43 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
         }}
       />
       <Button
-        title="Randomly change screen orientation"
+        title="Randomly change status bar color"
         onPress={() => {
           navigation.setOptions({
-            statusBarColor: Math.random() > 0.5 ? 'yellow' : 'powderblue',
+            statusBarColor: Math.random() > 0.5 ? 'mediumseagreen' : 'powderblue',
           });
-          setYes(!yes);
+        }}
+      />
+      <Button
+        title="Randomly change status bar style"
+        onPress={() => {
+          navigation.setOptions({
+            statusBarStyle: Math.random() > 0.5 ? 'dark' : 'light',
+          });
+        }}
+      />
+      <Button
+        title="Randomly change status bar hidden"
+        onPress={() => {
+          navigation.setOptions({
+            statusBarHidden: Math.random() > 0.5,
+          });
+        }}
+      />
+            <Button
+        title="Randomly change status bar translucent"
+        onPress={() => {
+          navigation.setOptions({
+            statusBarTranslucent: Math.random() > 0.5,
+          });
+        }}
+      />
+            <Button
+        title="Randomly change status bar animation"
+        onPress={() => {
+          navigation.setOptions({
+            statusBarAnimation: Math.random() > 0.5 ? 'slide' : 'none',
+          });
         }}
       />
       <Text>Go to `TabNavigator` and then go to second tab there. Spot the difference between dismissing modal with a swipe and with a `Pop to top` button. </Text> 
