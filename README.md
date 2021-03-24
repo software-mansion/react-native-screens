@@ -148,7 +148,7 @@ Allows for the customization of the type of animation to use when this screen re
 
 #### `screenOrientation`
 
-Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
+Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
 
 - `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
 - `all`
@@ -159,7 +159,7 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_left`
 - `landscape_right`
 
-Defaults to `default`.
+Defaults to `default` on iOS. On Android, it stays the same as it was before if no screen provides this prop.
 
 #### `stackAnimation`
 
@@ -200,17 +200,31 @@ For Android:
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
-#### `statusBarAnimation` (iOS only)
+#### `statusBarAnimation`
 
-Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Possible values: `fade`, `none`, `slide`. On Android, there will be no animation if `none` provided.
 
-#### `statusBarHidden` (iOS only)
+Defaults to `fade` on iOS and `none` on Android.
 
-When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
+#### `statusBarColor` (Android only)
 
-#### `statusBarStyle` (iOS only)
+Sets the status bar color (similar to the `StatusBar` component).
 
-Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
+#### `statusBarHidden`
+
+When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+
+Defaults to `false` on iOS. On Android, it stays the same as it was before if no screen provides this prop.
+
+#### `statusBarStyle`
+
+Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
+
+Defaults to `auto` on iOS. On Android, it stays the same as it was before if no screen provides this prop.
+
+#### `statusBarTranslucent` (Android only)
+
+Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `true`.
 
 ### `<ScreenStackHeaderConfig>`
 

@@ -152,7 +152,7 @@ export interface ScreenProps extends ViewProps {
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
   /**
    * Sets the translucency of the status bar. Defaults to true.
-   * 
+   *
    * @platform android
    */
   statusBarTranslucent?: boolean;
