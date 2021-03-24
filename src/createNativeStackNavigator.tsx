@@ -378,8 +378,10 @@ class StackView extends React.Component<Props> {
         }
         screenOrientation={options.screenOrientation}
         statusBarAnimation={options.statusBarAnimation}
+        statusBarColor={options.statusBarColor}
         statusBarHidden={options.statusBarHidden}
         statusBarStyle={options.statusBarStyle}
+        statusBarTranslucent={options.statusBarTranslucent ?? true}
         onAppear={() => this.onAppear(route, descriptor)}
         onWillAppear={() => options?.onWillAppear?.()}
         onWillDisappear={() => options?.onWillDisappear?.()}
