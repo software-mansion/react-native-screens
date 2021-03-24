@@ -61,7 +61,7 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle,
-      headerHideBackButton: !backButtonVisible, // android
+      headerHideBackButton: !backButtonVisible,
       headerBackTitleVisible: backButtonVisible, // iOS
       headerLargeTitle, // iOS
       headerBackTitle, // iOS

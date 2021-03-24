@@ -59,60 +59,66 @@ export interface ScreenProps extends ViewProps {
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
   /**
-   * @description All children screens should have the same value of their "enabled" prop as their container.
+   * All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
   /**
-   * @host (iOS only)
-   * @description When set to false the back swipe gesture will be disabled. The default value is true.
+   * Whether you can use gestures to dismiss this screen. Defaults to `true`.
+   * Only supported on iOS.
+   *
+   * @platform ios
    */
   gestureEnabled?: boolean;
   /**
-   * @description A callback that gets called when the current screen appears.
+   * A callback that gets called when the current screen appears.
    */
   onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
   onComponentRef?: (view: unknown) => void;
   /**
-   * @description A callback that gets called when the current screen disappears.
+   * A callback that gets called when the current screen disappears.
    */
   onDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
   /**
-   * @description A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
    */
   onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
   /**
-   * @description A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
+   * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
   onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
   /**
-   * @description A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
+   * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
   onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
   ref?: React.Ref<View>;
   /**
-   * @description Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
-   *  @type "push" – performs push animation
-   *  @type "pop" – performs pop animation (default)
+   * How should the screen replacing another screen animate. Defaults to `pop`.
+   * The following values are currently supported:
+   * - "push" – the new screen will perform push animation.
+   * - "pop" – the new screen will perform pop animation.
    */
   replaceAnimation?: ScreenReplaceTypes;
   /**
-   * @description Allows for the customization of how the given screen should appear/dissapear when pushed or popped at the top of the stack. The following values are currently supported:
-   *  @type "default" – uses a platform default animation
-   *  @type "fade" – fades screen in or out
-   *  @type "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
-   *  @type "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
-   *  @type "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-   *  @type "none" – the screen appears/dissapears without an animation
+   * How the screen should appear/disappear when pushed or popped at the top of the stack.
+   * The following values are currently supported:
+   * - "default" – uses a platform default animation
+   * - "fade" – fades screen in or out
+   * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+   * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
+   * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: StackAnimationTypes;
   /**
-   * @type "push" – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
-   * @type "modal" – the new screen will be presented modally. In addition this allow for a nested stack to be rendered inside such screens.
-   * @type "transparentModal" – the new screen will be presented modally but in addition the second to last screen will remain attached to the stack container such that if the top screen is non opaque the content below can still be seen. If "modal" is used instead the below screen will get unmounted as soon as the transition ends.
-   * @type "containedModal" – will use "UIModalPresentationCurrentContext" modal style on iOS and will fallback to "modal" on Android.
-   * @type "containedTransparentModal" – will use "UIModalPresentationOverCurrentContext" modal style on iOS and will fallback to "transparentModal" on Android.
-   * @type "fullScreenModal" – will use "UIModalPresentationFullScreen" modal style on iOS and will fallback to "modal" on Android.
-   * @type "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS and will fallback to "modal" on Android.
+   * How should the screen be presented.
+   * The following values are currently supported:
+   * - "push" – the new screen will be pushed onto a stack which on iOS means that the default animation will be slide from the side, the animation on Android may vary depending on the OS version and theme.
+   * - "modal" – the new screen will be presented modally. In addition this allow for a nested stack to be rendered inside such screens.
+   * - "transparentModal" – the new screen will be presented modally but in addition the second to last screen will remain attached to the stack container such that if the top screen is non opaque the content below can still be seen. If "modal" is used instead the below screen will get unmounted as soon as the transition ends.
+   * - "containedModal" – will use "UIModalPresentationCurrentContext" modal style on iOS and will fallback to "modal" on Android.
+   * - "containedTransparentModal" – will use "UIModalPresentationOverCurrentContext" modal style on iOS and will fallback to "transparentModal" on Android.
+   * - "fullScreenModal" – will use "UIModalPresentationFullScreen" modal style on iOS and will fallback to "modal" on Android.
+   * - "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS and will fallback to "modal" on Android.
    */
   stackPresentation?: StackPresentationTypes;
 }
@@ -120,7 +126,7 @@ export interface ScreenProps extends ViewProps {
 export interface ScreenContainerProps extends ViewProps {
   children?: React.ReactNode;
   /**
-   * @description A prop that gives users an option to switch between using Screens for the navigator (container). All children screens should have the same value of their "enabled" prop as their container.
+   * A prop that gives users an option to switch between using Screens for the navigator (container). All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
 }
@@ -128,38 +134,40 @@ export interface ScreenContainerProps extends ViewProps {
 export interface ScreenStackProps extends ViewProps {
   children?: React.ReactNode;
   /**
-   * @description A callback that gets called when the current screen finishes its transition.
+   * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
-   * @description Whether to show the back button with a custom left side of the header.
+   * Whether to show the back button with custom left side of the header.
    */
   backButtonInCustomView?: boolean;
   /**
-   * @description Controls the color of the navigation header.
+   * Controls the color of the navigation header.
    */
   backgroundColor?: string;
   /**
-   * @host (iOS only)
-   * @description Allows for controlling the string to be rendered next to back button. By default iOS uses the title of the previous screen.
+   * Title to display in the back button.
+   * Only supported on iOS.
+   *
+   *
    */
   backTitle?: string;
   /**
-   * @host (iOS only)
-   * @description Allows for customizing font family to be used for back button title on iOS.
+   * Allows for customizing font family to be used for back button title on iOS.
+   * @platform ios
    */
   backTitleFontFamily?: string;
   /**
-   * @host (iOS only)
-   * @description Allows for customizing font size to be used for back button title on iOS.
+   * Allows for customizing font size to be used for back button title on iOS.
+   * @platform ios
    */
   backTitleFontSize?: number;
   /**
-   * @host (iOS only)
-   * @description Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
+   * Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
+   * @platform ios
    */
   blurEffect?: BlurEffectTypes;
   /**
@@ -167,113 +175,124 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   children?: React.ReactNode;
   /**
-   *@description Controls whether the stack should be in rtl or ltr form.
+   * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
   /**
-   * @description When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
+   * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
   hidden?: boolean;
   /**
-   * @description Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
+   * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
    */
   color?: string;
   /**
-   * @description If set to true the back button will not be rendered as a part of navigation header.
+   * Boolean indicating whether to hide the back button in header.
    */
   hideBackButton?: boolean;
   /**
-   * @description Boolean that allows for disabling drop shadow under navigation header. The default value is true.
+   * Boolean indicating whether to hide the elevation shadow or the bottom border on the header.
    */
   hideShadow?: boolean;
   /**
-   * @host (iOS only)
-   * @description When set to true it makes the title display using the large title effect.
+   * Boolean to set native property to prefer large title header (like in iOS setting).
+   * For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`.
+   * If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
+   * Only supported on iOS.
+   *
+   * @platform ios
    */
   largeTitle?: boolean;
   /**
-   *@description Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+   * Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleBackgroundColor?: string;
   /**
-   * @host (iOS only)
-   * @description Customize the color to be used for the large title. By default uses the titleColor property.
+   * Customize the color to be used for the large title. By default uses the titleColor property.
+   * @platform ios
    */
   largeTitleColor?: string;
   /**
-   * @host (iOS only)
-   * @description Customize font family to be used for the large title.
+   * Customize font family to be used for the large title.
+   * @platform ios
    */
   largeTitleFontFamily?: string;
   /**
-   * @host (iOS only)
-   * @description Customize the size of the font to be used for the large title.
+   * Customize the size of the font to be used for the large title.
+   * @platform ios
    */
   largeTitleFontSize?: number;
   /**
-   * @host (iOS only)
-   * @description Customize the weight of the font to be used for the large title.
+   * Customize the weight of the font to be used for the large title.
+   * @platform ios
    */
   largeTitleFontWeight?: string;
   /**
-   * @description Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+   * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean;
   /**
-   * @description Controls in which orientation should the screen appear.
-   * @type "default" - on iOS, it resolves to "all" without "portrait_down" and on Android it lets the system decide the best orientation
-   * @type "all" – all orientations are permitted
-   * @type "portrait" – portrait orientations are permitted
-   * @type "portrait_up" – right-side portrait orientation is permitted
-   * @type "portrait_down" – upside-down portrait orientation is permitted
-   * @type "landscape" – landscape orientations are permitted
-   * @type "landscape_left" – landscape-left orientation is permitted
-   * @type "landscape_right" – landscape-right orientation is permitted
+   * In which orientation should the screen appear.
+   * The following values are currently supported:
+   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
+   * - "all" – all orientations are permitted
+   * - "portrait" – portrait orientations are permitted
+   * - "portrait_up" – right-side portrait orientation is permitted
+   * - "portrait_down" – upside-down portrait orientation is permitted
+   * - "landscape" – landscape orientations are permitted
+   * - "landscape_left" – landscape-left orientation is permitted
+   * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenOrientationTypes;
   /**
-   * @host (iOS only)
-   * @description Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   *
+   * @platform ios
    */
   statusBarAnimation?: 'none' | 'fade' | 'slide';
   /**
-   * @host (iOS only)
-   * @description When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   *
+   * @platform ios
    */
   statusBarHidden?: boolean;
-  /**
-   * @host (iOS only)
-   * @description Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
+  /** Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   *
+   * @platform ios
    */
   statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
   /**
-   * @description String that representing screen title that will get rendered in the middle section of the header. On iOS the title is centered on the header while on Android it is aligned to the left and placed next to back button (if one is present).
+   * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;
   /**
-   * @description Allows for setting text color of the title.
+   * Allows for setting text color of the title.
    */
   titleColor?: string;
   /**
-   * @description Customize font family to be used for the title.
+   * Customize font family to be used for the title.
    */
   titleFontFamily?: string;
   /**
-   * @description Customize the size of the font to be used for the title.
+   * Customize the size of the font to be used for the title.
    */
   titleFontSize?: number;
   /**
-   * * @host (iOS only)
-   * @description Customize the weight of the font to be used for the title.
+   * Customize the weight of the font to be used for the title.
+   * @platform ios
    */
   titleFontWeight?: string;
   /**
-   * @host (Android only)
-   * @description A flag to that lets you opt out of insetting the header. You may want to set this to `false` if you use an opaque status bar. Defaults to `true`.
+   * A flag to that lets you opt out of insetting the header. You may want to
+   * set this to `false` if you use an opaque status bar. Defaults to `true`.
+   * Only supported on Android. Insets are always applied on iOS because the
+   * header cannot be opaque.
+   *
+   * @platform android
    */
   topInsetEnabled?: boolean;
   /**
-   * @description When set to true, it makes native navigation bar semi transparent. It adds blur effect on iOS. The default value is false.
+   * Boolean indicating whether the navigation bar is translucent.
    */
   translucent?: boolean;
 }

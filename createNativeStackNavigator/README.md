@@ -102,7 +102,7 @@ Whether the back button title should be visible or not. Defaults to `true`. Only
 
 #### `headerHideBackButton`
 
-Boolean indicating whether to hide the back button in the header. Only supported on Android.
+Boolean indicating whether to hide the back button in the header.
 
 #### `headerHideShadow`
 
