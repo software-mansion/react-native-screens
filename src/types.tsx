@@ -188,9 +188,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   color?: string;
   /**
    * Boolean indicating whether to hide the back button in header.
-   * Only supported on Android.
-   *
-   * @platform android
    */
   hideBackButton?: boolean;
   /**
