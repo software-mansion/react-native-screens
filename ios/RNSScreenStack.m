@@ -99,6 +99,7 @@
   if (self.onFinishTransitioning) {
     self.onFinishTransitioning(nil);
   }
+  [RNSScreenWindowTraits updateWindowTraits];
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController

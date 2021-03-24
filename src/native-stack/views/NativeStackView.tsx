@@ -8,9 +8,6 @@ import * as React from 'react';
 import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
-// @ts-ignore Getting private component
-// eslint-disable-next-line import/default
-import processColor from 'react-native/Libraries/StyleSheet/processColor';
 import {
   Screen as ScreenComponent,
   ScreenProps,
@@ -72,6 +69,7 @@ export default function NativeStackView({
           stackPresentation = 'push',
           stackAnimation,
           statusBarAnimation,
+          statusBarColor,
           statusBarHidden,
           statusBarStyle,
           statusBarTranslucent = true,
@@ -85,8 +83,6 @@ export default function NativeStackView({
             },
           contentStyle,
         ];
-
-        const statusBarColor = processColor(options.statusBarColor);
 
         return (
           <Screen

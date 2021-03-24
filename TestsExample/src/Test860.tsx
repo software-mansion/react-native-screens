@@ -1,9 +1,9 @@
 import React from 'react';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {ScrollView, Button, Text} from 'react-native';
-import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import {createNativeStackNavigator, NativeStackNavigationProp, NativeStackNavigationOptions} from 'react-native-screens/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
+// import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,9 +22,9 @@ export default function NativeNavigation() {
             statusBarColor: 'blue',
             statusBarAnimation: 'slide',
             statusBarStyle: 'auto',
-            statusBarTranslucent: true,
+            // statusBarTranslucent: true,
             // headerTopInsetEnabled: false,
-            statusBarHidden: false,
+            // statusBarHidden: false,
           }}
         />
         <Stack.Screen
@@ -34,9 +34,9 @@ export default function NativeNavigation() {
             statusBarColor: 'red',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
-            statusBarTranslucent: true,
+            // statusBarTranslucent: true,
             // headerTopInsetEnabled: true,
-            statusBarHidden: false,
+            // statusBarHidden: false,
           }}
         />
       </Stack.Navigator>
@@ -45,10 +45,13 @@ export default function NativeNavigation() {
 }
 
 // change to createStackNavigator to test with stack in the middle
-const Tab = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const NestedNavigator = () => (
-  <Tab.Navigator>
+  <Tab.Navigator screenOptions={{           
+    //  statusBarColor: 'purple',
+    //  statusBarStyle: 'light',
+  }}>
     <Tab.Screen name="Screen1" component={Home} />
     <Tab.Screen name="Screen2" component={Inner} />
     <Tab.Screen name="Screen3" component={Home} />
@@ -70,6 +73,12 @@ const Inner = () => (
 );
 
 function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
+  const [statusBarColor, setStatusBarColor] = React.useState('mediumseagreen');
+  const [statusBarStyle, setStatusBarStyle] = React.useState<NativeStackNavigationOptions['statusBarStyle']>('dark');
+  const [statusBarHidden, setStatusBarHidden] = React.useState(false);
+  const [statusBarTranslucent, setStatusBarTranslucent] = React.useState(true);
+  const [statusBarAnimation, setStatusBarAnimation] = React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
+
   return (
     <ScrollView
       style={{backgroundColor: 'yellow'}}
@@ -94,43 +103,48 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
         }}
       />
       <Button
-        title="Randomly change status bar color"
+        title="Change status bar color"
         onPress={() => {
           navigation.setOptions({
-            statusBarColor: Math.random() > 0.5 ? 'mediumseagreen' : 'powderblue',
+            statusBarColor,
           });
+          setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen');
         }}
       />
       <Button
-        title="Randomly change status bar style"
+        title="Change status bar style"
         onPress={() => {
           navigation.setOptions({
-            statusBarStyle: Math.random() > 0.5 ? 'dark' : 'light',
+            statusBarStyle,
           });
+          setStatusBarStyle(statusBarStyle === 'light' ? 'dark' : 'light');
         }}
       />
       <Button
-        title="Randomly change status bar hidden"
+        title="Change status bar hidden"
         onPress={() => {
           navigation.setOptions({
-            statusBarHidden: Math.random() > 0.5,
+            statusBarHidden,
           });
+          setStatusBarHidden(!statusBarHidden);
         }}
       />
             <Button
-        title="Randomly change status bar translucent"
+        title="Change status bar translucent"
         onPress={() => {
           navigation.setOptions({
-            statusBarTranslucent: Math.random() > 0.5,
+            statusBarTranslucent,
           });
+          setStatusBarTranslucent(!statusBarTranslucent);
         }}
       />
             <Button
-        title="Randomly change status bar animation"
+        title="Change status bar animation"
         onPress={() => {
           navigation.setOptions({
-            statusBarAnimation: Math.random() > 0.5 ? 'slide' : 'none',
+            statusBarAnimation,
           });
+          setStatusBarAnimation(statusBarAnimation === 'none' ? 'slide' : 'none');
         }}
       />
       <Text>Go to `TabNavigator` and then go to second tab there. Spot the difference between dismissing modal with a swipe and with a `Pop to top` button. </Text> 
