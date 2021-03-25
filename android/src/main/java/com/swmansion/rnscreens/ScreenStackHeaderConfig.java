@@ -178,20 +178,28 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       // because we don't have the Fragment and Activity available then yet on the first setting of props
       // similar thing is done for Screens of other navigators, but in `onContainerUpdate` of their Fragment
 
+      Screen screen = getScreen();
+      ReactContext context = null;
+      if (getContext() instanceof ReactContext) {
+        context = (ReactContext) getContext();
+      } else if (screen.getFragment() != null) {
+        context = screen.getFragment().tryGetContext();
+      }
+
       if (getScreen().getScreenOrientation() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "orientation")) {
-        ScreenWindowTraits.setOrientation(getScreen(), activity);
+        ScreenWindowTraits.setOrientation(screen, activity);
       }
       if (getScreen().getStatusBarColor() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "color")) {
-        ScreenWindowTraits.setColor(getScreen(), activity, (ReactContext) getContext());
+        ScreenWindowTraits.setColor(screen, activity, context);
       }
       if (getScreen().getStatusBarStyle() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "style")) {
-        ScreenWindowTraits.setStyle(getScreen(), activity, (ReactContext) getContext());
+        ScreenWindowTraits.setStyle(screen, activity, context);
       }
       if (getScreen().isStatusBarTranslucent() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "translucent")) {
-        ScreenWindowTraits.setTranslucent(getScreen(), activity, (ReactContext) getContext());
+        ScreenWindowTraits.setTranslucent(screen, activity, context);
       }
       if (getScreen().isStatusBarHidden() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "hidden")) {
-        ScreenWindowTraits.setHidden(getScreen(), activity);
+        ScreenWindowTraits.setHidden(screen, activity);
       }
 
     }
