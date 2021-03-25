@@ -79,7 +79,7 @@ const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
         onValueChange={setStatusBarTranslucent}
       />
       <SettingsPicker<string>
-        label="Status bar style"
+        label="Status bar color"
         value={statusBarColor}
         onValueChange={setStatusBarColor}
         items={['red', 'green', 'blue', 'gray']}
