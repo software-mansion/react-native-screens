@@ -22,7 +22,13 @@ export function screensEnabled(): boolean {
 
 export class NativeScreen extends React.Component<ScreenProps> {
   render(): JSX.Element {
-    let { active, activityState, style, enabled = true, ...rest } = this.props;
+    let {
+      active,
+      activityState,
+      style,
+      enabled = ENABLE_SCREENS,
+      ...rest
+    } = this.props;
     if (active !== undefined && activityState === undefined) {
       activityState = active !== 0 ? 2 : 0; // change taken from index.native.tsx
     }
@@ -30,9 +36,7 @@ export class NativeScreen extends React.Component<ScreenProps> {
       <View
         style={[
           style,
-          ENABLE_SCREENS && enabled && activityState !== 2
-            ? { display: 'none' }
-            : null,
+          enabled && activityState !== 2 ? { display: 'none' } : null,
         ]}
         {...rest}
       />
