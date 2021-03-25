@@ -23,7 +23,7 @@ import {
   ScreenStackHeaderConfigProps,
 } from './types';
 
-let ENABLE_SCREENS = false;
+let ENABLE_SCREENS = true;
 
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = shouldEnableScreens;
