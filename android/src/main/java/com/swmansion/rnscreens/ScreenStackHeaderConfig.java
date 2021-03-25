@@ -186,19 +186,19 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         context = screen.getFragment().tryGetContext();
       }
 
-      if (getScreen().getScreenOrientation() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "orientation")) {
+      if (screen.getScreenOrientation() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "orientation")) {
         ScreenWindowTraits.setOrientation(screen, activity);
       }
-      if (getScreen().getStatusBarColor() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "color")) {
+      if (screen.getStatusBarColor() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "color")) {
         ScreenWindowTraits.setColor(screen, activity, context);
       }
-      if (getScreen().getStatusBarStyle() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "style")) {
+      if (screen.getStatusBarStyle() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "style")) {
         ScreenWindowTraits.setStyle(screen, activity, context);
       }
-      if (getScreen().isStatusBarTranslucent() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "translucent")) {
+      if (screen.isStatusBarTranslucent() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "translucent")) {
         ScreenWindowTraits.setTranslucent(screen, activity, context);
       }
-      if (getScreen().isStatusBarHidden() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "hidden")) {
+      if (screen.isStatusBarHidden() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "hidden")) {
         ScreenWindowTraits.setHidden(screen, activity);
       }
 

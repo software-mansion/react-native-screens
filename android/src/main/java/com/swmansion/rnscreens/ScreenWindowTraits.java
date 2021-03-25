@@ -47,7 +47,6 @@ public class ScreenWindowTraits {
                 int curColor = activity.getWindow().getStatusBarColor();
                 ValueAnimator colorAnimation =
                         ValueAnimator.ofObject(new ArgbEvaluator(), curColor, color);
-
                 colorAnimation.addUpdateListener(
                         new ValueAnimator.AnimatorUpdateListener() {
                           @Override
@@ -57,7 +56,6 @@ public class ScreenWindowTraits {
                         });
 
                 if (animated) {
-
                   colorAnimation.setDuration(300).setStartDelay(0);
                 } else {
                   colorAnimation.setDuration(0).setStartDelay(300);
