@@ -450,6 +450,8 @@
     return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
   } else if ([trait isEqualToString:@"orientation"]) {
     return ((RNSScreenView *)self.view).hasOrientationSet;
+  } else {
+    RCTLogError(@"Unknown trait passed: %@", trait);
   }
   return NO;
 }

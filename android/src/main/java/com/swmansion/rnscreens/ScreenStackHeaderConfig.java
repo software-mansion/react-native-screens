@@ -173,9 +173,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     // orientation and status bar management
     if (getScreen() != null) {
-      // we check if there is no child that provides config, since then we shouldn't change traits here
-      // we set the traits here, not when the prop for Screen is passed
-      // because we don't have the Fragment and Activity available then yet
+      // we check if there is no child that provides a specific trait, since then we shouldn't change this here
+      // we set the traits here too, not only when the prop for Screen is passed
+      // because we don't have the Fragment and Activity available then yet on the first setting of props
+      // similar thing is done for Screens of other navigators, but in `onContainerUpdate` of their Fragment
 
       if (getScreen().getScreenOrientation() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "orientation")) {
         ScreenWindowTraits.setOrientation(getScreen(), activity);
@@ -188,18 +189,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       }
       if (getScreen().isStatusBarTranslucent() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "translucent")) {
         ScreenWindowTraits.setTranslucent(getScreen(), activity, (ReactContext) getContext());
-//        if (mIsTopInsetEnabled && getScreen().isStatusBarTranslucent()) {
-//          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            mToolbar.setPadding(0, getRootWindowInsets().getSystemWindowInsetTop(), 0, 0);
-//          } else {
-//            // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
-//            mToolbar.setPadding(0, (int) (25 * getResources().getDisplayMetrics().density), 0, 0);
-//          }
-//        } else {
-//          if (mToolbar.getPaddingTop() > 0) {
-//            mToolbar.setPadding(0, 0, 0, 0);
-//          }
-//        }
       }
       if (getScreen().isStatusBarHidden() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(getScreen(), "hidden")) {
         ScreenWindowTraits.setHidden(getScreen(), activity);

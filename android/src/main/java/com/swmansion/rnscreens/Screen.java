@@ -1,11 +1,8 @@
 package com.swmansion.rnscreens;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Paint;
-import android.os.Build;
 import android.os.Parcelable;
 import android.util.SparseArray;
 import android.view.View;
@@ -16,11 +13,9 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.react.bridge.GuardedRunnable;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 
 public class Screen extends ViewGroup {
