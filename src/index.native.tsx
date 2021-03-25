@@ -100,9 +100,9 @@ class Screen extends React.Component<ScreenProps> {
   };
 
   render() {
-    const { enabled } = this.props;
+    const { enabled = ENABLE_SCREENS } = this.props;
 
-    if (enabled || (enabled === undefined && ENABLE_SCREENS)) {
+    if (enabled) {
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
@@ -139,9 +139,9 @@ class Screen extends React.Component<ScreenProps> {
 
 class ScreenContainer extends React.Component<ScreenContainerProps> {
   render() {
-    const { enabled, ...rest } = this.props;
+    const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
-    if (enabled || (enabled === undefined && ENABLE_SCREENS)) {
+    if (enabled) {
       return <ScreensNativeModules.NativeScreenContainer {...rest} />;
     }
 
