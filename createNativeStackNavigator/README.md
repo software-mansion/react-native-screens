@@ -243,7 +243,7 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_left`
 - `landscape_right`
 
-Defaults to `default` on iOS. On Android, it stays the same as it was before if no screen provides this prop.
+Defaults to `default` on iOS. Defaults to current orientation on Android.
 
 #### `statusBarAnimation`
 
@@ -259,13 +259,13 @@ Sets the status bar color (similar to the `StatusBar` component).
 
 Boolean saying if the status bar for this screen is hidden.
 
-Defaults to `false` on iOS. On Android, it stays the same as it was before if no screen provides this prop.
+Defaults to `false` on iOS. Defaults to current state of status bar on Android.
 
 #### `statusBarStyle`
 
 Sets the status bar color (similar to the `StatusBar` component). On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
 
-Defaults to `auto` on iOS. On Android, it stays the same as it was before if no screen provides this prop.
+Defaults to `auto` on iOS. Defaults to current state of status bar on Android.
 
 #### `statusBarTranslucent` (Android only)
 
