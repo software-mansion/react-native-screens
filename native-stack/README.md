@@ -94,7 +94,7 @@ Function which returns a React Element to display in the center of the header.
 
 #### `headerHideBackButton`
 
-Boolean indicating whether to hide the back button in the header. Only supported on Android.
+Boolean indicating whether to hide the back button in the header.
 
 #### `headerHideShadow`
 

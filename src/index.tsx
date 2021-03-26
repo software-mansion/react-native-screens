@@ -23,20 +23,22 @@ export function screensEnabled(): boolean {
 export class NativeScreen extends React.Component<ScreenProps> {
   render(): JSX.Element {
     let { active, activityState, style, enabled = true, ...rest } = this.props;
-    if (active !== undefined && activityState === undefined) {
-      activityState = active !== 0 ? 2 : 0; // change taken from index.native.tsx
+
+    if (ENABLE_SCREENS && enabled) {
+      if (active !== undefined && activityState === undefined) {
+        activityState = active !== 0 ? 2 : 0; // change taken from index.native.tsx
+      }
+      return (
+        <View
+          // @ts-expect-error: hidden exists on web, but not in React Native
+          hidden={activityState === 0}
+          style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
+          {...rest}
+        />
+      );
     }
-    return (
-      <View
-        style={[
-          style,
-          ENABLE_SCREENS && enabled && activityState !== 2
-            ? { display: 'none' }
-            : null,
-        ]}
-        {...rest}
-      />
-    );
+
+    return <View {...rest} />;
   }
 }
 

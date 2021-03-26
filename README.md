@@ -6,7 +6,7 @@ This project aims to expose native navigation container components to React Nati
 
 ### iOS
 
-Installation on iOS should be completely handled with auto-linking, if you have insured pods are installed after adding this module, no other actions should be necessary
+Installation on iOS should be completely handled with auto-linking, if you have ensured pods are installed after adding this module, no other actions should be necessary
 
 ### Android
 

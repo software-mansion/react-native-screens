@@ -113,9 +113,6 @@ export type NativeStackNavigationOptions = {
   headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
-   * Only supported on Android.
-   *
-   * @platform android
    */
   headerHideBackButton?: boolean;
   /**
