@@ -92,6 +92,7 @@ module.exports = {
           'error',
           {
             'ts-ignore': 'allow-with-description',
+            'ts-expect-error': 'allow-with-description',
           },
         ],
       },

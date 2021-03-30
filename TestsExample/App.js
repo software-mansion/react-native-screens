@@ -20,6 +20,7 @@ import Test645 from './src/Test645';
 import Test648 from './src/Test648';
 import Test649 from './src/Test649';
 import Test654 from './src/Test654';
+import Test658 from './src/Test658';
 import Test691 from './src/Test691';
 import Test702 from './src/Test702';
 import Test706 from './src/Test706';
@@ -32,6 +33,8 @@ import Test780 from './src/Test780';
 import Test791 from './src/Test791';
 import Test817 from './src/Test817';
 import Test831 from './src/Test831';
+import Test844 from './src/Test844';
+import Test861 from './src/Test861';
 
 enableScreens();
 

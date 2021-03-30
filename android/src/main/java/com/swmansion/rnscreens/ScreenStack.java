@@ -150,19 +150,21 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
     // handle the case of newTop being NULL, which happens in several places below
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
-    ScreenStackFragment belowTop = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+    ScreenStackFragment visibleBottom = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
 
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
       if (!mDismissed.contains(screen)) {
         if (newTop == null) {
           newTop = screen;
-          if (newTop.getScreen().getStackPresentation() != Screen.StackPresentation.TRANSPARENT_MODAL) {
+          if (!isTransparent(newTop)) {
             break;
           }
         } else {
-          belowTop = screen;
-          break;
+          visibleBottom = screen;
+          if(!isTransparent(screen)){
+            break;
+          }
         }
       }
     }
@@ -235,21 +237,40 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
     for (ScreenStackFragment screen : mScreenFragments) {
       // detach all screens that should not be visible
-      if (screen != newTop && screen != belowTop && !mDismissed.contains(screen)) {
+      if (screen != newTop && screen != visibleBottom && !mDismissed.contains(screen)) {
         getOrCreateTransaction().remove(screen);
       }
+      // Stop detaching screens when reaching visible bottom. All screens above bottom should be
+      // visible.
+      if(screen == visibleBottom) {
+        break;
+      }
     }
-    // attach "below top" screen if set
-    if (belowTop != null && !belowTop.isAdded()) {
+
+    // attach screens that just became visible
+    if (visibleBottom != null && !visibleBottom.isAdded()) {
       final ScreenStackFragment top = newTop;
-      getOrCreateTransaction().add(getId(), belowTop).runOnCommit(new Runnable() {
-        @Override
-        public void run() {
-          top.getScreen().bringToFront();
+      boolean beneathVisibleBottom = true;
+
+      for (ScreenStackFragment screen : mScreenFragments) {
+        // ignore all screens beneath the visible bottom
+        if(beneathVisibleBottom){
+          if(screen == visibleBottom){
+            beneathVisibleBottom = false;
+          }
+          else continue;
         }
-      });
+        // when founding first visible screen, make all screens after that visible
+        getOrCreateTransaction().add(getId(), screen).runOnCommit(new Runnable() {
+          @Override
+          public void run() {
+            top.getScreen().bringToFront();
+          }
+        });
+      }
     }
-    if (newTop != null && !newTop.isAdded()) {
+
+    else if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
     }
 
@@ -317,5 +338,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
               .commitAllowingStateLoss();
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
     }
+  }
+
+  private static boolean isTransparent(ScreenStackFragment fragment){
+    return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 }
