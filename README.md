@@ -34,7 +34,10 @@ Read usage guide depending on if you are [using Expo](#usage-in-expo-with-react-
 
 ## Supported react-native version
 
-Since version 2.0.0 react-native-screens requires RN v0.60+.
+| version | react-native version |
+| ------- | -------------------- |
+| 3.0.0+  | 0.62.0+              |
+| 2.0.0+  | 0.60.0+              |
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
