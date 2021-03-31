@@ -10,14 +10,6 @@ This navigator uses native navigation primitives (`UINavigationController` on iO
 npm install react-native-screens @react-navigation/native
 ```
 
-Make sure to enable `react-native-screens`. This needs to be done before our app renders. To do it, add the following code in your entry file (e.g. `App.js`):
-
-```js
-import { enableScreens } from 'react-native-screens';
-
-enableScreens();
-```
-
 ## API Definition
 
 To use this navigator, import it from `react-native-screens/createNativeStackNavigator`:
@@ -310,3 +302,13 @@ const largeHeaderInset = statusBarInset + 96; // inset to use for a large header
 ```
 
 You can also see an example of using these values with a `ScrollView` here: https://snack.expo.io/@wolewicki/ios-header-height.
+
+### Disabling `react-native-screens`
+
+If, for whatever reason, you'd like to disable native screens support and use plain React Native Views just use:
+
+```js
+import { enableScreens } from 'react-native-screens';
+
+enableScreens(false);
+```
