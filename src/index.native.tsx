@@ -100,19 +100,9 @@ class Screen extends React.Component<ScreenProps> {
   };
 
   render() {
-    const { enabled = true } = this.props;
+    const { enabled = ENABLE_SCREENS } = this.props;
 
-    if (!ENABLE_SCREENS || !enabled) {
-      // Filter out active prop in this case because it is unused and
-      // can cause problems depending on react-native version:
-      // https://github.com/react-navigation/react-navigation/issues/4886
-      // same for enabled prop
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { active, enabled, onComponentRef, ...rest } = this.props;
-
-      return <Animated.View {...rest} ref={this.setRef} />;
-    } else {
+    if (enabled) {
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
@@ -133,19 +123,29 @@ class Screen extends React.Component<ScreenProps> {
           ref={this.setRef}
         />
       );
+    } else {
+      // Filter out active prop in this case because it is unused and
+      // can cause problems depending on react-native version:
+      // https://github.com/react-navigation/react-navigation/issues/4886
+      // same for enabled prop
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { active, enabled, onComponentRef, ...rest } = this.props;
+
+      return <Animated.View {...rest} ref={this.setRef} />;
     }
   }
 }
 
 class ScreenContainer extends React.Component<ScreenContainerProps> {
   render() {
-    const { enabled = true, ...rest } = this.props;
+    const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
-    if (!ENABLE_SCREENS || !enabled) {
-      return <View {...rest} />;
-    } else {
-      return <ScreensNativeModules.NativeScreenContainer {...this.props} />;
+    if (enabled) {
+      return <ScreensNativeModules.NativeScreenContainer {...rest} />;
     }
+
+    return <View {...rest} />;
   }
 }
 
