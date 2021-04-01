@@ -57,6 +57,16 @@ Just make sure that the version of [react-navigation](https://github.com/react-n
 
 You are all set 🎉 – when screens are enabled in your application code react-navigation will automatically use them instead of relying on plain React Native Views.
 
+### Disabling `react-native-screens`
+
+If, for whatever reason, you'd like to disable native screens support and use plain React Native Views add the following code in your entry file (e.g. `App.js`):
+
+```js
+import { enableScreens } from 'react-native-screens';
+
+enableScreens(false);
+```
+
 ### Using createNativeStackNavigator with React Navigation
 
 To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) for React Navigation v5 and [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator) for older versions. 
