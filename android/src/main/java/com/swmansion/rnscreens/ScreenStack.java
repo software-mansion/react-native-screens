@@ -215,13 +215,11 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
 
-    switch (stackAnimation) {
-      case NONE:
-        transition = FragmentTransaction.TRANSIT_NONE;
-        break;
-      case FADE:
-        transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
-        break;
+    if (stackAnimation == Screen.StackAnimation.NONE) {
+      transition = FragmentTransaction.TRANSIT_NONE;
+    }
+    if (stackAnimation == Screen.StackAnimation.FADE) {
+      transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
     }
 
     // check if it is a custom animation
