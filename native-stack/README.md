@@ -400,6 +400,7 @@ const largeHeaderInset = statusBarInset + 96; // inset to use for a large header
 
 You can also see an example of using these values with a `ScrollView` here: https://snack.expo.io/@wolewicki/ios-header-height.
 
+
 ## Example
 
 ```js
