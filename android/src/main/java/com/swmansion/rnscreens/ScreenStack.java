@@ -169,7 +169,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
 
-    // variables used for "open/close animation" logic
     boolean shouldUseOpenAnimation = true;
     int transition;
     Screen.StackAnimation stackAnimation = Screen.StackAnimation.DEFAULT;
@@ -222,7 +221,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
     }
 
-    // check if it is a custom animation
     if (!isCustomAnimation(stackAnimation)) {
       getOrCreateTransaction().setTransition(transition);
     }
