@@ -14,4 +14,5 @@ export { default as NativeStackView } from './views/NativeStackView';
 export type {
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
+  NativeStackScreenProps,
 } from './types';

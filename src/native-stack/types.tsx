@@ -51,8 +51,8 @@ export type NativeStackScreenProps<
   ParamList extends ParamListBase,
   RouteName extends keyof ParamList = string
 > = {
-navigation: NativeStackNavigationProp<ParamList, RouteName>;
-route: RouteProp<ParamList, RouteName>;
+  navigation: NativeStackNavigationProp<ParamList, RouteName>;
+  route: RouteProp<ParamList, RouteName>;
 };
 
 export type NativeStackNavigationHelpers = NavigationHelpers<
