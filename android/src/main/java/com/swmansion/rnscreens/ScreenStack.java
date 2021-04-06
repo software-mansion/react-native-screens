@@ -169,64 +169,62 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
 
-    boolean customAnimation = false;
+    boolean shouldUseOpenAnimation = true;
+    int transition;
+    Screen.StackAnimation stackAnimation = Screen.StackAnimation.DEFAULT;
 
     if (!mStack.contains(newTop)) {
       // if new top screen wasn't on stack we do "open animation" so long it is not the very first screen on stack
       if (mTopScreen != null && newTop != null) {
         // there was some other screen attached before
-        int transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
-        if (!mScreenFragments.contains(mTopScreen) && newTop.getScreen().getReplaceAnimation() == Screen.ReplaceAnimation.POP) {
-          // if the previous top screen does not exist anymore and the new top was not on the stack before,
-          // probably replace was called, so we check the animation
-          transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
-        }
-        switch (newTop.getScreen().getStackAnimation()) {
-          case NONE:
-            transition = FragmentTransaction.TRANSIT_NONE;
-            break;
-          case FADE:
-            transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
-            break;
-          case SLIDE_FROM_RIGHT:
-            customAnimation = true;
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
-            break;
-          case SLIDE_FROM_LEFT:
-            customAnimation = true;
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
-            break;
-        }
-
-        if (!customAnimation) {
-          getOrCreateTransaction().setTransition(transition);
-        }
+        // if the previous top screen does not exist anymore and the new top was not on the stack before,
+        // probably replace or reset was called, so we play the "close animation"
+        // otherwise it's open animation
+        shouldUseOpenAnimation = mScreenFragments.contains(mTopScreen) || newTop.getScreen().getReplaceAnimation() != Screen.ReplaceAnimation.POP;
+        stackAnimation = newTop.getScreen().getStackAnimation();
       }
     } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
-      // otherwise if we are performing top screen change we do "back animation"
-      int transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
+      // otherwise if we are performing top screen change we do "close animation"
+      shouldUseOpenAnimation = false;
+      stackAnimation = mTopScreen.getScreen().getStackAnimation();
+    }
 
-      switch (mTopScreen.getScreen().getStackAnimation()) {
-        case NONE:
-          transition = FragmentTransaction.TRANSIT_NONE;
-          break;
-        case FADE:
-          transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
-          break;
+    // animation logic start
+    if (shouldUseOpenAnimation) {
+      transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+
+      switch (stackAnimation) {
         case SLIDE_FROM_RIGHT:
-          customAnimation = true;
+          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+          break;
+        case SLIDE_FROM_LEFT:
+          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
+          break;
+      }
+    } else {
+      transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
+
+      switch (stackAnimation) {
+        case SLIDE_FROM_RIGHT:
           getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
           break;
         case SLIDE_FROM_LEFT:
-          customAnimation = true;
           getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
           break;
       }
-
-      if (!customAnimation) {
-        getOrCreateTransaction().setTransition(transition);
-      }
     }
+
+    if (stackAnimation == Screen.StackAnimation.NONE) {
+      transition = FragmentTransaction.TRANSIT_NONE;
+    }
+    if (stackAnimation == Screen.StackAnimation.FADE) {
+      transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
+    }
+
+    if (!isCustomAnimation(stackAnimation)) {
+      getOrCreateTransaction().setTransition(transition);
+    }
+    // animation logic end
 
     // remove all screens previously on stack
     for (ScreenStackFragment screen : mStack) {
@@ -338,6 +336,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
               .commitAllowingStateLoss();
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
     }
+  }
+
+  private static boolean isCustomAnimation(Screen.StackAnimation stackAnimation) {
+    return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT;
   }
 
   private static boolean isTransparent(ScreenStackFragment fragment){

@@ -7,6 +7,7 @@ import {
   StackNavigationState,
   StackRouterOptions,
   StackActionHelpers,
+  RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
@@ -45,6 +46,14 @@ export type NativeStackNavigationProp<
   NativeStackNavigationEventMap
 > &
   StackActionHelpers<ParamList>;
+
+export type NativeStackScreenProps<
+  ParamList extends ParamListBase,
+  RouteName extends keyof ParamList = string
+> = {
+  navigation: NativeStackNavigationProp<ParamList, RouteName>;
+  route: RouteProp<ParamList, RouteName>;
+};
 
 export type NativeStackNavigationHelpers = NavigationHelpers<
   ParamListBase,
