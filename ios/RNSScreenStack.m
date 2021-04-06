@@ -53,6 +53,7 @@
   __weak RNSScreenStackManager *_manager;
   BOOL _hasLayout;
   BOOL _invalidated;
+  BOOL _updateScheduled;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager*)manager
@@ -386,7 +387,7 @@
   }
 }
 
-- (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers behindModal:(BOOL)behindModal
+- (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // when there is no change we return immediately
   if ([_controller.viewControllers isEqualToArray:controllers]) {
@@ -405,12 +406,16 @@
   // making any updated when transition is ongoing and schedule updates for when the transition
   // is complete.
   if (_controller.transitionCoordinator != nil) {
-    __weak RNSScreenStackView *weakSelf = self;
-    [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-      // do nothing here, we only want to be notified when transition is complete
-    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-      [weakSelf updateContainer];
-    }];
+    if (!_updateScheduled) {
+      _updateScheduled = YES;
+      __weak RNSScreenStackView *weakSelf = self;
+      [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        // do nothing here, we only want to be notified when transition is complete
+      } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        self->_updateScheduled = NO;
+        [weakSelf updateContainer];
+      }];
+    }
     return;
   }
 
@@ -424,7 +429,7 @@
   BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreen class]];
 
   // we don't animate the push (or pop) screen changes occuring behind the modal since pushing them too fast can cause crashes with same VC pushed twice
-  BOOL shouldAnimate = !firstTimePush && ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone && !behindModal;
+  BOOL shouldAnimate = !firstTimePush && ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
 
   if (firstTimePush) {
     // nothing pushed yet
@@ -483,7 +488,7 @@
     }
   }
 
-  [self setPushViewControllers:pushControllers behindModal:modalControllers.count > 0];
+  [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
 }
 
