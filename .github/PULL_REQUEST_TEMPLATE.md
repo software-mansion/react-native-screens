@@ -48,6 +48,6 @@ This snippet should be as minimal as possible and ready to be pasted into editor
   - [ ] https://github.com/software-mansion/react-native-screens/blob/master/README.md
   - [ ] https://github.com/software-mansion/react-native-screens/blob/master/native-stack/README.md
   - [ ] https://github.com/software-mansion/react-native-screens/blob/master/createNativeStackNavigator/README.md
-  - [ ] https://github.com/software-mansion/react-native-screens/blob/master/src/index.d.ts
+  - [ ] https://github.com/software-mansion/react-native-screens/blob/master/src/types.tsx
   - [ ] https://github.com/software-mansion/react-native-screens/blob/master/src/native-stack/types.tsx
 - [ ] Ensured that CI passes
