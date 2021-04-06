@@ -1,13 +1,9 @@
 import React from 'react';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {StyleSheet, Button, View, Text} from 'react-native';
-import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import {createNativeStackNavigator, NativeStackScreenProps} from 'react-native-screens/native-stack';
 
-type Props = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}
-
-const MainScreen = ({navigation}: Props) => {
+const MainScreen = ({navigation}: NativeStackScreenProps<ParamListBase>) => {
 
   return (
     <View style={styles.screen}>
@@ -26,7 +22,7 @@ const MainScreen = ({navigation}: Props) => {
   )
 }
 
-const PushScreen = ({navigation}: Props) => (
+const PushScreen = ({navigation}: NativeStackScreenProps<ParamListBase>) => (
   <View style={styles.screen}>
     <Button onPress={() => {
       navigation.push('Push');
