@@ -71,9 +71,10 @@ export default function NativeStackView({
 
         const viewStyles = [
           styles.container,
-          stackPresentation !== 'transparentModal' && {
-            backgroundColor: colors.background,
-          },
+          stackPresentation !== 'transparentModal' &&
+            stackPresentation !== 'containedTransparentModal' && {
+              backgroundColor: colors.background,
+            },
           contentStyle,
         ];
 
