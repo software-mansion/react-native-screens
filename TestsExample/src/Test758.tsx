@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button, NativeSyntheticEvent, ScrollView } from 'react-native';
 import {NavigationContainer, NavigationProp, ParamListBase} from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
-import { SearchBar } from 'react-native-screens';
+import { createNativeStackNavigator, NativeStackScreenProps } from 'react-native-screens/native-stack';
+import { SearchBarProps } from 'react-native-screens';
 
 const AppStack = createNativeStackNavigator();
 
@@ -24,28 +24,30 @@ export default function App(): JSX.Element {
   );
 }
 
-function First({navigation}: {navigation: NavigationProp<ParamListBase>}) {
+function First({navigation}: NativeStackScreenProps<ParamListBase>) {
   React.useEffect(() => {
     navigation.setOptions({
-      // eslint-disable-next-line react/display-name
-      searchBar: () => 
-        <SearchBar
-          barTintColor={"powderblue"}
-          hideWhenScrolling={true} 
-          obscureBackground={true} 
-          hideNavigationBar={false} 
-          autoCapitalize={'sentences'} 
-          placeholder={"Some text"} 
-          onChangeText={(e: NativeSyntheticEvent<{ text: string }>) => setSearch(e.nativeEvent.text)}
-          onCancelButtonPress={() => console.warn("Cancel button pressed")}
-          onSearchButtonPress={() => console.warn("Search button pressed")}
-          onFocus={() => console.warn("onFocus event")}
-          onBlur={() => console.warn("onBlur event")}
-        />
+      searchBar: searchBarOptions
     })
   }, [navigation]);
 
   const [search, setSearch] = React.useState('');
+
+  const searchBarOptions: SearchBarProps = {
+    barTintColor: 'powderblue',
+    hideWhenScrolling: true, 
+    obscureBackground: true, 
+    hideNavigationBar: false, 
+    autoCapitalize: 'sentences',
+    placeholder: "Some text",
+    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) => setSearch(e.nativeEvent.text),
+    onCancelButtonPress: () => console.warn("Cancel button pressed"),
+    onSearchButtonPress: () => console.warn("Search button pressed"),
+    onFocus: () => console.warn("onFocus event"),
+    onBlur: () => console.warn("onBlur event"),
+  };
+
+
 
   const items = ['Apples', 'Pie', 'Juice', 'Cake', 'Nuggets', 'Some', 'Other', 'Stuff', 'To', 'Fill', 'The', 'Scrolling', 'Space'];
 

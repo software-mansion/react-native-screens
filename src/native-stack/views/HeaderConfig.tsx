@@ -7,6 +7,7 @@ import {
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
   ScreenStackHeaderSearchBarView,
+  SearchBar,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
 import { processFonts } from './FontProcessor';
@@ -127,7 +128,7 @@ export default function HeaderConfig({
       ) : null}
       {searchBar !== undefined ? (
         <ScreenStackHeaderSearchBarView>
-          {searchBar()}
+          <SearchBar {...searchBar} />
         </ScreenStackHeaderSearchBarView>
       ) : null}
     </ScreenStackHeaderConfig>

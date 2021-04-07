@@ -89,8 +89,7 @@ const ScreensNativeModules = {
   },
 
   get NativeSearchBar() {
-    NativeSearchBar =
-      NativeSearchBar || requireNativeComponent('RNSSearchBar');
+    NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
     return NativeSearchBar;
   },
 };
@@ -227,6 +226,7 @@ export type {
   ScreenContainerProps,
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 };
 
 module.exports = {

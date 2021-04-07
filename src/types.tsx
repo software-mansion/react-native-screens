@@ -52,7 +52,12 @@ export type ScreenOrientationTypes =
   | 'landscape'
   | 'landscape_left'
   | 'landscape_right';
-export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center' | 'searchBar';
+export type HeaderSubviewTypes =
+  | 'back'
+  | 'right'
+  | 'left'
+  | 'center'
+  | 'searchBar';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
@@ -333,9 +338,7 @@ export interface SearchBarProps {
   /**
    * Event fired when the search button is pressed. It receives the current text value of the search bar.
    */
-  onSearchButtonPress?: (
-    text: NativeSyntheticEvent<{ text: string }>
-  ) => void;
+  onSearchButtonPress?: (text: NativeSyntheticEvent<{ text: string }>) => void;
   /**
    * Handles text change events
    */

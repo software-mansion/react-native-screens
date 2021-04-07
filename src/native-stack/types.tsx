@@ -243,11 +243,11 @@ export type NativeStackNavigationOptions = {
    */
   screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
   /**
-   * Function which returns a native iOS search bar. You have to use `SearchBar` component provided by `react-native-screens` for it to work correctly.
+   * Object in which you should pass props in order to render native iOS searchBar.
    *
    * @platform ios
    */
-  searchBar?: () => React.ReactElement<SearchBarProps>;
+  searchBar?: SearchBarProps;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
