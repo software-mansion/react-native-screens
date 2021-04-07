@@ -267,7 +267,7 @@ class StackView extends React.Component<Props> {
       );
     }
 
-    if (options.searchBar) {
+    if (Platform.OS === 'ios' && options.searchBar) {
       children.push(
         <ScreenStackHeaderSearchBarView>
           <SearchBar {...options.searchBar} />

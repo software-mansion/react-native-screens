@@ -1,5 +1,6 @@
 import { Route, useTheme } from '@react-navigation/native';
 import * as React from 'react';
+import { Platform } from 'react-native';
 import {
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
@@ -126,7 +127,7 @@ export default function HeaderConfig({
           {headerCenter({ tintColor })}
         </ScreenStackHeaderCenterView>
       ) : null}
-      {searchBar !== undefined ? (
+      {Platform.OS === 'ios' && searchBar !== undefined ? (
         <ScreenStackHeaderSearchBarView>
           <SearchBar {...searchBar} />
         </ScreenStackHeaderSearchBarView>
