@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, View } from 'react-native';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import {Button, View} from 'react-native';
+import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -18,7 +18,7 @@ export default function App(): JSX.Element {
       <Stack.Navigator
         screenOptions={{
           stackAnimation: 'slide_from_bottom',
-          stackPresentation: 'transparentModal',
+          stackPresentation: 'fullScreenModal',
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
@@ -29,8 +29,8 @@ export default function App(): JSX.Element {
   );
 }
 
-const First = ({ navigation }: Props): JSX.Element => (
-  <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'blue' }}>
+const First = ({navigation}: Props): JSX.Element => (
+  <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'blue'}}>
     <Button
       title="Tap me for the second screen"
       onPress={() => navigation.navigate('Second')}
@@ -38,8 +38,8 @@ const First = ({ navigation }: Props): JSX.Element => (
   </View>
 );
 
-const Second = ({ navigation }: Props): JSX.Element => (
-  <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'red' }}>
+const Second = ({navigation}: Props): JSX.Element => (
+  <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'red'}}>
     <Button
       title="Tap me for the third screen"
       onPress={() => navigation.navigate('Third')}
@@ -47,8 +47,8 @@ const Second = ({ navigation }: Props): JSX.Element => (
   </View>
 );
 
-const Third = ({ navigation }: Props): JSX.Element => (
-  <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'purple' }}>
+const Third = ({navigation}: Props): JSX.Element => (
+  <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'purple'}}>
     <Button
       title="Tap me for fourth screen"
       onPress={() => navigation.navigate('Fourth')}
@@ -56,8 +56,8 @@ const Third = ({ navigation }: Props): JSX.Element => (
   </View>
 );
 
-const Fourth = ({ navigation }: Props): JSX.Element => (
-  <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'orange' }}>
+const Fourth = ({navigation}: Props): JSX.Element => (
+  <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'orange'}}>
     <Button
       title="Tap me for first screen"
       onPress={() => navigation.navigate('First')}
