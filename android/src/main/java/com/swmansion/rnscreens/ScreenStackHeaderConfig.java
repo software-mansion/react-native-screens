@@ -308,8 +308,6 @@ public class ScreenStackHeaderConfig extends ViewGroup {
           params.gravity = Gravity.CENTER_HORIZONTAL;
           mToolbar.setTitle(null);
           break;
-        case SEARCH_BAR:
-          params.gravity = Gravity.BOTTOM;
       }
 
       view.setLayoutParams(params);

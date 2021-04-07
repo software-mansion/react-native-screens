@@ -13,8 +13,7 @@ public class ScreenStackHeaderSubview extends ReactViewGroup {
     LEFT,
     CENTER,
     RIGHT,
-    BACK,
-    SEARCH_BAR,
+    BACK
   }
 
   private int mReactWidth, mReactHeight;
