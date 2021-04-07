@@ -201,7 +201,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
           break;
         case SLIDE_FROM_BOTTOM:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_out_to_bottom, R.anim.rns_slide_in_from_bottom);
+          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, 0);
           break;
       }
     } else {
@@ -215,7 +215,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
           break;
         case SLIDE_FROM_BOTTOM:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_slide_out_to_bottom);
+          getOrCreateTransaction().setCustomAnimations(0, R.anim.rns_slide_out_to_bottom);
           break;
       }
     }
@@ -344,7 +344,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   private static boolean isCustomAnimation(Screen.StackAnimation stackAnimation) {
-    return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT;
+    return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT
+        || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT
+        || stackAnimation == Screen.StackAnimation.SLIDE_FROM_BOTTOM;
   }
 
   private static boolean isTransparent(ScreenStackFragment fragment){
