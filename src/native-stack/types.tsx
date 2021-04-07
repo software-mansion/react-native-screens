@@ -200,7 +200,7 @@ export type NativeStackNavigationOptions = {
    * Style object for header title. Supported properties:
    * - fontFamily
    * - fontSize
-   * - fontWeight (iOS only)
+   * - fontWeight
    * - color
    */
   headerTitleStyle?: {

@@ -284,7 +284,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   titleFontSize?: number;
   /**
    * Customize the weight of the font to be used for the title.
-   * @platform ios
    */
   titleFontWeight?: string;
   /**
