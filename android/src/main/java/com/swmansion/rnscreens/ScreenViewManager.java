@@ -100,7 +100,7 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
   }
 
   @ReactProp(name = "statusBarColor")
-  public void setStatusBarColor(Screen view, double statusBarColor) {
+  public void setStatusBarColor(Screen view, Integer statusBarColor) {
     view.setStatusBarColor(statusBarColor);
   }
 
@@ -110,12 +110,12 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
   }
 
   @ReactProp(name = "statusBarTranslucent")
-  public void setStatusBarTranslucent(Screen view, boolean statusBarTranslucent) {
+  public void setStatusBarTranslucent(Screen view, Boolean statusBarTranslucent) {
     view.setStatusBarTranslucent(statusBarTranslucent);
   }
 
   @ReactProp(name = "statusBarHidden")
-  public void setStatusBarHidden(Screen view, boolean statusBarHidden) {
+  public void setStatusBarHidden(Screen view, Boolean statusBarHidden) {
     view.setStatusBarHidden(statusBarHidden);
   }
 

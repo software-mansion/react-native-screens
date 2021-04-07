@@ -189,22 +189,23 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         context = screen.getFragment().tryGetContext();
       }
 
-      if (screen.getScreenOrientation() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "orientation")) {
+      if (ScreenWindowTraits.didSetOrientation() && screen.getScreenOrientation() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "orientation")) {
         ScreenWindowTraits.setOrientation(screen, activity);
       }
-      if (screen.getStatusBarColor() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "color")) {
-        ScreenWindowTraits.setColor(screen, activity, context);
+      if (ScreenWindowTraits.didSetStatusBarAppearance()) {
+        if (screen.getStatusBarColor() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "color")) {
+          ScreenWindowTraits.setColor(screen, activity, context);
+        }
+        if (screen.getStatusBarStyle() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "style")) {
+          ScreenWindowTraits.setStyle(screen, activity, context);
+        }
+        if (screen.isStatusBarTranslucent() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "translucent")) {
+          ScreenWindowTraits.setTranslucent(screen, activity, context);
+        }
+        if (screen.isStatusBarHidden() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "hidden")) {
+          ScreenWindowTraits.setHidden(screen, activity);
+        }
       }
-      if (screen.getStatusBarStyle() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "style")) {
-        ScreenWindowTraits.setStyle(screen, activity, context);
-      }
-      if (screen.isStatusBarTranslucent() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "translucent")) {
-        ScreenWindowTraits.setTranslucent(screen, activity, context);
-      }
-      if (screen.isStatusBarHidden() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "hidden")) {
-        ScreenWindowTraits.setHidden(screen, activity);
-      }
-
     }
 
     if (mIsHidden) {

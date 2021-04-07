@@ -18,6 +18,24 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.UiThreadUtil;
 
 public class ScreenWindowTraits {
+  private static boolean mDidSetOrientation = false;
+  private static boolean mDidSetStatusBarAppearance = false;
+
+  protected static void applyDidSetOrientation() {
+    mDidSetOrientation = true;
+  }
+
+  public static boolean didSetOrientation() {
+    return mDidSetOrientation;
+  }
+
+  protected static void applyDidSetStatusBarAppearance() {
+    mDidSetStatusBarAppearance = true;
+  }
+
+  public static boolean didSetStatusBarAppearance() {
+    return mDidSetStatusBarAppearance;
+  }
 
   protected static void setOrientation(Screen screen, final Activity activity) {
     if (screen == null || activity == null) {
@@ -31,10 +49,8 @@ public class ScreenWindowTraits {
       return;
     }
 
-    final double colorDouble = screen.getStatusBarColor();
+    final Integer color = screen.getStatusBarColor();
     final boolean animated = screen.isStatusBarAnimated();
-
-    final int color = (int) colorDouble;
 
     UiThreadUtil.runOnUiThread(
             new GuardedRunnable(context) {

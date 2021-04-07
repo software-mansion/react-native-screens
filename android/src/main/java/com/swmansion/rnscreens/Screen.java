@@ -73,7 +73,7 @@ public class Screen extends ViewGroup {
   private String mStatusBarStyle;
   private Boolean mStatusBarHidden;
   private Boolean mStatusBarTranslucent;
-  private Double mStatusBarColor;
+  private Integer mStatusBarColor;
   private boolean mStatusBarAnimated;
 
   @Override
@@ -269,6 +269,8 @@ public class Screen extends ViewGroup {
       return;
     }
 
+    ScreenWindowTraits.applyDidSetOrientation();
+
     switch (screenOrientation) {
       case "all":
         mScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
@@ -306,6 +308,10 @@ public class Screen extends ViewGroup {
   }
 
   public void setStatusBarStyle(String statusBarStyle) {
+    if (statusBarStyle != null) {
+      ScreenWindowTraits.applyDidSetStatusBarAppearance();
+    }
+
     mStatusBarStyle = statusBarStyle;
     if (getFragment() != null) {
       ScreenWindowTraits.setStyle(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
@@ -316,7 +322,11 @@ public class Screen extends ViewGroup {
     return mStatusBarStyle;
   }
 
-  public void setStatusBarHidden(boolean statusBarHidden) {
+  public void setStatusBarHidden(Boolean statusBarHidden) {
+    if (statusBarHidden != null) {
+      ScreenWindowTraits.applyDidSetStatusBarAppearance();
+    }
+
     mStatusBarHidden = statusBarHidden;
     if (getFragment() != null) {
       ScreenWindowTraits.setHidden(this, getFragment().tryGetActivity());
@@ -327,7 +337,11 @@ public class Screen extends ViewGroup {
     return mStatusBarHidden;
   }
 
-  public void setStatusBarTranslucent(boolean statusBarTranslucent) {
+  public void setStatusBarTranslucent(Boolean statusBarTranslucent) {
+    if (statusBarTranslucent != null) {
+      ScreenWindowTraits.applyDidSetStatusBarAppearance();
+    }
+
     mStatusBarTranslucent = statusBarTranslucent;
     if (getFragment() != null) {
       ScreenWindowTraits.setTranslucent(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
@@ -338,14 +352,18 @@ public class Screen extends ViewGroup {
     return mStatusBarTranslucent;
   }
 
-  public void setStatusBarColor(double statusBarColor) {
+  public void setStatusBarColor(Integer statusBarColor) {
+    if (statusBarColor != null) {
+      ScreenWindowTraits.applyDidSetStatusBarAppearance();
+    }
+
     mStatusBarColor = statusBarColor;
     if (getFragment() != null) {
       ScreenWindowTraits.setColor(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 
-  public Double getStatusBarColor() {
+  public Integer getStatusBarColor() {
     return mStatusBarColor;
   }
 
