@@ -57,8 +57,6 @@
   BOOL _hasLayout;
   BOOL _invalidated;
   UIPercentDrivenInteractiveTransition *_interactionController;
-  double _transitionProgress;
-  NSTimeInterval _gestureEndedTime;
   BOOL _updateScheduled;
 }
 
@@ -551,20 +549,12 @@
   [self addGestureRecognizer:rightEdgeSwipeGestureRecognizer];
 }
 
-- (void)handleDefaultSwipe:(UIGestureRecognizer *)recognizer
-{
-  if (recognizer.state == UIGestureRecognizerStateEnded) {
-    NSLog(@"cancelled");
-  }
-  NSLog(@"%f", _controller.transitionCoordinator.percentComplete);
-}
-
 - (void)handleSwipe:(RNSGestureRecognizer *)gestureRecognizer {
   float translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
   if (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
     translation = -translation;
   }
-  _transitionProgress = (translation / gestureRecognizer.view.bounds.size.width);
+  float transitionProgress = (translation / gestureRecognizer.view.bounds.size.width);
   
   switch (gestureRecognizer.state) {
   
@@ -576,7 +566,7 @@
     }
 
     case UIGestureRecognizerStateChanged: {
-      [_interactionController updateInteractiveTransition:_transitionProgress];
+      [_interactionController updateInteractiveTransition:transitionProgress];
       break;
     }
 
@@ -586,34 +576,17 @@
     }
       
     case UIGestureRecognizerStateEnded: {
-      if (_transitionProgress > 0.7) {
+      if (transitionProgress > 0.7) {
         [_interactionController finishInteractiveTransition];
       } else {
         [_interactionController cancelInteractiveTransition];
       }
-      _gestureEndedTime = CACurrentMediaTime();
-      _animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-      [_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
       _interactionController = nil;
     }
     default: {
       break;
     }
   }
-  
-  _transitionProgress = fmin(1.0, fmax(0.0, _transitionProgress));
-  
-  [_topScreenView notifyTransitionProgress:_transitionProgress];
-  [_belowScreenView notifyTransitionProgress:_transitionProgress];
-}
-
-- (void)handleAnimation
-{
-  double progress = _transitionProgress > 0.7
-    ? (fmin(1.0, ((CACurrentMediaTime() - _gestureEndedTime) / 0.35) + _transitionProgress))
-    : (fmax(0.0, (_transitionProgress - (CACurrentMediaTime() - _gestureEndedTime) / 0.35)));
-  [((RNSScreenView *)_topScreenView) notifyTransitionProgress:progress];
-  [((RNSScreenView *)_belowScreenView) notifyTransitionProgress:progress];
 }
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController

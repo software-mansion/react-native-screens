@@ -5,18 +5,13 @@
 @implementation RNSScreenStackAnimator {
   UINavigationControllerOperation _operation;
   NSTimeInterval _transitionDuration;
-  NSTimeInterval _animationStartTime;
-  UIViewController *_toViewController;
-  UIViewController *_fromViewController;
-  BOOL _isInteractive;
-  UIView *_fakeView;
 }
 
 - (instancetype)initWithOperation:(UINavigationControllerOperation)operation
 {
   if (self = [super init]) {
     _operation = operation;
-    _transitionDuration = 0.35;
+    _transitionDuration = 0.35; // default duration
   }
   return self;
 }
@@ -35,7 +30,7 @@
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
     return 0;
   }
-  return _transitionDuration; // default duration
+  return _transitionDuration;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -63,9 +58,7 @@
 - (void)animateSimplePushWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
 {
   UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-  _toViewController = toViewController;
   UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-  _fromViewController = fromViewController;
 
   CGAffineTransform rightTransform = CGAffineTransformMakeTranslation(transitionContext.containerView.bounds.size.width, 0);
   CGAffineTransform leftTransform = CGAffineTransformMakeTranslation(-transitionContext.containerView.bounds.size.width, 0);
@@ -75,30 +68,14 @@
     leftTransform = CGAffineTransformMakeTranslation(transitionContext.containerView.bounds.size.width, 0);
   }
   
-  CADisplayLink *animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-  _animationStartTime = CACurrentMediaTime();
-  _isInteractive = [transitionContext isInteractive];
-  if (!_isInteractive) {
-    [animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-  }
-  
-  // fake view for transition duration
-  _fakeView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 10, 10)];
-  _fakeView.alpha = 0.0;
-  
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = rightTransform;
     [[transitionContext containerView] addSubview:toViewController.view];
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-      self->_fakeView.alpha = 1.0;
       fromViewController.view.transform = leftTransform;
       toViewController.view.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished) {
       fromViewController.view.transform = CGAffineTransformIdentity;
-      [animationTimer setPaused:YES];
-      [animationTimer invalidate];
-      self->_toViewController = nil;
-      self->_fromViewController = nil;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
   } else if (_operation == UINavigationControllerOperationPop) {
@@ -109,21 +86,8 @@
       toViewController.view.transform = CGAffineTransformIdentity;
       fromViewController.view.transform = rightTransform;
     } completion:^(BOOL finished) {
-      [animationTimer setPaused:YES];
-      [animationTimer invalidate];
-      self->_toViewController = nil;
-      self->_fromViewController = nil;
       if (transitionContext.transitionWasCancelled) {
         toViewController.view.transform = CGAffineTransformIdentity;
-      }
-      if (self->_isInteractive) {
-        UINavigationController *navctr = toViewController.navigationController;
-        if ([navctr.delegate isKindOfClass:[RNSScreenStackView class]]) {
-          ((RNSScreenStackView *) navctr.delegate).topScreenView = nil;
-          ((RNSScreenStackView *) navctr.delegate).belowScreenView = nil;
-          [((RNSScreenStackView *) navctr.delegate).animationTimer setPaused:YES];
-          [((RNSScreenStackView *) navctr.delegate).animationTimer invalidate];
-        }
       }
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
@@ -133,16 +97,7 @@
 - (void)animateFadeWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
 {
   UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-  _toViewController = toViewController;
   UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-  _fromViewController = fromViewController;
-
-  CADisplayLink *animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-  _animationStartTime = CACurrentMediaTime();
-  _isInteractive = [transitionContext isInteractive];
-  if (!_isInteractive) {
-    [animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-  }
   
   if (_operation == UINavigationControllerOperationPush) {
     [[transitionContext containerView] addSubview:toViewController.view];
@@ -150,10 +105,6 @@
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
       toViewController.view.alpha = 1.0;
     } completion:^(BOOL finished) {
-      [animationTimer setPaused:YES];
-      [animationTimer invalidate];
-      self->_toViewController = nil;
-      self->_fromViewController = nil;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
   } else if (_operation == UINavigationControllerOperationPop) {
@@ -162,26 +113,12 @@
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
       fromViewController.view.alpha = 0.0;
     } completion:^(BOOL finished) {
-      [animationTimer setPaused:YES];
-      [animationTimer invalidate];
-      self->_toViewController = nil;
-      self->_fromViewController = nil;
       if (transitionContext.transitionWasCancelled) {
         toViewController.view.transform = CGAffineTransformIdentity;
       }
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     }];
   }
-}
-
-- (void)handleAnimation
-{
-//  NSLog(@"%f", _toViewController.view.alpha);
-  NSLog(@"%@", _toViewController.view);
-  double progress = (fmin(1.0, (CACurrentMediaTime() - _animationStartTime)/ _transitionDuration));
-//  NSLog(@"%f", progress);
-  [((RNSScreenView *)_toViewController.view) notifyTransitionProgress:progress];
-  [((RNSScreenView *)_fromViewController.view) notifyTransitionProgress:progress];
 }
 
 @end

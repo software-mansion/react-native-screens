@@ -10,12 +10,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
-import {
-  ImageSourcePropType,
-  NativeSyntheticEvent,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
@@ -226,14 +221,6 @@ export type NativeStackNavigationOptions = {
    * Boolean indicating whether the navigation bar is translucent.
    */
   headerTranslucent?: boolean;
-  /**
-   * A callback called every frame during the `simple_push` transition.
-   *
-   * @platform android
-   */
-  onTransitionProgress?: (
-    e: NativeSyntheticEvent<{ progress: number }>
-  ) => void;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
