@@ -7,6 +7,7 @@ import {
   StackNavigationState,
   StackRouterOptions,
   StackActionHelpers,
+  RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
 import {
@@ -50,6 +51,14 @@ export type NativeStackNavigationProp<
   NativeStackNavigationEventMap
 > &
   StackActionHelpers<ParamList>;
+
+export type NativeStackScreenProps<
+  ParamList extends ParamListBase,
+  RouteName extends keyof ParamList = string
+> = {
+  navigation: NativeStackNavigationProp<ParamList, RouteName>;
+  route: RouteProp<ParamList, RouteName>;
+};
 
 export type NativeStackNavigationHelpers = NavigationHelpers<
   ParamListBase,
@@ -118,9 +127,6 @@ export type NativeStackNavigationOptions = {
   headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
-   * Only supported on Android.
-   *
-   * @platform android
    */
   headerHideBackButton?: boolean;
   /**
@@ -198,7 +204,7 @@ export type NativeStackNavigationOptions = {
    * Style object for header title. Supported properties:
    * - fontFamily
    * - fontSize
-   * - fontWeight (iOS only)
+   * - fontWeight
    * - color
    */
   headerTitleStyle?: {
