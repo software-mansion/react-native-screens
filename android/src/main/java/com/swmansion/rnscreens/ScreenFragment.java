@@ -38,6 +38,7 @@ public class ScreenFragment extends Fragment {
 
   protected Screen mScreenView;
   private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
+  private boolean shouldUpdateOnResume = false;
 
   public ScreenFragment() {
     throw new IllegalStateException("Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
@@ -47,6 +48,18 @@ public class ScreenFragment extends Fragment {
   public ScreenFragment(Screen screenView) {
     super();
     mScreenView = screenView;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    if (shouldUpdateOnResume) {
+      shouldUpdateOnResume = false;
+      Activity activity = tryGetActivity();
+      Screen screen = getScreen();
+      ReactContext context = tryGetContext();
+      ScreenWindowTraits.trySetWindowTraits(screen, activity, context);
+    }
   }
 
   @Override
@@ -70,10 +83,14 @@ public class ScreenFragment extends Fragment {
   }
 
   private void updateWindowTraits() {
+    Activity activity = getActivity();
+    if (activity == null) {
+      shouldUpdateOnResume = true;
+      return;
+    }
     Screen screen = getScreen();
-    Activity activity = tryGetActivity();
     ReactContext context = tryGetContext();
-   ScreenWindowTraits.trySetWindowTraits(screen, activity, context);
+    ScreenWindowTraits.trySetWindowTraits(screen, activity, context);
   }
 
   protected @Nullable Activity tryGetActivity() {
