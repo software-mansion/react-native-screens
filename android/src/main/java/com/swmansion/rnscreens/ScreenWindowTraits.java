@@ -19,6 +19,9 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.UiThreadUtil;
 
 public class ScreenWindowTraits {
+  // Methods concerning statusBar management were taken from `react-native`'s status bar module:
+  // https://github.com/facebook/react-native/blob/master/ReactAndroid/src/main/java/com/facebook/react/modules/statusbar/StatusBarModule.java
+
   private static boolean mDidSetOrientation = false;
   private static boolean mDidSetStatusBarAppearance = false;
   private static Integer mDefaultStatusBarColor = null;
