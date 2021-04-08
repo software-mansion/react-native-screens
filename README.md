@@ -160,7 +160,7 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_left`
 - `landscape_right`
 
-Defaults to `default` on iOS. Defaults to current orientation on Android.
+Defaults to `default` on iOS.
 
 #### `stackAnimation`
 
@@ -209,23 +209,23 @@ Defaults to `fade` on iOS and `none` on Android.
 
 #### `statusBarColor` (Android only)
 
-Sets the status bar color (similar to the `StatusBar` component).
+Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
 #### `statusBarHidden`
 
 When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
 
-Defaults to `false` on iOS. Defaults to current state of status bar on Android.
+Defaults to `false`.
 
 #### `statusBarStyle`
 
 Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
 
-Defaults to `auto` on iOS. Defaults to current state of status bar on Android.
+Defaults to `auto`.
 
 #### `statusBarTranslucent` (Android only)
 
-Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `true`.
+Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
 ### `<ScreenStackHeaderConfig>`
 

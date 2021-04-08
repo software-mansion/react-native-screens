@@ -268,21 +268,22 @@ export type NativeStackNavigationOptions = {
    * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    */
   statusBarAnimation?: ScreenProps['statusBarAnimation'];
-  /** Sets the status bar color (similar to the `StatusBar` component).
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component) Defaults to initial status bar color.
    *
    * @platform android
    */
   statusBarColor?: string;
   /**
-   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */
   statusBarHidden?: boolean;
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
    */
   statusBarStyle?: ScreenProps['statusBarStyle'];
   /**
-   * Sets the translucency of the status bar. Defaults to `true`.
+   * Sets the translucency of the status bar. Defaults to `false`.
    *
    * @platform android
    */

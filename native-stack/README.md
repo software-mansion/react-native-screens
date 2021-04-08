@@ -221,8 +221,7 @@ With `native-stack`, the status bar and screen orientation can be managed by `UI
 1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
 2. For both status bar and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
 
-On Android, no additional setup is required.
-
+On Android, no additional setup is required, although, you should keep in mind that once you set the orientation or status bar props, `react-native-screens` will manage them on every screen, so you shouldn't use other methods of manipulating them then.
 #### `screenOrientation`
 
 Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
@@ -236,7 +235,7 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_left`
 - `landscape_right`
 
-Defaults to `default` on iOS. Defaults to current orientation on Android.
+Defaults to `default`.
 
 #### `statusBarAnimation`
 
@@ -246,23 +245,23 @@ Defaults to `fade` on iOS and `none` on Android.
 
 #### `statusBarColor` (Android only)
 
-Sets the status bar color (similar to the `StatusBar` component).
+Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
 #### `statusBarHidden`
 
 Boolean saying if the status bar for this screen is hidden.
 
-Defaults to `false` on iOS. Defaults to current state of status bar on Android.
+Defaults to `false`.
 
 #### `statusBarStyle`
 
 Sets the status bar color (similar to the `StatusBar` component). On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
 
-Defaults to `auto` on iOS. Defaults to current state of status bar on Android.
+Defaults to `auto`.
 
 #### `statusBarTranslucent` (Android only)
 
-Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `true`.
+Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
 ### Events
 
