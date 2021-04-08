@@ -95,7 +95,7 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
 
   @ReactProp(name = "statusBarAnimation")
   public void setStatusBarAnimation(Screen view, String statusBarAnimation) {
-    boolean animated = statusBarAnimation != null && !"none".equals(statusBarAnimation);
+    Boolean animated = statusBarAnimation != null && !"none".equals(statusBarAnimation);
     view.setStatusBarAnimated(animated);
   }
 

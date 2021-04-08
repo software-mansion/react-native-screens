@@ -3,6 +3,7 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Parcelable;
 import android.util.SparseArray;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.GuardedRunnable;
 import com.facebook.react.bridge.ReactContext;
@@ -45,6 +47,15 @@ public class Screen extends ViewGroup {
     ON_TOP
   }
 
+  public enum WindowTraits {
+    ORIENTATION,
+    COLOR,
+    STYLE,
+    TRANSLUCENT,
+    HIDDEN,
+    ANIMATED
+  }
+
   private static OnAttachStateChangeListener sShowSoftKeyboardOnAttach = new OnAttachStateChangeListener() {
 
     @Override
@@ -74,7 +85,7 @@ public class Screen extends ViewGroup {
   private Boolean mStatusBarHidden;
   private Boolean mStatusBarTranslucent;
   private Integer mStatusBarColor;
-  private boolean mStatusBarAnimated;
+  private Boolean mStatusBarAnimated;
 
   @Override
   protected void onAnimationStart() {
@@ -143,15 +154,17 @@ public class Screen extends ViewGroup {
     // autoFocus is implemented it sometimes gets triggered before native text view is mounted. As
     // a result Android ignores calls for opening soft keyboard and here we trigger it manually
     // again after the screen is attached.
-    View view = getFocusedChild();
-    if (view != null) {
-      while (view instanceof ViewGroup) {
-        view = ((ViewGroup) view).getFocusedChild();
-      }
-      if (view instanceof TextView) {
-        TextView textView = (TextView) view;
-        if (textView.getShowSoftInputOnFocus()) {
-          textView.addOnAttachStateChangeListener(sShowSoftKeyboardOnAttach);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      View view = getFocusedChild();
+      if (view != null) {
+        while (view instanceof ViewGroup) {
+          view = ((ViewGroup) view).getFocusedChild();
+        }
+        if (view instanceof TextView) {
+          TextView textView = (TextView) view;
+          if (textView.getShowSoftInputOnFocus()) {
+            textView.addOnAttachStateChangeListener(sShowSoftKeyboardOnAttach);
+          }
         }
       }
     }
@@ -299,7 +312,7 @@ public class Screen extends ViewGroup {
     }
 
     if (getFragment() != null) {
-      ScreenWindowTraits.setOrientation(this, getFragment().tryGetActivity());
+      ScreenWindowTraits.setOrientation(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.ORIENTATION), getFragment().tryGetActivity());
     }
   }
 
@@ -314,7 +327,7 @@ public class Screen extends ViewGroup {
 
     mStatusBarStyle = statusBarStyle;
     if (getFragment() != null) {
-      ScreenWindowTraits.setStyle(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setStyle(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.STYLE), getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 
@@ -329,7 +342,7 @@ public class Screen extends ViewGroup {
 
     mStatusBarHidden = statusBarHidden;
     if (getFragment() != null) {
-      ScreenWindowTraits.setHidden(this, getFragment().tryGetActivity());
+      ScreenWindowTraits.setHidden(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.HIDDEN), getFragment().tryGetActivity());
     }
   }
 
@@ -344,7 +357,7 @@ public class Screen extends ViewGroup {
 
     mStatusBarTranslucent = statusBarTranslucent;
     if (getFragment() != null) {
-      ScreenWindowTraits.setTranslucent(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setTranslucent(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.TRANSLUCENT), getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 
@@ -359,7 +372,7 @@ public class Screen extends ViewGroup {
 
     mStatusBarColor = statusBarColor;
     if (getFragment() != null) {
-      ScreenWindowTraits.setColor(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setColor(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.COLOR), ScreenWindowTraits.findScreenForTrait(this, WindowTraits.ANIMATED), getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 
@@ -367,11 +380,11 @@ public class Screen extends ViewGroup {
     return mStatusBarColor;
   }
 
-  public boolean isStatusBarAnimated() {
+  public Boolean isStatusBarAnimated() {
     return mStatusBarAnimated;
   }
 
-  public void setStatusBarAnimated(boolean statusBarAnimated) {
+  public void setStatusBarAnimated(Boolean statusBarAnimated) {
     mStatusBarAnimated = statusBarAnimated;
   }
 }

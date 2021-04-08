@@ -72,7 +72,7 @@ export default function NativeStackView({
           statusBarColor,
           statusBarHidden,
           statusBarStyle,
-          statusBarTranslucent = true,
+          statusBarTranslucent,
         } = options;
 
         const viewStyles = [

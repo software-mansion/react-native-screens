@@ -74,13 +74,13 @@ public class ScreenFragment extends Fragment {
     Activity activity = tryGetActivity();
     ReactContext context = tryGetContext();
     if (ScreenWindowTraits.didSetOrientation()) {
-      ScreenWindowTraits.setOrientation(ScreenWindowTraits.findScreenForTrait(screen, "orientation"), activity);
+      ScreenWindowTraits.setOrientation(ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.ORIENTATION), activity);
     }
     if (ScreenWindowTraits.didSetStatusBarAppearance()) {
-      ScreenWindowTraits.setColor(ScreenWindowTraits.findScreenForTrait(screen, "color"), activity, context);
-      ScreenWindowTraits.setStyle(ScreenWindowTraits.findScreenForTrait(screen, "style"), activity, context);
-      ScreenWindowTraits.setTranslucent(ScreenWindowTraits.findScreenForTrait(screen, "translucent"), activity, context);
-      ScreenWindowTraits.setHidden(ScreenWindowTraits.findScreenForTrait(screen, "hidden"), activity);
+      ScreenWindowTraits.setColor(ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.COLOR), ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.ANIMATED), activity, context);
+      ScreenWindowTraits.setStyle(ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.STYLE), activity, context);
+      ScreenWindowTraits.setTranslucent(ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.TRANSLUCENT), activity, context);
+      ScreenWindowTraits.setHidden(ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.HIDDEN), activity);
     }
   }
 

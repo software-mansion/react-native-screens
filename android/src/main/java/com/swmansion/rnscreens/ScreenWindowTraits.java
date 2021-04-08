@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewParent;
@@ -20,6 +21,7 @@ import com.facebook.react.bridge.UiThreadUtil;
 public class ScreenWindowTraits {
   private static boolean mDidSetOrientation = false;
   private static boolean mDidSetStatusBarAppearance = false;
+  private static Integer mDefaultStatusBarColor = null;
 
   protected static void applyDidSetOrientation() {
     mDidSetOrientation = true;
@@ -38,19 +40,44 @@ public class ScreenWindowTraits {
   }
 
   protected static void setOrientation(Screen screen, final Activity activity) {
-    if (screen == null || activity == null) {
+    if (activity == null) {
       return;
     }
-    activity.setRequestedOrientation(screen.getScreenOrientation());
+
+    final Integer orientation;
+
+    if (screen != null && screen.getScreenOrientation() != null) {
+      orientation = screen.getScreenOrientation();
+    } else {
+      orientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+    }
+
+    activity.setRequestedOrientation(orientation);
   }
 
-  protected static void setColor(Screen screen, final Activity activity, ReactContext context) {
-    if (screen == null || activity == null || context == null) {
+  protected static void setColor(Screen screenForColor, Screen ScreenForAnimated, final Activity activity, ReactContext context) {
+    if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
       return;
     }
 
-    final Integer color = screen.getStatusBarColor();
-    final boolean animated = screen.isStatusBarAnimated();
+    if (mDefaultStatusBarColor == null) {
+      mDefaultStatusBarColor = activity.getWindow().getStatusBarColor();
+    }
+
+    final Integer color;
+    final boolean animated;
+
+    if (screenForColor != null && screenForColor.getStatusBarColor() != null) {
+      color = screenForColor.getStatusBarColor();
+    } else {
+      color = mDefaultStatusBarColor;
+    }
+
+    if (ScreenForAnimated != null && ScreenForAnimated.isStatusBarAnimated() != null) {
+      animated = ScreenForAnimated.isStatusBarAnimated();
+    } else {
+      animated = false;
+    }
 
     UiThreadUtil.runOnUiThread(
             new GuardedRunnable(context) {
@@ -82,11 +109,17 @@ public class ScreenWindowTraits {
   }
 
   protected static void setStyle(Screen screen, final Activity activity, ReactContext context) {
-    if (screen == null || activity == null || context == null) {
+    if (activity == null || context == null) {
       return;
     }
 
-    final String style = screen.getStatusBarStyle();
+    final String style;
+
+    if (screen != null && screen.getStatusBarStyle() != null) {
+      style = screen.getStatusBarStyle();
+    } else {
+      style = "light";
+    }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       UiThreadUtil.runOnUiThread(
@@ -108,11 +141,17 @@ public class ScreenWindowTraits {
   }
 
   protected static void setTranslucent(Screen screen, final Activity activity, ReactContext context) {
-    if (screen == null || activity == null || context == null) {
+    if (activity == null || context == null) {
       return;
     }
 
-    final boolean translucent = screen.isStatusBarTranslucent();
+    final boolean translucent;
+
+    if (screen != null && screen.isStatusBarTranslucent() != null) {
+      translucent = screen.isStatusBarTranslucent();
+    } else {
+      translucent = true;
+    }
 
     UiThreadUtil.runOnUiThread(
             new GuardedRunnable(context) {
@@ -145,11 +184,17 @@ public class ScreenWindowTraits {
   }
 
   protected static void setHidden(Screen screen, final Activity activity) {
-    if (screen == null || activity == null) {
+    if (activity == null) {
       return;
     }
 
-    final boolean hidden = screen.isStatusBarHidden();
+    final boolean hidden;
+
+    if (screen != null && screen.isStatusBarHidden() != null) {
+      hidden = screen.isStatusBarHidden();
+    } else {
+      hidden = false;
+    }
 
     UiThreadUtil.runOnUiThread(
             new Runnable() {
@@ -166,7 +211,7 @@ public class ScreenWindowTraits {
             });
   }
 
-  protected static Screen findScreenForTrait(Screen screen, String trait) {
+  protected static Screen findScreenForTrait(Screen screen, Screen.WindowTraits trait) {
     if (!hasChildScreenWithTraitSet(screen, trait)) {
       if (checkTraitForScreen(screen, trait)) {
         return screen;
@@ -178,7 +223,7 @@ public class ScreenWindowTraits {
     return null;
   }
 
-  private static @Nullable Screen findParentWithTraitSet(Screen screen, String trait) {
+  private static @Nullable Screen findParentWithTraitSet(Screen screen, Screen.WindowTraits trait) {
     ViewParent parent = screen.getContainer();
     while (parent != null) {
       if (parent instanceof Screen) {
@@ -191,7 +236,7 @@ public class ScreenWindowTraits {
     return null;
   }
 
-  protected static boolean hasChildScreenWithTraitSet(Screen screen, String trait) {
+  protected static boolean hasChildScreenWithTraitSet(Screen screen, Screen.WindowTraits trait) {
     if (screen == null || screen.getFragment() == null) {
       return false;
     }
@@ -208,18 +253,20 @@ public class ScreenWindowTraits {
     return false;
   }
 
-  private static boolean checkTraitForScreen(Screen screen, String trait) {
+  private static boolean checkTraitForScreen(Screen screen, Screen.WindowTraits trait) {
     switch (trait) {
-      case "orientation":
+      case ORIENTATION:
         return screen.getScreenOrientation() != null;
-      case "color":
+      case COLOR:
         return screen.getStatusBarColor() != null;
-      case "style":
+      case STYLE:
         return screen.getStatusBarStyle() != null;
-      case "translucent":
+      case TRANSLUCENT:
         return screen.isStatusBarTranslucent() != null;
-      case "hidden":
+      case HIDDEN:
         return screen.isStatusBarHidden() != null;
+      case ANIMATED:
+        return screen.isStatusBarAnimated() != null;
       default:
         throw new IllegalArgumentException("Wrong trait passed: " + trait);
     }

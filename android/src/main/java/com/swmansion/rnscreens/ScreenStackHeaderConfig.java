@@ -181,6 +181,12 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       // because we don't have the Fragment and Activity available then yet on the first setting of props
       // similar thing is done for Screens of other navigators, but in `onContainerUpdate` of their Fragment
 
+      // we check `hasChildScreenWithTraitSet` for all of the props before looking for a screen to apply traits
+      // because the flow of attaching native-stacks results in a situation, where, when having 2 nested native-stacks,
+      // the code here fires for the upper native-stack after the updates of the below native-stack
+      // which results in the upper native-stack having a child with the trait set, so `findScreenForTrait` returns null
+      // and the default trait would be set instead of the one set in the child before
+
       Screen screen = getScreen();
       ReactContext context = null;
       if (getContext() instanceof ReactContext) {
@@ -189,20 +195,22 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         context = screen.getFragment().tryGetContext();
       }
 
-      if (ScreenWindowTraits.didSetOrientation() && screen.getScreenOrientation() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "orientation")) {
+      if (ScreenWindowTraits.didSetOrientation() && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, Screen.WindowTraits.ORIENTATION)) {
         ScreenWindowTraits.setOrientation(screen, activity);
       }
+
       if (ScreenWindowTraits.didSetStatusBarAppearance()) {
-        if (screen.getStatusBarColor() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "color")) {
-          ScreenWindowTraits.setColor(screen, activity, context);
+        if (!ScreenWindowTraits.hasChildScreenWithTraitSet(screen, Screen.WindowTraits.COLOR)) {
+          ScreenWindowTraits.setColor(screen, screen, activity, context);
+//          ScreenWindowTraits.setColor(ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.COLOR), ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.ANIMATED), activity, context);
         }
-        if (screen.getStatusBarStyle() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "style")) {
+        if (!ScreenWindowTraits.hasChildScreenWithTraitSet(screen, Screen.WindowTraits.STYLE)) {
           ScreenWindowTraits.setStyle(screen, activity, context);
         }
-        if (screen.isStatusBarTranslucent() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "translucent")) {
+        if (!ScreenWindowTraits.hasChildScreenWithTraitSet(screen, Screen.WindowTraits.TRANSLUCENT)) {
           ScreenWindowTraits.setTranslucent(screen, activity, context);
         }
-        if (screen.isStatusBarHidden() != null && !ScreenWindowTraits.hasChildScreenWithTraitSet(screen, "hidden")) {
+        if (!ScreenWindowTraits.hasChildScreenWithTraitSet(screen, Screen.WindowTraits.HIDDEN)) {
           ScreenWindowTraits.setHidden(screen, activity);
         }
       }

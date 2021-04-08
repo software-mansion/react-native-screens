@@ -20,8 +20,8 @@ export default function NativeNavigation() {
           component={Home}
           options={{
             statusBarColor: 'blue',
-            statusBarAnimation: 'slide',
-            statusBarStyle: 'auto',
+            // statusBarAnimation: 'slide',
+            // statusBarStyle: 'auto',
             // statusBarTranslucent: true,
             // headerTopInsetEnabled: false,
             // statusBarHidden: false,
@@ -31,9 +31,9 @@ export default function NativeNavigation() {
           name="NestedNavigator"
           component={NestedNavigator}
           options={{
-            statusBarColor: 'red',
-            statusBarAnimation: 'slide',
-            statusBarStyle: 'dark',
+            // statusBarColor: 'red',
+            // statusBarAnimation: 'slide',
+            // statusBarStyle: 'dark',
             // statusBarTranslucent: true,
             // headerTopInsetEnabled: true,
             // statusBarHidden: false,
@@ -64,9 +64,9 @@ const Inner = () => (
   <InnerStack.Navigator
     screenOptions={{
       statusBarColor: 'pink',
-      statusBarAnimation: 'none',
-      statusBarStyle: 'auto',
-      headerShown: false,
+      // statusBarAnimation: 'none',
+      // statusBarStyle: 'auto',
+      // headerShown: false,
     }}>
     <InnerStack.Screen name="DeeperHome" component={Home} />
   </InnerStack.Navigator>
