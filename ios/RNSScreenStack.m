@@ -57,6 +57,7 @@
   BOOL _hasLayout;
   BOOL _invalidated;
   UIPercentDrivenInteractiveTransition *_interactionController;
+  double _transitionProgress;
   BOOL _updateScheduled;
 }
 
@@ -400,10 +401,6 @@
   // in the init function). Here, we need to detect if the initial empty
   // controller is still there
   BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreen class]];
-  
-  if (firstTimePush) {
-    [_controller.interactivePopGestureRecognizer addTarget:self action:@selector(handleDefaultSwipe:)];
-  }
 
   BOOL shouldAnimate = !firstTimePush && ((RNSScreenView *) lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
 
@@ -554,19 +551,18 @@
   if (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
     translation = -translation;
   }
-  float transitionProgress = (translation / gestureRecognizer.view.bounds.size.width);
+  _transitionProgress = (translation / gestureRecognizer.view.bounds.size.width);
   
   switch (gestureRecognizer.state) {
   
     case UIGestureRecognizerStateBegan: {
       _interactionController = [UIPercentDrivenInteractiveTransition new];
-      _topScreenView = (RNSScreenView *)[_controller popViewControllerAnimated:YES].view;
-      _belowScreenView = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+      [_controller popViewControllerAnimated:YES];
       break;
     }
 
     case UIGestureRecognizerStateChanged: {
-      [_interactionController updateInteractiveTransition:transitionProgress];
+      [_interactionController updateInteractiveTransition:_transitionProgress];
       break;
     }
 
@@ -576,7 +572,7 @@
     }
       
     case UIGestureRecognizerStateEnded: {
-      if (transitionProgress > 0.7) {
+      if (_transitionProgress > 0.7) {
         [_interactionController finishInteractiveTransition];
       } else {
         [_interactionController cancelInteractiveTransition];
