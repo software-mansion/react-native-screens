@@ -19,14 +19,14 @@ export default function NativeNavigation() {
           name="Home"
           component={Home}
           options={{
-            screenOrientation: 'default',
+            screenOrientation: 'portrait_up',
           }}
         />
         <Stack.Screen
           name="NestedNavigator"
           component={NestedNavigator}
           options={{
-            screenOrientation: 'landscape',
+            screenOrientation: 'landscape_right',
           }}
         />
       </Stack.Navigator>
@@ -38,10 +38,16 @@ export default function NativeNavigation() {
 const Tab = createBottomTabNavigator();
 
 const NestedNavigator = () => (
-  <Tab.Navigator>
+  <Tab.Navigator 
+    screenOptions={{
+      // screenOrientation: 'landscape_left',
+    }}
+  >
     <Tab.Screen name="Screen1" component={Home} />
     <Tab.Screen name="Screen2" component={Inner} />
-    <Tab.Screen name="Screen3" component={Home} />
+    <Tab.Screen name="Screen3" component={Home} 
+      // options={{screenOrientation: 'landscape_right'}}
+    />
   </Tab.Navigator>
 );
 

@@ -41,6 +41,13 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
   RNSStatusBarStyleDark,
 };
 
+typedef NS_ENUM(NSInteger, RNSWindowTrait) {
+  RNSWindowTraitStyle,
+  RNSWindowTraitAnimation,
+  RNSWindowTraitHidden,
+  RNSWindowTraitOrientation,
+};
+
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;

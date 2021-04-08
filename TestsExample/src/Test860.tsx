@@ -52,7 +52,12 @@ const NestedNavigator = () => (
   }}>
     <Tab.Screen name="Screen1" component={Home} />
     <Tab.Screen name="Screen2" component={Inner} />
-    <Tab.Screen name="Screen3" component={Home} />
+    <Tab.Screen name="Screen3" component={Home}
+      options={{
+        // statusBarColor: 'powderblue', 
+        // statusBarStyle: 'dark',
+      }}
+      />
   </Tab.Navigator>
 );
 

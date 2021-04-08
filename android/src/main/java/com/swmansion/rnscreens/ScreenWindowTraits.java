@@ -268,12 +268,12 @@ public class ScreenWindowTraits {
     for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
       // we check only the top screen for the trait
       Screen topScreen = sc.getTopScreen();
-      if (topScreen != null && checkTraitForScreen(topScreen, trait)) {
-        return topScreen;
-      }
       Screen child = childScreenWithTraitSet(topScreen, trait);
       if (child != null) {
         return child;
+      }
+      if (topScreen != null && checkTraitForScreen(topScreen, trait)) {
+        return topScreen;
       }
     }
     return null;

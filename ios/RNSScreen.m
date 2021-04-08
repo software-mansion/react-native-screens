@@ -360,7 +360,7 @@
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-  UIViewController *vc = [self findChildVCForConfigAndTrait:@"style" includingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitStyle includingModals:NO];
   return vc == self ? nil : vc;
 }
 
@@ -371,7 +371,7 @@
 
 - (UIViewController *)childViewControllerForStatusBarHidden
 {
-  UIViewController *vc = [self findChildVCForConfigAndTrait:@"hidden" includingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitHidden includingModals:NO];
   return vc == self ? nil : vc;
 }
 
@@ -382,7 +382,7 @@
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  UIViewController *vc = [self findChildVCForConfigAndTrait:@"animation" includingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitAnimation includingModals:NO];
   
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreenView *)vc.view).statusBarAnimation;
@@ -392,7 +392,7 @@
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-  UIViewController *vc = [self findChildVCForConfigAndTrait:@"orientation" includingModals:YES];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreenView *)vc.view).screenOrientation;
@@ -405,7 +405,7 @@
 // so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
 // if the returned vc is nil, it means none of children could provide config and self does not have config either,
 // so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
-- (UIViewController *)findChildVCForConfigAndTrait:(NSString *)trait includingModals:(BOOL)includingModals
+- (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
@@ -440,18 +440,24 @@
   }
 }
 
-- (BOOL)hasTraitSet:(NSString *)trait
+- (BOOL)hasTraitSet:(RNSWindowTrait)trait
 {
-  if ([trait isEqualToString:@"style"]) {
-    return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
-  } else if ([trait isEqualToString:@"animation"]) {
-    return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
-  } else if ([trait isEqualToString:@"hidden"]) {
-    return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
-  } else if ([trait isEqualToString:@"orientation"]) {
-    return ((RNSScreenView *)self.view).hasOrientationSet;
-  } else {
-    RCTLogError(@"Unknown trait passed: %@", trait);
+  switch (trait) {
+    case RNSWindowTraitStyle: {
+      return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
+    }
+    case RNSWindowTraitAnimation: {
+      return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
+    }
+    case RNSWindowTraitHidden: {
+      return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
+    }
+    case RNSWindowTraitOrientation: {
+      return ((RNSScreenView *)self.view).hasOrientationSet;
+    }
+    default: {
+      RCTLogError(@"Unknown trait passed: %d", (int)trait);
+    }
   }
   return NO;
 }
