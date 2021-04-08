@@ -312,7 +312,7 @@ public class Screen extends ViewGroup {
     }
 
     if (getFragment() != null) {
-      ScreenWindowTraits.setOrientation(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.ORIENTATION), getFragment().tryGetActivity());
+      ScreenWindowTraits.setOrientation(this, getFragment().tryGetActivity());
     }
   }
 
@@ -327,7 +327,7 @@ public class Screen extends ViewGroup {
 
     mStatusBarStyle = statusBarStyle;
     if (getFragment() != null) {
-      ScreenWindowTraits.setStyle(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.STYLE), getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setStyle(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 
@@ -342,7 +342,7 @@ public class Screen extends ViewGroup {
 
     mStatusBarHidden = statusBarHidden;
     if (getFragment() != null) {
-      ScreenWindowTraits.setHidden(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.HIDDEN), getFragment().tryGetActivity());
+      ScreenWindowTraits.setHidden(this, getFragment().tryGetActivity());
     }
   }
 
@@ -357,7 +357,7 @@ public class Screen extends ViewGroup {
 
     mStatusBarTranslucent = statusBarTranslucent;
     if (getFragment() != null) {
-      ScreenWindowTraits.setTranslucent(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.TRANSLUCENT), getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setTranslucent(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 
@@ -372,7 +372,7 @@ public class Screen extends ViewGroup {
 
     mStatusBarColor = statusBarColor;
     if (getFragment() != null) {
-      ScreenWindowTraits.setColor(ScreenWindowTraits.findScreenForTrait(this, WindowTraits.COLOR), ScreenWindowTraits.findScreenForTrait(this, WindowTraits.ANIMATED), getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setColor(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 

@@ -44,10 +44,12 @@ public class ScreenWindowTraits {
       return;
     }
 
+    Screen screenForOrientation =  ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.ORIENTATION);
+
     final Integer orientation;
 
-    if (screen != null && screen.getScreenOrientation() != null) {
-      orientation = screen.getScreenOrientation();
+    if (screenForOrientation != null && screenForOrientation.getScreenOrientation() != null) {
+      orientation = screenForOrientation.getScreenOrientation();
     } else {
       orientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
     }
@@ -55,7 +57,7 @@ public class ScreenWindowTraits {
     activity.setRequestedOrientation(orientation);
   }
 
-  protected static void setColor(Screen screenForColor, Screen ScreenForAnimated, final Activity activity, ReactContext context) {
+  protected static void setColor(Screen screen, final Activity activity, ReactContext context) {
     if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
       return;
     }
@@ -63,6 +65,9 @@ public class ScreenWindowTraits {
     if (mDefaultStatusBarColor == null) {
       mDefaultStatusBarColor = activity.getWindow().getStatusBarColor();
     }
+
+    Screen screenForColor = ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.COLOR);
+    Screen screenForAnimated = ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.ANIMATED);
 
     final Integer color;
     final boolean animated;
@@ -73,8 +78,8 @@ public class ScreenWindowTraits {
       color = mDefaultStatusBarColor;
     }
 
-    if (ScreenForAnimated != null && ScreenForAnimated.isStatusBarAnimated() != null) {
-      animated = ScreenForAnimated.isStatusBarAnimated();
+    if (screenForAnimated != null && screenForAnimated.isStatusBarAnimated() != null) {
+      animated = screenForAnimated.isStatusBarAnimated();
     } else {
       animated = false;
     }
@@ -113,10 +118,12 @@ public class ScreenWindowTraits {
       return;
     }
 
+    Screen screenForStyle =  ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.STYLE);
+
     final String style;
 
-    if (screen != null && screen.getStatusBarStyle() != null) {
-      style = screen.getStatusBarStyle();
+    if (screenForStyle != null && screenForStyle.getStatusBarStyle() != null) {
+      style = screenForStyle.getStatusBarStyle();
     } else {
       style = "light";
     }
@@ -147,10 +154,12 @@ public class ScreenWindowTraits {
 
     final boolean translucent;
 
-    if (screen != null && screen.isStatusBarTranslucent() != null) {
-      translucent = screen.isStatusBarTranslucent();
+    Screen screenForTranslucent = ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.TRANSLUCENT);
+
+    if (screenForTranslucent != null && screenForTranslucent.isStatusBarTranslucent() != null) {
+      translucent = screenForTranslucent.isStatusBarTranslucent();
     } else {
-      translucent = true;
+      translucent = false;
     }
 
     UiThreadUtil.runOnUiThread(
@@ -190,8 +199,10 @@ public class ScreenWindowTraits {
 
     final boolean hidden;
 
-    if (screen != null && screen.isStatusBarHidden() != null) {
-      hidden = screen.isStatusBarHidden();
+    Screen screenForHidden = ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.HIDDEN);
+
+    if (screenForHidden != null && screenForHidden.isStatusBarHidden() != null) {
+      hidden = screenForHidden.isStatusBarHidden();
     } else {
       hidden = false;
     }
@@ -211,16 +222,30 @@ public class ScreenWindowTraits {
             });
   }
 
-  protected static Screen findScreenForTrait(Screen screen, Screen.WindowTraits trait) {
-    if (!hasChildScreenWithTraitSet(screen, trait)) {
-      if (checkTraitForScreen(screen, trait)) {
-        return screen;
-      } else {
-        // if this screen has no trait set and there is no child with trait set, we look for a parent that has the trait set
-        return findParentWithTraitSet(screen, trait);
-      }
+  protected static void trySetWindowTraits(Screen screen, Activity activity, ReactContext context) {
+    if (ScreenWindowTraits.didSetOrientation()) {
+      ScreenWindowTraits.setOrientation(screen, activity);
     }
-    return null;
+    if (ScreenWindowTraits.didSetStatusBarAppearance()) {
+      ScreenWindowTraits.setColor(screen, activity, context);
+      ScreenWindowTraits.setStyle(screen, activity, context);
+      ScreenWindowTraits.setTranslucent(screen, activity, context);
+      ScreenWindowTraits.setHidden(screen, activity);
+    }
+  }
+
+  protected static Screen findScreenForTrait(Screen screen, Screen.WindowTraits trait) {
+    Screen childWithTrait = childScreenWithTraitSet(screen, trait);
+    if (childWithTrait != null) {
+      return childWithTrait;
+    }
+
+    if (checkTraitForScreen(screen, trait)) {
+      return screen;
+    } else {
+      // if there is no child with trait set and this screen has no trait set, we look for a parent that has the trait set
+      return findParentWithTraitSet(screen, trait);
+    }
   }
 
   private static @Nullable Screen findParentWithTraitSet(Screen screen, Screen.WindowTraits trait) {
@@ -236,21 +261,22 @@ public class ScreenWindowTraits {
     return null;
   }
 
-  protected static boolean hasChildScreenWithTraitSet(Screen screen, Screen.WindowTraits trait) {
+  protected static @Nullable Screen childScreenWithTraitSet(Screen screen, Screen.WindowTraits trait) {
     if (screen == null || screen.getFragment() == null) {
-      return false;
+      return null;
     }
     for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
       // we check only the top screen for the trait
       Screen topScreen = sc.getTopScreen();
       if (topScreen != null && checkTraitForScreen(topScreen, trait)) {
-        return true;
+        return topScreen;
       }
-      if (hasChildScreenWithTraitSet(topScreen, trait)) {
-        return true;
+      Screen child = childScreenWithTraitSet(topScreen, trait);
+      if (child != null) {
+        return child;
       }
     }
-    return false;
+    return null;
   }
 
   private static boolean checkTraitForScreen(Screen screen, Screen.WindowTraits trait) {

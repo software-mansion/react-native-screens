@@ -20,23 +20,21 @@ export default function NativeNavigation() {
           component={Home}
           options={{
             statusBarColor: 'blue',
-            // statusBarAnimation: 'slide',
-            // statusBarStyle: 'auto',
-            // statusBarTranslucent: true,
-            // headerTopInsetEnabled: false,
-            // statusBarHidden: false,
+            statusBarAnimation: 'slide',
+            statusBarStyle: 'dark',
+            statusBarTranslucent: true,
+            statusBarHidden: false,
           }}
         />
         <Stack.Screen
           name="NestedNavigator"
           component={NestedNavigator}
           options={{
-            // statusBarColor: 'red',
-            // statusBarAnimation: 'slide',
-            // statusBarStyle: 'dark',
-            // statusBarTranslucent: true,
-            // headerTopInsetEnabled: true,
-            // statusBarHidden: false,
+            statusBarColor: 'red',
+            statusBarAnimation: 'slide',
+            statusBarStyle: 'dark',
+            statusBarTranslucent: true,
+            statusBarHidden: false,
           }}
         />
       </Stack.Navigator>
@@ -64,8 +62,9 @@ const Inner = () => (
   <InnerStack.Navigator
     screenOptions={{
       statusBarColor: 'pink',
-      // statusBarAnimation: 'none',
-      // statusBarStyle: 'auto',
+      statusBarAnimation: 'none',
+      statusBarStyle: 'auto',
+      headerTopInsetEnabled: false,
       // headerShown: false,
     }}>
     <InnerStack.Screen name="DeeperHome" component={Home} />
@@ -106,6 +105,15 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
         title="Change status bar color"
         onPress={() => {
           navigation.setOptions({
+            statusBarColor,
+          });
+          setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen');
+        }}
+      />
+      <Button
+        title="Change status bar color in parent native-stack"
+        onPress={() => {
+          navigation.dangerouslyGetParent()?.dangerouslyGetParent()?.setOptions({
             statusBarColor,
           });
           setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen');
