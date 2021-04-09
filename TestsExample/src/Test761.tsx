@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Button, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+// import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
 

@@ -60,13 +60,16 @@
   UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
   UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
 
-  CGAffineTransform rightTransform = CGAffineTransformMakeTranslation(transitionContext.containerView.bounds.size.width, 0);
-  CGAffineTransform leftTransform = CGAffineTransformMakeTranslation(-transitionContext.containerView.bounds.size.width, 0);
+  float containerWidth = transitionContext.containerView.bounds.size.width;
+  float belowViewWidth = containerWidth * 0.3;
+
+  CGAffineTransform rightTransform = CGAffineTransformMakeTranslation(containerWidth, 0);
+  CGAffineTransform leftTransform = CGAffineTransformMakeTranslation(-belowViewWidth, 0);
   
   if (toViewController.navigationController.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
-    rightTransform = CGAffineTransformMakeTranslation(-transitionContext.containerView.bounds.size.width, 0);
-    leftTransform = CGAffineTransformMakeTranslation(transitionContext.containerView.bounds.size.width, 0);
-  }
+    rightTransform = CGAffineTransformMakeTranslation(-containerWidth, 0);
+    leftTransform = CGAffineTransformMakeTranslation(belowViewWidth, 0);
+    }
   
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = rightTransform;
@@ -81,16 +84,24 @@
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview: fromViewController.view];
-    
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-      toViewController.view.transform = CGAffineTransformIdentity;
-      fromViewController.view.transform = rightTransform;
-    } completion:^(BOOL finished) {
-      if (transitionContext.transitionWasCancelled) {
+      
+    void (^animationBlock)(void) = ^{
         toViewController.view.transform = CGAffineTransformIdentity;
-      }
-      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-    }];
+        fromViewController.view.transform = rightTransform;
+    };
+    void (^completionBlock)(BOOL) = ^(BOOL finished) {
+        if (transitionContext.transitionWasCancelled) {
+          toViewController.view.transform = CGAffineTransformIdentity;
+        }
+        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    };
+      
+    if (!transitionContext.isInteractive) {
+      [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:animationBlock completion:completionBlock];
+    } else {
+      // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
+      [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0 options:UIViewAnimationOptionCurveLinear animations:animationBlock completion:completionBlock];
+    }
   }
 }
 
@@ -98,6 +109,7 @@
 {
   UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
   UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+  toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
   
   if (_operation == UINavigationControllerOperationPush) {
     [[transitionContext containerView] addSubview:toViewController.view];
