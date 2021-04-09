@@ -53,6 +53,7 @@
   __weak RNSScreenStackManager *_manager;
   BOOL _hasLayout;
   BOOL _invalidated;
+  BOOL _updateScheduled;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager*)manager
@@ -405,12 +406,16 @@
   // making any updated when transition is ongoing and schedule updates for when the transition
   // is complete.
   if (_controller.transitionCoordinator != nil) {
-    __weak RNSScreenStackView *weakSelf = self;
-    [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-      // do nothing here, we only want to be notified when transition is complete
-    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-      [weakSelf updateContainer];
-    }];
+    if (!_updateScheduled) {
+      _updateScheduled = YES;
+      __weak RNSScreenStackView *weakSelf = self;
+      [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        // do nothing here, we only want to be notified when transition is complete
+      } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        self->_updateScheduled = NO;
+        [weakSelf updateContainer];
+      }];
+    }
     return;
   }
 
