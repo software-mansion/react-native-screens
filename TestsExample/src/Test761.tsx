@@ -14,8 +14,12 @@ type SimpleStackParams = {
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{stackAnimation: 'simple_push', direction: 'ltr'}}>
-        <Stack.Screen name="First" component={First} options={{}}/>
+      <Stack.Navigator screenOptions=
+      {{
+        stackAnimation: 'simple_push',
+        direction: 'ltr'
+        }}>
+        <Stack.Screen name="First" component={First}/>
         <Stack.Screen
           name="Second"
           component={Second}

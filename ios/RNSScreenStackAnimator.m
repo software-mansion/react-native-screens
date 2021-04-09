@@ -48,18 +48,16 @@
   
   if (screen != nil) {
     if (screen.stackAnimation == RNSScreenStackAnimationSimplePush) {
-      [self animateSimplePushWithTransitionContext:transitionContext];
+      [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     } else if (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone) {
-      [self animateFadeWithTransitionContext:transitionContext];
+      [self animateFadeWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     }
   }
 }
 
 - (void)animateSimplePushWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                          toVC:(UIViewController *)toViewController fromVC:(UIViewController *)fromViewController
 {
-  UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-  UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-
   float containerWidth = transitionContext.containerView.bounds.size.width;
   float belowViewWidth = containerWidth * 0.3;
 
@@ -106,9 +104,8 @@
 }
 
 - (void)animateFadeWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                    toVC:(UIViewController *)toViewController fromVC:(UIViewController *)fromViewController
 {
-  UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-  UIViewController* fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
   toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
   
   if (_operation == UINavigationControllerOperationPush) {

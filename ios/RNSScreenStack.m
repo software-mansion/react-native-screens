@@ -548,10 +548,14 @@
 
 - (void)handleSwipe:(RNSGestureRecognizer *)gestureRecognizer {
   float translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
-  if (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft) {
+  float velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].x;
+  float distance = gestureRecognizer.view.bounds.size.width;
+  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+  if (isRTL) {
     translation = -translation;
+    velocity = -velocity;
   }
-  _transitionProgress = (translation / gestureRecognizer.view.bounds.size.width);
+  _transitionProgress = (translation / distance);
   
   switch (gestureRecognizer.state) {
   
@@ -572,7 +576,9 @@
     }
       
     case UIGestureRecognizerStateEnded: {
-      if (_transitionProgress > 0.7) {
+      // values taken from https://github.com/react-navigation/react-navigation/blob/54739828598d7072c1bf7b369659e3682db3edc5/packages/stack/src/views/Stack/Card.tsx#L316
+      BOOL shouldFinishTransition =  (translation + velocity * 0.3) > (distance / 2);
+      if (shouldFinishTransition) {
         [_interactionController finishInteractiveTransition];
       } else {
         [_interactionController cancelInteractiveTransition];
