@@ -57,7 +57,6 @@
   BOOL _hasLayout;
   BOOL _invalidated;
   UIPercentDrivenInteractiveTransition *_interactionController;
-  double _transitionProgress;
   BOOL _updateScheduled;
 }
 
@@ -555,7 +554,8 @@
     translation = -translation;
     velocity = -velocity;
   }
-  _transitionProgress = (translation / distance);
+  
+  float transitionProgress = (translation / distance);
   
   switch (gestureRecognizer.state) {
   
@@ -566,7 +566,7 @@
     }
 
     case UIGestureRecognizerStateChanged: {
-      [_interactionController updateInteractiveTransition:_transitionProgress];
+      [_interactionController updateInteractiveTransition:transitionProgress];
       break;
     }
 
