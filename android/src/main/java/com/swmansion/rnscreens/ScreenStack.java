@@ -157,12 +157,15 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       if (!mDismissed.contains(screen)) {
         if (newTop == null) {
           newTop = screen;
-          if (!isTransparent(newTop)) {
-            break;
-          }
         } else {
-          visibleBottom = screen;
-          if (!isTransparent(screen)) {
+          // when screen is transparent all screens underneath should be visible
+          if (isTransparent(screen)) {
+            visibleBottom = screen;
+          }
+
+          // on slide from bottom only screen below top should be visible
+          if (isSlideFromBottom(screen) && !isTransparent(screen)) {
+            visibleBottom = screen;
             break;
           }
         }
@@ -245,34 +248,12 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         break;
       }
       // detach all screens that should not be visible
-      if (screen != newTop && screen != visibleBottom && !mDismissed.contains(screen)) {
+      if (screen != newTop && !mDismissed.contains(screen)) {
         getOrCreateTransaction().remove(screen);
       }
     }
 
-    // attach screens that just became visible
-    if (visibleBottom != null && !visibleBottom.isAdded()) {
-      final ScreenStackFragment top = newTop;
-      boolean beneathVisibleBottom = true;
-
-      for (ScreenStackFragment screen : mScreenFragments) {
-        // ignore all screens beneath the visible bottom
-        if (beneathVisibleBottom) {
-          if (screen == visibleBottom) {
-            beneathVisibleBottom = false;
-          } else {
-            continue;
-          }
-        }
-        // when founding first visible screen, make all screens after that visible
-        getOrCreateTransaction().add(getId(), screen).runOnCommit(new Runnable() {
-          @Override
-          public void run() {
-            top.getScreen().bringToFront();
-          }
-        });
-      }
-    } else if (newTop != null && !newTop.isAdded()) {
+    if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
     }
 
@@ -305,9 +286,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
    * own in `mBackStackListener`.
    *
    * We pop that "fake" transaction each time we update stack and we add a new one in case the top
-   * screen is allowed to be dismised using hw back button. This way in the listener we can tell
+   * screen is allowed to be dismissed using hw back button. This way in the listener we can tell
    * if back button was pressed based on the count of the items on back stack. We expect 0 items
-   * in case hw back is pressed becakse we try to keep the number of items at 1 by always resetting
+   * in case hw back is pressed because we try to keep the number of items at 1 by always resetting
    * and adding new items. In case we don't add a new item to back stack we remove listener so that
    * it does not get triggered.
    *
@@ -351,5 +332,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private static boolean isTransparent(ScreenStackFragment fragment){
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
+  }
+
+  private static boolean isSlideFromBottom(ScreenStackFragment fragment){
+    return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM;
   }
 }

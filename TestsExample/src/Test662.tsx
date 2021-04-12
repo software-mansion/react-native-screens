@@ -18,7 +18,6 @@ export default function App(): JSX.Element {
       <Stack.Navigator
         screenOptions={{
           stackAnimation: 'slide_from_bottom',
-          stackPresentation: 'fullScreenModal',
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
