@@ -3,6 +3,7 @@ import {
   Animated,
   Image,
   ImageProps,
+  Platform,
   requireNativeComponent,
   StyleSheet,
   UIManager,
@@ -24,10 +25,15 @@ import {
 } from './types';
 
 let ENABLE_SCREENS = true;
+const isWindows = Platform.OS === 'windows';
 
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = shouldEnableScreens;
-  if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
+  if (
+    ENABLE_SCREENS &&
+    !isWindows &&
+    !UIManager.getViewManagerConfig('RNSScreen')
+  ) {
     console.error(
       `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
     );
@@ -102,7 +108,7 @@ class Screen extends React.Component<ScreenProps> {
   render() {
     const { enabled = ENABLE_SCREENS } = this.props;
 
-    if (enabled) {
+    if (enabled && !isWindows) {
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
@@ -141,7 +147,7 @@ class ScreenContainer extends React.Component<ScreenContainerProps> {
   render() {
     const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
-    if (enabled) {
+    if (enabled && !isWindows) {
       return <ScreensNativeModules.NativeScreenContainer {...rest} />;
     }
 
