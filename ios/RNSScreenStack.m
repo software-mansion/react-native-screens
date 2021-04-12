@@ -525,7 +525,13 @@
   }
   
   if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
-    return topScreen.stackAnimation == RNSScreenStackAnimationSimplePush;
+    // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
+    BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft && ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
+    (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft && ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
+    if (isCorrectEdge) {
+      return topScreen.stackAnimation == RNSScreenStackAnimationSimplePush;
+    }
+    return NO;
   } else {
     return topScreen.stackAnimation != RNSScreenStackAnimationSimplePush;
   }
