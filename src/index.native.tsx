@@ -25,13 +25,14 @@ import {
 } from './types';
 
 let ENABLE_SCREENS = true;
-const isWindows = Platform.OS === 'windows';
+// web implementation is taken from `index.tsx`
+const isPlatformSupported = Platform.OS === 'ios' || Platform.OS === 'android';
 
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = shouldEnableScreens;
   if (
     ENABLE_SCREENS &&
-    !isWindows &&
+    isPlatformSupported &&
     !UIManager.getViewManagerConfig('RNSScreen')
   ) {
     console.error(
@@ -108,7 +109,7 @@ class Screen extends React.Component<ScreenProps> {
   render() {
     const { enabled = ENABLE_SCREENS } = this.props;
 
-    if (enabled && !isWindows) {
+    if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
@@ -147,7 +148,7 @@ class ScreenContainer extends React.Component<ScreenContainerProps> {
   render() {
     const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
-    if (enabled && !isWindows) {
+    if (enabled && isPlatformSupported) {
       return <ScreensNativeModules.NativeScreenContainer {...rest} />;
     }
 
