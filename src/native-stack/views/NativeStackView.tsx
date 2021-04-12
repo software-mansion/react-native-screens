@@ -56,31 +56,32 @@ const maybeRenderNestedStack = (
   options: NativeStackNavigationOptions,
   route: Route<string>,
   renderScene: () => JSX.Element,
-  isHeaderInModal: boolean,
-  viewStyles: StyleProp<ViewStyle>
+  stackPresentation: StackPresentationTypes,
+  viewStyles: StyleProp<ViewStyle>,
+  headerShown?: boolean
 ): JSX.Element => {
-  if (isHeaderInModal) {
+  if (stackPresentation === 'push') {
     return (
-      <ScreenStack style={styles.container}>
-        <Screen style={StyleSheet.absoluteFill}>
-          <HeaderConfig {...options} route={route} />
-          <Container
-            style={viewStyles}
-            // @ts-ignore Wrong props passed to View
-            stackPresentation={options.stackPresentation}>
-            {renderScene()}
-          </Container>
-        </Screen>
-      </ScreenStack>
+      <Container
+        style={viewStyles}
+        // @ts-ignore Wrong props
+        stackPresentation={options.stackPresentation}>
+        {renderScene()}
+      </Container>
     );
   }
   return (
-    <Container
-      style={viewStyles}
-      // @ts-ignore Wrong props passed to View
-      stackPresentation={options.stackPresentation}>
-      {renderScene()}
-    </Container>
+    <ScreenStack style={styles.container}>
+      <Screen style={StyleSheet.absoluteFill}>
+        <HeaderConfig {...options} route={route} headerShown={headerShown} />
+        <Container
+          style={viewStyles}
+          // @ts-ignore Wrong props
+          stackPresentation={options.stackPresentation}>
+          {renderScene()}
+        </Container>
+      </Screen>
+    </ScreenStack>
   );
 };
 
@@ -127,8 +128,6 @@ export default function NativeStackView({
           contentStyle,
         ];
 
-        const isHeaderInModal =
-          stackPresentation !== 'push' && headerShown !== false;
         const isHeaderInPush =
           stackPresentation === 'push' && headerShown !== false;
 
@@ -193,8 +192,9 @@ export default function NativeStackView({
               options,
               route,
               renderScene,
-              isHeaderInModal,
-              viewStyles
+              stackPresentation,
+              viewStyles,
+              headerShown
             )}
           </Screen>
         );
