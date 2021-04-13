@@ -17,8 +17,8 @@
     "@react-navigation/drawer": "^5.12.3",
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
-    "react": "16.13.1",
-    "react-native": "0.63.4",
+    "react": "17.0.1",
+    "react-native": "0.64.0",
     "react-native-appearance": "^0.3.4",
     "react-native-gesture-handler": "^1.10.1",
     "react-native-reanimated": "^1.13.2",
@@ -46,7 +46,7 @@
     "glob-to-regexp": "^0.4.1",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.65.1",
-    "react-test-renderer": "16.13.1",
+    "react-test-renderer": "17.0.1",
     "typescript": "^4.2.3"
   },
   "jest": {
