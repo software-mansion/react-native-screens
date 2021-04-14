@@ -151,8 +151,9 @@ class Screen extends React.Component<ScreenProps> {
         activityState = active !== 0 ? 2 : 0;
       }
       return (
-        <View
+        <Animated.View
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
+          ref={this.setRef}
           {...rest}
         />
       );
