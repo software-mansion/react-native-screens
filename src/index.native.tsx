@@ -24,9 +24,10 @@ import {
   ScreenStackHeaderConfigProps,
 } from './types';
 
-let ENABLE_SCREENS = true;
 // web implementation is taken from `index.tsx`
 const isPlatformSupported = Platform.OS === 'ios' || Platform.OS === 'android';
+
+let ENABLE_SCREENS = isPlatformSupported;
 
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = shouldEnableScreens;
@@ -114,7 +115,10 @@ class Screen extends React.Component<ScreenProps> {
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
 
-      // same reason as above
+      // Filter out active prop in this case because it is unused and
+      // can cause problems depending on react-native version:
+      // https://github.com/react-navigation/react-navigation/issues/4886
+      // same for enabled prop
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let { enabled, active, activityState, ...rest } = this.props;
       if (active !== undefined && activityState === undefined) {
@@ -131,15 +135,27 @@ class Screen extends React.Component<ScreenProps> {
         />
       );
     } else {
-      // Filter out active prop in this case because it is unused and
-      // can cause problems depending on react-native version:
-      // https://github.com/react-navigation/react-navigation/issues/4886
-      // same for enabled prop
+      // same reason as above
+      let {
+        active,
+        activityState,
+        style,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        enabled,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        onComponentRef,
+        ...rest
+      } = this.props;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { active, enabled, onComponentRef, ...rest } = this.props;
-
-      return <Animated.View {...rest} ref={this.setRef} />;
+      if (active !== undefined && activityState === undefined) {
+        activityState = active !== 0 ? 2 : 0;
+      }
+      return (
+        <View
+          style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
+          {...rest}
+        />
+      );
     }
   }
 }
