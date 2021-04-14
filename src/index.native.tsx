@@ -30,12 +30,8 @@ const isPlatformSupported = Platform.OS === 'ios' || Platform.OS === 'android';
 let ENABLE_SCREENS = isPlatformSupported;
 
 function enableScreens(shouldEnableScreens = true): void {
-  ENABLE_SCREENS = shouldEnableScreens;
-  if (
-    ENABLE_SCREENS &&
-    isPlatformSupported &&
-    !UIManager.getViewManagerConfig('RNSScreen')
-  ) {
+  ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
+  if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
     console.error(
       `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
     );
