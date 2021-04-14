@@ -36,7 +36,8 @@ import Test844 from './src/Test844';
 import Test852 from './src/Test852';
 import Test861 from './src/Test861';
 import Test865 from './src/Test865';
+import Test887 from './src/Test887';
 
 export default function App() {
-  return <Test42 />;
+  return <Test887 />;
 }

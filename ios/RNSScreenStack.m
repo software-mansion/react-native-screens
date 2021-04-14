@@ -54,6 +54,9 @@
   BOOL _hasLayout;
   BOOL _invalidated;
   BOOL _updateScheduled;
+//  CADisplayLink *_animationTimer;
+//  UIView *_transitioningView;
+//  RNSScreenView *_toView;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager*)manager
@@ -83,6 +86,24 @@
 
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
+//  if (animated && [viewController.view isKindOfClass:[RNSScreenView class]] && _controller.transitionCoordinator != nil) {
+//    UIView *fakeView = [UIView new];
+//    fakeView.alpha = 0.0;
+//    _transitioningView = fakeView;
+//    _toView = (RNSScreenView *)viewController.view;
+//    [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+//      [[context containerView] addSubview:fakeView];
+//      fakeView.alpha = 1.0;
+//      self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+//      [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+//    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+//      [self->_animationTimer setPaused:YES];
+//      [self->_animationTimer invalidate];
+//      self->_transitioningView = nil;
+//      self->_toView = nil;
+//      [fakeView removeFromSuperview];
+//    }];
+//  }
   UIView *view = viewController.view;
   RNSScreenStackHeaderConfig *config = nil;
   for (UIView *subview in view.reactSubviews) {
@@ -92,6 +113,14 @@
     }
   }
   [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
+}
+
+- (void)handleAnimation
+{
+//  if (_transitioningView != nil) {
+//    CGFloat currentAlpha = [_transitioningView.layer.presentationLayer opacity];
+//    [_toView notifyTransitionProgress:currentAlpha];
+//  }
 }
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated

@@ -233,6 +233,15 @@
   }
 }
 
+- (void)notifyTransitionProgress:(double)progress
+{
+  if (self.onTransitionProgress) {
+    self.onTransitionProgress(@{
+      @"progress": @(progress),
+    });
+  }
+}
+
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
@@ -310,6 +319,9 @@
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
+  UIView *_fakeView;
+  CADisplayLink *_animationTimer;
+  CGFloat _currentAlpha;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -465,6 +477,7 @@
   [super viewWillAppear:animated];
   [RNSScreenStackHeaderConfig updateWindowTraits];
   [((RNSScreenView *)self.view) notifyWillAppear];
+  [self setupProgressNotification];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -472,6 +485,7 @@
   [super viewWillDisappear:animated];
 
   [((RNSScreenView *)self.view) notifyWillDisappear];
+  [self setupProgressNotification];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -510,6 +524,43 @@
   [RNSScreenStackHeaderConfig updateWindowTraits];
 }
 
+# pragma mark - transition related methods
+- (void)setupProgressNotification
+{
+  if (self.navigationController != nil && self.transitionCoordinator != nil) {
+    UIView *fakeView = [UIView new];
+    fakeView.alpha = 0.0;
+    _fakeView = fakeView;
+    [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+      [[context containerView] addSubview:fakeView];
+      fakeView.alpha = 1.0;
+      self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+      [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+      [self->_animationTimer setPaused:YES];
+      [self->_animationTimer invalidate];
+      self->_fakeView = nil;
+      [fakeView removeFromSuperview];
+    }];
+  }
+}
+
+- (void)handleAnimation
+{
+  if (_fakeView != nil && _fakeView.layer != nil && _fakeView.layer.presentationLayer != nil) {
+    CGFloat fakeViewAlpha = [_fakeView.layer.presentationLayer opacity];
+    if (_currentAlpha != fakeViewAlpha) {
+      _currentAlpha = fakeViewAlpha;
+      [self notifyTransitionProgress:_currentAlpha];
+    }
+  }
+}
+
+- (void)notifyTransitionProgress:(double)progress
+{
+  [((RNSScreenView *)self.view) notifyTransitionProgress:progress];
+}
+
 @end
 
 @implementation RNSScreenManager
@@ -527,6 +578,7 @@ RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 
 - (UIView *)view
 {
