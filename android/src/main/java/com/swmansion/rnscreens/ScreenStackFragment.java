@@ -1,5 +1,7 @@
 package com.swmansion.rnscreens;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -35,12 +37,27 @@ public class ScreenStackFragment extends ScreenFragment {
     private Animation.AnimationListener mAnimationListener = new Animation.AnimationListener() {
       @Override
       public void onAnimationStart(Animation animation) {
+        mFragment.setIsSendingProgress(true);
+        View fakeView = new View(getContext());
+        fakeView.setAlpha(0f);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(fakeView, ALPHA, 1f).setDuration(animation.getDuration());
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+          @Override
+          public void onAnimationUpdate(ValueAnimator animation) {
+            float alpha = (float)animation.getAnimatedValue();
+            if (mFragment.getScreen() != null) {
+              mFragment.dispatchTransitionProgress(alpha);
+            }
+          }
+        });
+        animator.start();
         mFragment.onViewAnimationStart();
       }
 
       @Override
       public void onAnimationEnd(Animation animation) {
         mFragment.onViewAnimationEnd();
+        mFragment.setIsSendingProgress(false);
       }
 
       @Override
