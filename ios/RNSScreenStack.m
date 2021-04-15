@@ -390,6 +390,14 @@
 #endif
 
         BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] && ((RNSScreenView *) next.view).stackAnimation != RNSScreenStackAnimationNone;
+        
+        if ([next isKindOfClass:[RNSScreen class]]) {
+          if ([previous isKindOfClass:[RNSScreen class]]) {
+            ((RNSScreen *)next).presentingScreen = (RNSScreen *)previous;
+          } else if ([previous isKindOfClass:[RNScreensNavigationController class]]) {
+            ((RNSScreen *)next).presentingScreen = (RNSScreen *)((RNScreensNavigationController *) previous).topViewController;
+          }
+        }
 
         [previous presentViewController:next
                                animated:shouldAnimate

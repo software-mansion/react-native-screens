@@ -524,10 +524,12 @@
   [RNSScreenStackHeaderConfig updateWindowTraits];
 }
 
-# pragma mark - transition related methods
+# pragma mark - transition progress related methods
+
 - (void)setupProgressNotification
 {
-  if (self.navigationController != nil && self.transitionCoordinator != nil) {
+  if (self.transitionCoordinator != nil && !_isSendingProgress) {
+    _isSendingProgress = YES;
     UIView *fakeView = [UIView new];
     fakeView.alpha = 0.0;
     _fakeView = fakeView;
@@ -541,6 +543,7 @@
       [self->_animationTimer invalidate];
       self->_fakeView = nil;
       [fakeView removeFromSuperview];
+      self->_isSendingProgress = NO;
     }];
   }
 }
@@ -550,7 +553,7 @@
   if (_fakeView != nil && _fakeView.layer != nil && _fakeView.layer.presentationLayer != nil) {
     CGFloat fakeViewAlpha = [_fakeView.layer.presentationLayer opacity];
     if (_currentAlpha != fakeViewAlpha) {
-      _currentAlpha = fakeViewAlpha;
+      _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha];
     }
   }
@@ -559,6 +562,13 @@
 - (void)notifyTransitionProgress:(double)progress
 {
   [((RNSScreenView *)self.view) notifyTransitionProgress:progress];
+  // if we are in a modal, we want to send transition to the above screen too, which might not trigger appear/disappear events
+  // e.g. when we are in iOS >= 13 default modal
+  // we also check if we are not already sending the progress of transition and if it does not present another modal,
+  // because otherwise we would send progress to the screen 2 levels higher then the current one
+  if ([_presentingScreen isKindOfClass:[RNSScreen class]] && !_presentingScreen.isSendingProgress && self.presentedViewController == nil) {
+    [((RNSScreenView *)_presentingScreen.view) notifyTransitionProgress:progress];
+  }
 }
 
 @end

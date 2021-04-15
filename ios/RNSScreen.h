@@ -43,6 +43,9 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
 
 @interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
 
+@property (weak, nonatomic) RNSScreen *presentingScreen;
+@property (nonatomic) BOOL isSendingProgress;
+
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
 
