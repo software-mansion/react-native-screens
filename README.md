@@ -69,7 +69,9 @@ enableScreens(false);
 
 ### Using `createNativeStackNavigator` with React Navigation
 
-To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) for React Navigation >= v5 and [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator) for older versions. 
+To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer:
+- for React Navigation >= v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) 
+- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator) 
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
