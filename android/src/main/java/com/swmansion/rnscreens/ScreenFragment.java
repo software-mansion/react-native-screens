@@ -127,7 +127,7 @@ public class ScreenFragment extends Fragment {
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.WillAppear);
   
-    if (getScreen() != null && getScreen().getContainer() != null && getScreen().getContainer().getScreenCount() > 1) {
+    if (mAboveScreen == null && getScreen() != null && getScreen().getContainer() != null && getScreen().getContainer().getScreenCount() > 1) {
       mAboveScreen = getScreen().getContainer().getScreenAt(getScreen().getContainer().getScreenCount() - 2);
     }
   }

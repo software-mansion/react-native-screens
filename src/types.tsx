@@ -84,8 +84,6 @@ export interface ScreenProps extends ViewProps {
   onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
   /**
    * A callback called every frame during the transition of screens of `native-stack`.
-   *
-   * @platform ios
    */
   onTransitionProgress?: (
     e: NativeSyntheticEvent<{ progress: number }>

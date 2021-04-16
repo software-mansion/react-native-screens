@@ -172,6 +172,10 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
+#### `onTransitionProgress`
+
+A callback called every frame during the transition of screens.
+
 #### `replaceAnimation`
 
 How should the screen replacing another screen animate.

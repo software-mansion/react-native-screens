@@ -228,8 +228,6 @@ export type NativeStackNavigationOptions = {
   headerTranslucent?: boolean;
   /**
    * A callback called every frame during the transition of screens of `native-stack`.
-   *
-   * @platform ios
    */
   onTransitionProgress?: (
     e: NativeSyntheticEvent<{ progress: number }>

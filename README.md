@@ -133,6 +133,10 @@ A callback that gets called when the current screen disappears.
 
 A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
 
+#### `onTransitionProgress`
+
+A callback called every frame during the transition of screens.
+
 #### `onWillAppear`
 
 A callback that gets called when the current screen will appear. This is called as soon as the transition begins.

@@ -388,6 +388,7 @@ class StackView extends React.Component<Props> {
         onWillAppear={() => options?.onWillAppear?.()}
         onWillDisappear={() => options?.onWillDisappear?.()}
         onDisappear={() => options?.onDisappear?.()}
+        onTransitionProgress={(event) => options?.onTransitionProgress?.(event)}
         onDismissed={() => this.removeScene(route)}>
         {this.renderHeaderConfig(index, route, descriptor)}
         <SceneView
