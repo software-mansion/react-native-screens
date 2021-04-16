@@ -170,8 +170,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
 
     boolean shouldUseOpenAnimation = true;
-    int transition;
-    Screen.StackAnimation stackAnimation = Screen.StackAnimation.DEFAULT;
+    int transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+    Screen.StackAnimation stackAnimation = null;
 
     if (!mStack.contains(newTop)) {
       // if new top screen wasn't on stack we do "open animation" so long it is not the very first screen on stack
@@ -190,27 +190,29 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
 
     // animation logic start
-    if (shouldUseOpenAnimation) {
-      transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+    if (stackAnimation != null) {
+      if (shouldUseOpenAnimation) {
+        transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
 
-      switch (stackAnimation) {
-        case SLIDE_FROM_RIGHT:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
-          break;
-        case SLIDE_FROM_LEFT:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
-          break;
-      }
-    } else {
-      transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
+        switch (stackAnimation) {
+          case SLIDE_FROM_RIGHT:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+            break;
+          case SLIDE_FROM_LEFT:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
+            break;
+        }
+      } else {
+        transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
 
-      switch (stackAnimation) {
-        case SLIDE_FROM_RIGHT:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
-          break;
-        case SLIDE_FROM_LEFT:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
-          break;
+        switch (stackAnimation) {
+          case SLIDE_FROM_RIGHT:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
+            break;
+          case SLIDE_FROM_LEFT:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+            break;
+        }
       }
     }
 
@@ -221,7 +223,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
     }
 
-    if (!isCustomAnimation(stackAnimation)) {
+    if (stackAnimation != null && !isCustomAnimation(stackAnimation)) {
       getOrCreateTransaction().setTransition(transition);
     }
     // animation logic end
