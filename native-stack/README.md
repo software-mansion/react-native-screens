@@ -239,7 +239,7 @@ Defaults to `default`.
 
 #### `statusBarAnimation`
 
-Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`. On Android, there will be no animation if `none` provided.
+Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`. On Android, this prop considers the transition of changing status bar color (see https://reactnative.dev/docs/statusbar#animated). There will be no animation if `none` provided.
 
 Defaults to `fade` on iOS and `none` on Android.
 

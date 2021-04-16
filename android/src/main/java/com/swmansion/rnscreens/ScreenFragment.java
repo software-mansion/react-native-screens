@@ -2,6 +2,7 @@ package com.swmansion.rnscreens;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,10 +56,7 @@ public class ScreenFragment extends Fragment {
     super.onResume();
     if (shouldUpdateOnResume) {
       shouldUpdateOnResume = false;
-      Activity activity = tryGetActivity();
-      Screen screen = getScreen();
-      ReactContext context = tryGetContext();
-      ScreenWindowTraits.trySetWindowTraits(screen, activity, context);
+      ScreenWindowTraits.trySetWindowTraits(getScreen(), tryGetActivity(), tryGetContext());
     }
   }
 
@@ -88,17 +86,16 @@ public class ScreenFragment extends Fragment {
       shouldUpdateOnResume = true;
       return;
     }
-    Screen screen = getScreen();
-    ReactContext context = tryGetContext();
-    ScreenWindowTraits.trySetWindowTraits(screen, activity, context);
+    ScreenWindowTraits.trySetWindowTraits(getScreen(), activity, tryGetContext());
   }
 
   protected @Nullable Activity tryGetActivity() {
     if (getActivity() != null) {
       return getActivity();
     }
-    if (getScreen().getContext() instanceof ReactContext && ((ReactContext) getScreen().getContext()).getCurrentActivity() != null) {
-      return ((ReactContext) getScreen().getContext()).getCurrentActivity();
+    Context context = getScreen().getContext();
+    if (context instanceof ReactContext && ((ReactContext) context).getCurrentActivity() != null) {
+      return ((ReactContext) context).getCurrentActivity();
     }
 
     ViewParent parent = getScreen().getContainer();
