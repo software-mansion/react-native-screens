@@ -81,6 +81,11 @@ React-native-navigation library already uses native containers for rendering nav
 
 This library should work out of the box with all existing react-native libraries. If you experience problems with interoperability please [report an issue](https://github.com/kmagiera/react-native-screens/issues).
 
+## Guide for navigation library authors
+
+If you are building a navigation library you may want to use `react-native-screens` to have control over which parts of the React component tree are attached to the native view hierarchy.
+To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/master/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
+
 ## License
 
 React native screens library is licensed under [The MIT License](LICENSE).
