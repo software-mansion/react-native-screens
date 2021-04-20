@@ -3,6 +3,7 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
@@ -22,7 +23,7 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
-import com.facebook.react.views.text.ReactFontManager;
+import com.facebook.react.views.text.ReactTypefaceUtils;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private String mTitleFontFamily;
   private String mDirection;
   private float mTitleFontSize;
+  private int mTitleFontWeight;
   private Integer mBackgroundColor;
   private boolean mIsHidden;
   private boolean mIsBackButtonHidden;
@@ -241,9 +243,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       mToolbar.setTitleTextColor(mTitleColor);
     }
     if (titleTextView != null) {
-      if (mTitleFontFamily != null) {
-        titleTextView.setTypeface(ReactFontManager.getInstance().getTypeface(
-                mTitleFontFamily, 0, getContext().getAssets()));
+      if (mTitleFontFamily != null || mTitleFontWeight > 0) {
+        Typeface titleTypeface = ReactTypefaceUtils.applyStyles(
+              null, 0, mTitleFontWeight, mTitleFontFamily, getContext().getAssets());
+        titleTextView.setTypeface(titleTypeface);
       }
       if (mTitleFontSize > 0) {
         titleTextView.setTextSize(mTitleFontSize);
@@ -368,6 +371,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   public void setTitleFontFamily(String titleFontFamily) {
     mTitleFontFamily = titleFontFamily;
+  }
+
+  public void setTitleFontWeight(String fontWeightString) {
+    mTitleFontWeight = ReactTypefaceUtils.parseFontWeight(fontWeightString);
   }
 
   public void setTitleFontSize(float titleFontSize) {

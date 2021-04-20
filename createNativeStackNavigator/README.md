@@ -10,12 +10,14 @@ This navigator uses native navigation primitives (`UINavigationController` on iO
 npm install react-native-screens @react-navigation/native
 ```
 
-Make sure to enable `react-native-screens`. This needs to be done before our app renders. To do it, add the following code in your entry file (e.g. `App.js`):
+## Disabling `react-native-screens`
+
+If, for whatever reason, you'd like to disable native screens support and use plain React Native Views add the following code in your entry file (e.g. `App.js`):
 
 ```js
 import { enableScreens } from 'react-native-screens';
 
-enableScreens();
+enableScreens(false);
 ```
 
 ## API Definition
@@ -106,7 +108,7 @@ Whether the back button title should be visible or not. Defaults to `true`. Only
 
 #### `headerHideBackButton`
 
-Boolean indicating whether to hide the back button in the header. Only supported on Android.
+Boolean indicating whether to hide the back button in the header.
 
 #### `headerHideShadow`
 
@@ -172,7 +174,7 @@ Style object for header title. Supported properties:
 
 - `fontFamily`
 - `fontSize`
-- `fontWeight` (iOS only).
+- `fontWeight`
 - `color`
 
 #### `headerTopInsetEnabled`
