@@ -22,7 +22,7 @@ export default function App(): JSX.Element {
           headerShown: true,
         }}>
         <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} options={{headerShown: true}}/>
+        <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>
     </NavigationContainer>
   );

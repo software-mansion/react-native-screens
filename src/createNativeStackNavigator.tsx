@@ -47,6 +47,10 @@ import {
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
+const isAndroid = Platform.OS === 'android';
+
+let didWarn = isAndroid;
+
 function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
   if (typeof componentOrThunk === 'function') {
     return componentOrThunk(props);
@@ -397,11 +401,29 @@ class StackView extends React.Component<Props> {
     }
 
     const hasHeader =
+      options.headerShown !== false &&
       this.props.navigationConfig?.headerMode !== 'none' &&
       options.header !== null;
 
-    const isHeaderInModal = stackPresentation !== 'push' && hasHeader;
-    const isHeaderInPush = stackPresentation === 'push' && hasHeader;
+    if (
+      !didWarn &&
+      stackPresentation !== 'push' &&
+      options.headerShown !== undefined
+    ) {
+      didWarn = true;
+      console.warn(
+        'Be aware that changing the visibility of header in modal on iOS will result in resetting the state of the screen.'
+      );
+    }
+
+    const isHeaderInModal = isAndroid
+      ? false
+      : stackPresentation !== 'push' &&
+        hasHeader &&
+        options.headerShown === true;
+    const isHeaderInPush = isAndroid
+      ? hasHeader
+      : stackPresentation === 'push' && hasHeader;
 
     const { screenProps } = this.props;
     return (

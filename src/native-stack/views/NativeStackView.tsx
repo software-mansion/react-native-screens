@@ -32,6 +32,8 @@ import HeaderConfig from './HeaderConfig';
 const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
 
+let didWarn = isAndroid;
+
 let Container = View;
 
 if (__DEV__) {
@@ -57,31 +59,31 @@ const maybeRenderNestedStack = (
   route: Route<string>,
   renderScene: () => JSX.Element,
   stackPresentation: StackPresentationTypes,
-  viewStyles: StyleProp<ViewStyle>,
-  headerShown?: boolean
+  isHeaderInModal: boolean,
+  viewStyles: StyleProp<ViewStyle>
 ): JSX.Element => {
-  if (stackPresentation === 'push') {
+  if (isHeaderInModal) {
     return (
-      <Container
-        style={viewStyles}
-        // @ts-ignore Wrong props
-        stackPresentation={options.stackPresentation}>
-        {renderScene()}
-      </Container>
+      <ScreenStack style={styles.container}>
+        <Screen style={StyleSheet.absoluteFill}>
+          <HeaderConfig {...options} route={route} />
+          <Container
+            style={viewStyles}
+            // @ts-ignore Wrong props passed to View
+            stackPresentation={stackPresentation}>
+            {renderScene()}
+          </Container>
+        </Screen>
+      </ScreenStack>
     );
   }
   return (
-    <ScreenStack style={styles.container}>
-      <Screen style={StyleSheet.absoluteFill}>
-        <HeaderConfig {...options} route={route} headerShown={headerShown} />
-        <Container
-          style={viewStyles}
-          // @ts-ignore Wrong props
-          stackPresentation={options.stackPresentation}>
-          {renderScene()}
-        </Container>
-      </Screen>
-    </ScreenStack>
+    <Container
+      style={viewStyles}
+      // @ts-ignore Wrong props passed to View
+      stackPresentation={stackPresentation}>
+      {renderScene()}
+    </Container>
   );
 };
 
@@ -128,8 +130,23 @@ export default function NativeStackView({
           contentStyle,
         ];
 
-        const isHeaderInPush =
-          stackPresentation === 'push' && headerShown !== false;
+        if (
+          !didWarn &&
+          stackPresentation !== 'push' &&
+          headerShown !== undefined
+        ) {
+          didWarn = true;
+          console.warn(
+            'Be aware that changing the visibility of header in modal on iOS will result in resetting the state of the screen.'
+          );
+        }
+
+        const isHeaderInModal = isAndroid
+          ? false
+          : stackPresentation !== 'push' && headerShown === true;
+        const isHeaderInPush = isAndroid
+          ? headerShown
+          : stackPresentation === 'push' && headerShown !== false;
 
         return (
           <Screen
@@ -193,8 +210,8 @@ export default function NativeStackView({
               route,
               renderScene,
               stackPresentation,
-              viewStyles,
-              headerShown
+              isHeaderInModal,
+              viewStyles
             )}
           </Screen>
         );
