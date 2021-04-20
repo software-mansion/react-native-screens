@@ -33,7 +33,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kmagiera/react-native-screens.git"
+    "url": "git+https://github.com/software-mansion/react-native-screens.git"
   },
   "author": {
     "email": "krzys.magiera@gmail.com",
@@ -42,9 +42,9 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/kmagiera/react-native-screens/issues"
+    "url": "https://github.com/software-mansion/react-native-screens/issues"
   },
-  "homepage": "https://github.com/kmagiera/react-native-screens#readme",
+  "homepage": "https://github.com/software-mansion/react-native-screens#readme",
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
