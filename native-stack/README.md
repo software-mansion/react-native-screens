@@ -61,10 +61,6 @@ The `options` prop can be used to configure individual screens inside the naviga
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
 
-#### `backButtonMenuHidden`
-
-Boolean indicating whether to hide the iOS >= 14 menu of back button. Only supported on iOS.
-
 #### `contentStyle`
 
 Style object for the scene content.
@@ -72,6 +68,10 @@ Style object for the scene content.
 #### `direction`
 
 String that applies `rtl` or `ltr` form to the stack. On Android, you have to add `android:supportsRtl="true"` in the manifest of your app to enable `rtl`. On Android, if you set the above flag in the manifest, the orientation changes without the need to do it programmatically if the phone has `rtl` direction enabled. On iOS, the direction defaults to `ltr`, and only way to change it is via this prop.
+
+#### `disableBackButtonMenu`
+
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. It is `true` by default since its behavior is currently buggy. Only supported on iOS.
 
 #### `gestureEnabled`
 

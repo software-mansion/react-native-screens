@@ -35,7 +35,7 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic, retain) UIColor *largeTitleColor;
 @property (nonatomic) BOOL hideBackButton;
 @property (nonatomic) BOOL backButtonInCustomView;
-@property (nonatomic) BOOL backButtonMenuHidden;
+@property (nonatomic) BOOL disableBackButtonMenu;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
 @property (nonatomic) UISemanticContentAttribute direction;

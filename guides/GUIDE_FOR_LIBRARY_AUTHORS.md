@@ -122,10 +122,6 @@ Below is a list of properties that can be set with `ScreenStackHeaderConfig` com
 
 Whether to show the back button with a custom left side of the header.
 
-#### `backButtonMenuHidden` (iOS only)
-
-Whether to hide the iOS >= 14 menu of back button.
-
 ### `backgroundColor`
 
 Controls the color of the navigation header.
@@ -153,6 +149,10 @@ Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenSt
 ### `direction`
 
 Controls whether the stack should be in `rtl` or `ltr` form.
+
+#### `disableBackButtonMenu`
+
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. It is `true` by default since its behavior is currently buggy. Only supported on iOS.
 
 ### `hidden`
 

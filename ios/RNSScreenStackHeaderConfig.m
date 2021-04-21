@@ -51,7 +51,7 @@
 
 @implementation RNSUIBarButtonItem
 
--(void)setMenuHidden:(BOOL)menuHidden
+- (void)setMenuHidden:(BOOL)menuHidden
 {
   _menuHidden = menuHidden;
 }
@@ -426,15 +426,15 @@ API_AVAILABLE(ios(13.0)){
   
   navitem.title = config.title;
 #if !TARGET_OS_TV
-  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize || config.backButtonMenuHidden) {
+  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize || config.disableBackButtonMenu) {
     RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc]
                                                  initWithTitle:config.backTitle ?: prevItem.title
                                                  style:UIBarButtonItemStylePlain
                                                  target:nil
                                                  action:nil];
-    if (config.backButtonMenuHidden) {
-      [backBarButtonItem setMenuHidden:YES];
-    }
+    
+    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+    
     prevItem.backBarButtonItem = backBarButtonItem;
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
@@ -762,7 +762,7 @@ RCT_EXPORT_VIEW_PROPERTY(largeTitleHideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(backButtonMenuHidden, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
 // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)

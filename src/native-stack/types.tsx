@@ -75,13 +75,6 @@ export type NativeStackNavigationOptions = {
    */
   backButtonInCustomView?: boolean;
   /**
-   * Whether to hide the iOS >= 14 menu of back button.
-   * Only supported on iOS.
-   *
-   * @platform ios
-   */
-  backButtonMenuHidden?: boolean;
-  /**
    * Style object for the scene content.
    */
   contentStyle?: StyleProp<ViewStyle>;
@@ -89,6 +82,11 @@ export type NativeStackNavigationOptions = {
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
+  /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. It is `true` by default since its behavior is currently buggy.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.

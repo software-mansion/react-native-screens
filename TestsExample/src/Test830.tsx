@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{backButtonMenuHidden: true}}>
+      <Stack.Navigator screenOptions={{}}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen
           name="Second"

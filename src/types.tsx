@@ -145,19 +145,12 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backButtonInCustomView?: boolean;
   /**
-   * Whether to hide the iOS >= 14 menu of back button.
-   * @platform ios
-   */
-  backButtonMenuHidden?: boolean;
-  /**
    * Controls the color of the navigation header.
    */
   backgroundColor?: string;
   /**
    * Title to display in the back button.
-   * Only supported on iOS.
-   *
-   *
+   * @platform ios.
    */
   backTitle?: string;
   /**
@@ -183,6 +176,11 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
+  /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. It is `true` by default since its behavior is currently buggy.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
   /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */

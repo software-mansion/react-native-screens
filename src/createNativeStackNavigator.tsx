@@ -177,8 +177,8 @@ class StackView extends React.Component<Props> {
 
     const {
       backButtonInCustomView,
-      backButtonMenuHidden,
       direction,
+      disableBackButtonMenu = true,
       headerBackTitle,
       headerBackTitleStyle,
       headerBackTitleVisible,
@@ -214,12 +214,12 @@ class StackView extends React.Component<Props> {
 
     const headerOptions: ScreenStackHeaderConfigProps = {
       backButtonInCustomView,
-      backButtonMenuHidden,
       backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
       backTitleFontFamily: headerBackTitleStyle?.fontFamily,
       backTitleFontSize: headerBackTitleStyle?.fontSize,
       color: headerTintColor,
       direction,
+      disableBackButtonMenu,
       topInsetEnabled: headerTopInsetEnabled,
       hideBackButton: headerHideBackButton,
       hideShadow: headerHideShadow || hideShadow,
