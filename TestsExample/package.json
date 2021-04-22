@@ -25,7 +25,7 @@
     "react-native-appearance": "^0.3.4",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-paper": "^4.3.1",
-    "react-native-reanimated": "^1.13.1",
+    "react-native-reanimated": "^2.1.0",
     "react-native-redash": "^15.11.1",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-search-bar": "^3.5.1",
