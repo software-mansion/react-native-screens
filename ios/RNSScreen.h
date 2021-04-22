@@ -72,13 +72,13 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 
 - (void)notifyFinishTransitioning;
-- (void)notifyTransitionProgress:(double)progress;
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing;
 
 @end
 
 @interface RNSScreensEvent : NSObject <RCTEvent>
 
-- (instancetype)initWithReactTag:(NSNumber *)reactTag progress:(double)progress;
+- (instancetype)initWithReactTag:(NSNumber *)reactTag progress:(double)progress closing:(BOOL)closing;
 
 @end
 

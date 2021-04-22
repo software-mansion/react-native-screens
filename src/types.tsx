@@ -54,6 +54,11 @@ export type ScreenOrientationTypes =
   | 'landscape_right';
 export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
 
+export type TransitionProgressEvent = NativeSyntheticEvent<{
+  progress: number;
+  closing: boolean;
+}>;
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
@@ -85,9 +90,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * A callback called every frame during the transition of screens of `native-stack`.
    */
-  onTransitionProgress?: (
-    e: NativeSyntheticEvent<{ progress: number }>
-  ) => void;
+  onTransitionProgress?: (e: TransitionProgressEvent) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */

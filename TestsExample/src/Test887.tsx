@@ -18,6 +18,7 @@ const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
+        console.warn("dialog closing: " + event.nativeEvent.closing);
         setWidth(event.nativeEvent.progress * 50 + 50);
       }
     })
@@ -65,6 +66,7 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
+        console.warn("First closing: " + event.nativeEvent.closing);
         setWidth(event.nativeEvent.progress * 50 + 50);
       }
     })
@@ -82,6 +84,7 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
+        console.warn("Second closing: " + event.nativeEvent.closing);
         setWidth(event.nativeEvent.progress * 50 + 50);
       }
     })

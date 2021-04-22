@@ -236,9 +236,9 @@
   }
 }
 
-- (void)notifyTransitionProgress:(double)progress
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing
 {
-  [_eventDispatcher sendEvent:[[RNSScreensEvent alloc] initWithReactTag:self.reactTag progress:progress]];
+  [_eventDispatcher sendEvent:[[RNSScreensEvent alloc] initWithReactTag:self.reactTag progress:progress closing:closing]];
 }
 
 - (BOOL)isMountedUnderScreenOrReactRoot
@@ -321,6 +321,7 @@
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
+  BOOL _closing;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -476,6 +477,7 @@
   [super viewWillAppear:animated];
   [RNSScreenStackHeaderConfig updateWindowTraits];
   [((RNSScreenView *)self.view) notifyWillAppear];
+  _closing = NO;
   [self setupProgressNotification];
 }
 
@@ -484,6 +486,7 @@
   [super viewWillDisappear:animated];
 
   [((RNSScreenView *)self.view) notifyWillDisappear];
+  _closing = YES;
   [self setupProgressNotification];
 }
 
@@ -560,13 +563,13 @@
 
 - (void)notifyTransitionProgress:(double)progress
 {
-  [((RNSScreenView *)self.view) notifyTransitionProgress:progress];
+  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:_closing];
   // if we are in a modal, we want to send transition to the above screen too, which might not trigger appear/disappear events
   // e.g. when we are in iOS >= 13 default modal
   // we also check if we are not already sending the progress of transition and if it does not present another modal,
   // because otherwise we would send progress to the screen 2 levels higher then the current one
   if ([_presentingScreen isKindOfClass:[RNSScreen class]] && !_presentingScreen.isSendingProgress && self.presentedViewController == nil) {
-    [((RNSScreenView *)_presentingScreen.view) notifyTransitionProgress:progress];
+    [((RNSScreenView *)_presentingScreen.view) notifyTransitionProgress:progress closing:!_closing];
   }
 }
 
@@ -574,18 +577,20 @@
 
 @implementation RNSScreensEvent {
   double _progress;
+  BOOL _closing;
 }
 
 @synthesize viewTag = _viewTag;
 @synthesize coalescingKey = _coalescingKey;
 
-- (instancetype)initWithReactTag:(NSNumber *)reactTag progress:(double)progress
+- (instancetype)initWithReactTag:(NSNumber *)reactTag progress:(double)progress closing:(BOOL)closing
 {
   static uint16_t coalescingKey = 0;
   if ((self = [super init])) {
     _viewTag = reactTag;
-    _progress = progress;
     _coalescingKey = coalescingKey++;
+    _progress = progress;
+    _closing = closing;
   }
   return self;
 }
@@ -618,6 +623,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
   NSMutableDictionary *body = [NSMutableDictionary new];
   [body setObject:_viewTag forKey:@"target"];
   [body setObject:@(_progress) forKey:@"progress"];
+  [body setObject:@(_closing) forKey:@"closing"];
   return @[self.viewTag, @"onTransitionProgress", body];
 }
 

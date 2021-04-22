@@ -10,9 +10,11 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
   public static final String EVENT_NAME = "topTransitionProgress";
 
   private final float mProgress;
-  public ScreenTransitionProgressEvent(int viewId, float progress) {
+  private final boolean mClosing;
+  public ScreenTransitionProgressEvent(int viewId, float progress, boolean closing) {
     super(viewId);
     mProgress = progress;
+    mClosing = closing;
   }
 
   @Override
@@ -30,6 +32,7 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
   public void dispatch(RCTEventEmitter rctEventEmitter) {
     WritableMap map = Arguments.createMap();
     map.putDouble("progress", mProgress);
+    map.putBoolean("closing", mClosing);
     rctEventEmitter.receiveEvent(getViewTag(), getEventName(), map);
   }
 }

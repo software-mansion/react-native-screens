@@ -10,15 +10,11 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
-import {
-  ImageSourcePropType,
-  StyleProp,
-  ViewStyle,
-  NativeSyntheticEvent,
-} from 'react-native';
+import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
+  TransitionProgressEvent,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -229,9 +225,7 @@ export type NativeStackNavigationOptions = {
   /**
    * A callback called every frame during the transition of screens of `native-stack`.
    */
-  onTransitionProgress?: (
-    e: NativeSyntheticEvent<{ progress: number }>
-  ) => void;
+  onTransitionProgress?: (e: TransitionProgressEvent) => void;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:

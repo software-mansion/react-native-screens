@@ -46,7 +46,7 @@ public class ScreenStackFragment extends ScreenFragment {
           public void onAnimationUpdate(ValueAnimator animation) {
             float alpha = (float)animation.getAnimatedValue();
             if (mFragment.getScreen() != null) {
-              mFragment.dispatchTransitionProgress(alpha);
+              mFragment.dispatchTransitionProgress(alpha, !mFragment.isResumed());
             }
           }
         });

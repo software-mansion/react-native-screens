@@ -159,19 +159,19 @@ public class ScreenFragment extends Fragment {
     dispatchEventInChildContainers(ScreenLifecycleEvent.Disappear);
   }
 
-  protected void dispatchTransitionProgress(float alpha) {
-    sendTransitionProgressEvent(alpha);
+  protected void dispatchTransitionProgress(float alpha, boolean closing) {
+    sendTransitionProgressEvent(alpha, closing);
 
     if (mAboveScreen != null && mAboveScreen.getFragment() != null && !mAboveScreen.getFragment().isSendingProgress()) {
-      mAboveScreen.getFragment().sendTransitionProgressEvent(alpha);
+      mAboveScreen.getFragment().sendTransitionProgressEvent(alpha, !closing);
     }
   }
 
-  protected void sendTransitionProgressEvent(float alpha) {
+  protected void sendTransitionProgressEvent(float alpha, boolean closing) {
     ((ReactContext) mScreenView.getContext())
             .getNativeModule(UIManagerModule.class)
             .getEventDispatcher()
-            .dispatchEvent(new ScreenTransitionProgressEvent(mScreenView.getId(), alpha));
+            .dispatchEvent(new ScreenTransitionProgressEvent(mScreenView.getId(), alpha, closing));
   }
 
   private void dispatchEventInChildContainers(ScreenLifecycleEvent event) {
