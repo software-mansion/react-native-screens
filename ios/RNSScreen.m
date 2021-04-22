@@ -7,6 +7,7 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
+#import <React/RCTEventDispatcher.h>
 
 @interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
@@ -16,6 +17,7 @@
   RNSScreen *_controller;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
+  RCTEventDispatcher *_eventDispatcher;
 }
 
 @synthesize controller = _controller;
@@ -24,6 +26,7 @@
 {
   if (self = [super init]) {
     _bridge = bridge;
+    _eventDispatcher = bridge.eventDispatcher;
     _controller = [[RNSScreen alloc] initWithView:self];
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
@@ -235,11 +238,7 @@
 
 - (void)notifyTransitionProgress:(double)progress
 {
-  if (self.onTransitionProgress) {
-    self.onTransitionProgress(@{
-      @"progress": @(progress),
-    });
-  }
+  [_eventDispatcher sendEvent:[[RNSScreensEvent alloc] initWithReactTag:self.reactTag progress:progress]];
 }
 
 - (BOOL)isMountedUnderScreenOrReactRoot
@@ -573,6 +572,57 @@
 
 @end
 
+@implementation RNSScreensEvent {
+  double _progress;
+}
+
+@synthesize viewTag = _viewTag;
+@synthesize coalescingKey = _coalescingKey;
+
+- (instancetype)initWithReactTag:(NSNumber *)reactTag progress:(double)progress
+{
+  static uint16_t coalescingKey = 0;
+  if ((self = [super init])) {
+    _viewTag = reactTag;
+    _progress = progress;
+    _coalescingKey = coalescingKey++;
+  }
+  return self;
+}
+
+RCT_NOT_IMPLEMENTED(- (instancetype)init)
+
+- (NSString *)eventName
+{
+  return @"onTransitionProgress";
+}
+
+- (BOOL)canCoalesce
+{
+  // TODO: event coalescing
+  return NO;
+}
+
+- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent;
+{
+  return newEvent;
+}
+
++ (NSString *)moduleDotMethod
+{
+  return @"RCTEventEmitter.receiveEvent";
+}
+
+- (NSArray *)arguments
+{
+  NSMutableDictionary *body = [NSMutableDictionary new];
+  [body setObject:_viewTag forKey:@"target"];
+  [body setObject:@(_progress) forKey:@"progress"];
+  return @[self.viewTag, @"onTransitionProgress", body];
+}
+
+@end
+
 @implementation RNSScreenManager
 
 RCT_EXPORT_MODULE()
@@ -588,7 +638,6 @@ RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 
 - (UIView *)view
 {
