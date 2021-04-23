@@ -53,6 +53,7 @@
   __weak RNSScreenStackManager *_manager;
   BOOL _hasLayout;
   BOOL _invalidated;
+  BOOL _updateScheduled;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager*)manager
@@ -144,10 +145,13 @@
   // Without the below code the Touchable will remain active (highlighted) for the duration of back
   // gesture and onPress may fire when we release the finger.
   UIView *parent = _controller.view;
-  while (parent != nil && ![parent isKindOfClass:[RCTRootContentView class]]) parent = parent.superview;
-  RCTRootContentView *rootView = (RCTRootContentView *)parent;
-  [rootView.touchHandler cancel];
-
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) parent = parent.superview;
+  if (parent != nil) {
+    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler cancel];
+    [touchHandler reset];
+  }
+  
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
   
   if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
@@ -411,12 +415,16 @@
   // making any updated when transition is ongoing and schedule updates for when the transition
   // is complete.
   if (_controller.transitionCoordinator != nil) {
-    __weak RNSScreenStackView *weakSelf = self;
-    [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-      // do nothing here, we only want to be notified when transition is complete
-    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-      [weakSelf updateContainer];
-    }];
+    if (!_updateScheduled) {
+      _updateScheduled = YES;
+      __weak RNSScreenStackView *weakSelf = self;
+      [_controller.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        // do nothing here, we only want to be notified when transition is complete
+      } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        self->_updateScheduled = NO;
+        [weakSelf updateContainer];
+      }];
+    }
     return;
   }
 

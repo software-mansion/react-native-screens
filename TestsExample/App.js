@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import {enableScreens} from 'react-native-screens';
 
 import Test42 from './src/Test42';
 import Test111 from './src/Test111';
@@ -20,6 +19,7 @@ import Test645 from './src/Test645';
 import Test648 from './src/Test648';
 import Test649 from './src/Test649';
 import Test654 from './src/Test654';
+import Test658 from './src/Test658';
 import Test691 from './src/Test691';
 import Test702 from './src/Test702';
 import Test706 from './src/Test706';
@@ -28,8 +28,16 @@ import Test726 from './src/Test726';
 import Test748 from './src/Test748';
 import Test750 from './src/Test750';
 import Test765 from './src/Test765';
-
-enableScreens();
+import Test780 from './src/Test780';
+import Test791 from './src/Test791';
+import Test817 from './src/Test817';
+import Test831 from './src/Test831';
+import Test844 from './src/Test844';
+import Test852 from './src/Test852';
+import Test861 from './src/Test861';
+import Test865 from './src/Test865';
+import Test881 from './src/Test881';
+import Test898 from './src/Test898';
 
 export default function App() {
   return <Test556 />;
