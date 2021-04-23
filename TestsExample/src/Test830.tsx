@@ -1,47 +1,52 @@
-import * as React from 'react';
-import {Button} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import React, {useLayoutEffect} from 'react';
+import {Button, View} from 'react-native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
+import {NavigationContainer, RouteProp} from '@react-navigation/native';
 
-type Props = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
+type StackParamList = {
+  Details: {index: number};
+};
+interface DetailsScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Details'>;
+  route: RouteProp<StackParamList, 'Details'>;
 }
+
+const DetailsScreen = ({
+  navigation,
+  route,
+}: DetailsScreenProps): JSX.Element => {
+  const index = route.params?.index ? route.params?.index : 0;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: `Details screen #${index}`,
+    });
+  }, [navigation]);
+
+  return (
+    <View>
+      <Button
+        title={`More details ${index}`}
+        onPress={() => navigation.push('Details', {index: index + 1})}
+      />
+    </View>
+  );
+};
 
 const Stack = createNativeStackNavigator();
 
-export default function App(): JSX.Element {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{}}>
-        <Stack.Screen name="First" component={First} />
-        <Stack.Screen
-          name="Second"
-          component={Second}
-        />
-        <Stack.Screen
-          name="Third"
-          component={Third}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
+const App = (): JSX.Element => (
+  <NavigationContainer>
+    <Stack.Navigator
+      screenOptions={{
+        disableBackButtonMenu: false,
+      }}>
+      <Stack.Screen name="Details" component={DetailsScreen} />
+    </Stack.Navigator>
+  </NavigationContainer>
+);
 
-function First({navigation}: Props) {
-  return (
-    <Button title="Tap me for second screen" onPress={() => navigation.navigate('Second')} />
-
-  );
-}
-
-function Second({navigation}: Props) {
-  return (
-    <Button title="Tap me for third screen" onPress={() => navigation.navigate('Third')} />
-  );
-}
-
-function Third({navigation}: Props) {
-  return (
-    <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
-  );
-}
+export default App;
