@@ -68,7 +68,7 @@ public class Screen extends ViewGroup {
   private ReplaceAnimation mReplaceAnimation = ReplaceAnimation.POP;
   private StackAnimation mStackAnimation = StackAnimation.DEFAULT;
   private boolean mGestureEnabled = true;
-  private boolean mPreventGoingBack = false;
+  private boolean mEnableNativeBackButtonDismissal = true;
 
   @Override
   protected void onAnimationStart() {
@@ -206,8 +206,8 @@ public class Screen extends ViewGroup {
     mGestureEnabled = gestureEnabled;
   }
 
-  public void setPreventGoingBack(boolean preventGoingBack) {
-    mPreventGoingBack = preventGoingBack;
+  public void setEnableNativeBackButtonDismissal(boolean enableNativeBackButtonDismissal) {
+    mEnableNativeBackButtonDismissal = enableNativeBackButtonDismissal;
   }
 
   public StackAnimation getStackAnimation() {
@@ -261,7 +261,7 @@ public class Screen extends ViewGroup {
     return mGestureEnabled;
   }
 
-  public boolean preventsGoingBack() {
-    return mPreventGoingBack;
+  public boolean isNativeBackButtonDismissalEnabled() {
+    return mEnableNativeBackButtonDismissal;
   }
 }

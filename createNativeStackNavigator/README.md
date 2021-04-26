@@ -81,6 +81,13 @@ Boolean indicating whether to hide the back button while using `headerLeft` func
 
 String that applies `rtl` or `ltr` form to the stack. On Android, you have to add `android:supportsRtl="true"` in the manifest of your app to enable `rtl`. On Android, if you set the above flag in the manifest, the orientation changes without the need to do it programmatically if the phone has `rtl` direction enabled. On iOS, the direction defaults to `ltr`, and only way to change it is via this prop.
 
+#### `enableNativeBackButtonDismissal` (Android only)
+
+Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft`.
+
+Defaults to `false`.
+
 #### `gestureEnabled`
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`,
@@ -180,6 +187,14 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 #### `headerTranslucent`
 
 Boolean indicating whether the navigation bar is translucent.
+
+#### `onSwipeCancelled` (iOS only)
+
+A callback that gets called when you set `cancelSwipe` to `true` and try to swipe back the screen or dismiss modal with gesture on iOS.
+
+#### `preventSwipeDismiss` (iOS only)
+
+Boolean indicating whether you are able to dimiss the screen or modal using swipe gesture. If you set it to `true`, the `onSwipeCancelled` event is called when trying to dismiss the screen.
 
 #### `replaceAnimation`
 

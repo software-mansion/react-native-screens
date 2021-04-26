@@ -158,8 +158,10 @@
     return NO;
   }
   
-  if (topScreen.preventGoingBack) {
-    topScreen.onGoingBackPrevented(nil);
+  if (topScreen.preventSwipeDismiss) {
+    if (topScreen.onSwipeCancelled) {
+      topScreen.onSwipeCancelled(nil);
+    }
     return NO;
   }
 

@@ -62,12 +62,14 @@ export default function NativeStackView({
       {routes.map((route) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
+          contentStyle,
+          enableNativeBackButtonDismissal = false,
           gestureEnabled,
+          onSwipeCancelled,
+          preventSwipeDismiss = false,
           replaceAnimation = 'pop',
           stackPresentation = 'push',
           stackAnimation,
-          contentStyle,
-          preventGoingBack = false,
         } = options;
 
         const viewStyles = [
@@ -84,10 +86,21 @@ export default function NativeStackView({
             key={route.key}
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
-            preventGoingBack={preventGoingBack}
+            enableNativeBackButtonDismissal={enableNativeBackButtonDismissal}
+            preventSwipeDismiss={preventSwipeDismiss}
             replaceAnimation={replaceAnimation}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
+            onHeaderBackButtonClicked={() => {
+              navigation.dispatch({
+                ...StackActions.pop(),
+                source: route.key,
+                target: key,
+              });
+            }}
+            onSwipeCancelled={() => {
+              onSwipeCancelled?.();
+            }}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',
@@ -118,18 +131,6 @@ export default function NativeStackView({
                 type: 'transitionEnd',
                 data: { closing: true },
                 target: route.key,
-              });
-            }}
-            onGoingBackPrevented={() => {
-              navigation.emit({
-                type: 'dismiss',
-                target: route.key,
-              });
-
-              navigation.dispatch({
-                ...StackActions.pop(),
-                source: route.key,
-                target: key,
               });
             }}
             onDismissed={() => {

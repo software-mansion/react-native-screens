@@ -63,6 +63,14 @@ export interface ScreenProps extends ViewProps {
    */
   enabled?: boolean;
   /**
+   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft`.
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
+  enableNativeBackButtonDismissal?: boolean;
+  /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
    *
@@ -73,35 +81,41 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called when the current screen appears.
    */
   onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
-  /**
-   * @description A callback that gets called when the native header back button is clicked on Android. It enables the option to prevent going back.
-   */
-  onBackButtonClicked?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
   onComponentRef?: (view: unknown) => void;
   /**
    * A callback that gets called when the current screen disappears.
    */
-  onDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onDisappear?: () => void;
   /**
    * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
    */
-  onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onDismissed?: () => void;
   /**
-   * A callback that gets called when the current screen is prevented from dismissing by setting `preventGoingBack` to `true`. The callback takes no arguments.
+   * A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
+   *
+   * @platform android
    */
-  onGoingBackPrevented?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onHeaderBackButtonClicked?: () => void;
+  /**
+   * A callback that gets called when you set `cancelSwipe` to `true` and try to swipe back the screen or dismiss modal with gesture on iOS.
+   *
+   * @platform ios
+   */
+  onSwipeCancelled?: () => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
-  onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onWillAppear?: () => void;
   /**
    * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
-  onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onWillDisappear?: () => void;
   /**
-   * @description Boolean indicating whether the navigation should be performed only on the JS side to be able to prevent it. Affects header back button behavior on Android. On iOS, it affects swipe gesture, header back button (TBD) and modal dismissal. Works only with `gestureEnabled` set to `true` for modal and swipe.
+   * Boolean indicating whether you are able to dimiss the screen or modal using swipe gesture. If you set it to `true`, the `onSwipeCancelled` event is called when trying to dismiss the screen.
+   *
+   * @platform ios
    */
-  preventGoingBack?: boolean;
+  preventSwipeDismiss?: boolean;
   ref?: React.Ref<View>;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.

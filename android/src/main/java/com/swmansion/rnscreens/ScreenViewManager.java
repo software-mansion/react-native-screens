@@ -79,9 +79,9 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
     view.setGestureEnabled(gestureEnabled);
   }
 
-  @ReactProp(name = "preventGoingBack")
-  public void setPreventGoingBack(Screen view, boolean preventGoingBack) {
-    view.setPreventGoingBack(preventGoingBack);
+  @ReactProp(name = "enableNativeBackButtonDismissal")
+  public void setEnableNativeBackButtonDismissal(Screen view, boolean enableNativeBackButtonDismissal) {
+    view.setEnableNativeBackButtonDismissal(enableNativeBackButtonDismissal);
   }
 
   @ReactProp(name = "replaceAnimation")
@@ -107,8 +107,8 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
             MapBuilder.of("registrationName", "onWillDisappear"),
             ScreenDisappearEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDisappear"),
-            GoingBackPreventedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onGoingBackPrevented"),
+            HeaderBackButtonClickedEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
             StackFinishTransitioningEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onFinishTransitioning"));
   }

@@ -75,17 +75,17 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         if (stack != null && stack.getRootScreen() == fragment.getScreen()) {
           Fragment parentFragment = fragment.getParentFragment();
           if (parentFragment instanceof ScreenStackFragment) {
-            if (((ScreenStackFragment) parentFragment).getScreen().preventsGoingBack()) {
-              ((ScreenStackFragment) parentFragment).dispatchOnGoingBackPrevented();
-            } else {
+            if (((ScreenStackFragment) parentFragment).getScreen().isNativeBackButtonDismissalEnabled()) {
               ((ScreenStackFragment) parentFragment).dismiss();
+            } else {
+              ((ScreenStackFragment) parentFragment).dispatchHeaderBackButtonClickedEvent();
             }
           }
         } else {
-          if (fragment.getScreen().preventsGoingBack()) {
-            fragment.dispatchOnGoingBackPrevented();
-          } else {
+          if (fragment.getScreen().isNativeBackButtonDismissalEnabled()) {
             fragment.dismiss();
+          } else {
+            fragment.dispatchHeaderBackButtonClickedEvent();
           }
         }
       }

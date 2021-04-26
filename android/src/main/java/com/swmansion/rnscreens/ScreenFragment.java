@@ -166,11 +166,11 @@ public class ScreenFragment extends Fragment {
     }
   }
 
-  protected void dispatchOnGoingBackPrevented() {
+  protected void dispatchHeaderBackButtonClickedEvent() {
     ((ReactContext) mScreenView.getContext())
             .getNativeModule(UIManagerModule.class)
             .getEventDispatcher()
-            .dispatchEvent(new GoingBackPreventedEvent(mScreenView.getId()));
+            .dispatchEvent(new HeaderBackButtonClickedEvent(mScreenView.getId()));
   }
 
   public void registerChildScreenContainer(ScreenContainer screenContainer) {

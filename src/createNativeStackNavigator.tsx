@@ -384,7 +384,11 @@ class StackView extends React.Component<Props> {
             ? true
             : options.gestureEnabled
         }
-        preventGoingBack={options.preventGoingBack}
+        enableNativeBackButtonDismissal={
+          options.enableNativeBackButtonDismissal
+        }
+        onHeaderBackButtonClicked={() => this.removeScene(route)}
+        onSwipeCancelled={() => options.onSwipeCancelled?.()}
         onAppear={() => this.onAppear(route, descriptor)}
         onWillAppear={() => options?.onWillAppear?.()}
         onWillDisappear={() => options?.onWillDisappear?.()}
