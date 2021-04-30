@@ -433,6 +433,13 @@
     _lastViewFrame = self.view.frame;
     [((RNSScreenView *)self.viewIfLoaded) updateBounds];
   }
+
+  // Clear any coordinates that have been (inadvertently) set on RNSScreenStackHeaderConfig subviews.
+  // This allows the native UINavigationBar to control the position of header content.
+  RNSScreenStackHeaderConfig * configView = [self findScreenConfig];
+  for (UIView* subview in configView.reactSubviews) {
+    subview.frame = CGRectMake(0, 0, subview.frame.size.width, subview.frame.size.height);
+  }
 }
 
 - (id)findFirstResponder:(UIView*)parent
