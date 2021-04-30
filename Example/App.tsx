@@ -14,7 +14,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import RNRestart from 'react-native-restart';
 
-import {MenuItem, SettingsSwitch} from './src/shared';
+import {ListItem, SettingsSwitch} from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import StackPresentation from './src/screens/StackPresentation';
@@ -25,6 +25,7 @@ import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
 import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
+import SearchBar from './src/screens/SearchBar';
 
 enableScreens();
 
@@ -64,6 +65,11 @@ const SCREENS: Record<
     title: 'Stack react-navigation v4',
     // @ts-ignore react-navigation v4 AppNavigator type
     component: StackReactNavigation4,
+    type: 'example',
+  },
+  SearchBar: {
+    title: 'Search bar (iOS)',
+    component: SearchBar,
     type: 'example',
   },
   HeaderOptions: {
@@ -116,7 +122,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
       {Object.keys(SCREENS)
         .filter((name) => SCREENS[name].type === 'example')
         .map((name) => (
-          <MenuItem
+          <ListItem
             key={name}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
@@ -126,7 +132,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
       {Object.keys(SCREENS)
         .filter((name) => SCREENS[name].type === 'playground')
         .map((name) => (
-          <MenuItem
+          <ListItem
             key={name}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
