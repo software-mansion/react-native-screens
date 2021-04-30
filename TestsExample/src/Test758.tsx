@@ -69,7 +69,9 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
   ];
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      keyboardDismissMode="on-drag">
       <Button
         title="Tap me for second screen"
         onPress={() => navigation.navigate('Second')}
