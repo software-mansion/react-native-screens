@@ -317,7 +317,7 @@ export interface SearchBarProps {
   /**
    * The auto-capitalization behavior
    */
-  autoCapitalize?: 'none' | 'words' | 'sentences' | 'allCharacters';
+  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
   /**
    * Text displayed when search field is empty
    */
