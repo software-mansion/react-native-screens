@@ -1,6 +1,5 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
-  View,
   I18nManager,
   Platform,
   Button,
@@ -12,11 +11,18 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {SettingsInput, SettingsPicker, SettingsSwitch, Snack} from '../shared';
+import {
+  ListItem,
+  SettingsInput,
+  SettingsPicker,
+  SettingsSwitch,
+  Snack,
+} from '../shared';
 
 type StackParamList = {
   Main: undefined;
   Snack: {backgroundColor: string; message: string};
+  Search: undefined;
 };
 
 type BarTintColor = 'lightcoral' | 'orange' | 'white' | 'darkslategray';
@@ -114,7 +120,68 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
         onValueChange={setAutoCapitalize}
         items={['none', 'words', 'sentences', 'characters']}
       />
+      <Button
+        onPress={() => navigation.navigate('Search')}
+        title="Other Searchbar example"
+      />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
+    </ScrollView>
+  );
+};
+
+interface SearchScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Search'>;
+}
+
+const SearchScreen = ({navigation}: SearchScreenProps) => {
+  const [search, setSearch] = useState('');
+
+  const places = [
+    '🏝️ Desert Island',
+    '🏞️ National Park',
+    '⛰️ Mountain',
+    '🏰 Castle',
+    '🗽 Statue of Liberty',
+    '🌉 Bridge at Night',
+    '🏦 Bank',
+    '🏛️ Classical Building',
+    '🏟️ Stadium',
+    '🏪 Convenience Store',
+    '🏫 School',
+    '⛲ Fountain',
+    '🌄 Sunrise Over Mountains',
+    '🌆 Cityscape at Dusk',
+    '🎡 Ferris Wheel',
+  ];
+
+  useEffect(() => {
+    navigation.setOptions({
+      searchBar: {
+        placeholder: 'Interesting places...',
+        onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
+          setSearch(e.nativeEvent.text),
+        obscureBackground: false,
+        autoCapitalize: 'none',
+        hideWhenScrolling: false,
+      },
+    });
+  }, [navigation, search]);
+
+  return (
+    <ScrollView
+      contentInsetAdjustmentBehavior="never"
+      keyboardDismissMode="on-drag">
+      {places
+        .filter(
+          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1,
+        )
+        .map((place) => (
+          <ListItem
+            key={place}
+            title={place}
+            onPress={() => navigation.goBack()}
+          />
+        ))}
     </ScrollView>
   );
 };
@@ -142,6 +209,13 @@ const App = (): JSX.Element => (
         headerShown: false,
         stackAnimation:
           Platform.OS === 'android' ? 'slide_from_left' : 'default',
+      }}
+    />
+    <Stack.Screen
+      name="Search"
+      component={SearchScreen}
+      options={{
+        headerLargeTitle: true,
       }}
     />
   </Stack.Navigator>
