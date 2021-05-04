@@ -41,6 +41,13 @@
   return self;
 }
 
+- (void) reactSetFrame:(CGRect)frame
+{
+  // Block any attempt to set coordinates a RNSScreenStackHeaderSubview. This
+  // allows the native UINavigationBar to control the position of header content.
+  [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+}
+
 @end
 
 @implementation RNSScreenStackHeaderConfig {
