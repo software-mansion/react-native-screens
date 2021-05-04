@@ -10,7 +10,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
+import {ImageSourcePropType, StyleProp, ViewStyle} from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
@@ -23,19 +23,19 @@ export type NativeStackNavigationEventMap = {
    *
    * @deprecated Use `transitionEnd` event with `data.closing: false` instead.
    */
-  appear: { data: undefined };
+  appear: {data: undefined};
   /**
    * Event which fires when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
    */
-  dismiss: { data: undefined };
+  dismiss: {data: undefined};
   /**
    * Event which fires when a transition animation starts.
    */
-  transitionStart: { data: { closing: boolean } };
+  transitionStart: {data: {closing: boolean}};
   /**
    * Event which fires when a transition animation ends.
    */
-  transitionEnd: { data: { closing: boolean } };
+  transitionEnd: {data: {closing: boolean}};
 };
 
 export type NativeStackNavigationProp<
@@ -127,7 +127,7 @@ export type NativeStackNavigationOptions = {
   /**
    * Function which returns a React Element to display in the center of the header.
    */
-  headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
+  headerCenter?: (props: {tintColor?: string}) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
    */
@@ -177,11 +177,11 @@ export type NativeStackNavigationOptions = {
   /**
    * Function which returns a React Element to display on the left side of the header.
    */
-  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
+  headerLeft?: (props: {tintColor?: string}) => React.ReactNode;
   /**
    * Function which returns a React Element to display on the right side of the header.
    */
-  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
+  headerRight?: (props: {tintColor?: string}) => React.ReactNode;
   /**
    * Whether to show the header.
    */
@@ -262,6 +262,7 @@ export type NativeStackNavigationOptions = {
    * - "fade" – fades screen in or out
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
+   * - "bottom_fade" - slide in from bottom with quick fade, mimics default animation on many Android devices (Android only, resolves to default transition on iOS)
    * - "slide_from_bottom" – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)

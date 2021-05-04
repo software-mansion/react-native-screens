@@ -624,6 +624,7 @@ RCT_ENUM_CONVERTER(RNSScreenStackAnimation, (@{
                                                   @"fade": @(RNSScreenStackAnimationFade),
                                                   @"flip": @(RNSScreenStackAnimationFlip),
                                                   @"simple_push": @(RNSScreenStackAnimationSimplePush),
+                                                  @"bottom_fade": @(RNSScreenStackAnimationDefault),
                                                   @"slide_from_bottom": @(RNSScreenStackAnimationSlideFromBottom),
                                                   @"slide_from_right": @(RNSScreenStackAnimationDefault),
                                                   @"slide_from_left": @(RNSScreenStackAnimationDefault),

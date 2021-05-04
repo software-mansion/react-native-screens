@@ -21,6 +21,7 @@ export type StackAnimationTypes =
   | 'flip'
   | 'none'
   | 'simple_push'
+  | 'bottom_fade'
   | 'slide_from_bottom'
   | 'slide_from_right'
   | 'slide_from_left';
@@ -90,7 +91,7 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
-  onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  onDismissed?: (e: NativeSyntheticEvent<{dismissCount: number}>) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
@@ -127,6 +128,7 @@ export interface ScreenProps extends ViewProps {
    * - "fade" – fades screen in or out
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
+   * - "bottom_fade" - slide in from bottom with quick fade, mimics default animation on many Android devices (Android only, resolves to default transition on iOS)
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
@@ -354,7 +356,7 @@ export interface SearchBarProps {
    * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
   onSearchButtonPress?: (
-    e: NativeSyntheticEvent<TextInputFocusEventData>
+    e: NativeSyntheticEvent<TextInputFocusEventData>,
   ) => void;
   /**
    * A callback that gets called when search bar has received focus

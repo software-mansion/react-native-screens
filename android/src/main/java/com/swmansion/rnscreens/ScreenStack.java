@@ -213,6 +213,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
 
         switch (stackAnimation) {
+          case BOTTOM_FADE:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_bottom_fade_in, R.anim.rns_no_animation);
+            break;
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
             break;
@@ -226,6 +229,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       } else {
         transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
         switch (stackAnimation) {
+          case BOTTOM_FADE:
+            getOrCreateTransaction().setCustomAnimations(0, R.anim.rns_bottom_fade_out);
+            break;
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
             break;

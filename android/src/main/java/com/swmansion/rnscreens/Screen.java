@@ -33,6 +33,7 @@ public class Screen extends ViewGroup {
     NONE,
     FADE,
     SLIDE_FROM_BOTTOM,
+    BOTTOM_FADE,
     SLIDE_FROM_RIGHT,
     SLIDE_FROM_LEFT,
   }
