@@ -34,8 +34,11 @@ import Test791 from './src/Test791';
 import Test817 from './src/Test817';
 import Test831 from './src/Test831';
 import Test844 from './src/Test844';
+import Test852 from './src/Test852';
 import Test861 from './src/Test861';
 import Test865 from './src/Test865';
+import Test881 from './src/Test881';
+import Test898 from './src/Test898';
 
 export default function App() {
   return <Test42 />;
