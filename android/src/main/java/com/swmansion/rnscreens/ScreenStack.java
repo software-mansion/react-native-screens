@@ -195,6 +195,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
 
         switch (stackAnimation) {
+          case BOTTOM_FADE:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_bottom_fade_in, R.anim.rns_no_animation);
+            break;
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
             break;
@@ -206,6 +209,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
 
         switch (stackAnimation) {
+          case BOTTOM_FADE:
+            getOrCreateTransaction().setCustomAnimations(0, R.anim.rns_bottom_fade_out);
+            break;
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
             break;
@@ -341,10 +347,12 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   private static boolean isCustomAnimation(Screen.StackAnimation stackAnimation) {
-    return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT;
+    return stackAnimation == Screen.StackAnimation.BOTTOM_FADE
+        || stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT
+        || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT;
   }
 
-  private static boolean isTransparent(ScreenStackFragment fragment){
+  private static boolean isTransparent(ScreenStackFragment fragment) {
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 }
