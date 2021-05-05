@@ -67,11 +67,6 @@ const SCREENS: Record<
     component: StackReactNavigation4,
     type: 'example',
   },
-  SearchBar: {
-    title: 'Search bar (iOS)',
-    component: SearchBar,
-    type: 'example',
-  },
   HeaderOptions: {
     title: 'Header Options',
     component: HeaderOptions,
@@ -90,6 +85,11 @@ const SCREENS: Record<
   Orientation: {
     title: 'Orientation',
     component: Orientation,
+    type: 'playground',
+  },
+  SearchBar: {
+    title: 'Search bar (iOS)',
+    component: SearchBar,
     type: 'playground',
   },
 };
