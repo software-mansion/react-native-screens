@@ -276,11 +276,23 @@ React.useEffect(
 
 Supported properties are described below.
 
-####  `obscureBackground`
+#### `autoCapitalize`
 
-Boolean indicating whether to obscure the underlying content with semi-transparent overlay.
+Controlles whether text is automatically auto-capitalized as it is entered by the user.
+Possible values:
 
-Defaults to `true`.
+- `none`
+- `words`
+- `sentences`
+- `characters`
+
+Defaults to `sentences`.
+
+#### `barTintColor`
+
+The search field background color.
+
+By default bar tint color is translucent.
 
 #### `hideNavigationBar`
 
@@ -294,29 +306,19 @@ Boolean indicating whether to hide the search bar when scrolling.
 
 Defaults to `true`.
 
-#### `autoCapitalize`
+####  `obscureBackground`
 
-Controlles whether text is automatically auto-capitalized as it is entered by the user.
-Possible values:
+Boolean indicating whether to obscure the underlying content with semi-transparent overlay.
 
-- `none`
-- `words`
-- `sentences`
-- `characters`
+Defaults to `true`.
 
-Defaults to `sentences`.
+#### `onBlur`
 
-#### `placeholder`
+A callback that gets called when search bar has lost focus.
 
-Text displayed when search field is empty.
+#### `onCancelButtonPress`
 
-Defaults to empty string.
-
-#### `barTintColor`
-
-The search field background color.
-
-By default bar tint color is translucent.
+A callback that gets called when the cancel button is pressed.
 
 #### `onChangeText`
 
@@ -336,21 +338,19 @@ React.useEffect(
 }, [navigation]);
 ```
 
-#### `onCancelButtonPress`
+#### `onFocus`
 
-A callback that gets called when the cancel button is pressed.
+A callback that gets called when search bar has received focus.
 
 #### `onSearchButtonPress`
 
 A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 
-#### `onFocus`
+#### `placeholder`
 
-A callback that gets called when search bar has received focus.
+Text displayed when search field is empty.
 
-#### `onBlur`
-
-A callback that gets called when search bar has lost focus.
+Defaults to an empty string.
 
 ### Events
 
