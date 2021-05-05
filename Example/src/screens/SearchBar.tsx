@@ -1,12 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {
-  I18nManager,
-  Platform,
-  Button,
-  ScrollView,
-  NativeSyntheticEvent,
-  Text,
-} from 'react-native';
+import {I18nManager, Platform, Button, ScrollView, Text} from 'react-native';
 import {SearchBarProps} from 'react-native-screens';
 import {
   createNativeStackNavigator,
@@ -55,8 +48,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
         hideNavigationBar,
         autoCapitalize,
         placeholder,
-        onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
-          setSearch(e.nativeEvent.text),
+        onChangeText: (event) => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
           navigation.navigate('Snack', {
             message: 'Cancel button pressed',
@@ -168,8 +160,7 @@ const SearchScreen = ({navigation}: SearchScreenProps) => {
     navigation.setOptions({
       searchBar: {
         placeholder: 'Interesting places...',
-        onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
-          setSearch(e.nativeEvent.text),
+        onChangeText: (event) => setSearch(event.nativeEvent.text),
         obscureBackground: false,
         autoCapitalize: 'none',
         hideWhenScrolling: false,
@@ -179,7 +170,7 @@ const SearchScreen = ({navigation}: SearchScreenProps) => {
 
   return (
     <ScrollView
-      contentInsetAdjustmentBehavior="never"
+      contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag">
       {places
         .filter(
