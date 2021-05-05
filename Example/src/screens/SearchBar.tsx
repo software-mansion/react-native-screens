@@ -5,6 +5,7 @@ import {
   Button,
   ScrollView,
   NativeSyntheticEvent,
+  Text,
 } from 'react-native';
 import {SearchBarProps} from 'react-native-screens';
 import {
@@ -17,6 +18,7 @@ import {
   SettingsPicker,
   SettingsSwitch,
   Snack,
+  Spacer,
 } from '../shared';
 
 type StackParamList = {
@@ -88,42 +90,50 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag">
-      <SettingsInput
-        label="Placeholder"
-        value={placeholder}
-        onValueChange={setPlaceholder}
-      />
-      <SettingsPicker<BarTintColor>
-        label="Bar Tint Color"
-        value={barTintColor}
-        onValueChange={setBarTintColor}
-        items={['lightcoral', 'orange', 'darkslategray', 'white']}
-      />
-      <SettingsSwitch
-        label="Hide when scrolling"
-        value={hideWhenScrolling}
-        onValueChange={setHideWhenScrolling}
-      />
-      <SettingsSwitch
-        label="Obscure background"
-        value={obscureBackground}
-        onValueChange={setObscureBackground}
-      />
-      <SettingsSwitch
-        label="Hide navigation bar"
-        value={hideNavigationBar}
-        onValueChange={setHideNavigationBar}
-      />
-      <SettingsPicker<AutoCapitalize>
-        label="Auto capitalize"
-        value={autoCapitalize}
-        onValueChange={setAutoCapitalize}
-        items={['none', 'words', 'sentences', 'characters']}
-      />
-      <Button
-        onPress={() => navigation.navigate('Search')}
-        title="Other Searchbar example"
-      />
+      {Platform.OS === 'ios' ? (
+        <>
+          <SettingsInput
+            label="Placeholder"
+            value={placeholder}
+            onValueChange={setPlaceholder}
+          />
+          <SettingsPicker<BarTintColor>
+            label="Bar Tint Color"
+            value={barTintColor}
+            onValueChange={setBarTintColor}
+            items={['lightcoral', 'orange', 'darkslategray', 'white']}
+          />
+          <SettingsSwitch
+            label="Hide when scrolling"
+            value={hideWhenScrolling}
+            onValueChange={setHideWhenScrolling}
+          />
+          <SettingsSwitch
+            label="Obscure background"
+            value={obscureBackground}
+            onValueChange={setObscureBackground}
+          />
+          <SettingsSwitch
+            label="Hide navigation bar"
+            value={hideNavigationBar}
+            onValueChange={setHideNavigationBar}
+          />
+          <SettingsPicker<AutoCapitalize>
+            label="Auto capitalize"
+            value={autoCapitalize}
+            onValueChange={setAutoCapitalize}
+            items={['none', 'words', 'sentences', 'characters']}
+          />
+          <Button
+            onPress={() => navigation.navigate('Search')}
+            title="Other Searchbar example"
+          />
+        </>
+      ) : Platform.OS === 'android' ? (
+        <Spacer>
+          <Text>SearchBar options have no effect on Android.</Text>
+        </Spacer>
+      ) : null}
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </ScrollView>
   );
