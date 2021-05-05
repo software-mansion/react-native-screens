@@ -4,6 +4,8 @@ import {
   NativeTouchEvent,
   ViewProps,
   View,
+  TargetedEvent,
+  TextInputFocusEventData,
 } from 'react-native';
 
 export type StackPresentationTypes =
@@ -327,23 +329,25 @@ export interface SearchBarProps {
    */
   barTintColor?: string;
   /**
-   * Event fired when the text changes. It receives the current text value of the search bar.
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
    */
-  onChangeText?: (text: NativeSyntheticEvent<{ text: string }>) => void;
+  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
   /**
-   * Event fired when the cancel button is pressed
+   * A callback that gets called when the cancel button is pressed
    */
-  onCancelButtonPress?: () => void;
+  onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * Event fired when the search button is pressed. It receives the current text value of the search bar.
+   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
-  onSearchButtonPress?: (text: NativeSyntheticEvent<{ text: string }>) => void;
+  onSearchButtonPress?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>
+  ) => void;
   /**
-   * Handles text change events
+   * A callback that gets called when search bar has received focus
    */
-  onFocus?: (text: NativeSyntheticEvent<{ text: string }>) => void;
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * Handles text change events
+   * A callback that gets called when search bar has lost focus
    */
-  onBlur?: (text: NativeSyntheticEvent<{ text: string }>) => void;
+  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 }
