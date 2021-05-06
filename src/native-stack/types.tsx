@@ -246,6 +246,7 @@ export type NativeStackNavigationOptions = {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
+  sharedElements?: { fromID: string; toID: string }[];
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

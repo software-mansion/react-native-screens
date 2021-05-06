@@ -64,6 +64,7 @@ export default function NativeStackView({
         const {
           gestureEnabled,
           replaceAnimation = 'pop',
+          sharedElements,
           stackPresentation = 'push',
           stackAnimation,
           contentStyle,
@@ -85,6 +86,7 @@ export default function NativeStackView({
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
             replaceAnimation={replaceAnimation}
+            sharedElements={sharedElements}
             stackPresentation={stackPresentation}
             stackAnimation={stackAnimation}
             onWillAppear={() => {

@@ -3,6 +3,7 @@
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenContainer.h"
+#import "RNSTransitionProgressEvent.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
@@ -13,7 +14,6 @@
 @end
 
 @implementation RNSScreenView {
-  __weak RCTBridge *_bridge;
   RNSScreen *_controller;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
@@ -165,6 +165,11 @@
   _gestureEnabled = gestureEnabled;
 }
 
+- (void)setSharedElements:(NSArray *)sharedElements
+{
+  _sharedElements = sharedElements;
+}
+
 - (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
 {
   _replaceAnimation = replaceAnimation;
@@ -238,7 +243,7 @@
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing
 {
-  [_eventDispatcher sendEvent:[[RNSScreensEvent alloc] initWithReactTag:self.reactTag progress:progress closing:closing]];
+  [_eventDispatcher sendEvent:[[RNSTransitionProgressEvent alloc] initWithReactTag:self.reactTag progress:progress closing:closing]];
 }
 
 - (BOOL)isMountedUnderScreenOrReactRoot
@@ -322,6 +327,7 @@
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
   BOOL _closing;
+  NSMutableArray<NSArray<UIView *>*> *_sharedElements;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -535,12 +541,39 @@
     UIView *fakeView = [UIView new];
     fakeView.alpha = 0.0;
     _fakeView = fakeView;
-    [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-      [[context containerView] addSubview:fakeView];
+
+    _sharedElements = [self prepareSharedElementsArray];
+
+    [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull transitionContext) {
+      [[transitionContext containerView] addSubview:fakeView];
       fakeView.alpha = 1.0;
+
+      UIViewController* toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+      [toViewController.view setNeedsLayout];
+      [toViewController.view layoutIfNeeded];
+      if (self->_closing) {
+        for (NSArray<UIView *> *sharedElement in self->_sharedElements) {
+          UIView *endingView = sharedElement[1];
+          UIView *snapshotView = sharedElement[2];
+          [[transitionContext containerView] addSubview:snapshotView];
+//          snapshotView.frame = endingView.frame;
+          snapshotView.layer.backgroundColor = endingView.backgroundColor.CGColor;
+//          snapshotView.layer.transform = endingView.layer.transform;
+        }
+      }
       self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
       [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+      for (NSArray *sharedElement in self->_sharedElements) {
+        UIView *startingView = sharedElement[0];
+        startingView.alpha = 1;
+        UIView *endingView = sharedElement[1];
+        endingView.alpha = 1;
+        UIView *snapshotView = sharedElement[2];
+        [snapshotView removeFromSuperview];
+      }
+      self->_sharedElements = nil;
+      
       [self->_animationTimer setPaused:YES];
       [self->_animationTimer invalidate];
       self->_fakeView = nil;
@@ -557,8 +590,27 @@
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha];
+      [self calculateFramesOfSharedElements:_currentAlpha];
     }
   }
+}
+
+- (void)calculateFramesOfSharedElements:(double)progress
+{
+  for (NSArray *sharedElement in _sharedElements) {
+    UIView *from = sharedElement[0];
+    UIView *to = sharedElement[1];
+    UIView *snapshotView = sharedElement[2];
+    snapshotView.frame = CGRectMake([RNSScreen interpolateWithFrom:from.frame.origin.x to:to.frame.origin.x progress:progress],
+                                          [RNSScreen interpolateWithFrom:from.frame.origin.y to:to.frame.origin.y progress:progress],
+                                          [RNSScreen interpolateWithFrom:from.frame.size.width to:to.frame.size.width progress:progress],
+                                          [RNSScreen interpolateWithFrom:from.frame.size.height to:to.frame.size.height progress:progress]);
+  }
+}
+
++ (float)interpolateWithFrom:(double)from to:(double)to progress:(double)progress
+{
+    return from + progress * (to - from);
 }
 
 - (void)notifyTransitionProgress:(double)progress
@@ -573,61 +625,51 @@
   }
 }
 
-@end
-
-@implementation RNSScreensEvent {
-  double _progress;
-  BOOL _closing;
-}
-
-@synthesize viewTag = _viewTag;
-@synthesize coalescingKey = _coalescingKey;
-
-- (instancetype)initWithReactTag:(NSNumber *)reactTag progress:(double)progress closing:(BOOL)closing
+- (NSMutableArray<NSArray<UIView *>*> *)prepareSharedElementsArray
 {
-  static uint16_t coalescingKey = 0;
-  if ((self = [super init])) {
-    _viewTag = reactTag;
-    _coalescingKey = coalescingKey++;
-    _progress = progress;
-    _closing = closing;
+  NSMutableArray<NSArray<UIView *>*> *objectsArray = [NSMutableArray new];
+  
+  if (_closing) {
+    NSArray<__kindof UIViewController *> *viewControllers = self.navigationController.viewControllers;
+    RNSScreenView *screenView = (RNSScreenView *)self.view;
+
+    for (NSDictionary *sharedElementDict in screenView.sharedElements) {
+      UIView *start;
+      UIView *end;
+      UIView *snapshot;
+      
+      NSString *fromID = sharedElementDict[@"fromID"];
+      NSString *toID = sharedElementDict[@"toID"];
+      if ([viewControllers containsObject:self]) {
+
+        // we are in previous vc and going forward
+        start = [[screenView bridge].uiManager viewForNativeID:fromID withRootTag:[(RNSScreenView *)self.view rootTag]];
+        end = [[screenView bridge].uiManager viewForNativeID:toID withRootTag:[(RNSScreenView *)self.view rootTag]];
+      } else {
+        // we are in next vc and going back
+        start = [[(RNSScreenView *)self.view bridge].uiManager viewForNativeID:toID withRootTag:[(RNSScreenView *)self.view rootTag]];
+        end = [[(RNSScreenView *)self.view bridge].uiManager viewForNativeID:fromID withRootTag:[(RNSScreenView *)self.view rootTag]];
+      }
+      // we are always the vc that is going to be closed so the starting rect must be converted from our perspective
+      CGRect startRect = [self.transitionCoordinator.containerView convertRect:start.frame fromView:self.view];
+      
+      snapshot = [[UIView alloc] initWithFrame:startRect];
+      snapshot.layer.backgroundColor = start.backgroundColor.CGColor;
+//      snapshot.layer.transform = start.layer.transform;
+      start.alpha = 0;
+      end.alpha = 0;
+      if (start != nil && end != nil && snapshot != nil) {
+        [objectsArray addObject:@[start, end, snapshot]];
+      }
+    }
   }
-  return self;
+  return objectsArray;
 }
 
-RCT_NOT_IMPLEMENTED(- (instancetype)init)
-
-- (NSString *)eventName
-{
-  return @"onTransitionProgress";
-}
-
-- (BOOL)canCoalesce
-{
-  // TODO: event coalescing
-  return NO;
-}
-
-- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent;
-{
-  return newEvent;
-}
-
-+ (NSString *)moduleDotMethod
-{
-  return @"RCTEventEmitter.receiveEvent";
-}
-
-- (NSArray *)arguments
-{
-  NSMutableDictionary *body = [NSMutableDictionary new];
-  [body setObject:_viewTag forKey:@"target"];
-  [body setObject:@(_progress) forKey:@"progress"];
-  [body setObject:@(_closing) forKey:@"closing"];
-  return @[self.viewTag, @"onTransitionProgress", body];
-}
 
 @end
+
+
 
 @implementation RNSScreenManager
 
@@ -637,6 +679,7 @@ RCT_EXPORT_MODULE()
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
+RCT_EXPORT_VIEW_PROPERTY(sharedElements, NSArray<NSDictionary *>)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);

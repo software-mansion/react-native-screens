@@ -63,6 +63,7 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
 @property (nonatomic, copy) RCTDirectEventBlock onWillAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
+@property (weak, nonatomic) RCTBridge *bridge;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) int activityState;
@@ -70,15 +71,10 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+@property (nonatomic, copy) NSArray<NSDictionary *> *sharedElements;
 
 - (void)notifyFinishTransitioning;
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing;
-
-@end
-
-@interface RNSScreensEvent : NSObject <RCTEvent>
-
-- (instancetype)initWithReactTag:(NSNumber *)reactTag progress:(double)progress closing:(BOOL)closing;
 
 @end
 

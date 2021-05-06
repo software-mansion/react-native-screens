@@ -41,5 +41,5 @@ import Test887 from './src/Test887';
 import Test898 from './src/Test898';
 
 export default function App() {
-  return <Test42 />;
+  return <Test887 />;
 }
