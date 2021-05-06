@@ -18,6 +18,8 @@ import {
   ScreenStackHeaderConfigProps,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
+  ScreenStackHeaderSearchBarView,
+  SearchBar,
   StackPresentationTypes,
 } from 'react-native-screens';
 import {
@@ -262,6 +264,14 @@ class StackView extends React.Component<Props> {
           key="backImage"
           source={options.backButtonImage}
         />
+      );
+    }
+
+    if (Platform.OS === 'ios' && options.searchBar) {
+      children.push(
+        <ScreenStackHeaderSearchBarView>
+          <SearchBar {...options.searchBar} />
+        </ScreenStackHeaderSearchBarView>
       );
     }
 

@@ -22,6 +22,7 @@ import {
   ScreenContainerProps,
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 } from './types';
 
 // web implementation is taken from `index.tsx`
@@ -55,6 +56,7 @@ let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
   ViewProps & { type?: HeaderSubviewTypes }
 >>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
+let NativeSearchBar: React.ComponentType<SearchBarProps>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -88,6 +90,11 @@ const ScreensNativeModules = {
       NativeScreenStackHeaderSubview ||
       requireNativeComponent('RNSScreenStackHeaderSubview');
     return NativeScreenStackHeaderSubview;
+  },
+
+  get NativeSearchBar() {
+    NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
+    return NativeSearchBar;
   },
 };
 
@@ -218,6 +225,16 @@ const ScreenStackHeaderCenterView = (
   />
 );
 
+const ScreenStackHeaderSearchBarView = (
+  props: React.PropsWithChildren<SearchBarProps>
+): JSX.Element => (
+  <ScreensNativeModules.NativeScreenStackHeaderSubview
+    {...props}
+    type="searchBar"
+    style={styles.headerSubview}
+  />
+);
+
 export type {
   StackPresentationTypes,
   StackAnimationTypes,
@@ -229,6 +246,7 @@ export type {
   ScreenContainerProps,
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 };
 
 module.exports = {
@@ -254,13 +272,21 @@ module.exports = {
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
+  get SearchBar() {
+    if (Platform.OS !== 'ios') {
+      console.warn('Importing SearchBar is only valid on iOS devices.');
+      return View;
+    }
 
+    return ScreensNativeModules.NativeSearchBar;
+  },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderCenterView,
+  ScreenStackHeaderSearchBarView,
 
   enableScreens,
   screensEnabled,

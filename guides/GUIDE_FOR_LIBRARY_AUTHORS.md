@@ -114,6 +114,22 @@ Along with this component's properties that can be used to customize header beha
 - `ScreenStackHeaderCenterView` – the children will render in the center of the native navigation bar.
 - `ScreenStackHeaderRightView` – the children will render on the right-hand side of the navigation bar (or on the left-hand side in case LTR locales are set on the user's device).
 - `ScreenStackHeaderLeftView` – the children will render on the left-hand side of the navigation bar (or on the right-hand side in case LTR locales are set on the user's device).
+- `ScreenStackHeaderSearchBarView` - used exclusively for rendering iOS `<SearchBar>` component in the bottom of the native navigation bar.
+
+To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
+
+- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences`.
+- `barTintColor` - The search field background color. By default bar tint color is translucent.
+- `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`.
+- `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`.
+- `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`.
+- `onBlur` - A callback that gets called when search bar has lost focus.
+- `onChangeText` - A callback that gets called when the text changes. It receives the current text value of the search bar.
+- `onCancelButtonPress` - A callback that gets called when the cancel button is pressed.
+- `onFocus` - A callback that gets called when search bar has received focus.
+- `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+- `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
+
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
 
@@ -144,7 +160,7 @@ Blur effect to be applied to the header. Works with `backgroundColor`'s alpha < 
 
 ### `children`
 
-Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenStackHeaderLeftView`, `ScreenStackHeaderCenterView`.
+Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenStackHeaderLeftView`, `ScreenStackHeaderCenterView`, `ScreenStackHeaderSearchBarView`.
 
 ### `direction`
 

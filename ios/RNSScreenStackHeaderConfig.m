@@ -1,5 +1,6 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreen.h"
+#import "RNSSearchBar.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -485,6 +486,15 @@ API_AVAILABLE(ios(13.0)){
         navitem.titleView = subview;
         break;
       }
+      case RNSScreenStackHeaderSubviewTypeSearchBar: {
+        if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
+          if (@available(iOS 11.0, *)) {
+            RNSSearchBar *searchBar = subview.subviews[0];
+            navitem.searchController = searchBar.controller;
+            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+          }
+        }
+      }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
         break;
       }
@@ -793,6 +803,7 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
   @"right": @(RNSScreenStackHeaderSubviewTypeRight),
   @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
   @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
+  @"searchBar": @(RNSScreenStackHeaderSubviewTypeSearchBar),
   }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
 RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{

@@ -6,7 +6,7 @@ interface Props {
   onPress: () => void;
 }
 
-export const MenuItem = ({title, onPress}: Props): JSX.Element => {
+export const ListItem = ({title, onPress}: Props): JSX.Element => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.container}>
