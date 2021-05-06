@@ -6,6 +6,7 @@ import {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   HeaderSubviewTypes,
+  SearchBarProps,
 } from './types';
 
 export * from './types';
@@ -76,7 +77,14 @@ export const ScreenStackHeaderCenterView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => <View {...props} />;
 
+export const ScreenStackHeaderSearchBarView = (
+  props: React.PropsWithChildren<SearchBarProps>
+): JSX.Element => <View {...props} />;
+
 export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> = View;
+
+// @ts-expect-error: search bar props have no common props with View
+export const SearchBar: React.ComponentType<SearchBarProps> = View;
 
 export const ScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
   ViewProps & { type?: HeaderSubviewTypes }

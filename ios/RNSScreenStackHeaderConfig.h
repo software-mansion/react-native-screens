@@ -2,6 +2,7 @@
 #import <React/RCTConvert.h>
 
 #import "RNSScreen.h"
+#import "RNSSearchBar.h"
 
 typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
   RNSStatusBarStyleAuto,
@@ -69,6 +70,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
   RNSScreenStackHeaderSubviewTypeRight,
   RNSScreenStackHeaderSubviewTypeTitle,
   RNSScreenStackHeaderSubviewTypeCenter,
+  RNSScreenStackHeaderSubviewTypeSearchBar,
 };
 
 @interface RCTConvert (RNSScreenStackHeader)
