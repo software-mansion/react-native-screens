@@ -287,7 +287,7 @@ Supported properties are described below.
 
 #### `autoCapitalize`
 
-Controlles whether text is automatically auto-capitalized as it is entered by the user.
+Controls whether the text is automatically auto-capitalized as it is entered by the user.
 Possible values:
 
 - `none`

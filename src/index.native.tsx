@@ -280,6 +280,8 @@ module.exports = {
 
     return ScreensNativeModules.NativeSearchBar;
   },
+  // these are functions and will not be evaluated until used
+  // so no need to use getters for them
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
