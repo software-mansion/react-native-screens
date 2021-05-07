@@ -1,11 +1,14 @@
 import { Route, useTheme } from '@react-navigation/native';
 import * as React from 'react';
+import { Platform } from 'react-native';
 import {
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
+  ScreenStackHeaderSearchBarView,
+  SearchBar,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
 import { processFonts } from './FontProcessor';
@@ -39,6 +42,7 @@ export default function HeaderConfig({
   headerTranslucent,
   route,
   screenOrientation,
+  searchBar,
   statusBarAnimation,
   statusBarHidden,
   statusBarStyle,
@@ -122,6 +126,11 @@ export default function HeaderConfig({
         <ScreenStackHeaderCenterView>
           {headerCenter({ tintColor })}
         </ScreenStackHeaderCenterView>
+      ) : null}
+      {Platform.OS === 'ios' && searchBar !== undefined ? (
+        <ScreenStackHeaderSearchBarView>
+          <SearchBar {...searchBar} />
+        </ScreenStackHeaderSearchBarView>
       ) : null}
     </ScreenStackHeaderConfig>
   );

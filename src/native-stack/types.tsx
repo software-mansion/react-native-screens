@@ -14,6 +14,7 @@ import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -241,6 +242,12 @@ export type NativeStackNavigationOptions = {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
+  /**
+   * Object in which you should pass props in order to render native iOS searchBar.
+   *
+   * @platform ios
+   */
+  searchBar?: SearchBarProps;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

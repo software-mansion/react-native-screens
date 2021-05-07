@@ -27,6 +27,7 @@ import Test713 from './src/Test713';
 import Test726 from './src/Test726';
 import Test748 from './src/Test748';
 import Test750 from './src/Test750';
+import Test758 from './src/Test758';
 import Test765 from './src/Test765';
 import Test780 from './src/Test780';
 import Test791 from './src/Test791';
@@ -37,6 +38,8 @@ import Test844 from './src/Test844';
 import Test852 from './src/Test852';
 import Test861 from './src/Test861';
 import Test865 from './src/Test865';
+import Test881 from './src/Test881';
+import Test898 from './src/Test898';
 
 export default function App() {
   return <Test42 />;
