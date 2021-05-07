@@ -182,6 +182,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   children?: React.ReactNode;
   /**
+   * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
+   */
+  color?: string;
+  /**
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
@@ -189,10 +193,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
   hidden?: boolean;
-  /**
-   * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
-   */
-  color?: string;
   /**
    * Boolean indicating whether to hide the back button in header.
    */

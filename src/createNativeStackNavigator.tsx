@@ -37,6 +37,7 @@ import {
   NavigationNavigator,
   NavigationAction,
   NavigationProp,
+  NavigationScreenProp,
 } from 'react-navigation';
 import { NativeStackNavigationOptions as NativeStackNavigationOptionsV5 } from './native-stack/types';
 import { HeaderBackButton } from 'react-navigation-stack';
@@ -47,6 +48,10 @@ import {
 } from 'react-navigation-stack/src/vendor/types';
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
+
+const isAndroid = Platform.OS === 'android';
+
+let didWarn = isAndroid;
 
 function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
   if (typeof componentOrThunk === 'function') {
@@ -340,6 +345,41 @@ class StackView extends React.Component<Props> {
     return <ScreenStackHeaderConfig {...headerOptions} />;
   };
 
+  private maybeRenderNestedStack = (
+    isHeaderInModal: boolean,
+    screenProps: unknown,
+    route: NavigationRoute<NavigationParams>,
+    navigation: NavigationScreenProp<
+      NavigationRoute<NavigationParams>,
+      NavigationParams
+    >,
+    SceneComponent: React.ComponentType<Record<string, unknown>>,
+    index: number,
+    descriptor: NativeStackDescriptor
+  ) => {
+    if (isHeaderInModal) {
+      return (
+        <ScreenStack style={styles.scenes}>
+          <Screen style={StyleSheet.absoluteFill}>
+            {this.renderHeaderConfig(index, route, descriptor)}
+            <SceneView
+              screenProps={screenProps}
+              navigation={navigation}
+              component={SceneComponent}
+            />
+          </Screen>
+        </ScreenStack>
+      );
+    }
+    return (
+      <SceneView
+        screenProps={screenProps}
+        navigation={navigation}
+        component={SceneComponent}
+      />
+    );
+  };
+
   private renderScene = (
     index: number,
     route: NavigationRoute<NavigationParams>,
@@ -370,6 +410,31 @@ class StackView extends React.Component<Props> {
       stackAnimation = 'none';
     }
 
+    const hasHeader =
+      options.headerShown !== false &&
+      this.props.navigationConfig?.headerMode !== 'none' &&
+      options.header !== null;
+
+    if (
+      !didWarn &&
+      stackPresentation !== 'push' &&
+      options.headerShown !== undefined
+    ) {
+      didWarn = true;
+      console.warn(
+        'Be aware that changing the visibility of header in modal on iOS will result in resetting the state of the screen.'
+      );
+    }
+
+    const isHeaderInModal = isAndroid
+      ? false
+      : stackPresentation !== 'push' &&
+        hasHeader &&
+        options.headerShown === true;
+    const isHeaderInPush = isAndroid
+      ? hasHeader
+      : stackPresentation === 'push' && hasHeader;
+
     const { screenProps } = this.props;
     return (
       <Screen
@@ -399,12 +464,16 @@ class StackView extends React.Component<Props> {
         onWillDisappear={() => options?.onWillDisappear?.()}
         onDisappear={() => options?.onDisappear?.()}
         onDismissed={() => this.removeScene(route)}>
-        {this.renderHeaderConfig(index, route, descriptor)}
-        <SceneView
-          screenProps={screenProps}
-          navigation={navigation}
-          component={SceneComponent}
-        />
+        {isHeaderInPush && this.renderHeaderConfig(index, route, descriptor)}
+        {this.maybeRenderNestedStack(
+          isHeaderInModal,
+          screenProps,
+          route,
+          navigation,
+          SceneComponent,
+          index,
+          descriptor
+        )}
       </Screen>
     );
   };
