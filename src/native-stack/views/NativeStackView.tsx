@@ -3,9 +3,17 @@ import {
   StackActions,
   StackNavigationState,
   useTheme,
+  Route,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { Platform, StyleSheet, View, ViewProps } from 'react-native';
+import {
+  Platform,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewProps,
+  ViewStyle,
+} from 'react-native';
 // @ts-ignore Getting private component
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import {
@@ -17,11 +25,14 @@ import {
 import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
+  NativeStackNavigationOptions,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 
 const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
+
+let didWarn = isAndroid;
 
 let Container = View;
 
@@ -43,6 +54,39 @@ if (__DEV__) {
   Container = DebugContainer;
 }
 
+const maybeRenderNestedStack = (
+  options: NativeStackNavigationOptions,
+  route: Route<string>,
+  renderScene: () => JSX.Element,
+  stackPresentation: StackPresentationTypes,
+  isHeaderInModal: boolean,
+  viewStyles: StyleProp<ViewStyle>
+): JSX.Element => {
+  if (isHeaderInModal) {
+    return (
+      <ScreenStack style={styles.container}>
+        <Screen style={StyleSheet.absoluteFill}>
+          <HeaderConfig {...options} route={route} />
+          <Container
+            style={viewStyles}
+            // @ts-ignore Wrong props passed to View
+            stackPresentation={stackPresentation}>
+            {renderScene()}
+          </Container>
+        </Screen>
+      </ScreenStack>
+    );
+  }
+  return (
+    <Container
+      style={viewStyles}
+      // @ts-ignore Wrong props passed to View
+      stackPresentation={stackPresentation}>
+      {renderScene()}
+    </Container>
+  );
+};
+
 type Props = {
   state: StackNavigationState<ParamListBase>;
   navigation: NativeStackNavigationHelpers;
@@ -59,15 +103,23 @@ export default function NativeStackView({
 
   return (
     <ScreenStack style={styles.container}>
-      {routes.map((route) => {
+      {routes.map((route, index) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
-          gestureEnabled,
-          replaceAnimation = 'pop',
-          stackPresentation = 'push',
-          stackAnimation,
           contentStyle,
+          gestureEnabled,
+          headerShown,
+          replaceAnimation = 'pop',
+          stackAnimation,
         } = options;
+
+        let { stackPresentation = 'push' } = options;
+
+        if (index === 0) {
+          // first screen should always be treated as `push`, it resolves problems with no header animation
+          // for navigator with first screen as `modal` and the next as `push`
+          stackPresentation = 'push';
+        }
 
         const viewStyles = [
           styles.container,
@@ -77,6 +129,24 @@ export default function NativeStackView({
             },
           contentStyle,
         ];
+
+        if (
+          !didWarn &&
+          stackPresentation !== 'push' &&
+          headerShown !== undefined
+        ) {
+          didWarn = true;
+          console.warn(
+            'Be aware that changing the visibility of header in modal on iOS will result in resetting the state of the screen.'
+          );
+        }
+
+        const isHeaderInModal = isAndroid
+          ? false
+          : stackPresentation !== 'push' && headerShown === true;
+        const isHeaderInPush = isAndroid
+          ? headerShown
+          : stackPresentation === 'push' && headerShown !== false;
 
         return (
           <Screen
@@ -130,13 +200,19 @@ export default function NativeStackView({
                 target: key,
               });
             }}>
-            <HeaderConfig {...options} route={route} />
-            <Container
-              style={viewStyles}
-              // @ts-ignore Wrong props passed to View
-              stackPresentation={stackPresentation}>
-              {renderScene()}
-            </Container>
+            <HeaderConfig
+              {...options}
+              route={route}
+              headerShown={isHeaderInPush}
+            />
+            {maybeRenderNestedStack(
+              options,
+              route,
+              renderScene,
+              stackPresentation,
+              isHeaderInModal,
+              viewStyles
+            )}
           </Screen>
         );
       })}
