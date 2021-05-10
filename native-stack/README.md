@@ -265,7 +265,7 @@ Search bar is only supported on iOS.
 Example: 
 
 ```js
-React.useEffect(
+React.useEffect(() => {
   navigation.setOptions({
     searchBar: {
       // search bar options
@@ -329,7 +329,7 @@ Example:
 ```js
 const [search, setSearch] = React.useState('');
 
-React.useEffect(
+React.useEffect(() => {
   navigation.setOptions({
     searchBar: {
       onChangeText: (event) => setSearch(event.nativeEvent.text),
