@@ -65,7 +65,7 @@ const maybeRenderNestedStack = (
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.container}>
-        <Screen style={StyleSheet.absoluteFill}>
+        <Screen enabled style={StyleSheet.absoluteFill}>
           <HeaderConfig {...options} route={route} />
           <Container
             style={viewStyles}
@@ -151,6 +151,7 @@ export default function NativeStackView({
         return (
           <Screen
             key={route.key}
+            enabled
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
             replaceAnimation={replaceAnimation}
