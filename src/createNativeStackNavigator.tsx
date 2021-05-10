@@ -441,6 +441,7 @@ class StackView extends React.Component<Props> {
     return (
       <Screen
         key={`screen_${route.key}`}
+        enabled
         style={[StyleSheet.absoluteFill, options.cardStyle]}
         stackAnimation={stackAnimation}
         stackPresentation={stackPresentation}

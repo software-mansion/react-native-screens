@@ -10,7 +10,6 @@ import {
   useNavigationBuilder,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { screensEnabled } from 'react-native-screens';
 import {
   NativeStackNavigationEventMap,
   NativeStackNavigationOptions,
@@ -24,12 +23,6 @@ function NativeStackNavigator({
   screenOptions,
   ...rest
 }: NativeStackNavigatorProps) {
-  if (!screensEnabled()) {
-    throw new Error(
-      'Native stack is only available if React Native Screens is enabled.'
-    );
-  }
-
   const { state, descriptors, navigation } = useNavigationBuilder<
     StackNavigationState<ParamListBase>,
     StackRouterOptions,
