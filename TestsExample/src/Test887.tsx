@@ -25,7 +25,7 @@ export default function App(): JSX.Element {
       <Stack.Navigator screenOptions={{ 
         stackAnimation: 'default', 
         // stackPresentation: 'transparentModal',
-        headerShown: false,
+        headerShown: true,
         }}>
         <Stack.Screen name="First" component={First} options={{sharedElements: [
           {fromID: 'view3000', toID: 'view3000Dest'},

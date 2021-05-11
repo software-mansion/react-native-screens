@@ -327,7 +327,9 @@
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
   BOOL _closing;
-  NSMutableArray<NSArray<UIView *>*> *_sharedElements;
+  NSMutableArray<NSArray *> *_sharedElements;
+  UIView *_containerView;
+  UIView *_toView;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -545,6 +547,8 @@
     _sharedElements = [self prepareSharedElementsArray];
 
     [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull transitionContext) {
+      self->_containerView = [transitionContext containerView];
+      self->_toView = [transitionContext viewForKey:UITransitionContextToViewKey];
       [[transitionContext containerView] addSubview:fakeView];
       fakeView.alpha = 1.0;
 
@@ -564,23 +568,33 @@
       self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
       [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-      for (NSArray *sharedElement in self->_sharedElements) {
-        UIView *startingView = sharedElement[0];
-        startingView.alpha = 1;
-        UIView *endingView = sharedElement[1];
-        endingView.alpha = 1;
-        UIView *snapshotView = sharedElement[2];
-        [snapshotView removeFromSuperview];
-      }
-      self->_sharedElements = nil;
-      
-      [self->_animationTimer setPaused:YES];
-      [self->_animationTimer invalidate];
-      self->_fakeView = nil;
-      [fakeView removeFromSuperview];
-      self->_isSendingProgress = NO;
+      [self resetSharedViewsAndFakeView:fakeView];
     }];
   }
+}
+
+- (void)resetSharedViewsAndFakeView:(UIView *)fakeView
+{
+  for (NSArray *sharedElement in self->_sharedElements) {
+    NSDictionary *originalValues = sharedElement[3];
+    double startAlpha = [[originalValues objectForKey:@"startAlpha"] doubleValue];
+    double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
+    UIView *startingView = sharedElement[0];
+    startingView.alpha = startAlpha;
+    UIView *endingView = sharedElement[1];
+    endingView.alpha = endAlpha;
+    UIView *snapshotView = sharedElement[2];
+    [snapshotView removeFromSuperview];
+  }
+  self->_sharedElements = nil;
+  
+  [self->_animationTimer setPaused:YES];
+  [self->_animationTimer invalidate];
+  self->_fakeView = nil;
+  [fakeView removeFromSuperview];
+  self->_isSendingProgress = NO;
+  self->_containerView = nil;
+  self->_toView = nil;
 }
 
 - (void)handleAnimation
@@ -590,21 +604,28 @@
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha];
-      [self calculateFramesOfSharedElements:_currentAlpha];
+      [self updateSharedElements:_currentAlpha];
     }
   }
+}
+
+- (void)updateSharedElements:(double)progress
+{
+  [self calculateFramesOfSharedElements:progress];
 }
 
 - (void)calculateFramesOfSharedElements:(double)progress
 {
   for (NSArray *sharedElement in _sharedElements) {
-    UIView *from = sharedElement[0];
     UIView *to = sharedElement[1];
     UIView *snapshotView = sharedElement[2];
-    snapshotView.frame = CGRectMake([RNSScreen interpolateWithFrom:from.frame.origin.x to:to.frame.origin.x progress:progress],
-                                          [RNSScreen interpolateWithFrom:from.frame.origin.y to:to.frame.origin.y progress:progress],
-                                          [RNSScreen interpolateWithFrom:from.frame.size.width to:to.frame.size.width progress:progress],
-                                          [RNSScreen interpolateWithFrom:from.frame.size.height to:to.frame.size.height progress:progress]);
+    NSDictionary *originalValues = sharedElement[3];
+    CGRect startFrame = [[originalValues objectForKey:@"convertedStartFrame"] CGRectValue];
+    CGRect toFrame = [_containerView convertRect:to.frame fromView:_toView];
+    snapshotView.frame = CGRectMake([RNSScreen interpolateWithFrom:startFrame.origin.x to:toFrame.origin.x progress:progress],
+                                          [RNSScreen interpolateWithFrom:startFrame.origin.y to:toFrame.origin.y progress:progress],
+                                          [RNSScreen interpolateWithFrom:startFrame.size.width to:toFrame.size.width progress:progress],
+                                          [RNSScreen interpolateWithFrom:startFrame.size.height to:toFrame.size.height progress:progress]);
   }
 }
 
@@ -625,9 +646,9 @@
   }
 }
 
-- (NSMutableArray<NSArray<UIView *>*> *)prepareSharedElementsArray
+- (NSMutableArray<NSArray *> *)prepareSharedElementsArray
 {
-  NSMutableArray<NSArray<UIView *>*> *objectsArray = [NSMutableArray new];
+  NSMutableArray<NSArray *> *sharedElementsArray = [NSMutableArray new];
   
   if (_closing) {
     NSArray<__kindof UIViewController *> *viewControllers = self.navigationController.viewControllers;
@@ -651,19 +672,24 @@
         end = [[(RNSScreenView *)self.view bridge].uiManager viewForNativeID:fromID withRootTag:[(RNSScreenView *)self.view rootTag]];
       }
       // we are always the vc that is going to be closed so the starting rect must be converted from our perspective
-      CGRect startRect = [self.transitionCoordinator.containerView convertRect:start.frame fromView:self.view];
+      CGRect startFrame = [self.transitionCoordinator.containerView convertRect:start.frame fromView:self.view];
       
-      snapshot = [[UIView alloc] initWithFrame:startRect];
+      NSDictionary *originalValues = @{
+        @"startAlpha": @(start.alpha),
+        @"endAlpha": @(end.alpha),
+        @"convertedStartFrame": @(startFrame),
+      };
+      
+      snapshot = [[UIView alloc] initWithFrame:startFrame];
       snapshot.layer.backgroundColor = start.backgroundColor.CGColor;
-//      snapshot.layer.transform = start.layer.transform;
       start.alpha = 0;
       end.alpha = 0;
       if (start != nil && end != nil && snapshot != nil) {
-        [objectsArray addObject:@[start, end, snapshot]];
+        [sharedElementsArray addObject:@[start, end, snapshot, originalValues]];
       }
     }
   }
-  return objectsArray;
+  return sharedElementsArray;
 }
 
 
