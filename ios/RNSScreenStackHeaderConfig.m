@@ -1,5 +1,6 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreen.h"
+#import "RNSSearchBar.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -39,6 +40,13 @@
     _bridge = bridge;
   }
   return self;
+}
+
+- (void) reactSetFrame:(CGRect)frame
+{
+  // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
+  // makes UINavigationBar the only one to control the position of header content.
+  [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 }
 
 @end
@@ -485,6 +493,15 @@ API_AVAILABLE(ios(13.0)){
         navitem.titleView = subview;
         break;
       }
+      case RNSScreenStackHeaderSubviewTypeSearchBar: {
+        if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
+          if (@available(iOS 11.0, *)) {
+            RNSSearchBar *searchBar = subview.subviews[0];
+            navitem.searchController = searchBar.controller;
+            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+          }
+        }
+      }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
         break;
       }
@@ -793,6 +810,7 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
   @"right": @(RNSScreenStackHeaderSubviewTypeRight),
   @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
   @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
+  @"searchBar": @(RNSScreenStackHeaderSubviewTypeSearchBar),
   }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
 RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{
