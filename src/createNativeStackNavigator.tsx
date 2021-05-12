@@ -464,7 +464,7 @@ class StackView extends React.Component<Props> {
         onWillAppear={() => options?.onWillAppear?.()}
         onWillDisappear={() => options?.onWillDisappear?.()}
         onDisappear={() => options?.onDisappear?.()}
-        onTransitionProgress={(event) => options?.onTransitionProgress?.(event)}
+        onTransitionProgress={options.onTransitionProgress}
         onDismissed={() => this.removeScene(route)}>
         {isHeaderInPush && this.renderHeaderConfig(index, route, descriptor)}
         {this.maybeRenderNestedStack(

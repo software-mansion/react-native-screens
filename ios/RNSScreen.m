@@ -7,7 +7,6 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
-#import <React/RCTEventDispatcher.h>
 
 @interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
@@ -559,8 +558,8 @@
 
 - (void)handleAnimation
 {
-  if (_fakeView != nil && _fakeView.layer != nil && _fakeView.layer.presentationLayer != nil) {
-    CGFloat fakeViewAlpha = [_fakeView.layer.presentationLayer opacity];
+  if ([[_fakeView layer] presentationLayer] != nil) {
+    CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha closing:_closing];
