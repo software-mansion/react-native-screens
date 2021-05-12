@@ -11,10 +11,13 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
 
   private final float mProgress;
   private final boolean mClosing;
-  public ScreenTransitionProgressEvent(int viewId, float progress, boolean closing) {
+  private final short mCoalescingKey;
+
+  public ScreenTransitionProgressEvent(int viewId, float progress, boolean closing, short coalescingKey) {
     super(viewId);
     mProgress = progress;
     mClosing = closing;
+    mCoalescingKey = coalescingKey;
   }
 
   @Override
@@ -25,7 +28,7 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
   @Override
   public short getCoalescingKey() {
     // All events for a given view can be coalesced.
-    return 0;
+    return mCoalescingKey;
   }
 
   @Override

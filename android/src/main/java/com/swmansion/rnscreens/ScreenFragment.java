@@ -45,6 +45,8 @@ public class ScreenFragment extends Fragment {
   protected Screen mScreenView;
   private boolean mIsSendingProgress;
   private Screen mAboveScreen;
+  private float mProgress;
+  private short mCoalescingKey;
   private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
 
   public ScreenFragment() {
@@ -127,11 +129,13 @@ public class ScreenFragment extends Fragment {
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.WillAppear);
   
-    if (mAboveScreen == null && getScreen() != null && getScreen().getContainer() != null && getScreen().getContainer().getScreenCount() > 1) {
+    if (mAboveScreen == null && getScreen() != null &&
+            getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL
+            && getScreen().getContainer() != null && getScreen().getContainer().getScreenCount() > 1) {
       mAboveScreen = getScreen().getContainer().getScreenAt(getScreen().getContainer().getScreenCount() - 2);
     }
 
-    dispatchTransitionProgress(0.0f, false);
+    dispatchTransitionProgress(0.0f, false, true);
   }
 
   protected void dispatchOnAppear() {
@@ -142,7 +146,7 @@ public class ScreenFragment extends Fragment {
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.Appear);
 
-    dispatchTransitionProgress(1.0f, false);
+    dispatchTransitionProgress(1.0f, false, true);
   }
 
   protected void dispatchOnWillDisappear() {
@@ -153,7 +157,7 @@ public class ScreenFragment extends Fragment {
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.WillDisappear);
 
-    dispatchTransitionProgress(0.0f, true);
+    dispatchTransitionProgress(0.0f, true, true);
   }
 
   protected void dispatchOnDisappear() {
@@ -164,22 +168,36 @@ public class ScreenFragment extends Fragment {
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.Disappear);
 
-    dispatchTransitionProgress(1.0f, true);
+    dispatchTransitionProgress(1.0f, true, true);
   }
 
-  protected void dispatchTransitionProgress(float alpha, boolean closing) {
+  public void incrementCoalescingKey() {
+    mCoalescingKey++;
+  }
+
+  protected void dispatchTransitionProgress(float alpha, boolean closing, boolean shouldIncrementCoalescingKey) {
+    if (shouldIncrementCoalescingKey) {
+      incrementCoalescingKey();
+    }
     sendTransitionProgressEvent(alpha, closing);
 
     if (mAboveScreen != null && mAboveScreen.getFragment() != null && !mAboveScreen.getFragment().isSendingProgress()) {
+      if (shouldIncrementCoalescingKey) {
+        mAboveScreen.getFragment().incrementCoalescingKey();
+      }
+      // if we are in transparentModal presentation, only one screen is sending progress
       mAboveScreen.getFragment().sendTransitionProgressEvent(alpha, !closing);
     }
   }
 
   protected void sendTransitionProgressEvent(float alpha, boolean closing) {
-    ((ReactContext) mScreenView.getContext())
-            .getNativeModule(UIManagerModule.class)
-            .getEventDispatcher()
-            .dispatchEvent(new ScreenTransitionProgressEvent(mScreenView.getId(), alpha, closing));
+    if (mProgress != alpha || alpha == 0.0f || alpha == 1.0f) {
+      mProgress = Math.max(0.0f, Math.min(1.0f, alpha));
+      ((ReactContext) mScreenView.getContext())
+              .getNativeModule(UIManagerModule.class)
+              .getEventDispatcher()
+              .dispatchEvent(new ScreenTransitionProgressEvent(mScreenView.getId(), mProgress, closing, mCoalescingKey));
+    }
   }
 
   private void dispatchEventInChildContainers(ScreenLifecycleEvent event) {

@@ -13,34 +13,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
 // import { createStackNavigator } from '@react-navigation/stack';
 
-const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Third'>}): JSX.Element => {
-  const [width, setWidth] = React.useState(50);
-  React.useEffect(() => {
-    navigation.setOptions({
-      onTransitionProgress: (event) => {
-        console.warn("dialog closing: " + event.nativeEvent.closing);
-        setWidth(event.nativeEvent.progress * 50 + 50);
-      }
-    })
-  }, [navigation])
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.wrapper}>
-        <Text style={styles.heading}>Hey! Sign up for our newsletter!</Text>
-        <Animated.View style={{width, height: width, backgroundColor: 'black'}} />
-        <TouchableOpacity
-          style={{...styles.button}}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Please no.</Text>
-        </TouchableOpacity>
-        <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
-        <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
-      </View>
-    </SafeAreaView>
-  );
-};
-
 const Stack = createNativeStackNavigator();
 type SimpleStackParams = {
   First: undefined;
@@ -99,6 +71,35 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
     </View>
   );
 }
+
+
+const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Third'>}): JSX.Element => {
+  const [width, setWidth] = React.useState(50);
+  React.useEffect(() => {
+    navigation.setOptions({
+      onTransitionProgress: (event) => {
+        console.warn("dialog closing: " + event.nativeEvent.closing);
+        setWidth(event.nativeEvent.progress * 50 + 50);
+      }
+    })
+  }, [navigation])
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.wrapper}>
+        <Text style={styles.heading}>Hey! Sign up for our newsletter!</Text>
+        <Animated.View style={{width, height: width, backgroundColor: 'black'}} />
+        <TouchableOpacity
+          style={{...styles.button}}
+          onPress={() => navigation.goBack()}>
+          <Text style={styles.buttonText}>Please no.</Text>
+        </TouchableOpacity>
+        <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
+        <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
+      </View>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
