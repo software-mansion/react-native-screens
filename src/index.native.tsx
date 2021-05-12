@@ -46,37 +46,6 @@ function screensEnabled(): boolean {
   return ENABLE_SCREENS;
 }
 
-const customScreensEventsConfig = {
-  onTransitionProgress: { registrationName: 'onTransitionProgress' },
-};
-
-// UIManager code was taken from `react-native-gesture-handler`:
-// https://github.com/software-mansion/react-native-gesture-handler/blob/1.10.3/src/handlers/createHandler.ts#L28
-// Add RNScreens specific events to genericDirectEventTypes object exported from UIManager
-// native module.
-// Once new event types are registered with react it is possible to dispatch these
-// events to all kind of native views.
-// @ts-ignore wrong types for some reason
-UIManager.genericDirectEventTypes = {
-  // @ts-ignore wrong types for some reason
-  ...UIManager.genericDirectEventTypes,
-  ...customScreensEventsConfig,
-};
-
-const UIManagerConstants =
-  UIManager.getViewManagerConfig?.('getConstants') ??
-  // @ts-ignore wrong types for some reason
-  UIManager.getConstants?.();
-
-if (UIManagerConstants) {
-  // @ts-ignore wrong types for some reason
-  UIManagerConstants.genericDirectEventTypes = {
-    // @ts-ignore wrong types for some reason
-    ...UIManagerConstants.genericDirectEventTypes,
-    ...customScreensEventsConfig,
-  };
-}
-
 // We initialize these lazily so that importing the module doesn't throw error when not linked
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
 let NativeScreenValue: React.ComponentType<ScreenProps>;

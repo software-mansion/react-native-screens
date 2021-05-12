@@ -17,7 +17,6 @@
   RNSScreen *_controller;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
-  RCTEventDispatcher *_eventDispatcher;
 }
 
 @synthesize controller = _controller;
@@ -26,7 +25,6 @@
 {
   if (self = [super init]) {
     _bridge = bridge;
-    _eventDispatcher = bridge.eventDispatcher;
     _controller = [[RNSScreen alloc] initWithView:self];
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
@@ -238,7 +236,12 @@
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing
 {
-  [_eventDispatcher sendEvent:[[RNSScreensEvent alloc] initWithReactTag:self.reactTag progress:progress closing:closing]];
+  if (self.onTransitionProgress) {
+    self.onTransitionProgress(@{
+      @"progress": @(progress),
+      @"closing": @(closing),
+                              });
+  }
 }
 
 - (BOOL)isMountedUnderScreenOrReactRoot
@@ -478,6 +481,7 @@
   [RNSScreenStackHeaderConfig updateWindowTraits];
   [((RNSScreenView *)self.view) notifyWillAppear];
   _closing = NO;
+  [self notifyTransitionProgress:0.0 closing:_closing];
   [self setupProgressNotification];
 }
 
@@ -487,6 +491,7 @@
 
   [((RNSScreenView *)self.view) notifyWillDisappear];
   _closing = YES;
+  [self notifyTransitionProgress:0.0 closing:_closing];
   [self setupProgressNotification];
 }
 
@@ -494,6 +499,7 @@
 {
   [super viewDidAppear:animated];
   [((RNSScreenView *)self.view) notifyAppear];
+  [self notifyTransitionProgress:1.0 closing:NO];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -501,6 +507,7 @@
   [super viewDidDisappear:animated];
 
   [((RNSScreenView *)self.view) notifyDisappear];
+  [self notifyTransitionProgress:1.0 closing:YES];
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
     [((RNSScreenView *)self.view) notifyDismissed];
@@ -556,75 +563,21 @@
     CGFloat fakeViewAlpha = [_fakeView.layer.presentationLayer opacity];
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
-      [self notifyTransitionProgress:_currentAlpha];
+      [self notifyTransitionProgress:_currentAlpha closing:_closing];
     }
   }
 }
 
-- (void)notifyTransitionProgress:(double)progress
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing
 {
-  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:_closing];
+  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing];
   // if we are in a modal, we want to send transition to the above screen too, which might not trigger appear/disappear events
   // e.g. when we are in iOS >= 13 default modal
   // we also check if we are not already sending the progress of transition and if it does not present another modal,
   // because otherwise we would send progress to the screen 2 levels higher then the current one
   if ([_presentingScreen isKindOfClass:[RNSScreen class]] && !_presentingScreen.isSendingProgress && self.presentedViewController == nil) {
-    [((RNSScreenView *)_presentingScreen.view) notifyTransitionProgress:progress closing:!_closing];
+    [((RNSScreenView *)_presentingScreen.view) notifyTransitionProgress:progress closing:!closing];
   }
-}
-
-@end
-
-@implementation RNSScreensEvent {
-  double _progress;
-  BOOL _closing;
-}
-
-@synthesize viewTag = _viewTag;
-@synthesize coalescingKey = _coalescingKey;
-
-- (instancetype)initWithReactTag:(NSNumber *)reactTag progress:(double)progress closing:(BOOL)closing
-{
-  static uint16_t coalescingKey = 0;
-  if ((self = [super init])) {
-    _viewTag = reactTag;
-    _coalescingKey = coalescingKey++;
-    _progress = progress;
-    _closing = closing;
-  }
-  return self;
-}
-
-RCT_NOT_IMPLEMENTED(- (instancetype)init)
-
-- (NSString *)eventName
-{
-  return @"onTransitionProgress";
-}
-
-- (BOOL)canCoalesce
-{
-  // TODO: event coalescing
-  return NO;
-}
-
-- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent;
-{
-  return newEvent;
-}
-
-+ (NSString *)moduleDotMethod
-{
-  return @"RCTEventEmitter.receiveEvent";
-}
-
-- (NSArray *)arguments
-{
-  NSMutableDictionary *body = [NSMutableDictionary new];
-  [body setObject:_viewTag forKey:@"target"];
-  [body setObject:@(_progress) forKey:@"progress"];
-  [body setObject:@(_closing) forKey:@"closing"];
-  return @[self.viewTag, @"onTransitionProgress", body];
 }
 
 @end
@@ -644,6 +597,7 @@ RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 
 - (UIView *)view
 {

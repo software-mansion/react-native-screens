@@ -143,12 +143,12 @@ public class ScreenStackFragment extends ScreenFragment {
   @Nullable
   @Override
   public Animation onCreateAnimation(int transit, final boolean enter, int nextAnim) {
-    // this means that the fragment will appear without transition, in this case
-    // onViewAnimationStart and onViewAnimationEnd won't be called and we need to notify
-    // stack directly from here.
+    // this means that the fragment will appear with a custom transition, in the case
+    // of animation: 'none', onViewAnimationStart and onViewAnimationEnd
+    // won't be called and we need to notify stack directly from here.
     // When using the Toolbar back button this is called an extra time with transit = 0 but in
     // this case we don't want to notify. The way I found to detect is case is check isHidden.
-    if (transit == 0 && !isHidden()) {
+    if (transit == 0 && !isHidden() && getScreen().getStackAnimation() == Screen.StackAnimation.NONE) {
       // If the container is nested then appear events will be dispatched by their parent screen so
       // they must not be triggered here.
       ScreenContainer container = getScreen().getContainer();

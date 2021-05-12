@@ -183,11 +183,7 @@ export default function NativeStackView({
                 target: route.key,
               });
             }}
-            onTransitionProgress={(event) => {
-              if (onTransitionProgress) {
-                onTransitionProgress(event);
-              }
-            }}
+            onTransitionProgress={onTransitionProgress}
             onDisappear={() => {
               navigation.emit({
                 type: 'transitionEnd',

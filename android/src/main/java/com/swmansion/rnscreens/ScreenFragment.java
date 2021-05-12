@@ -130,6 +130,8 @@ public class ScreenFragment extends Fragment {
     if (mAboveScreen == null && getScreen() != null && getScreen().getContainer() != null && getScreen().getContainer().getScreenCount() > 1) {
       mAboveScreen = getScreen().getContainer().getScreenAt(getScreen().getContainer().getScreenCount() - 2);
     }
+
+    dispatchTransitionProgress(0.0f, false);
   }
 
   protected void dispatchOnAppear() {
@@ -139,6 +141,8 @@ public class ScreenFragment extends Fragment {
             .dispatchEvent(new ScreenAppearEvent(mScreenView.getId()));
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.Appear);
+
+    dispatchTransitionProgress(1.0f, false);
   }
 
   protected void dispatchOnWillDisappear() {
@@ -148,6 +152,8 @@ public class ScreenFragment extends Fragment {
         .dispatchEvent(new ScreenWillDisappearEvent(mScreenView.getId()));
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.WillDisappear);
+
+    dispatchTransitionProgress(0.0f, true);
   }
 
   protected void dispatchOnDisappear() {
@@ -157,6 +163,8 @@ public class ScreenFragment extends Fragment {
         .dispatchEvent(new ScreenDisappearEvent(mScreenView.getId()));
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.Disappear);
+
+    dispatchTransitionProgress(1.0f, true);
   }
 
   protected void dispatchTransitionProgress(float alpha, boolean closing) {

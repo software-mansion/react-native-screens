@@ -66,8 +66,8 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
-        console.warn("First closing: " + event.nativeEvent.closing);
-        setWidth(event.nativeEvent.progress * 50 + 50);
+        console.warn("First closing: " + event.nativeEvent.closing + " progress: " + event.nativeEvent.progress);
+        setWidth(event.nativeEvent.closing ? (event.nativeEvent.progress * 50 + 50) : ((1 - event.nativeEvent.progress) * 50 + 50));
       }
     })
   }, [navigation])
@@ -84,8 +84,8 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
-        console.warn("Second closing: " + event.nativeEvent.closing);
-        setWidth(event.nativeEvent.progress * 50 + 50);
+        console.warn("Second closing: " + event.nativeEvent.closing + " progress: " + event.nativeEvent.progress);
+        setWidth(event.nativeEvent.closing ? (event.nativeEvent.progress * 50 + 50) : ((1 - event.nativeEvent.progress) * 50 + 50));
       }
     })
   }, [navigation])
