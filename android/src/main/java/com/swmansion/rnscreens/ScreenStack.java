@@ -182,6 +182,18 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         // otherwise it's open animation
         shouldUseOpenAnimation = mScreenFragments.contains(mTopScreen) || newTop.getScreen().getReplaceAnimation() != Screen.ReplaceAnimation.POP;
         stackAnimation = newTop.getScreen().getStackAnimation();
+      } else if (mTopScreen == null && newTop != null) {
+        // mTopScreen was not present before so newTop is the first screen added to a stack
+        // and we don't want the animation when it is entering, but we want to send the
+        // willAppear and Appear events to the user, which won't be sent by default if Screen's
+        // stack animation is not NONE (see check for stackAnimation in onCreateAnimation in ScreenStackFragment)
+        // We don't do it if the stack is nested since the parent will trigger these events in child
+        stackAnimation = Screen.StackAnimation.NONE;
+        if (newTop.getScreen().getStackAnimation() != Screen.StackAnimation.NONE
+                && !isNested()) {
+          newTop.dispatchOnWillAppear();
+          newTop.dispatchOnAppear();
+        }
       }
     } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
       // otherwise if we are performing top screen change we do "close animation"
