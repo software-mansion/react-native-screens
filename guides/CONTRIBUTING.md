@@ -34,10 +34,10 @@ Pull requests are more than welcome 🚀
 
 We've created a template to help you with the process of submitting a pull request to this project. Remember to change or add documentation as needed and provide a code snippet (preferably added to `TestsExample/` project) that the developers could test your change on. In the PR template we've added a checklist for all the places where the documentation should be updated.
 
-If it's your first pull request (this guide)[https://github.com/MarcDiethelm/contributing/blob/master/README.md] might be helpful for you.
+If it's your first pull request [this guide](https://github.com/MarcDiethelm/contributing/blob/master/README.md) might be helpful for you.
 
 ### Naming convensions
 
-For commits and pull request names we follow a [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
+For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
 For branch names we use `@username/description-separated-by-dashes` convention.
