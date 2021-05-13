@@ -87,6 +87,10 @@ This library should work out of the box with all existing react-native libraries
 If you are building a navigation library you may want to use `react-native-screens` to have control over which parts of the React component tree are attached to the native view hierarchy.
 To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/master/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
 
+## Contributing
+
+There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/kmagiera/react-native-screens/tree/master/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
+
 ## License
 
 React native screens library is licensed under [The MIT License](LICENSE).
