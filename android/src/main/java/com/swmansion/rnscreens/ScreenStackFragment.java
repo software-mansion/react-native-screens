@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.widget.LinearLayout;
 
+import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.PixelUtil;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -155,8 +156,18 @@ public class ScreenStackFragment extends ScreenFragment {
       boolean isNested = container != null && container.isNested();
       if (enter) {
         if (!isNested) {
-          dispatchOnWillAppear();
-          dispatchOnAppear();
+          // Android dispatches the animation start event for the fragment that is being added first
+          // however we want the one being dismissed first to match iOS. It also makes more sense from
+          // a navigation point of view to have the disappear event first.
+          // Since there are no explicit relationships between the fragment being added / removed the
+          // practical way to fix this is delaying dispatching the appear events at the end of the frame.
+          UiThreadUtil.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              dispatchOnWillAppear();
+              dispatchOnAppear();
+            }
+          });
         }
       } else {
         if (!isNested) {
