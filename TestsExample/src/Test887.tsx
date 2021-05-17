@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Animated,
   Button,
   View,
   StyleSheet,
@@ -9,6 +8,7 @@ import {
   Dimensions,
   SafeAreaView,
 } from 'react-native';
+import Animated, {useSharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
 // import { createStackNavigator } from '@react-navigation/stack';
@@ -34,61 +34,86 @@ export default function App(): JSX.Element {
   );
 }
 function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'First'>}) {
-  const [width, setWidth] = React.useState(50);
+  const sv = useSharedValue(50);
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
+
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
-        console.warn("First closing: " + event.nativeEvent.closing + " progress: " + event.nativeEvent.progress);
-        setWidth(event.nativeEvent.closing ? (event.nativeEvent.progress * 50 + 50) : ((1 - event.nativeEvent.progress) * 50 + 50));
+        'worklet'
+        sv.value = event.closing ? (event.progress * 50 + 50) : ((1 - event.progress) * 50 + 50);
       }
     })
-  }, [navigation])
+  }, [navigation]);
+
   return (
     <View style={{backgroundColor: 'red', flex: 1}}>
       <Button title="Tap me for second screen" onPress={() => navigation.navigate('Second')} />
       <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
-      <Animated.View style={{width, height: width, backgroundColor: 'black'}} />
+      <Animated.View style={reaStyle} />
     </View>
   );
 }
 function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Second'>}) {
-  const [width, setWidth] = React.useState(50);
+  const sv = useSharedValue(50);
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
+
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
-        console.warn("Second closing: " + event.nativeEvent.closing + " progress: " + event.nativeEvent.progress);
-        setWidth(event.nativeEvent.closing ? (event.nativeEvent.progress * 50 + 50) : ((1 - event.nativeEvent.progress) * 50 + 50));
+        'worklet'
+        sv.value = event.closing ? (event.progress * 50 + 50) : ((1 - event.progress) * 50 + 50);
       }
     })
-  }, [navigation])
+  }, [navigation]);
 
   return (
     <View style={{backgroundColor: 'yellow', flex: 1}}>
       <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
       <Button title="Tap me for second screen" onPress={() => navigation.push('Second')} />
       <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
-      <Animated.View style={{width, height: width, backgroundColor: 'black'}} />
+      <Animated.View style={reaStyle} />
     </View>
   );
 }
 
 
 const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Third'>}): JSX.Element => {
-  const [width, setWidth] = React.useState(50);
+  const sv = useSharedValue(50);
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
+
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
-        console.warn("dialog closing: " + event.nativeEvent.closing);
-        setWidth(event.nativeEvent.progress * 50 + 50);
+        'worklet'
+        sv.value = event.closing ? (event.progress * 50 + 50) : ((1 - event.progress) * 50 + 50);
       }
     })
-  }, [navigation])
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
         <Text style={styles.heading}>Hey! Sign up for our newsletter!</Text>
-        <Animated.View style={{width, height: width, backgroundColor: 'black'}} />
+        <Animated.View style={reaStyle} />
         <TouchableOpacity
           style={{...styles.button}}
           onPress={() => navigation.goBack()}>

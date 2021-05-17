@@ -61,10 +61,16 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
-export type TransitionProgressEvent = NativeSyntheticEvent<{
+type TransitionProgressEventBody = {
   progress: number;
   closing: boolean;
-}>;
+};
+
+// reanimated event uses only the body of the function, without `.nativeEvent` part
+export type TransitionProgressEvent = NativeSyntheticEvent<
+  TransitionProgressEventBody
+> &
+  TransitionProgressEventBody;
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;

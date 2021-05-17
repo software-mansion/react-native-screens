@@ -1,6 +1,7 @@
 import React from 'react';
 import {
-  Animated,
+  Animated as RNAnimated,
+  findNodeHandle,
   Image,
   ImageProps,
   Platform,
@@ -25,10 +26,17 @@ import {
   SearchBarProps,
 } from './types';
 
+import Animated from 'react-native-reanimated';
+
+import WorkletEventHandler from 'react-native-reanimated/src/reanimated2/WorkletEventHandler';
+
 // web implementation is taken from `index.tsx`
 const isPlatformSupported = Platform.OS === 'ios' || Platform.OS === 'android';
 
 let ENABLE_SCREENS = isPlatformSupported;
+
+// @ts-ignore types missing
+const isRea2Available = Animated.isConfigured?.();
 
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
@@ -100,40 +108,86 @@ const ScreensNativeModules = {
 
 class Screen extends React.Component<ScreenProps> {
   private ref: React.ElementRef<typeof View> | null = null;
+  private tag: number | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private eventHandler: any;
 
   setNativeProps(props: ScreenProps): void {
     this.ref?.setNativeProps(props);
   }
 
   setRef = (ref: React.ElementRef<typeof View> | null): void => {
+    this.tag = findNodeHandle(ref);
     this.ref = ref;
     this.props.onComponentRef?.(ref);
   };
+
+  componentWillUnmount() {
+    if (this.eventHandler) {
+      this.eventHandler.unregisterFromEvents();
+      this.eventHandler = null;
+    }
+  }
 
   render() {
     const { enabled = ENABLE_SCREENS } = this.props;
 
     if (enabled && isPlatformSupported) {
+      // @ts-ignore some types incompability
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
-        Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
+        Animated.createAnimatedComponent(
+          RNAnimated.createAnimatedComponent(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ScreensNativeModules.NativeScreen as any
+          )
+        );
 
       // Filter out active prop in this case because it is unused and
       // can cause problems depending on react-native version:
       // https://github.com/react-navigation/react-navigation/issues/4886
       // same for enabled prop
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      let { enabled, active, activityState, ...rest } = this.props;
+      let {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        enabled,
+        active,
+        activityState,
+        onTransitionProgress,
+        ...rest
+      } = this.props;
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
         );
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
+
+      if (
+        isRea2Available &&
+        this.eventHandler == null &&
+        // @ts-ignore no type for worklet
+        onTransitionProgress?.__worklet
+      ) {
+        this.eventHandler = new WorkletEventHandler(onTransitionProgress, [
+          // @ts-ignore wrong type
+          Platform.OS === 'android'
+            ? 'onTransitionProgress'
+            : 'topTransitionProgress',
+        ]);
+        this.eventHandler.registerForEvents(this.tag);
+      }
+
+      // @ts-ignore no type for worklet
+      if (onTransitionProgress?.__worklet) {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onTransitionProgress = () => {};
+      }
+
       return (
         <AnimatedNativeScreen
           {...rest}
           activityState={activityState}
+          onTransitionProgress={onTransitionProgress}
           ref={this.setRef}
         />
       );
@@ -154,7 +208,7 @@ class Screen extends React.Component<ScreenProps> {
         activityState = active !== 0 ? 2 : 0;
       }
       return (
-        <Animated.View
+        <RNAnimated.View
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
           ref={this.setRef}
           {...rest}
