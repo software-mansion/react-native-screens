@@ -9,6 +9,7 @@ import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 
 import java.util.ArrayList;
@@ -179,7 +180,17 @@ public class ScreenFragment extends Fragment {
     // We override Screen#onAnimationStart and an appropriate method of the StackFragment's root view
     // in order to achieve this.
     if (isResumed()) {
-      dispatchOnWillAppear();
+      // Android dispatches the animation start event for the fragment that is being added first
+      // however we want the one being dismissed first to match iOS. It also makes more sense from
+      // a navigation point of view to have the disappear event first.
+      // Since there are no explicit relationships between the fragment being added / removed the
+      // practical way to fix this is delaying dispatching the appear events at the end of the frame.
+      UiThreadUtil.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          dispatchOnWillAppear();
+        }
+      });
     } else {
       dispatchOnWillDisappear();
     }
@@ -190,7 +201,13 @@ public class ScreenFragment extends Fragment {
     // We override Screen#onAnimationEnd and an appropriate method of the StackFragment's root view
     // in order to achieve this.
     if (isResumed()) {
-      dispatchOnAppear();
+      // See the comment in onViewAnimationStart for why this event is delayed.
+      UiThreadUtil.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          dispatchOnAppear();
+        }
+      });
     } else {
       dispatchOnDisappear();
     }

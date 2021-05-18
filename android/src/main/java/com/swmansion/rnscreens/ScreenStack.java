@@ -170,8 +170,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
 
     boolean shouldUseOpenAnimation = true;
-    int transition;
-    Screen.StackAnimation stackAnimation = Screen.StackAnimation.DEFAULT;
+    int transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+    Screen.StackAnimation stackAnimation = null;
 
     if (!mStack.contains(newTop)) {
       // if new top screen wasn't on stack we do "open animation" so long it is not the very first screen on stack
@@ -182,6 +182,18 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         // otherwise it's open animation
         shouldUseOpenAnimation = mScreenFragments.contains(mTopScreen) || newTop.getScreen().getReplaceAnimation() != Screen.ReplaceAnimation.POP;
         stackAnimation = newTop.getScreen().getStackAnimation();
+      } else if (mTopScreen == null && newTop != null) {
+        // mTopScreen was not present before so newTop is the first screen added to a stack
+        // and we don't want the animation when it is entering, but we want to send the
+        // willAppear and Appear events to the user, which won't be sent by default if Screen's
+        // stack animation is not NONE (see check for stackAnimation in onCreateAnimation in ScreenStackFragment)
+        // We don't do it if the stack is nested since the parent will trigger these events in child
+        stackAnimation = Screen.StackAnimation.NONE;
+        if (newTop.getScreen().getStackAnimation() != Screen.StackAnimation.NONE
+                && !isNested()) {
+          newTop.dispatchOnWillAppear();
+          newTop.dispatchOnAppear();
+        }
       }
     } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
       // otherwise if we are performing top screen change we do "close animation"
@@ -190,27 +202,29 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
 
     // animation logic start
-    if (shouldUseOpenAnimation) {
-      transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
+    if (stackAnimation != null) {
+      if (shouldUseOpenAnimation) {
+        transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN;
 
-      switch (stackAnimation) {
-        case SLIDE_FROM_RIGHT:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
-          break;
-        case SLIDE_FROM_LEFT:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
-          break;
-      }
-    } else {
-      transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
+        switch (stackAnimation) {
+          case SLIDE_FROM_RIGHT:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+            break;
+          case SLIDE_FROM_LEFT:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
+            break;
+        }
+      } else {
+        transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
 
-      switch (stackAnimation) {
-        case SLIDE_FROM_RIGHT:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
-          break;
-        case SLIDE_FROM_LEFT:
-          getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
-          break;
+        switch (stackAnimation) {
+          case SLIDE_FROM_RIGHT:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
+            break;
+          case SLIDE_FROM_LEFT:
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+            break;
+        }
       }
     }
 
@@ -221,7 +235,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
     }
 
-    if (!isCustomAnimation(stackAnimation)) {
+    if (stackAnimation != null && !isCustomAnimation(stackAnimation)) {
       getOrCreateTransaction().setTransition(transition);
     }
     // animation logic end
