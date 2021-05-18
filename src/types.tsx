@@ -21,6 +21,7 @@ export type StackAnimationTypes =
   | 'fade'
   | 'flip'
   | 'none'
+  | 'simple_push'
   | 'slide_from_right'
   | 'slide_from_left';
 export type BlurEffectTypes =
