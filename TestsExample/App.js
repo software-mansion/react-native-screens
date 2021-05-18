@@ -11,6 +11,7 @@ import Test550 from './src/Test550';
 import Test556 from './src/Test556';
 import Test564 from './src/Test564';
 import Test577 from './src/Test577';
+import Test593 from './src/Test593';
 import Test619 from './src/Test619';
 import Test624 from './src/Test624';
 import Test640 from './src/Test640';
