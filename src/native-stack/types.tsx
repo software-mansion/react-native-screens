@@ -14,6 +14,7 @@ import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -242,11 +243,18 @@ export type NativeStackNavigationOptions = {
    */
   screenOrientation?: ScreenProps['screenOrientation'];
   /**
+   * Object in which you should pass props in order to render native iOS searchBar.
+   *
+   * @platform ios
+   */
+  searchBar?: SearchBarProps;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
    * - "fade" – fades screen in or out
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+   * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation

@@ -4,6 +4,8 @@ import {
   NativeTouchEvent,
   ViewProps,
   View,
+  TargetedEvent,
+  TextInputFocusEventData,
 } from 'react-native';
 
 export type StackPresentationTypes =
@@ -19,6 +21,7 @@ export type StackAnimationTypes =
   | 'fade'
   | 'flip'
   | 'none'
+  | 'simple_push'
   | 'slide_from_right'
   | 'slide_from_left';
 export type BlurEffectTypes =
@@ -52,7 +55,12 @@ export type ScreenOrientationTypes =
   | 'landscape'
   | 'landscape_left'
   | 'landscape_right';
-export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
+export type HeaderSubviewTypes =
+  | 'back'
+  | 'right'
+  | 'left'
+  | 'center'
+  | 'searchBar';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
@@ -212,6 +220,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   children?: React.ReactNode;
   /**
+   * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
+   */
+  color?: string;
+  /**
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
@@ -219,10 +231,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
   hidden?: boolean;
-  /**
-   * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
-   */
-  color?: string;
   /**
    * Boolean indicating whether to hide the back button in header.
    */
@@ -301,4 +309,53 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean indicating whether the navigation bar is translucent.
    */
   translucent?: boolean;
+}
+
+export interface SearchBarProps {
+  /**
+   * Indicates whether to to obscure the underlying content
+   */
+  obscureBackground?: boolean;
+  /**
+   * Indicates whether to hide the navigation bar
+   */
+  hideNavigationBar?: boolean;
+  /**
+   * Indicates whether to hide the search bar when scrolling
+   */
+  hideWhenScrolling?: boolean;
+  /**
+   * The auto-capitalization behavior
+   */
+  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  /**
+   * Text displayed when search field is empty
+   */
+  placeholder?: string;
+  /**
+   * The search field background color
+   */
+  barTintColor?: string;
+  /**
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
+   */
+  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  /**
+   * A callback that gets called when the cancel button is pressed
+   */
+  onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+   */
+  onSearchButtonPress?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>
+  ) => void;
+  /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when search bar has lost focus
+   */
+  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 }

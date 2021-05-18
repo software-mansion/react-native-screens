@@ -150,6 +150,7 @@
 #endif
     case RNSScreenStackAnimationNone:
     case RNSScreenStackAnimationDefault:
+    case RNSScreenStackAnimationSimplePush:
       // Default
       break;
   }
@@ -605,6 +606,7 @@ RCT_ENUM_CONVERTER(RNSScreenStackAnimation, (@{
                                                   @"none": @(RNSScreenStackAnimationNone),
                                                   @"fade": @(RNSScreenStackAnimationFade),
                                                   @"flip": @(RNSScreenStackAnimationFlip),
+                                                  @"simple_push": @(RNSScreenStackAnimationSimplePush),
                                                   @"slide_from_right": @(RNSScreenStackAnimationDefault),
                                                   @"slide_from_left": @(RNSScreenStackAnimationDefault),
                                                   }), RNSScreenStackAnimationDefault, integerValue)

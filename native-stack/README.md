@@ -188,6 +188,7 @@ How the given screen should appear/disappear when pushed or popped at the top of
 - `default` - Uses a platform default animation.
 - `fade` - Fades screen in or out.
 - `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only).
+- `simple_push` – performs a default animation, but without shadow and native header transition (iOS only)
 - `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
 - `none` - The screen appears/disappears without an animation.
@@ -262,6 +263,102 @@ Defaults to `auto`.
 #### `statusBarTranslucent` (Android only)
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
+
+### Search bar (iOS only)
+
+The search bar is just a `searchBar` property that can be specified in the navigator's `screenOptions` or an individual screen's `options`. Search bars are rarely static so normally it is controlled by passing an object to `searchBar` navigation option in the component's body.
+
+Search bar is only supported on iOS.
+
+Example: 
+
+```js
+React.useEffect(() => {
+  navigation.setOptions({
+    searchBar: {
+      // search bar options
+    }
+  });
+}, [navigation]);
+```
+
+Supported properties are described below.
+
+#### `autoCapitalize`
+
+Controls whether the text is automatically auto-capitalized as it is entered by the user.
+Possible values:
+
+- `none`
+- `words`
+- `sentences`
+- `characters`
+
+Defaults to `sentences`.
+
+#### `barTintColor`
+
+The search field background color.
+
+By default bar tint color is translucent.
+
+#### `hideNavigationBar`
+
+Boolean indicating whether to hide the navigation bar during searching.
+
+Defaults to `true`.
+
+#### `hideWhenScrolling`
+
+Boolean indicating whether to hide the search bar when scrolling.
+
+Defaults to `true`.
+
+####  `obscureBackground`
+
+Boolean indicating whether to obscure the underlying content with semi-transparent overlay.
+
+Defaults to `true`.
+
+#### `onBlur`
+
+A callback that gets called when search bar has lost focus.
+
+#### `onCancelButtonPress`
+
+A callback that gets called when the cancel button is pressed.
+
+#### `onChangeText`
+
+A callback that gets called when the text changes. It receives the current text value of the search bar.
+
+Example:
+
+```js
+const [search, setSearch] = React.useState('');
+
+React.useEffect(() => {
+  navigation.setOptions({
+    searchBar: {
+      onChangeText: (event) => setSearch(event.nativeEvent.text),
+    }
+  });
+}, [navigation]);
+```
+
+#### `onFocus`
+
+A callback that gets called when search bar has received focus.
+
+#### `onSearchButtonPress`
+
+A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+
+#### `placeholder`
+
+Text displayed when search field is empty.
+
+Defaults to an empty string.
 
 ### Events
 

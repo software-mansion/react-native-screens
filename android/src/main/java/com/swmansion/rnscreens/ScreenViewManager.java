@@ -61,7 +61,7 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
 
   @ReactProp(name = "stackAnimation")
   public void setStackAnimation(Screen view, String animation) {
-    if (animation == null || "default".equals(animation)) {
+    if (animation == null || "default".equals(animation) || "simple_push".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.DEFAULT);
     } else if ("none".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.NONE);
