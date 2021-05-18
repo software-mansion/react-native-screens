@@ -17,7 +17,7 @@ export default function App(): JSX.Element {
       <Stack.Navigator screenOptions=
       {{
         stackAnimation: 'simple_push',
-        direction: 'ltr'
+        direction: 'ltr',
         }}>
         <Stack.Screen name="First" component={First}/>
         <Stack.Screen
