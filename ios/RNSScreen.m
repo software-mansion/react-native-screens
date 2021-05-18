@@ -9,6 +9,12 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
 #import <React/RCTEventDispatcher.h>
+#import <React/RCTImageView.h>
+
+// same hack as in header
+@interface RCTImageView (Private)
+- (UIImage*)image;
+@end
 
 @interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
@@ -556,12 +562,16 @@
       [toViewController.view setNeedsLayout];
       [toViewController.view layoutIfNeeded];
       if (self->_closing) {
-        for (NSArray<UIView *> *sharedElement in self->_sharedElements) {
+        for (NSArray *sharedElement in self->_sharedElements) {
           UIView *endingView = sharedElement[1];
           UIView *snapshotView = sharedElement[2];
           [[transitionContext containerView] addSubview:snapshotView];
 //          snapshotView.frame = endingView.frame;
-          snapshotView.layer.backgroundColor = endingView.backgroundColor.CGColor;
+          [self copyValuesFromView:endingView toSnapshot:snapshotView];
+//          snapshotView.layer.backgroundColor = endingView.backgroundColor.CGColor;
+          NSDictionary *originalValues = sharedElement[3];
+          double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
+          snapshotView.alpha = endAlpha;
 //          snapshotView.layer.transform = endingView.layer.transform;
         }
       }
@@ -680,8 +690,16 @@
         @"convertedStartFrame": @(startFrame),
       };
       
-      snapshot = [[UIView alloc] initWithFrame:startFrame];
-      snapshot.layer.backgroundColor = start.backgroundColor.CGColor;
+      if ([start isKindOfClass:[RCTImageView class]]) {
+        snapshot = [[UIImageView alloc] initWithImage:((RCTImageView *) start).image];
+      } else {
+        snapshot = [[UIView alloc] initWithFrame:start.frame];
+      }
+      
+      snapshot.alpha = start.alpha;
+      
+      [self copyValuesFromView:start toSnapshot:snapshot];
+      
       start.alpha = 0;
       end.alpha = 0;
       if (start != nil && end != nil && snapshot != nil) {
@@ -691,6 +709,12 @@
   }
   return sharedElementsArray;
 }
+
+-(void)copyValuesFromView:(UIView *)view toSnapshot:(UIView *)snapshot
+{
+  snapshot.layer.backgroundColor = view.backgroundColor.CGColor;
+}
+
 
 
 @end

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
@@ -29,11 +30,17 @@ export default function App(): JSX.Element {
         }}>
         <Stack.Screen name="First" component={First} options={{sharedElements: [
           {fromID: 'view3000', toID: 'view3000Dest'},
+          {fromID: 'view3001', toID: 'view3001Dest'},
+          {fromID: 'view3002', toID: 'view3002Dest'},
           ]}}/>
         <Stack.Screen name="Second" component={Second} options={{headerShown: false, sharedElements: [
           {fromID: 'view3000', toID: 'view3000Dest'},
+          {fromID: 'view3001', toID: 'view3001Dest'},
+          {fromID: 'view3002', toID: 'view3002Dest'},
           ]}}/>
-        <Stack.Screen name="Third" component={Dialog} options={{stackPresentation: 'transparentModal'}}/>
+        <Stack.Screen name="Third" component={Dialog} options={{stackPresentation: 'modal', sharedElements: [
+          {fromID: 'view3000', toID: 'view3000Dest'},
+          ]}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -56,18 +63,22 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
       <View style={{width: 50, height: 50, backgroundColor: 'pink',
        // transform: [{rotate: '45deg'}]
        }} nativeID={"view3000"}/>
+      <View style={{width: 100, height: 200, backgroundColor: 'powderblue', opacity: 0.5,
+       // transform: [{rotate: '45deg'}]
+       }} nativeID={"view3001"}/>
+      <Image source={require('../assets/backButton.png')} resizeMode='stretch' nativeID={"view3002"}/>
     </View>
   );
 }
 function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Second'>}) {
-  const [width, setWidth] = React.useState(50);
-  React.useEffect(() => {
-    navigation.setOptions({
-      onTransitionProgress: (event) => {
-        setWidth(event.nativeEvent.progress * 50 + 50);
-      }
-    })
-  }, [navigation])
+  // const [width, setWidth] = React.useState(50);
+  // React.useEffect(() => {
+  //   navigation.setOptions({
+  //     onTransitionProgress: (event) => {
+  //       setWidth(event.nativeEvent.progress * 50 + 50);
+  //     }
+  //   })
+  // }, [navigation])
 
   return (
     <View style={{backgroundColor: 'yellow', flex: 1}}>
@@ -75,6 +86,8 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
       <Button title="Tap me for second screen" onPress={() => navigation.push('Second')} />
       <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
       <View style={{width: 50, height: 50, backgroundColor: 'blue'}} nativeID={"view3000Dest"}/>
+      <View style={{width: 120, height: 140, backgroundColor: 'green'}} nativeID={"view3001Dest"}/>
+      <Image source={require('../assets/backButton.png')} style={{width: 50, height: 50}} nativeID={"view3002Dest"}/>
       {/* <Animated.View style={{width, height: width, backgroundColor: 'purple'}} /> */}
     </View>
   );
@@ -101,6 +114,7 @@ const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
           onPress={() => navigation.goBack()}>
           <Text style={styles.buttonText}>Please no.</Text>
         </TouchableOpacity>
+        <View style={{width: 50, height: 50, backgroundColor: 'blue'}} nativeID={"view3000Dest"}/>
         <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
         <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
       </View>
