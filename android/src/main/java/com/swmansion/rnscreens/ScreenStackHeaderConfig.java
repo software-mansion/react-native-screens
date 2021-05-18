@@ -23,7 +23,6 @@ import androidx.fragment.app.Fragment;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.views.text.ReactFontManager;
 import com.facebook.react.views.text.ReactTypefaceUtils;
 
 import java.util.ArrayList;

@@ -80,6 +80,7 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+
 ### `stackAnimation`
 
 Allows for the customization of how the given screen should appear/disappear when pushed or popped at the top of the stack. The following values are currently supported:

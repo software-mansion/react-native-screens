@@ -147,7 +147,7 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarAnimation?: 'none' | 'fade' | 'slide';
   /**
-   * Sets the status bar color (similar to the `StatusBar` component) Defaults to initial status bar color.
+   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
    *
    * @platform android
    */

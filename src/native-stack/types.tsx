@@ -277,7 +277,7 @@ export type NativeStackNavigationOptions = {
    */
   statusBarAnimation?: ScreenProps['statusBarAnimation'];
   /**
-   * Sets the status bar color (similar to the `StatusBar` component) Defaults to initial status bar color.
+   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
    *
    * @platform android
    */
