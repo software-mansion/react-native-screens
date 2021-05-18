@@ -29,6 +29,7 @@ import Test726 from './src/Test726';
 import Test748 from './src/Test748';
 import Test750 from './src/Test750';
 import Test758 from './src/Test758';
+import Test761 from './src/Test761';
 import Test765 from './src/Test765';
 import Test780 from './src/Test780';
 import Test791 from './src/Test791';
