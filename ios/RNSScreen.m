@@ -3,6 +3,7 @@
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenWindowTraits.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
@@ -30,6 +31,10 @@
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
+    _hasStatusBarStyleSet = NO;
+    _hasStatusBarAnimationSet = NO;
+    _hasStatusBarHiddenSet = NO;
+    _hasOrientationSet = NO;
   }
 
   return self;
@@ -167,6 +172,38 @@
 {
   _replaceAnimation = replaceAnimation;
 }
+
+#if !TARGET_OS_TV
+- (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
+{
+  _hasStatusBarStyleSet = YES;
+  _statusBarStyle = statusBarStyle;
+  [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
+  [RNSScreenWindowTraits updateStatusBarAppearance];
+}
+
+- (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
+{
+  _hasStatusBarAnimationSet = YES;
+  _statusBarAnimation = statusBarAnimation;
+  [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
+}
+
+- (void)setStatusBarHidden:(BOOL)statusBarHidden
+{
+  _hasStatusBarHiddenSet = YES;
+  _statusBarHidden = statusBarHidden;
+  [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
+  [RNSScreenWindowTraits updateStatusBarAppearance];
+}
+
+- (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
+{
+  _hasOrientationSet = YES;
+  _screenOrientation = screenOrientation;
+  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
+}
+#endif
 
 - (UIView *)reactSuperview
 {
@@ -324,46 +361,42 @@
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitStyle includingModals:NO];
   return vc == self ? nil : vc;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
-  return [RNSScreenStackHeaderConfig statusBarStyleForRNSStatusBarStyle:config && config.statusBarStyle ? config.statusBarStyle : RNSStatusBarStyleAuto];
+  return [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:((RNSScreenView *)self.view).statusBarStyle];
 }
 
 - (UIViewController *)childViewControllerForStatusBarHidden
 {
-  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitHidden includingModals:NO];
   return vc == self ? nil : vc;
 }
 
 - (BOOL)prefersStatusBarHidden
 {
-  RNSScreenStackHeaderConfig *config = [self findScreenConfig];
-  return config && config.statusBarHidden ? config.statusBarHidden : NO;
+  return ((RNSScreenView *)self.view).statusBarHidden;
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
-  UIViewController *vc = [self findChildVCForConfigIncludingModals:NO];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitAnimation includingModals:NO];
   
   if ([vc isKindOfClass:[RNSScreen class]]) {
-    RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
-    return config && config.statusBarAnimation ? config.statusBarAnimation : UIStatusBarAnimationFade;
+    return ((RNSScreenView *)vc.view).statusBarAnimation;
   }
   return UIStatusBarAnimationFade;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-  UIViewController *vc = [self findChildVCForConfigIncludingModals:YES];
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
-    RNSScreenStackHeaderConfig *config = [(RNSScreen *)vc findScreenConfig];
-    return config && config.screenOrientation ? config.screenOrientation : UIInterfaceOrientationMaskAllButUpsideDown;
+    return ((RNSScreenView *)vc.view).screenOrientation;
   }
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
@@ -373,7 +406,7 @@
 // so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
 // if the returned vc is nil, it means none of children could provide config and self does not have config either,
 // so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
-- (UIViewController *)findChildVCForConfigIncludingModals:(BOOL)includingModals
+- (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
@@ -383,21 +416,21 @@
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
     // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
-    return !includingModals ? nil : [(RNSScreen *)lastViewController findChildVCForConfigIncludingModals:includingModals] ?: lastViewController;
+    return !includingModals ? nil : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals] ?: lastViewController;
   }
 
-  UIViewController *selfOrNil = [self findScreenConfig] != nil ? self : nil;
+  UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
   if (lastViewController == nil) {
     return selfOrNil;
   } else {
     if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide config,
-      // we recursively go into its findChildVCForConfig, and if one of the children has the config, we return it,
+      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the trait,
+      // we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return it,
       // otherwise we return self if this VC has config, and nil if it doesn't
       // we use `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
       UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
       if ([childScreen isKindOfClass:[RNSScreen class]]) {
-        return [(RNSScreen *)childScreen findChildVCForConfigIncludingModals:includingModals] ?: selfOrNil;
+        return [(RNSScreen *)childScreen findChildVCForConfigAndTrait:trait includingModals:includingModals] ?: selfOrNil;
       } else {
         return selfOrNil;
       }
@@ -407,17 +440,30 @@
     }
   }
 }
-#endif
 
-- (RNSScreenStackHeaderConfig *)findScreenConfig
+- (BOOL)hasTraitSet:(RNSWindowTrait)trait
 {
-  for (UIView *subview in self.view.reactSubviews) {
-    if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      return (RNSScreenStackHeaderConfig *)subview;
+  switch (trait) {
+    case RNSWindowTraitStyle: {
+      return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
+    }
+    case RNSWindowTraitAnimation: {
+      return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
+    }
+    case RNSWindowTraitHidden: {
+      return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
+    }
+    case RNSWindowTraitOrientation: {
+      return ((RNSScreenView *)self.view).hasOrientationSet;
+    }
+    default: {
+      RCTLogError(@"Unknown trait passed: %d", (int)trait);
     }
   }
-  return nil;
+  return NO;
 }
+
+#endif
 
 - (void)viewDidLayoutSubviews
 {
@@ -464,7 +510,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [RNSScreenStackHeaderConfig updateWindowTraits];
+  [RNSScreenWindowTraits updateWindowTraits];
   [((RNSScreenView *)self.view) notifyWillAppear];
 }
 
@@ -508,7 +554,7 @@
   [_previousFirstResponder becomeFirstResponder];
   _previousFirstResponder = nil;
   // the correct Screen for appearance is set after the transition, same for orientation.
-  [RNSScreenStackHeaderConfig updateWindowTraits];
+  [RNSScreenWindowTraits updateWindowTraits];
 }
 
 @end
@@ -528,6 +574,13 @@ RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+
+#if !TARGET_OS_TV
+RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
+RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
+RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
+RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
+#endif
 
 - (UIView *)view
 {
@@ -562,5 +615,37 @@ RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
                                                   @"push": @(RNSScreenReplaceAnimationPush),
                                                   @"pop": @(RNSScreenReplaceAnimationPop),
                                                   }), RNSScreenReplaceAnimationPop, integerValue)
+
+#if !TARGET_OS_TV
+RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
+  @"auto": @(RNSStatusBarStyleAuto),
+  @"inverted": @(RNSStatusBarStyleInverted),
+  @"light": @(RNSStatusBarStyleLight),
+  @"dark": @(RNSStatusBarStyleDark),
+  }), RNSStatusBarStyleAuto, integerValue)
+
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
+{
+  json = [self NSString:json];
+  if ([json isEqualToString:@"default"]) {
+    return UIInterfaceOrientationMaskAllButUpsideDown;
+  } else if ([json isEqualToString:@"all"]) {
+    return UIInterfaceOrientationMaskAll;
+  } else if ([json isEqualToString:@"portrait"]) {
+    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"portrait_up"]) {
+    return UIInterfaceOrientationMaskPortrait;
+  } else if ([json isEqualToString:@"portrait_down"]) {
+    return UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"landscape"]) {
+    return UIInterfaceOrientationMaskLandscape;
+  } else if ([json isEqualToString:@"landscape_left"]) {
+    return UIInterfaceOrientationMaskLandscapeLeft;
+  } else if ([json isEqualToString:@"landscape_right"]) {
+    return UIInterfaceOrientationMaskLandscapeRight;
+  }
+  return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+#endif
 
 @end

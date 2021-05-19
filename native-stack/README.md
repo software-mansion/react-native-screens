@@ -217,34 +217,15 @@ A string that can be used as a fallback for `headerTitle`.
 
 ### Status bar and orientation managment
 
-With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. On Android, the screen orientation can be managed by `FragmentActivity`. On iOS, it requires:
+With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. On Android, the status bar and screen orientation can be managed by `FragmentActivity`. On iOS, it requires:
 
 1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
 2. For both status bar and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
 
-On Android, no additional setup is required.
-
-#### `statusBarStyle`
-
-Sets the status bar color (similar to the `StatusBar` component). Possible values: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. Only supported on iOS.
-
-Defaults to `auto`.
-
-#### `statusBarAnimation`
-
-Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`. Only supported on iOS.
-
-Defaults to `fade`.
-
-#### `statusBarHidden`
-
-Boolean saying if the status bar for this screen is hidden. Only supported on iOS.
-
-Defaults to `false`.
-
+On Android, no additional setup is required, although, you should keep in mind that once you set the orientation or status bar props, `react-native-screens` will manage them on every screen, so you shouldn't use other methods of manipulating them then.
 #### `screenOrientation`
 
-Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
+Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
 
 - `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
 - `all`
@@ -256,6 +237,32 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default`.
+
+#### `statusBarAnimation`
+
+Sets the status bar animation (similar to the `StatusBar` component). Possible values: `fade`, `none`, `slide`. On Android, this prop considers the transition of changing status bar color (see https://reactnative.dev/docs/statusbar#animated). There will be no animation if `none` provided.
+
+Defaults to `fade` on iOS and `none` on Android.
+
+#### `statusBarColor` (Android only)
+
+Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+
+#### `statusBarHidden`
+
+Boolean saying if the status bar for this screen is hidden.
+
+Defaults to `false`.
+
+#### `statusBarStyle`
+
+Sets the status bar color (similar to the `StatusBar` component). On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
+
+Defaults to `auto`.
+
+#### `statusBarTranslucent` (Android only)
+
+Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
 ### Search bar (iOS only)
 

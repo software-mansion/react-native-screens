@@ -1,6 +1,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenWindowTraits.h"
 #import "RNSScreenStackAnimator.h"
 
 #import <React/RCTBridge.h>
@@ -105,6 +106,7 @@
   if (self.onFinishTransitioning) {
     self.onFinishTransitioning(nil);
   }
+  [RNSScreenWindowTraits updateWindowTraits];
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
@@ -115,7 +117,7 @@
   if ([screenView isKindOfClass:[RNSScreenView class]]) {
     // we trigger the update of status bar's appearance here because there is no other lifecycle method
     // that can handle it when dismissing a modal, the same for orientation
-    [RNSScreenStackHeaderConfig updateWindowTraits];
+    [RNSScreenWindowTraits updateWindowTraits];
     [_presentedModals removeObject:presentationController.presentedViewController];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
@@ -302,7 +304,7 @@
     }
     // we trigger the update of orientation here because, when dismissing the modal from JS,
     // neither `viewWillAppear` nor `presentationControllerDidDismiss` are called, same for status bar.
-    [RNSScreenStackHeaderConfig updateWindowTraits];
+    [RNSScreenWindowTraits updateWindowTraits];
   };
 
   void (^finish)(void) = ^{

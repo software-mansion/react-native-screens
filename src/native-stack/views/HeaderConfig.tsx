@@ -41,11 +41,7 @@ export default function HeaderConfig({
   headerTopInsetEnabled = true,
   headerTranslucent,
   route,
-  screenOrientation,
   searchBar,
-  statusBarAnimation,
-  statusBarHidden,
-  statusBarStyle,
   title,
 }: Props): JSX.Element {
   const { colors } = useTheme();
@@ -83,10 +79,6 @@ export default function HeaderConfig({
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleFontWeight={headerLargeTitleStyle.fontWeight}
       largeTitleHideShadow={headerLargeTitleHideShadow}
-      screenOrientation={screenOrientation}
-      statusBarAnimation={statusBarAnimation}
-      statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle}
       title={
         headerTitle !== undefined
           ? headerTitle

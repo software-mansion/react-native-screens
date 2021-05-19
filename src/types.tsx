@@ -107,6 +107,19 @@ export interface ScreenProps extends ViewProps {
    */
   replaceAnimation?: ScreenReplaceTypes;
   /**
+   * In which orientation should the screen appear.
+   * The following values are currently supported:
+   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
+   * - "all" – all orientations are permitted
+   * - "portrait" – portrait orientations are permitted
+   * - "portrait_up" – right-side portrait orientation is permitted
+   * - "portrait_down" – upside-down portrait orientation is permitted
+   * - "landscape" – landscape orientations are permitted
+   * - "landscape_left" – landscape-left orientation is permitted
+   * - "landscape_right" – landscape-right orientation is permitted
+   */
+  screenOrientation?: ScreenOrientationTypes;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
@@ -129,6 +142,30 @@ export interface ScreenProps extends ViewProps {
    * - "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS and will fallback to "modal" on Android.
    */
   stackPresentation?: StackPresentationTypes;
+  /**
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   */
+  statusBarAnimation?: 'none' | 'fade' | 'slide';
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+   *
+   * @platform android
+   */
+  statusBarColor?: string;
+  /**
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
+   */
+  statusBarHidden?: boolean;
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
+   */
+  statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
+  /**
+   * Sets the translucency of the status bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  statusBarTranslucent?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {
@@ -239,36 +276,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
   largeTitleHideShadow?: boolean;
-  /**
-   * In which orientation should the screen appear.
-   * The following values are currently supported:
-   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
-   * - "all" – all orientations are permitted
-   * - "portrait" – portrait orientations are permitted
-   * - "portrait_up" – right-side portrait orientation is permitted
-   * - "portrait_down" – upside-down portrait orientation is permitted
-   * - "landscape" – landscape orientations are permitted
-   * - "landscape_left" – landscape-left orientation is permitted
-   * - "landscape_right" – landscape-right orientation is permitted
-   */
-  screenOrientation?: ScreenOrientationTypes;
-  /**
-   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
-   */
-  statusBarAnimation?: 'none' | 'fade' | 'slide';
-  /**
-   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
-   */
-  statusBarHidden?: boolean;
-  /** Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
-   */
-  statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
   /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */

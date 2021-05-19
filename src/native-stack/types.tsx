@@ -241,7 +241,7 @@ export type NativeStackNavigationOptions = {
    * - "landscape_left" – landscape-left orientation is permitted
    * - "landscape_right" – landscape-right orientation is permitted
    */
-  screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
+  screenOrientation?: ScreenProps['screenOrientation'];
   /**
    * Object in which you should pass props in order to render native iOS searchBar.
    *
@@ -273,22 +273,29 @@ export type NativeStackNavigationOptions = {
    */
   stackPresentation?: ScreenProps['stackPresentation'];
   /**
-   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    */
-  statusBarAnimation?: ScreenStackHeaderConfigProps['statusBarAnimation'];
+  statusBarAnimation?: ScreenProps['statusBarAnimation'];
   /**
-   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
    *
-   * @platform ios
+   * @platform android
+   */
+  statusBarColor?: string;
+  /**
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */
   statusBarHidden?: boolean;
-  /** Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
    */
-  statusBarStyle?: ScreenStackHeaderConfigProps['statusBarStyle'];
+  statusBarStyle?: ScreenProps['statusBarStyle'];
+  /**
+   * Sets the translucency of the status bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  statusBarTranslucent?: boolean;
   /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */

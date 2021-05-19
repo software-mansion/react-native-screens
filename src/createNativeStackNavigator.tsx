@@ -203,10 +203,6 @@ class StackView extends React.Component<Props> {
       hideShadow,
       largeTitle,
       largeTitleHideShadow,
-      screenOrientation,
-      statusBarAnimation,
-      statusBarHidden,
-      statusBarStyle,
       title,
       translucent,
     } = options;
@@ -238,10 +234,6 @@ class StackView extends React.Component<Props> {
       largeTitleFontSize: headerLargeTitleStyle?.fontSize,
       largeTitleFontWeight: headerLargeTitleStyle?.fontWeight,
       largeTitleHideShadow: largeTitleHideShadow || headerLargeTitleHideShadow,
-      screenOrientation,
-      statusBarAnimation,
-      statusBarHidden,
-      statusBarStyle,
       title,
       titleColor: headerTitleStyle?.color || headerTintColor,
       titleFontFamily: headerTitleStyle?.fontFamily,
@@ -460,6 +452,12 @@ class StackView extends React.Component<Props> {
             ? true
             : options.gestureEnabled
         }
+        screenOrientation={options.screenOrientation}
+        statusBarAnimation={options.statusBarAnimation}
+        statusBarColor={options.statusBarColor}
+        statusBarHidden={options.statusBarHidden}
+        statusBarStyle={options.statusBarStyle}
+        statusBarTranslucent={options.statusBarTranslucent}
         onAppear={() => this.onAppear(route, descriptor)}
         onWillAppear={() => options?.onWillAppear?.()}
         onWillDisappear={() => options?.onWillDisappear?.()}
