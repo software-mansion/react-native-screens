@@ -1,16 +1,15 @@
 package com.swmansion.rnscreens;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 
 import java.util.ArrayList;
@@ -64,6 +63,52 @@ public class ScreenFragment extends Fragment {
 
   public Screen getScreen() {
     return mScreenView;
+  }
+
+  public void onContainerUpdate() {
+    if (!hasChildScreenWithConfig(getScreen())) {
+      // if there is no child with config, we look for a parent with config to set the orientation
+      ScreenStackHeaderConfig config = findHeaderConfig();
+      if (config != null && config.getScreenFragment().getActivity() != null) {
+        config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
+      }
+    }
+  }
+
+  private @Nullable ScreenStackHeaderConfig findHeaderConfig() {
+    ViewParent parent = getScreen().getContainer();
+    while (parent != null) {
+      if (parent instanceof Screen) {
+        ScreenStackHeaderConfig headerConfig = ((Screen) parent).getHeaderConfig();
+        if (headerConfig != null) {
+          return headerConfig;
+        }
+      }
+      parent = parent.getParent();
+    }
+    return null;
+  }
+
+  protected boolean hasChildScreenWithConfig(Screen screen) {
+    if (screen == null) {
+      return false;
+    }
+    for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
+      // we check only the top screen for header config
+      Screen topScreen = sc.getTopScreen();
+      ScreenStackHeaderConfig headerConfig = topScreen != null ? topScreen.getHeaderConfig(): null;
+      if (headerConfig != null) {
+        return true;
+      }
+      if (hasChildScreenWithConfig(topScreen)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public List<ScreenContainer> getChildScreenContainers() {
+    return mChildScreenContainers;
   }
 
   protected void dispatchOnWillAppear() {
@@ -135,7 +180,17 @@ public class ScreenFragment extends Fragment {
     // We override Screen#onAnimationStart and an appropriate method of the StackFragment's root view
     // in order to achieve this.
     if (isResumed()) {
-      dispatchOnWillAppear();
+      // Android dispatches the animation start event for the fragment that is being added first
+      // however we want the one being dismissed first to match iOS. It also makes more sense from
+      // a navigation point of view to have the disappear event first.
+      // Since there are no explicit relationships between the fragment being added / removed the
+      // practical way to fix this is delaying dispatching the appear events at the end of the frame.
+      UiThreadUtil.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          dispatchOnWillAppear();
+        }
+      });
     } else {
       dispatchOnWillDisappear();
     }
@@ -146,7 +201,13 @@ public class ScreenFragment extends Fragment {
     // We override Screen#onAnimationEnd and an appropriate method of the StackFragment's root view
     // in order to achieve this.
     if (isResumed()) {
-      dispatchOnAppear();
+      // See the comment in onViewAnimationStart for why this event is delayed.
+      UiThreadUtil.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          dispatchOnAppear();
+        }
+      });
     } else {
       dispatchOnDisappear();
     }

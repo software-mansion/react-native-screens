@@ -1,5 +1,6 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreen.h"
+#import "RNSSearchBar.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
@@ -39,6 +40,13 @@
     _bridge = bridge;
   }
   return self;
+}
+
+- (void) reactSetFrame:(CGRect)frame
+{
+  // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
+  // makes UINavigationBar the only one to control the position of header content.
+  [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 }
 
 @end
@@ -97,7 +105,9 @@
     nextVC = nav.topViewController;
   }
 
-  if (vc != nil && nextVC == vc) {
+  BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
+  // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
+  if (vc != nil && (nextVC == vc || isInFullScreenModal)) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller
                                           withConfig:self
                                             animated:YES];
@@ -239,7 +249,8 @@
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *source = imageView.imageSources[0];
-        image = [subview.bridge.imageLoader.imageCache
+        RCTImageLoader *imageloader = [subview.bridge moduleForClass:[RCTImageLoader class]];
+        image = [imageloader.imageCache
                  imageForUrl:source.request.URL.absoluteString
                  size:source.size
                  scale:source.scale
@@ -386,15 +397,15 @@ API_AVAILABLE(ios(13.0)){
   }
 #endif
 
-  if (shouldHide) {
-    return;
-  }
-
   if (config.direction == UISemanticContentAttributeForceLeftToRight || config.direction == UISemanticContentAttributeForceRightToLeft) {
     navctr.view.semanticContentAttribute = config.direction;
     navctr.navigationBar.semanticContentAttribute = config.direction;
   }
 
+  if (shouldHide) {
+    return;
+  }
+  
   navitem.title = config.title;
 #if !TARGET_OS_TV
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize) {
@@ -481,6 +492,15 @@ API_AVAILABLE(ios(13.0)){
       case RNSScreenStackHeaderSubviewTypeTitle: {
         navitem.titleView = subview;
         break;
+      }
+      case RNSScreenStackHeaderSubviewTypeSearchBar: {
+        if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
+          if (@available(iOS 11.0, *)) {
+            RNSSearchBar *searchBar = subview.subviews[0];
+            navitem.searchController = searchBar.controller;
+            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+          }
+        }
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
         break;
@@ -790,6 +810,7 @@ RCT_ENUM_CONVERTER(RNSScreenStackHeaderSubviewType, (@{
   @"right": @(RNSScreenStackHeaderSubviewTypeRight),
   @"title": @(RNSScreenStackHeaderSubviewTypeTitle),
   @"center": @(RNSScreenStackHeaderSubviewTypeCenter),
+  @"searchBar": @(RNSScreenStackHeaderSubviewTypeSearchBar),
   }), RNSScreenStackHeaderSubviewTypeTitle, integerValue)
 
 RCT_ENUM_CONVERTER(UISemanticContentAttribute, (@{

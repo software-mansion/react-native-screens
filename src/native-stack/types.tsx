@@ -7,12 +7,14 @@ import {
   StackNavigationState,
   StackRouterOptions,
   StackActionHelpers,
+  RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -46,12 +48,22 @@ export type NativeStackNavigationProp<
 > &
   StackActionHelpers<ParamList>;
 
+export type NativeStackScreenProps<
+  ParamList extends ParamListBase,
+  RouteName extends keyof ParamList = string
+> = {
+  navigation: NativeStackNavigationProp<ParamList, RouteName>;
+  route: RouteProp<ParamList, RouteName>;
+};
+
 export type NativeStackNavigationHelpers = NavigationHelpers<
   ParamListBase,
   NativeStackNavigationEventMap
 >;
 
-export type NativeStackNavigationConfig = Record<string, unknown>;
+// We want it to be an empty object beacuse navigator does not have any additional config
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
@@ -111,9 +123,6 @@ export type NativeStackNavigationOptions = {
   headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
-   * Only supported on Android.
-   *
-   * @platform android
    */
   headerHideBackButton?: boolean;
   /**
@@ -191,7 +200,7 @@ export type NativeStackNavigationOptions = {
    * Style object for header title. Supported properties:
    * - fontFamily
    * - fontSize
-   * - fontWeight (iOS only)
+   * - fontWeight
    * - color
    */
   headerTitleStyle?: {
@@ -223,7 +232,7 @@ export type NativeStackNavigationOptions = {
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
-   * - "default" - resolves to "all" without "portrait_down".
+   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
    * - "all" – all orientations are permitted
    * - "portrait" – portrait orientations are permitted
    * - "portrait_up" – right-side portrait orientation is permitted
@@ -234,11 +243,18 @@ export type NativeStackNavigationOptions = {
    */
   screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
   /**
+   * Object in which you should pass props in order to render native iOS searchBar.
+   *
+   * @platform ios
+   */
+  searchBar?: SearchBarProps;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
    * - "fade" – fades screen in or out
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+   * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
    * - `slide_from_bottom` – performs a slide from bottom animation (iOS only)
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
