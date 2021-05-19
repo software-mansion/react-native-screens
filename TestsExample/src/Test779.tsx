@@ -16,7 +16,28 @@ function HomeScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) {
 
 function DetailsScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) {
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: 'red'}}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <Button
+          onPress={() => {
+            navigation.goBack()
+          }}
+          title="Go back"
+        />
+        <Button
+          onPress={() => {
+            navigation.navigate('Profile');
+          }}
+          title="Go to profile"
+        />
+      </View>
+    </ScrollView>
+  );
+}
+
+function ProfileScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) {
+  return (
+    <ScrollView style={{backgroundColor: 'blue'}}>
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Button
           onPress={() => {
@@ -33,9 +54,12 @@ const RootStack = createNativeStackNavigator();
 
 function RootStackScreen() {
   return (
-    <RootStack.Navigator screenOptions={{stackAnimation: "slide_from_bottom"}}>
+    <RootStack.Navigator 
+      screenOptions={{stackAnimation: "slide_from_bottom", gestureEnabled: false, headerShown: false}}
+    >
       <RootStack.Screen name="Home" component={HomeScreen}/>
-      <RootStack.Screen name="Details" component={DetailsScreen} />
+      <RootStack.Screen name="Details" component={DetailsScreen} options={{headerShown: true}}/>
+      <RootStack.Screen name="Profile" component={ProfileScreen} />
     </RootStack.Navigator>
   );
 }

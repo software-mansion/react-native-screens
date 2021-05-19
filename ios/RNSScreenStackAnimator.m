@@ -51,8 +51,8 @@
       [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     } else if (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone) {
       [self animateFadeWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
-    } else if (screen.stackAnimation == RNSScreenStackAnimationUpDown) {
-      [self animateTopDownWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
+    } else if (screen.stackAnimation == RNSScreenStackAnimationSlideFromBottom) {
+      [self animateSlideFromBottomWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     }
   }
 }
@@ -83,7 +83,7 @@
     }];
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
-    [[transitionContext containerView] insertSubview:toViewController.view belowSubview: fromViewController.view];
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
       
     void (^animationBlock)(void) = ^{
         toViewController.view.transform = CGAffineTransformIdentity;
@@ -132,13 +132,13 @@
   }
 }
 
-- (void)animateTopDownWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+- (void)animateSlideFromBottomWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
                                     toVC:(UIViewController *)toViewController fromVC:(UIViewController *)fromViewController
 {
-  CGAffineTransform topDownTransform = CGAffineTransformMakeTranslation(0, transitionContext.containerView.bounds.size.height);
+  CGAffineTransform topBottomTransform = CGAffineTransformMakeTranslation(0, transitionContext.containerView.bounds.size.height);
 
    if (_operation == UINavigationControllerOperationPush) {
-     toViewController.view.transform = topDownTransform;
+     toViewController.view.transform = topBottomTransform;
      [[transitionContext containerView] addSubview:toViewController.view];
      [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
        fromViewController.view.transform = CGAffineTransformIdentity;
@@ -149,10 +149,10 @@
      }];
    } else if (_operation == UINavigationControllerOperationPop) {
      toViewController.view.transform = CGAffineTransformIdentity;
-     [[transitionContext containerView] insertSubview:toViewController.view belowSubview: fromViewController.view];
+     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
      [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
          toViewController.view.transform = CGAffineTransformIdentity;
-         fromViewController.view.transform = topDownTransform;
+         fromViewController.view.transform = topBottomTransform;
      } completion:^(BOOL finished) {
        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
      }];
