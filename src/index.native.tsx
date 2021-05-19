@@ -10,6 +10,9 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+// @ts-ignore Getting private component
+// eslint-disable-next-line import/default
+import processColor from 'react-native/Libraries/StyleSheet/processColor';
 
 import {
   StackPresentationTypes,
@@ -118,21 +121,32 @@ class Screen extends React.Component<ScreenProps> {
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
 
-      // Filter out active prop in this case because it is unused and
-      // can cause problems depending on react-native version:
-      // https://github.com/react-navigation/react-navigation/issues/4886
-      // same for enabled prop
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      let { enabled, active, activityState, ...rest } = this.props;
+      let {
+        // Filter out active prop in this case because it is unused and
+        // can cause problems depending on react-native version:
+        // https://github.com/react-navigation/react-navigation/issues/4886
+        // same for enabled prop
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        enabled,
+        active,
+        activityState,
+        statusBarColor,
+        ...rest
+      } = this.props;
+
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
         );
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
+
+      const processedColor = processColor(statusBarColor);
+
       return (
         <AnimatedNativeScreen
           {...rest}
+          statusBarColor={processedColor}
           activityState={activityState}
           ref={this.setRef}
         />

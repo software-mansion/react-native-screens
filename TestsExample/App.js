@@ -39,6 +39,7 @@ import Test830 from './src/Test830';
 import Test831 from './src/Test831';
 import Test844 from './src/Test844';
 import Test852 from './src/Test852';
+import Test860 from './src/Test860';
 import Test861 from './src/Test861';
 import Test865 from './src/Test865';
 import Test881 from './src/Test881';

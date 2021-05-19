@@ -110,7 +110,13 @@ export default function NativeStackView({
           gestureEnabled,
           headerShown,
           replaceAnimation = 'pop',
+          screenOrientation,
           stackAnimation,
+          statusBarAnimation,
+          statusBarColor,
+          statusBarHidden,
+          statusBarStyle,
+          statusBarTranslucent,
         } = options;
 
         let { stackPresentation = 'push' } = options;
@@ -155,8 +161,14 @@ export default function NativeStackView({
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
             replaceAnimation={replaceAnimation}
-            stackPresentation={stackPresentation}
+            screenOrientation={screenOrientation}
             stackAnimation={stackAnimation}
+            stackPresentation={stackPresentation}
+            statusBarAnimation={statusBarAnimation}
+            statusBarColor={statusBarColor}
+            statusBarHidden={statusBarHidden}
+            statusBarStyle={statusBarStyle}
+            statusBarTranslucent={statusBarTranslucent}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',

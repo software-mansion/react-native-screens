@@ -68,6 +68,8 @@ const Inner = () => (
 
 function Home({navigation}: Props) {
   const [yes, setYes] = React.useState(true);
+  const [hidden, setHidden] = React.useState(true);
+  const [animation, setAnimation] = React.useState(true);
   return (
     <ScrollView
       style={{backgroundColor: 'rgba(255,255,0,0.5)'}}
@@ -93,6 +95,24 @@ function Home({navigation}: Props) {
             statusBarStyle: yes ? 'light' : 'dark',
           });
           setYes(!yes);
+        }}
+      />
+      <Button
+        title="status bar animation"
+        onPress={() => {
+          navigation.setOptions({
+            statusBarAnimation: animation ? 'fade' : 'none',
+          });
+          setAnimation(!animation);
+        }}
+      />
+      <Button
+        title="status bar hidden"
+        onPress={() => {
+          navigation.setOptions({
+            statusBarHidden: hidden,
+          });
+          setHidden(!hidden);
         }}
       />
       <Button
