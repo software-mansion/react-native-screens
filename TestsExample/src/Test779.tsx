@@ -1,16 +1,18 @@
 import React from 'react';
-import {Button, ScrollView, View} from 'react-native';
+import {Button, ScrollView, View, SafeAreaView} from 'react-native';
 import {NavigationContainer, NavigationProp, ParamListBase} from '@react-navigation/native';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 
 function HomeScreen({navigation}: {navigation: NavigationProp<ParamListBase>}) {
   return (
-    <Button
-      onPress={() => {
-        navigation.navigate('Details');
-      }}
-      title="Go to details"
-    />
+    <SafeAreaView>
+      <Button
+        onPress={() => {
+          navigation.navigate('Details');
+        }}
+        title="Go to details"
+      />
+    </SafeAreaView>
   );
 }
 
