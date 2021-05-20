@@ -210,7 +210,7 @@ Controls whether the stack should be in `rtl` or `ltr` form.
 
 #### `disableBackButtonMenu`
 
-Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. It is `true` by default since its behavior is currently buggy. Only supported on iOS.
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. Only supported on iOS.
 
 ### `hidden`
 

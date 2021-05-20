@@ -84,7 +84,7 @@ export type NativeStackNavigationOptions = {
    */
   direction?: 'rtl' | 'ltr';
   /**
-   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. It is `true` by default since its behavior is currently buggy.
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
    * @platform ios
    */
   disableBackButtonMenu?: boolean;

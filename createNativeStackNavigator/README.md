@@ -83,7 +83,7 @@ String that applies `rtl` or `ltr` form to the stack. On Android, you have to ad
 
 #### `disableBackButtonMenu`
 
-Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. It is `true` by default since its behavior is currently buggy. Only supported on iOS.
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. Only supported on iOS.
 
 #### `gestureEnabled`
 

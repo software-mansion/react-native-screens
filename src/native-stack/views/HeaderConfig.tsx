@@ -21,7 +21,7 @@ export default function HeaderConfig({
   backButtonImage,
   backButtonInCustomView,
   direction,
-  disableBackButtonMenu = true,
+  disableBackButtonMenu,
   headerBackTitle,
   headerBackTitleStyle = {},
   headerBackTitleVisible = true,
