@@ -523,7 +523,7 @@
   if (!self.transitionCoordinator.isInteractive) {
     // user might have long pressed ios 14 back button item,
     // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
-    // We calculating it by substracting the difference between the index of currently displayed screen
+    // We calculate it by substracting the difference between the index of currently displayed screen
     // and the index of the target screen, which is the view of topViewController at this point.
     // If the values is lower than 1, it means we are navigating forward
     int selfIndex = (int)[[(RNSScreenStackView *) self.navigationController.delegate reactSubviews] indexOfObject:self.view];

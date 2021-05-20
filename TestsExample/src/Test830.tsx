@@ -40,10 +40,7 @@ const Stack = createNativeStackNavigator();
 
 const App = (): JSX.Element => (
   <NavigationContainer>
-    <Stack.Navigator
-      screenOptions={{
-        disableBackButtonMenu: false,
-      }}>
+    <Stack.Navigator>
       <Stack.Screen name="Details" component={DetailsScreen} />
     </Stack.Navigator>
   </NavigationContainer>
