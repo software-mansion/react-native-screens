@@ -208,6 +208,10 @@ Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenSt
 
 Controls whether the stack should be in `rtl` or `ltr` form.
 
+#### `disableBackButtonMenu`
+
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. Only supported on iOS.
+
 ### `hidden`
 
 When set to `true` the header will be hidden while the parent `Screen` is on the top of the stack. The default value is `false`.

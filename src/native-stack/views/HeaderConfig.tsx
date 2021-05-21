@@ -21,6 +21,7 @@ export default function HeaderConfig({
   backButtonImage,
   backButtonInCustomView,
   direction,
+  disableBackButtonMenu,
   headerBackTitle,
   headerBackTitleStyle = {},
   headerBackTitleVisible = true,
@@ -69,6 +70,7 @@ export default function HeaderConfig({
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
       direction={direction}
+      disableBackButtonMenu={disableBackButtonMenu}
       hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}

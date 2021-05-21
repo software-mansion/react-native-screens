@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   NativeSyntheticEvent,
-  NativeTouchEvent,
   Platform,
   StyleSheet,
   Animated,
   StyleProp,
   TextStyle,
   ViewStyle,
+  TargetedEvent,
 } from 'react-native';
 import {
   Screen,
@@ -63,6 +63,7 @@ function renderComponentOrThunk(componentOrThunk: unknown, props: unknown) {
 type NativeStackRemoveNavigationAction = {
   type: typeof REMOVE_ACTION;
   immediate: boolean;
+  dismissCount: number;
   key?: string;
 };
 
@@ -135,12 +136,16 @@ type Props = {
   screenProps: unknown;
 };
 class StackView extends React.Component<Props> {
-  private removeScene = (route: NavigationRoute<NavigationParams>) => {
+  private removeScene = (
+    route: NavigationRoute<NavigationParams>,
+    dismissCount: number
+  ) => {
     this.props.navigation.dispatch({
       // @ts-ignore special navigation action for native stack
       type: REMOVE_ACTION,
       immediate: true,
       key: route.key,
+      dismissCount,
     });
   };
 
@@ -158,7 +163,7 @@ class StackView extends React.Component<Props> {
   };
 
   private onFinishTransitioning:
-    | ((e: NativeSyntheticEvent<NativeTouchEvent>) => void)
+    | ((e: NativeSyntheticEvent<TargetedEvent>) => void)
     | undefined = () => {
     const { routes } = this.props.navigation.state;
     const lastRoute = routes?.length && routes[routes.length - 1];
@@ -185,6 +190,7 @@ class StackView extends React.Component<Props> {
     const {
       backButtonInCustomView,
       direction,
+      disableBackButtonMenu,
       headerBackTitle,
       headerBackTitleStyle,
       headerBackTitleVisible,
@@ -221,6 +227,7 @@ class StackView extends React.Component<Props> {
       backTitleFontSize: headerBackTitleStyle?.fontSize,
       color: headerTintColor,
       direction,
+      disableBackButtonMenu,
       topInsetEnabled: headerTopInsetEnabled,
       hideBackButton: headerHideBackButton,
       hideShadow: headerHideShadow || hideShadow,
@@ -462,7 +469,9 @@ class StackView extends React.Component<Props> {
         onWillAppear={() => options?.onWillAppear?.()}
         onWillDisappear={() => options?.onWillDisappear?.()}
         onDisappear={() => options?.onDisappear?.()}
-        onDismissed={() => this.removeScene(route)}>
+        onDismissed={(e) =>
+          this.removeScene(route, e.nativeEvent.dismissCount)
+        }>
         {isHeaderInPush && this.renderHeaderConfig(index, route, descriptor)}
         {this.maybeRenderNestedStack(
           isHeaderInModal,
@@ -526,7 +535,7 @@ function createStackNavigator(
     state
   ) => {
     if (action.type === REMOVE_ACTION) {
-      const { key, immediate } = action;
+      const { key, immediate, dismissCount } = action;
       let backRouteIndex = state.index;
       if (key) {
         const backRoute = state.routes.find(
@@ -537,7 +546,15 @@ function createStackNavigator(
 
       if (backRouteIndex > 0) {
         const newRoutes = [...state.routes];
-        newRoutes.splice(backRouteIndex, 1);
+        if (dismissCount > 1) {
+          // when dismissing with iOS 14 native header back button, we can pop more than 1 screen at a time
+          // and the `backRouteIndex` is the index of the previous screen. Since we are starting already
+          // on the previous screen, we add 1 to start.
+          newRoutes.splice(backRouteIndex - dismissCount + 1, dismissCount);
+        } else {
+          newRoutes.splice(backRouteIndex, 1);
+        }
+
         return {
           ...state,
           routes: newRoutes,

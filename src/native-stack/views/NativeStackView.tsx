@@ -201,14 +201,17 @@ export default function NativeStackView({
                 target: route.key,
               });
             }}
-            onDismissed={() => {
+            onDismissed={(e) => {
               navigation.emit({
                 type: 'dismiss',
                 target: route.key,
               });
 
+              const dismissCount =
+                e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
+
               navigation.dispatch({
-                ...StackActions.pop(),
+                ...StackActions.pop(dismissCount),
                 source: route.key,
                 target: key,
               });

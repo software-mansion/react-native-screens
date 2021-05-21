@@ -84,6 +84,11 @@ export type NativeStackNavigationOptions = {
    */
   direction?: 'rtl' | 'ltr';
   /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
+  /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
    *

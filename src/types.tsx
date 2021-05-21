@@ -1,7 +1,6 @@
 import {
   Animated,
   NativeSyntheticEvent,
-  NativeTouchEvent,
   ViewProps,
   View,
   TargetedEvent,
@@ -81,24 +80,25 @@ export interface ScreenProps extends ViewProps {
   /**
    * A callback that gets called when the current screen appears.
    */
-  onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   onComponentRef?: (view: unknown) => void;
   /**
    * A callback that gets called when the current screen disappears.
    */
-  onDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
+   * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
-  onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
-  onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onWillAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
-  onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   ref?: React.Ref<View>;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
@@ -184,7 +184,7 @@ export interface ScreenStackProps extends ViewProps {
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
-  onFinishTransitioning?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -198,9 +198,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   backgroundColor?: string;
   /**
    * Title to display in the back button.
-   * Only supported on iOS.
-   *
-   *
+   * @platform ios.
    */
   backTitle?: string;
   /**
@@ -230,6 +228,11 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
+  /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
   /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */

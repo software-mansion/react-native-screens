@@ -3,6 +3,7 @@
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenStack.h"
 #import "RNSScreenWindowTraits.h"
 
 #import <React/RCTUIManager.h>
@@ -225,13 +226,13 @@
   [_controller notifyFinishTransitioning];
 }
 
-- (void)notifyDismissed
+- (void)notifyDismissedWithCount:(int)dismissCount
 {
   _dismissed = YES;
   if (self.onDismissed) {
     dispatch_async(dispatch_get_main_queue(), ^{
       if (self.onDismissed) {
-        self.onDismissed(nil);
+        self.onDismissed(@{@"dismissCount": @(dismissCount)});
       }
     });
   }
@@ -349,6 +350,7 @@
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
+  int _dismissCount;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -518,6 +520,20 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
+  
+  if (!self.transitionCoordinator.isInteractive) {
+    // user might have long pressed ios 14 back button item,
+    // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
+    // We calculate it by substracting the difference between the index of currently displayed screen
+    // and the index of the target screen, which is the view of topViewController at this point.
+    // If the values is lower than 1, it means we are navigating forward
+    int selfIndex = (int)[[(RNSScreenStackView *) self.navigationController.delegate reactSubviews] indexOfObject:self.view];
+    int targetIndex = (int)[[(RNSScreenStackView *) self.navigationController.delegate reactSubviews] indexOfObject:self.navigationController.topViewController.view];
+    _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
+    
+  } else {
+    _dismissCount = 1;
+  }
 
   [((RNSScreenView *)self.view) notifyWillDisappear];
 }
@@ -535,7 +551,7 @@
   [((RNSScreenView *)self.view) notifyDisappear];
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
-    [((RNSScreenView *)self.view) notifyDismissed];
+    [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
   }
   [self traverseForScrollView:self.view];
 }
