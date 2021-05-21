@@ -546,7 +546,15 @@ function createStackNavigator(
 
       if (backRouteIndex > 0) {
         const newRoutes = [...state.routes];
-        newRoutes.splice(backRouteIndex, dismissCount > 0 ? dismissCount : 1);
+        if (dismissCount > 1) {
+          // when dismissing with iOS 14 native header back button, we can pop more than 1 screen at a time
+          // and the `backRouteIndex` is the index of the previous screen. Since we are starting already
+          // on the previous screen, we add 1 to start.
+          newRoutes.splice(backRouteIndex - dismissCount + 1, dismissCount);
+        } else {
+          newRoutes.splice(backRouteIndex, 1);
+        }
+
         return {
           ...state,
           routes: newRoutes,
