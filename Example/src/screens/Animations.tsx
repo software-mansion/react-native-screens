@@ -47,6 +47,8 @@ const MainScreen = ({
           'default',
           'fade',
           'flip',
+          'simple_push',
+          'slide_from_bottom',
           'slide_from_right',
           'slide_from_left',
           'none',
