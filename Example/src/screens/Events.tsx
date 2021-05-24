@@ -63,17 +63,6 @@ const ScreensEventsScreen = ({
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('appear', () => {
-      toast.push({
-        message: 'appear',
-        backgroundColor: 'darkviolet',
-      });
-    });
-
-    return unsubscribe;
-  }, [navigation]);
-
   return (
     <View style={{...styles.container, backgroundColor: 'lavenderblush'}}>
       <Button
