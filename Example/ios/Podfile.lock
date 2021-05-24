@@ -330,8 +330,9 @@ PODS:
     - React-Core
   - RNReanimated (1.13.2):
     - React-Core
-  - RNScreens (3.1.1):
+  - RNScreens (3.2.0):
     - React-Core
+    - React-RCTImage
   - RNSearchBar (3.5.1):
     - React
   - RNVectorIcons (8.0.0):
@@ -540,7 +541,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNGestureHandler: 5e58135436aacc1c5d29b75547d3d2b9430d052c
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
-  RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
+  RNScreens: 02cc349f80040ea8ea3b6c35642a90094f7b43ce
   RNSearchBar: 9860431356b7d12a8449d2fddb2b5f3c78d1e99f
   RNVectorIcons: f67a1abce2ec73e62fe4606e8110e95a832bc859
   Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
