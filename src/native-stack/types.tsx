@@ -20,6 +20,8 @@ import {
 export type NativeStackNavigationEventMap = {
   /**
    * Event which fires when the screen appears.
+   *
+   * @deprecated since v3.3.0. Use `transitionEnd` with `data.closing: false` instead.
    */
   appear: { data: undefined };
   /**
