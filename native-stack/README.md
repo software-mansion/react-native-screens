@@ -369,7 +369,9 @@ Defaults to an empty string.
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:
 
-#### `appear`
+#### `appear` - deprecated
+
+Use `transitionEnd` event with `data.closing: false` instead.
 
 Event which fires when the screen appears.
 
