@@ -109,9 +109,15 @@ export default function NativeStackView({
           contentStyle,
           gestureEnabled,
           headerShown,
-          replaceAnimation = 'pop',
-          stackAnimation,
           onTransitionProgress,
+          replaceAnimation = 'pop',
+          screenOrientation,
+          stackAnimation,
+          statusBarAnimation,
+          statusBarColor,
+          statusBarHidden,
+          statusBarStyle,
+          statusBarTranslucent,
         } = options;
 
         let { stackPresentation = 'push' } = options;
@@ -156,8 +162,14 @@ export default function NativeStackView({
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
             replaceAnimation={replaceAnimation}
-            stackPresentation={stackPresentation}
+            screenOrientation={screenOrientation}
             stackAnimation={stackAnimation}
+            stackPresentation={stackPresentation}
+            statusBarAnimation={statusBarAnimation}
+            statusBarColor={statusBarColor}
+            statusBarHidden={statusBarHidden}
+            statusBarStyle={statusBarStyle}
+            statusBarTranslucent={statusBarTranslucent}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',
@@ -191,14 +203,17 @@ export default function NativeStackView({
                 target: route.key,
               });
             }}
-            onDismissed={() => {
+            onDismissed={(e) => {
               navigation.emit({
                 type: 'dismiss',
                 target: route.key,
               });
 
+              const dismissCount =
+                e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
+
               navigation.dispatch({
-                ...StackActions.pop(),
+                ...StackActions.pop(dismissCount),
                 source: route.key,
                 target: key,
               });

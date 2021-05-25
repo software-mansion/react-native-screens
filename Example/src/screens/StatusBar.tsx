@@ -1,11 +1,11 @@
 import React, {useLayoutEffect, useState} from 'react';
-import {View, StyleSheet, Platform, Text, I18nManager} from 'react-native';
+import {View, ScrollView, StyleSheet, I18nManager, Text} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
-import {SettingsPicker, SettingsSwitch, Button, Spacer} from '../shared';
+import {SettingsPicker, SettingsSwitch, Button} from '../shared';
 
 type StackParamList = {
   First: undefined;
@@ -33,49 +33,64 @@ const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
   const [statusBarAnimation, setStatusBarAnimation] = useState<
     StatusBarAnimation
   >('fade');
+  const [statusBarTranslucent, setStatusBarTranslucent] = useState(true);
+  const [statusBarColor, setStatusBarColor] = useState('gray');
 
   useLayoutEffect(() => {
     navigation.setOptions({
       statusBarStyle,
       statusBarHidden,
       statusBarAnimation,
+      statusBarTranslucent,
+      statusBarColor,
     });
-  }, [navigation, statusBarStyle, statusBarHidden, statusBarAnimation]);
+  }, [
+    navigation,
+    statusBarStyle,
+    statusBarHidden,
+    statusBarAnimation,
+    statusBarTranslucent,
+    statusBarColor,
+  ]);
 
   return (
-    <View style={styles.container}>
-      {Platform.OS === 'ios' ? (
-        <>
-          <SettingsPicker<StatusBarStyle>
-            label="Status bar style"
-            value={statusBarStyle}
-            onValueChange={setStatusBarStyle}
-            items={['auto', 'inverted', 'light', 'dark']}
-          />
-          <SettingsSwitch
-            label="Status bar hidden"
-            value={statusBarHidden}
-            onValueChange={setStatusBarHidden}
-          />
-          <SettingsPicker<StatusBarAnimation>
-            label="Status bar animation"
-            value={statusBarAnimation}
-            onValueChange={setStatusBarAnimation}
-            items={['fade', 'none', 'slide']}
-          />
-        </>
-      ) : Platform.OS === 'android' ? (
-        <Spacer>
-          <Text>StatusBar options have no effect on Android.</Text>
-        </Spacer>
-      ) : null}
+    <ScrollView style={styles.container}>
+      <SettingsPicker<StatusBarStyle>
+        label="Status bar style"
+        value={statusBarStyle}
+        onValueChange={setStatusBarStyle}
+        items={['auto', 'inverted', 'light', 'dark']}
+      />
+      <SettingsSwitch
+        label="Status bar hidden"
+        value={statusBarHidden}
+        onValueChange={setStatusBarHidden}
+      />
+      <SettingsPicker<StatusBarAnimation>
+        label="Status bar animation"
+        value={statusBarAnimation}
+        onValueChange={setStatusBarAnimation}
+        items={['fade', 'none', 'slide']}
+      />
+      <Text style={styles.heading}>Android only</Text>
+      <SettingsSwitch
+        label="Status bar translucent"
+        value={statusBarTranslucent}
+        onValueChange={setStatusBarTranslucent}
+      />
+      <SettingsPicker<string>
+        label="Status bar color"
+        value={statusBarColor}
+        onValueChange={setStatusBarColor}
+        items={['red', 'green', 'blue', 'gray']}
+      />
       <Button
         title="Go to second screen"
         onPress={() => navigation.navigate('Second')}
       />
       <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -107,7 +122,7 @@ const App = (): JSX.Element => (
       name="First"
       component={FirstScreen}
       options={{
-        title: 'Status bar (iOS)',
+        title: 'Status bar',
       }}
     />
     <Stack.Screen name="Second" component={SecondScreen} />
@@ -123,6 +138,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 100,
+  },
+  heading: {
+    marginLeft: 10,
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 

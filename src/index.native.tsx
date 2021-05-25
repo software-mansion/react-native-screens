@@ -11,6 +11,9 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+// @ts-ignore Getting private component
+// eslint-disable-next-line import/default
+import processColor from 'react-native/Libraries/StyleSheet/processColor';
 
 import {
   StackPresentationTypes,
@@ -153,6 +156,7 @@ class Screen extends React.Component<ScreenProps> {
         active,
         activityState,
         onTransitionProgress,
+        statusBarColor,
         ...rest
       } = this.props;
       if (active !== undefined && activityState === undefined) {
@@ -183,9 +187,12 @@ class Screen extends React.Component<ScreenProps> {
         onTransitionProgress = () => {};
       }
 
+      const processedColor = processColor(statusBarColor);
+
       return (
         <AnimatedNativeScreen
           {...rest}
+          statusBarColor={processedColor}
           activityState={activityState}
           onTransitionProgress={onTransitionProgress}
           ref={this.setRef}

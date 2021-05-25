@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +51,7 @@ public class ScreenFragment extends Fragment {
   private float mProgress;
   private short mCoalescingKey;
   private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
+  private boolean shouldUpdateOnResume = false;
 
   public ScreenFragment() {
     throw new IllegalStateException("Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
@@ -61,6 +64,15 @@ public class ScreenFragment extends Fragment {
     // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
     // due to progress value being already 0.0f
     mProgress = -1f;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    if (shouldUpdateOnResume) {
+      shouldUpdateOnResume = false;
+      ScreenWindowTraits.trySetWindowTraits(getScreen(), tryGetActivity(), tryGetContext());
+    }
   }
 
   @Override
@@ -80,22 +92,33 @@ public class ScreenFragment extends Fragment {
   }
 
   public void onContainerUpdate() {
-    if (!hasChildScreenWithConfig(getScreen())) {
-      // if there is no child with config, we look for a parent with config to set the orientation
-      ScreenStackHeaderConfig config = findHeaderConfig();
-      if (config != null && config.getScreenFragment().getActivity() != null) {
-        config.getScreenFragment().getActivity().setRequestedOrientation(config.getScreenOrientation());
-      }
-    }
+   updateWindowTraits();
   }
 
-  private @Nullable ScreenStackHeaderConfig findHeaderConfig() {
+  private void updateWindowTraits() {
+    Activity activity = getActivity();
+    if (activity == null) {
+      shouldUpdateOnResume = true;
+      return;
+    }
+    ScreenWindowTraits.trySetWindowTraits(getScreen(), activity, tryGetContext());
+  }
+
+  protected @Nullable Activity tryGetActivity() {
+    if (getActivity() != null) {
+      return getActivity();
+    }
+    Context context = getScreen().getContext();
+    if (context instanceof ReactContext && ((ReactContext) context).getCurrentActivity() != null) {
+      return ((ReactContext) context).getCurrentActivity();
+    }
+
     ViewParent parent = getScreen().getContainer();
     while (parent != null) {
       if (parent instanceof Screen) {
-        ScreenStackHeaderConfig headerConfig = ((Screen) parent).getHeaderConfig();
-        if (headerConfig != null) {
-          return headerConfig;
+        ScreenFragment fragment = ((Screen) parent).getFragment();
+        if (fragment != null && fragment.getActivity() != null) {
+          return fragment.getActivity();
         }
       }
       parent = parent.getParent();
@@ -103,22 +126,24 @@ public class ScreenFragment extends Fragment {
     return null;
   }
 
-  protected boolean hasChildScreenWithConfig(Screen screen) {
-    if (screen == null) {
-      return false;
+  protected @Nullable ReactContext tryGetContext() {
+    if (getContext() instanceof ReactContext) {
+      return ((ReactContext) getContext());
     }
-    for (ScreenContainer sc : screen.getFragment().getChildScreenContainers()) {
-      // we check only the top screen for header config
-      Screen topScreen = sc.getTopScreen();
-      ScreenStackHeaderConfig headerConfig = topScreen != null ? topScreen.getHeaderConfig(): null;
-      if (headerConfig != null) {
-        return true;
-      }
-      if (hasChildScreenWithConfig(topScreen)) {
-        return true;
-      }
+    if (getScreen().getContext() instanceof ReactContext) {
+      return ((ReactContext) getScreen().getContext());
     }
-    return false;
+
+    ViewParent parent = getScreen().getContainer();
+    while (parent != null) {
+      if (parent instanceof Screen) {
+          if (((Screen) parent).getContext() instanceof ReactContext) {
+            return (ReactContext) ((Screen) parent).getContext();
+          }
+        }
+      parent = parent.getParent();
+    }
+    return null;
   }
 
   public List<ScreenContainer> getChildScreenContainers() {

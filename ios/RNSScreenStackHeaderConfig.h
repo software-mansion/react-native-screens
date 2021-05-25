@@ -4,13 +4,6 @@
 #import "RNSScreen.h"
 #import "RNSSearchBar.h"
 
-typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
-  RNSStatusBarStyleAuto,
-  RNSStatusBarStyleInverted,
-  RNSStatusBarStyleLight,
-  RNSStatusBarStyleDark,
-};
-
 @interface RNSScreenStackHeaderConfig : UIView
 
 @property (nonatomic, weak) RNSScreenView *screenView;
@@ -36,26 +29,12 @@ typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
 @property (nonatomic, retain) UIColor *largeTitleColor;
 @property (nonatomic) BOOL hideBackButton;
 @property (nonatomic) BOOL backButtonInCustomView;
+@property (nonatomic) BOOL disableBackButtonMenu;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
 @property (nonatomic) UISemanticContentAttribute direction;
 
-#if !TARGET_OS_TV
-@property (nonatomic) RNSStatusBarStyle statusBarStyle;
-@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
-@property (nonatomic) BOOL statusBarHidden;
-@property (nonatomic) UIInterfaceOrientationMask screenOrientation;
-#endif
-
 + (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
-+ (void)updateWindowTraits;
-
-#if !TARGET_OS_TV
-+ (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle;
-+ (UIInterfaceOrientation)defaultOrientationForOrientationMask:(UIInterfaceOrientationMask)orientationMask;
-+ (UIInterfaceOrientation)interfaceOrientationFromDeviceOrientation:(UIDeviceOrientation)deviceOrientation;
-+ (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation;
-#endif
 
 @end
 
@@ -77,11 +56,6 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
 + (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
-
-#if !TARGET_OS_TV
-+ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
-+ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
-#endif
 
 @end
 

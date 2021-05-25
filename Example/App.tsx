@@ -73,7 +73,7 @@ const SCREENS: Record<
     type: 'playground',
   },
   StatusBar: {
-    title: 'Status bar (iOS)',
+    title: 'Status bar',
     component: StatusBarExample,
     type: 'playground',
   },

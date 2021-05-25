@@ -21,6 +21,7 @@ export default function HeaderConfig({
   backButtonImage,
   backButtonInCustomView,
   direction,
+  disableBackButtonMenu,
   headerBackTitle,
   headerBackTitleStyle = {},
   headerBackTitleVisible = true,
@@ -41,11 +42,7 @@ export default function HeaderConfig({
   headerTopInsetEnabled = true,
   headerTranslucent,
   route,
-  screenOrientation,
   searchBar,
-  statusBarAnimation,
-  statusBarHidden,
-  statusBarStyle,
   title,
 }: Props): JSX.Element {
   const { colors } = useTheme();
@@ -73,6 +70,7 @@ export default function HeaderConfig({
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
       direction={direction}
+      disableBackButtonMenu={disableBackButtonMenu}
       hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}
@@ -83,10 +81,6 @@ export default function HeaderConfig({
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleFontWeight={headerLargeTitleStyle.fontWeight}
       largeTitleHideShadow={headerLargeTitleHideShadow}
-      screenOrientation={screenOrientation}
-      statusBarAnimation={statusBarAnimation}
-      statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle}
       title={
         headerTitle !== undefined
           ? headerTitle

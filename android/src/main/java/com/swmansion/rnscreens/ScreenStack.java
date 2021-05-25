@@ -193,9 +193,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
                 && !isNested()) {
           newTop.dispatchOnWillAppear();
           newTop.dispatchOnAppear();
-          }
         }
-      } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
+      }
+    } else if (mTopScreen != null && !mTopScreen.equals(newTop)) {
       // otherwise if we are performing top screen change we do "close animation"
       shouldUseOpenAnimation = false;
       stackAnimation = mTopScreen.getScreen().getStackAnimation();
