@@ -371,8 +371,7 @@ The navigator can [emit events](https://reactnavigation.org/docs/navigation-even
 
 #### `appear` - deprecated
 
-Deprecated since `v3.3.0`.
-Use `transitionEnd` with `data.closing: false` instead.
+Use `transitionEnd` event with `data.closing: false` instead.
 
 Event which fires when the screen appears.
 
