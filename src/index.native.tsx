@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  Animated as RNAnimated,
-  findNodeHandle,
+  Animated,
   Image,
   ImageProps,
   Platform,
@@ -29,17 +28,10 @@ import {
   SearchBarProps,
 } from './types';
 
-import Animated from 'react-native-reanimated';
-
-import WorkletEventHandler from 'react-native-reanimated/src/reanimated2/WorkletEventHandler';
-
 // web implementation is taken from `index.tsx`
 const isPlatformSupported = Platform.OS === 'ios' || Platform.OS === 'android';
 
 let ENABLE_SCREENS = isPlatformSupported;
-
-// @ts-ignore types missing
-const isRea2Available = Animated.isConfigured?.();
 
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
@@ -109,41 +101,40 @@ const ScreensNativeModules = {
   },
 };
 
-class Screen extends React.Component<ScreenProps> {
-  private ref: React.ElementRef<typeof View> | null = null;
-  private tag: number | null = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private eventHandler: any;
+const Screen = React.forwardRef<React.ComponentType<ScreenProps>, ScreenProps>(
+  (props, ref) => {
+    // let _ref: React.ElementRef<typeof View> | null = null;
+    // let smg = null;
+    // private ref: React.ElementRef<typeof View> | null = null;
+    // private tag: number | null = null;
+    // // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // private eventHandler: any;
 
-  setNativeProps(props: ScreenProps): void {
-    this.ref?.setNativeProps(props);
-  }
+    // const _ref = React.useRef<typeof Screen>();
 
-  setRef = (ref: React.ElementRef<typeof View> | null): void => {
-    this.tag = findNodeHandle(ref);
-    this.ref = ref;
-    this.props.onComponentRef?.(ref);
-  };
+    // const setNativeProps = (props: ScreenProps): void => {
+    //   _ref?.current?.setNativeProps(props);
+    // }
 
-  componentWillUnmount() {
-    if (this.eventHandler) {
-      this.eventHandler.unregisterFromEvents();
-      this.eventHandler = null;
-    }
-  }
+    // const setRef = (ref: React.ElementRef<typeof View> | null): void => {
+    // _ref = ref;
+    // props.onComponentRef?.(ref);
+    // };
 
-  render() {
-    const { enabled = ENABLE_SCREENS } = this.props;
+    // componentWillUnmount() {
+    //   if (this.eventHandler) {
+    //     this.eventHandler.unregisterFromEvents();
+    //     this.eventHandler = null;
+    //   }
+    // }
+    const { enabled = ENABLE_SCREENS } = props;
 
     if (enabled && isPlatformSupported) {
       // @ts-ignore some types incompability
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(
-          RNAnimated.createAnimatedComponent(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ScreensNativeModules.NativeScreen as any
-          )
+          ScreensNativeModules.NativeScreen as any
         );
 
       // Filter out active prop in this case because it is unused and
@@ -155,10 +146,10 @@ class Screen extends React.Component<ScreenProps> {
         enabled,
         active,
         activityState,
-        onTransitionProgress,
+        // onTransitionProgress,
         statusBarColor,
         ...rest
-      } = this.props;
+      } = props;
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
@@ -166,26 +157,26 @@ class Screen extends React.Component<ScreenProps> {
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
 
-      if (
-        isRea2Available &&
-        this.eventHandler == null &&
-        // @ts-ignore no type for worklet
-        onTransitionProgress?.__worklet
-      ) {
-        this.eventHandler = new WorkletEventHandler(onTransitionProgress, [
-          // @ts-ignore wrong type
-          Platform.OS === 'android'
-            ? 'onTransitionProgress'
-            : 'topTransitionProgress',
-        ]);
-        this.eventHandler.registerForEvents(this.tag);
-      }
+      // if (
+      //   isRea2Available &&
+      //   smg == null &&
+      //   // @ts-ignore no type for worklet
+      //   onTransitionProgress?.__worklet
+      // ) {
+      //   smg = useEvent(onTransitionProgress, [
+      //     Platform.OS === 'android'
+      //       ? 'onTransitionProgress'
+      //       : 'topTransitionProgress',
+      //   ]);
+      //   console.warn(smg);
+      //   // this.eventHandler.registerForEvents(tag);
+      // }
 
-      // @ts-ignore no type for worklet
-      if (onTransitionProgress?.__worklet) {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onTransitionProgress = () => {};
-      }
+      // // @ts-ignore no type for worklet
+      // if (onTransitionProgress?.__worklet) {
+      //   // eslint-disable-next-line @typescript-eslint/no-empty-function
+      //   onTransitionProgress = () => {};
+      // }
 
       const processedColor = processColor(statusBarColor);
 
@@ -194,8 +185,9 @@ class Screen extends React.Component<ScreenProps> {
           {...rest}
           statusBarColor={processedColor}
           activityState={activityState}
-          onTransitionProgress={onTransitionProgress}
-          ref={this.setRef}
+          // onTransitionProgress={onTransitionProgress}
+          // @ts-ignore some ref inconsistencies
+          ref={ref}
         />
       );
     } else {
@@ -209,32 +201,29 @@ class Screen extends React.Component<ScreenProps> {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onComponentRef,
         ...rest
-      } = this.props;
+      } = props;
 
       if (active !== undefined && activityState === undefined) {
         activityState = active !== 0 ? 2 : 0;
       }
       return (
-        <RNAnimated.View
+        <Animated.View
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
-          ref={this.setRef}
+          ref={ref}
           {...rest}
         />
       );
     }
   }
-}
+);
 
-class ScreenContainer extends React.Component<ScreenContainerProps> {
-  render() {
-    const { enabled = ENABLE_SCREENS, ...rest } = this.props;
+function ScreenContainer(props: ScreenContainerProps) {
+  const { enabled, ...rest } = props;
 
-    if (enabled && isPlatformSupported) {
-      return <ScreensNativeModules.NativeScreenContainer {...rest} />;
-    }
-
-    return <View {...rest} />;
+  if (enabled && isPlatformSupported) {
+    return <ScreensNativeModules.NativeScreenContainer {...rest} />;
   }
+  return <View {...rest} />;
 }
 
 const styles = StyleSheet.create({

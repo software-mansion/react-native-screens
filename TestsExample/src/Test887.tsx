@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Animated as RNAnimated,
   Button,
   View,
   StyleSheet,
@@ -61,6 +62,7 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
   );
 }
 function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Second'>}) {
+  const [width, setWidth] = React.useState(50);
   const sv = useSharedValue(50);
   const reaStyle = useAnimatedStyle(() => {
     return {
@@ -73,8 +75,9 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
   React.useEffect(() => {
     navigation.setOptions({
       onTransitionProgress: (event) => {
-        'worklet'
-        sv.value = event.closing ? (event.progress * 50 + 50) : ((1 - event.progress) * 50 + 50);
+        // 'worklet'
+        // sv.value = event.closing ? (event.progress * 50 + 50) : ((1 - event.progress) * 50 + 50);
+        setWidth(event.nativeEvent.closing ? (event.nativeEvent.progress * 50 + 50) : ((1 - event.nativeEvent.progress) * 50 + 50));
       }
     })
   }, [navigation]);
@@ -85,6 +88,7 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
       <Button title="Tap me for second screen" onPress={() => navigation.push('Second')} />
       <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
       <Animated.View style={reaStyle} />
+      <RNAnimated.View style={{width, height: width, backgroundColor: 'green'}} />
     </View>
   );
 }
