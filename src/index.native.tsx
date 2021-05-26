@@ -3,12 +3,16 @@ import {
   Animated,
   Image,
   ImageProps,
+  Platform,
   requireNativeComponent,
   StyleSheet,
   UIManager,
   View,
   ViewProps,
 } from 'react-native';
+// @ts-ignore Getting private component
+// eslint-disable-next-line import/default
+import processColor from 'react-native/Libraries/StyleSheet/processColor';
 
 import {
   StackPresentationTypes,
@@ -21,12 +25,16 @@ import {
   ScreenContainerProps,
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 } from './types';
 
-let ENABLE_SCREENS = true;
+// web implementation is taken from `index.tsx`
+const isPlatformSupported = Platform.OS === 'ios' || Platform.OS === 'android';
+
+let ENABLE_SCREENS = isPlatformSupported;
 
 function enableScreens(shouldEnableScreens = true): void {
-  ENABLE_SCREENS = shouldEnableScreens;
+  ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
     console.error(
       `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
@@ -51,6 +59,7 @@ let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
   ViewProps & { type?: HeaderSubviewTypes }
 >>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
+let NativeSearchBar: React.ComponentType<SearchBarProps>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -85,6 +94,11 @@ const ScreensNativeModules = {
       requireNativeComponent('RNSScreenStackHeaderSubview');
     return NativeScreenStackHeaderSubview;
   },
+
+  get NativeSearchBar() {
+    NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
+    return NativeSearchBar;
+  },
 };
 
 class Screen extends React.Component<ScreenProps> {
@@ -102,37 +116,64 @@ class Screen extends React.Component<ScreenProps> {
   render() {
     const { enabled = ENABLE_SCREENS } = this.props;
 
-    if (enabled) {
+    if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
         Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
 
-      // same reason as above
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      let { enabled, active, activityState, ...rest } = this.props;
+      let {
+        // Filter out active prop in this case because it is unused and
+        // can cause problems depending on react-native version:
+        // https://github.com/react-navigation/react-navigation/issues/4886
+        // same for enabled prop
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        enabled,
+        active,
+        activityState,
+        statusBarColor,
+        ...rest
+      } = this.props;
+
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
         );
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
+
+      const processedColor = processColor(statusBarColor);
+
       return (
         <AnimatedNativeScreen
           {...rest}
+          statusBarColor={processedColor}
           activityState={activityState}
           ref={this.setRef}
         />
       );
     } else {
-      // Filter out active prop in this case because it is unused and
-      // can cause problems depending on react-native version:
-      // https://github.com/react-navigation/react-navigation/issues/4886
-      // same for enabled prop
+      // same reason as above
+      let {
+        active,
+        activityState,
+        style,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        enabled,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        onComponentRef,
+        ...rest
+      } = this.props;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { active, enabled, onComponentRef, ...rest } = this.props;
-
-      return <Animated.View {...rest} ref={this.setRef} />;
+      if (active !== undefined && activityState === undefined) {
+        activityState = active !== 0 ? 2 : 0;
+      }
+      return (
+        <Animated.View
+          style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
+          ref={this.setRef}
+          {...rest}
+        />
+      );
     }
   }
 }
@@ -141,7 +182,7 @@ class ScreenContainer extends React.Component<ScreenContainerProps> {
   render() {
     const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
-    if (enabled) {
+    if (enabled && isPlatformSupported) {
       return <ScreensNativeModules.NativeScreenContainer {...rest} />;
     }
 
@@ -198,6 +239,16 @@ const ScreenStackHeaderCenterView = (
   />
 );
 
+const ScreenStackHeaderSearchBarView = (
+  props: React.PropsWithChildren<SearchBarProps>
+): JSX.Element => (
+  <ScreensNativeModules.NativeScreenStackHeaderSubview
+    {...props}
+    type="searchBar"
+    style={styles.headerSubview}
+  />
+);
+
 export type {
   StackPresentationTypes,
   StackAnimationTypes,
@@ -209,6 +260,7 @@ export type {
   ScreenContainerProps,
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 };
 
 module.exports = {
@@ -234,13 +286,21 @@ module.exports = {
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
+  get SearchBar() {
+    if (Platform.OS !== 'ios') {
+      console.warn('Importing SearchBar is only valid on iOS devices.');
+      return View;
+    }
 
+    return ScreensNativeModules.NativeSearchBar;
+  },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderCenterView,
+  ScreenStackHeaderSearchBarView,
 
   enableScreens,
   screensEnabled,
