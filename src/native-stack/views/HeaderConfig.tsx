@@ -1,11 +1,14 @@
 import { Route, useTheme } from '@react-navigation/native';
 import * as React from 'react';
+import { Platform } from 'react-native';
 import {
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
+  ScreenStackHeaderSearchBarView,
+  SearchBar,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
 import { processFonts } from './FontProcessor';
@@ -18,6 +21,7 @@ export default function HeaderConfig({
   backButtonImage,
   backButtonInCustomView,
   direction,
+  disableBackButtonMenu,
   headerBackTitle,
   headerBackTitleStyle = {},
   headerBackTitleVisible = true,
@@ -38,10 +42,7 @@ export default function HeaderConfig({
   headerTopInsetEnabled = true,
   headerTranslucent,
   route,
-  screenOrientation,
-  statusBarAnimation,
-  statusBarHidden,
-  statusBarStyle,
+  searchBar,
   title,
 }: Props): JSX.Element {
   const { colors } = useTheme();
@@ -69,6 +70,7 @@ export default function HeaderConfig({
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
       direction={direction}
+      disableBackButtonMenu={disableBackButtonMenu}
       hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}
@@ -79,10 +81,6 @@ export default function HeaderConfig({
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleFontWeight={headerLargeTitleStyle.fontWeight}
       largeTitleHideShadow={headerLargeTitleHideShadow}
-      screenOrientation={screenOrientation}
-      statusBarAnimation={statusBarAnimation}
-      statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle}
       title={
         headerTitle !== undefined
           ? headerTitle
@@ -122,6 +120,11 @@ export default function HeaderConfig({
         <ScreenStackHeaderCenterView>
           {headerCenter({ tintColor })}
         </ScreenStackHeaderCenterView>
+      ) : null}
+      {Platform.OS === 'ios' && searchBar !== undefined ? (
+        <ScreenStackHeaderSearchBarView>
+          <SearchBar {...searchBar} />
+        </ScreenStackHeaderSearchBarView>
       ) : null}
     </ScreenStackHeaderConfig>
   );

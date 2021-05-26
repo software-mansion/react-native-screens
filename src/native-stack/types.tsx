@@ -7,17 +7,21 @@ import {
   StackNavigationState,
   StackRouterOptions,
   StackActionHelpers,
+  RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
   /**
    * Event which fires when the screen appears.
+   *
+   * @deprecated Use `transitionEnd` event with `data.closing: false` instead.
    */
   appear: { data: undefined };
   /**
@@ -46,12 +50,22 @@ export type NativeStackNavigationProp<
 > &
   StackActionHelpers<ParamList>;
 
+export type NativeStackScreenProps<
+  ParamList extends ParamListBase,
+  RouteName extends keyof ParamList = string
+> = {
+  navigation: NativeStackNavigationProp<ParamList, RouteName>;
+  route: RouteProp<ParamList, RouteName>;
+};
+
 export type NativeStackNavigationHelpers = NavigationHelpers<
   ParamListBase,
   NativeStackNavigationEventMap
 >;
 
-export type NativeStackNavigationConfig = Record<string, unknown>;
+// We want it to be an empty object beacuse navigator does not have any additional config
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
@@ -71,6 +85,11 @@ export type NativeStackNavigationOptions = {
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
+  /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
@@ -111,9 +130,6 @@ export type NativeStackNavigationOptions = {
   headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
-   * Only supported on Android.
-   *
-   * @platform android
    */
   headerHideBackButton?: boolean;
   /**
@@ -191,7 +207,7 @@ export type NativeStackNavigationOptions = {
    * Style object for header title. Supported properties:
    * - fontFamily
    * - fontSize
-   * - fontWeight (iOS only)
+   * - fontWeight
    * - color
    */
   headerTitleStyle?: {
@@ -223,7 +239,7 @@ export type NativeStackNavigationOptions = {
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
-   * - "default" - resolves to "all" without "portrait_down".
+   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
    * - "all" – all orientations are permitted
    * - "portrait" – portrait orientations are permitted
    * - "portrait_up" – right-side portrait orientation is permitted
@@ -232,13 +248,21 @@ export type NativeStackNavigationOptions = {
    * - "landscape_left" – landscape-left orientation is permitted
    * - "landscape_right" – landscape-right orientation is permitted
    */
-  screenOrientation?: ScreenStackHeaderConfigProps['screenOrientation'];
+  screenOrientation?: ScreenProps['screenOrientation'];
+  /**
+   * Object in which you should pass props in order to render native iOS searchBar.
+   *
+   * @platform ios
+   */
+  searchBar?: SearchBarProps;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
    * - "fade" – fades screen in or out
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+   * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
+   * - `slide_from_bottom` – performs a slide from bottom animation (iOS only)
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
@@ -257,22 +281,29 @@ export type NativeStackNavigationOptions = {
    */
   stackPresentation?: ScreenProps['stackPresentation'];
   /**
-   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    */
-  statusBarAnimation?: ScreenStackHeaderConfigProps['statusBarAnimation'];
+  statusBarAnimation?: ScreenProps['statusBarAnimation'];
   /**
-   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
    *
-   * @platform ios
+   * @platform android
+   */
+  statusBarColor?: string;
+  /**
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */
   statusBarHidden?: boolean;
-  /** Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
    */
-  statusBarStyle?: ScreenStackHeaderConfigProps['statusBarStyle'];
+  statusBarStyle?: ScreenProps['statusBarStyle'];
+  /**
+   * Sets the translucency of the status bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  statusBarTranslucent?: boolean;
   /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */

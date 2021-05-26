@@ -2,6 +2,7 @@ package com.swmansion.rnscreens;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
@@ -13,6 +14,7 @@ import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -20,7 +22,8 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
-import com.facebook.react.views.text.ReactFontManager;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.views.text.ReactTypefaceUtils;
 
 import java.util.ArrayList;
 
@@ -32,6 +35,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private String mTitleFontFamily;
   private String mDirection;
   private float mTitleFontSize;
+  private int mTitleFontWeight;
   private Integer mBackgroundColor;
   private boolean mIsHidden;
   private boolean mIsBackButtonHidden;
@@ -136,7 +140,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     return null;
   }
 
-  private ScreenStackFragment getScreenFragment() {
+  protected @Nullable ScreenStackFragment getScreenFragment() {
     ViewParent screen = getParent();
     if (screen instanceof Screen) {
       Fragment fragment = ((Screen) screen).getFragment();
@@ -167,6 +171,23 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       } else if (mDirection.equals("ltr")) {
         mToolbar.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
       }
+    }
+
+    // orientation and status bar management
+    if (getScreen() != null) {
+      // we set the traits here too, not only when the prop for Screen is passed
+      // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the first setting of props
+      // similar thing is done for Screens of ScreenContainers, but in `onContainerUpdate` of their Fragment
+
+      Screen screen = getScreen();
+      ReactContext context = null;
+      if (getContext() instanceof ReactContext) {
+        context = (ReactContext) getContext();
+      } else if (screen.getFragment() != null) {
+        context = screen.getFragment().tryGetContext();
+      }
+
+      ScreenWindowTraits.trySetWindowTraits(screen, activity, context);
     }
 
     if (mIsHidden) {
@@ -232,9 +253,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
       mToolbar.setTitleTextColor(mTitleColor);
     }
     if (titleTextView != null) {
-      if (mTitleFontFamily != null) {
-        titleTextView.setTypeface(ReactFontManager.getInstance().getTypeface(
-                mTitleFontFamily, 0, getContext().getAssets()));
+      if (mTitleFontFamily != null || mTitleFontWeight > 0) {
+        Typeface titleTypeface = ReactTypefaceUtils.applyStyles(
+              null, 0, mTitleFontWeight, mTitleFontFamily, getContext().getAssets());
+        titleTextView.setTypeface(titleTypeface);
       }
       if (mTitleFontSize > 0) {
         titleTextView.setTextSize(mTitleFontSize);
@@ -309,6 +331,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
   }
 
+  public Toolbar getToolbar() {
+    return mToolbar;
+  }
+
   public ScreenStackHeaderSubview getConfigSubview(int index) {
     return mConfigSubviews.get(index);
   }
@@ -351,6 +377,10 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   public void setTitleFontFamily(String titleFontFamily) {
     mTitleFontFamily = titleFontFamily;
+  }
+
+  public void setTitleFontWeight(String fontWeightString) {
+    mTitleFontWeight = ReactTypefaceUtils.parseFontWeight(fontWeightString);
   }
 
   public void setTitleFontSize(float titleFontSize) {
