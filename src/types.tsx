@@ -23,8 +23,7 @@ export type StackAnimationTypes =
   | 'simple_push'
   | 'slide_from_bottom'
   | 'slide_from_right'
-  | 'slide_from_left'
-  | 'slide_from_bottom';
+  | 'slide_from_left';
 export type BlurEffectTypes =
   | 'extraLight'
   | 'light'
