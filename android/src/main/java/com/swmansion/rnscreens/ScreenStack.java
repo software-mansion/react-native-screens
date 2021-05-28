@@ -24,6 +24,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private ScreenStackFragment mTopScreen = null;
   private boolean mRemovalTransitionStarted = false;
+  private ScreenStackFragment screenToDismiss = null;
 
   private final FragmentManager.OnBackStackChangedListener mBackStackListener = new FragmentManager.OnBackStackChangedListener() {
     @Override
@@ -116,6 +117,11 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     if (!mRemovalTransitionStarted) {
       dispatchOnFinishTransitioning();
     }
+    if (screenToDismiss != null) {
+      getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_NONE).remove(screenToDismiss);
+      tryCommitTransaction();
+      screenToDismiss = null;
+    }
   }
 
   private void dispatchOnFinishTransitioning() {
@@ -152,22 +158,20 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
     ScreenStackFragment visibleBottom = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
 
+    // we null it here since if another update happened before onViewAppearTransitionEnd, we don't want to
+    // remove the screen since maybe it should be added at the end of the update
+    screenToDismiss = null;
+
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
       if (!mDismissed.contains(screen)) {
         if (newTop == null) {
           newTop = screen;
         } else {
-          // when screen is transparent all screens underneath should be visible
-          if (isTransparent(screen)) {
-            visibleBottom = screen;
-          }
-
-          // on slide from bottom only screen below top should be visible
-          if (isSlideFromBottom(screen) && !isTransparent(screen)) {
-            visibleBottom = screen;
-            break;
-          }
+          visibleBottom = screen;
+        }
+        if (!isTransparent(screen)) {
+          break;
         }
       }
     }
@@ -222,7 +226,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         }
       } else {
         transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
-
         switch (stackAnimation) {
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
@@ -231,7 +234,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
             break;
           case SLIDE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(0, R.anim.rns_slide_out_to_bottom);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_identity, R.anim.rns_slide_out_to_bottom);
             break;
         }
       }
@@ -250,6 +253,14 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     // animation logic end
 
     // remove all screens previously on stack
+
+    if (mDismissed.isEmpty() && mTopScreen != null && isSlideFromBottom(mTopScreen) && visibleBottom == null) {
+      // When going forward in `slide_from_bottom` transition, we want the previous screen, which is mTopScreen now,
+      // to stay visible during transition, we remove it after the transition ended
+      visibleBottom = mTopScreen;
+      screenToDismiss = mTopScreen;
+    }
+
     for (ScreenStackFragment screen : mStack) {
       if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
         getOrCreateTransaction().remove(screen);
@@ -257,8 +268,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
 
     for (ScreenStackFragment screen : mScreenFragments) {
-      // don't detach screens that reached visible bottom. All screens above bottom should be visible.
-      if (screen == visibleBottom) {
+      // Stop detaching screens when reaching visible bottom. All screens above bottom should be
+      // visible.
+      if(screen == visibleBottom) {
         break;
       }
       // detach all screens that should not be visible
@@ -267,7 +279,28 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
 
-    if (newTop != null && !newTop.isAdded()) {
+    // attach screens that just became visible
+    if (visibleBottom != null && !visibleBottom.isAdded()) {
+      final ScreenStackFragment top = newTop;
+      boolean beneathVisibleBottom = true;
+
+      for (ScreenStackFragment screen : mScreenFragments) {
+        // ignore all screens beneath the visible bottom
+        if(beneathVisibleBottom){
+          if(screen == visibleBottom){
+            beneathVisibleBottom = false;
+          }
+          else continue;
+        }
+        // when first visible screen found, make all screens after that visible
+        getOrCreateTransaction().add(getId(), screen).runOnCommit(new Runnable() {
+          @Override
+          public void run() {
+            top.getScreen().bringToFront();
+          }
+        });
+      }
+    } else if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
     }
 
@@ -339,9 +372,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   private static boolean isCustomAnimation(Screen.StackAnimation stackAnimation) {
-    return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT
-        || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT
-        || stackAnimation == Screen.StackAnimation.SLIDE_FROM_BOTTOM;
+    return stackAnimation != Screen.StackAnimation.DEFAULT
+        && stackAnimation != Screen.StackAnimation.FADE
+        && stackAnimation != Screen.StackAnimation.NONE;
   }
 
   private static boolean isTransparent(ScreenStackFragment fragment){

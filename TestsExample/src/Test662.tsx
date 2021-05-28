@@ -18,6 +18,7 @@ export default function App(): JSX.Element {
       <Stack.Navigator
         screenOptions={{
           stackAnimation: 'slide_from_bottom',
+          // stackPresentation: 'transparentModal',
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
@@ -43,6 +44,10 @@ const Second = ({navigation}: Props): JSX.Element => (
       title="Tap me for the third screen"
       onPress={() => navigation.navigate('Third')}
     />
+    <Button
+      title="Tap me to go back"
+      onPress={() => navigation.goBack()}
+    />
   </View>
 );
 
@@ -52,6 +57,10 @@ const Third = ({navigation}: Props): JSX.Element => (
       title="Tap me for fourth screen"
       onPress={() => navigation.navigate('Fourth')}
     />
+    <Button
+      title="Tap me to go back"
+      onPress={() => navigation.goBack()}
+    />
   </View>
 );
 
@@ -60,6 +69,10 @@ const Fourth = ({navigation}: Props): JSX.Element => (
     <Button
       title="Tap me for first screen"
       onPress={() => navigation.navigate('First')}
+    />
+    <Button
+      title="Tap me to go back"
+      onPress={() => navigation.goBack()}
     />
   </View>
 );
