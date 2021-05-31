@@ -364,4 +364,8 @@ export interface SearchBarProps {
    * A callback that gets called when search bar has lost focus
    */
   onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * The search field text color
+   */
+  textColor?: string;
 }
