@@ -384,7 +384,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 
-  private static boolean isSlideFromBottom(ScreenStackFragment fragment)  {
+  private static boolean isSlideFromBottom(ScreenStackFragment fragment) {
     return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM;
   }
 }
