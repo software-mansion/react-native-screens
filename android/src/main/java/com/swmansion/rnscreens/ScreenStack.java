@@ -24,7 +24,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private ScreenStackFragment mTopScreen = null;
   private boolean mRemovalTransitionStarted = false;
-  private ScreenStackFragment screenToDismiss = null;
+  private ScreenStackFragment mFragmentToRemove = null;
 
   private final FragmentManager.OnBackStackChangedListener mBackStackListener = new FragmentManager.OnBackStackChangedListener() {
     @Override
@@ -59,6 +59,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   @Override
   public @Nullable Screen getTopScreen() {
     return mTopScreen != null ? mTopScreen.getScreen() : null;
+  }
+
+  protected ScreenStackFragment getFragmentToRemove() {
+    return mFragmentToRemove;
   }
 
   public Screen getRootScreen() {
@@ -117,10 +121,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     if (!mRemovalTransitionStarted) {
       dispatchOnFinishTransitioning();
     }
-    if (screenToDismiss != null) {
-      getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_NONE).remove(screenToDismiss);
+    if (mFragmentToRemove != null) {
+      getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_NONE).remove(mFragmentToRemove);
       tryCommitTransaction();
-      screenToDismiss = null;
+      mFragmentToRemove = null;
     }
   }
 
@@ -160,7 +164,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
     // we null it here since if another update happened before onViewAppearTransitionEnd, we don't want to
     // remove the screen since maybe it should be added at the end of the update
-    screenToDismiss = null;
+    mFragmentToRemove = null;
 
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
@@ -252,15 +256,14 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
     // animation logic end
 
-    // remove all screens previously on stack
-
     if (mDismissed.isEmpty() && mTopScreen != null && isSlideFromBottom(mTopScreen) && visibleBottom == null) {
       // When going forward in `slide_from_bottom` transition, we want the previous screen, which is mTopScreen now,
       // to stay visible during transition, we remove it after the transition ended
       visibleBottom = mTopScreen;
-      screenToDismiss = mTopScreen;
+      mFragmentToRemove = mTopScreen;
     }
 
+    // remove all screens previously on stack
     for (ScreenStackFragment screen : mStack) {
       if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
         getOrCreateTransaction().remove(screen);
@@ -377,11 +380,11 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         && stackAnimation != Screen.StackAnimation.NONE;
   }
 
-  private static boolean isTransparent(ScreenStackFragment fragment){
+  private static boolean isTransparent(ScreenStackFragment fragment) {
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 
-  private static boolean isSlideFromBottom(ScreenStackFragment fragment){
+  private static boolean isSlideFromBottom(ScreenStackFragment fragment)  {
     return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM;
   }
 }
