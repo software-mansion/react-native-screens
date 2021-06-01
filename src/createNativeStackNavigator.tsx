@@ -10,7 +10,8 @@ import {
   TargetedEvent,
 } from 'react-native';
 import {
-  Screen,
+  ScreenContext,
+  ScreenProps,
   ScreenStack,
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
@@ -345,6 +346,7 @@ class StackView extends React.Component<Props> {
   };
 
   private maybeRenderNestedStack = (
+    Screen: React.ComponentType<ScreenProps>,
     isHeaderInModal: boolean,
     screenProps: unknown,
     route: NavigationRoute<NavigationParams>,
@@ -380,6 +382,7 @@ class StackView extends React.Component<Props> {
   };
 
   private renderScene = (
+    Screen: React.ComponentType<ScreenProps>,
     index: number,
     route: NavigationRoute<NavigationParams>,
     descriptor: NativeStackDescriptor
@@ -475,6 +478,7 @@ class StackView extends React.Component<Props> {
         }>
         {isHeaderInPush && this.renderHeaderConfig(index, route, descriptor)}
         {this.maybeRenderNestedStack(
+          Screen,
           isHeaderInModal,
           screenProps,
           route,
@@ -491,13 +495,22 @@ class StackView extends React.Component<Props> {
     const { navigation, descriptors } = this.props;
 
     return (
-      <ScreenStack
-        style={styles.scenes}
-        onFinishTransitioning={this.onFinishTransitioning}>
-        {navigation.state.routes.map((route, i) =>
-          this.renderScene(i, route, descriptors[route.key])
+      <ScreenContext.Consumer>
+        {(Screen) => (
+          <ScreenStack
+            style={styles.scenes}
+            onFinishTransitioning={this.onFinishTransitioning}>
+            {navigation.state.routes.map((route, i) =>
+              this.renderScene(
+                Screen as React.ComponentType<ScreenProps>,
+                i,
+                route,
+                descriptors[route.key]
+              )
+            )}
+          </ScreenStack>
         )}
-      </ScreenStack>
+      </ScreenContext.Consumer>
     );
   }
 }
