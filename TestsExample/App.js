@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 
+import ReanimatedScreenProvider from 'react-native-screens/reanimated';
+
 import Test42 from './src/Test42';
 import Test111 from './src/Test111';
 import Test263 from './src/Test263';
@@ -48,5 +50,9 @@ import Test887 from './src/Test887';
 import Test898 from './src/Test898';
 
 export default function App() {
-  return <Test887 />;
+  return (
+    <ReanimatedScreenProvider>
+      <Test42 />
+    </ReanimatedScreenProvider>
+  );
 }

@@ -51,6 +51,8 @@ export class NativeScreen extends React.Component<ScreenProps> {
 
 export const Screen = Animated.createAnimatedComponent(NativeScreen);
 
+export const ScreenContext = React.createContext(Screen);
+
 export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
 export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> = View;

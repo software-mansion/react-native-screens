@@ -7,6 +7,7 @@ import {
 } from '@react-navigation/native';
 import * as React from 'react';
 import {
+  Animated,
   Platform,
   StyleProp,
   StyleSheet,
@@ -17,10 +18,10 @@ import {
 // @ts-ignore Getting private component
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import {
-  Screen as ScreenComponent,
-  ScreenProps,
   ScreenStack,
   StackPresentationTypes,
+  ScreenContext,
+  NativeScreen,
 } from 'react-native-screens';
 import {
   NativeStackDescriptorMap,
@@ -29,7 +30,7 @@ import {
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 
-const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
+// const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
 
 let didWarn = isAndroid;
@@ -55,6 +56,7 @@ if (__DEV__) {
 }
 
 const maybeRenderNestedStack = (
+  Screen: Animated.AnimatedComponent<typeof NativeScreen>,
   options: NativeStackNavigationOptions,
   route: Route<string>,
   renderScene: () => JSX.Element,
@@ -100,6 +102,7 @@ export default function NativeStackView({
 }: Props): JSX.Element {
   const { key, routes } = state;
   const { colors } = useTheme();
+  const Screen = React.useContext(ScreenContext);
 
   return (
     <ScreenStack style={styles.container}>
@@ -224,6 +227,7 @@ export default function NativeStackView({
               headerShown={isHeaderInPush}
             />
             {maybeRenderNestedStack(
+              Screen,
               options,
               route,
               renderScene,

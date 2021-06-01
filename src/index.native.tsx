@@ -101,82 +101,45 @@ const ScreensNativeModules = {
   },
 };
 
-const Screen = React.forwardRef<React.ComponentType<ScreenProps>, ScreenProps>(
-  (props, ref) => {
-    // let _ref: React.ElementRef<typeof View> | null = null;
-    // let smg = null;
-    // private ref: React.ElementRef<typeof View> | null = null;
-    // private tag: number | null = null;
-    // // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // private eventHandler: any;
+class Screen extends React.Component<ScreenProps> {
+  private ref: React.ElementRef<typeof View> | null = null;
 
-    // const _ref = React.useRef<typeof Screen>();
+  setNativeProps(props: ScreenProps): void {
+    this.ref?.setNativeProps(props);
+  }
 
-    // const setNativeProps = (props: ScreenProps): void => {
-    //   _ref?.current?.setNativeProps(props);
-    // }
+  setRef = (ref: React.ElementRef<typeof View> | null): void => {
+    this.ref = ref;
+    this.props.onComponentRef?.(ref);
+  };
 
-    // const setRef = (ref: React.ElementRef<typeof View> | null): void => {
-    // _ref = ref;
-    // props.onComponentRef?.(ref);
-    // };
-
-    // componentWillUnmount() {
-    //   if (this.eventHandler) {
-    //     this.eventHandler.unregisterFromEvents();
-    //     this.eventHandler = null;
-    //   }
-    // }
-    const { enabled = ENABLE_SCREENS } = props;
+  render() {
+    const { enabled = ENABLE_SCREENS } = this.props;
 
     if (enabled && isPlatformSupported) {
-      // @ts-ignore some types incompability
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
-        Animated.createAnimatedComponent(
-          ScreensNativeModules.NativeScreen as any
-        );
+        Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
 
-      // Filter out active prop in this case because it is unused and
-      // can cause problems depending on react-native version:
-      // https://github.com/react-navigation/react-navigation/issues/4886
-      // same for enabled prop
       let {
+        // Filter out active prop in this case because it is unused and
+        // can cause problems depending on react-native version:
+        // https://github.com/react-navigation/react-navigation/issues/4886
+        // same for enabled prop
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         enabled,
         active,
         activityState,
-        // onTransitionProgress,
         statusBarColor,
         ...rest
-      } = props;
+      } = this.props;
+
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
         );
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
-
-      // if (
-      //   isRea2Available &&
-      //   smg == null &&
-      //   // @ts-ignore no type for worklet
-      //   onTransitionProgress?.__worklet
-      // ) {
-      //   smg = useEvent(onTransitionProgress, [
-      //     Platform.OS === 'android'
-      //       ? 'onTransitionProgress'
-      //       : 'topTransitionProgress',
-      //   ]);
-      //   console.warn(smg);
-      //   // this.eventHandler.registerForEvents(tag);
-      // }
-
-      // // @ts-ignore no type for worklet
-      // if (onTransitionProgress?.__worklet) {
-      //   // eslint-disable-next-line @typescript-eslint/no-empty-function
-      //   onTransitionProgress = () => {};
-      // }
 
       const processedColor = processColor(statusBarColor);
 
@@ -185,9 +148,7 @@ const Screen = React.forwardRef<React.ComponentType<ScreenProps>, ScreenProps>(
           {...rest}
           statusBarColor={processedColor}
           activityState={activityState}
-          // onTransitionProgress={onTransitionProgress}
-          // @ts-ignore some ref inconsistencies
-          ref={ref}
+          ref={this.setRef}
         />
       );
     } else {
@@ -201,7 +162,7 @@ const Screen = React.forwardRef<React.ComponentType<ScreenProps>, ScreenProps>(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onComponentRef,
         ...rest
-      } = props;
+      } = this.props;
 
       if (active !== undefined && activityState === undefined) {
         activityState = active !== 0 ? 2 : 0;
@@ -209,13 +170,13 @@ const Screen = React.forwardRef<React.ComponentType<ScreenProps>, ScreenProps>(
       return (
         <Animated.View
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
-          ref={ref}
+          ref={this.setRef}
           {...rest}
         />
       );
     }
   }
-);
+}
 
 function ScreenContainer(props: ScreenContainerProps) {
   const { enabled, ...rest } = props;
@@ -299,11 +260,16 @@ export type {
   SearchBarProps,
 };
 
+// context to be used when the user wants to use enhanced implementation
+// e.g. to use `react-native-reanimated` (see `reanimated` folder in repo)
+const ScreenContext = React.createContext(Screen);
+
 module.exports = {
   // these are classes so they are not evaluated until used
   // so no need to use getters for them
   Screen,
   ScreenContainer,
+  ScreenContext,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
