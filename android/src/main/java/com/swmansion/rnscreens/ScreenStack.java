@@ -238,7 +238,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
             break;
           case SLIDE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_identity, R.anim.rns_slide_out_to_bottom);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation, R.anim.rns_slide_out_to_bottom);
             break;
         }
       }
@@ -251,14 +251,14 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
     }
 
-    if (stackAnimation != null && !isCustomAnimation(stackAnimation)) {
+    if (stackAnimation != null && isSystemAnimation(stackAnimation)) {
       getOrCreateTransaction().setTransition(transition);
     }
     // animation logic end
 
     if (mDismissed.isEmpty() && mTopScreen != null && isSlideFromBottom(mTopScreen) && visibleBottom == null) {
       // When going forward in `slide_from_bottom` transition, we want the previous screen, which is mTopScreen now,
-      // to stay visible during transition, we remove it after the transition ended
+      // to stay visible during transition, we remove it after the transition ended in onViewAppearTransitionEnd
       visibleBottom = mTopScreen;
       mFragmentToRemove = mTopScreen;
     }
@@ -374,10 +374,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
   }
 
-  private static boolean isCustomAnimation(Screen.StackAnimation stackAnimation) {
-    return stackAnimation != Screen.StackAnimation.DEFAULT
-        && stackAnimation != Screen.StackAnimation.FADE
-        && stackAnimation != Screen.StackAnimation.NONE;
+  private static boolean isSystemAnimation(Screen.StackAnimation stackAnimation) {
+    return stackAnimation == Screen.StackAnimation.DEFAULT
+        || stackAnimation == Screen.StackAnimation.FADE
+        || stackAnimation == Screen.StackAnimation.NONE;
   }
 
   private static boolean isTransparent(ScreenStackFragment fragment) {
