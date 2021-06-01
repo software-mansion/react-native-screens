@@ -374,6 +374,10 @@ Text displayed when search field is empty.
 
 Defaults to an empty string.
 
+#### `textColor`
+
+The search field text color.
+
 ### Helpers
 
 The stack navigator adds the following methods to the navigation prop:

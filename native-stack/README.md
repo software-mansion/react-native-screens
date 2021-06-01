@@ -365,6 +365,10 @@ Text displayed when search field is empty.
 
 Defaults to an empty string.
 
+#### `textColor`
+
+The search field text color.
+
 ### Events
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:
