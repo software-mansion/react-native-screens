@@ -159,6 +159,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     // handle the case of newTop being NULL, which happens in several places below
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
     ScreenStackFragment visibleBottom = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+    isDetachingCurrentScreen = false; // we reset it so the previous value is not used by mistake
 
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
@@ -250,9 +251,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
     // animation logic end
 
-    if (shouldUseOpenAnimation && mTopScreen != null && isSlideFromBottom(mTopScreen) && visibleBottom == null) {
-      // When going forward in `slide_from_bottom` transition, we want the previous screen, which is mTopScreen now,
-      // to stay visible during transition, we remove it after the transition ended in onViewAppearTransitionEnd
+    if (shouldUseOpenAnimation && newTop != null && isSlideFromBottom(newTop) && visibleBottom == null) {
+      // When using open animation with `slide_from_bottom`, we want the previous screen to be drawn
+      // under the new one, which is not the default option.
       isDetachingCurrentScreen = true;
     }
 
