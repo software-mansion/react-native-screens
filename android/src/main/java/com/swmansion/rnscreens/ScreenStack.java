@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -12,7 +13,9 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
@@ -21,10 +24,14 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private final ArrayList<ScreenStackFragment> mStack = new ArrayList<>();
   private final Set<ScreenStackFragment> mDismissed = new HashSet<>();
+  private final List<DrawingOp> drawingOpPool = new ArrayList<>();
+  private final List<DrawingOp> drawingOps = new ArrayList<>();
 
   private ScreenStackFragment mTopScreen = null;
   private boolean mRemovalTransitionStarted = false;
-  private ScreenStackFragment mFragmentToRemove = null;
+  private boolean isDetachingCurrentScreen = false;
+  private boolean reverseLastTwoChildren = false;
+  private int previousChildrenCount = 0;
 
   private final FragmentManager.OnBackStackChangedListener mBackStackListener = new FragmentManager.OnBackStackChangedListener() {
     @Override
@@ -59,10 +66,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   @Override
   public @Nullable Screen getTopScreen() {
     return mTopScreen != null ? mTopScreen.getScreen() : null;
-  }
-
-  protected ScreenStackFragment getFragmentToRemove() {
-    return mFragmentToRemove;
   }
 
   public Screen getRootScreen() {
@@ -121,11 +124,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     if (!mRemovalTransitionStarted) {
       dispatchOnFinishTransitioning();
     }
-    if (mFragmentToRemove != null) {
-      getOrCreateTransaction().setTransition(FragmentTransaction.TRANSIT_NONE).remove(mFragmentToRemove);
-      tryCommitTransaction();
-      mFragmentToRemove = null;
-    }
   }
 
   private void dispatchOnFinishTransitioning() {
@@ -161,10 +159,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     // handle the case of newTop being NULL, which happens in several places below
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
     ScreenStackFragment visibleBottom = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
-
-    // we null it here since if another update happened before onViewAppearTransitionEnd, we don't want to
-    // remove the screen since maybe it should be added at the end of the update
-    mFragmentToRemove = null;
 
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
@@ -225,7 +219,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
             break;
           case SLIDE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, 0);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation);
             break;
         }
       } else {
@@ -256,11 +250,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
     // animation logic end
 
-    if (mDismissed.isEmpty() && mTopScreen != null && isSlideFromBottom(mTopScreen) && visibleBottom == null) {
+    if (shouldUseOpenAnimation && mTopScreen != null && isSlideFromBottom(mTopScreen) && visibleBottom == null) {
       // When going forward in `slide_from_bottom` transition, we want the previous screen, which is mTopScreen now,
       // to stay visible during transition, we remove it after the transition ended in onViewAppearTransitionEnd
-      visibleBottom = mTopScreen;
-      mFragmentToRemove = mTopScreen;
+      isDetachingCurrentScreen = true;
     }
 
     // remove all screens previously on stack
@@ -386,5 +379,79 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private static boolean isSlideFromBottom(ScreenStackFragment fragment) {
     return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM;
+  }
+
+  // below methods are taken from https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L43
+  // and are used to swap the order of drawing views when navigating forward with the transitions that are making transitioning fragments appear one on another. See more info in the comment to the linked class.
+  @Override
+  public void removeView(final View view) {
+    if (isDetachingCurrentScreen) {
+      isDetachingCurrentScreen = false;
+      reverseLastTwoChildren = true;
+    }
+
+    super.removeView(view);
+  }
+
+  private void drawAndRelease(int index) {
+    DrawingOp op = drawingOps.remove(index);
+    op.draw();
+    drawingOpPool.add(op);
+  }
+
+  @Override
+  protected void dispatchDraw(Canvas canvas) {
+    super.dispatchDraw(canvas);
+
+    // check the view removal is completed (by comparing the previous children count)
+    if (drawingOps.size() < previousChildrenCount) {
+      reverseLastTwoChildren = false;
+    }
+    previousChildrenCount = drawingOps.size();
+
+    if (reverseLastTwoChildren && drawingOps.size() >= 2) {
+      Collections.swap(drawingOps, drawingOps.size() - 1, drawingOps.size() - 2);
+    }
+
+    while (!drawingOps.isEmpty()) {
+      drawAndRelease(0);
+    }
+  }
+
+  @Override
+  protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+    drawingOps.add(obtainDrawingOp().set(canvas, child, drawingTime));
+    return true;
+  }
+
+  private void performDraw(DrawingOp op) {
+    super.drawChild(op.canvas, op.child, op.drawingTime);
+  }
+
+  private DrawingOp obtainDrawingOp() {
+    if (drawingOpPool.isEmpty()) {
+      return new DrawingOp();
+    }
+    return drawingOpPool.remove(drawingOpPool.size() - 1);
+  }
+
+  private final class DrawingOp {
+    private Canvas canvas;
+    private View child;
+    private long drawingTime;
+
+    DrawingOp set(Canvas canvas, View child, long drawingTime) {
+      this.canvas = canvas;
+      this.child = child;
+      this.drawingTime = drawingTime;
+      return this;
+    }
+
+    void draw() {
+      performDraw(this);
+      canvas = null;
+      child = null;
+      drawingTime = 0;
+    }
   }
 }

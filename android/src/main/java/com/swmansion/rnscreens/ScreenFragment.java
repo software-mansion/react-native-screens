@@ -41,10 +41,6 @@ public class ScreenFragment extends Fragment {
   protected Screen mScreenView;
   private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
   private boolean shouldUpdateOnResume = false;
-  // in `slide_from_bottom` animation, we don't remove the fragment we are transitioning from
-  // when going forward in order to achieve correct visual effect, so we need to fire lifecycle events
-  // on it manually
-  private ScreenStackFragment mFragmentWithoutEvents;
 
   public ScreenFragment() {
     throw new IllegalStateException("Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
@@ -141,12 +137,6 @@ public class ScreenFragment extends Fragment {
   }
 
   protected void dispatchOnWillAppear() {
-    ScreenContainer container = getScreen().getContainer();
-    if (container instanceof ScreenStack && ((ScreenStack) container).getFragmentToRemove() != null) {
-      mFragmentWithoutEvents = ((ScreenStack) container).getFragmentToRemove();
-      mFragmentWithoutEvents.dispatchOnWillDisappear();
-    }
-
     ((ReactContext) mScreenView.getContext())
         .getNativeModule(UIManagerModule.class)
         .getEventDispatcher()
@@ -161,11 +151,6 @@ public class ScreenFragment extends Fragment {
   }
 
   protected void dispatchOnAppear() {
-    if (mFragmentWithoutEvents != null) {
-      mFragmentWithoutEvents.dispatchOnDisappear();
-      mFragmentWithoutEvents = null;
-    }
-
     ((ReactContext) mScreenView.getContext())
             .getNativeModule(UIManagerModule.class)
             .getEventDispatcher()

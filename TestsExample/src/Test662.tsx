@@ -21,7 +21,9 @@ export default function App(): JSX.Element {
           // stackPresentation: 'transparentModal',
         }}>
         <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} />
+        <Stack.Screen name="Second" component={Second} options={{
+          replaceAnimation: 'push',
+        }}/>
         <Stack.Screen name="Third" component={Third} />
         <Stack.Screen name="Fourth" component={Fourth} />
       </Stack.Navigator>
@@ -35,6 +37,10 @@ const First = ({navigation}: Props): JSX.Element => (
       title="Tap me for the second screen"
       onPress={() => navigation.navigate('Second')}
     />
+    <Button
+      title="Replace with second screen"
+      onPress={() => navigation.replace('Second')}
+    />
   </View>
 );
 
@@ -47,6 +53,10 @@ const Second = ({navigation}: Props): JSX.Element => (
     <Button
       title="Tap me to go back"
       onPress={() => navigation.goBack()}
+    />
+    <Button
+      title="Replace with first screen"
+      onPress={() => navigation.replace('First')}
     />
   </View>
 );
