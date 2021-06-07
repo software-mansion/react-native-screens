@@ -176,6 +176,7 @@ public class ScreenFragment extends Fragment {
     dispatchEventInChildContainers(ScreenLifecycleEvent.Appear);
 
     dispatchTransitionProgress(1.0f, false, true);
+    mAboveScreen = null;
   }
 
   protected void dispatchOnWillDisappear() {
@@ -309,7 +310,7 @@ public class ScreenFragment extends Fragment {
     return mIsSendingProgress;
   }
 
-  public void setIsSendingProgress(boolean isSendingProgress) {
+  public void setSendingProgress(boolean isSendingProgress) {
     mIsSendingProgress = isSendingProgress;
   }
 

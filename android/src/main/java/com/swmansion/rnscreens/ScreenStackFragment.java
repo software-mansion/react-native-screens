@@ -38,7 +38,7 @@ public class ScreenStackFragment extends ScreenFragment {
     private Animation.AnimationListener mAnimationListener = new Animation.AnimationListener() {
       @Override
       public void onAnimationStart(Animation animation) {
-        mFragment.setIsSendingProgress(true);
+        mFragment.setSendingProgress(true);
         View fakeView = new View(getContext());
         fakeView.setAlpha(0f);
         ObjectAnimator animator = ObjectAnimator.ofFloat(fakeView, ALPHA, 1f).setDuration(animation.getDuration());
@@ -58,7 +58,7 @@ public class ScreenStackFragment extends ScreenFragment {
       @Override
       public void onAnimationEnd(Animation animation) {
         mFragment.onViewAnimationEnd();
-        mFragment.setIsSendingProgress(false);
+        mFragment.setSendingProgress(false);
       }
 
       @Override

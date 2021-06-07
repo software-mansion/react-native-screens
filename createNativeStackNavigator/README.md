@@ -187,7 +187,25 @@ Boolean indicating whether the navigation bar is translucent.
 
 #### `onTransitionProgress`
 
-A callback called every frame during the transition of screens.
+A callback called every frame during the transition of screens. It takes two arguments: 
+- `progress` - the value between `0.0` and `1.0` with the progress of the current transition
+- `closing` - boolean indicating if the current screen is being pushed or dismissed.
+
+In order to use it with `react-native-reanimated` version `2.x`, you need to have it installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
+
+```jsx
+import ReanimatedScreenProvider from 'react-native-screens/reanimated';
+
+export default function App() {
+  return (
+    <ReanimatedScreenProvider>
+      <YourApp />
+    </ReanimatedScreenProvider>
+  );
+}
+```
+
+Then, you can pass the `'worklet'` function as the value of `onTransitionProgress`.
 
 #### `replaceAnimation`
 

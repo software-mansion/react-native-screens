@@ -27,7 +27,6 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
 
   @Override
   public short getCoalescingKey() {
-    // All events for a given view can be coalesced.
     return mCoalescingKey;
   }
 
