@@ -250,6 +250,8 @@
 
 - (void)notifyWillDisappear
 {
+  [self endEditing:YES];
+  
   if (self.onWillDisappear) {
     self.onWillDisappear(nil);
   }
