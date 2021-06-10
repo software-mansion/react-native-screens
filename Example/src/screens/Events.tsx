@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, I18nManager, Text} from 'react-native';
+import {View, StyleSheet, I18nManager, Text, Alert} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -12,6 +12,9 @@ type StackParamList = {
   Next: undefined;
   NavigationEvents: undefined;
   NativeEvents: undefined;
+  Events: undefined;
+  Home: undefined;
+  Details: undefined;
 };
 
 interface MainScreenProps {
@@ -21,12 +24,16 @@ interface MainScreenProps {
 const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
   <View style={{...styles.container, backgroundColor: 'aliceblue'}}>
     <Button
-      title="React Navigation events"
+      title="focus and blur"
       onPress={() => navigation.navigate('NavigationEvents')}
     />
     <Button
-      title="React Native Screens events"
+      title="transitionStart and transitionEnd"
       onPress={() => navigation.navigate('NativeEvents')}
+    />
+    <Button
+      title="Simple example"
+      onPress={() => navigation.navigate('Events')}
     />
     <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
   </View>
@@ -144,8 +151,51 @@ const NextScreen = (): JSX.Element => (
   </View>
 );
 
+interface HomeScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Home'>;
+}
+
+const HomeScreen = ({navigation}: HomeScreenProps): JSX.Element => (
+  <View style={styles.container}>
+    <Button
+      title="Go to details"
+      onPress={() => navigation.navigate('Details')}
+    />
+    <Button title="Go back" onPress={() => navigation.goBack()} />
+  </View>
+);
+
+interface DetailsScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Details'>;
+}
+
+const DetailsScreen = ({navigation}: DetailsScreenProps): JSX.Element => {
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      Alert.alert('You went to details screen.');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
+      Alert.alert('You left the details screen.');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  return (
+    <View style={styles.container}>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+};
+
 const NativeStack = createNativeStackNavigator<StackParamList>();
 const NavigationStack = createStackNavigator<StackParamList>();
+const EventsStack = createNativeStackNavigator<StackParamList>();
 
 const NativeNavigator = () => (
   <NativeStack.Navigator>
@@ -164,6 +214,13 @@ const NavigationNavigator = () => (
   </NavigationStack.Navigator>
 );
 
+const EventsNavigator = () => (
+  <EventsStack.Navigator>
+    <NativeStack.Screen name="Home" component={HomeScreen} />
+    <NativeStack.Screen name="Details" component={DetailsScreen} />
+  </EventsStack.Navigator>
+);
+
 const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
@@ -180,6 +237,7 @@ const App = (): JSX.Element => (
       />
       <Stack.Screen name="NativeEvents" component={NativeNavigator} />
       <Stack.Screen name="NavigationEvents" component={NavigationNavigator} />
+      <Stack.Screen name="Events" component={EventsNavigator} />
     </Stack.Navigator>
   </ToastProvider>
 );
@@ -191,6 +249,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
+    color: 'black',
   },
 });
 
