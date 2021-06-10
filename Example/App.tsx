@@ -8,7 +8,6 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import {enableScreens} from 'react-native-screens';
 import {NavigationContainer} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
