@@ -27,8 +27,6 @@ import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
 
-enableScreens();
-
 if (Platform.OS === 'android') {
   StatusBar.setTranslucent(true);
 }
