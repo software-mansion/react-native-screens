@@ -1,7 +1,12 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.graphics.BlurMaskFilter;
+import android.graphics.Color;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -15,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import eightbitlab.com.blurview.BlurView;
+import eightbitlab.com.blurview.RenderScriptBlur;
 import jp.wasabeef.blurry.Blurry;
 
 public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
@@ -48,6 +55,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
   };
   private int lastSize;
+  private ArrayList<ScreenContainer> blurs;
 
   public ScreenStack(Context context) {
     super(context);
@@ -305,17 +313,33 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
       // screen added
       else if(lastSize < size) {
-        if (blurred != null) Blurry.delete(blurred);
-        blurred = getTopScreen().getContainer();
-        Blurry.with(getContext()).radius(25).sampling(2).onto(blurred);
+
+        BlurView blurView = new BlurView(getContext());
+
+
+//        blurView.setBackgroundColor(Color.GREEN);
+        blurView.setMinimumHeight(200);
+//        blurView.setAlpha(0.5f);
+        blurView.setMinimumWidth(200);
+
+        blurView.setupWith(mTopScreen.getScreen().getContainer())
+//                .setFrameClearDrawable(windowBackground)
+                .setBlurAlgorithm(new RenderScriptBlur(getContext()))
+                .setBlurRadius(20f)
+                .setBlurAutoUpdate(true)
+                .setHasFixedTransformationMatrix(true);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(20, 20);
+        params.leftMargin = 100;
+        params.topMargin  = 200;
+
+        mTopScreen.getScreen().getContainer().addView(blurView, params);
+        mTopScreen.onContainerUpdate();
+
       }
 
       // screen removed
       else if(lastSize > size) {
-        if (blurred != null) {
-          Blurry.delete(blurred);
-          blurred = null;
-        }
       }
 
     }catch (Exception e){
@@ -349,9 +373,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
    * own in `mBackStackListener`.
    *
    * We pop that "fake" transaction each time we update stack and we add a new one in case the top
-   * screen is allowed to be dismised using hw back button. This way in the listener we can tell
+   * screen is allowed to be dismissed using hw back button. This way in the listener we can tell
    * if back button was pressed based on the count of the items on back stack. We expect 0 items
-   * in case hw back is pressed becakse we try to keep the number of items at 1 by always resetting
+   * in case hw back is pressed because we try to keep the number of items at 1 by always resetting
    * and adding new items. In case we don't add a new item to back stack we remove listener so that
    * it does not get triggered.
    *
