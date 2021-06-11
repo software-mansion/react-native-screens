@@ -41,4 +41,5 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'jp.wasabeef:blurry:4.0.0'
+    implementation 'com.eightbitlab:blurview:1.6.6'
 }

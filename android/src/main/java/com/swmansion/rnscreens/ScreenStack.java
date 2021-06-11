@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -56,6 +57,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   };
   private int lastSize;
   private ArrayList<ScreenContainer> blurs;
+  private BlurView blurView;
 
   public ScreenStack(Context context) {
     super(context);
@@ -308,38 +310,33 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     try{
       int size = mStack.size();
       if(lastSize == 0 || lastSize == size) {
+        if(blurView != null)
+          ((ViewGroup) blurView.getParent()).removeView(blurView);
 
       }
 
       // screen added
-      else if(lastSize < size) {
+      else if(lastSize < size ) {
 
-        BlurView blurView = new BlurView(getContext());
-
-
-//        blurView.setBackgroundColor(Color.GREEN);
-        blurView.setMinimumHeight(200);
-//        blurView.setAlpha(0.5f);
-        blurView.setMinimumWidth(200);
+        blurView = new BlurView(getContext());
 
         blurView.setupWith(mTopScreen.getScreen().getContainer())
-//                .setFrameClearDrawable(windowBackground)
                 .setBlurAlgorithm(new RenderScriptBlur(getContext()))
                 .setBlurRadius(20f)
                 .setBlurAutoUpdate(true)
                 .setHasFixedTransformationMatrix(true);
 
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(20, 20);
-        params.leftMargin = 100;
-        params.topMargin  = 200;
-
-        mTopScreen.getScreen().getContainer().addView(blurView, params);
+        mTopScreen.getScreen().getContainer().addView(blurView);
         mTopScreen.onContainerUpdate();
 
       }
 
       // screen removed
       else if(lastSize > size) {
+
+        if(blurView != null)
+        ((ViewGroup) blurView.getParent()).removeView(blurView);
+
       }
 
     }catch (Exception e){

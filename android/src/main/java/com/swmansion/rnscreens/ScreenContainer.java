@@ -19,7 +19,10 @@ import com.facebook.react.modules.core.ReactChoreographer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+
+import jp.wasabeef.blurry.Blurry;
 
 public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
@@ -32,7 +35,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   private boolean mIsAttached;
   private boolean mLayoutEnqueued = false;
   private @Nullable ScreenFragment mParentScreenFragment = null;
-
+  protected ScreenContainer blurred;
 
   private final ChoreographerCompat.FrameCallback mFrameCallback = new ChoreographerCompat.FrameCallback() {
     @Override
@@ -61,6 +64,8 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     for (int i = 0, size = getChildCount(); i < size; i++) {
       getChildAt(i).layout(0, 0, getWidth(), getHeight());
     }
+//      Blurry.with(getContext()).radius(25).sampling(2).onto(this.getTopScreen());
+
   }
 
   @Override
@@ -127,12 +132,25 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     mScreenFragments.add(index, fragment);
     screen.setContainer(this);
     markUpdated();
+
+//    Blurry.with(getContext()).radius(25).sampling(2).onto(this.getTopScreen());
   }
 
   protected void removeScreenAt(int index) {
+//    if(this.blurred != null){
+//      Blurry.delete(this.blurred);
+//      this.blurred= null;
+//    }
     mScreenFragments.get(index).getScreen().setContainer(null);
     mScreenFragments.remove(index);
     markUpdated();
+
+//    int toBlurIndex = index - 2;
+//    if(toBlurIndex > 0 && toBlurIndex < mScreenFragments.size()) {
+//      T top = mScreenFragments.get(toBlurIndex);
+//      this.blurred = top.getScreen();
+//      Blurry.with(getContext()).radius(25).sampling(2).onto(this.blurred);
+//   }
   }
 
   protected void removeAllScreens() {
