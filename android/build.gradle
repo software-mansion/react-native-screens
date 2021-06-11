@@ -40,4 +40,5 @@ dependencies {
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.google.android.material:material:1.1.0'
+    implementation 'jp.wasabeef:blurry:4.0.0'
 }

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import jp.wasabeef.blurry.Blurry;
+
 public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private static final String BACK_STACK_TAG = "RN_SCREEN_LAST";
@@ -115,6 +117,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   public void onViewAppearTransitionEnd() {
     if (!mRemovalTransitionStarted) {
       dispatchOnFinishTransitioning();
+      // if(mTopScreen != null){
+      //   Blurry.with(getContext()).radius(25).sampling(2).onto(mTopScreen.getScreen());
+      // }
     }
   }
 
@@ -291,6 +296,13 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     mStack.clear();
     mStack.addAll(mScreenFragments);
 
+    try{
+      Blurry.with(getContext()).radius(25).sampling(2).onto(getTopScreen().getContainer());
+    }catch (Exception e){
+
+    }
+
+
     tryCommitTransaction();
 
     if (mTopScreen != null) {
@@ -356,7 +368,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT;
   }
 
-  private static boolean isTransparent(ScreenStackFragment fragment){
+  protected  static boolean isTransparent(ScreenStackFragment fragment){
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 }
