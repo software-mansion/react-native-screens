@@ -58,6 +58,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   private int lastSize;
   private ArrayList<ScreenContainer> blurs;
   private BlurView blurView;
+  private ArrayList<BlurView> blurViews;
 
   public ScreenStack(Context context) {
     super(context);
@@ -318,7 +319,11 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       // screen added
       else if(lastSize < size ) {
 
-        blurView = new BlurView(getContext());
+        if(blurViews == null)
+        blurViews = new ArrayList<>();
+
+
+        BlurView blurView = new BlurView(getContext());
 
         blurView.setupWith(mTopScreen.getScreen().getContainer())
                 .setBlurAlgorithm(new RenderScriptBlur(getContext()))
@@ -329,13 +334,17 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         mTopScreen.getScreen().getContainer().addView(blurView);
         mTopScreen.onContainerUpdate();
 
+        blurViews.add(blurView);
+
+
       }
 
       // screen removed
       else if(lastSize > size) {
+        BlurView view = blurViews.remove(blurViews.size() - 1);
 
-        if(blurView != null)
-        ((ViewGroup) blurView.getParent()).removeView(blurView);
+        if(view != null)
+        ((ViewGroup) view.getParent()).removeView(view);
 
       }
 
