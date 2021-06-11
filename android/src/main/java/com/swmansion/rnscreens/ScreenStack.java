@@ -47,6 +47,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
   };
+  private int lastSize;
 
   public ScreenStack(Context context) {
     super(context);
@@ -297,10 +298,31 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     mStack.addAll(mScreenFragments);
 
     try{
-      Blurry.with(getContext()).radius(25).sampling(2).onto(getTopScreen().getContainer());
-    }catch (Exception e){
+      int size = mStack.size();
+      if(lastSize == 0 || lastSize == size) {
 
+      }
+
+      // screen added
+      else if(lastSize < size) {
+        if (blurred != null) Blurry.delete(blurred);
+        blurred = getTopScreen().getContainer();
+        Blurry.with(getContext()).radius(25).sampling(2).onto(blurred);
+      }
+
+      // screen removed
+      else if(lastSize > size) {
+        if (blurred != null) {
+          Blurry.delete(blurred);
+          blurred = null;
+        }
+      }
+
+    }catch (Exception e){
+//      blurred = null;
     }
+    lastSize = mStack.size();
+
 
 
     tryCommitTransaction();
