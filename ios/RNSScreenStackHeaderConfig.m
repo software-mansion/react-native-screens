@@ -510,11 +510,13 @@ API_AVAILABLE(ios(13.0)){
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
+#if !TARGET_OS_TV
           if (@available(iOS 11.0, *)) {
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
           }
+#endif
         }
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {

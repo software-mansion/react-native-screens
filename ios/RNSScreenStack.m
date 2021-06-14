@@ -45,11 +45,13 @@
 
 @end
 
+#if !TARGET_OS_TV
 @interface RNSGestureRecognizer: UIScreenEdgePanGestureRecognizer
 @end
 
 @implementation RNSGestureRecognizer
 @end
+#endif
 
 @implementation RNSScreenStackView {
   UINavigationController *_controller;
@@ -72,8 +74,10 @@
     _controller = [[RNScreensNavigationController alloc] init];
     _controller.delegate = self;
     
+#if !TARGET_OS_TV
     [self setupGestureHandlers];
-    
+#endif
+      
     // we have to initialize viewControllers with a non empty array for
     // largeTitle header to render in the opened state. If it is empty
     // the header will render in collapsed state which is perhaps a bug
@@ -507,6 +511,7 @@
   return nil;
 }
 
+#if !TARGET_OS_TV
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
@@ -599,6 +604,7 @@
     }
   }
 }
+#endif
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController interactionControllerForAnimationController:(id<UIViewControllerAnimatedTransitioning>)animationController
 {
