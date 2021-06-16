@@ -1,13 +1,11 @@
 package com.swmansion.rnscreens;
 
 import android.view.View;
-
 import com.facebook.react.bridge.JSApplicationCausedNativeException;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
-
 import javax.annotation.Nonnull;
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
@@ -28,7 +26,8 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   @Override
   public void addView(ScreenStackHeaderConfig parent, View child, int index) {
     if (!(child instanceof ScreenStackHeaderSubview)) {
-      throw new JSApplicationCausedNativeException("Config children should be of type " + ScreenStackHeaderSubviewManager.REACT_CLASS);
+      throw new JSApplicationCausedNativeException(
+          "Config children should be of type " + ScreenStackHeaderSubviewManager.REACT_CLASS);
     }
     parent.addConfigSubview((ScreenStackHeaderSubview) child, index);
   }
@@ -130,7 +129,8 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   }
 
   @ReactProp(name = "backButtonInCustomView")
-  public void setBackButtonInCustomView(ScreenStackHeaderConfig config, boolean backButtonInCustomView) {
+  public void setBackButtonInCustomView(
+      ScreenStackHeaderConfig config, boolean backButtonInCustomView) {
     config.setBackButtonInCustomView(backButtonInCustomView);
   }
 
@@ -139,8 +139,8 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
     config.setDirection(direction);
   }
 
-//  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
-//  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
-//  RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
-//  // `hidden` is an UIView property, we need to use different name internally
+  //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
+  //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
+  //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
+  //  // `hidden` is an UIView property, we need to use different name internally
 }

@@ -12,34 +12,29 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-
 import com.facebook.react.bridge.GuardedRunnable;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
 
 public class Screen extends ViewGroup {
 
-  private static final OnAttachStateChangeListener sShowSoftKeyboardOnAttach = new OnAttachStateChangeListener() {
+  private static final OnAttachStateChangeListener sShowSoftKeyboardOnAttach =
+      new OnAttachStateChangeListener() {
 
-    @Override
-    public void onViewAttachedToWindow(View view) {
-      InputMethodManager inputMethodManager =
-        (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-      inputMethodManager.showSoftInput(view, 0);
-      view.removeOnAttachStateChangeListener(sShowSoftKeyboardOnAttach);
-    }
+        @Override
+        public void onViewAttachedToWindow(View view) {
+          InputMethodManager inputMethodManager =
+              (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+          inputMethodManager.showSoftInput(view, 0);
+          view.removeOnAttachStateChangeListener(sShowSoftKeyboardOnAttach);
+        }
 
-    @Override
-    public void onViewDetachedFromWindow(View view) {
-
-    }
-  };
-  private @Nullable
-  ScreenFragment mFragment;
-  private @Nullable
-  ScreenContainer mContainer;
+        @Override
+        public void onViewDetachedFromWindow(View view) {}
+      };
+  private @Nullable ScreenFragment mFragment;
+  private @Nullable ScreenContainer mContainer;
   private ActivityState mActivityState;
   private boolean mTransitioning;
   private StackPresentation mStackPresentation = StackPresentation.PUSH;
@@ -52,6 +47,7 @@ public class Screen extends ViewGroup {
   private Boolean mStatusBarTranslucent;
   private Integer mStatusBarColor;
   private Boolean mStatusBarAnimated;
+
   public Screen(ReactContext context) {
     super(context);
     // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -59,8 +55,10 @@ public class Screen extends ViewGroup {
     // fact that TextView implementation is expected to be attached to window when layout happens.
     // Then, at the moment of layout it checks whether window type is in a reasonable range to tell
     // whether it should enable selection controlls (see Editor.java#prepareCursorControllers).
-    // With screens, however, the text input component can be laid out before it is attached, in that
-    // case TextView tries to get window type property from the oldest existing parent, which in this
+    // With screens, however, the text input component can be laid out before it is attached, in
+    // that
+    // case TextView tries to get window type property from the oldest existing parent, which in
+    // this
     // case is a Screen class, as it is the root of the screen that is about to be attached. Setting
     // params this way is not the most elegant way to solve this problem but workarounds it for the
     // time being
@@ -86,7 +84,8 @@ public class Screen extends ViewGroup {
   @Override
   protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
     // do nothing, react native will keep the view hierarchy so no need to serialize/deserialize
-    // view's states. The side effect of restoring is that TextInput components would trigger set-text
+    // view's states. The side effect of restoring is that TextInput components would trigger
+    // set-text
     // events which may confuse text input handling.
   }
 
@@ -102,13 +101,14 @@ public class Screen extends ViewGroup {
       final int height = b - t;
       final ReactContext reactContext = (ReactContext) getContext();
       reactContext.runOnNativeModulesQueueThread(
-        new GuardedRunnable(reactContext) {
-          @Override
-          public void runGuarded() {
-            reactContext.getNativeModule(UIManagerModule.class)
-              .updateNodeSize(getId(), width, height);
-          }
-        });
+          new GuardedRunnable(reactContext) {
+            @Override
+            public void runGuarded() {
+              reactContext
+                  .getNativeModule(UIManagerModule.class)
+                  .updateNodeSize(getId(), width, height);
+            }
+          });
     }
   }
 
@@ -145,8 +145,8 @@ public class Screen extends ViewGroup {
 
   /**
    * While transitioning this property allows to optimize rendering behavior on Android and provide
-   * a correct blending options for the animated screen. It is turned on automatically by the container
-   * when transitioning is detected and turned off immediately after
+   * a correct blending options for the animated screen. It is turned on automatically by the
+   * container when transitioning is detected and turned off immediately after
    */
   public void setTransitioning(boolean transitioning) {
     if (mTransitioning == transitioning) {
@@ -157,7 +157,9 @@ public class Screen extends ViewGroup {
     if (isWebViewInScreen && getLayerType() != View.LAYER_TYPE_HARDWARE) {
       return;
     }
-    super.setLayerType(transitioning && !isWebViewInScreen ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE, null);
+    super.setLayerType(
+        transitioning && !isWebViewInScreen ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE,
+        null);
   }
 
   private boolean hasWebView(ViewGroup viewGroup) {
@@ -203,8 +205,7 @@ public class Screen extends ViewGroup {
     // ignore - layer type is controlled by `transitioning` prop
   }
 
-  protected @Nullable
-  ScreenFragment getFragment() {
+  protected @Nullable ScreenFragment getFragment() {
     return mFragment;
   }
 
@@ -212,8 +213,7 @@ public class Screen extends ViewGroup {
     mFragment = fragment;
   }
 
-  protected @Nullable
-  ScreenContainer getContainer() {
+  protected @Nullable ScreenContainer getContainer() {
     return mContainer;
   }
 
@@ -298,7 +298,8 @@ public class Screen extends ViewGroup {
 
     mStatusBarStyle = statusBarStyle;
     if (getFragment() != null) {
-      ScreenWindowTraits.setStyle(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setStyle(
+          this, getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 
@@ -324,7 +325,8 @@ public class Screen extends ViewGroup {
 
     mStatusBarTranslucent = statusBarTranslucent;
     if (getFragment() != null) {
-      ScreenWindowTraits.setTranslucent(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setTranslucent(
+          this, getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 
@@ -343,7 +345,8 @@ public class Screen extends ViewGroup {
 
     mStatusBarColor = statusBarColor;
     if (getFragment() != null) {
-      ScreenWindowTraits.setColor(this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+      ScreenWindowTraits.setColor(
+          this, getFragment().tryGetActivity(), getFragment().tryGetContext());
     }
   }
 

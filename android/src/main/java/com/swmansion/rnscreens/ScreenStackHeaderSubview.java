@@ -2,7 +2,6 @@ package com.swmansion.rnscreens;
 
 import android.view.View;
 import android.view.ViewParent;
-
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.views.view.ReactViewGroup;
 
@@ -17,8 +16,8 @@ public class ScreenStackHeaderSubview extends ReactViewGroup {
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY &&
-      MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
+    if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY
+        && MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
       // dimensions provided by react
       mReactWidth = MeasureSpec.getSize(widthMeasureSpec);
       mReactHeight = MeasureSpec.getSize(heightMeasureSpec);

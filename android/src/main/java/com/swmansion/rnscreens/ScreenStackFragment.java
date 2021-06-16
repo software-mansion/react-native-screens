@@ -11,13 +11,11 @@ import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.PixelUtil;
 import com.google.android.material.appbar.AppBarLayout;
@@ -29,13 +27,15 @@ public class ScreenStackFragment extends ScreenFragment {
   private Toolbar mToolbar;
   private boolean mShadowHidden;
   private boolean mIsTranslucent;
+
   @SuppressLint("ValidFragment")
   public ScreenStackFragment(Screen screenView) {
     super(screenView);
   }
 
   public ScreenStackFragment() {
-    throw new IllegalStateException("ScreenStack fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
+    throw new IllegalStateException(
+        "ScreenStack fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
   }
 
   public void removeToolbar() {
@@ -50,8 +50,9 @@ public class ScreenStackFragment extends ScreenFragment {
       mAppBarLayout.addView(toolbar);
     }
     mToolbar = toolbar;
-    AppBarLayout.LayoutParams params = new AppBarLayout.LayoutParams(
-      AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT);
+    AppBarLayout.LayoutParams params =
+        new AppBarLayout.LayoutParams(
+            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT);
     params.setScrollFlags(0);
     mToolbar.setLayoutParams(params);
   }
@@ -66,7 +67,8 @@ public class ScreenStackFragment extends ScreenFragment {
   public void setToolbarTranslucent(boolean translucent) {
     if (mIsTranslucent != translucent) {
       ViewGroup.LayoutParams params = mScreenView.getLayoutParams();
-      ((CoordinatorLayout.LayoutParams) params).setBehavior(translucent ? null : new AppBarLayout.ScrollingViewBehavior());
+      ((CoordinatorLayout.LayoutParams) params)
+          .setBehavior(translucent ? null : new AppBarLayout.ScrollingViewBehavior());
       mIsTranslucent = translucent;
     }
   }
@@ -93,7 +95,9 @@ public class ScreenStackFragment extends ScreenFragment {
     // stack directly from here.
     // When using the Toolbar back button this is called an extra time with transit = 0 but in
     // this case we don't want to notify. The way I found to detect is case is check isHidden.
-    if (transit == 0 && !isHidden() && getScreen().getStackAnimation() == Screen.StackAnimation.NONE) {
+    if (transit == 0
+        && !isHidden()
+        && getScreen().getStackAnimation() == Screen.StackAnimation.NONE) {
       // If the container is nested then appear events will be dispatched by their parent screen so
       // they must not be triggered here.
       ScreenContainer container = getScreen().getContainer();
@@ -101,17 +105,21 @@ public class ScreenStackFragment extends ScreenFragment {
       if (enter) {
         if (!isNested) {
           // Android dispatches the animation start event for the fragment that is being added first
-          // however we want the one being dismissed first to match iOS. It also makes more sense from
+          // however we want the one being dismissed first to match iOS. It also makes more sense
+          // from
           // a navigation point of view to have the disappear event first.
-          // Since there are no explicit relationships between the fragment being added / removed the
-          // practical way to fix this is delaying dispatching the appear events at the end of the frame.
-          UiThreadUtil.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-              dispatchOnWillAppear();
-              dispatchOnAppear();
-            }
-          });
+          // Since there are no explicit relationships between the fragment being added / removed
+          // the
+          // practical way to fix this is delaying dispatching the appear events at the end of the
+          // frame.
+          UiThreadUtil.runOnUiThread(
+              new Runnable() {
+                @Override
+                public void run() {
+                  dispatchOnWillAppear();
+                  dispatchOnAppear();
+                }
+              });
         }
       } else {
         if (!isNested) {
@@ -120,7 +128,6 @@ public class ScreenStackFragment extends ScreenFragment {
         }
         notifyViewAppearTransitionEnd();
       }
-
     }
 
     return null;
@@ -134,12 +141,12 @@ public class ScreenStackFragment extends ScreenFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater,
-                           @Nullable ViewGroup container,
-                           @Nullable Bundle savedInstanceState) {
+  public View onCreateView(
+      LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     CoordinatorLayout view = new NotifyingCoordinatorLayout(getContext(), this);
-    CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
-      LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+    CoordinatorLayout.LayoutParams params =
+        new CoordinatorLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     params.setBehavior(mIsTranslucent ? null : new AppBarLayout.ScrollingViewBehavior());
     mScreenView.setLayoutParams(params);
     view.addView(recycleView(mScreenView));
@@ -150,8 +157,9 @@ public class ScreenStackFragment extends ScreenFragment {
     // role. On top of that it breaks screens animations when alfa offscreen compositing is off
     // (which is the default)
     mAppBarLayout.setBackgroundColor(Color.TRANSPARENT);
-    mAppBarLayout.setLayoutParams(new AppBarLayout.LayoutParams(
-      AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT));
+    mAppBarLayout.setLayoutParams(
+        new AppBarLayout.LayoutParams(
+            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT));
     view.addView(mAppBarLayout);
 
     if (mShadowHidden) {
@@ -201,22 +209,21 @@ public class ScreenStackFragment extends ScreenFragment {
   private static class NotifyingCoordinatorLayout extends CoordinatorLayout {
 
     private final ScreenFragment mFragment;
-    private final Animation.AnimationListener mAnimationListener = new Animation.AnimationListener() {
-      @Override
-      public void onAnimationStart(Animation animation) {
-        mFragment.onViewAnimationStart();
-      }
+    private final Animation.AnimationListener mAnimationListener =
+        new Animation.AnimationListener() {
+          @Override
+          public void onAnimationStart(Animation animation) {
+            mFragment.onViewAnimationStart();
+          }
 
-      @Override
-      public void onAnimationEnd(Animation animation) {
-        mFragment.onViewAnimationEnd();
-      }
+          @Override
+          public void onAnimationEnd(Animation animation) {
+            mFragment.onViewAnimationEnd();
+          }
 
-      @Override
-      public void onAnimationRepeat(Animation animation) {
-
-      }
-    };
+          @Override
+          public void onAnimationRepeat(Animation animation) {}
+        };
 
     public NotifyingCoordinatorLayout(@NonNull Context context, ScreenFragment fragment) {
       super(context);
