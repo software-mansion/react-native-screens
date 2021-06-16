@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.UIManagerModule;
@@ -17,10 +20,20 @@ import com.facebook.react.uimanager.UIManagerModule;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 public class ScreenFragment extends Fragment {
+
+  protected Screen mScreenView;
+  private final List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
+  private boolean shouldUpdateOnResume = false;
+  public ScreenFragment() {
+    throw new IllegalStateException("Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
+  }
+
+  @SuppressLint("ValidFragment")
+  public ScreenFragment(Screen screenView) {
+    super();
+    mScreenView = screenView;
+  }
 
   protected static View recycleView(View view) {
     // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
@@ -38,20 +51,6 @@ public class ScreenFragment extends Fragment {
     return view;
   }
 
-  protected Screen mScreenView;
-  private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
-  private boolean shouldUpdateOnResume = false;
-
-  public ScreenFragment() {
-    throw new IllegalStateException("Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
-  }
-
-  @SuppressLint("ValidFragment")
-  public ScreenFragment(Screen screenView) {
-    super();
-    mScreenView = screenView;
-  }
-
   @Override
   public void onResume() {
     super.onResume();
@@ -67,7 +66,7 @@ public class ScreenFragment extends Fragment {
                            @Nullable Bundle savedInstanceState) {
     FrameLayout wrapper = new FrameLayout(getContext());
     FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+      ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     mScreenView.setLayoutParams(params);
     wrapper.addView(recycleView(mScreenView));
     return wrapper;
@@ -78,7 +77,7 @@ public class ScreenFragment extends Fragment {
   }
 
   public void onContainerUpdate() {
-   updateWindowTraits();
+    updateWindowTraits();
   }
 
   private void updateWindowTraits() {
@@ -90,7 +89,8 @@ public class ScreenFragment extends Fragment {
     ScreenWindowTraits.trySetWindowTraits(getScreen(), activity, tryGetContext());
   }
 
-  protected @Nullable Activity tryGetActivity() {
+  protected @Nullable
+  Activity tryGetActivity() {
     if (getActivity() != null) {
       return getActivity();
     }
@@ -112,7 +112,8 @@ public class ScreenFragment extends Fragment {
     return null;
   }
 
-  protected @Nullable ReactContext tryGetContext() {
+  protected @Nullable
+  ReactContext tryGetContext() {
     if (getContext() instanceof ReactContext) {
       return ((ReactContext) getContext());
     }
@@ -123,10 +124,10 @@ public class ScreenFragment extends Fragment {
     ViewParent parent = getScreen().getContainer();
     while (parent != null) {
       if (parent instanceof Screen) {
-          if (((Screen) parent).getContext() instanceof ReactContext) {
-            return (ReactContext) ((Screen) parent).getContext();
-          }
+        if (((Screen) parent).getContext() instanceof ReactContext) {
+          return (ReactContext) ((Screen) parent).getContext();
         }
+      }
       parent = parent.getParent();
     }
     return null;
@@ -138,9 +139,9 @@ public class ScreenFragment extends Fragment {
 
   protected void dispatchOnWillAppear() {
     ((ReactContext) mScreenView.getContext())
-        .getNativeModule(UIManagerModule.class)
-        .getEventDispatcher()
-        .dispatchEvent(new ScreenWillAppearEvent(mScreenView.getId()));
+      .getNativeModule(UIManagerModule.class)
+      .getEventDispatcher()
+      .dispatchEvent(new ScreenWillAppearEvent(mScreenView.getId()));
 
     for (ScreenContainer sc : mChildScreenContainers) {
       if (sc.getScreenCount() > 0) {
@@ -152,9 +153,9 @@ public class ScreenFragment extends Fragment {
 
   protected void dispatchOnAppear() {
     ((ReactContext) mScreenView.getContext())
-            .getNativeModule(UIManagerModule.class)
-            .getEventDispatcher()
-            .dispatchEvent(new ScreenAppearEvent(mScreenView.getId()));
+      .getNativeModule(UIManagerModule.class)
+      .getEventDispatcher()
+      .dispatchEvent(new ScreenAppearEvent(mScreenView.getId()));
 
     for (ScreenContainer sc : mChildScreenContainers) {
       if (sc.getScreenCount() > 0) {
@@ -166,9 +167,9 @@ public class ScreenFragment extends Fragment {
 
   protected void dispatchOnWillDisappear() {
     ((ReactContext) mScreenView.getContext())
-        .getNativeModule(UIManagerModule.class)
-        .getEventDispatcher()
-        .dispatchEvent(new ScreenWillDisappearEvent(mScreenView.getId()));
+      .getNativeModule(UIManagerModule.class)
+      .getEventDispatcher()
+      .dispatchEvent(new ScreenWillDisappearEvent(mScreenView.getId()));
 
     for (ScreenContainer sc : mChildScreenContainers) {
       if (sc.getScreenCount() > 0) {
@@ -180,9 +181,9 @@ public class ScreenFragment extends Fragment {
 
   protected void dispatchOnDisappear() {
     ((ReactContext) mScreenView.getContext())
-        .getNativeModule(UIManagerModule.class)
-        .getEventDispatcher()
-        .dispatchEvent(new ScreenDisappearEvent(mScreenView.getId()));
+      .getNativeModule(UIManagerModule.class)
+      .getEventDispatcher()
+      .dispatchEvent(new ScreenDisappearEvent(mScreenView.getId()));
 
     for (ScreenContainer sc : mChildScreenContainers) {
       if (sc.getScreenCount() > 0) {
@@ -245,9 +246,9 @@ public class ScreenFragment extends Fragment {
     if (container == null || !container.hasScreen(this)) {
       // we only send dismissed even when the screen has been removed from its container
       ((ReactContext) mScreenView.getContext())
-              .getNativeModule(UIManagerModule.class)
-              .getEventDispatcher()
-              .dispatchEvent(new ScreenDismissedEvent(mScreenView.getId()));
+        .getNativeModule(UIManagerModule.class)
+        .getEventDispatcher()
+        .dispatchEvent(new ScreenDismissedEvent(mScreenView.getId()));
     }
     mChildScreenContainers.clear();
   }

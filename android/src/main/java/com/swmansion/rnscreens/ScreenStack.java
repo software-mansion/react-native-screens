@@ -23,8 +23,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   private final Set<ScreenStackFragment> mDismissed = new HashSet<>();
 
   private ScreenStackFragment mTopScreen = null;
-  private boolean mRemovalTransitionStarted = false;
-
   private final FragmentManager.OnBackStackChangedListener mBackStackListener = new FragmentManager.OnBackStackChangedListener() {
     @Override
     public void onBackStackChanged() {
@@ -36,7 +34,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
   };
-
   private final FragmentManager.FragmentLifecycleCallbacks mLifecycleCallbacks = new FragmentManager.FragmentLifecycleCallbacks() {
     @Override
     public void onFragmentResumed(FragmentManager fm, Fragment f) {
@@ -45,9 +42,18 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
     }
   };
+  private boolean mRemovalTransitionStarted = false;
 
   public ScreenStack(Context context) {
     super(context);
+  }
+
+  private static boolean isCustomAnimation(Screen.StackAnimation stackAnimation) {
+    return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT;
+  }
+
+  private static boolean isTransparent(ScreenStackFragment fragment) {
+    return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 
   public void dismiss(ScreenStackFragment screenFragment) {
@@ -56,7 +62,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   @Override
-  public @Nullable Screen getTopScreen() {
+  public @Nullable
+  Screen getTopScreen() {
     return mTopScreen != null ? mTopScreen.getScreen() : null;
   }
 
@@ -120,9 +127,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private void dispatchOnFinishTransitioning() {
     ((ReactContext) getContext())
-            .getNativeModule(UIManagerModule.class)
-            .getEventDispatcher()
-            .dispatchEvent(new StackFinishTransitioningEvent(getId()));
+      .getNativeModule(UIManagerModule.class)
+      .getEventDispatcher()
+      .dispatchEvent(new StackFinishTransitioningEvent(getId()));
   }
 
   @Override
@@ -162,7 +169,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           }
         } else {
           visibleBottom = screen;
-          if(!isTransparent(screen)){
+          if (!isTransparent(screen)) {
             break;
           }
         }
@@ -190,7 +197,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         // We don't do it if the stack is nested since the parent will trigger these events in child
         stackAnimation = Screen.StackAnimation.NONE;
         if (newTop.getScreen().getStackAnimation() != Screen.StackAnimation.NONE
-                && !isNested()) {
+          && !isNested()) {
           newTop.dispatchOnWillAppear();
           newTop.dispatchOnAppear();
         }
@@ -254,7 +261,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       }
       // Stop detaching screens when reaching visible bottom. All screens above bottom should be
       // visible.
-      if(screen == visibleBottom) {
+      if (screen == visibleBottom) {
         break;
       }
     }
@@ -266,11 +273,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
       for (ScreenStackFragment screen : mScreenFragments) {
         // ignore all screens beneath the visible bottom
-        if(beneathVisibleBottom){
-          if(screen == visibleBottom){
+        if (beneathVisibleBottom) {
+          if (screen == visibleBottom) {
             beneathVisibleBottom = false;
-          }
-          else continue;
+          } else continue;
         }
         // when founding first visible screen, make all screens after that visible
         getOrCreateTransaction().add(getId(), screen).runOnCommit(new Runnable() {
@@ -280,9 +286,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           }
         });
       }
-    }
-
-    else if (newTop != null && !newTop.isAdded()) {
+    } else if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
     }
 
@@ -308,19 +312,19 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   /**
    * The below method sets up fragment manager's back stack in a way that it'd trigger our back
    * stack change listener when hw back button is clicked.
-   *
+   * <p>
    * Because back stack by default rolls back the transaction the stack entry is associated with we
    * generate a "fake" transaction that hides and shows the top fragment. As a result when back
    * stack entry is rolled back nothing happens and we are free to handle back navigation on our
    * own in `mBackStackListener`.
-   *
+   * <p>
    * We pop that "fake" transaction each time we update stack and we add a new one in case the top
    * screen is allowed to be dismised using hw back button. This way in the listener we can tell
    * if back button was pressed based on the count of the items on back stack. We expect 0 items
    * in case hw back is pressed becakse we try to keep the number of items at 1 by always resetting
    * and adding new items. In case we don't add a new item to back stack we remove listener so that
    * it does not get triggered.
-   *
+   * <p>
    * It is important that we don't install back handler when stack contains a single screen as in
    * that case we want the parent navigator or activity handler to take over.
    */
@@ -343,20 +347,12 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
     if (topScreen != firstScreen && topScreen.isDismissable()) {
       mFragmentManager
-              .beginTransaction()
-              .show(topScreen)
-              .addToBackStack(BACK_STACK_TAG)
-              .setPrimaryNavigationFragment(topScreen)
-              .commitAllowingStateLoss();
+        .beginTransaction()
+        .show(topScreen)
+        .addToBackStack(BACK_STACK_TAG)
+        .setPrimaryNavigationFragment(topScreen)
+        .commitAllowingStateLoss();
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
     }
-  }
-
-  private static boolean isCustomAnimation(Screen.StackAnimation stackAnimation) {
-    return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT;
-  }
-
-  private static boolean isTransparent(ScreenStackFragment fragment){
-    return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 }

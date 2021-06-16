@@ -25,32 +25,33 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
   protected final ArrayList<T> mScreenFragments = new ArrayList<>();
 
-  protected @Nullable FragmentManager mFragmentManager;
-  private @Nullable FragmentTransaction mCurrentTransaction;
-  private @Nullable FragmentTransaction mProcessingTransaction;
+  protected @Nullable
+  FragmentManager mFragmentManager;
+  private @Nullable
+  FragmentTransaction mCurrentTransaction;
+  private @Nullable
+  FragmentTransaction mProcessingTransaction;
   private boolean mNeedUpdate;
   private boolean mIsAttached;
-  private boolean mLayoutEnqueued = false;
-  private @Nullable ScreenFragment mParentScreenFragment = null;
-
-
   private final ChoreographerCompat.FrameCallback mFrameCallback = new ChoreographerCompat.FrameCallback() {
     @Override
     public void doFrame(long frameTimeNanos) {
       updateIfNeeded();
     }
   };
-
+  private boolean mLayoutEnqueued = false;
   private final ChoreographerCompat.FrameCallback mLayoutCallback = new ChoreographerCompat.FrameCallback() {
     @Override
     public void doFrame(long frameTimeNanos) {
       mLayoutEnqueued = false;
       measure(
-              MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-              MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+        MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+        MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
       layout(getLeft(), getTop(), getRight(), getBottom());
     }
   };
+  private @Nullable
+  ScreenFragment mParentScreenFragment = null;
 
   public ScreenContainer(Context context) {
     super(context);
@@ -79,7 +80,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     // keyboard open).
     if (view == getFocusedChild()) {
       ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
-              .hideSoftInputFromWindow(getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        .hideSoftInputFromWindow(getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
     super.removeView(view);
   }
@@ -93,8 +94,8 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
       // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
       ReactChoreographer.getInstance().postFrameCallback(
-              ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-              mLayoutCallback);
+        ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+        mLayoutCallback);
     }
   }
 
@@ -108,8 +109,8 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       // enqueue callback of NATIVE_ANIMATED_MODULE type as all view operations are executed in
       // DISPATCH_UI type and we want the callback to be called right after in the same frame.
       ReactChoreographer.getInstance().postFrameCallback(
-              ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
-              mFrameCallback);
+        ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+        mFrameCallback);
     }
   }
 
@@ -136,7 +137,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   }
 
   protected void removeAllScreens() {
-    for (ScreenFragment screenFragment: mScreenFragments) {
+    for (ScreenFragment screenFragment : mScreenFragments) {
       screenFragment.getScreen().setContainer(null);
     }
     mScreenFragments.clear();
@@ -151,8 +152,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     return mScreenFragments.get(index).getScreen();
   }
 
-  public @Nullable Screen getTopScreen() {
-    for (ScreenFragment screenFragment: mScreenFragments) {
+  public @Nullable
+  Screen getTopScreen() {
+    for (ScreenFragment screenFragment : mScreenFragments) {
       if (getActivityState(screenFragment) == Screen.ActivityState.ON_TOP) {
         return screenFragment.getScreen();
       }
@@ -197,7 +199,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     }
     if (!(context instanceof FragmentActivity)) {
       throw new IllegalStateException(
-              "In order to use RNScreens components your app's activity need to extend ReactFragmentActivity or ReactCompatActivity");
+        "In order to use RNScreens components your app's activity need to extend ReactFragmentActivity or ReactCompatActivity");
     }
     setFragmentManager(((FragmentActivity) context).getSupportFragmentManager());
   }
@@ -343,7 +345,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   protected void performUpdate() {
     // detach screens that are no longer active
     Set<Fragment> orphaned = new HashSet<>(mFragmentManager.getFragments());
-    for (ScreenFragment screenFragment: mScreenFragments) {
+    for (ScreenFragment screenFragment : mScreenFragments) {
       if (getActivityState(screenFragment) == Screen.ActivityState.INACTIVE && screenFragment.isAdded()) {
         detachScreen(screenFragment);
       }
@@ -371,7 +373,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
     // attach newly activated screens
     boolean addedBefore = false;
-    for (ScreenFragment screenFragment: mScreenFragments) {
+    for (ScreenFragment screenFragment : mScreenFragments) {
       Screen.ActivityState activityState = getActivityState(screenFragment);
       if (activityState != Screen.ActivityState.INACTIVE && !screenFragment.isAdded()) {
         addedBefore = true;

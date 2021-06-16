@@ -61,7 +61,7 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
 
   @ReactProp(name = "stackAnimation")
   public void setStackAnimation(Screen view, String animation) {
-    if (animation == null || "default".equals(animation) 
+    if (animation == null || "default".equals(animation)
       || "slide_from_bottom".equals(animation) || "simple_push".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.DEFAULT);
     } else if ("none".equals(animation)) {
@@ -125,17 +125,17 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
   @Override
   public Map getExportedCustomDirectEventTypeConstants() {
     return MapBuilder.of(
-            ScreenDismissedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDismissed"),
-            ScreenWillAppearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onWillAppear"),
-            ScreenAppearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onAppear"),
-            ScreenWillDisappearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onWillDisappear"),
-            ScreenDisappearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDisappear"),
-            StackFinishTransitioningEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onFinishTransitioning"));
+      ScreenDismissedEvent.EVENT_NAME,
+      MapBuilder.of("registrationName", "onDismissed"),
+      ScreenWillAppearEvent.EVENT_NAME,
+      MapBuilder.of("registrationName", "onWillAppear"),
+      ScreenAppearEvent.EVENT_NAME,
+      MapBuilder.of("registrationName", "onAppear"),
+      ScreenWillDisappearEvent.EVENT_NAME,
+      MapBuilder.of("registrationName", "onWillDisappear"),
+      ScreenDisappearEvent.EVENT_NAME,
+      MapBuilder.of("registrationName", "onDisappear"),
+      StackFinishTransitioningEvent.EVENT_NAME,
+      MapBuilder.of("registrationName", "onFinishTransitioning"));
   }
 }

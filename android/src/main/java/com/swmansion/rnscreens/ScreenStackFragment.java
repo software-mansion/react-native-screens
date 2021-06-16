@@ -12,62 +12,23 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.widget.LinearLayout;
 
-import com.facebook.react.bridge.UiThreadUtil;
-import com.facebook.react.uimanager.PixelUtil;
-import com.google.android.material.appbar.AppBarLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
+import com.facebook.react.bridge.UiThreadUtil;
+import com.facebook.react.uimanager.PixelUtil;
+import com.google.android.material.appbar.AppBarLayout;
+
 public class ScreenStackFragment extends ScreenFragment {
 
-  private static class NotifyingCoordinatorLayout extends CoordinatorLayout {
-
-    private final ScreenFragment mFragment;
-
-    public NotifyingCoordinatorLayout(@NonNull Context context, ScreenFragment fragment) {
-      super(context);
-      mFragment = fragment;
-    }
-
-    private Animation.AnimationListener mAnimationListener = new Animation.AnimationListener() {
-      @Override
-      public void onAnimationStart(Animation animation) {
-        mFragment.onViewAnimationStart();
-      }
-
-      @Override
-      public void onAnimationEnd(Animation animation) {
-        mFragment.onViewAnimationEnd();
-      }
-
-      @Override
-      public void onAnimationRepeat(Animation animation) {
-
-      }
-    };
-
-    @Override
-    public void startAnimation(Animation animation) {
-      // For some reason View##onAnimationEnd doesn't get called for
-      // exit transitions so we use this hack.
-      AnimationSet set = new AnimationSet(true);
-      set.addAnimation(animation);
-      set.setAnimationListener(mAnimationListener);
-      super.startAnimation(set);
-    }
-  }
-
   private static final float TOOLBAR_ELEVATION = PixelUtil.toPixelFromDIP(4);
-
   private AppBarLayout mAppBarLayout;
   private Toolbar mToolbar;
   private boolean mShadowHidden;
   private boolean mIsTranslucent;
-
   @SuppressLint("ValidFragment")
   public ScreenStackFragment(Screen screenView) {
     super(screenView);
@@ -90,7 +51,7 @@ public class ScreenStackFragment extends ScreenFragment {
     }
     mToolbar = toolbar;
     AppBarLayout.LayoutParams params = new AppBarLayout.LayoutParams(
-            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT);
+      AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT);
     params.setScrollFlags(0);
     mToolbar.setLayoutParams(params);
   }
@@ -178,7 +139,7 @@ public class ScreenStackFragment extends ScreenFragment {
                            @Nullable Bundle savedInstanceState) {
     CoordinatorLayout view = new NotifyingCoordinatorLayout(getContext(), this);
     CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+      LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     params.setBehavior(mIsTranslucent ? null : new AppBarLayout.ScrollingViewBehavior());
     mScreenView.setLayoutParams(params);
     view.addView(recycleView(mScreenView));
@@ -190,7 +151,7 @@ public class ScreenStackFragment extends ScreenFragment {
     // (which is the default)
     mAppBarLayout.setBackgroundColor(Color.TRANSPARENT);
     mAppBarLayout.setLayoutParams(new AppBarLayout.LayoutParams(
-            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT));
+      AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT));
     view.addView(mAppBarLayout);
 
     if (mShadowHidden) {
@@ -234,6 +195,42 @@ public class ScreenStackFragment extends ScreenFragment {
       ((ScreenStack) container).dismiss(this);
     } else {
       throw new IllegalStateException("ScreenStackFragment added into a non-stack container");
+    }
+  }
+
+  private static class NotifyingCoordinatorLayout extends CoordinatorLayout {
+
+    private final ScreenFragment mFragment;
+    private final Animation.AnimationListener mAnimationListener = new Animation.AnimationListener() {
+      @Override
+      public void onAnimationStart(Animation animation) {
+        mFragment.onViewAnimationStart();
+      }
+
+      @Override
+      public void onAnimationEnd(Animation animation) {
+        mFragment.onViewAnimationEnd();
+      }
+
+      @Override
+      public void onAnimationRepeat(Animation animation) {
+
+      }
+    };
+
+    public NotifyingCoordinatorLayout(@NonNull Context context, ScreenFragment fragment) {
+      super(context);
+      mFragment = fragment;
+    }
+
+    @Override
+    public void startAnimation(Animation animation) {
+      // For some reason View##onAnimationEnd doesn't get called for
+      // exit transitions so we use this hack.
+      AnimationSet set = new AnimationSet(true);
+      set.addAnimation(animation);
+      set.setAnimationListener(mAnimationListener);
+      super.startAnimation(set);
     }
   }
 }
