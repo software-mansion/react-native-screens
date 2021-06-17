@@ -29,7 +29,7 @@ import {
 } from './types';
 
 // web implementation is taken from `index.tsx`
-const isPlatformSupported = Platform.OS === 'ios' || Platform.OS === 'android';
+const isPlatformSupported = Platform.OS === 'ios' || Platform.OS === 'android' || Platform.OS === 'windows';
 
 let ENABLE_SCREENS = isPlatformSupported;
 
