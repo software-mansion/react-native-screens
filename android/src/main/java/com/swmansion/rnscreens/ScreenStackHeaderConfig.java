@@ -229,8 +229,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     if (TextUtils.isEmpty(mTitle)) {
       // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
       // views. When it is set to default it'd take up additional distance from the back button
-      // which
-      // would impact the position of custom header views rendered at the center.
+      // which would impact the position of custom header views rendered at the center.
       mToolbar.setContentInsetStartWithNavigation(0);
     }
     TextView titleTextView = getTitleTextView();

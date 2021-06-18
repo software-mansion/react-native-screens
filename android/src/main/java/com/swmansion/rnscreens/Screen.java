@@ -56,12 +56,10 @@ public class Screen extends ViewGroup {
     // Then, at the moment of layout it checks whether window type is in a reasonable range to tell
     // whether it should enable selection controlls (see Editor.java#prepareCursorControllers).
     // With screens, however, the text input component can be laid out before it is attached, in
-    // that
-    // case TextView tries to get window type property from the oldest existing parent, which in
-    // this
-    // case is a Screen class, as it is the root of the screen that is about to be attached. Setting
-    // params this way is not the most elegant way to solve this problem but workarounds it for the
-    // time being
+    // that case TextView tries to get window type property from the oldest existing parent, which
+    // in this case is a Screen class, as it is the root of the screen that is about to be attached.
+    // Setting params this way is not the most elegant way to solve this problem but workarounds it
+    // for the time being
     setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION));
   }
 
@@ -85,8 +83,7 @@ public class Screen extends ViewGroup {
   protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
     // do nothing, react native will keep the view hierarchy so no need to serialize/deserialize
     // view's states. The side effect of restoring is that TextInput components would trigger
-    // set-text
-    // events which may confuse text input handling.
+    // set-text events which may confuse text input handling.
   }
 
   @Override

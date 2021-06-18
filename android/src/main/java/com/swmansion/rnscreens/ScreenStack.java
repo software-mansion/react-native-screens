@@ -88,7 +88,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       mFragmentManager.removeOnBackStackChangedListener(mBackStackListener);
       mFragmentManager.unregisterFragmentLifecycleCallbacks(mLifecycleCallbacks);
       if (!mFragmentManager.isStateSaved() && !mFragmentManager.isDestroyed()) {
-        // state save means that the container where fragment manager was installed has been
+        // State save means that the container where fragment manager was installed has been
         // unmounted.
         // This could happen as a result of dismissing nested stack. In such a case we don't need to
         // reset back stack as it'd result in a crash caused by the fact the fragment manager is no
@@ -188,9 +188,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       if (mTopScreen != null && newTop != null) {
         // there was some other screen attached before
         // if the previous top screen does not exist anymore and the new top was not on the stack
-        // before,
-        // probably replace or reset was called, so we play the "close animation"
-        // otherwise it's open animation
+        // before, probably replace or reset was called, so we play the "close animation".
+        // Otherwise it's open animation
         shouldUseOpenAnimation =
             mScreenFragments.contains(mTopScreen)
                 || newTop.getScreen().getReplaceAnimation() != Screen.ReplaceAnimation.POP;
@@ -200,7 +199,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         // and we don't want the animation when it is entering, but we want to send the
         // willAppear and Appear events to the user, which won't be sent by default if Screen's
         // stack animation is not NONE (see check for stackAnimation in onCreateAnimation in
-        // ScreenStackFragment)
+        // ScreenStackFragment).
         // We don't do it if the stack is nested since the parent will trigger these events in child
         stackAnimation = Screen.StackAnimation.NONE;
         if (newTop.getScreen().getStackAnimation() != Screen.StackAnimation.NONE && !isNested()) {

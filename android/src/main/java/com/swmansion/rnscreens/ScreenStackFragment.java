@@ -106,12 +106,10 @@ public class ScreenStackFragment extends ScreenFragment {
         if (!isNested) {
           // Android dispatches the animation start event for the fragment that is being added first
           // however we want the one being dismissed first to match iOS. It also makes more sense
-          // from
-          // a navigation point of view to have the disappear event first.
+          // from  a navigation point of view to have the disappear event first.
           // Since there are no explicit relationships between the fragment being added / removed
-          // the
-          // practical way to fix this is delaying dispatching the appear events at the end of the
-          // frame.
+          // the practical way to fix this is delaying dispatching the appear events at the end of
+          // the frame.
           UiThreadUtil.runOnUiThread(
               new Runnable() {
                 @Override

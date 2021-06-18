@@ -45,8 +45,7 @@ public class ScreenFragment extends Fragment {
 
     // view detached from fragment manager get their visibility changed to GONE after their state is
     // dumped. Since we don't restore the state but want to reuse the view we need to change
-    // visibility
-    // back to VISIBLE in order for the fragment manager to animate in the view.
+    // visibility back to VISIBLE in order for the fragment manager to animate in the view.
     view.setVisibility(View.VISIBLE);
     return view;
   }
@@ -201,10 +200,8 @@ public class ScreenFragment extends Fragment {
 
   public void onViewAnimationStart() {
     // onViewAnimationStart is triggered from View#onAnimationStart method of the fragment's root
-    // view.
-    // We override Screen#onAnimationStart and an appropriate method of the StackFragment's root
-    // view
-    // in order to achieve this.
+    // view. We override Screen#onAnimationStart and an appropriate method of the StackFragment's
+    // root view in order to achieve this.
     if (isResumed()) {
       // Android dispatches the animation start event for the fragment that is being added first
       // however we want the one being dismissed first to match iOS. It also makes more sense from
