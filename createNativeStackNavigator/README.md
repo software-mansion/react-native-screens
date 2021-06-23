@@ -200,6 +200,7 @@ How the given screen should appear/disappear when pushed or popped at the top of
 
 - `default` - Uses a platform default animation.
 - `fade` - Fades screen in or out.
+- `fade_from_bottom` – performs a fade from bottom animation
 - `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only).
 - `simple_push` – performs a default animation, but without shadow and native header transition (iOS only)
 - `slide_from_bottom` – performs a slide from bottom animation

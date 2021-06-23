@@ -49,7 +49,7 @@ function Deeper({ navigation }: Props) {
 export default function NativeNavigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{stackAnimation: 'slide_from_bottom'}}>
+      <Stack.Navigator screenOptions={{stackAnimation: 'fade_from_bottom'}}>
         <Stack.Screen name="Status" component={Status} />
         <Stack.Screen name="Deeper" component={Deeper} />
       </Stack.Navigator>

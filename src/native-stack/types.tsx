@@ -260,6 +260,7 @@ export type NativeStackNavigationOptions = {
    * The following values are currently supported:
    * - "default" – uses a platform default animation
    * - "fade" – fades screen in or out
+   * - "fade_from_bottom" – performs a fade from bottom animation
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
    * - "slide_from_bottom" – performs a slide from bottom animation
