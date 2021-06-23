@@ -39,7 +39,7 @@ function Deeper({ navigation }: Props) {
   }, [navigation]);
 
   return (
-    <NestedStack.Navigator screenOptions={{ headerShown: true, stackAnimation: 'default' }}>
+    <NestedStack.Navigator screenOptions={{ headerShown: true, stackAnimation: 'fade_from_bottom' }}>
       <NestedStack.Screen name="Privacy" component={Privacy} />
       <NestedStack.Screen name="Another" component={Another} />
     </NestedStack.Navigator>

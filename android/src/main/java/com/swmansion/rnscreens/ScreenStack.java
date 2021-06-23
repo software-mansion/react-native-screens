@@ -2,7 +2,13 @@ package com.swmansion.rnscreens;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.Transformation;
+import android.view.animation.TranslateAnimation;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -12,6 +18,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -223,7 +231,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation);
             break;
           case FADE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(R.animator.rns_fade_from_bottom, R.anim.rns_no_animation);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_fade_from, R.anim.rns_no_animation);
             break;
         }
       } else {
@@ -239,7 +247,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation, R.anim.rns_slide_out_to_bottom);
             break;
           case FADE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation, R.animator.rns_fade_to_bottom);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation, R.anim.rns_fade_to);
             break;
         }
       }
@@ -401,8 +409,11 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     super.removeView(view);
   }
 
-  private void drawAndRelease(int index) {
-    DrawingOp op = drawingOps.remove(index);
+  private void drawAndRelease() {
+    DrawingOp op = drawingOps.remove(0);
+    if (op.child.getAnimation() instanceof AnimationSet) {
+      Log.e("FD", "start: " + op.child.getAnimation());
+    }
     op.draw();
     drawingOpPool.add(op);
   }
@@ -422,7 +433,34 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
 
     while (!drawingOps.isEmpty()) {
-      drawAndRelease(0);
+      drawAndRelease();
+    }
+  }
+
+  public class MyAnimationSet extends AnimationSet
+  {
+    public MyAnimationSet(Context context, AttributeSet attrs) {
+      super(context, attrs);
+    }
+
+    public MyAnimationSet(boolean shareInterpolator) {
+      super(shareInterpolator);
+    }
+
+    @Override
+    protected void applyTransformation(float interpolatedTime, Transformation t) {
+      super.applyTransformation(interpolatedTime, t);
+      int count = getAnimations().size();
+      for (int i = count - 1; i >= 0; --i) {
+        try {
+          Method andPrivateMethod
+                  = Animation.class.getDeclaredMethod(
+                  "applyTransformation", float.class, Transformation.class);
+          andPrivateMethod.invoke(this, interpolatedTime, t);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+          e.printStackTrace();
+        }
+      }
     }
   }
 
