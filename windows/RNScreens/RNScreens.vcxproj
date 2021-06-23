@@ -115,6 +115,8 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="ScreenContainer.h" />
+    <ClInclude Include="ScreenContainerViewManager.h" />
     <ClInclude Include="ScreenStack.h" />
     <ClInclude Include="ScreenStackHeaderConfigViewManager.h" />
     <ClInclude Include="ScreenViewManager.h" />
@@ -135,6 +137,8 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="ScreenContainer.cpp" />
+    <ClCompile Include="ScreenContainerViewManager.cpp" />
     <ClCompile Include="ScreenStack.cpp" />
     <ClCompile Include="ScreenStackHeaderConfigViewManager.cpp" />
     <ClCompile Include="ScreenViewManager.cpp" />

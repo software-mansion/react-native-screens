@@ -21,6 +21,8 @@
     <ClCompile Include="ScreenStackHeaderConfig.cpp" />
     <ClCompile Include="ScreenStackViewManager.cpp" />
     <ClCompile Include="ScreenStack.cpp" />
+    <ClCompile Include="ScreenContainerViewManager.cpp" />
+    <ClCompile Include="ScreenContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -33,6 +35,8 @@
     <ClInclude Include="ScreenStackHeaderConfig.h" />
     <ClInclude Include="ScreenStackViewManager.h" />
     <ClInclude Include="ScreenStack.h" />
+    <ClInclude Include="ScreenContainer.h" />
+    <ClInclude Include="ScreenContainerViewManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="RNScreens.def" />
