@@ -7,6 +7,7 @@ export { default as createNativeStackNavigator } from './navigators/createNative
  * Views
  */
 export { default as NativeStackView } from './views/NativeStackView';
+export { default as useTransitionProgress } from './useTransitionProgress';
 
 /**
  * Types

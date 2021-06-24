@@ -4,6 +4,7 @@ import { Screen, ScreenProps, ScreenContext } from 'react-native-screens';
 
 // @ts-ignore file to be used only if `react-native-reanimated` available in the project, also types are not exported
 import Animated from 'react-native-reanimated';
+// @ts-ignore file to be used only if `react-native-reanimated` available in the project, also types are not exported
 import WorkletEventHandler from 'react-native-reanimated/src/reanimated2/WorkletEventHandler';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -12,6 +12,7 @@ import {
 import Animated, {useSharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import {useTransitionProgress} from 'react-native-screens/native-stack';
 // import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
@@ -64,8 +65,14 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
 }
 
 function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Second'>}) {
-  // using Animated.Value with the progress
-  const progr = React.useRef(new RNAnimated.Value(0));
+  // using Animated.Value with the progress from context
+  const {progress} = useTransitionProgress();
+
+  const opacity = progress.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1.0, 0.0 ,1.0],
+    extrapolate: 'clamp',
+  });
 
   // use to check that nativeDriver works correctly
   // React.useEffect(() => {
@@ -78,20 +85,12 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
   //   return () => clearInterval(inter);
   // })
 
-  React.useEffect(() => {
-    navigation.setOptions({
-      onTransitionProgress: RNAnimated.event([{nativeEvent: {
-        progress: progr.current,
-      }}], {useNativeDriver: true})
-    })
-  }, [navigation]);
-
   return (
     <View style={{backgroundColor: 'yellow', flex: 1}}>
       <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
       <Button title="Tap me for second screen" onPress={() => navigation.push('Second')} />
       <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
-      <RNAnimated.View style={{opacity: progr.current, height: 50, backgroundColor: 'green'}} />
+      <RNAnimated.View style={{opacity, height: 50, backgroundColor: 'green'}} />
     </View>
   );
 }
@@ -99,21 +98,23 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
 
 const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Third'>}): JSX.Element => {
   // using Animated with the progress
-  const [width, setWidth] = React.useState(50);
+  const {progress} = useTransitionProgress();
 
-  React.useEffect(() => {
-    navigation.setOptions({
-      onTransitionProgress: (event) => {
-        setWidth(event.closing ? (event.nativeEvent.progress * 50 + 50) : ((1 - event.nativeEvent.progress) * 50 + 50));
-      }
-    })
-  }, [navigation]);
+  const val = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.1, 0.5],
+    extrapolate: 'clamp',
+  });
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
         <Text style={styles.heading}>Hey! Sign up for our newsletter!</Text>
-        <Animated.View style={{width, height: width, backgroundColor: 'blue'}} />
+        <RNAnimated.View style={{
+          width: 50,
+          height: 50,
+          opacity: val,
+          backgroundColor: 'blue'}} />
         <TouchableOpacity
           style={{...styles.button}}
           onPress={() => navigation.goBack()}>

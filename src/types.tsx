@@ -67,6 +67,11 @@ type TransitionProgressEventBody = {
   closing: boolean;
 };
 
+export type TransitionProgressContextBody = {
+  progress: Animated.Value;
+  closing: Animated.Value;
+};
+
 // reanimated event uses only the body of the function, without `.nativeEvent` part
 export type TransitionProgressEvent = NativeSyntheticEvent<
   TransitionProgressEventBody
@@ -106,6 +111,10 @@ export interface ScreenProps extends ViewProps {
    * A callback called every frame during the transition of screens of `native-stack`.
    */
   onTransitionProgress?: (e: TransitionProgressEvent) => void;
+  /**
+   * Internal callback for providing transition progress context.
+   */
+  onTransitionProgressContext?: (e: TransitionProgressContextBody) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */

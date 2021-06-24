@@ -279,7 +279,13 @@
     self.onTransitionProgress(@{
       @"progress": @(progress),
       @"closing": @(closing),
-                              });
+    });
+  }
+  if (self.onTransitionProgressContext) {
+    self.onTransitionProgressContext(@{
+      @"progress": @(progress),
+      @"closing": @(closing ? 1 : 0),
+    });
   }
 }
 
@@ -584,12 +590,12 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [self notifyTransitionProgress:1.0 closing:NO];
 
   if (!_isSwiping || _shouldNotify) {
     // we are going forward or dismissing without swipe
     // or successfully swiped back
     [((RNSScreenView *)self.view) notifyAppear];
+    [self notifyTransitionProgress:1.0 closing:NO];
   }
   
   _isSwiping = NO;
@@ -600,8 +606,6 @@
 {
   [super viewDidDisappear:animated];
 
-  [self notifyTransitionProgress:1.0 closing:YES];
-  
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
     [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
@@ -610,6 +614,7 @@
   // same flow as in viewDidAppear
   if (!_isSwiping || _shouldNotify) {
     [((RNSScreenView *)self.view) notifyDisappear];
+    [self notifyTransitionProgress:1.0 closing:YES];
   }
   
   _isSwiping = NO;
@@ -701,6 +706,7 @@ RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onTransitionProgressContext, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)

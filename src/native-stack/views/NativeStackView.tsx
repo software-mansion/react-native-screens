@@ -29,6 +29,8 @@ import {
   NativeStackNavigationOptions,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
+import memoize from '../../utils/memoize';
+import TransitionProgressContext from '../TransitionProgressContext';
 
 // const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
@@ -104,6 +106,15 @@ export default function NativeStackView({
   const { colors } = useTheme();
   const Screen = React.useContext(ScreenContext);
 
+  // Keep track of the animation context when deps changes. These changes are taken from react-navigation:
+  // https://github.com/react-navigation/react-navigation/blob/67f6950c14b5ec1baa4359162c3c59b1b2fec94d/packages/stack/src/views/Stack/Card.tsx#L341
+  const getCardAnimation = memoize(
+    (progress: Animated.Value, closing: Animated.Value) => ({
+      progress,
+      closing,
+    })
+  );
+
   return (
     <ScreenStack style={styles.container}>
       {routes.map((route, index) => {
@@ -122,6 +133,9 @@ export default function NativeStackView({
           statusBarStyle,
           statusBarTranslucent,
         } = options;
+
+        const isClosing = new Animated.Value(0);
+        const transitionProgress = new Animated.Value(0);
 
         let { stackPresentation = 'push' } = options;
 
@@ -199,6 +213,17 @@ export default function NativeStackView({
               });
             }}
             onTransitionProgress={onTransitionProgress}
+            onTransitionProgressContext={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    progress: transitionProgress,
+                    closing: isClosing,
+                  },
+                },
+              ],
+              { useNativeDriver: true }
+            )}
             onDisappear={() => {
               navigation.emit({
                 type: 'transitionEnd',
@@ -221,20 +246,23 @@ export default function NativeStackView({
                 target: key,
               });
             }}>
-            <HeaderConfig
-              {...options}
-              route={route}
-              headerShown={isHeaderInPush}
-            />
-            {maybeRenderNestedStack(
-              Screen,
-              options,
-              route,
-              renderScene,
-              stackPresentation,
-              isHeaderInModal,
-              viewStyles
-            )}
+            <TransitionProgressContext.Provider
+              value={getCardAnimation(transitionProgress, isClosing)}>
+              <HeaderConfig
+                {...options}
+                route={route}
+                headerShown={isHeaderInPush}
+              />
+              {maybeRenderNestedStack(
+                Screen,
+                options,
+                route,
+                renderScene,
+                stackPresentation,
+                isHeaderInModal,
+                viewStyles
+              )}
+            </TransitionProgressContext.Provider>
           </Screen>
         );
       })}
