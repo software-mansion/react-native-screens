@@ -230,7 +230,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
         switch (stackAnimation) {
           case BOTTOM_FADE:
-            getOrCreateTransaction().setCustomAnimations(0, R.anim.rns_bottom_fade_out);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation, R.anim.rns_bottom_fade_out);
             break;
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
@@ -257,9 +257,9 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
     // animation logic end
 
-    if (shouldUseOpenAnimation && newTop != null && isSlideFromBottom(newTop) && visibleBottom == null) {
-      // When using open animation with `slide_from_bottom`, we want the previous screen to be drawn
-      // under the new one, which is not the default option.
+    if (shouldUseOpenAnimation && newTop != null && needsToBeFirst(newTop) && visibleBottom == null) {
+      // When using open animation with `slide_from_bottom` or `bottom_fade`, we want the previous
+      // screen to be drawn under the new one, which is not the default option.
       isDetachingCurrentScreen = true;
     }
 
@@ -384,8 +384,12 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     return fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 
-  private static boolean isSlideFromBottom(ScreenStackFragment fragment) {
-    return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM;
+  // FragmentManager incorrectly infers which animation should be at the top during transition.
+  // `needsToBeFirst` method describes which open animations should to be done at the top either way.
+  // This is behaviour guaranteed by `dispatchDraw` method.
+  private static boolean needsToBeFirst(ScreenStackFragment fragment) {
+    return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM
+        || fragment.getScreen().getStackAnimation() == Screen.StackAnimation.BOTTOM_FADE;
   }
 
   // below methods are taken from https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L43
