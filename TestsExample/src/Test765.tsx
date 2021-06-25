@@ -2,28 +2,29 @@ import * as React from 'react';
 import {
   Button,
   View,
+  Animated
 } from 'react-native';
 import {
   createAppContainer,
 } from 'react-navigation';
 
 import createNativeStackNavigator, {NativeStackNavigationOptions, NativeStackNavigationProp} from 'react-native-screens/createNativeStackNavigator';	
+import {useTransitionProgress} from 'react-native-screens/native-stack';	
 
 const DEFAULT_STACK_OPTIONS : NativeStackNavigationOptions
  = {
-	headerBackTitleVisible: false,
 	headerTintColor: 'black',
 	headerTitleStyle: {
     fontFamily: 'arial',
   },
 	headerStyle: {
-		backgroundColor: 'white',
+		backgroundColor: 'powderblue',
 	},
 	cardStyle: {
 		backgroundColor: 'white',
 	},
+  headerTitle: 'Home',
 	hideShadow: true,
-	backButtonImage: undefined,
 	headerTopInsetEnabled: false,
 };
 
@@ -52,7 +53,6 @@ function makeStacks() {
 				screen: Home,
 				navigationOptions: {
 					cardTransparent: true,
-					gestureEnabled: false,
 					stackAnimation: 'fade',
 					cardStyle: {
 						backgroundColor: 'blue',
@@ -62,7 +62,7 @@ function makeStacks() {
 		},
 		{
 			headerMode: 'none',
-			mode: 'containedModal',
+			// mode: 'containedModal',
 		},
 	);
 	const MainStack = createNativeStackNavigator(
@@ -71,14 +71,13 @@ function makeStacks() {
 			Home5: {
 				screen: Home,
 				navigationOptions: {
-					gestureEnabled: false,
-					stackAnimation: 'fade',
+					stackAnimation: 'slide_from_right',
 				},
 			},
 		},
 		{
 			headerMode: 'none',
-			mode: 'containedModal',
+			// mode: 'containedModal',
 		},
 	);
 	return MainStack;
@@ -87,8 +86,18 @@ function makeStacks() {
 export default createAppContainer(makeStacks());
 
 function Home({navigation}: {navigation: NativeStackNavigationProp}) {
+
+  const {progress} = useTransitionProgress();
+
+  const opacity = progress.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1.0, 0.0 ,1.0],
+    extrapolate: 'clamp',
+  });
+
   return (
     <View style={{ flex: 1, backgroundColor: 'red' }}>
+      <Animated.View style={{opacity, height: 50, backgroundColor: 'green'}} />
       <Button title="Go forward" onPress={() => navigation.navigate("Home5")} />
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>

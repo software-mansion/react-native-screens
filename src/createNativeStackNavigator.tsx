@@ -1,17 +1,14 @@
 import React from 'react';
 import {
-  NativeSyntheticEvent,
   Platform,
   StyleSheet,
   Animated,
   StyleProp,
   TextStyle,
   ViewStyle,
-  TargetedEvent,
 } from 'react-native';
 import {
   ScreenContext,
-  ScreenProps,
   ScreenStack,
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
@@ -131,405 +128,417 @@ type NativeStackNavigationConfig = {
   transparentCard?: boolean;
 };
 
-type Props = {
+type RouteViewProps = {
+  index: number;
+  route: NavigationRoute<NavigationParams>;
+  descriptor: NativeStackDescriptor;
+  navigationConfig: NativeStackNavigationConfig;
+  stackNavigation: StackNavigationHelpers;
+  screenProps: unknown;
+};
+
+function RouteView({
+  index,
+  route,
+  descriptor,
+  navigationConfig,
+  stackNavigation,
+  screenProps,
+}: RouteViewProps) {
+  const { navigation, getComponent, options } = descriptor;
+  const { mode, transparentCard } = navigationConfig;
+  const SceneComponent = getComponent();
+  const Screen = React.useContext(ScreenContext);
+
+  const closing = React.useRef(new Animated.Value(0)).current;
+  const progress = React.useRef(new Animated.Value(0)).current;
+
+  let stackPresentation: StackPresentationTypes = 'push';
+
+  if (options.stackPresentation) {
+    stackPresentation = options.stackPresentation;
+  } else {
+    // this shouldn't be used because we have a prop for that
+    if (mode === 'modal' || mode === 'containedModal') {
+      stackPresentation = mode;
+      if (transparentCard || options.cardTransparent) {
+        stackPresentation =
+          mode === 'containedModal'
+            ? 'containedTransparentModal'
+            : 'transparentModal';
+      }
+    }
+  }
+  let stackAnimation = options.stackAnimation;
+  if (options.animationEnabled === false) {
+    stackAnimation = 'none';
+  }
+
+  const hasHeader =
+    options.headerShown !== false &&
+    navigationConfig?.headerMode !== 'none' &&
+    options.header !== null;
+
+  if (
+    !didWarn &&
+    stackPresentation !== 'push' &&
+    options.headerShown !== undefined
+  ) {
+    didWarn = true;
+    console.warn(
+      'Be aware that changing the visibility of header in modal on iOS will result in resetting the state of the screen.'
+    );
+  }
+
+  const isHeaderInModal = isAndroid
+    ? false
+    : stackPresentation !== 'push' && hasHeader && options.headerShown === true;
+  const isHeaderInPush = isAndroid
+    ? hasHeader
+    : stackPresentation === 'push' && hasHeader;
+
+  return (
+    <Screen
+      key={`screen_${route.key}`}
+      enabled
+      style={[StyleSheet.absoluteFill, options.cardStyle]}
+      stackAnimation={stackAnimation}
+      stackPresentation={stackPresentation}
+      replaceAnimation={
+        options.replaceAnimation === undefined
+          ? 'pop'
+          : options.replaceAnimation
+      }
+      pointerEvents={
+        index === stackNavigation.state.routes.length - 1 ? 'auto' : 'none'
+      }
+      gestureEnabled={
+        Platform.OS === 'android'
+          ? false
+          : options.gestureEnabled === undefined
+          ? true
+          : options.gestureEnabled
+      }
+      screenOrientation={options.screenOrientation}
+      statusBarAnimation={options.statusBarAnimation}
+      statusBarColor={options.statusBarColor}
+      statusBarHidden={options.statusBarHidden}
+      statusBarStyle={options.statusBarStyle}
+      statusBarTranslucent={options.statusBarTranslucent}
+      onAppear={() => onAppear(route, descriptor, stackNavigation)}
+      onWillAppear={() => options?.onWillAppear?.()}
+      onWillDisappear={() => options?.onWillDisappear?.()}
+      onDisappear={() => options?.onDisappear?.()}
+      onTransitionProgress={options.onTransitionProgress}
+      onTransitionProgressContext={Animated.event(
+        [
+          {
+            nativeEvent: {
+              progress,
+              closing,
+            },
+          },
+        ],
+        { useNativeDriver: true }
+      )}
+      onDismissed={(e) =>
+        removeScene(route, e.nativeEvent.dismissCount, stackNavigation)
+      }>
+      <TransitionProgressContext.Provider value={{ progress, closing }}>
+        {isHeaderInPush &&
+          renderHeaderConfig(index, route, descriptor, navigationConfig)}
+        {maybeRenderNestedStack(
+          isHeaderInModal,
+          screenProps,
+          route,
+          navigation,
+          SceneComponent,
+          index,
+          descriptor,
+          navigationConfig
+        )}
+      </TransitionProgressContext.Provider>
+    </Screen>
+  );
+}
+
+function removeScene(
+  route: NavigationRoute<NavigationParams>,
+  dismissCount: number,
+  navigation: StackNavigationHelpers
+) {
+  navigation.dispatch({
+    // @ts-ignore special navigation action for native stack
+    type: REMOVE_ACTION,
+    immediate: true,
+    key: route.key,
+    dismissCount,
+  });
+}
+
+function onAppear(
+  route: NavigationRoute<NavigationParams>,
+  descriptor: NativeStackDescriptor,
+  navigation: StackNavigationHelpers
+) {
+  descriptor.options?.onAppear?.();
+  navigation.dispatch(
+    StackActions.completeTransition({
+      toChildKey: route.key,
+      key: navigation.state.key,
+    })
+  );
+}
+
+function onFinishTransitioning(navigation: StackNavigationHelpers) {
+  const { routes } = navigation.state;
+  const lastRoute = routes?.length && routes[routes.length - 1];
+
+  if (lastRoute) {
+    navigation.dispatch(
+      StackActions.completeTransition({
+        toChildKey: lastRoute.key,
+        key: navigation.state.key,
+      })
+    );
+  }
+}
+
+function renderHeaderConfig(
+  index: number,
+  route: NavigationRoute<NavigationParams>,
+  descriptor: NativeStackDescriptor,
+  navigationConfig: NativeStackNavigationConfig
+) {
+  const { options } = descriptor;
+  const { headerMode } = navigationConfig;
+
+  const {
+    backButtonInCustomView,
+    direction,
+    disableBackButtonMenu,
+    headerBackTitle,
+    headerBackTitleStyle,
+    headerBackTitleVisible,
+    headerHideBackButton,
+    headerHideShadow,
+    headerLargeStyle,
+    headerLargeTitle,
+    headerLargeTitleHideShadow,
+    headerLargeTitleStyle,
+    headerShown,
+    headerStyle,
+    headerTintColor,
+    headerTitleStyle,
+    headerTopInsetEnabled = true,
+    headerTranslucent,
+    hideShadow,
+    largeTitle,
+    largeTitleHideShadow,
+    title,
+    translucent,
+  } = options;
+
+  const scene = {
+    index,
+    key: route.key,
+    route,
+    descriptor,
+  };
+
+  const headerOptions: ScreenStackHeaderConfigProps = {
+    backButtonInCustomView,
+    backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
+    backTitleFontFamily: headerBackTitleStyle?.fontFamily,
+    backTitleFontSize: headerBackTitleStyle?.fontSize,
+    color: headerTintColor,
+    direction,
+    disableBackButtonMenu,
+    topInsetEnabled: headerTopInsetEnabled,
+    hideBackButton: headerHideBackButton,
+    hideShadow: headerHideShadow || hideShadow,
+    largeTitle: headerLargeTitle || largeTitle,
+    largeTitleBackgroundColor:
+      headerLargeStyle?.backgroundColor ||
+      // @ts-ignore old implementation, will not be present in TS API, but can be used here
+      headerLargeTitleStyle?.backgroundColor,
+    largeTitleColor: headerLargeTitleStyle?.color,
+    largeTitleFontFamily: headerLargeTitleStyle?.fontFamily,
+    largeTitleFontSize: headerLargeTitleStyle?.fontSize,
+    largeTitleFontWeight: headerLargeTitleStyle?.fontWeight,
+    largeTitleHideShadow: largeTitleHideShadow || headerLargeTitleHideShadow,
+    title,
+    titleColor: headerTitleStyle?.color || headerTintColor,
+    titleFontFamily: headerTitleStyle?.fontFamily,
+    titleFontSize: headerTitleStyle?.fontSize,
+    titleFontWeight: headerTitleStyle?.fontWeight,
+    translucent: headerTranslucent || translucent || false,
+  };
+
+  const hasHeader =
+    headerShown !== false && headerMode !== 'none' && options.header !== null;
+  if (!hasHeader) {
+    return <ScreenStackHeaderConfig {...headerOptions} hidden />;
+  }
+
+  if (headerStyle !== undefined) {
+    headerOptions.backgroundColor = headerStyle.backgroundColor;
+    headerOptions.blurEffect = headerStyle.blurEffect;
+  }
+
+  const children = [];
+
+  if (options.backButtonImage) {
+    children.push(
+      <ScreenStackHeaderBackButtonImage
+        key="backImage"
+        source={options.backButtonImage}
+      />
+    );
+  }
+
+  if (Platform.OS === 'ios' && options.searchBar) {
+    children.push(
+      <ScreenStackHeaderSearchBarView>
+        <SearchBar {...options.searchBar} />
+      </ScreenStackHeaderSearchBarView>
+    );
+  }
+
+  if (options.headerLeft !== undefined) {
+    children.push(
+      <ScreenStackHeaderLeftView key="left">
+        {renderComponentOrThunk(options.headerLeft, { scene })}
+      </ScreenStackHeaderLeftView>
+    );
+  } else if (options.headerBackImage !== undefined) {
+    const goBack = () => {
+      // Go back on next tick because button ripple effect needs to happen on Android
+      requestAnimationFrame(() => {
+        descriptor.navigation.goBack(descriptor.key);
+      });
+    };
+
+    children.push(
+      <ScreenStackHeaderLeftView key="left">
+        <HeaderBackButton
+          onPress={goBack}
+          pressColorAndroid={options.headerPressColorAndroid}
+          tintColor={options.headerTintColor}
+          backImage={options.headerBackImage}
+          label={options.backButtonTitle}
+          truncatedLabel={options.truncatedBackButtonTitle}
+          labelVisible={options.backTitleVisible}
+          labelStyle={options.headerBackTitleStyle}
+          titleLayout={options.layoutPreset}
+          // @ts-ignore old props kept for very old version of `react-navigation-stack`
+          title={options.backButtonTitle}
+          truncatedTitle={options.truncatedBackButtonTitle}
+          backTitleVisible={options.backTitleVisible}
+          titleStyle={options.headerBackTitleStyle}
+          layoutPreset={options.layoutPreset}
+          scene={scene}
+        />
+      </ScreenStackHeaderLeftView>
+    );
+  }
+
+  if (options.headerTitle) {
+    if (title === undefined && typeof options.headerTitle === 'string') {
+      headerOptions.title = options.headerTitle;
+    } else {
+      children.push(
+        <ScreenStackHeaderCenterView key="center">
+          {renderComponentOrThunk(options.headerTitle, { scene })}
+        </ScreenStackHeaderCenterView>
+      );
+    }
+  }
+
+  if (options.headerRight) {
+    children.push(
+      <ScreenStackHeaderRightView key="right">
+        {renderComponentOrThunk(options.headerRight, { scene })}
+      </ScreenStackHeaderRightView>
+    );
+  }
+
+  if (children.length > 0) {
+    headerOptions.children = children;
+  }
+
+  return <ScreenStackHeaderConfig {...headerOptions} />;
+}
+
+function maybeRenderNestedStack(
+  isHeaderInModal: boolean,
+  screenProps: unknown,
+  route: NavigationRoute<NavigationParams>,
+  navigation: NavigationScreenProp<
+    NavigationRoute<NavigationParams>,
+    NavigationParams
+  >,
+  SceneComponent: React.ComponentType<Record<string, unknown>>,
+  index: number,
+  descriptor: NativeStackDescriptor,
+  navigationConfig: NativeStackNavigationConfig
+) {
+  const Screen = React.useContext(ScreenContext);
+
+  if (isHeaderInModal) {
+    return (
+      <ScreenStack style={styles.scenes}>
+        <Screen style={StyleSheet.absoluteFill}>
+          {renderHeaderConfig(index, route, descriptor, navigationConfig)}
+          <SceneView
+            screenProps={screenProps}
+            navigation={navigation}
+            component={SceneComponent}
+          />
+        </Screen>
+      </ScreenStack>
+    );
+  }
+  return (
+    <SceneView
+      screenProps={screenProps}
+      navigation={navigation}
+      component={SceneComponent}
+    />
+  );
+}
+
+type StackViewProps = {
   navigation: StackNavigationHelpers;
   descriptors: NativeStackDescriptorMap;
   navigationConfig: NativeStackNavigationConfig;
   screenProps: unknown;
 };
-class StackView extends React.Component<Props> {
-  private removeScene = (
-    route: NavigationRoute<NavigationParams>,
-    dismissCount: number
-  ) => {
-    this.props.navigation.dispatch({
-      // @ts-ignore special navigation action for native stack
-      type: REMOVE_ACTION,
-      immediate: true,
-      key: route.key,
-      dismissCount,
-    });
-  };
 
-  private onAppear = (
-    route: NavigationRoute<NavigationParams>,
-    descriptor: NativeStackDescriptor
-  ) => {
-    descriptor.options?.onAppear?.();
-    this.props.navigation.dispatch(
-      StackActions.completeTransition({
-        toChildKey: route.key,
-        key: this.props.navigation.state.key,
-      })
-    );
-  };
-
-  private onFinishTransitioning:
-    | ((e: NativeSyntheticEvent<TargetedEvent>) => void)
-    | undefined = () => {
-    const { routes } = this.props.navigation.state;
-    const lastRoute = routes?.length && routes[routes.length - 1];
-
-    if (lastRoute) {
-      this.props.navigation.dispatch(
-        StackActions.completeTransition({
-          toChildKey: lastRoute.key,
-          key: this.props.navigation.state.key,
-        })
-      );
-    }
-  };
-
-  private renderHeaderConfig = (
-    index: number,
-    route: NavigationRoute<NavigationParams>,
-    descriptor: NativeStackDescriptor
-  ) => {
-    const { navigationConfig } = this.props;
-    const { options } = descriptor;
-    const { headerMode } = navigationConfig;
-
-    const {
-      backButtonInCustomView,
-      direction,
-      disableBackButtonMenu,
-      headerBackTitle,
-      headerBackTitleStyle,
-      headerBackTitleVisible,
-      headerHideBackButton,
-      headerHideShadow,
-      headerLargeStyle,
-      headerLargeTitle,
-      headerLargeTitleHideShadow,
-      headerLargeTitleStyle,
-      headerShown,
-      headerStyle,
-      headerTintColor,
-      headerTitleStyle,
-      headerTopInsetEnabled = true,
-      headerTranslucent,
-      hideShadow,
-      largeTitle,
-      largeTitleHideShadow,
-      title,
-      translucent,
-    } = options;
-
-    const scene = {
-      index,
-      key: route.key,
-      route,
-      descriptor,
-    };
-
-    const headerOptions: ScreenStackHeaderConfigProps = {
-      backButtonInCustomView,
-      backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
-      backTitleFontFamily: headerBackTitleStyle?.fontFamily,
-      backTitleFontSize: headerBackTitleStyle?.fontSize,
-      color: headerTintColor,
-      direction,
-      disableBackButtonMenu,
-      topInsetEnabled: headerTopInsetEnabled,
-      hideBackButton: headerHideBackButton,
-      hideShadow: headerHideShadow || hideShadow,
-      largeTitle: headerLargeTitle || largeTitle,
-      largeTitleBackgroundColor:
-        headerLargeStyle?.backgroundColor ||
-        // @ts-ignore old implementation, will not be present in TS API, but can be used here
-        headerLargeTitleStyle?.backgroundColor,
-      largeTitleColor: headerLargeTitleStyle?.color,
-      largeTitleFontFamily: headerLargeTitleStyle?.fontFamily,
-      largeTitleFontSize: headerLargeTitleStyle?.fontSize,
-      largeTitleFontWeight: headerLargeTitleStyle?.fontWeight,
-      largeTitleHideShadow: largeTitleHideShadow || headerLargeTitleHideShadow,
-      title,
-      titleColor: headerTitleStyle?.color || headerTintColor,
-      titleFontFamily: headerTitleStyle?.fontFamily,
-      titleFontSize: headerTitleStyle?.fontSize,
-      titleFontWeight: headerTitleStyle?.fontWeight,
-      translucent: headerTranslucent || translucent || false,
-    };
-
-    const hasHeader =
-      headerShown !== false && headerMode !== 'none' && options.header !== null;
-    if (!hasHeader) {
-      return <ScreenStackHeaderConfig {...headerOptions} hidden />;
-    }
-
-    if (headerStyle !== undefined) {
-      headerOptions.backgroundColor = headerStyle.backgroundColor;
-      headerOptions.blurEffect = headerStyle.blurEffect;
-    }
-
-    const children = [];
-
-    if (options.backButtonImage) {
-      children.push(
-        <ScreenStackHeaderBackButtonImage
-          key="backImage"
-          source={options.backButtonImage}
+function StackView({
+  navigation,
+  descriptors,
+  navigationConfig,
+  screenProps,
+}: StackViewProps) {
+  const { routes } = navigation.state;
+  return (
+    <ScreenStack
+      style={styles.scenes}
+      onFinishTransitioning={() => onFinishTransitioning(navigation)}>
+      {routes.map((route, index) => (
+        <RouteView
+          key={route.key}
+          index={index}
+          route={route}
+          descriptor={descriptors[route.key]}
+          navigationConfig={navigationConfig}
+          stackNavigation={navigation}
+          screenProps={screenProps}
         />
-      );
-    }
-
-    if (Platform.OS === 'ios' && options.searchBar) {
-      children.push(
-        <ScreenStackHeaderSearchBarView>
-          <SearchBar {...options.searchBar} />
-        </ScreenStackHeaderSearchBarView>
-      );
-    }
-
-    if (options.headerLeft !== undefined) {
-      children.push(
-        <ScreenStackHeaderLeftView key="left">
-          {renderComponentOrThunk(options.headerLeft, { scene })}
-        </ScreenStackHeaderLeftView>
-      );
-    } else if (options.headerBackImage !== undefined) {
-      const goBack = () => {
-        // Go back on next tick because button ripple effect needs to happen on Android
-        requestAnimationFrame(() => {
-          descriptor.navigation.goBack(descriptor.key);
-        });
-      };
-
-      children.push(
-        <ScreenStackHeaderLeftView key="left">
-          <HeaderBackButton
-            onPress={goBack}
-            pressColorAndroid={options.headerPressColorAndroid}
-            tintColor={options.headerTintColor}
-            backImage={options.headerBackImage}
-            label={options.backButtonTitle}
-            truncatedLabel={options.truncatedBackButtonTitle}
-            labelVisible={options.backTitleVisible}
-            labelStyle={options.headerBackTitleStyle}
-            titleLayout={options.layoutPreset}
-            // @ts-ignore old props kept for very old version of `react-navigation-stack`
-            title={options.backButtonTitle}
-            truncatedTitle={options.truncatedBackButtonTitle}
-            backTitleVisible={options.backTitleVisible}
-            titleStyle={options.headerBackTitleStyle}
-            layoutPreset={options.layoutPreset}
-            scene={scene}
-          />
-        </ScreenStackHeaderLeftView>
-      );
-    }
-
-    if (options.headerTitle) {
-      if (title === undefined && typeof options.headerTitle === 'string') {
-        headerOptions.title = options.headerTitle;
-      } else {
-        children.push(
-          <ScreenStackHeaderCenterView key="center">
-            {renderComponentOrThunk(options.headerTitle, { scene })}
-          </ScreenStackHeaderCenterView>
-        );
-      }
-    }
-
-    if (options.headerRight) {
-      children.push(
-        <ScreenStackHeaderRightView key="right">
-          {renderComponentOrThunk(options.headerRight, { scene })}
-        </ScreenStackHeaderRightView>
-      );
-    }
-
-    if (children.length > 0) {
-      headerOptions.children = children;
-    }
-
-    return <ScreenStackHeaderConfig {...headerOptions} />;
-  };
-
-  private maybeRenderNestedStack = (
-    Screen: React.ComponentType<ScreenProps>,
-    isHeaderInModal: boolean,
-    screenProps: unknown,
-    route: NavigationRoute<NavigationParams>,
-    navigation: NavigationScreenProp<
-      NavigationRoute<NavigationParams>,
-      NavigationParams
-    >,
-    SceneComponent: React.ComponentType<Record<string, unknown>>,
-    index: number,
-    descriptor: NativeStackDescriptor
-  ) => {
-    if (isHeaderInModal) {
-      return (
-        <ScreenStack style={styles.scenes}>
-          <Screen style={StyleSheet.absoluteFill}>
-            {this.renderHeaderConfig(index, route, descriptor)}
-            <SceneView
-              screenProps={screenProps}
-              navigation={navigation}
-              component={SceneComponent}
-            />
-          </Screen>
-        </ScreenStack>
-      );
-    }
-    return (
-      <SceneView
-        screenProps={screenProps}
-        navigation={navigation}
-        component={SceneComponent}
-      />
-    );
-  };
-
-  private renderScene = (
-    Screen: React.ComponentType<ScreenProps>,
-    index: number,
-    route: NavigationRoute<NavigationParams>,
-    descriptor: NativeStackDescriptor
-  ) => {
-    const { navigation, getComponent, options } = descriptor;
-    const { mode, transparentCard } = this.props.navigationConfig;
-    const SceneComponent = getComponent();
-
-    const closing = React.useRef(new Animated.Value(0)).current;
-    const progress = React.useRef(new Animated.Value(0)).current;
-
-    let stackPresentation: StackPresentationTypes = 'push';
-
-    if (options.stackPresentation) {
-      stackPresentation = options.stackPresentation;
-    } else {
-      // this shouldn't be used because we have a prop for that
-      if (mode === 'modal' || mode === 'containedModal') {
-        stackPresentation = mode;
-        if (transparentCard || options.cardTransparent) {
-          stackPresentation =
-            mode === 'containedModal'
-              ? 'containedTransparentModal'
-              : 'transparentModal';
-        }
-      }
-    }
-    let stackAnimation = options.stackAnimation;
-    if (options.animationEnabled === false) {
-      stackAnimation = 'none';
-    }
-
-    const hasHeader =
-      options.headerShown !== false &&
-      this.props.navigationConfig?.headerMode !== 'none' &&
-      options.header !== null;
-
-    if (
-      !didWarn &&
-      stackPresentation !== 'push' &&
-      options.headerShown !== undefined
-    ) {
-      didWarn = true;
-      console.warn(
-        'Be aware that changing the visibility of header in modal on iOS will result in resetting the state of the screen.'
-      );
-    }
-
-    const isHeaderInModal = isAndroid
-      ? false
-      : stackPresentation !== 'push' &&
-        hasHeader &&
-        options.headerShown === true;
-    const isHeaderInPush = isAndroid
-      ? hasHeader
-      : stackPresentation === 'push' && hasHeader;
-
-    const { screenProps } = this.props;
-    return (
-      <Screen
-        key={`screen_${route.key}`}
-        enabled
-        style={[StyleSheet.absoluteFill, options.cardStyle]}
-        stackAnimation={stackAnimation}
-        stackPresentation={stackPresentation}
-        replaceAnimation={
-          options.replaceAnimation === undefined
-            ? 'pop'
-            : options.replaceAnimation
-        }
-        pointerEvents={
-          index === this.props.navigation.state.routes.length - 1
-            ? 'auto'
-            : 'none'
-        }
-        gestureEnabled={
-          Platform.OS === 'android'
-            ? false
-            : options.gestureEnabled === undefined
-            ? true
-            : options.gestureEnabled
-        }
-        screenOrientation={options.screenOrientation}
-        statusBarAnimation={options.statusBarAnimation}
-        statusBarColor={options.statusBarColor}
-        statusBarHidden={options.statusBarHidden}
-        statusBarStyle={options.statusBarStyle}
-        statusBarTranslucent={options.statusBarTranslucent}
-        onAppear={() => this.onAppear(route, descriptor)}
-        onWillAppear={() => options?.onWillAppear?.()}
-        onWillDisappear={() => options?.onWillDisappear?.()}
-        onDisappear={() => options?.onDisappear?.()}
-        onTransitionProgress={options.onTransitionProgress}
-        onTransitionProgressContext={Animated.event(
-          [
-            {
-              nativeEvent: {
-                progress,
-                closing,
-              },
-            },
-          ],
-          { useNativeDriver: true }
-        )}
-        onDismissed={(e) =>
-          this.removeScene(route, e.nativeEvent.dismissCount)
-        }>
-        <TransitionProgressContext.Provider value={{ progress, closing }}>
-          {isHeaderInPush && this.renderHeaderConfig(index, route, descriptor)}
-          {this.maybeRenderNestedStack(
-            Screen,
-            isHeaderInModal,
-            screenProps,
-            route,
-            navigation,
-            SceneComponent,
-            index,
-            descriptor
-          )}
-        </TransitionProgressContext.Provider>
-      </Screen>
-    );
-  };
-
-  render() {
-    const { navigation, descriptors } = this.props;
-
-    return (
-      <ScreenContext.Consumer>
-        {(Screen) => (
-          <ScreenStack
-            style={styles.scenes}
-            onFinishTransitioning={this.onFinishTransitioning}>
-            {navigation.state.routes.map((route, i) =>
-              this.renderScene(
-                Screen as React.ComponentType<ScreenProps>,
-                i,
-                route,
-                descriptors[route.key]
-              )
-            )}
-          </ScreenStack>
-        )}
-      </ScreenContext.Consumer>
-    );
-  }
+      ))}
+    </ScreenStack>
+  );
 }
 
 const styles = StyleSheet.create({

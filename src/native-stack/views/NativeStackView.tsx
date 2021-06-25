@@ -4,7 +4,6 @@ import {
   StackNavigationState,
   useTheme,
   Route,
-  Theme,
 } from '@react-navigation/native';
 import * as React from 'react';
 import { Animated, Platform, StyleSheet, View, ViewProps } from 'react-native';
@@ -114,7 +113,6 @@ type RouteViewProps = {
   index: number;
   navigation: NativeStackNavigationHelpers;
   descriptors: NativeStackDescriptorMap;
-  colors: Theme['colors'];
   navigatorKey: string;
 };
 
@@ -256,7 +254,6 @@ export default function NativeStackView({
   descriptors,
 }: Props): JSX.Element {
   const { key, routes } = state;
-  const { colors } = useTheme();
   return (
     <ScreenStack style={styles.container}>
       {routes.map((route, index) => (
@@ -266,7 +263,6 @@ export default function NativeStackView({
           index={index}
           navigation={navigation}
           descriptors={descriptors}
-          colors={colors}
           navigatorKey={key}
         />
       ))}
