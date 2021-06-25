@@ -41,6 +41,7 @@ import {
   NavigationScreenProp,
 } from 'react-navigation';
 import { NativeStackNavigationOptions as NativeStackNavigationOptionsV5 } from './native-stack/types';
+import TransitionProgressContext from './native-stack/TransitionProgressContext';
 import { HeaderBackButton } from 'react-navigation-stack';
 import {
   StackNavigationHelpers,
@@ -391,6 +392,9 @@ class StackView extends React.Component<Props> {
     const { mode, transparentCard } = this.props.navigationConfig;
     const SceneComponent = getComponent();
 
+    const closing = React.useRef(new Animated.Value(0)).current;
+    const progress = React.useRef(new Animated.Value(0)).current;
+
     let stackPresentation: StackPresentationTypes = 'push';
 
     if (options.stackPresentation) {
@@ -473,20 +477,33 @@ class StackView extends React.Component<Props> {
         onWillDisappear={() => options?.onWillDisappear?.()}
         onDisappear={() => options?.onDisappear?.()}
         onTransitionProgress={options.onTransitionProgress}
+        onTransitionProgressContext={Animated.event(
+          [
+            {
+              nativeEvent: {
+                progress,
+                closing,
+              },
+            },
+          ],
+          { useNativeDriver: true }
+        )}
         onDismissed={(e) =>
           this.removeScene(route, e.nativeEvent.dismissCount)
         }>
-        {isHeaderInPush && this.renderHeaderConfig(index, route, descriptor)}
-        {this.maybeRenderNestedStack(
-          Screen,
-          isHeaderInModal,
-          screenProps,
-          route,
-          navigation,
-          SceneComponent,
-          index,
-          descriptor
-        )}
+        <TransitionProgressContext.Provider value={{ progress, closing }}>
+          {isHeaderInPush && this.renderHeaderConfig(index, route, descriptor)}
+          {this.maybeRenderNestedStack(
+            Screen,
+            isHeaderInModal,
+            screenProps,
+            route,
+            navigation,
+            SceneComponent,
+            index,
+            descriptor
+          )}
+        </TransitionProgressContext.Provider>
       </Screen>
     );
   };

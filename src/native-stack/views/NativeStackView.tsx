@@ -24,7 +24,6 @@ import {
 import HeaderConfig from './HeaderConfig';
 import TransitionProgressContext from '../TransitionProgressContext';
 
-// const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
 
 let Container = View;
