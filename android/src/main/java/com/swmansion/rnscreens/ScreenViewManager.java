@@ -124,7 +124,7 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
   @Nullable
   @Override
   public Map getExportedCustomDirectEventTypeConstants() {
-    return MapBuilder.of(
+    Map<String, Map<String, String>> map = MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDismissed"),
             ScreenWillAppearEvent.EVENT_NAME,
@@ -139,5 +139,8 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
             MapBuilder.of("registrationName", "onTransitionProgress"),
             StackFinishTransitioningEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onFinishTransitioning"));
+    // MapBuilder.of method can only take 7 events
+    map.put(ScreenTransitionProgressContextEvent.EVENT_NAME, MapBuilder.of("registrationName", "onTransitionProgressContext"));
+    return map;
   }
 }

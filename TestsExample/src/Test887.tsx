@@ -101,8 +101,8 @@ const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
   const {progress} = useTransitionProgress();
 
   const val = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.1, 0.5],
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.1, 0.5, 0.1],
     extrapolate: 'clamp',
   });
 

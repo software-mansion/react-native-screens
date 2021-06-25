@@ -227,6 +227,10 @@ public class ScreenFragment extends Fragment {
               .getNativeModule(UIManagerModule.class)
               .getEventDispatcher()
               .dispatchEvent(new ScreenTransitionProgressEvent(mScreenView.getId(), mProgress, closing, mCoalescingKey));
+      ((ReactContext) mScreenView.getContext())
+              .getNativeModule(UIManagerModule.class)
+              .getEventDispatcher()
+              .dispatchEvent(new ScreenTransitionProgressContextEvent(mScreenView.getId(), mProgress, closing, mCoalescingKey));
     }
   }
 
