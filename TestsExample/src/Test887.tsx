@@ -36,7 +36,7 @@ export default function App(): JSX.Element {
   );
 }
 function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'First'>}) {
-  // using reanimated 2 with the progress
+  // using reanimated 2 with the progress and progress from context in the same Screen
   const sv = useSharedValue(50);
   const reaStyle = useAnimatedStyle(() => {
     return {
@@ -51,15 +51,24 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
       onTransitionProgress: (event) => {
         'worklet'
         sv.value = event.closing ? (event.progress * 50 + 50) : ((1 - event.progress) * 50 + 50);
-      }
+      },
     })
   }, [navigation]);
+
+  const {progress} = useTransitionProgress();
+
+  const opacity = progress.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1.0, 0.0 ,1.0],
+    extrapolate: 'clamp',
+  });
 
   return (
     <View style={{backgroundColor: 'red', flex: 1}}>
       <Button title="Tap me for second screen" onPress={() => navigation.navigate('Second')} />
       <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
       <Animated.View style={reaStyle} />
+      <RNAnimated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
     </View>
   );
 }

@@ -143,6 +143,13 @@ function RouteView({
   const closing = React.useRef(new Animated.Value(0)).current;
   const progress = React.useRef(new Animated.Value(0)).current;
 
+  // @ts-ignore checking if function is a worklet
+  if (onTransitionProgress && !onTransitionProgress?.__worklet) {
+    console.warn(
+      'Function provided in `onTransitionProgress` should be a worklet. If you want to use it with `react-native` Animated, check `useTransitionProgress`.'
+    );
+  }
+
   let { stackPresentation = 'push' } = options;
 
   if (index === 0) {

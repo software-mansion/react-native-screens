@@ -232,6 +232,7 @@ export type NativeStackNavigationOptions = {
   headerTranslucent?: boolean;
   /**
    * A callback called every frame during the transition of screens of `native-stack`.
+   * It should be used only with `react-native-reanimated` v2 and provide `worklet` as a function.
    */
   onTransitionProgress?: (e: TransitionProgressEvent) => void;
   /**

@@ -187,11 +187,11 @@ Boolean indicating whether the navigation bar is translucent.
 
 #### `onTransitionProgress`
 
-A callback called every frame during the transition of screens. It takes two arguments: 
-- `progress` - the value between `0.0` and `1.0` with the progress of the current transition
-- `closing` - boolean indicating if the current screen is being pushed or dismissed.
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It takes two arguments: 
+- `progress` - the value between `0.0` and `1.0` with the progress of the current transition.
+- `closing` - boolean indicating if the current screen is being navigated into or from.
 
-In order to use it with `react-native-reanimated` version `2.x`, you need to have it installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
+In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
 
 ```jsx
 import ReanimatedScreenProvider from 'react-native-screens/reanimated';
@@ -206,6 +206,8 @@ export default function App() {
 ```
 
 Then, you can pass the `'worklet'` function as the value of `onTransitionProgress`.
+
+If you want to use transition progress with `react-native` `Animated`, see [useTransitionProgress](#useTransitionProgress).
 
 #### `replaceAnimation`
 
@@ -250,6 +252,31 @@ Using `containedModal` and `containedTransparentModal` with other types of modal
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.
+
+#### `useTransitionProgress`
+
+Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
+- `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
+- `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
+
+```jsx
+import {Animated} from 'react-native';
+import {useTransitionProgress} from 'react-native-screens/native-stack';
+
+const {progress} = useTransitionProgress();
+
+const opacity = progress.interpolate({
+  inputRange: [0, 0.5, 1],
+  outputRange: [1.0, 0.0 ,1.0],
+  extrapolate: 'clamp',
+});
+
+return (
+  <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+);
+```
+
+If you want to use `react-native-reanimated` version `2.x`, see [onTransitionProgress](#onTransitionProgress).
 
 ### Status bar and orientation managment
 

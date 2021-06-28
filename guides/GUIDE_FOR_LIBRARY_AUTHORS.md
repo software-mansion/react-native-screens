@@ -75,6 +75,10 @@ export default function App() {
 
 Then, you can pass the `'worklet'` function as the value of `onTransitionProgress`.
 
+#### `onTransitionProgressContext`
+
+A callback similar to `onTransitionProgress`, but giving `closing` value of `0` or `1` instead of its boolean value.
+
 ### `onWillAppear`
 
 A callback that gets called when the current screen will appear. This is called as soon as the transition begins.

@@ -109,6 +109,7 @@ export interface ScreenProps extends ViewProps {
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
   /**
    * A callback called every frame during the transition of screens of `native-stack`.
+   * It should be used only with `react-native-reanimated` v2 and provide `worklet` as a function.
    */
   onTransitionProgress?: (e: TransitionProgressEvent) => void;
   /**
