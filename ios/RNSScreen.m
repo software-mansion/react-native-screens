@@ -153,6 +153,7 @@
     case RNSScreenStackAnimationDefault:
     case RNSScreenStackAnimationSimplePush:
     case RNSScreenStackAnimationSlideFromBottom:
+    case RNSScreenStackAnimationFadeFromBottom:
       // Default
       break;
   }
@@ -663,7 +664,7 @@ RCT_ENUM_CONVERTER(RNSScreenStackAnimation, (@{
                                                   @"flip": @(RNSScreenStackAnimationFlip),
                                                   @"simple_push": @(RNSScreenStackAnimationSimplePush),
                                                   @"slide_from_bottom": @(RNSScreenStackAnimationSlideFromBottom),
-                                                  @"fade_from_bottom": @(RNSScreenStackAnimationDefault),
+                                                  @"fade_from_bottom": @(RNSScreenStackAnimationFadeFromBottom),
                                                   @"slide_from_right": @(RNSScreenStackAnimationDefault),
                                                   @"slide_from_left": @(RNSScreenStackAnimationDefault),
                                                   }), RNSScreenStackAnimationDefault, integerValue)

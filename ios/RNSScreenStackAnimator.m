@@ -53,6 +53,8 @@
       [self animateFadeWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     } else if (screen.stackAnimation == RNSScreenStackAnimationSlideFromBottom) {
       [self animateSlideFromBottomWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
+    } else if (screen.stackAnimation == RNSScreenStackAnimationFadeFromBottom) {
+      [self animateFadeFromBottomWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     }
   }
 }
@@ -151,8 +153,38 @@
      toViewController.view.transform = CGAffineTransformIdentity;
      [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
      [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-         toViewController.view.transform = CGAffineTransformIdentity;
-         fromViewController.view.transform = topBottomTransform;
+       toViewController.view.transform = CGAffineTransformIdentity;
+       fromViewController.view.transform = topBottomTransform;
+     } completion:^(BOOL finished) {
+       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+     }];
+   }
+}
+
+- (void)animateFadeFromBottomWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                    toVC:(UIViewController *)toViewController fromVC:(UIViewController *)fromViewController
+{
+  CGAffineTransform topBottomTransform = CGAffineTransformMakeTranslation(0, transitionContext.containerView.bounds.size.height);
+
+   if (_operation == UINavigationControllerOperationPush) {
+     toViewController.view.transform = topBottomTransform;
+     toViewController.view.alpha = 0.0;
+     [[transitionContext containerView] addSubview:toViewController.view];
+     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+       fromViewController.view.transform = CGAffineTransformIdentity;
+       toViewController.view.transform = CGAffineTransformIdentity;
+       toViewController.view.alpha = 1.0;
+     } completion:^(BOOL finished) {
+       fromViewController.view.transform = CGAffineTransformIdentity;
+       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+     }];
+   } else if (_operation == UINavigationControllerOperationPop) {
+     toViewController.view.transform = CGAffineTransformIdentity;
+     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+       toViewController.view.transform = CGAffineTransformIdentity;
+       fromViewController.view.transform = topBottomTransform;
+       fromViewController.view.alpha = 0.0;
      } completion:^(BOOL finished) {
        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
      }];
