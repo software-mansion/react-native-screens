@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android">
-    <translate
-        android:duration="@android:integer/config_mediumAnimTime"
-        android:fromYDelta="0%"
-        android:toYDelta="100%" />
-    <alpha
-        android:interpolator="@android:anim/decelerate_interpolator"
-        android:duration="@android:integer/config_mediumAnimTime"
-        android:fromAlpha="1.0"
-        android:toAlpha="0.0" />
+<!--Android Nougat exit animation-->
+<!--http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false"
+    android:zAdjustment="top">
+    <alpha android:fromAlpha="1.0" android:toAlpha="0.0"
+        android:interpolator="@android:interpolator/linear"
+        android:startOffset="100"
+        android:duration="150"/>
+    <translate android:fromYDelta="0%" android:toYDelta="8%"
+        android:interpolator="@android:interpolator/accelerate_quint"
+        android:duration="250"/>
 </set>
