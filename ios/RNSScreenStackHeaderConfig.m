@@ -453,7 +453,7 @@ API_AVAILABLE(ios(13.0)){
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
+  if (@available(iOS 13.0, tvOS 13.0, *)) {
     UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
@@ -510,11 +510,13 @@ API_AVAILABLE(ios(13.0)){
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
+#if !TARGET_OS_TV
           if (@available(iOS 11.0, *)) {
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
           }
+#endif
         }
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
