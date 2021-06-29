@@ -17,9 +17,8 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackAnimation: 'fade_from_bottom',
-          // stackAnimation: 'slide_from_bottom',
-          stackPresentation: 'transparentModal',
+          // stackAnimation: 'fade_from_bottom',
+          stackAnimation: 'slide_from_bottom',
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} options={{
