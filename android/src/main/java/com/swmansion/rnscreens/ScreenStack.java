@@ -3,7 +3,6 @@ package com.swmansion.rnscreens;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.View;
-import android.view.animation.AnimationSet;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
