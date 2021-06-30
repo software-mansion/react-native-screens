@@ -164,31 +164,52 @@
 - (void)animateFadeFromBottomWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
                                     toVC:(UIViewController *)toViewController fromVC:(UIViewController *)fromViewController
 {
-  CGAffineTransform topBottomTransform = CGAffineTransformMakeTranslation(0, transitionContext.containerView.bounds.size.height);
+  CGAffineTransform topBottomTransform = CGAffineTransformMakeTranslation(0, 0.08 * transitionContext.containerView.bounds.size.height);
 
-   if (_operation == UINavigationControllerOperationPush) {
-     toViewController.view.transform = topBottomTransform;
-     toViewController.view.alpha = 0.0;
-     [[transitionContext containerView] addSubview:toViewController.view];
-     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-       fromViewController.view.transform = CGAffineTransformIdentity;
-       toViewController.view.transform = CGAffineTransformIdentity;
-       toViewController.view.alpha = 1.0;
-     } completion:^(BOOL finished) {
-       fromViewController.view.transform = CGAffineTransformIdentity;
-       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-     }];
-   } else if (_operation == UINavigationControllerOperationPop) {
-     toViewController.view.transform = CGAffineTransformIdentity;
-     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
-     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-       toViewController.view.transform = CGAffineTransformIdentity;
-       fromViewController.view.transform = topBottomTransform;
-       fromViewController.view.alpha = 0.0;
-     } completion:^(BOOL finished) {
-       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-     }];
-   }
+  if (_operation == UINavigationControllerOperationPush) {
+    toViewController.view.transform = topBottomTransform;
+    toViewController.view.alpha = 0.0;
+    [[transitionContext containerView] addSubview:toViewController.view];
+    [UIView animateWithDuration: 0.35
+                          delay: 0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                       fromViewController.view.transform = CGAffineTransformIdentity;
+                       toViewController.view.transform = CGAffineTransformIdentity;
+                     }
+                     completion:^(BOOL finished) {
+                       fromViewController.view.transform = CGAffineTransformIdentity;
+                       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+                     }];
+    [UIView animateWithDuration: 0.2
+                          delay: 0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                       toViewController.view.alpha = 1.0;
+                     }
+                    completion: nil];
+      
+  } else if (_operation == UINavigationControllerOperationPop) {
+    toViewController.view.transform = CGAffineTransformIdentity;
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+    [UIView animateWithDuration: 0.25
+                          delay: 0
+                        options: UIViewAnimationOptionCurveEaseIn
+                    animations:^{
+                          toViewController.view.transform = CGAffineTransformIdentity;
+                          fromViewController.view.transform = topBottomTransform;
+                    }
+                    completion: nil];
+    [UIView animateWithDuration: 0.15
+                          delay: 0.1
+                        options: UIViewAnimationOptionCurveLinear
+                     animations:^{
+                       fromViewController.view.alpha = 0.0;
+                     }
+                     completion:^(BOOL finished) {
+                       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+                     }];
+  }
 }
 
 @end
