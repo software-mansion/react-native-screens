@@ -170,6 +170,9 @@
     toViewController.view.transform = topBottomTransform;
     toViewController.view.alpha = 0.0;
     [[transitionContext containerView] addSubview:toViewController.view];
+
+    // Android Nougat open animation
+    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_open_enter.xml
     [UIView animateWithDuration: 0.35
                           delay: 0
                         options: UIViewAnimationOptionCurveEaseOut
@@ -192,6 +195,9 @@
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    // Android Nougat exit animation
+    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
     [UIView animateWithDuration: 0.25
                           delay: 0
                         options: UIViewAnimationOptionCurveEaseIn
