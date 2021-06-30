@@ -259,8 +259,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     // animation logic end
 
     if (shouldUseOpenAnimation && newTop != null && needsDrawReordering(newTop) && visibleBottom == null) {
-      // When using open animation with `slide_from_bottom`, we want the previous screen to be drawn
-      // under the new one, which is not the default option.
+      // When using an open animation in which two screens overlap (eg. fade_from_bottom or slide_from_bottom),
+      // we want to draw the previous screen under the new one, which is not the default option.
       isDetachingCurrentScreen = true;
     }
 
