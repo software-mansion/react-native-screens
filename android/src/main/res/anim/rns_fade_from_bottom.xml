@@ -5,8 +5,8 @@
     android:shareInterpolator="false">
     <alpha android:fromAlpha="0.0" android:toAlpha="1.0"
         android:interpolator="@android:interpolator/decelerate_quint"
-        android:duration="200"/>
+        android:duration="210"/>
     <translate android:fromYDelta="8%" android:toYDelta="0"
         android:interpolator="@android:interpolator/decelerate_quint"
-        android:duration="350"/>
+        android:duration="370"/>
 </set>
