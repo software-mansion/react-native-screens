@@ -61,17 +61,21 @@ class ReanimatedScreen extends React.Component<ScreenProps> {
   }
 
   render() {
-    const { children, ...rest } = this.props;
+    const { children, copyTransitionProgress = false, ...rest } = this.props;
 
     return (
       <AnimatedScreen
         {...rest}
         // @ts-ignore some problems with types
         ref={this.setRef}>
-        <ReanimatedTransitionProgressContext.Provider
-          value={{ progress: this.progress, closing: this.closing }}>
-          {children}
-        </ReanimatedTransitionProgressContext.Provider>
+        {copyTransitionProgress ? ( // if we are in an iOS modal with `headerShown: true`, there is a nested stack with no transition
+          children
+        ) : (
+          <ReanimatedTransitionProgressContext.Provider
+            value={{ progress: this.progress, closing: this.closing }}>
+            {children}
+          </ReanimatedTransitionProgressContext.Provider>
+        )}
       </AnimatedScreen>
     );
   }

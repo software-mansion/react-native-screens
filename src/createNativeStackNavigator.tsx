@@ -19,7 +19,6 @@ import {
   ScreenStackHeaderSearchBarView,
   SearchBar,
   StackPresentationTypes,
-  TransitionProgressContext,
 } from 'react-native-screens';
 import {
   createNavigator,
@@ -150,9 +149,6 @@ function RouteView({
   const SceneComponent = getComponent();
   const Screen = React.useContext(ScreenContext);
 
-  const closing = React.useRef(new Animated.Value(0)).current;
-  const progress = React.useRef(new Animated.Value(0)).current;
-
   let stackPresentation: StackPresentationTypes = 'push';
 
   if (options.stackPresentation) {
@@ -229,34 +225,21 @@ function RouteView({
       onWillAppear={() => options?.onWillAppear?.()}
       onWillDisappear={() => options?.onWillDisappear?.()}
       onDisappear={() => options?.onDisappear?.()}
-      onTransitionProgress={Animated.event(
-        [
-          {
-            nativeEvent: {
-              progress,
-              closing,
-            },
-          },
-        ],
-        { useNativeDriver: true }
-      )}
       onDismissed={(e) =>
         removeScene(route, e.nativeEvent.dismissCount, stackNavigation)
       }>
-      <TransitionProgressContext.Provider value={{ progress, closing }}>
-        {isHeaderInPush &&
-          renderHeaderConfig(index, route, descriptor, navigationConfig)}
-        {maybeRenderNestedStack(
-          isHeaderInModal,
-          screenProps,
-          route,
-          navigation,
-          SceneComponent,
-          index,
-          descriptor,
-          navigationConfig
-        )}
-      </TransitionProgressContext.Provider>
+      {isHeaderInPush &&
+        renderHeaderConfig(index, route, descriptor, navigationConfig)}
+      {maybeRenderNestedStack(
+        isHeaderInModal,
+        screenProps,
+        route,
+        navigation,
+        SceneComponent,
+        index,
+        descriptor,
+        navigationConfig
+      )}
     </Screen>
   );
 }

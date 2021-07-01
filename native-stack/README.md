@@ -228,19 +228,21 @@ Hook providing context value of transition progress of the current screen to be 
 
 ```jsx
 import {Animated} from 'react-native';
-import {useTransitionProgress} from 'react-native-screens/native-stack';
+import {useTransitionProgress} from 'react-native-screens';
 
-const {progress} = useTransitionProgress();
+function Home() {
+  const {progress} = useTransitionProgress();
 
-const opacity = progress.interpolate({
-  inputRange: [0, 0.5, 1],
-  outputRange: [1.0, 0.0 ,1.0],
-  extrapolate: 'clamp',
-});
+  const opacity = progress.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1.0, 0.0 ,1.0],
+    extrapolate: 'clamp',
+  });
 
-return (
-  <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
-);
+  return (
+    <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+  );
+}
 ```
 
 #### `useReanimatedTransitionProgress`
@@ -252,7 +254,7 @@ A callback called every frame during the transition of screens to be used with `
 In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
 
 ```jsx
-import ReanimatedScreenProvider from 'react-native-screens/reanimated';
+import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
 
 export default function App() {
   return (

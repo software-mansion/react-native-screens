@@ -72,6 +72,10 @@ export interface ScreenProps extends ViewProps {
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
   /**
+   * An internal boolean value for not providing transition progress values in modals with header since there will never be transition in it.
+   */
+  copyTransitionProgress?: boolean;
+  /**
    * All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;

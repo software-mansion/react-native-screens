@@ -105,7 +105,8 @@ const ScreensNativeModules = {
 
 class Screen extends React.Component<ScreenProps> {
   private ref: React.ElementRef<typeof View> | null = null;
-
+  private closing = new Animated.Value(0);
+  private progress = new Animated.Value(0);
   setNativeProps(props: ScreenProps): void {
     this.ref?.setNativeProps(props);
   }
@@ -132,7 +133,9 @@ class Screen extends React.Component<ScreenProps> {
         enabled,
         active,
         activityState,
+        children,
         statusBarColor,
+        copyTransitionProgress = false,
         ...rest
       } = this.props;
 
@@ -151,7 +154,26 @@ class Screen extends React.Component<ScreenProps> {
           statusBarColor={processedColor}
           activityState={activityState}
           ref={this.setRef}
-        />
+          onTransitionProgress={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  progress: this.progress,
+                  closing: this.closing,
+                },
+              },
+            ],
+            { useNativeDriver: true }
+          )}>
+          {copyTransitionProgress ? ( // if we are in an iOS modal with `headerShown: true`, there is a nested stack with no transition
+            children
+          ) : (
+            <TransitionProgressContext.Provider
+              value={{ progress: this.progress, closing: this.closing }}>
+              {children}
+            </TransitionProgressContext.Provider>
+          )}
+        </AnimatedNativeScreen>
       );
     } else {
       // same reason as above
@@ -310,6 +332,4 @@ module.exports = {
   screensEnabled,
   shouldUseActivityState,
   useTransitionProgress,
-
-  TransitionProgressContext,
 };

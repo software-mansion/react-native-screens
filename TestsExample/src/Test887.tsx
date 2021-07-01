@@ -10,10 +10,16 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
 import {useTransitionProgress} from 'react-native-screens';
 import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
-import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+} from 'react-native-reanimated';
 
 const Stack = createNativeStackNavigator();
 type SimpleStackParams = {
@@ -24,21 +30,35 @@ type SimpleStackParams = {
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ 
-        stackAnimation: 'slide_from_left', 
-        // stackPresentation: 'transparentModal',
+      <Stack.Navigator
+        screenOptions={{
+          stackAnimation: 'slide_from_left',
+          // stackPresentation: 'transparentModal',
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
-        <Stack.Screen name="Third" component={Dialog} options={{stackPresentation: 'transparentModal'}}/>
+        <Stack.Screen
+          name="Third"
+          component={Dialog}
+          options={{stackPresentation: 'modal'}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'First'>}) {
+function First({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<SimpleStackParams, 'First'>;
+}) {
   // using progress from both Animated and Reanimated context in the same Screen
   const reaProgress = useReanimatedTransitionProgress();
-  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
+  );
   const reaStyle = useAnimatedStyle(() => {
     return {
       width: sv.value,
@@ -51,27 +71,39 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
 
   const opacity = progress.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [1.0, 0.0 ,1.0],
+    outputRange: [1.0, 0.0, 1.0],
     extrapolate: 'clamp',
   });
 
   return (
     <View style={{backgroundColor: 'red', flex: 1}}>
-      <Button title="Tap me for second screen" onPress={() => navigation.navigate('Second')} />
-      <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
+      <Button
+        title="Tap me for second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
+      <Button
+        title="Tap me for third screen"
+        onPress={() => navigation.push('Third')}
+      />
       <Animated.View style={reaStyle} />
-      <RNAnimated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+      <RNAnimated.View
+        style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}}
+      />
     </View>
   );
 }
 
-function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Second'>}) {
+function Second({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<SimpleStackParams, 'Second'>;
+}) {
   // using Animated.Value with the progress from context
   const {progress} = useTransitionProgress();
 
   const opacity = progress.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [1.0, 0.0 ,1.0],
+    outputRange: [1.0, 0.0, 1.0],
     extrapolate: 'clamp',
   });
 
@@ -88,18 +120,46 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
 
   return (
     <View style={{backgroundColor: 'yellow', flex: 1}}>
-      <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
-      <Button title="Tap me for second screen" onPress={() => navigation.push('Second')} />
-      <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
-      <RNAnimated.View style={{opacity, height: 50, backgroundColor: 'green'}} />
+      <Button
+        title="Tap me for first screen"
+        onPress={() => navigation.navigate('First')}
+      />
+      <Button
+        title="Tap me for second screen"
+        onPress={() => navigation.push('Second')}
+      />
+      <Button
+        title="Tap me for third screen"
+        onPress={() => navigation.push('Third')}
+      />
+      <RNAnimated.View
+        style={{opacity, height: 50, backgroundColor: 'green'}}
+      />
     </View>
   );
 }
 
-
-const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'Third'>}): JSX.Element => {
+const Dialog = ({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<SimpleStackParams, 'Third'>;
+}): JSX.Element => {
   // using Animated with the progress
   const {progress} = useTransitionProgress();
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
+  );
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
 
   const val = progress.interpolate({
     inputRange: [0, 0.5, 1],
@@ -111,18 +171,28 @@ const Dialog = ({navigation}: {navigation: NativeStackNavigationProp<SimpleStack
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
         <Text style={styles.heading}>Hey! Sign up for our newsletter!</Text>
-        <RNAnimated.View style={{
-          width: 50,
-          height: 50,
-          opacity: val,
-          backgroundColor: 'blue'}} />
+        <RNAnimated.View
+          style={{
+            width: 50,
+            height: 50,
+            opacity: val,
+            backgroundColor: 'blue',
+          }}
+        />
+        <Animated.View style={reaStyle} />
         <TouchableOpacity
           style={{...styles.button}}
           onPress={() => navigation.goBack()}>
           <Text style={styles.buttonText}>Please no.</Text>
         </TouchableOpacity>
-        <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
-        <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
+        <Button
+          title="Tap me for third screen"
+          onPress={() => navigation.push('Third')}
+        />
+        <Button
+          title="Tap me for first screen"
+          onPress={() => navigation.navigate('First')}
+        />
       </View>
     </SafeAreaView>
   );

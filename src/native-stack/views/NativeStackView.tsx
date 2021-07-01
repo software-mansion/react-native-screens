@@ -6,7 +6,7 @@ import {
   Route,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { Animated, Platform, StyleSheet, View, ViewProps } from 'react-native';
+import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
@@ -14,7 +14,6 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
-  TransitionProgressContext,
 } from 'react-native-screens';
 import {
   NativeStackDescriptorMap,
@@ -97,7 +96,7 @@ const MaybeNestedStack = ({
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.container}>
-        <Screen enabled style={StyleSheet.absoluteFill}>
+        <Screen enabled style={StyleSheet.absoluteFill} copyTransitionProgress>
           <HeaderConfig {...options} route={route} />
           {content}
         </Screen>
@@ -138,9 +137,6 @@ function RouteView({
   } = options;
 
   const Screen = React.useContext(ScreenContext);
-
-  const closing = React.useRef(new Animated.Value(0)).current;
-  const progress = React.useRef(new Animated.Value(0)).current;
 
   let { stackPresentation = 'push' } = options;
 
@@ -194,17 +190,6 @@ function RouteView({
           target: route.key,
         });
       }}
-      onTransitionProgress={Animated.event(
-        [
-          {
-            nativeEvent: {
-              progress,
-              closing,
-            },
-          },
-        ],
-        { useNativeDriver: true }
-      )}
       onDisappear={() => {
         navigation.emit({
           type: 'transitionEnd',
@@ -227,15 +212,13 @@ function RouteView({
           target: navigatorKey,
         });
       }}>
-      <TransitionProgressContext.Provider value={{ progress, closing }}>
-        <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
-        <MaybeNestedStack
-          options={options}
-          route={route}
-          stackPresentation={stackPresentation}>
-          {renderScene()}
-        </MaybeNestedStack>
-      </TransitionProgressContext.Provider>
+      <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
+      <MaybeNestedStack
+        options={options}
+        route={route}
+        stackPresentation={stackPresentation}>
+        {renderScene()}
+      </MaybeNestedStack>
     </Screen>
   );
 }
