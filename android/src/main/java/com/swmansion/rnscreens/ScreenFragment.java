@@ -206,27 +206,31 @@ public class ScreenFragment extends Fragment {
   }
 
   protected void dispatchTransitionProgress(float alpha, boolean closing, boolean shouldIncrementCoalescingKey) {
+    boolean goingForward = false;
+    if (getScreen().getContainer() instanceof ScreenStack) {
+      goingForward = ((ScreenStack) getScreen().getContainer()).isGoingForward();
+    }
     if (shouldIncrementCoalescingKey) {
       incrementCoalescingKey();
     }
-    sendTransitionProgressEvent(alpha, closing);
+    sendTransitionProgressEvent(alpha, closing, goingForward);
 
     if (mAboveScreen != null && mAboveScreen.getFragment() != null && !mAboveScreen.getFragment().isSendingProgress()) {
       if (shouldIncrementCoalescingKey) {
         mAboveScreen.getFragment().incrementCoalescingKey();
       }
       // if we are in transparentModal presentation, only one screen is sending progress
-      mAboveScreen.getFragment().sendTransitionProgressEvent(alpha, !closing);
+      mAboveScreen.getFragment().sendTransitionProgressEvent(alpha, !closing, goingForward);
     }
   }
 
-  protected void sendTransitionProgressEvent(float alpha, boolean closing) {
+  protected void sendTransitionProgressEvent(float alpha, boolean closing, boolean goingForward) {
     if (mProgress != alpha) {
       mProgress = Math.max(0.0f, Math.min(1.0f, alpha));
       ((ReactContext) mScreenView.getContext())
               .getNativeModule(UIManagerModule.class)
               .getEventDispatcher()
-              .dispatchEvent(new ScreenTransitionProgressEvent(mScreenView.getId(), mProgress, closing, mCoalescingKey));
+              .dispatchEvent(new ScreenTransitionProgressEvent(mScreenView.getId(), mProgress, closing, goingForward, mCoalescingKey));
     }
   }
 

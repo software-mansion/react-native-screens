@@ -107,6 +107,7 @@ class Screen extends React.Component<ScreenProps> {
   private ref: React.ElementRef<typeof View> | null = null;
   private closing = new Animated.Value(0);
   private progress = new Animated.Value(0);
+  private goingForward = new Animated.Value(0);
   setNativeProps(props: ScreenProps): void {
     this.ref?.setNativeProps(props);
   }
@@ -160,6 +161,7 @@ class Screen extends React.Component<ScreenProps> {
                 nativeEvent: {
                   progress: this.progress,
                   closing: this.closing,
+                  goingForward: this.goingForward,
                 },
               },
             ],
@@ -169,7 +171,11 @@ class Screen extends React.Component<ScreenProps> {
             children
           ) : (
             <TransitionProgressContext.Provider
-              value={{ progress: this.progress, closing: this.closing }}>
+              value={{
+                progress: this.progress,
+                closing: this.closing,
+                goingForward: this.goingForward,
+              }}>
               {children}
             </TransitionProgressContext.Provider>
           )}

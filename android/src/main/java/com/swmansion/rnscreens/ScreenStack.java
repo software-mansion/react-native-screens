@@ -24,6 +24,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private ScreenStackFragment mTopScreen = null;
   private boolean mRemovalTransitionStarted = false;
+  private boolean mGoingForward = false;
 
   private final FragmentManager.OnBackStackChangedListener mBackStackListener = new FragmentManager.OnBackStackChangedListener() {
     @Override
@@ -58,6 +59,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   @Override
   public @Nullable Screen getTopScreen() {
     return mTopScreen != null ? mTopScreen.getScreen() : null;
+  }
+
+  public boolean isGoingForward() {
+    return mGoingForward;
   }
 
   public Screen getRootScreen() {
@@ -191,6 +196,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         stackAnimation = Screen.StackAnimation.NONE;
         if (newTop.getScreen().getStackAnimation() != Screen.StackAnimation.NONE
                 && !isNested()) {
+          mGoingForward = true;
           newTop.dispatchOnWillAppear();
           newTop.dispatchOnAppear();
         }
@@ -239,6 +245,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       getOrCreateTransaction().setTransition(transition);
     }
     // animation logic end
+
+    mGoingForward = shouldUseOpenAnimation;
 
     // remove all screens previously on stack
     for (ScreenStackFragment screen : mStack) {

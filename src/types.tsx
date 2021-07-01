@@ -65,6 +65,7 @@ export type HeaderSubviewTypes =
 export type TransitionProgressEventType = {
   progress: number;
   closing: number;
+  goingForward: number;
 };
 
 export interface ScreenProps extends ViewProps {

@@ -66,6 +66,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 
 @property (weak, nonatomic) RNSScreen *presentingScreen;
 @property (nonatomic) BOOL isSendingProgress;
+@property (nonatomic) BOOL goingBackWithJS;
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
@@ -105,7 +106,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 #endif
 
 - (void)notifyFinishTransitioning;
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing;
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 
 @end
 

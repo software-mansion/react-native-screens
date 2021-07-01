@@ -24,6 +24,7 @@ class ReanimatedScreen extends React.Component<ScreenProps> {
   private eventHandler: WorkletEventHandler | null = null;
   private progress = makeMutable(0);
   private closing = makeMutable(0);
+  private goingForward = makeMutable(0);
 
   setNativeProps(props: ScreenProps): void {
     this.ref?.setNativeProps(props);
@@ -36,11 +37,13 @@ class ReanimatedScreen extends React.Component<ScreenProps> {
     if (this.eventHandler == null && this.tag != null) {
       const progressRef = this.progress;
       const closingRef = this.closing;
+      const goingForwardRef = this.goingForward;
       this.eventHandler = new WorkletEventHandler(
         (event: TransitionProgressEventType) => {
           'worklet';
           progressRef.value = event.progress;
           closingRef.value = event.closing;
+          goingForwardRef.value = event.goingForward;
         },
         [
           // @ts-ignore wrong type
@@ -72,7 +75,11 @@ class ReanimatedScreen extends React.Component<ScreenProps> {
           children
         ) : (
           <ReanimatedTransitionProgressContext.Provider
-            value={{ progress: this.progress, closing: this.closing }}>
+            value={{
+              progress: this.progress,
+              closing: this.closing,
+              goingForward: this.goingForward,
+            }}>
             {children}
           </ReanimatedTransitionProgressContext.Provider>
         )}

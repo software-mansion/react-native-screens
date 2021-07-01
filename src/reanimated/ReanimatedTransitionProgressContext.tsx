@@ -5,6 +5,7 @@ import Animated from 'react-native-reanimated';
 type ReanimatedTransitionProgressContextBody = {
   progress: Animated.SharedValue<number>;
   closing: Animated.SharedValue<number>;
+  goingForward: Animated.SharedValue<number>;
 };
 
 export default React.createContext<

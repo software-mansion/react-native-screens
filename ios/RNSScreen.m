@@ -273,12 +273,13 @@
   }
 }
 
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
       @"progress": @(progress),
       @"closing": @(closing ? 1 : 0),
+      @"goingForward": @(goingForward ? 1 : 0),
     });
   }
 }
@@ -364,6 +365,7 @@
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
   BOOL _closing;
+  BOOL _goingForward;
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
@@ -374,6 +376,7 @@
   if (self = [super init]) {
     self.view = view;
     _shouldNotify = YES;
+    _goingBackWithJS = NO;
   }
   return self;
 }
@@ -530,12 +533,18 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+
+  int selfIndex = [self getIndexOfView:self.view];
+  int parentChildrenCount = [self getParentChildrenCount];
+
+  _goingForward = parentChildrenCount - 1 == selfIndex;
   
   if (!_isSwiping) {
     [((RNSScreenView *)self.view) notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
       // we started dismissing with swipe gesture
       _isSwiping = YES;
+      _goingForward = NO;
     }
   } else {
     // this event is also triggered if we cancelled the swipe.
@@ -543,27 +552,41 @@
     _shouldNotify = NO;
   }
 
+  if (_goingBackWithJS) {
+    _goingForward = !_goingBackWithJS;
+    _goingBackWithJS = NO;
+  }
+
   [RNSScreenWindowTraits updateWindowTraits];
-  _closing = NO;
-  [self notifyTransitionProgress:0.0 closing:_closing];
-  [self setupProgressNotification];
+  if (_shouldNotify) {
+    _closing = NO;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self setupProgressNotification];
+  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  
+    
   if (!self.transitionCoordinator.isInteractive) {
     // user might have long pressed ios 14 back button item,
     // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
     // We calculate it by substracting the difference between the index of currently displayed screen
     // and the index of the target screen, which is the view of topViewController at this point.
-    // If the value is lower than 1, it means we are navigating forward
-    int selfIndex = (int)[[(RNSScreenStackView *) self.navigationController.delegate reactSubviews] indexOfObject:self.view];
-    int targetIndex = (int)[[(RNSScreenStackView *) self.navigationController.delegate reactSubviews] indexOfObject:self.navigationController.topViewController.view];
+    // If the value is lower than 1, it means we are dismissing a modal, or navigating forward, or going back from JS.
+    int selfIndex = [self getIndexOfView:self.view];
+    int targetIndex = [self getIndexOfView:self.navigationController.topViewController.view];
     _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
+    _goingForward = targetIndex > selfIndex;
   } else {
     _dismissCount = 1;
+    _goingForward = NO;
+  }
+
+  if (_goingBackWithJS) {
+    _goingForward = !_goingBackWithJS;
+    _goingBackWithJS = NO;
   }
 
   // same flow as in viewWillAppear
@@ -576,9 +599,11 @@
     _shouldNotify = NO;
   }
 
-  _closing = YES;
-  [self notifyTransitionProgress:0.0 closing:_closing];
-  [self setupProgressNotification];
+  if (_shouldNotify) {
+    _closing = YES;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self setupProgressNotification];
+  }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -589,7 +614,7 @@
     // we are going forward or dismissing without swipe
     // or successfully swiped back
     [((RNSScreenView *)self.view) notifyAppear];
-    [self notifyTransitionProgress:1.0 closing:NO];
+    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
   }
   
   _isSwiping = NO;
@@ -608,7 +633,7 @@
   // same flow as in viewDidAppear
   if (!_isSwiping || _shouldNotify) {
     [((RNSScreenView *)self.view) notifyDisappear];
-    [self notifyTransitionProgress:1.0 closing:YES];
+    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
   }
   
   _isSwiping = NO;
@@ -625,6 +650,16 @@
   [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
     [self traverseForScrollView:obj];
   }];
+}
+
+- (int)getIndexOfView:(UIView *)view
+{
+  return (int)[[self.view.reactSuperview reactSubviews] indexOfObject:view];
+}
+
+- (int)getParentChildrenCount
+{
+  return (int)[[self.view.reactSuperview reactSubviews] count];
 }
 
 - (void)notifyFinishTransitioning
@@ -665,20 +700,20 @@
     CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
-      [self notifyTransitionProgress:_currentAlpha closing:_closing];
+      [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
     }
   }
 }
 
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
-  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing];
+  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
   // if we are in a modal, we want to send transition to the above screen too, which might not trigger appear/disappear events
   // e.g. when we are in iOS >= 13 default modal
   // we also check if we are not already sending the progress of transition and if current screen does not present another modal,
   // because otherwise we would send progress to the screen 2 levels higher than the current one
   if ([_presentingScreen isKindOfClass:[RNSScreen class]] && !_presentingScreen.isSendingProgress && self.presentedViewController == nil) {
-    [((RNSScreenView *)_presentingScreen.view) notifyTransitionProgress:progress closing:!closing];
+    [((RNSScreenView *)_presentingScreen.view) notifyTransitionProgress:progress closing:!closing goingForward:goingForward];
   }
 }
 
