@@ -3,6 +3,8 @@
 <!--http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_open_enter.xml-->
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:shareInterpolator="false">
+    <!--This animation should take 350ms but then for some reason transition events resolve incorrectly.-->
+    <!--We have to account for additional ~17ms (rounded to 20ms) for a skipped frame to make this work.-->
     <alpha android:fromAlpha="0.0" android:toAlpha="1.0"
         android:interpolator="@android:interpolator/decelerate_quint"
         android:duration="210"/>
