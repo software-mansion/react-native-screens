@@ -34,7 +34,7 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
   public void dispatch(RCTEventEmitter rctEventEmitter) {
     WritableMap map = Arguments.createMap();
     map.putDouble("progress", mProgress);
-    map.putBoolean("closing", mClosing);
+    map.putInt("closing", mClosing ? 1 : 0);
     rctEventEmitter.receiveEvent(getViewTag(), getEventName(), map);
   }
 }

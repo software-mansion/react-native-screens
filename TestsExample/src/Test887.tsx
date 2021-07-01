@@ -9,11 +9,11 @@ import {
   Dimensions,
   SafeAreaView,
 } from 'react-native';
-import Animated, {useSharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
-import {useTransitionProgress} from 'react-native-screens/native-stack';
-// import { createStackNavigator } from '@react-navigation/stack';
+import {useTransitionProgress} from 'react-native-screens';
+import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
+import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
 
 const Stack = createNativeStackNavigator();
 type SimpleStackParams = {
@@ -36,8 +36,9 @@ export default function App(): JSX.Element {
   );
 }
 function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackParams, 'First'>}) {
-  // using reanimated 2 with the progress and progress from context in the same Screen
-  const sv = useSharedValue(50);
+  // using progress from both Animated and Reanimated context in the same Screen
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
   const reaStyle = useAnimatedStyle(() => {
     return {
       width: sv.value,
@@ -45,15 +46,6 @@ function First({navigation}: {navigation: NativeStackNavigationProp<SimpleStackP
       backgroundColor: 'blue',
     };
   });
-
-  React.useEffect(() => {
-    navigation.setOptions({
-      onTransitionProgress: (event) => {
-        'worklet'
-        sv.value = event.closing ? (event.progress * 50 + 50) : ((1 - event.progress) * 50 + 50);
-      },
-    })
-  }, [navigation]);
 
   const {progress} = useTransitionProgress();
 

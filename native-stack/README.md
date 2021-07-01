@@ -176,56 +176,6 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
-#### `onTransitionProgress`
-
-A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It takes two arguments: 
-- `progress` - the value between `0.0` and `1.0` with the progress of the current transition.
-- `closing` - boolean indicating if the current screen is being navigated into or from.
-
-In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
-
-```jsx
-import ReanimatedScreenProvider from 'react-native-screens/reanimated';
-
-export default function App() {
-  return (
-    <ReanimatedScreenProvider>
-      <YourApp />
-    </ReanimatedScreenProvider>
-  );
-}
-```
-
-Then, you can pass the `'worklet'` function as the value of `onTransitionProgress`:
-
-```jsx
-import Animated, {useSharedValue, useAnimatedStyle} from 'react-native-reanimated';
-
-const sv = useSharedValue(50);
-const reaStyle = useAnimatedStyle(() => {
-  return {
-    width: sv.value,
-    height: sv.value,
-    // ...other props
-  };
-});
-
-React.useEffect(() => {
-    navigation.setOptions({
-      onTransitionProgress: (event) => {
-        'worklet'
-        sv.value = event.closing ? (event.progress * 50 + 50) : ((1 - event.progress) * 50 + 50);
-      }
-    })
-  }, [navigation]); 
-
-return (
-  <Animated.View style={reaStyle} />
-);
-```
-
-If you want to use transition progress with `react-native` `Animated`, see [useTransitionProgress](#useTransitionProgress).
-
 #### `replaceAnimation`
 
 How should the screen replacing another screen animate.
@@ -293,7 +243,48 @@ return (
 );
 ```
 
-If you want to use `react-native-reanimated` version `2.x`, see [onTransitionProgress](#onTransitionProgress).
+#### `useReanimatedTransitionProgress`
+
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
+- `progress` - between `0.0` and `1.0` with the progress of the current transition.
+- `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
+
+In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
+
+```jsx
+import ReanimatedScreenProvider from 'react-native-screens/reanimated';
+
+export default function App() {
+  return (
+    <ReanimatedScreenProvider>
+      <YourApp />
+    </ReanimatedScreenProvider>
+  );
+}
+```
+
+Then you can use `useReanimatedTransitionProgress` to get the shared values:
+
+```jsx
+import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
+import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
+
+function Home() {
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
+
+  return (
+    <Animated.View style={reaStyle} />
+  );
+}
+```
 
 ### Status bar and orientation managment
 

@@ -62,21 +62,10 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
-type TransitionProgressEventBody = {
+export type TransitionProgressEventType = {
   progress: number;
-  closing: boolean;
+  closing: number;
 };
-
-export type TransitionProgressContextBody = {
-  progress: Animated.Value;
-  closing: Animated.Value;
-};
-
-// reanimated event uses only the body of the function, without `.nativeEvent` part
-export type TransitionProgressEvent = NativeSyntheticEvent<
-  TransitionProgressEventBody
-> &
-  TransitionProgressEventBody;
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
@@ -108,14 +97,11 @@ export interface ScreenProps extends ViewProps {
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
   /**
-   * A callback called every frame during the transition of screens of `native-stack`.
-   * It should be used only with `react-native-reanimated` v2 and provide `worklet` as a function.
+   * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
-  onTransitionProgress?: (e: TransitionProgressEvent) => void;
-  /**
-   * Internal callback for providing transition progress context.
-   */
-  onTransitionProgressContext?: (e: TransitionProgressContextBody) => void;
+  onTransitionProgress?: (
+    e: NativeSyntheticEvent<TransitionProgressEventType>
+  ) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */

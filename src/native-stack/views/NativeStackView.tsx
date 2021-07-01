@@ -14,6 +14,7 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
+  TransitionProgressContext,
 } from 'react-native-screens';
 import {
   NativeStackDescriptorMap,
@@ -21,7 +22,6 @@ import {
   NativeStackNavigationOptions,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
-import TransitionProgressContext from '../TransitionProgressContext';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -127,7 +127,6 @@ function RouteView({
   const {
     gestureEnabled,
     headerShown,
-    onTransitionProgress,
     replaceAnimation = 'pop',
     screenOrientation,
     stackAnimation,
@@ -142,13 +141,6 @@ function RouteView({
 
   const closing = React.useRef(new Animated.Value(0)).current;
   const progress = React.useRef(new Animated.Value(0)).current;
-
-  // @ts-ignore checking if function is a worklet
-  if (onTransitionProgress && !onTransitionProgress?.__worklet) {
-    console.warn(
-      'Function provided in `onTransitionProgress` should be a worklet. If you want to use it with `react-native` Animated, check `useTransitionProgress`.'
-    );
-  }
 
   let { stackPresentation = 'push' } = options;
 
@@ -202,8 +194,7 @@ function RouteView({
           target: route.key,
         });
       }}
-      onTransitionProgress={onTransitionProgress}
-      onTransitionProgressContext={Animated.event(
+      onTransitionProgress={Animated.event(
         [
           {
             nativeEvent: {

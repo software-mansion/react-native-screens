@@ -19,6 +19,7 @@ import {
   ScreenStackHeaderSearchBarView,
   SearchBar,
   StackPresentationTypes,
+  TransitionProgressContext,
 } from 'react-native-screens';
 import {
   createNavigator,
@@ -38,7 +39,6 @@ import {
   NavigationScreenProp,
 } from 'react-navigation';
 import { NativeStackNavigationOptions as NativeStackNavigationOptionsV5 } from './native-stack/types';
-import TransitionProgressContext from './native-stack/TransitionProgressContext';
 import { HeaderBackButton } from 'react-navigation-stack';
 import {
   StackNavigationHelpers,
@@ -229,8 +229,7 @@ function RouteView({
       onWillAppear={() => options?.onWillAppear?.()}
       onWillDisappear={() => options?.onWillDisappear?.()}
       onDisappear={() => options?.onDisappear?.()}
-      onTransitionProgress={options.onTransitionProgress}
-      onTransitionProgressContext={Animated.event(
+      onTransitionProgress={Animated.event(
         [
           {
             nativeEvent: {

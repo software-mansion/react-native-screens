@@ -278,12 +278,6 @@
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
       @"progress": @(progress),
-      @"closing": @(closing),
-    });
-  }
-  if (self.onTransitionProgressContext) {
-    self.onTransitionProgressContext(@{
-      @"progress": @(progress),
       @"closing": @(closing ? 1 : 0),
     });
   }
@@ -706,7 +700,6 @@ RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onTransitionProgressContext, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)

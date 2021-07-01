@@ -10,6 +10,8 @@ import {
 } from './types';
 
 export * from './types';
+export { default as useTransitionProgress } from './useTransitionProgress';
+export { default as TransitionProgressContext } from './TransitionProgressContext';
 
 let ENABLE_SCREENS = true;
 

@@ -15,7 +15,6 @@ import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-  TransitionProgressEvent,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -230,11 +229,6 @@ export type NativeStackNavigationOptions = {
    * Boolean indicating whether the navigation bar is translucent.
    */
   headerTranslucent?: boolean;
-  /**
-   * A callback called every frame during the transition of screens of `native-stack`.
-   * It should be used only with `react-native-reanimated` v2 and provide `worklet` as a function.
-   */
-  onTransitionProgress?: (e: TransitionProgressEvent) => void;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:

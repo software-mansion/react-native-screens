@@ -58,7 +58,7 @@ A callback called every frame during the transition of screens. It takes two arg
 - `progress` - the value between `0.0` and `1.0` with the progress of the current transition
 - `closing` - boolean indicating if the current screen is being pushed or dismissed.
 
-In order to use it with `react-native-reanimated` version `2.x`, you need to have it installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
+In order to use it with [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated) version `2.x`, you need to have it installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
 
 ```jsx
 import ReanimatedScreenProvider from 'react-native-screens/reanimated';
@@ -73,11 +73,7 @@ export default function App() {
 
 ```
 
-Then, you can pass the `'worklet'` function as the value of `onTransitionProgress`.
-
-#### `onTransitionProgressContext`
-
-A callback similar to `onTransitionProgress`, but giving `closing` value of `0` or `1` instead of its boolean value.
+Then, you should use `Screen` from `ScreenContext` and `useReanimatedTransitionProgress` from `reanimated` folder to obtain [`sharedValues`](https://docs.swmansion.com/react-native-reanimated/docs/shared-values) with `progress` and `closing`.
 
 ### `onWillAppear`
 
