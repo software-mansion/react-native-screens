@@ -152,6 +152,7 @@ Sets the translucency of the status bar (similar to the `StatusBar` component). 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
 - `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
+- `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
 
 ```jsx
 import {Animated} from 'react-native';
@@ -177,6 +178,7 @@ function Home() {
 A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
 - `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
+- `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
 
 In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
 
