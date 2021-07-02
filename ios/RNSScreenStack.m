@@ -415,9 +415,8 @@
     if (![controllers containsObject:lastTop]) {
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace was called, so we check the animation
       if ( ![_controller.viewControllers containsObject:top] && ((RNSScreenView *) top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
-        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-        [_controller pushViewController:top animated:shouldAnimate];
-        [_controller setViewControllers:newControllers animated:NO];
+        // setting new controllers with animation does `push` animation by default
+        [_controller setViewControllers:controllers animated:YES];
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
