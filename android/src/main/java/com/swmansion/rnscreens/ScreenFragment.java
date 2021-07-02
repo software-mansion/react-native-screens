@@ -157,12 +157,6 @@ public class ScreenFragment extends Fragment {
         .dispatchEvent(new ScreenWillAppearEvent(mScreenView.getId()));
 
     dispatchEventInChildContainers(ScreenLifecycleEvent.WillAppear);
-  
-    if (mAboveScreen == null && getScreen() != null &&
-            getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL
-            && getScreen().getContainer() != null && getScreen().getContainer().getScreenCount() > 1) {
-      mAboveScreen = getScreen().getContainer().getScreenAt(getScreen().getContainer().getScreenCount() - 2);
-    }
 
     dispatchTransitionProgress(0.0f, false, true);
   }
@@ -199,6 +193,7 @@ public class ScreenFragment extends Fragment {
     dispatchEventInChildContainers(ScreenLifecycleEvent.Disappear);
 
     dispatchTransitionProgress(1.0f, true, true);
+    mAboveScreen = null;
   }
 
   public void incrementCoalescingKey() {
@@ -316,6 +311,10 @@ public class ScreenFragment extends Fragment {
 
   public void setSendingProgress(boolean isSendingProgress) {
     mIsSendingProgress = isSendingProgress;
+  }
+
+  public void setAboveScreen(Screen aboveScreen) {
+    mAboveScreen = aboveScreen;
   }
 
   @Override

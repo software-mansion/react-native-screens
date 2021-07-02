@@ -537,6 +537,8 @@
   int selfIndex = [self getIndexOfView:self.view];
   int parentChildrenCount = [self getParentChildrenCount];
 
+  // the appearing view is on top of stack so
+  // in the most basic case we are going forward
   _goingForward = parentChildrenCount - 1 == selfIndex;
   
   if (!_isSwiping) {
@@ -553,6 +555,7 @@
   }
 
   if (_goingBackWithJS) {
+    // we are going back with JS, so previous assumptions may have been wrong
     _goingForward = !_goingBackWithJS;
     _goingBackWithJS = NO;
   }
@@ -572,9 +575,9 @@
   if (!self.transitionCoordinator.isInteractive) {
     // user might have long pressed ios 14 back button item,
     // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
-    // We calculate it by substracting the difference between the index of currently displayed screen
+    // We check it by calculating the difference between the index of currently displayed screen
     // and the index of the target screen, which is the view of topViewController at this point.
-    // If the value is lower than 1, it means we are dismissing a modal, or navigating forward, or going back from JS.
+    // If the value is lower than 1, it means we are dismissing a modal, or navigating forward, or going back with JS.
     int selfIndex = [self getIndexOfView:self.view];
     int targetIndex = [self getIndexOfView:self.navigationController.topViewController.view];
     _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
@@ -585,6 +588,7 @@
   }
 
   if (_goingBackWithJS) {
+    // same flow as in viewWillAppear
     _goingForward = !_goingBackWithJS;
     _goingBackWithJS = NO;
   }
