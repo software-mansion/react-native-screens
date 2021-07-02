@@ -6,9 +6,7 @@ import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
-
 import java.util.Map;
-
 import javax.annotation.Nullable;
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
@@ -48,10 +46,14 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
   public void setStackPresentation(Screen view, String presentation) {
     if ("push".equals(presentation)) {
       view.setStackPresentation(Screen.StackPresentation.PUSH);
-    } else if ("modal".equals(presentation) || "containedModal".equals(presentation) || "fullScreenModal".equals(presentation) || "formSheet".equals(presentation)) {
+    } else if ("modal".equals(presentation)
+        || "containedModal".equals(presentation)
+        || "fullScreenModal".equals(presentation)
+        || "formSheet".equals(presentation)) {
       // at the moment Android implementation does not handle contained vs regular modals
       view.setStackPresentation(Screen.StackPresentation.MODAL);
-    } else if ("transparentModal".equals(presentation) || "containedTransparentModal".equals((presentation))) {
+    } else if ("transparentModal".equals(presentation)
+        || "containedTransparentModal".equals((presentation))) {
       // at the moment Android implementation does not handle contained vs regular modals
       view.setStackPresentation(Screen.StackPresentation.TRANSPARENT_MODAL);
     } else {
@@ -61,8 +63,10 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
 
   @ReactProp(name = "stackAnimation")
   public void setStackAnimation(Screen view, String animation) {
-    if (animation == null || "default".equals(animation) 
-      || "slide_from_bottom".equals(animation) || "simple_push".equals(animation)) {
+    if (animation == null
+        || "default".equals(animation)
+        || "slide_from_bottom".equals(animation)
+        || "simple_push".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.DEFAULT);
     } else if ("none".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.NONE);
@@ -120,22 +124,21 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
     view.setStatusBarHidden(statusBarHidden);
   }
 
-
   @Nullable
   @Override
   public Map getExportedCustomDirectEventTypeConstants() {
     return MapBuilder.of(
-            ScreenDismissedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDismissed"),
-            ScreenWillAppearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onWillAppear"),
-            ScreenAppearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onAppear"),
-            ScreenWillDisappearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onWillDisappear"),
-            ScreenDisappearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDisappear"),
-            StackFinishTransitioningEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onFinishTransitioning"));
+        ScreenDismissedEvent.EVENT_NAME,
+        MapBuilder.of("registrationName", "onDismissed"),
+        ScreenWillAppearEvent.EVENT_NAME,
+        MapBuilder.of("registrationName", "onWillAppear"),
+        ScreenAppearEvent.EVENT_NAME,
+        MapBuilder.of("registrationName", "onAppear"),
+        ScreenWillDisappearEvent.EVENT_NAME,
+        MapBuilder.of("registrationName", "onWillDisappear"),
+        ScreenDisappearEvent.EVENT_NAME,
+        MapBuilder.of("registrationName", "onDisappear"),
+        StackFinishTransitioningEvent.EVENT_NAME,
+        MapBuilder.of("registrationName", "onFinishTransitioning"));
   }
 }
