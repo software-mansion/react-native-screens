@@ -7,14 +7,12 @@ import com.facebook.react.views.view.ReactViewGroup;
 
 public class ScreenStackHeaderSubview extends ReactViewGroup {
 
-  public enum Type {
-    LEFT,
-    CENTER,
-    RIGHT,
-    BACK
-  }
-
   private int mReactWidth, mReactHeight;
+  private Type mType = Type.RIGHT;
+
+  public ScreenStackHeaderSubview(ReactContext context) {
+    super(context);
+  }
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -37,17 +35,18 @@ public class ScreenStackHeaderSubview extends ReactViewGroup {
     // no-op
   }
 
-  private Type mType = Type.RIGHT;
-
-  public ScreenStackHeaderSubview(ReactContext context) {
-    super(context);
+  public Type getType() {
+    return mType;
   }
 
   public void setType(Type type) {
     mType = type;
   }
 
-  public Type getType() {
-    return mType;
+  public enum Type {
+    LEFT,
+    CENTER,
+    RIGHT,
+    BACK
   }
 }
