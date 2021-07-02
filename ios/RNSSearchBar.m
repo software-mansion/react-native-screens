@@ -55,7 +55,7 @@
 - (void)setBarTintColor:(UIColor *)barTintColor
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0 && !TARGET_OS_TV
   if (@available(iOS 13.0, *)) {
     [_controller.searchBar.searchTextField setBackgroundColor:barTintColor];
   }
@@ -65,7 +65,7 @@
 - (void)setTextColor:(UIColor *)textColor
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0 && !TARGET_OS_TV
   _textColor = textColor;
   if (@available(iOS 13.0, *)) {
     [_controller.searchBar.searchTextField setTextColor:_textColor];
@@ -78,7 +78,7 @@
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0 && !TARGET_OS_TV
   if (@available(iOS 13.0, *)) {
     // for some reason, the color does not change when set at the beginning,
     // so we apply it again here
@@ -88,7 +88,9 @@
   }
 #endif
 
+#if !TARGET_OS_TV
   [_controller.searchBar setShowsCancelButton:YES animated:YES];
+#endif
   [self becomeFirstResponder];
 
   if (self.onFocus) {

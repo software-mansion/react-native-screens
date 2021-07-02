@@ -49,11 +49,13 @@
 
 @end
 
+#if !TARGET_OS_TV
 @interface RNSGestureRecognizer : UIScreenEdgePanGestureRecognizer
 @end
 
 @implementation RNSGestureRecognizer
 @end
+#endif
 
 @implementation RNSScreenStackView {
   UINavigationController *_controller;
@@ -76,8 +78,9 @@
     _controller = [[RNScreensNavigationController alloc] init];
     _controller.delegate = self;
 
+#if !TARGET_OS_TV
     [self setupGestureHandlers];
-
+#endif
     // we have to initialize viewControllers with a non empty array for
     // largeTitle header to render in the opened state. If it is empty
     // the header will render in collapsed state which is perhaps a bug
@@ -337,7 +340,7 @@
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-        if (@available(iOS 13.0, *)) {
+        if (@available(iOS 13.0, tvOS 13.0, *)) {
           // Inherit UI style from its parent - solves an issue with incorrect style being applied to some UIKit views
           // like date picker or segmented control.
           next.overrideUserInterfaceStyle = self->_controller.overrideUserInterfaceStyle;
@@ -547,7 +550,9 @@
   if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
     return NO;
   }
-
+#if TARGET_OS_TV
+  return YES;
+#else
   if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
     // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
     // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
@@ -562,8 +567,10 @@
   } else {
     return topScreen.stackAnimation != RNSScreenStackAnimationSimplePush;
   }
+#endif
 }
 
+#if !TARGET_OS_TV
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
@@ -626,6 +633,7 @@
     }
   }
 }
+#endif
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
                          interactionControllerForAnimationController:
