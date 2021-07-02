@@ -13,23 +13,21 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-
 import com.facebook.react.ReactApplication;
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.views.text.ReactTypefaceUtils;
-
 import java.util.ArrayList;
 
 public class ScreenStackHeaderConfig extends ViewGroup {
 
   private final ArrayList<ScreenStackHeaderSubview> mConfigSubviews = new ArrayList<>(3);
+  private final Toolbar mToolbar;
   private String mTitle;
   private int mTitleColor;
   private String mTitleFontFamily;
@@ -45,43 +43,28 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mIsTopInsetEnabled = true;
   private boolean mIsTranslucent;
   private int mTintColor;
-  private final Toolbar mToolbar;
-
   private boolean mIsAttachedToWindow = false;
 
-  private int mDefaultStartInset;
-  private int mDefaultStartInsetWithNavigation;
-
-  private static class DebugMenuToolbar extends Toolbar {
-
-    public DebugMenuToolbar(Context context) {
-      super(context);
-    }
-
-    @Override
-    public boolean showOverflowMenu() {
-      ((ReactApplication) getContext().getApplicationContext()).getReactNativeHost().getReactInstanceManager().showDevOptionsDialog();
-      return true;
-    }
-  }
-
-  private OnClickListener mBackClickListener = new OnClickListener() {
-    @Override
-    public void onClick(View view) {
-      ScreenStackFragment fragment = getScreenFragment();
-      if (fragment != null) {
-        ScreenStack stack = getScreenStack();
-        if (stack != null && stack.getRootScreen() == fragment.getScreen()) {
-          Fragment parentFragment = fragment.getParentFragment();
-          if (parentFragment instanceof ScreenStackFragment) {
-            ((ScreenStackFragment) parentFragment).dismiss();
+  private final int mDefaultStartInset;
+  private final int mDefaultStartInsetWithNavigation;
+  private final OnClickListener mBackClickListener =
+      new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          ScreenStackFragment fragment = getScreenFragment();
+          if (fragment != null) {
+            ScreenStack stack = getScreenStack();
+            if (stack != null && stack.getRootScreen() == fragment.getScreen()) {
+              Fragment parentFragment = fragment.getParentFragment();
+              if (parentFragment instanceof ScreenStackFragment) {
+                ((ScreenStackFragment) parentFragment).dismiss();
+              }
+            } else {
+              fragment.dismiss();
+            }
           }
-        } else {
-          fragment.dismiss();
         }
-      }
-    }
-  };
+      };
 
   public ScreenStackHeaderConfig(Context context) {
     super(context);
@@ -131,7 +114,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   private ScreenStack getScreenStack() {
     Screen screen = getScreen();
-    if (screen  != null) {
+    if (screen != null) {
       ScreenContainer container = screen.getContainer();
       if (container instanceof ScreenStack) {
         return (ScreenStack) container;
@@ -154,7 +137,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   public void onUpdate() {
     Screen parent = (Screen) getParent();
     final ScreenStack stack = getScreenStack();
-    boolean isTop = stack == null ? true : stack.getTopScreen() == parent;
+    boolean isTop = stack == null || stack.getTopScreen() == parent;
 
     if (!mIsAttachedToWindow || !isTop || mDestroyed) {
       return;
@@ -176,8 +159,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     // orientation and status bar management
     if (getScreen() != null) {
       // we set the traits here too, not only when the prop for Screen is passed
-      // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the first setting of props
-      // similar thing is done for Screens of ScreenContainers, but in `onContainerUpdate` of their Fragment
+      // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the
+      // first setting of props similar thing is done for Screens of ScreenContainers, but in
+      // `onContainerUpdate` of their Fragment
 
       Screen screen = getScreen();
       ReactContext context = null;
@@ -226,13 +210,13 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     mToolbar.setContentInsetsRelative(mDefaultStartInset, mDefaultStartInset);
 
     // hide back button
-    actionBar.setDisplayHomeAsUpEnabled(getScreenFragment().canNavigateBack() ? !mIsBackButtonHidden : false);
+    actionBar.setDisplayHomeAsUpEnabled(
+        getScreenFragment().canNavigateBack() && !mIsBackButtonHidden);
 
     // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
     // navigation click listener. The default behavior set in the wrapper is to call into
     // menu options handlers, but we prefer the back handling logic to stay here instead.
     mToolbar.setNavigationOnClickListener(mBackClickListener);
-
 
     // shadow
     getScreenFragment().setToolbarShadowHidden(mIsShadowHidden);
@@ -244,8 +228,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     actionBar.setTitle(mTitle);
     if (TextUtils.isEmpty(mTitle)) {
       // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
-      // views. When it is set to default it'd take up additional distance from the back button which
-      // would impact the position of custom header views rendered at the center.
+      // views. When it is set to default it'd take up additional distance from the back button
+      // which would impact the position of custom header views rendered at the center.
       mToolbar.setContentInsetStartWithNavigation(0);
     }
     TextView titleTextView = getTitleTextView();
@@ -254,8 +238,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
     if (titleTextView != null) {
       if (mTitleFontFamily != null || mTitleFontWeight > 0) {
-        Typeface titleTypeface = ReactTypefaceUtils.applyStyles(
-              null, 0, mTitleFontWeight, mTitleFontFamily, getContext().getAssets());
+        Typeface titleTypeface =
+            ReactTypefaceUtils.applyStyles(
+                null, 0, mTitleFontWeight, mTitleFontFamily, getContext().getAssets());
         titleTextView.setTypeface(titleTypeface);
       }
       if (mTitleFontSize > 0) {
@@ -291,14 +276,15 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         // but instead just copy the drawable from imageview that's added as a first child to it.
         View firstChild = view.getChildAt(0);
         if (!(firstChild instanceof ImageView)) {
-          throw new JSApplicationIllegalArgumentException("Back button header config view should have Image as first child");
+          throw new JSApplicationIllegalArgumentException(
+              "Back button header config view should have Image as first child");
         }
         actionBar.setHomeAsUpIndicator(((ImageView) firstChild).getDrawable());
         continue;
       }
 
       Toolbar.LayoutParams params =
-              new Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+          new Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 
       switch (type) {
         case LEFT:
@@ -395,7 +381,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     mTintColor = color;
   }
 
-  public void setTopInsetEnabled(boolean topInsetEnabled) { mIsTopInsetEnabled = topInsetEnabled; }
+  public void setTopInsetEnabled(boolean topInsetEnabled) {
+    mIsTopInsetEnabled = topInsetEnabled;
+  }
 
   public void setBackgroundColor(Integer color) {
     mBackgroundColor = color;
@@ -417,9 +405,27 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     mIsTranslucent = translucent;
   }
 
-  public void setBackButtonInCustomView(boolean backButtonInCustomView) { mBackButtonInCustomView = backButtonInCustomView; }
+  public void setBackButtonInCustomView(boolean backButtonInCustomView) {
+    mBackButtonInCustomView = backButtonInCustomView;
+  }
 
   public void setDirection(String direction) {
     mDirection = direction;
+  }
+
+  private static class DebugMenuToolbar extends Toolbar {
+
+    public DebugMenuToolbar(Context context) {
+      super(context);
+    }
+
+    @Override
+    public boolean showOverflowMenu() {
+      ((ReactApplication) getContext().getApplicationContext())
+          .getReactNativeHost()
+          .getReactInstanceManager()
+          .showDevOptionsDialog();
+      return true;
+    }
   }
 }

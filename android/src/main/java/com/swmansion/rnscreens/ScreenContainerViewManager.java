@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens;
 
 import android.view.View;
-
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;

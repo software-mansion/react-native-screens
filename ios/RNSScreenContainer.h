@@ -10,7 +10,7 @@
 
 @end
 
-@interface RNScreensViewController: UIViewController <RNScreensViewControllerDelegate>
+@interface RNScreensViewController : UIViewController <RNScreensViewControllerDelegate>
 
 @end
 

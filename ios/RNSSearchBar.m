@@ -6,8 +6,7 @@
 #import <React/RCTComponent.h>
 #import <React/RCTUIManager.h>
 
-@implementation RNSSearchBar
-{
+@implementation RNSSearchBar {
   __weak RCTBridge *_bridge;
   UISearchController *_controller;
   UIColor *_textColor;
@@ -83,12 +82,12 @@
   if (@available(iOS 13.0, *)) {
     // for some reason, the color does not change when set at the beginning,
     // so we apply it again here
-    if(_textColor != nil) {
+    if (_textColor != nil) {
       [_controller.searchBar.searchTextField setTextColor:_textColor];
     }
   }
 #endif
-  
+
   [_controller.searchBar setShowsCancelButton:YES animated:YES];
   [self becomeFirstResponder];
 
@@ -108,7 +107,7 @@
 {
   if (self.onChangeText) {
     self.onChangeText(@{
-      @"text": _controller.searchBar.text,
+      @"text" : _controller.searchBar.text,
     });
   }
 }
@@ -117,7 +116,7 @@
 {
   if (self.onSearchButtonPress) {
     self.onSearchButtonPress(@{
-      @"text": _controller.searchBar.text,
+      @"text" : _controller.searchBar.text,
     });
   }
 }
@@ -128,13 +127,13 @@
   _controller.searchBar.text = @"";
   [self resignFirstResponder];
   [_controller.searchBar setShowsCancelButton:NO animated:YES];
-    
+
   if (self.onCancelButtonPress) {
     self.onCancelButtonPress(@{});
   }
   if (self.onChangeText) {
     self.onChangeText(@{
-      @"text": _controller.searchBar.text,
+      @"text" : _controller.searchBar.text,
     });
   }
 }
@@ -148,7 +147,7 @@ RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-    return [[RNSSearchBar alloc] initWithBridge:self.bridge];
+  return [[RNSSearchBar alloc] initWithBridge:self.bridge];
 }
 
 RCT_EXPORT_VIEW_PROPERTY(obscureBackground, BOOL)

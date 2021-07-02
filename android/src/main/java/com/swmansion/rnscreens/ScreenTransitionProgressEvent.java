@@ -14,7 +14,8 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
   private final boolean mGoingForward;
   private final short mCoalescingKey;
 
-  public ScreenTransitionProgressEvent(int viewId, float progress, boolean closing, boolean goingForward, short coalescingKey) {
+  public ScreenTransitionProgressEvent(
+      int viewId, float progress, boolean closing, boolean goingForward, short coalescingKey) {
     super(viewId);
     mProgress = progress;
     mClosing = closing;
