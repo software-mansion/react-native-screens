@@ -220,10 +220,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
             break;
           case SLIDE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium);
             break;
           case FADE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350);
             break;
         }
       } else {
@@ -236,10 +236,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction().setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
             break;
           case SLIDE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation, R.anim.rns_slide_out_to_bottom);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom);
             break;
           case FADE_FROM_BOTTOM:
-            getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation, R.anim.rns_fade_to_bottom);
+            getOrCreateTransaction().setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom);
             break;
         }
       }
