@@ -211,7 +211,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     // hide back button
     actionBar.setDisplayHomeAsUpEnabled(
-        getScreenFragment().canNavigateBack() ? !mIsBackButtonHidden : false);
+        getScreenFragment().canNavigateBack() && !mIsBackButtonHidden);
 
     // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
     // navigation click listener. The default behavior set in the wrapper is to call into
