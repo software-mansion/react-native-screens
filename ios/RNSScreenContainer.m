@@ -47,7 +47,8 @@
 - (UIViewController *)findActiveChildVC
 {
   for (UIViewController *childVC in self.childViewControllers) {
-    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
+    if ([childVC isKindOfClass:[RNSScreen class]] &&
+        ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
       return childVC;
     }
   }
@@ -111,7 +112,7 @@
   return _controller;
 }
 
-- (UIViewController*)findChildControllerForScreen:(RNSScreenView*)screen
+- (UIViewController *)findChildControllerForScreen:(RNSScreenView *)screen
 {
   for (UIViewController *vc in _controller.childViewControllers) {
     if (vc.view == screen) {
@@ -193,14 +194,14 @@
     }
   }
 
-
   for (RNSScreenView *screen in _reactSubviews) {
     if (screen.activityState == RNSActivityStateOnTop) {
       [screen notifyFinishTransitioning];
     }
   }
 
-  if ((screenRemoved || screenAdded) && _controller.presentedViewController == nil && _controller.presentingViewController == nil) {
+  if ((screenRemoved || screenAdded) && _controller.presentedViewController == nil &&
+      _controller.presentingViewController == nil) {
     // if user has reachability enabled (one hand use) and the window is slided down the below
     // method will force it to slide back up as it is expected to happen with UINavController when
     // we push or pop views.
@@ -244,7 +245,6 @@
 }
 
 @end
-
 
 @implementation RNSScreenContainerManager
 

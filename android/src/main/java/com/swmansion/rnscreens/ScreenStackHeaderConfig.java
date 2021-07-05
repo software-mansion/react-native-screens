@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class ScreenStackHeaderConfig extends ViewGroup {
 
   private final ArrayList<ScreenStackHeaderSubview> mConfigSubviews = new ArrayList<>(3);
+  private final Toolbar mToolbar;
   private String mTitle;
   private int mTitleColor;
   private String mTitleFontFamily;
@@ -42,30 +43,11 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   private boolean mIsTopInsetEnabled = true;
   private boolean mIsTranslucent;
   private int mTintColor;
-  private final Toolbar mToolbar;
-
   private boolean mIsAttachedToWindow = false;
 
-  private int mDefaultStartInset;
-  private int mDefaultStartInsetWithNavigation;
-
-  private static class DebugMenuToolbar extends Toolbar {
-
-    public DebugMenuToolbar(Context context) {
-      super(context);
-    }
-
-    @Override
-    public boolean showOverflowMenu() {
-      ((ReactApplication) getContext().getApplicationContext())
-          .getReactNativeHost()
-          .getReactInstanceManager()
-          .showDevOptionsDialog();
-      return true;
-    }
-  }
-
-  private OnClickListener mBackClickListener =
+  private final int mDefaultStartInset;
+  private final int mDefaultStartInsetWithNavigation;
+  private final OnClickListener mBackClickListener =
       new OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -155,7 +137,7 @@ public class ScreenStackHeaderConfig extends ViewGroup {
   public void onUpdate() {
     Screen parent = (Screen) getParent();
     final ScreenStack stack = getScreenStack();
-    boolean isTop = stack == null ? true : stack.getTopScreen() == parent;
+    boolean isTop = stack == null || stack.getTopScreen() == parent;
 
     if (!mIsAttachedToWindow || !isTop || mDestroyed) {
       return;
@@ -429,5 +411,21 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   public void setDirection(String direction) {
     mDirection = direction;
+  }
+
+  private static class DebugMenuToolbar extends Toolbar {
+
+    public DebugMenuToolbar(Context context) {
+      super(context);
+    }
+
+    @Override
+    public boolean showOverflowMenu() {
+      ((ReactApplication) getContext().getApplicationContext())
+          .getReactNativeHost()
+          .getReactInstanceManager()
+          .showDevOptionsDialog();
+      return true;
+    }
   }
 }

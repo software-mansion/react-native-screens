@@ -1,6 +1,6 @@
-#import <React/RCTViewManager.h>
-#import <React/RCTView.h>
 #import <React/RCTComponent.h>
+#import <React/RCTView.h>
+#import <React/RCTViewManager.h>
 
 #import "RNSScreenContainer.h"
 

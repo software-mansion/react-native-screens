@@ -27,9 +27,6 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   private @Nullable FragmentTransaction mProcessingTransaction;
   private boolean mNeedUpdate;
   private boolean mIsAttached;
-  private boolean mLayoutEnqueued = false;
-  private @Nullable ScreenFragment mParentScreenFragment = null;
-
   private final ChoreographerCompat.FrameCallback mFrameCallback =
       new ChoreographerCompat.FrameCallback() {
         @Override
@@ -37,7 +34,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
           updateIfNeeded();
         }
       };
-
+  private boolean mLayoutEnqueued = false;
   private final ChoreographerCompat.FrameCallback mLayoutCallback =
       new ChoreographerCompat.FrameCallback() {
         @Override
@@ -49,6 +46,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
           layout(getLeft(), getTop(), getRight(), getBottom());
         }
       };
+  private @Nullable ScreenFragment mParentScreenFragment = null;
 
   public ScreenContainer(Context context) {
     super(context);

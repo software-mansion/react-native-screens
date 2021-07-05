@@ -11,6 +11,17 @@ import javax.annotation.Nullable;
 
 public class LifecycleHelper {
 
+  private final Map<View, Lifecycle> mViewToLifecycleMap = new HashMap<>();
+  private final View.OnLayoutChangeListener mRegisterOnLayoutChange =
+      new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(
+            View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+          registerViewWithLifecycleOwner(view);
+          view.removeOnLayoutChangeListener(this);
+        }
+      };
+
   public static @Nullable Fragment findNearestScreenFragmentAncestor(View view) {
     ViewParent parent = view.getParent();
     while (parent != null && !(parent instanceof Screen)) {
@@ -21,17 +32,6 @@ public class LifecycleHelper {
     }
     return null;
   }
-
-  private Map<View, Lifecycle> mViewToLifecycleMap = new HashMap<>();
-  private View.OnLayoutChangeListener mRegisterOnLayoutChange =
-      new View.OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(
-            View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-          registerViewWithLifecycleOwner(view);
-          view.removeOnLayoutChangeListener(this);
-        }
-      };
 
   private void registerViewWithLifecycleOwner(View view) {
     Fragment parent = findNearestScreenFragmentAncestor(view);

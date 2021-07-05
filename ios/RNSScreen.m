@@ -1,14 +1,14 @@
 #import <UIKit/UIKit.h>
 
 #import "RNSScreen.h"
-#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenStack.h"
+#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
-#import <React/RCTUIManager.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
+#import <React/RCTUIManager.h>
 
 @interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
@@ -128,10 +128,12 @@
   if (stackPresentation != RNSScreenStackPresentationPush) {
     // `modalPresentationStyle` must be set before accessing `presentationController`
     // otherwise a default controller will be created and cannot be changed after.
-    // Documented here: https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
+    // Documented here:
+    // https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
     _controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
-    RCTLogError(@"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
+    RCTLogError(
+        @"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
   }
   _stackPresentation = stackPresentation;
 }
@@ -218,7 +220,7 @@
   if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     [super addSubview:view];
   } else {
-    ((RNSScreenStackHeaderConfig*) view).screenView = self;
+    ((RNSScreenStackHeaderConfig *)view).screenView = self;
   }
 }
 
@@ -233,7 +235,7 @@
   if (self.onDismissed) {
     dispatch_async(dispatch_get_main_queue(), ^{
       if (self.onDismissed) {
-        self.onDismissed(@{@"dismissCount": @(dismissCount)});
+        self.onDismissed(@{@"dismissCount" : @(dismissCount)});
       }
     });
   }
@@ -321,7 +323,8 @@
     return _touchHandler;
   }
   UIView *parent = [self superview];
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) parent = parent.superview;
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
+    parent = parent.superview;
   if (parent != nil) {
     return [parent performSelector:@selector(touchHandler)];
   }
@@ -336,8 +339,7 @@
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
   if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
-    [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:)
-                          withObject:presentationController];
+    [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:) withObject:presentationController];
   }
 }
 
@@ -391,7 +393,7 @@
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
 {
   UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitAnimation includingModals:NO];
-  
+
   if ([vc isKindOfClass:[RNSScreen class]]) {
     return ((RNSScreenView *)vc.view).statusBarAnimation;
   }
@@ -423,7 +425,10 @@
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
     // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
-    return !includingModals ? nil : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals] ?: lastViewController;
+    return !includingModals
+        ? nil
+        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
+            ?: lastViewController;
   }
 
   UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
@@ -431,13 +436,14 @@
     return selfOrNil;
   } else {
     if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the trait,
-      // we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return it,
-      // otherwise we return self if this VC has config, and nil if it doesn't
-      // we use `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
+      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the
+      // trait, we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return
+      // it, otherwise we return self if this VC has config, and nil if it doesn't we use
+      // `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
       UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
       if ([childScreen isKindOfClass:[RNSScreen class]]) {
-        return [(RNSScreen *)childScreen findChildVCForConfigAndTrait:trait includingModals:includingModals] ?: selfOrNil;
+        return [(RNSScreen *)childScreen findChildVCForConfigAndTrait:trait includingModals:includingModals]
+            ?: selfOrNil;
       } else {
         return selfOrNil;
       }
@@ -483,13 +489,14 @@
   // screen size
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
-  if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) && !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+  if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
+      !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
     [((RNSScreenView *)self.viewIfLoaded) updateBounds];
   }
 }
 
-- (id)findFirstResponder:(UIView*)parent
+- (id)findFirstResponder:(UIView *)parent
 {
   if (parent.isFirstResponder) {
     return parent;
@@ -517,7 +524,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  
+
   if (!_isSwiping) {
     [((RNSScreenView *)self.view) notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
@@ -536,15 +543,17 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  
+
   if (!self.transitionCoordinator.isInteractive) {
     // user might have long pressed ios 14 back button item,
     // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
     // We calculate it by substracting the difference between the index of currently displayed screen
     // and the index of the target screen, which is the view of topViewController at this point.
     // If the value is lower than 1, it means we are navigating forward
-    int selfIndex = (int)[[(RNSScreenStackView *) self.navigationController.delegate reactSubviews] indexOfObject:self.view];
-    int targetIndex = (int)[[(RNSScreenStackView *) self.navigationController.delegate reactSubviews] indexOfObject:self.navigationController.topViewController.view];
+    int selfIndex =
+        (int)[[(RNSScreenStackView *)self.navigationController.delegate reactSubviews] indexOfObject:self.view];
+    int targetIndex = (int)[[(RNSScreenStackView *)self.navigationController.delegate reactSubviews]
+        indexOfObject:self.navigationController.topViewController.view];
     _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
   } else {
     _dismissCount = 1;
@@ -570,7 +579,7 @@
     // or successfully swiped back
     [((RNSScreenView *)self.view) notifyAppear];
   }
-  
+
   _isSwiping = NO;
   _shouldNotify = YES;
 }
@@ -583,24 +592,25 @@
     // screen dismissed, send event
     [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
   }
-  
+
   // same flow as in viewDidAppear
   if (!_isSwiping || _shouldNotify) {
     [((RNSScreenView *)self.view) notifyDisappear];
   }
-  
+
   _isSwiping = NO;
   _shouldNotify = YES;
 
   [self traverseForScrollView:self.view];
 }
 
-- (void)traverseForScrollView:(UIView*)view
+- (void)traverseForScrollView:(UIView *)view
 {
-  if([view isKindOfClass:[UIScrollView class]] && ([[(UIScrollView*)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)]) ) {
-    [[(UIScrollView*)view delegate] scrollViewDidEndDecelerating:(id)view];
+  if ([view isKindOfClass:[UIScrollView class]] &&
+      ([[(UIScrollView *)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)])) {
+    [[(UIScrollView *)view delegate] scrollViewDidEndDecelerating:(id)view];
   }
-  [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+  [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
     [self traverseForScrollView:obj];
   }];
 }
@@ -647,40 +657,56 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 
 @implementation RCTConvert (RNSScreen)
 
-RCT_ENUM_CONVERTER(RNSScreenStackPresentation, (@{
-                                                  @"push": @(RNSScreenStackPresentationPush),
-                                                  @"modal": @(RNSScreenStackPresentationModal),
-                                                  @"fullScreenModal": @(RNSScreenStackPresentationFullScreenModal),
-                                                  @"formSheet": @(RNSScreenStackPresentationFormSheet),
-                                                  @"containedModal": @(RNSScreenStackPresentationContainedModal),
-                                                  @"transparentModal": @(RNSScreenStackPresentationTransparentModal),
-                                                  @"containedTransparentModal": @(RNSScreenStackPresentationContainedTransparentModal)
-                                                  }), RNSScreenStackPresentationPush, integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenStackPresentation,
+    (@{
+      @"push" : @(RNSScreenStackPresentationPush),
+      @"modal" : @(RNSScreenStackPresentationModal),
+      @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
+      @"formSheet" : @(RNSScreenStackPresentationFormSheet),
+      @"containedModal" : @(RNSScreenStackPresentationContainedModal),
+      @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
+      @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
+    }),
+    RNSScreenStackPresentationPush,
+    integerValue)
 
-RCT_ENUM_CONVERTER(RNSScreenStackAnimation, (@{
-                                                  @"default": @(RNSScreenStackAnimationDefault),
-                                                  @"none": @(RNSScreenStackAnimationNone),
-                                                  @"fade": @(RNSScreenStackAnimationFade),
-                                                  @"flip": @(RNSScreenStackAnimationFlip),
-                                                  @"simple_push": @(RNSScreenStackAnimationSimplePush),
-                                                  @"slide_from_bottom": @(RNSScreenStackAnimationSlideFromBottom),
-                                                  @"fade_from_bottom": @(RNSScreenStackAnimationFadeFromBottom),
-                                                  @"slide_from_right": @(RNSScreenStackAnimationDefault),
-                                                  @"slide_from_left": @(RNSScreenStackAnimationDefault),
-                                                  }), RNSScreenStackAnimationDefault, integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenStackAnimation,
+    (@{
+      @"default" : @(RNSScreenStackAnimationDefault),
+      @"none" : @(RNSScreenStackAnimationNone),
+      @"fade" : @(RNSScreenStackAnimationFade),
+      @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
+      @"flip" : @(RNSScreenStackAnimationFlip),
+      @"simple_push" : @(RNSScreenStackAnimationSimplePush),
+      @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
+      @"slide_from_right" : @(RNSScreenStackAnimationDefault),
+      @"slide_from_left" : @(RNSScreenStackAnimationDefault),
+    }),
+    RNSScreenStackAnimationDefault,
+    integerValue)
 
-RCT_ENUM_CONVERTER(RNSScreenReplaceAnimation, (@{
-                                                  @"push": @(RNSScreenReplaceAnimationPush),
-                                                  @"pop": @(RNSScreenReplaceAnimationPop),
-                                                  }), RNSScreenReplaceAnimationPop, integerValue)
+RCT_ENUM_CONVERTER(
+    RNSScreenReplaceAnimation,
+    (@{
+      @"push" : @(RNSScreenReplaceAnimationPush),
+      @"pop" : @(RNSScreenReplaceAnimationPop),
+    }),
+    RNSScreenReplaceAnimationPop,
+    integerValue)
 
 #if !TARGET_OS_TV
-RCT_ENUM_CONVERTER(RNSStatusBarStyle, (@{
-  @"auto": @(RNSStatusBarStyleAuto),
-  @"inverted": @(RNSStatusBarStyleInverted),
-  @"light": @(RNSStatusBarStyleLight),
-  @"dark": @(RNSStatusBarStyleDark),
-  }), RNSStatusBarStyleAuto, integerValue)
+RCT_ENUM_CONVERTER(
+    RNSStatusBarStyle,
+    (@{
+      @"auto" : @(RNSStatusBarStyleAuto),
+      @"inverted" : @(RNSStatusBarStyleInverted),
+      @"light" : @(RNSStatusBarStyleLight),
+      @"dark" : @(RNSStatusBarStyleDark),
+    }),
+    RNSStatusBarStyleAuto,
+    integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {

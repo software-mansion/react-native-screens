@@ -25,11 +25,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   private final List<DrawingOp> drawingOps = new ArrayList<>();
 
   private ScreenStackFragment mTopScreen = null;
-  private boolean mRemovalTransitionStarted = false;
-  private boolean isDetachingCurrentScreen = false;
-  private boolean reverseLastTwoChildren = false;
-  private int previousChildrenCount = 0;
-
   private final FragmentManager.OnBackStackChangedListener mBackStackListener =
       new FragmentManager.OnBackStackChangedListener() {
         @Override
@@ -52,9 +47,29 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           }
         }
       };
+  private boolean mRemovalTransitionStarted = false;
+  private boolean isDetachingCurrentScreen = false;
+  private boolean reverseLastTwoChildren = false;
+  private int previousChildrenCount = 0;
 
   public ScreenStack(Context context) {
     super(context);
+  }
+
+  private static boolean isSystemAnimation(Screen.StackAnimation stackAnimation) {
+    return stackAnimation == Screen.StackAnimation.DEFAULT
+        || stackAnimation == Screen.StackAnimation.FADE
+        || stackAnimation == Screen.StackAnimation.NONE;
+  }
+
+  private static boolean isTransparent(ScreenStackFragment fragment) {
+    return fragment.getScreen().getStackPresentation()
+        == Screen.StackPresentation.TRANSPARENT_MODAL;
+  }
+
+  private static boolean needsDrawReordering(ScreenStackFragment fragment) {
+    return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM
+        || fragment.getScreen().getStackAnimation() == Screen.StackAnimation.FADE_FROM_BOTTOM;
   }
 
   public void dismiss(ScreenStackFragment screenFragment) {
@@ -392,22 +407,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           .commitAllowingStateLoss();
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
     }
-  }
-
-  private static boolean isSystemAnimation(Screen.StackAnimation stackAnimation) {
-    return stackAnimation == Screen.StackAnimation.DEFAULT
-        || stackAnimation == Screen.StackAnimation.FADE
-        || stackAnimation == Screen.StackAnimation.NONE;
-  }
-
-  private static boolean isTransparent(ScreenStackFragment fragment) {
-    return fragment.getScreen().getStackPresentation()
-        == Screen.StackPresentation.TRANSPARENT_MODAL;
-  }
-
-  private static boolean needsDrawReordering(ScreenStackFragment fragment) {
-    return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM
-        || fragment.getScreen().getStackAnimation() == Screen.StackAnimation.FADE_FROM_BOTTOM;
   }
 
   // below methods are taken from
