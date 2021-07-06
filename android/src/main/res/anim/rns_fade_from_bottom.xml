@@ -8,5 +8,7 @@
         android:duration="210"/>
     <translate android:fromYDelta="8%" android:toYDelta="0"
         android:interpolator="@android:interpolator/decelerate_quint"
-        android:duration="350"/>
+        android:duration="350"/> <!--we use rns_no_animation_350.xml as the other animation for
+        this transition in oder for them to end at the same time. Remember to change
+        duration in both files when modifying it-->
 </set>

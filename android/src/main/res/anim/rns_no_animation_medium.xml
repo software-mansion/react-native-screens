@@ -3,4 +3,5 @@
     android:duration="@android:integer/config_mediumAnimTime"
     android:fromAlpha="1.0"
     android:toAlpha="1.0"
-    />
+    />  <!--Remember to change duration in the corresponding xml when modifying it-->
+
