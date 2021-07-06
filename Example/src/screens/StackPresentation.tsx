@@ -125,7 +125,7 @@ const App = (): JSX.Element => (
       component={Alert}
       options={{
         stackPresentation: 'transparentModal',
-        headerShown: false,
+        headerShown: Platform.OS === 'android' ? false : undefined,
         stackAnimation:
           Platform.OS === 'android' ? 'slide_from_left' : 'default',
       }}
@@ -140,7 +140,7 @@ const App = (): JSX.Element => (
       component={Dialog}
       options={{
         stackPresentation: 'containedTransparentModal',
-        headerShown: false,
+        headerShown: Platform.OS === 'android' ? false : undefined,
         stackAnimation: 'fade',
       }}
     />

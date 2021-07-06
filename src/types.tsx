@@ -1,9 +1,10 @@
 import {
   Animated,
   NativeSyntheticEvent,
-  NativeTouchEvent,
   ViewProps,
   View,
+  TargetedEvent,
+  TextInputFocusEventData,
 } from 'react-native';
 
 export type StackPresentationTypes =
@@ -19,6 +20,8 @@ export type StackAnimationTypes =
   | 'fade'
   | 'flip'
   | 'none'
+  | 'simple_push'
+  | 'slide_from_bottom'
   | 'slide_from_right'
   | 'slide_from_left';
 export type BlurEffectTypes =
@@ -52,7 +55,12 @@ export type ScreenOrientationTypes =
   | 'landscape'
   | 'landscape_left'
   | 'landscape_right';
-export type HeaderSubviewTypes = 'back' | 'right' | 'left' | 'center';
+export type HeaderSubviewTypes =
+  | 'back'
+  | 'right'
+  | 'left'
+  | 'center'
+  | 'searchBar';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
@@ -80,16 +88,17 @@ export interface ScreenProps extends ViewProps {
   /**
    * A callback that gets called when the current screen appears.
    */
-  onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   onComponentRef?: (view: unknown) => void;
   /**
    * A callback that gets called when the current screen disappears.
    */
-  onDisappear?: () => void;
+  onDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
+   * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
-  onDismissed?: () => void;
+  onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
   /**
    * A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
@@ -105,11 +114,11 @@ export interface ScreenProps extends ViewProps {
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
-  onWillAppear?: () => void;
+  onWillAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
-  onWillDisappear?: () => void;
+  onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * Boolean indicating whether you are able to dimiss the screen or modal using swipe gesture. If you set it to `true`, the `onSwipeCancelled` event is called when trying to dismiss the screen.
    *
@@ -125,11 +134,26 @@ export interface ScreenProps extends ViewProps {
    */
   replaceAnimation?: ScreenReplaceTypes;
   /**
+   * In which orientation should the screen appear.
+   * The following values are currently supported:
+   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
+   * - "all" – all orientations are permitted
+   * - "portrait" – portrait orientations are permitted
+   * - "portrait_up" – right-side portrait orientation is permitted
+   * - "portrait_down" – upside-down portrait orientation is permitted
+   * - "landscape" – landscape orientations are permitted
+   * - "landscape_left" – landscape-left orientation is permitted
+   * - "landscape_right" – landscape-right orientation is permitted
+   */
+  screenOrientation?: ScreenOrientationTypes;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
    * - "fade" – fades screen in or out
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+   * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
+   * - `slide_from_bottom` – performs a slide from bottom animation (iOS only)
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
@@ -147,6 +171,30 @@ export interface ScreenProps extends ViewProps {
    * - "formSheet" – will use "UIModalPresentationFormSheet" modal style on iOS and will fallback to "modal" on Android.
    */
   stackPresentation?: StackPresentationTypes;
+  /**
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
+   */
+  statusBarAnimation?: 'none' | 'fade' | 'slide';
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+   *
+   * @platform android
+   */
+  statusBarColor?: string;
+  /**
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
+   */
+  statusBarHidden?: boolean;
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
+   */
+  statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
+  /**
+   * Sets the translucency of the status bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  statusBarTranslucent?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {
@@ -162,7 +210,7 @@ export interface ScreenStackProps extends ViewProps {
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
-  onFinishTransitioning?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -176,9 +224,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   backgroundColor?: string;
   /**
    * Title to display in the back button.
-   * Only supported on iOS.
-   *
-   *
+   * @platform ios.
    */
   backTitle?: string;
   /**
@@ -201,17 +247,22 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   children?: React.ReactNode;
   /**
+   * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
+   */
+  color?: string;
+  /**
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
   /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
+  /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
   hidden?: boolean;
-  /**
-   * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
-   */
-  color?: string;
   /**
    * Boolean indicating whether to hide the back button in header.
    */
@@ -258,36 +309,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   largeTitleHideShadow?: boolean;
   /**
-   * In which orientation should the screen appear.
-   * The following values are currently supported:
-   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
-   * - "all" – all orientations are permitted
-   * - "portrait" – portrait orientations are permitted
-   * - "portrait_up" – right-side portrait orientation is permitted
-   * - "portrait_down" – upside-down portrait orientation is permitted
-   * - "landscape" – landscape orientations are permitted
-   * - "landscape_left" – landscape-left orientation is permitted
-   * - "landscape_right" – landscape-right orientation is permitted
-   */
-  screenOrientation?: ScreenOrientationTypes;
-  /**
-   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
-   */
-  statusBarAnimation?: 'none' | 'fade' | 'slide';
-  /**
-   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
-   */
-  statusBarHidden?: boolean;
-  /** Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
-   *
-   * @platform ios
-   */
-  statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
-  /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;
@@ -320,4 +341,57 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean indicating whether the navigation bar is translucent.
    */
   translucent?: boolean;
+}
+
+export interface SearchBarProps {
+  /**
+   * Indicates whether to to obscure the underlying content
+   */
+  obscureBackground?: boolean;
+  /**
+   * Indicates whether to hide the navigation bar
+   */
+  hideNavigationBar?: boolean;
+  /**
+   * Indicates whether to hide the search bar when scrolling
+   */
+  hideWhenScrolling?: boolean;
+  /**
+   * The auto-capitalization behavior
+   */
+  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  /**
+   * Text displayed when search field is empty
+   */
+  placeholder?: string;
+  /**
+   * The search field background color
+   */
+  barTintColor?: string;
+  /**
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
+   */
+  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  /**
+   * A callback that gets called when the cancel button is pressed
+   */
+  onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+   */
+  onSearchButtonPress?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>
+  ) => void;
+  /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when search bar has lost focus
+   */
+  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * The search field text color
+   */
+  textColor?: string;
 }
