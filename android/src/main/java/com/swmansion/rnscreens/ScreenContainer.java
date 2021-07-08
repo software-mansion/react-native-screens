@@ -23,17 +23,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   protected final ArrayList<T> mScreenFragments = new ArrayList<>();
 
   protected @Nullable FragmentManager mFragmentManager;
-  private @Nullable FragmentTransaction mCurrentTransaction;
-  private @Nullable FragmentTransaction mProcessingTransaction;
-  private boolean mNeedUpdate;
   private boolean mIsAttached;
-  private final ChoreographerCompat.FrameCallback mFrameCallback =
-      new ChoreographerCompat.FrameCallback() {
-        @Override
-        public void doFrame(long frameTimeNanos) {
-          updateIfNeeded();
-        }
-      };
   private boolean mLayoutEnqueued = false;
   private final ChoreographerCompat.FrameCallback mLayoutCallback =
       new ChoreographerCompat.FrameCallback() {
@@ -47,6 +37,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
         }
       };
   private @Nullable ScreenFragment mParentScreenFragment = null;
+  private FragmentTransaction mCurrentTransaction = null;
 
   public ScreenContainer(Context context) {
     super(context);
@@ -100,14 +91,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   }
 
   protected void markUpdated() {
-    if (!mNeedUpdate) {
-      mNeedUpdate = true;
-      // enqueue callback of NATIVE_ANIMATED_MODULE type as all view operations are executed in
-      // DISPATCH_UI type and we want the callback to be called right after in the same frame.
-      ReactChoreographer.getInstance()
-          .postFrameCallback(
-              ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mFrameCallback);
-    }
+    updateIfNeeded();
   }
 
   protected void notifyChildUpdate() {
@@ -201,47 +185,36 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   }
 
   protected FragmentTransaction getOrCreateTransaction() {
-    if (mCurrentTransaction == null) {
-      mCurrentTransaction = mFragmentManager.beginTransaction();
-      mCurrentTransaction.setReorderingAllowed(true);
+    if (mCurrentTransaction != null) {
+      return mCurrentTransaction;
     }
+    mCurrentTransaction = mFragmentManager.beginTransaction();
+    mCurrentTransaction.setReorderingAllowed(true);
     return mCurrentTransaction;
   }
 
-  protected void tryCommitTransaction() {
+  protected void commitNowAllowingStateLoss() {
     if (mCurrentTransaction != null) {
-      final FragmentTransaction transaction = mCurrentTransaction;
-      mProcessingTransaction = transaction;
-      mProcessingTransaction.runOnCommit(
-          new Runnable() {
-            @Override
-            public void run() {
-              if (mProcessingTransaction == transaction) {
-                // we need to take into account that commit is initiated with some other transaction
-                // while the previous one is still processing. In this case mProcessingTransaction
-                // gets overwritten and we don't want to set it to null until the second transaction
-                // is finished.
-                mProcessingTransaction = null;
-              }
-            }
-          });
-      mCurrentTransaction.commitAllowingStateLoss();
+      mCurrentTransaction.commitNowAllowingStateLoss();
       mCurrentTransaction = null;
     }
   }
 
   private void attachScreen(ScreenFragment screenFragment) {
     getOrCreateTransaction().add(getId(), screenFragment);
+    commitNowAllowingStateLoss();
   }
 
   private void moveToFront(ScreenFragment screenFragment) {
     FragmentTransaction transaction = getOrCreateTransaction();
     transaction.remove(screenFragment);
     transaction.add(getId(), screenFragment);
+    commitNowAllowingStateLoss();
   }
 
   private void detachScreen(ScreenFragment screenFragment) {
     getOrCreateTransaction().remove(screenFragment);
+    commitNowAllowingStateLoss();
   }
 
   protected Screen.ActivityState getActivityState(ScreenFragment screenFragment) {
@@ -256,7 +229,6 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
     mIsAttached = true;
-    mNeedUpdate = true;
     setupFragmentManager();
   }
 
@@ -323,24 +295,13 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   }
 
   private void updateIfNeeded() {
-    if (!mNeedUpdate || !mIsAttached || mFragmentManager == null) {
+    if (!mIsAttached || mFragmentManager == null) {
       return;
     }
-    mNeedUpdate = false;
     onUpdate();
   }
 
   private final void onUpdate() {
-    // We double check if fragment manager have any pending transactions to run.
-    // In performUpdate we often check whether some fragments are added to
-    // manager to avoid adding them for the second time (which result in crash).
-    // By design performUpdate should be called at most once per frame, so this
-    // should never happen, but in case there are some pending transaction we
-    // need to flush them here such that Fragment#isAdded checks reflect the
-    // reality and that we don't have enqueued fragment add commands that will
-    // execute shortly and cause "Fragment already added" crash.
-    mFragmentManager.executePendingTransactions();
-
     performUpdate();
     notifyContainerUpdate();
   }
@@ -386,8 +347,6 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       }
       screenFragment.getScreen().setTransitioning(transitioning);
     }
-
-    tryCommitTransaction();
   }
 
   protected void notifyContainerUpdate() {
