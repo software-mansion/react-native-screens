@@ -230,22 +230,22 @@
     // Android Nougat exit animation
     // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
     [UIView animateWithDuration:0.25
-                          delay:0
-                        options:UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                       toViewController.view.transform = CGAffineTransformIdentity;
-                       fromViewController.view.transform = topBottomTransform;
-                     }
-                     completion:nil];
-    [UIView animateWithDuration:0.15
-        delay:0.1
-        options:UIViewAnimationOptionCurveLinear
+        delay:0
+        options:UIViewAnimationOptionCurveEaseIn
         animations:^{
-          fromViewController.view.alpha = 0.0;
+          toViewController.view.transform = CGAffineTransformIdentity;
+          fromViewController.view.transform = topBottomTransform;
         }
         completion:^(BOOL finished) {
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
+    [UIView animateWithDuration:0.15
+                          delay:0.1
+                        options:UIViewAnimationOptionCurveLinear
+                     animations:^{
+                       fromViewController.view.alpha = 0.0;
+                     }
+                     completion:nil];
   }
 }
 

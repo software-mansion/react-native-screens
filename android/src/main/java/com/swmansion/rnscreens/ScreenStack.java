@@ -291,8 +291,12 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         && needsDrawReordering(newTop)
         && visibleBottom == null) {
       // When using an open animation in which two screens overlap (eg. fade_from_bottom or
-      // slide_from_bottom),
-      // we want to draw the previous screen under the new one, which is not the default option.
+      // slide_from_bottom), we want to draw the previous screen under the new one,
+      // which is apparently not the default option. Android always draws the disappearing view
+      // on top of the appearing one. We then reverse the order of the views so the new screen
+      // appears on top of the previous one. You can read more about in the comment
+      // for the code we use to change that behavior:
+      // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
       isDetachingCurrentScreen = true;
     }
 
@@ -416,6 +420,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   // the linked class.
   @Override
   public void removeView(final View view) {
+    // we set this property to reverse the order of drawing views
+    // when we want to push new fragment on top of the previous one and their animations collide.
+    // More information in:
+    // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L17
     if (isDetachingCurrentScreen) {
       isDetachingCurrentScreen = false;
       reverseLastTwoChildren = true;
@@ -425,9 +433,12 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   private void drawAndRelease() {
-    DrawingOp op = drawingOps.remove(0);
-    op.draw();
-    drawingOpPool.add(op);
+    for (int i = 0; i < drawingOps.size(); i++) {
+      DrawingOp op = drawingOps.get(i);
+      op.draw();
+      drawingOpPool.add(op);
+    }
+    drawingOps.clear();
   }
 
   @Override
@@ -444,9 +455,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       Collections.swap(drawingOps, drawingOps.size() - 1, drawingOps.size() - 2);
     }
 
-    while (!drawingOps.isEmpty()) {
-      drawAndRelease();
-    }
+    drawAndRelease();
   }
 
   @Override

@@ -10,6 +10,6 @@
     <translate android:fromYDelta="0%" android:toYDelta="8%"
         android:interpolator="@android:interpolator/accelerate_quint"
         android:duration="250"/>  <!--we use rns_no_animation_250.xml as the other animation for
-        this transition in oder for them to end at the same time. Remember to change
+        this transition since we want both of them to end at the same time. Remember to change
         duration in both files when modifying it-->
 </set>
