@@ -64,7 +64,6 @@ function makeStacks() {
 		},
 		{
 			headerMode: 'none',
-			// mode: 'containedModal',
 		},
 	);
 	const MainStack = createNativeStackNavigator(
@@ -79,7 +78,6 @@ function makeStacks() {
 		},
 		{
 			headerMode: 'none',
-			// mode: 'containedModal',
 		},
 	);
 	return MainStack;

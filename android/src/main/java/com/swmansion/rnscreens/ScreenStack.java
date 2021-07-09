@@ -256,15 +256,17 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
     mGoingForward = shouldUseOpenAnimation;
 
-    // when navigating to or from transparent screen, only the transparent screen is animating
-    // so only it is sending progress, and we want both screens to send progress. We then keep
-    // the reference to the other screen for during the transition and dispatch event in it too.
-    // This logic does not apply if we are going back to the screen under the first visible screen,
-    // but then there is a check if the screen is not already sending progress, so it will not
-    // double the events anyways.
-    if (newTop != null && !mGoingForward && isTransparent(mTopScreen)) {
+    if (!mGoingForward && newTop != null && newTop.isAdded()) {
+      // If we are going back to a screen that is already added (because it has a transparent screen
+      // on top of it and so is visible beneath it), it will not animate and so
+      // it will not send transition progress. We want both screens participating in the
+      // transition to send progress, so, in order to achieve it, we keep the reference
+      // to the non-animating screen in the screen being dismissed for the lifecycle of transition.
+      // We can then dispatch progress event in both screens.
       mTopScreen.setAboveScreen(newTop.getScreen());
-    } else if (newTop != null && mGoingForward && isTransparent(newTop)) {
+    } else if (mGoingForward && newTop != null && isTransparent(newTop)) {
+      // Situation similar to the above one appears when we are pushing a transparent screen,
+      // then the current top screen (mTopScreen) will not be dismissed and so it will not animate.
       newTop.setAboveScreen(mTopScreen.getScreen());
     }
 
