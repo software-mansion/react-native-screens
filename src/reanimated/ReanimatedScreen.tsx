@@ -71,7 +71,7 @@ class ReanimatedScreen extends React.Component<ScreenProps> {
         {...rest}
         // @ts-ignore some problems with types
         ref={this.setRef}>
-        {copyTransitionProgress ? ( // if we are in an iOS modal with `headerShown: true`, there is a nested stack with no transition
+        {copyTransitionProgress ? ( // see comment of this prop in types.tsx for information why it is needed
           children
         ) : (
           <ReanimatedTransitionProgressContext.Provider

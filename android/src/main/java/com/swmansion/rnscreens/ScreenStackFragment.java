@@ -33,7 +33,7 @@ public class ScreenStackFragment extends ScreenFragment {
       mFragment = fragment;
     }
 
-    private Animation.AnimationListener mAnimationListener =
+    private final Animation.AnimationListener mAnimationListener =
         new Animation.AnimationListener() {
           @Override
           public void onAnimationStart(Animation animation) {

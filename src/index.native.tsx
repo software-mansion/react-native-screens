@@ -167,7 +167,7 @@ class Screen extends React.Component<ScreenProps> {
             ],
             { useNativeDriver: true }
           )}>
-          {copyTransitionProgress ? ( // if we are in an iOS modal with `headerShown: true`, there is a nested stack with no transition
+          {copyTransitionProgress ? ( // see comment of this prop in types.tsx for information why it is needed
             children
           ) : (
             <TransitionProgressContext.Provider

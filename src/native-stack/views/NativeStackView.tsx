@@ -107,122 +107,6 @@ const MaybeNestedStack = ({
   return content;
 };
 
-type RouteViewProps = {
-  route: Route<string>;
-  index: number;
-  navigation: NativeStackNavigationHelpers;
-  descriptors: NativeStackDescriptorMap;
-  navigatorKey: string;
-};
-
-function RouteView({
-  route,
-  index,
-  navigation,
-  descriptors,
-  navigatorKey,
-}: RouteViewProps) {
-  const { options, render: renderScene } = descriptors[route.key];
-  const {
-    gestureEnabled,
-    headerShown,
-    replaceAnimation = 'pop',
-    screenOrientation,
-    stackAnimation,
-    statusBarAnimation,
-    statusBarColor,
-    statusBarHidden,
-    statusBarStyle,
-    statusBarTranslucent,
-  } = options;
-
-  const Screen = React.useContext(ScreenContext);
-
-  let { stackPresentation = 'push' } = options;
-
-  if (index === 0) {
-    // first screen should always be treated as `push`, it resolves problems with no header animation
-    // for navigator with first screen as `modal` and the next as `push`
-    stackPresentation = 'push';
-  }
-
-  const isHeaderInPush = isAndroid
-    ? headerShown
-    : stackPresentation === 'push' && headerShown !== false;
-
-  return (
-    <Screen
-      key={route.key}
-      enabled
-      style={StyleSheet.absoluteFill}
-      gestureEnabled={isAndroid ? false : gestureEnabled}
-      replaceAnimation={replaceAnimation}
-      screenOrientation={screenOrientation}
-      stackAnimation={stackAnimation}
-      stackPresentation={stackPresentation}
-      statusBarAnimation={statusBarAnimation}
-      statusBarColor={statusBarColor}
-      statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle}
-      statusBarTranslucent={statusBarTranslucent}
-      onWillAppear={() => {
-        navigation.emit({
-          type: 'transitionStart',
-          data: { closing: false },
-          target: route.key,
-        });
-      }}
-      onWillDisappear={() => {
-        navigation.emit({
-          type: 'transitionStart',
-          data: { closing: true },
-          target: route.key,
-        });
-      }}
-      onAppear={() => {
-        navigation.emit({
-          type: 'appear',
-          target: route.key,
-        });
-        navigation.emit({
-          type: 'transitionEnd',
-          data: { closing: false },
-          target: route.key,
-        });
-      }}
-      onDisappear={() => {
-        navigation.emit({
-          type: 'transitionEnd',
-          data: { closing: true },
-          target: route.key,
-        });
-      }}
-      onDismissed={(e) => {
-        navigation.emit({
-          type: 'dismiss',
-          target: route.key,
-        });
-
-        const dismissCount =
-          e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
-
-        navigation.dispatch({
-          ...StackActions.pop(dismissCount),
-          source: route.key,
-          target: navigatorKey,
-        });
-      }}>
-      <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
-      <MaybeNestedStack
-        options={options}
-        route={route}
-        stackPresentation={stackPresentation}>
-        {renderScene()}
-      </MaybeNestedStack>
-    </Screen>
-  );
-}
-
 type Props = {
   state: StackNavigationState<ParamListBase>;
   navigation: NativeStackNavigationHelpers;
@@ -235,18 +119,112 @@ export default function NativeStackView({
   descriptors,
 }: Props): JSX.Element {
   const { key, routes } = state;
+  const Screen = React.useContext(ScreenContext);
   return (
     <ScreenStack style={styles.container}>
-      {routes.map((route, index) => (
-        <RouteView
-          key={route.key}
-          route={route}
-          index={index}
-          navigation={navigation}
-          descriptors={descriptors}
-          navigatorKey={key}
-        />
-      ))}
+      {routes.map((route, index) => {
+        const { options, render: renderScene } = descriptors[route.key];
+        const {
+          gestureEnabled,
+          headerShown,
+          replaceAnimation = 'pop',
+          screenOrientation,
+          stackAnimation,
+          statusBarAnimation,
+          statusBarColor,
+          statusBarHidden,
+          statusBarStyle,
+          statusBarTranslucent,
+        } = options;
+
+        let { stackPresentation = 'push' } = options;
+
+        if (index === 0) {
+          // first screen should always be treated as `push`, it resolves problems with no header animation
+          // for navigator with first screen as `modal` and the next as `push`
+          stackPresentation = 'push';
+        }
+
+        const isHeaderInPush = isAndroid
+          ? headerShown
+          : stackPresentation === 'push' && headerShown !== false;
+
+        return (
+          <Screen
+            key={route.key}
+            enabled
+            style={StyleSheet.absoluteFill}
+            gestureEnabled={isAndroid ? false : gestureEnabled}
+            replaceAnimation={replaceAnimation}
+            screenOrientation={screenOrientation}
+            stackAnimation={stackAnimation}
+            stackPresentation={stackPresentation}
+            statusBarAnimation={statusBarAnimation}
+            statusBarColor={statusBarColor}
+            statusBarHidden={statusBarHidden}
+            statusBarStyle={statusBarStyle}
+            statusBarTranslucent={statusBarTranslucent}
+            onWillAppear={() => {
+              navigation.emit({
+                type: 'transitionStart',
+                data: { closing: false },
+                target: route.key,
+              });
+            }}
+            onWillDisappear={() => {
+              navigation.emit({
+                type: 'transitionStart',
+                data: { closing: true },
+                target: route.key,
+              });
+            }}
+            onAppear={() => {
+              navigation.emit({
+                type: 'appear',
+                target: route.key,
+              });
+              navigation.emit({
+                type: 'transitionEnd',
+                data: { closing: false },
+                target: route.key,
+              });
+            }}
+            onDisappear={() => {
+              navigation.emit({
+                type: 'transitionEnd',
+                data: { closing: true },
+                target: route.key,
+              });
+            }}
+            onDismissed={(e) => {
+              navigation.emit({
+                type: 'dismiss',
+                target: route.key,
+              });
+
+              const dismissCount =
+                e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
+
+              navigation.dispatch({
+                ...StackActions.pop(dismissCount),
+                source: route.key,
+                target: key,
+              });
+            }}>
+            <HeaderConfig
+              {...options}
+              route={route}
+              headerShown={isHeaderInPush}
+            />
+            <MaybeNestedStack
+              options={options}
+              route={route}
+              stackPresentation={stackPresentation}>
+              {renderScene()}
+            </MaybeNestedStack>
+          </Screen>
+        );
+      })}
     </ScreenStack>
   );
 }
