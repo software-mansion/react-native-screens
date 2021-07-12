@@ -59,6 +59,10 @@
       [self animateSlideFromBottomWithTransitionContext:transitionContext
                                                    toVC:toViewController
                                                  fromVC:fromViewController];
+    } else if (screen.stackAnimation == RNSScreenStackAnimationFadeFromBottom) {
+      [self animateFadeFromBottomWithTransitionContext:transitionContext
+                                                  toVC:toViewController
+                                                fromVC:fromViewController];
     }
   }
 }
@@ -183,6 +187,65 @@
         completion:^(BOOL finished) {
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
+  }
+}
+
+- (void)animateFadeFromBottomWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                              toVC:(UIViewController *)toViewController
+                                            fromVC:(UIViewController *)fromViewController
+{
+  CGAffineTransform topBottomTransform =
+      CGAffineTransformMakeTranslation(0, 0.08 * transitionContext.containerView.bounds.size.height);
+
+  if (_operation == UINavigationControllerOperationPush) {
+    toViewController.view.transform = topBottomTransform;
+    toViewController.view.alpha = 0.0;
+    [[transitionContext containerView] addSubview:toViewController.view];
+
+    // Android Nougat open animation
+    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_open_enter.xml
+    [UIView animateWithDuration:0.35
+        delay:0
+        options:UIViewAnimationOptionCurveEaseOut
+        animations:^{
+          fromViewController.view.transform = CGAffineTransformIdentity;
+          toViewController.view.transform = CGAffineTransformIdentity;
+        }
+        completion:^(BOOL finished) {
+          fromViewController.view.transform = CGAffineTransformIdentity;
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+    [UIView animateWithDuration:0.2
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                       toViewController.view.alpha = 1.0;
+                     }
+                     completion:nil];
+
+  } else if (_operation == UINavigationControllerOperationPop) {
+    toViewController.view.transform = CGAffineTransformIdentity;
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    // Android Nougat exit animation
+    // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
+    [UIView animateWithDuration:0.25
+        delay:0
+        options:UIViewAnimationOptionCurveEaseIn
+        animations:^{
+          toViewController.view.transform = CGAffineTransformIdentity;
+          fromViewController.view.transform = topBottomTransform;
+        }
+        completion:^(BOOL finished) {
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+    [UIView animateWithDuration:0.15
+                          delay:0.1
+                        options:UIViewAnimationOptionCurveLinear
+                     animations:^{
+                       fromViewController.view.alpha = 0.0;
+                     }
+                     completion:nil];
   }
 }
 

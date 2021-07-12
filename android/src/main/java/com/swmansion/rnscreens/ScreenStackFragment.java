@@ -231,11 +231,22 @@ public class ScreenStackFragment extends ScreenFragment {
     @Override
     public void startAnimation(Animation animation) {
       // For some reason View##onAnimationEnd doesn't get called for
-      // exit transitions so we use this hack.
-      AnimationSet set = new AnimationSet(true);
-      set.addAnimation(animation);
-      set.setAnimationListener(mAnimationListener);
-      super.startAnimation(set);
+      // exit transitions so we explicitly attach animation listener.
+      // We also have some animations that are an AnimationSet, so we don't wrap them
+      // in another set since it causes some visual glitches when going forward.
+      // We also set the listener only when going forward, since when going back,
+      // there is already a listener for dismiss action added, which would be overridden
+      // and also this is not necessary when going back since the lifecycle methods
+      // are correctly dispatched then.
+      if (animation instanceof AnimationSet && !mFragment.isRemoving()) {
+        animation.setAnimationListener(mAnimationListener);
+        super.startAnimation(animation);
+      } else {
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(animation);
+        set.setAnimationListener(mAnimationListener);
+        super.startAnimation(set);
+      }
     }
   }
 }
