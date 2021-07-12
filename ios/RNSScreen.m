@@ -379,6 +379,7 @@
     self.view = view;
     _shouldNotify = YES;
     _goingBackWithJS = NO;
+    _fakeView = [UIView new];
   }
   return self;
 }
@@ -688,21 +689,18 @@
 {
   if (self.transitionCoordinator != nil && !_isSendingProgress) {
     _isSendingProgress = YES;
-    UIView *fakeView = [UIView new];
-    fakeView.alpha = 0.0;
-    _fakeView = fakeView;
+    _fakeView.alpha = 0.0;
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [[context containerView] addSubview:fakeView];
-          fakeView.alpha = 1.0;
+          [[context containerView] addSubview:self->_fakeView];
+          self->_fakeView.alpha = 1.0;
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
           [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [self->_animationTimer setPaused:YES];
           [self->_animationTimer invalidate];
-          self->_fakeView = nil;
-          [fakeView removeFromSuperview];
+          [self->_fakeView removeFromSuperview];
           self->_isSendingProgress = NO;
         }];
   }
@@ -724,7 +722,7 @@
   [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
   // if we are in a modal, we want to send transition to the above screen too, which might not trigger appear/disappear
   // events e.g. when we are in iOS >= 13 default modal. We also check if we are not already sending the progress of
-  // transition and if current screen does not present another modal, because otherwise we would send progress to the
+  // transition and if current screen does not present another modal, otherwise we would send progress to the
   // screen 2 levels higher than the current one
   if ([_presentingScreen isKindOfClass:[RNSScreen class]] && !_presentingScreen.isSendingProgress &&
       self.presentedViewController == nil) {
