@@ -189,14 +189,15 @@ Defaults to `pop`.
 
 How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
 
-- `default` - Uses a platform default animation.
-- `fade` - Fades screen in or out.
-- `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only)
+- `default` - uses a platform default animation
+- `fade` - fades screen in or out.
+- `fade_from_bottom` – performs a fade from bottom animation
+- `flip` – flips the screen, requires stackPresentation: `modal` (iOS only)
 - `simple_push` – performs a default animation, but without shadow and native header transition (iOS only)
-- `slide_from_bottom` – performs a slide from bottom animation (iOS only)
+- `slide_from_bottom` – performs a slide from bottom animation
 - `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-- `none` - The screen appears/disappears without an animation.
+- `none` - the screen appears/disappears without an animation.
 
 Defaults to `default`.
 
