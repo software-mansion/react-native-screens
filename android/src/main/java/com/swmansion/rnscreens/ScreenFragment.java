@@ -43,7 +43,6 @@ public class ScreenFragment extends Fragment {
   }
 
   protected Screen mScreenView;
-  private boolean mIsSendingProgress;
   private float mProgress;
   private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
   private boolean shouldUpdateOnResume = false;
@@ -293,10 +292,6 @@ public class ScreenFragment extends Fragment {
     } else {
       dispatchOnDisappear();
     }
-  }
-
-  public void setSendingProgress(boolean isSendingProgress) {
-    mIsSendingProgress = isSendingProgress;
   }
 
   @Override

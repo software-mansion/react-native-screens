@@ -1,7 +1,5 @@
 package com.swmansion.rnscreens;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -12,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,29 +36,12 @@ public class ScreenStackFragment extends ScreenFragment {
         new Animation.AnimationListener() {
           @Override
           public void onAnimationStart(Animation animation) {
-            mFragment.setSendingProgress(true);
-            View fakeView = new View(getContext());
-            fakeView.setAlpha(0f);
-            ObjectAnimator animator =
-                ObjectAnimator.ofFloat(fakeView, ALPHA, 1f).setDuration(animation.getDuration());
-            animator.addUpdateListener(
-                new ValueAnimator.AnimatorUpdateListener() {
-                  @Override
-                  public void onAnimationUpdate(ValueAnimator animation) {
-                    if (mFragment.getScreen() != null) {
-                      float alpha = (float) animation.getAnimatedValue();
-                      mFragment.dispatchTransitionProgress(alpha, !mFragment.isResumed());
-                    }
-                  }
-                });
-            animator.start();
             mFragment.onViewAnimationStart();
           }
 
           @Override
           public void onAnimationEnd(Animation animation) {
             mFragment.onViewAnimationEnd();
-            mFragment.setSendingProgress(false);
           }
 
           @Override
@@ -76,15 +58,36 @@ public class ScreenStackFragment extends ScreenFragment {
       // there is already a listener for dismiss action added, which would be overridden
       // and also this is not necessary when going back since the lifecycle methods
       // are correctly dispatched then.
+      // We also add fakeAnimation to the set of animations, which sends the progress of animation
+      ScreensAnimation fakeAnimation = new ScreensAnimation(mFragment);
+      fakeAnimation.setDuration(animation.getDuration());
       if (animation instanceof AnimationSet && !mFragment.isRemoving()) {
+        ((AnimationSet) animation).addAnimation(fakeAnimation);
         animation.setAnimationListener(mAnimationListener);
         super.startAnimation(animation);
       } else {
         AnimationSet set = new AnimationSet(true);
         set.addAnimation(animation);
+        set.addAnimation(fakeAnimation);
         set.setAnimationListener(mAnimationListener);
         super.startAnimation(set);
       }
+    }
+  }
+
+  private static class ScreensAnimation extends Animation {
+    private final ScreenFragment mFragment;
+
+    public ScreensAnimation(ScreenFragment fragment) {
+      super();
+      mFragment = fragment;
+    }
+
+    @Override
+    protected void applyTransformation(float interpolatedTime, Transformation t) {
+      super.applyTransformation(interpolatedTime, t);
+      // interpolated time should be the progress of the current transition
+      mFragment.dispatchTransitionProgress(interpolatedTime, !mFragment.isResumed());
     }
   }
 
