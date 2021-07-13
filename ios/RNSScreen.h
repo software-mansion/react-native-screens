@@ -65,7 +65,6 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 
 @interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
 
-@property (weak, nonatomic) RNSScreen *presentingScreen;
 @property (nonatomic) BOOL isSendingProgress;
 @property (nonatomic) BOOL goingBackWithJS;
 

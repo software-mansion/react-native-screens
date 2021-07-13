@@ -721,16 +721,6 @@
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
   [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
-  // if we are in a modal, we want to send transition to the above screen too, which might not trigger appear/disappear
-  // events e.g. when we are in iOS >= 13 default modal. We also check if we are not already sending the progress of
-  // transition and if current screen does not present another modal, otherwise we would send progress to the
-  // screen 2 levels higher than the current one
-  if ([_presentingScreen isKindOfClass:[RNSScreen class]] && !_presentingScreen.isSendingProgress &&
-      self.presentedViewController == nil) {
-    [((RNSScreenView *)_presentingScreen.view) notifyTransitionProgress:progress
-                                                                closing:!closing
-                                                           goingForward:goingForward];
-  }
 }
 
 @end

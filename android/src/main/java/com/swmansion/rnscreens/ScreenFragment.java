@@ -44,7 +44,6 @@ public class ScreenFragment extends Fragment {
 
   protected Screen mScreenView;
   private boolean mIsSendingProgress;
-  private Screen mAboveScreen;
   private float mProgress;
   private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
   private boolean shouldUpdateOnResume = false;
@@ -167,7 +166,6 @@ public class ScreenFragment extends Fragment {
     dispatchEventInChildContainers(ScreenLifecycleEvent.Appear);
 
     dispatchTransitionProgress(1.0f, false);
-    mAboveScreen = null;
   }
 
   protected void dispatchOnWillDisappear() {
@@ -190,7 +188,6 @@ public class ScreenFragment extends Fragment {
     dispatchEventInChildContainers(ScreenLifecycleEvent.Disappear);
 
     dispatchTransitionProgress(1.0f, true);
-    mAboveScreen = null;
   }
 
   protected void dispatchTransitionProgress(float alpha, boolean closing) {
@@ -199,13 +196,6 @@ public class ScreenFragment extends Fragment {
       goingForward = ((ScreenStack) getScreen().getContainer()).isGoingForward();
     }
     sendTransitionProgressEvent(alpha, closing, goingForward);
-
-    if (mAboveScreen != null
-        && mAboveScreen.getFragment() != null
-        && !mAboveScreen.getFragment().isSendingProgress()) {
-      // if we are in transparentModal presentation, only one screen is sending progress
-      mAboveScreen.getFragment().sendTransitionProgressEvent(alpha, !closing, goingForward);
-    }
   }
 
   protected void sendTransitionProgressEvent(float alpha, boolean closing, boolean goingForward) {
@@ -305,16 +295,8 @@ public class ScreenFragment extends Fragment {
     }
   }
 
-  public boolean isSendingProgress() {
-    return mIsSendingProgress;
-  }
-
   public void setSendingProgress(boolean isSendingProgress) {
     mIsSendingProgress = isSendingProgress;
-  }
-
-  public void setAboveScreen(Screen aboveScreen) {
-    mAboveScreen = aboveScreen;
   }
 
   @Override
