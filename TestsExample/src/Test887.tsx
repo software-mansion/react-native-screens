@@ -46,6 +46,42 @@ export default function App(): JSX.Element {
     </NavigationContainer>
   );
 }
+
+// checking if many components can call useProgress at the same time
+function SiblingView() {
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
+  );
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
+
+  const {progress} = useTransitionProgress();
+
+  const opacity = progress.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1.0, 0.0, 1.0],
+    extrapolate: 'clamp',
+  });
+
+  return (
+     <>
+      <Animated.View style={reaStyle} />
+      <RNAnimated.View
+        style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}}
+      />
+    </>
+  );
+}
+
 function First({
   navigation,
 }: {
@@ -86,6 +122,8 @@ function First({
         onPress={() => navigation.push('Third')}
       />
       <Animated.View style={reaStyle} />
+      <SiblingView />
+      <SiblingView />
       <RNAnimated.View
         style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}}
       />

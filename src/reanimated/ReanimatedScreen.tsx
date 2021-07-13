@@ -31,6 +31,7 @@ const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
         goingForward.value = event.goingForward;
       },
       [
+        // This should not be necessary, but is not properly managed by `react-native-reanimated`
         // @ts-ignore wrong type
         Platform.OS === 'android'
           ? 'onTransitionProgress'
@@ -40,9 +41,9 @@ const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
 
     return (
       <AnimatedScreen
-        // @ts-ignore some problems with ref and eventProp being "fake" prop for parsing of `useEvent` return value
+        // @ts-ignore some problems with ref and onTransitionProgressReanimated being "fake" prop for parsing of `useEvent` return value
         ref={ref}
-        eventProp={transitionProgress}
+        onTransitionProgressReanimated={transitionProgress}
         {...rest}>
         {copyTransitionProgress ? ( // see comment of this prop in types.tsx for information why it is needed
           children
