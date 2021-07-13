@@ -40,7 +40,7 @@ const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
 
     return (
       <AnimatedScreen
-        // @ts-ignore some problems with ref and eventProp name is not defined since it is not
+        // @ts-ignore some problems with ref and eventProp being "fake" prop for parsing of `useEvent` return value
         ref={ref}
         eventProp={transitionProgress}
         {...rest}>
