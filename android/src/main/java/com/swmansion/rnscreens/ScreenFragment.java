@@ -27,7 +27,7 @@ public class ScreenFragment extends Fragment {
   }
 
   protected Screen mScreenView;
-  private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
+  private final List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
   private boolean shouldUpdateOnResume = false;
   private float mProgress;
 
