@@ -98,32 +98,24 @@ public class ScreenStackFragment extends ScreenFragment {
     if (transit == 0
         && !isHidden()
         && getScreen().getStackAnimation() == Screen.StackAnimation.NONE) {
-      // If the container is nested then appear events will be dispatched by their parent screen so
-      // they must not be triggered here.
-      ScreenContainer container = getScreen().getContainer();
-      boolean isNested = container != null && container.isNested();
       if (enter) {
-        if (!isNested) {
-          // Android dispatches the animation start event for the fragment that is being added first
-          // however we want the one being dismissed first to match iOS. It also makes more sense
-          // from  a navigation point of view to have the disappear event first.
-          // Since there are no explicit relationships between the fragment being added / removed
-          // the practical way to fix this is delaying dispatching the appear events at the end of
-          // the frame.
-          UiThreadUtil.runOnUiThread(
-              new Runnable() {
-                @Override
-                public void run() {
-                  dispatchOnWillAppear();
-                  dispatchOnAppear();
-                }
-              });
-        }
+        // Android dispatches the animation start event for the fragment that is being added first
+        // however we want the one being dismissed first to match iOS. It also makes more sense
+        // from  a navigation point of view to have the disappear event first.
+        // Since there are no explicit relationships between the fragment being added / removed
+        // the practical way to fix this is delaying dispatching the appear events at the end of
+        // the frame.
+        UiThreadUtil.runOnUiThread(
+            new Runnable() {
+              @Override
+              public void run() {
+                dispatchOnWillAppear();
+                dispatchOnAppear();
+              }
+            });
       } else {
-        if (!isNested) {
-          dispatchOnWillDisappear();
-          dispatchOnDisappear();
-        }
+        dispatchOnWillDisappear();
+        dispatchOnDisappear();
         notifyViewAppearTransitionEnd();
       }
     }
