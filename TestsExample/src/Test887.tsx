@@ -20,8 +20,21 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
+
+const NestedStack = createStackNavigator();
+
+// Nested stack to check if transition progress values are passed properly through non native-stack navigators
+function NestedFirst() {
+  return (
+    <NestedStack.Navigator>
+      <NestedStack.Screen name="NestedFirst" component={First}/>
+    </NestedStack.Navigator>
+  )
+}
+
 type SimpleStackParams = {
   First: undefined;
   Second: undefined;
@@ -35,7 +48,7 @@ export default function App(): JSX.Element {
           stackAnimation: 'fade_from_bottom',
           // stackPresentation: 'transparentModal',
         }}>
-        <Stack.Screen name="First" component={First} />
+        <Stack.Screen name="First" component={NestedFirst} />
         <Stack.Screen name="Second" component={Second} />
         <Stack.Screen
           name="Third"
