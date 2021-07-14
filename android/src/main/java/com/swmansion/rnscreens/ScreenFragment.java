@@ -26,6 +26,25 @@ public class ScreenFragment extends Fragment {
     WillDisappear,
   }
 
+  protected Screen mScreenView;
+  private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
+  private boolean shouldUpdateOnResume = false;
+  private float mProgress;
+
+  public ScreenFragment() {
+    throw new IllegalStateException(
+        "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
+  }
+
+  @SuppressLint("ValidFragment")
+  public ScreenFragment(Screen screenView) {
+    super();
+    mScreenView = screenView;
+    // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
+    // due to progress value being already 0.0f
+    mProgress = -1f;
+  }
+
   protected static View recycleView(View view) {
     // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
     // view it needs to be detached from the view hierarchy to allow the fragment to attach it back.
@@ -40,25 +59,6 @@ public class ScreenFragment extends Fragment {
     // visibility back to VISIBLE in order for the fragment manager to animate in the view.
     view.setVisibility(View.VISIBLE);
     return view;
-  }
-
-  protected Screen mScreenView;
-  private float mProgress;
-  private List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
-  private boolean shouldUpdateOnResume = false;
-
-  public ScreenFragment() {
-    throw new IllegalStateException(
-        "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
-  }
-
-  @SuppressLint("ValidFragment")
-  public ScreenFragment(Screen screenView) {
-    super();
-    mScreenView = screenView;
-    // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
-    // due to progress value being already 0.0f
-    mProgress = -1f;
   }
 
   @Override

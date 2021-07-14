@@ -23,74 +23,6 @@ import com.google.android.material.appbar.AppBarLayout;
 
 public class ScreenStackFragment extends ScreenFragment {
 
-  private static class NotifyingCoordinatorLayout extends CoordinatorLayout {
-
-    private final ScreenFragment mFragment;
-
-    public NotifyingCoordinatorLayout(@NonNull Context context, ScreenFragment fragment) {
-      super(context);
-      mFragment = fragment;
-    }
-
-    private final Animation.AnimationListener mAnimationListener =
-        new Animation.AnimationListener() {
-          @Override
-          public void onAnimationStart(Animation animation) {
-            mFragment.onViewAnimationStart();
-          }
-
-          @Override
-          public void onAnimationEnd(Animation animation) {
-            mFragment.onViewAnimationEnd();
-          }
-
-          @Override
-          public void onAnimationRepeat(Animation animation) {}
-        };
-
-    @Override
-    public void startAnimation(Animation animation) {
-      // For some reason View##onAnimationEnd doesn't get called for
-      // exit transitions so we explicitly attach animation listener.
-      // We also have some animations that are an AnimationSet, so we don't wrap them
-      // in another set since it causes some visual glitches when going forward.
-      // We also set the listener only when going forward, since when going back,
-      // there is already a listener for dismiss action added, which would be overridden
-      // and also this is not necessary when going back since the lifecycle methods
-      // are correctly dispatched then.
-      // We also add fakeAnimation to the set of animations, which sends the progress of animation
-      ScreensAnimation fakeAnimation = new ScreensAnimation(mFragment);
-      fakeAnimation.setDuration(animation.getDuration());
-      if (animation instanceof AnimationSet && !mFragment.isRemoving()) {
-        ((AnimationSet) animation).addAnimation(fakeAnimation);
-        animation.setAnimationListener(mAnimationListener);
-        super.startAnimation(animation);
-      } else {
-        AnimationSet set = new AnimationSet(true);
-        set.addAnimation(animation);
-        set.addAnimation(fakeAnimation);
-        set.setAnimationListener(mAnimationListener);
-        super.startAnimation(set);
-      }
-    }
-  }
-
-  private static class ScreensAnimation extends Animation {
-    private final ScreenFragment mFragment;
-
-    public ScreensAnimation(ScreenFragment fragment) {
-      super();
-      mFragment = fragment;
-    }
-
-    @Override
-    protected void applyTransformation(float interpolatedTime, Transformation t) {
-      super.applyTransformation(interpolatedTime, t);
-      // interpolated time should be the progress of the current transition
-      mFragment.dispatchTransitionProgress(interpolatedTime, !mFragment.isResumed());
-    }
-  }
-
   private static final float TOOLBAR_ELEVATION = PixelUtil.toPixelFromDIP(4);
 
   private AppBarLayout mAppBarLayout;
@@ -271,6 +203,74 @@ public class ScreenStackFragment extends ScreenFragment {
       ((ScreenStack) container).dismiss(this);
     } else {
       throw new IllegalStateException("ScreenStackFragment added into a non-stack container");
+    }
+  }
+
+  private static class NotifyingCoordinatorLayout extends CoordinatorLayout {
+
+    private final ScreenFragment mFragment;
+
+    public NotifyingCoordinatorLayout(@NonNull Context context, ScreenFragment fragment) {
+      super(context);
+      mFragment = fragment;
+    }
+
+    private final Animation.AnimationListener mAnimationListener =
+        new Animation.AnimationListener() {
+          @Override
+          public void onAnimationStart(Animation animation) {
+            mFragment.onViewAnimationStart();
+          }
+
+          @Override
+          public void onAnimationEnd(Animation animation) {
+            mFragment.onViewAnimationEnd();
+          }
+
+          @Override
+          public void onAnimationRepeat(Animation animation) {}
+        };
+
+    @Override
+    public void startAnimation(Animation animation) {
+      // For some reason View##onAnimationEnd doesn't get called for
+      // exit transitions so we explicitly attach animation listener.
+      // We also have some animations that are an AnimationSet, so we don't wrap them
+      // in another set since it causes some visual glitches when going forward.
+      // We also set the listener only when going forward, since when going back,
+      // there is already a listener for dismiss action added, which would be overridden
+      // and also this is not necessary when going back since the lifecycle methods
+      // are correctly dispatched then.
+      // We also add fakeAnimation to the set of animations, which sends the progress of animation
+      ScreensAnimation fakeAnimation = new ScreensAnimation(mFragment);
+      fakeAnimation.setDuration(animation.getDuration());
+      if (animation instanceof AnimationSet && !mFragment.isRemoving()) {
+        ((AnimationSet) animation).addAnimation(fakeAnimation);
+        animation.setAnimationListener(mAnimationListener);
+        super.startAnimation(animation);
+      } else {
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(animation);
+        set.addAnimation(fakeAnimation);
+        set.setAnimationListener(mAnimationListener);
+        super.startAnimation(set);
+      }
+    }
+  }
+
+  private static class ScreensAnimation extends Animation {
+    private final ScreenFragment mFragment;
+
+    public ScreensAnimation(ScreenFragment fragment) {
+      super();
+      mFragment = fragment;
+    }
+
+    @Override
+    protected void applyTransformation(float interpolatedTime, Transformation t) {
+      super.applyTransformation(interpolatedTime, t);
+      // interpolated time should be the progress of the current transition
+      mFragment.dispatchTransitionProgress(interpolatedTime, !mFragment.isResumed());
     }
   }
 }

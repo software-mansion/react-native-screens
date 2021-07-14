@@ -24,13 +24,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   private final List<DrawingOp> drawingOpPool = new ArrayList<>();
   private final List<DrawingOp> drawingOps = new ArrayList<>();
 
-  private ScreenStackFragment mTopScreen = null;
-  private boolean mRemovalTransitionStarted = false;
-  private boolean mGoingForward = false;
-  private boolean isDetachingCurrentScreen = false;
-  private boolean reverseLastTwoChildren = false;
-  private int previousChildrenCount = 0;
-
   private final FragmentManager.OnBackStackChangedListener mBackStackListener =
       new FragmentManager.OnBackStackChangedListener() {
         @Override
@@ -53,6 +46,13 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           }
         }
       };
+
+  private ScreenStackFragment mTopScreen = null;
+  private boolean mRemovalTransitionStarted = false;
+  private boolean mGoingForward = false;
+  private boolean isDetachingCurrentScreen = false;
+  private boolean reverseLastTwoChildren = false;
+  private int previousChildrenCount = 0;
 
   public ScreenStack(Context context) {
     super(context);
