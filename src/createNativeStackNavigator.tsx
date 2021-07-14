@@ -362,11 +362,7 @@ const MaybeNestedStack = ({
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.scenes}>
-        <Screen
-          style={StyleSheet.absoluteFill}
-          enabled
-          isNativeStack
-          copyTransitionProgress>
+        <Screen style={StyleSheet.absoluteFill} enabled isNativeStack>
           {renderHeaderConfig(index, route, descriptor, navigationConfig)}
           <SceneView
             screenProps={screenProps}

@@ -48,7 +48,7 @@ const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
               )
         }
         {...rest}>
-        {props.copyTransitionProgress || !props.isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
+        {!props.isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
           children
         ) : (
           <ReanimatedTransitionProgressContext.Provider

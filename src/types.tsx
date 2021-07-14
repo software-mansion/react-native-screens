@@ -74,12 +74,6 @@ export interface ScreenProps extends ViewProps {
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
   /**
-   * An internal boolean value used to not provide transition progress values by a Screen rendered in a nested stack, used to provide a header in modal in iOS.
-   * Such Screen will not provide correct values since it never animates.
-   * It defaults to `false`.
-   */
-  copyTransitionProgress?: boolean;
-  /**
    * All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;

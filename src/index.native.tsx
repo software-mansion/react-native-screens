@@ -136,7 +136,6 @@ class Screen extends React.Component<ScreenProps> {
         active,
         activityState,
         children,
-        copyTransitionProgress,
         isNativeStack,
         statusBarColor,
         ...props
@@ -173,7 +172,7 @@ class Screen extends React.Component<ScreenProps> {
                   { useNativeDriver: true }
                 )
           }>
-          {copyTransitionProgress || !isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
+          {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
             children
           ) : (
             <TransitionProgressContext.Provider

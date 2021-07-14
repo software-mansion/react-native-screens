@@ -96,11 +96,7 @@ const MaybeNestedStack = ({
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.container}>
-        <Screen
-          enabled
-          isNativeStack
-          copyTransitionProgress
-          style={StyleSheet.absoluteFill}>
+        <Screen enabled isNativeStack style={StyleSheet.absoluteFill}>
           <HeaderConfig {...options} route={route} />
           {content}
         </Screen>
