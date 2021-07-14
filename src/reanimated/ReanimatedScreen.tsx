@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import {
   Screen,
   ScreenProps,
@@ -14,6 +14,29 @@ import ReanimatedTransitionProgressContext from './ReanimatedTransitionProgressC
 const AnimatedScreen = Animated.createAnimatedComponent(
   (Screen as unknown) as React.ComponentClass
 );
+
+class ReanimatedScreenWrapper extends React.Component<ScreenProps> {
+  private ref: React.ElementRef<typeof View> | null = null;
+
+  setNativeProps(props: ScreenProps): void {
+    this.ref?.setNativeProps(props);
+  }
+
+  setRef = (ref: React.ElementRef<typeof View> | null): void => {
+    this.ref = ref;
+    this.props.onComponentRef?.(ref);
+  };
+
+  render() {
+    return (
+      <ReanimatedScreen
+        {...this.props}
+        // @ts-ignore some problems with ref
+        ref={this.setRef}
+      />
+    );
+  }
+}
 
 const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
   (props, ref) => {
@@ -73,7 +96,7 @@ export default function ReanimatedScreenProvider(
 ) {
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <ScreenContext.Provider value={ReanimatedScreen as any}>
+    <ScreenContext.Provider value={ReanimatedScreenWrapper as any}>
       {props.children}
     </ScreenContext.Provider>
   );
