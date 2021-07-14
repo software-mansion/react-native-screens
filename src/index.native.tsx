@@ -111,6 +111,7 @@ class Screen extends React.Component<ScreenProps> {
   private closing = new Animated.Value(0);
   private progress = new Animated.Value(0);
   private goingForward = new Animated.Value(0);
+
   setNativeProps(props: ScreenProps): void {
     this.ref?.setNativeProps(props);
   }
@@ -121,7 +122,7 @@ class Screen extends React.Component<ScreenProps> {
   };
 
   render() {
-    const { enabled = ENABLE_SCREENS } = this.props;
+    const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
     if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
@@ -132,16 +133,14 @@ class Screen extends React.Component<ScreenProps> {
         // Filter out active prop in this case because it is unused and
         // can cause problems depending on react-native version:
         // https://github.com/react-navigation/react-navigation/issues/4886
-        // same for enabled prop
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        enabled,
         active,
         activityState,
         children,
+        copyTransitionProgress,
+        isNativeStack,
         statusBarColor,
-        copyTransitionProgress = false,
-        ...rest
-      } = this.props;
+        ...props
+      } = rest;
 
       if (active !== undefined && activityState === undefined) {
         console.warn(
@@ -154,23 +153,27 @@ class Screen extends React.Component<ScreenProps> {
 
       return (
         <AnimatedNativeScreen
-          {...rest}
+          {...props}
           statusBarColor={processedColor}
           activityState={activityState}
           ref={this.setRef}
-          onTransitionProgress={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  progress: this.progress,
-                  closing: this.closing,
-                  goingForward: this.goingForward,
-                },
-              },
-            ],
-            { useNativeDriver: true }
-          )}>
-          {copyTransitionProgress ? ( // see comment of this prop in types.tsx for information why it is needed
+          onTransitionProgress={
+            !isNativeStack
+              ? undefined
+              : Animated.event(
+                  [
+                    {
+                      nativeEvent: {
+                        progress: this.progress,
+                        closing: this.closing,
+                        goingForward: this.goingForward,
+                      },
+                    },
+                  ],
+                  { useNativeDriver: true }
+                )
+          }>
+          {copyTransitionProgress || !isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
             children
           ) : (
             <TransitionProgressContext.Provider
@@ -191,11 +194,9 @@ class Screen extends React.Component<ScreenProps> {
         activityState,
         style,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        enabled,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onComponentRef,
-        ...rest
-      } = this.props;
+        ...props
+      } = rest;
 
       if (active !== undefined && activityState === undefined) {
         activityState = active !== 0 ? 2 : 0;
@@ -204,7 +205,7 @@ class Screen extends React.Component<ScreenProps> {
         <Animated.View
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
           ref={this.setRef}
-          {...rest}
+          {...props}
         />
       );
     }
@@ -212,7 +213,7 @@ class Screen extends React.Component<ScreenProps> {
 }
 
 function ScreenContainer(props: ScreenContainerProps) {
-  const { enabled, ...rest } = props;
+  const { enabled = ENABLE_SCREENS, ...rest } = props;
 
   if (enabled && isPlatformSupported) {
     return <ScreensNativeModules.NativeScreenContainer {...rest} />;

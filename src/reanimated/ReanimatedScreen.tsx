@@ -17,35 +17,38 @@ const AnimatedScreen = Animated.createAnimatedComponent(
 
 const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
   (props, ref) => {
-    const { children, copyTransitionProgress, ...rest } = props;
+    const { children, ...rest } = props;
 
     const progress = useSharedValue(0);
     const closing = useSharedValue(0);
     const goingForward = useSharedValue(0);
 
-    const transitionProgress = useEvent(
-      (event: TransitionProgressEventType) => {
-        'worklet';
-        progress.value = event.progress;
-        closing.value = event.closing;
-        goingForward.value = event.goingForward;
-      },
-      [
-        // This should not be necessary, but is not properly managed by `react-native-reanimated`
-        // @ts-ignore wrong type
-        Platform.OS === 'android'
-          ? 'onTransitionProgress'
-          : 'topTransitionProgress',
-      ]
-    );
-
     return (
       <AnimatedScreen
         // @ts-ignore some problems with ref and onTransitionProgressReanimated being "fake" prop for parsing of `useEvent` return value
         ref={ref}
-        onTransitionProgressReanimated={transitionProgress}
+        // ReanimatedScreen.tsx should only be used by Screens of native-stack, but it always better to check
+        onTransitionProgressReanimated={
+          !props.isNativeStack
+            ? undefined
+            : useEvent(
+                (event: TransitionProgressEventType) => {
+                  'worklet';
+                  progress.value = event.progress;
+                  closing.value = event.closing;
+                  goingForward.value = event.goingForward;
+                },
+                [
+                  // This should not be necessary, but is not properly managed by `react-native-reanimated`
+                  // @ts-ignore wrong type
+                  Platform.OS === 'android'
+                    ? 'onTransitionProgress'
+                    : 'topTransitionProgress',
+                ]
+              )
+        }
         {...rest}>
-        {copyTransitionProgress ? ( // see comment of this prop in types.tsx for information why it is needed
+        {props.copyTransitionProgress || !props.isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
           children
         ) : (
           <ReanimatedTransitionProgressContext.Provider

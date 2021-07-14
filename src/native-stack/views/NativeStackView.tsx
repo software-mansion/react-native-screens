@@ -96,7 +96,11 @@ const MaybeNestedStack = ({
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.container}>
-        <Screen enabled style={StyleSheet.absoluteFill} copyTransitionProgress>
+        <Screen
+          enabled
+          isNativeStack
+          copyTransitionProgress
+          style={StyleSheet.absoluteFill}>
           <HeaderConfig {...options} route={route} />
           {content}
         </Screen>
@@ -120,6 +124,7 @@ export default function NativeStackView({
 }: Props): JSX.Element {
   const { key, routes } = state;
   const Screen = React.useContext(ScreenContext);
+
   return (
     <ScreenStack style={styles.container}>
       {routes.map((route, index) => {
@@ -153,8 +158,8 @@ export default function NativeStackView({
           <Screen
             key={route.key}
             enabled
-            style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
+            isNativeStack
             replaceAnimation={replaceAnimation}
             screenOrientation={screenOrientation}
             stackAnimation={stackAnimation}
@@ -164,6 +169,7 @@ export default function NativeStackView({
             statusBarHidden={statusBarHidden}
             statusBarStyle={statusBarStyle}
             statusBarTranslucent={statusBarTranslucent}
+            style={StyleSheet.absoluteFill}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',

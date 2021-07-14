@@ -127,123 +127,6 @@ type NativeStackNavigationConfig = {
   transparentCard?: boolean;
 };
 
-type RouteViewProps = {
-  index: number;
-  route: NavigationRoute<NavigationParams>;
-  descriptor: NativeStackDescriptor;
-  navigationConfig: NativeStackNavigationConfig;
-  stackNavigation: StackNavigationHelpers;
-  screenProps: unknown;
-};
-
-function RouteView({
-  index,
-  route,
-  descriptor,
-  navigationConfig,
-  stackNavigation,
-  screenProps,
-}: RouteViewProps) {
-  const { navigation, getComponent, options } = descriptor;
-  const { mode, transparentCard } = navigationConfig;
-  const SceneComponent = getComponent();
-  const Screen = React.useContext(ScreenContext);
-
-  let stackPresentation: StackPresentationTypes = 'push';
-
-  if (options.stackPresentation) {
-    stackPresentation = options.stackPresentation;
-  } else {
-    // this shouldn't be used because we have a prop for that
-    if (mode === 'modal' || mode === 'containedModal') {
-      stackPresentation = mode;
-      if (transparentCard || options.cardTransparent) {
-        stackPresentation =
-          mode === 'containedModal'
-            ? 'containedTransparentModal'
-            : 'transparentModal';
-      }
-    }
-  }
-  let stackAnimation = options.stackAnimation;
-  if (options.animationEnabled === false) {
-    stackAnimation = 'none';
-  }
-
-  const hasHeader =
-    options.headerShown !== false &&
-    navigationConfig?.headerMode !== 'none' &&
-    options.header !== null;
-
-  if (
-    !didWarn &&
-    stackPresentation !== 'push' &&
-    options.headerShown !== undefined
-  ) {
-    didWarn = true;
-    console.warn(
-      'Be aware that changing the visibility of header in modal on iOS will result in resetting the state of the screen.'
-    );
-  }
-
-  const isHeaderInModal = isAndroid
-    ? false
-    : stackPresentation !== 'push' && hasHeader && options.headerShown === true;
-  const isHeaderInPush = isAndroid
-    ? hasHeader
-    : stackPresentation === 'push' && hasHeader;
-
-  return (
-    <Screen
-      key={`screen_${route.key}`}
-      enabled
-      style={[StyleSheet.absoluteFill, options.cardStyle]}
-      stackAnimation={stackAnimation}
-      stackPresentation={stackPresentation}
-      replaceAnimation={
-        options.replaceAnimation === undefined
-          ? 'pop'
-          : options.replaceAnimation
-      }
-      pointerEvents={
-        index === stackNavigation.state.routes.length - 1 ? 'auto' : 'none'
-      }
-      gestureEnabled={
-        Platform.OS === 'android'
-          ? false
-          : options.gestureEnabled === undefined
-          ? true
-          : options.gestureEnabled
-      }
-      screenOrientation={options.screenOrientation}
-      statusBarAnimation={options.statusBarAnimation}
-      statusBarColor={options.statusBarColor}
-      statusBarHidden={options.statusBarHidden}
-      statusBarStyle={options.statusBarStyle}
-      statusBarTranslucent={options.statusBarTranslucent}
-      onAppear={() => onAppear(route, descriptor, stackNavigation)}
-      onWillAppear={() => options?.onWillAppear?.()}
-      onWillDisappear={() => options?.onWillDisappear?.()}
-      onDisappear={() => options?.onDisappear?.()}
-      onDismissed={(e) =>
-        removeScene(route, e.nativeEvent.dismissCount, stackNavigation)
-      }>
-      {isHeaderInPush &&
-        renderHeaderConfig(index, route, descriptor, navigationConfig)}
-      {maybeRenderNestedStack(
-        isHeaderInModal,
-        screenProps,
-        route,
-        navigation,
-        SceneComponent,
-        index,
-        descriptor,
-        navigationConfig
-      )}
-    </Screen>
-  );
-}
-
 function removeScene(
   route: NavigationRoute<NavigationParams>,
   dismissCount: number,
@@ -452,25 +335,38 @@ function renderHeaderConfig(
   return <ScreenStackHeaderConfig {...headerOptions} />;
 }
 
-function maybeRenderNestedStack(
-  isHeaderInModal: boolean,
-  screenProps: unknown,
-  route: NavigationRoute<NavigationParams>,
+const MaybeNestedStack = ({
+  isHeaderInModal,
+  screenProps,
+  route,
+  navigation,
+  SceneComponent,
+  index,
+  descriptor,
+  navigationConfig,
+}: {
+  isHeaderInModal: boolean;
+  screenProps: unknown;
+  route: NavigationRoute<NavigationParams>;
   navigation: NavigationScreenProp<
     NavigationRoute<NavigationParams>,
     NavigationParams
-  >,
-  SceneComponent: React.ComponentType<Record<string, unknown>>,
-  index: number,
-  descriptor: NativeStackDescriptor,
-  navigationConfig: NativeStackNavigationConfig
-) {
+  >;
+  SceneComponent: React.ComponentType<Record<string, unknown>>;
+  index: number;
+  descriptor: NativeStackDescriptor;
+  navigationConfig: NativeStackNavigationConfig;
+}) => {
   const Screen = React.useContext(ScreenContext);
 
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.scenes}>
-        <Screen style={StyleSheet.absoluteFill}>
+        <Screen
+          style={StyleSheet.absoluteFill}
+          enabled
+          isNativeStack
+          copyTransitionProgress>
           {renderHeaderConfig(index, route, descriptor, navigationConfig)}
           <SceneView
             screenProps={screenProps}
@@ -488,7 +384,7 @@ function maybeRenderNestedStack(
       component={SceneComponent}
     />
   );
-}
+};
 
 type StackViewProps = {
   navigation: StackNavigationHelpers;
@@ -504,21 +400,119 @@ function StackView({
   screenProps,
 }: StackViewProps) {
   const { routes } = navigation.state;
+  const Screen = React.useContext(ScreenContext);
   return (
     <ScreenStack
       style={styles.scenes}
       onFinishTransitioning={() => onFinishTransitioning(navigation)}>
-      {routes.map((route, index) => (
-        <RouteView
-          key={route.key}
-          index={index}
-          route={route}
-          descriptor={descriptors[route.key]}
-          navigationConfig={navigationConfig}
-          stackNavigation={navigation}
-          screenProps={screenProps}
-        />
-      ))}
+      {routes.map((route, index) => {
+        const descriptor = descriptors[route.key];
+        const { getComponent, options } = descriptor;
+        const routeNavigationProp = descriptor.navigation;
+        const { mode, transparentCard } = navigationConfig;
+        const SceneComponent = getComponent();
+
+        let stackPresentation: StackPresentationTypes = 'push';
+
+        if (options.stackPresentation) {
+          stackPresentation = options.stackPresentation;
+        } else {
+          // this shouldn't be used because we have a prop for that
+          if (mode === 'modal' || mode === 'containedModal') {
+            stackPresentation = mode;
+            if (transparentCard || options.cardTransparent) {
+              stackPresentation =
+                mode === 'containedModal'
+                  ? 'containedTransparentModal'
+                  : 'transparentModal';
+            }
+          }
+        }
+        let stackAnimation = options.stackAnimation;
+        if (options.animationEnabled === false) {
+          stackAnimation = 'none';
+        }
+
+        const hasHeader =
+          options.headerShown !== false &&
+          navigationConfig?.headerMode !== 'none' &&
+          options.header !== null;
+
+        if (
+          !didWarn &&
+          stackPresentation !== 'push' &&
+          options.headerShown !== undefined
+        ) {
+          didWarn = true;
+          console.warn(
+            'Be aware that changing the visibility of header in modal on iOS will result in resetting the state of the screen.'
+          );
+        }
+
+        const isHeaderInModal = isAndroid
+          ? false
+          : stackPresentation !== 'push' &&
+            hasHeader &&
+            options.headerShown === true;
+        const isHeaderInPush = isAndroid
+          ? hasHeader
+          : stackPresentation === 'push' && hasHeader;
+
+        return (
+          <Screen
+            key={`screen_${route.key}`}
+            enabled
+            isNativeStack
+            style={[StyleSheet.absoluteFill, options.cardStyle]}
+            stackAnimation={stackAnimation}
+            stackPresentation={stackPresentation}
+            replaceAnimation={
+              options.replaceAnimation === undefined
+                ? 'pop'
+                : options.replaceAnimation
+            }
+            pointerEvents={
+              index === navigation.state.routes.length - 1 ? 'auto' : 'none'
+            }
+            gestureEnabled={
+              Platform.OS === 'android'
+                ? false
+                : options.gestureEnabled === undefined
+                ? true
+                : options.gestureEnabled
+            }
+            screenOrientation={options.screenOrientation}
+            statusBarAnimation={options.statusBarAnimation}
+            statusBarColor={options.statusBarColor}
+            statusBarHidden={options.statusBarHidden}
+            statusBarStyle={options.statusBarStyle}
+            statusBarTranslucent={options.statusBarTranslucent}
+            onAppear={() => onAppear(route, descriptor, routeNavigationProp)}
+            onWillAppear={() => options?.onWillAppear?.()}
+            onWillDisappear={() => options?.onWillDisappear?.()}
+            onDisappear={() => options?.onDisappear?.()}
+            onDismissed={(e) =>
+              removeScene(
+                route,
+                e.nativeEvent.dismissCount,
+                routeNavigationProp
+              )
+            }>
+            {isHeaderInPush &&
+              renderHeaderConfig(index, route, descriptor, navigationConfig)}
+            <MaybeNestedStack
+              isHeaderInModal={isHeaderInModal}
+              screenProps={screenProps}
+              route={route}
+              navigation={routeNavigationProp}
+              SceneComponent={SceneComponent}
+              index={index}
+              descriptor={descriptor}
+              navigationConfig={navigationConfig}
+            />
+          </Screen>
+        );
+      })}
     </ScreenStack>
   );
 }

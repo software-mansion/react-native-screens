@@ -84,6 +84,10 @@ export interface ScreenProps extends ViewProps {
    */
   enabled?: boolean;
   /**
+   * Internal boolean used to not attach events used only by native-stack. It prevents non native-stack navigators from sending transition progress from their Screen components.
+   */
+  isNativeStack?: boolean;
+  /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
    *
