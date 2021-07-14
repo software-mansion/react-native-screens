@@ -688,8 +688,7 @@
 
 - (void)setupProgressNotification
 {
-  if (self.transitionCoordinator != nil && !_isSendingProgress) {
-    _isSendingProgress = YES;
+  if (self.transitionCoordinator != nil) {
     _fakeView.alpha = 0.0;
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
@@ -702,7 +701,6 @@
           [self->_animationTimer setPaused:YES];
           [self->_animationTimer invalidate];
           [self->_fakeView removeFromSuperview];
-          self->_isSendingProgress = NO;
         }];
   }
 }
