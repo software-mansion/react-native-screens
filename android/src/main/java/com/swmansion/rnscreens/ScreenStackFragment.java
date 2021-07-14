@@ -24,7 +24,6 @@ import com.google.android.material.appbar.AppBarLayout;
 public class ScreenStackFragment extends ScreenFragment {
 
   private static final float TOOLBAR_ELEVATION = PixelUtil.toPixelFromDIP(4);
-
   private AppBarLayout mAppBarLayout;
   private Toolbar mToolbar;
   private boolean mShadowHidden;
@@ -209,12 +208,6 @@ public class ScreenStackFragment extends ScreenFragment {
   private static class NotifyingCoordinatorLayout extends CoordinatorLayout {
 
     private final ScreenFragment mFragment;
-
-    public NotifyingCoordinatorLayout(@NonNull Context context, ScreenFragment fragment) {
-      super(context);
-      mFragment = fragment;
-    }
-
     private final Animation.AnimationListener mAnimationListener =
         new Animation.AnimationListener() {
           @Override
@@ -230,6 +223,11 @@ public class ScreenStackFragment extends ScreenFragment {
           @Override
           public void onAnimationRepeat(Animation animation) {}
         };
+
+    public NotifyingCoordinatorLayout(@NonNull Context context, ScreenFragment fragment) {
+      super(context);
+      mFragment = fragment;
+    }
 
     @Override
     public void startAnimation(Animation animation) {
