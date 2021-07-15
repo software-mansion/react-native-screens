@@ -6,9 +6,11 @@ import {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   HeaderSubviewTypes,
+  SearchBarProps,
 } from './types';
 
 export * from './types';
+export { default as useTransitionProgress } from './useTransitionProgress';
 
 let ENABLE_SCREENS = true;
 
@@ -50,6 +52,8 @@ export class NativeScreen extends React.Component<ScreenProps> {
 
 export const Screen = Animated.createAnimatedComponent(NativeScreen);
 
+export const ScreenContext = React.createContext(Screen);
+
 export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
 export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> = View;
@@ -76,7 +80,14 @@ export const ScreenStackHeaderCenterView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => <View {...props} />;
 
+export const ScreenStackHeaderSearchBarView = (
+  props: React.PropsWithChildren<SearchBarProps>
+): JSX.Element => <View {...props} />;
+
 export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> = View;
+
+// @ts-expect-error: search bar props have no common props with View
+export const SearchBar: React.ComponentType<SearchBarProps> = View;
 
 export const ScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
   ViewProps & { type?: HeaderSubviewTypes }

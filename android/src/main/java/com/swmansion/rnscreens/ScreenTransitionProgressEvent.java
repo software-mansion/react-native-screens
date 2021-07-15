@@ -11,10 +11,16 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
 
   private final float mProgress;
   private final boolean mClosing;
-  public ScreenTransitionProgressEvent(int viewId, float progress, boolean closing) {
+  private final boolean mGoingForward;
+  private final short mCoalescingKey;
+
+  public ScreenTransitionProgressEvent(
+      int viewId, float progress, boolean closing, boolean goingForward, short coalescingKey) {
     super(viewId);
     mProgress = progress;
     mClosing = closing;
+    mGoingForward = goingForward;
+    mCoalescingKey = coalescingKey;
   }
 
   @Override
@@ -24,15 +30,15 @@ public class ScreenTransitionProgressEvent extends Event<ScreenAppearEvent> {
 
   @Override
   public short getCoalescingKey() {
-    // All events for a given view can be coalesced.
-    return 0;
+    return mCoalescingKey;
   }
 
   @Override
   public void dispatch(RCTEventEmitter rctEventEmitter) {
     WritableMap map = Arguments.createMap();
     map.putDouble("progress", mProgress);
-    map.putBoolean("closing", mClosing);
+    map.putInt("closing", mClosing ? 1 : 0);
+    map.putInt("goingForward", mGoingForward ? 1 : 0);
     rctEventEmitter.receiveEvent(getViewTag(), getEventName(), map);
   }
 }

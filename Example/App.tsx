@@ -8,13 +8,12 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import {enableScreens} from 'react-native-screens';
 import {NavigationContainer} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import RNRestart from 'react-native-restart';
 
-import {MenuItem, SettingsSwitch} from './src/shared';
+import {ListItem, SettingsSwitch} from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import StackPresentation from './src/screens/StackPresentation';
@@ -25,8 +24,7 @@ import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
 import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
-
-enableScreens();
+import SearchBar from './src/screens/SearchBar';
 
 if (Platform.OS === 'android') {
   StatusBar.setTranslucent(true);
@@ -72,7 +70,7 @@ const SCREENS: Record<
     type: 'playground',
   },
   StatusBar: {
-    title: 'Status bar (iOS)',
+    title: 'Status bar',
     component: StatusBarExample,
     type: 'playground',
   },
@@ -84,6 +82,11 @@ const SCREENS: Record<
   Orientation: {
     title: 'Orientation',
     component: Orientation,
+    type: 'playground',
+  },
+  SearchBar: {
+    title: 'Search bar (iOS)',
+    component: SearchBar,
     type: 'playground',
   },
 };
@@ -116,7 +119,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
       {Object.keys(SCREENS)
         .filter((name) => SCREENS[name].type === 'example')
         .map((name) => (
-          <MenuItem
+          <ListItem
             key={name}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
@@ -126,7 +129,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
       {Object.keys(SCREENS)
         .filter((name) => SCREENS[name].type === 'playground')
         .map((name) => (
-          <MenuItem
+          <ListItem
             key={name}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}

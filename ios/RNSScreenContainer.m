@@ -47,7 +47,8 @@
 - (UIViewController *)findActiveChildVC
 {
   for (UIViewController *childVC in self.childViewControllers) {
-    if ([childVC isKindOfClass:[RNSScreen class]] && ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
+    if ([childVC isKindOfClass:[RNSScreen class]] &&
+        ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
       return childVC;
     }
   }
@@ -111,7 +112,7 @@
   return _controller;
 }
 
-- (UIViewController*)findChildControllerForScreen:(RNSScreenView*)screen
+- (UIViewController *)findChildControllerForScreen:(RNSScreenView *)screen
 {
   for (UIViewController *vc in _controller.childViewControllers) {
     if (vc.view == screen) {
@@ -193,14 +194,14 @@
     }
   }
 
-
   for (RNSScreenView *screen in _reactSubviews) {
     if (screen.activityState == RNSActivityStateOnTop) {
       [screen notifyFinishTransitioning];
     }
   }
 
-  if ((screenRemoved || screenAdded) && _controller.presentedViewController == nil && _controller.presentingViewController == nil) {
+  if ((screenRemoved || screenAdded) && _controller.presentedViewController == nil &&
+      _controller.presentingViewController == nil) {
     // if user has reachability enabled (one hand use) and the window is slided down the below
     // method will force it to slide back up as it is expected to happen with UINavController when
     // we push or pop views.
@@ -245,39 +246,22 @@
 
 @end
 
-
-@implementation RNSScreenContainerManager {
-  NSMutableArray<RNSScreenContainerView *> *_markedContainers;
-}
+@implementation RNSScreenContainerManager
 
 RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-  if (!_markedContainers) {
-    _markedContainers = [NSMutableArray new];
-  }
   return [[RNSScreenContainerView alloc] initWithManager:self];
 }
 
-- (void)markUpdated:(RNSScreenContainerView *)screen
+- (void)markUpdated:(RNSScreenContainerView *)container
 {
-  [_markedContainers addObject:screen];
-  if ([_markedContainers count] == 1) {
-    // we enqueue updates to be run on the main queue in order to make sure that
-    // all these updates (new screens attached etc) are executed in one batch.
-    // We call it asynchronously because the events being fired when swiping the screen
-    // resolve in calling this method, and inside it, the same type of event
-    // can be fired when calling e.g. `notifyFinishTransitioning` leading to a deadlock.
-    // See https://github.com/software-mansion/react-native-screens/issues/726#issuecomment-757879605
-    // for more information.
-    dispatch_async(dispatch_get_main_queue(), ^{
-      for (RNSScreenContainerView *container in self->_markedContainers) {
-        [container updateContainer];
-      }
-      [self->_markedContainers removeAllObjects];
-    });
-  }
+  // we want the attaching/detaching of children to be always made on main queue, which
+  // is currently true for `react-navigation` since the changes of `Animated` value in stack's
+  // transition and mounting/unmounting views in tabs and drawer are dispatched on main queue.
+  RCTAssertMainQueue();
+  [container updateContainer];
 }
 
 @end

@@ -1,4 +1,5 @@
-# react-native-screens
+<img src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png" width="100%" alt="React Native Screens by Software Mansion" >
+
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
@@ -85,6 +86,10 @@ This library should work out of the box with all existing react-native libraries
 
 If you are building a navigation library you may want to use `react-native-screens` to have control over which parts of the React component tree are attached to the native view hierarchy.
 To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/master/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
+
+## Contributing
+
+There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/kmagiera/react-native-screens/tree/master/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
 
 ## License
 

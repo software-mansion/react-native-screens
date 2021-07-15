@@ -46,7 +46,10 @@ const MainScreen = ({
         items={[
           'default',
           'fade',
+          'fade_from_bottom',
           'flip',
+          'simple_push',
+          'slide_from_bottom',
           'slide_from_right',
           'slide_from_left',
           'none',

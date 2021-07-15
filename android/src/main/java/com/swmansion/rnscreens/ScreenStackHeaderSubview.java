@@ -2,26 +2,22 @@ package com.swmansion.rnscreens;
 
 import android.view.View;
 import android.view.ViewParent;
-
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.views.view.ReactViewGroup;
 
 public class ScreenStackHeaderSubview extends ReactViewGroup {
 
-  public enum Type {
-    LEFT,
-    CENTER,
-    RIGHT,
-    BACK
-  }
-
   private int mReactWidth, mReactHeight;
+  private Type mType = Type.RIGHT;
+
+  public ScreenStackHeaderSubview(ReactContext context) {
+    super(context);
+  }
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY &&
-            MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
+    if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY
+        && MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
       // dimensions provided by react
       mReactWidth = MeasureSpec.getSize(widthMeasureSpec);
       mReactHeight = MeasureSpec.getSize(heightMeasureSpec);
@@ -39,17 +35,18 @@ public class ScreenStackHeaderSubview extends ReactViewGroup {
     // no-op
   }
 
-  private Type mType = Type.RIGHT;
-
-  public ScreenStackHeaderSubview(ReactContext context) {
-    super(context);
+  public Type getType() {
+    return mType;
   }
 
   public void setType(Type type) {
     mType = type;
   }
 
-  public Type getType() {
-    return mType;
+  public enum Type {
+    LEFT,
+    CENTER,
+    RIGHT,
+    BACK
   }
 }

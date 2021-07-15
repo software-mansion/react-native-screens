@@ -52,10 +52,6 @@ A callback that gets called when the current screen disappears.
 
 A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
 
-#### `onTransitionProgress`
-
-A callback called every frame during the transition of screens.
-
 ### `onWillAppear`
 
 A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
@@ -70,13 +66,31 @@ Allows for the customization of the type of animation to use when this screen re
 - `push` – performs push animation
 - `pop` – performs pop animation (default)
 
+#### `screenOrientation`
+
+Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
+
+- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
+- `all`
+- `portrait`
+- `portrait_up`
+- `portrait_down`
+- `landscape`
+- `landscape_left`
+- `landscape_right`
+
+Defaults to `default` on iOS.
+
 ### `stackAnimation`
 
 Allows for the customization of how the given screen should appear/disappear when pushed or popped at the top of the stack. The following values are currently supported:
 
 - `"default"` – uses a platform default animation
 - `"fade"` – fades screen in or out
+- `fade_from_bottom` – performs a fade from bottom animation
 - `"flip"` – flips the screen, requires `stackPresentation: "modal"` (iOS only)
+- `"simple_push"` – performs a default animation, but without shadow and native header transition (iOS only)
+- `"slide_from_bottom"` - slide in the new screen from bottom to top
 - `"slide_from_right"` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `"slide_from_left"` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
 - `"none"` – the screen appears/disappears without an animation
@@ -109,6 +123,102 @@ For Android:
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
+#### `statusBarAnimation`
+
+Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Possible values: `fade`, `none`, `slide`. On Android, this prop considers the transition of changing status bar color (see https://reactnative.dev/docs/statusbar#animated). There will be no animation if `none` provided.
+
+Defaults to `fade` on iOS and `none` on Android.
+
+#### `statusBarColor` (Android only)
+
+Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+
+#### `statusBarHidden`
+
+When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
+
+Defaults to `false`.
+
+#### `statusBarStyle`
+
+Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
+
+Defaults to `auto`.
+
+#### `statusBarTranslucent` (Android only)
+
+Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
+
+#### `useTransitionProgress`
+
+Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
+- `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
+- `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
+- `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
+
+```jsx
+import {Animated} from 'react-native';
+import {useTransitionProgress} from 'react-native-screens';
+
+function Home() {
+  const {progress} = useTransitionProgress();
+
+  const opacity = progress.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1.0, 0.0 ,1.0],
+    extrapolate: 'clamp',
+  });
+
+  return (
+    <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+  );
+}
+```
+
+#### `useReanimatedTransitionProgress`
+
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
+- `progress` - between `0.0` and `1.0` with the progress of the current transition.
+- `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
+- `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
+
+In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
+
+```jsx
+import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
+
+export default function App() {
+  return (
+    <ReanimatedScreenProvider>
+      <YourApp />
+    </ReanimatedScreenProvider>
+  );
+}
+```
+
+Then you can use `useReanimatedTransitionProgress` to get the shared values:
+
+```jsx
+import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
+import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
+
+function Home() {
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
+
+  return (
+    <Animated.View style={reaStyle} />
+  );
+}
+```
+
 ## `<ScreenStackHeaderConfig>`
 
 The config component is expected to be rendered as a direct child of `<Screen>`. It provides an ability to configure native navigation header that gets rendered as a part of the native screen stack. The component acts as a "virtual" element that is not directly rendered under `Screen`. You can use its properties to customize platform native header for the parent screen and also render react-native components that you'd like to be displayed inside the header (e.g. in the title are or on the side).
@@ -118,6 +228,23 @@ Along with this component's properties that can be used to customize header beha
 - `ScreenStackHeaderCenterView` – the children will render in the center of the native navigation bar.
 - `ScreenStackHeaderRightView` – the children will render on the right-hand side of the navigation bar (or on the left-hand side in case LTR locales are set on the user's device).
 - `ScreenStackHeaderLeftView` – the children will render on the left-hand side of the navigation bar (or on the right-hand side in case LTR locales are set on the user's device).
+- `ScreenStackHeaderSearchBarView` - used exclusively for rendering iOS `<SearchBar>` component in the bottom of the native navigation bar.
+
+To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
+
+- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences`.
+- `barTintColor` - The search field background color. By default bar tint color is translucent.
+- `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`.
+- `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`.
+- `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`.
+- `onBlur` - A callback that gets called when search bar has lost focus.
+- `onChangeText` - A callback that gets called when the text changes. It receives the current text value of the search bar.
+- `onCancelButtonPress` - A callback that gets called when the cancel button is pressed.
+- `onFocus` - A callback that gets called when search bar has received focus.
+- `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+- `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
+- `textColor` - The search field text color.
+
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
 
@@ -148,11 +275,15 @@ Blur effect to be applied to the header. Works with `backgroundColor`'s alpha < 
 
 ### `children`
 
-Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenStackHeaderLeftView`, `ScreenStackHeaderCenterView`.
+Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenStackHeaderLeftView`, `ScreenStackHeaderCenterView`, `ScreenStackHeaderSearchBarView`.
 
 ### `direction`
 
 Controls whether the stack should be in `rtl` or `ltr` form.
+
+#### `disableBackButtonMenu`
+
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. Only supported on iOS.
 
 ### `hidden`
 
@@ -197,33 +328,6 @@ Customize the weight of the font to be used for the large title.
 ### `largeTitleHideShadow` (iOS only)
 
 Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
-
-### `screenOrientation`
-
-Sets the current screen's available orientations and forces rotation if current orientation is not included. Possible values:
-
-- `default` - on iOS, it resolves to [UIInterfaceOrientationMaskAllButUpsideDown](https://developer.apple.com/documentation/uikit/uiinterfaceorientationmask/uiinterfaceorientationmaskallbutupsidedown?language=objc). On Android, this lets the system decide the best orientation.
-- `all`
-- `portrait`
-- `portrait_up`
-- `portrait_down`
-- `landscape`
-- `landscape_left`
-- `landscape_right`
-
-Defaults to `default`.
-
-### `statusBarAnimation` (iOS only)
-
-Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `fade`.
-
-### `statusBarHidden` (iOS only)
-
-When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `false`.
-
-### `statusBarStyle` (iOS only)
-
-Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Defaults to `auto`.
 
 ### `title`
 
