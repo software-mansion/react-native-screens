@@ -99,7 +99,11 @@
 
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
-  if (vc != nil && (nextVC == vc || isInFullScreenModal)) {
+  
+  BOOL isOverlaid = nextVC != nil && nextVC.modalPresentationStyle == UIModalPresentationOverCurrentContext;
+  // if nextVC doesn't equal vc because of there is overlaid view controller
+    
+  if (vc != nil && (nextVC == vc || isInFullScreenModal || isOverlaid)) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller
                                           withConfig:self
                                             animated:YES];
