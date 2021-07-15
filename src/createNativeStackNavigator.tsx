@@ -459,6 +459,11 @@ class StackView extends React.Component<Props> {
             ? true
             : options.gestureEnabled
         }
+        enableNativeBackButtonDismissal={
+          options.enableNativeBackButtonDismissal
+        }
+        onHeaderBackButtonClicked={() => this.removeScene(route, 1)}
+        onSwipeCancelled={() => options.onSwipeCancelled?.()}
         screenOrientation={options.screenOrientation}
         statusBarAnimation={options.statusBarAnimation}
         statusBarColor={options.statusBarColor}

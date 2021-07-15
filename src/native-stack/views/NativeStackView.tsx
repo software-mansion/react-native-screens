@@ -125,8 +125,11 @@ export default function NativeStackView({
       {routes.map((route, index) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
+          enableNativeBackButtonDismissal = false,
           gestureEnabled,
           headerShown,
+          onSwipeCancelled,
+          preventSwipeDismiss = false,
           replaceAnimation = 'pop',
           screenOrientation,
           stackAnimation,
@@ -155,9 +158,21 @@ export default function NativeStackView({
             enabled
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
+            enableNativeBackButtonDismissal={enableNativeBackButtonDismissal}
+            preventSwipeDismiss={preventSwipeDismiss}
             replaceAnimation={replaceAnimation}
             screenOrientation={screenOrientation}
             stackAnimation={stackAnimation}
+            onHeaderBackButtonClicked={() => {
+              navigation.dispatch({
+                ...StackActions.pop(),
+                source: route.key,
+                target: key,
+              });
+            }}
+            onSwipeCancelled={() => {
+              onSwipeCancelled?.();
+            }}
             stackPresentation={stackPresentation}
             statusBarAnimation={statusBarAnimation}
             statusBarColor={statusBarColor}

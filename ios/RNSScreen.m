@@ -32,6 +32,7 @@
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
+    _preventSwipeDismiss = NO;
     _hasStatusBarStyleSet = NO;
     _hasStatusBarAnimationSet = NO;
     _hasStatusBarHiddenSet = NO;
@@ -171,6 +172,11 @@
 #endif
 
   _gestureEnabled = gestureEnabled;
+}
+
+- (void)setPreventSwipeDismiss:(BOOL)preventSwipeDismiss
+{
+  _preventSwipeDismiss = preventSwipeDismiss;
 }
 
 - (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
@@ -333,7 +339,13 @@
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
-  return _gestureEnabled;
+  if (_preventSwipeDismiss) {
+    if (self.onSwipeCancelled) {
+      self.onSwipeCancelled(nil);
+    }
+    return NO;
+  }
+  return YES;
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
@@ -635,11 +647,14 @@ RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
+RCT_EXPORT_VIEW_PROPERTY(preventSwipeDismiss, BOOL)
+
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onSwipeCancelled, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)

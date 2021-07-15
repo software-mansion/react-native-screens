@@ -81,6 +81,8 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
 @property (nonatomic, copy) RCTDirectEventBlock onWillAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
+@property (nonatomic, copy) RCTDirectEventBlock onSwipeCancelled;
+
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
@@ -89,6 +91,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+@property (nonatomic) BOOL preventSwipeDismiss;
 @property (nonatomic) BOOL hasOrientationSet;
 @property (nonatomic) BOOL hasStatusBarStyleSet;
 @property (nonatomic) BOOL hasStatusBarAnimationSet;

@@ -47,6 +47,7 @@ public class Screen extends ViewGroup {
   private Boolean mStatusBarTranslucent;
   private Integer mStatusBarColor;
   private Boolean mStatusBarAnimated;
+  private boolean mEnableNativeBackButtonDismissal = true;
 
   public Screen(ReactContext context) {
     super(context);
@@ -353,6 +354,14 @@ public class Screen extends ViewGroup {
 
   public void setStatusBarAnimated(Boolean statusBarAnimated) {
     mStatusBarAnimated = statusBarAnimated;
+  }
+
+  public void setEnableNativeBackButtonDismissal(boolean enableNativeBackButtonDismissal) {
+    mEnableNativeBackButtonDismissal = enableNativeBackButtonDismissal;
+  }
+
+  public boolean isNativeBackButtonDismissalEnabled() {
+    return mEnableNativeBackButtonDismissal;
   }
 
   public enum StackPresentation {

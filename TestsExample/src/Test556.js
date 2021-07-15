@@ -31,4 +31,3 @@ function Second({navigation}) {
     <Button title="Tap me for second screen" onPress={() => navigation.navigate('First')} />
   );
 }
-

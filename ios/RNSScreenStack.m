@@ -546,6 +546,13 @@
   if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
     return NO;
   }
+
+  if (topScreen.preventSwipeDismiss) {
+    if (topScreen.onSwipeCancelled) {
+      topScreen.onSwipeCancelled(nil);
+    }
+    return NO;
+  }
 #if TARGET_OS_TV
   return YES;
 #else
