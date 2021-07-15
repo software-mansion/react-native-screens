@@ -214,14 +214,6 @@ public class ScreenFragment extends Fragment {
   }
 
   protected void dispatchTransitionProgress(float alpha, boolean closing) {
-    boolean goingForward = false;
-    if (getScreen().getContainer() instanceof ScreenStack) {
-      goingForward = ((ScreenStack) getScreen().getContainer()).isGoingForward();
-    }
-    sendTransitionProgressEvent(alpha, closing, goingForward);
-  }
-
-  protected void sendTransitionProgressEvent(float alpha, boolean closing, boolean goingForward) {
     if (mProgress != alpha) {
       mProgress = Math.max(0.0f, Math.min(1.0f, alpha));
       /* We want value of 0 and 1 to be always dispatched so we base coalescing key on the progress:
@@ -230,6 +222,10 @@ public class ScreenFragment extends Fragment {
          - progress is between 0 and 1 -> key 3
       */
       short coalescingKey = (short) (mProgress == 0.0f ? 1 : mProgress == 1.0f ? 2 : 3);
+      boolean goingForward = false;
+      if (getScreen().getContainer() instanceof ScreenStack) {
+        goingForward = ((ScreenStack) getScreen().getContainer()).isGoingForward();
+      }
       ((ReactContext) mScreenView.getContext())
           .getNativeModule(UIManagerModule.class)
           .getEventDispatcher()
