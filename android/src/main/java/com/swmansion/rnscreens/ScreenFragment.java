@@ -30,6 +30,7 @@ public class ScreenFragment extends Fragment {
   protected Screen mScreenView;
   private final List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
   private boolean shouldUpdateOnResume = false;
+  private float mProgress;
 
   public ScreenFragment() {
     throw new IllegalStateException(
@@ -40,6 +41,9 @@ public class ScreenFragment extends Fragment {
   public ScreenFragment(Screen screenView) {
     super();
     mScreenView = screenView;
+    // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
+    // due to progress value being already 0.0f
+    mProgress = -1f;
   }
 
   protected static View recycleView(View view) {
@@ -144,18 +148,26 @@ public class ScreenFragment extends Fragment {
 
   protected void dispatchOnWillAppear() {
     dispatchEvent(ScreenLifecycleEvent.WillAppear, this);
+
+    dispatchTransitionProgress(0.0f, false);
   }
 
   protected void dispatchOnAppear() {
     dispatchEvent(ScreenLifecycleEvent.Appear, this);
+
+    dispatchTransitionProgress(1.0f, false);
   }
 
   protected void dispatchOnWillDisappear() {
     dispatchEvent(ScreenLifecycleEvent.WillDisappear, this);
+
+    dispatchTransitionProgress(0.0f, true);
   }
 
   protected void dispatchOnDisappear() {
     dispatchEvent(ScreenLifecycleEvent.Disappear, this);
+
+    dispatchTransitionProgress(1.0f, true);
   }
 
   private void dispatchEvent(ScreenLifecycleEvent event, ScreenFragment fragment) {
@@ -198,6 +210,28 @@ public class ScreenFragment extends Fragment {
           dispatchEvent(event, topScreen.getFragment());
         }
       }
+    }
+  }
+
+  protected void dispatchTransitionProgress(float alpha, boolean closing) {
+    if (mProgress != alpha) {
+      mProgress = Math.max(0.0f, Math.min(1.0f, alpha));
+      /* We want value of 0 and 1 to be always dispatched so we base coalescing key on the progress:
+         - progress is 0 -> key 1
+         - progress is 1 -> key 2
+         - progress is between 0 and 1 -> key 3
+      */
+      short coalescingKey = (short) (mProgress == 0.0f ? 1 : mProgress == 1.0f ? 2 : 3);
+      boolean goingForward = false;
+      if (getScreen().getContainer() instanceof ScreenStack) {
+        goingForward = ((ScreenStack) getScreen().getContainer()).isGoingForward();
+      }
+      ((ReactContext) mScreenView.getContext())
+          .getNativeModule(UIManagerModule.class)
+          .getEventDispatcher()
+          .dispatchEvent(
+              new ScreenTransitionProgressEvent(
+                  mScreenView.getId(), mProgress, closing, goingForward, coalescingKey));
     }
   }
 

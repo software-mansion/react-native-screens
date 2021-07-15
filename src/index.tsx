@@ -10,6 +10,7 @@ import {
 } from './types';
 
 export * from './types';
+export { default as useTransitionProgress } from './useTransitionProgress';
 
 let ENABLE_SCREENS = true;
 
@@ -50,6 +51,8 @@ export class NativeScreen extends React.Component<ScreenProps> {
 }
 
 export const Screen = Animated.createAnimatedComponent(NativeScreen);
+
+export const ScreenContext = React.createContext(Screen);
 
 export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 

@@ -11,10 +11,9 @@ import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
 import {
-  Screen as ScreenComponent,
-  ScreenProps,
   ScreenStack,
   StackPresentationTypes,
+  ScreenContext,
 } from 'react-native-screens';
 import {
   NativeStackDescriptorMap,
@@ -23,7 +22,6 @@ import {
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 
-const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
 
 let Container = View;
@@ -59,6 +57,8 @@ const MaybeNestedStack = ({
 }) => {
   const { colors } = useTheme();
   const { headerShown = true, contentStyle } = options;
+
+  const Screen = React.useContext(ScreenContext);
 
   const isHeaderInModal = isAndroid
     ? false
@@ -96,7 +96,7 @@ const MaybeNestedStack = ({
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.container}>
-        <Screen enabled style={StyleSheet.absoluteFill}>
+        <Screen enabled isNativeStack style={StyleSheet.absoluteFill}>
           <HeaderConfig {...options} route={route} />
           {content}
         </Screen>
@@ -119,6 +119,7 @@ export default function NativeStackView({
   descriptors,
 }: Props): JSX.Element {
   const { key, routes } = state;
+  const Screen = React.useContext(ScreenContext);
 
   return (
     <ScreenStack style={styles.container}>
@@ -153,8 +154,8 @@ export default function NativeStackView({
           <Screen
             key={route.key}
             enabled
-            style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
+            isNativeStack
             replaceAnimation={replaceAnimation}
             screenOrientation={screenOrientation}
             stackAnimation={stackAnimation}
@@ -164,6 +165,7 @@ export default function NativeStackView({
             statusBarHidden={statusBarHidden}
             statusBarStyle={statusBarStyle}
             statusBarTranslucent={statusBarTranslucent}
+            style={StyleSheet.absoluteFill}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',

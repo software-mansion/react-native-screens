@@ -24,7 +24,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   private final List<DrawingOp> drawingOpPool = new ArrayList<>();
   private final List<DrawingOp> drawingOps = new ArrayList<>();
 
-  private ScreenStackFragment mTopScreen = null;
   private final FragmentManager.OnBackStackChangedListener mBackStackListener =
       new FragmentManager.OnBackStackChangedListener() {
         @Override
@@ -47,7 +46,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           }
         }
       };
+
+  private ScreenStackFragment mTopScreen = null;
   private boolean mRemovalTransitionStarted = false;
+  private boolean mGoingForward = false;
   private boolean isDetachingCurrentScreen = false;
   private boolean reverseLastTwoChildren = false;
   private int previousChildrenCount = 0;
@@ -80,6 +82,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   @Override
   public @Nullable Screen getTopScreen() {
     return mTopScreen != null ? mTopScreen.getScreen() : null;
+  }
+
+  public boolean isGoingForward() {
+    return mGoingForward;
   }
 
   public Screen getRootScreen() {
@@ -216,6 +222,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         // We don't do it if the stack is nested since the parent will trigger these events in child
         stackAnimation = Screen.StackAnimation.NONE;
         if (newTop.getScreen().getStackAnimation() != Screen.StackAnimation.NONE && !isNested()) {
+          mGoingForward = true;
           newTop.dispatchOnWillAppear();
           newTop.dispatchOnAppear();
         }
@@ -285,6 +292,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       getOrCreateTransaction().setTransition(transition);
     }
     // animation logic end
+
+    mGoingForward = shouldUseOpenAnimation;
 
     if (shouldUseOpenAnimation
         && newTop != null
