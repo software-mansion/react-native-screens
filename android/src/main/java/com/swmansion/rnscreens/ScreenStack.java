@@ -351,7 +351,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     mStack.clear();
     mStack.addAll(mScreenFragments);
 
-    tryCommitTransaction();
+    commitNowAllowingStateLoss();
 
     if (mTopScreen != null) {
       setupBackHandlerIfNeeded(mTopScreen);
@@ -408,7 +408,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           .show(topScreen)
           .addToBackStack(BACK_STACK_TAG)
           .setPrimaryNavigationFragment(topScreen)
-          .commitAllowingStateLoss();
+          .commitNowAllowingStateLoss();
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
     }
   }

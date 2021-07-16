@@ -90,7 +90,7 @@ export default function ReactNativeScreensBugs() {
     <NavigationContainer>
       <NativeStack.Navigator
         screenOptions={{
-          headerTranslucent: true,
+          headerTranslucent: false,
           stackPresentation: 'modal',
         }}>
         <NativeStack.Screen
