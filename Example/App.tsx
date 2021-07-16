@@ -25,6 +25,7 @@ import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
+import Events from './src/screens/Events';
 
 if (Platform.OS === 'android') {
   StatusBar.setTranslucent(true);
@@ -62,6 +63,11 @@ const SCREENS: Record<
     title: 'Stack react-navigation v4',
     // @ts-ignore react-navigation v4 AppNavigator type
     component: StackReactNavigation4,
+    type: 'example',
+  },
+  Events: {
+    title: 'Events',
+    component: Events,
     type: 'example',
   },
   HeaderOptions: {
