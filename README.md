@@ -31,7 +31,6 @@ For people that must handle cases like this, there is [a more detailed discussio
 ## How can I take advantage of that?
 
 Screens are already integrated with the React Native's most popular navigation library [react-navigation](https://github.com/react-navigation/react-navigation) and [Expo](https://expo.io).
-Read usage guide depending on if you are [using Expo](#usage-in-expo-with-react-navigation) or [not](#usage-with-react-navigation-without-expo).
 
 ## Supported react-native version
 
@@ -42,7 +41,7 @@ Read usage guide depending on if you are [using Expo](#usage-in-expo-with-react-
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
-Screens support is built into [react-navigation](https://github.com/react-navigation/react-navigation) starting from version [2.14.0](https://github.com/react-navigation/react-navigation/releases/tag/2.14.0) for all the different navigator types (stack, tab, drawer, etc). We plan on adding it to other navigators shortly.
+Screens support is built into [react-navigation](https://github.com/react-navigation/react-navigation) starting from version [2.14.0](https://github.com/react-navigation/react-navigation/releases/tag/2.14.0) for all the different navigator types (stack, tab, drawer, etc).
 
 To configure react-navigation to use screens instead of plain RN Views for rendering screen views, simply add this library as a dependency to your project:
 
@@ -67,6 +66,8 @@ import { enableScreens } from 'react-native-screens';
 
 enableScreens(false);
 ```
+
+You can also disable the usage of native screens per navigator with [`detachInactiveScreens`](https://reactnavigation.org/docs/stack-navigator#detachinactivescreens).
 
 ### Using `createNativeStackNavigator` with React Navigation
 
