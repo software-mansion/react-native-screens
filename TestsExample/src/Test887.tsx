@@ -8,8 +8,6 @@ import {
   TouchableOpacity,
   Dimensions,
   SafeAreaView,
-  Image,
-  ScrollView,
 } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {
@@ -50,19 +48,13 @@ export default function App(): JSX.Element {
           stackAnimation: 'fade_from_bottom',
           // stackPresentation: 'transparentModal',
         }}>
-        <Stack.Screen name="First" component={NestedFirst} options={{sharedElements: [
-          {fromID: 'view3000', toID: 'view3000Dest'},
-          {fromID: 'view3001', toID: 'view3001Dest'},
-          {fromID: 'view3002', toID: 'view3002Dest'},
-          ]}}/>
-        <Stack.Screen name="Second" component={Second} options={{headerShown: false, sharedElements: [
-          {fromID: 'view3000', toID: 'view3000Dest'},
-          {fromID: 'view3001', toID: 'view3001Dest'},
-          {fromID: 'view3002', toID: 'view3002Dest'},
-          ]}}/>
-        <Stack.Screen name="Third" component={Dialog} options={{stackPresentation: 'modal', sharedElements: [
-          {fromID: 'view3000', toID: 'view3000Dest'},
-          ]}}/>
+        <Stack.Screen name="First" component={NestedFirst} />
+        <Stack.Screen name="Second" component={Second} />
+        <Stack.Screen
+          name="Third"
+          component={Dialog}
+          options={{stackPresentation: 'modal'}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -133,24 +125,22 @@ function First({
   });
 
   return (
-    <ScrollView style={{backgroundColor: 'red', flex: 1}}>
-      <Button title="Tap me for second screen" onPress={() => navigation.navigate('Second')} />
-      <Button title="Tap me for third screen" onPress={() => navigation.push('Third')} />
-
-      <View style={{width: 50, height: 50, backgroundColor: 'pink',
-       // transform: [{rotate: '45deg'}]
-       }} nativeID={"view3000"}/>
-      <View style={{width: 100, height: 200, backgroundColor: 'powderblue', opacity: 0.5,
-       // transform: [{rotate: '45deg'}]
-       }} nativeID={"view3001"}/>
-      <Image source={require('../assets/backButton.png')} resizeMode='stretch' nativeID={"view3002"}/>
+    <View style={{backgroundColor: 'red', flex: 1}}>
+      <Button
+        title="Tap me for second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
+      <Button
+        title="Tap me for third screen"
+        onPress={() => navigation.push('Third')}
+      />
       <Animated.View style={reaStyle} />
       <SiblingView />
       <SiblingView />
       <RNAnimated.View
         style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}}
       />
-    </ScrollView>
+    </View>
   );
 }
 
@@ -193,15 +183,12 @@ function Second({
         title="Tap me for third screen"
         onPress={() => navigation.push('Third')}
       />
-      <View style={{width: 50, height: 50, backgroundColor: 'blue'}} nativeID={"view3000Dest"}/>
-      <View style={{width: 120, height: 140, backgroundColor: 'green'}} nativeID={"view3001Dest"}/>
-      <Image source={require('../assets/backButton.png')} style={{width: 50, height: 50}} nativeID={"view3002Dest"}/>
       <RNAnimated.View
         style={{opacity, height: 50, backgroundColor: 'green'}}
       />
     </View>
   );
-};
+}
 
 const Dialog = ({
   navigation,
@@ -257,7 +244,6 @@ const Dialog = ({
           title="Tap me for first screen"
           onPress={() => navigation.navigate('First')}
         />
-        <View style={{width: 50, height: 50, backgroundColor: 'blue'}} nativeID={"view3000Dest"}/>
       </View>
     </SafeAreaView>
   );
