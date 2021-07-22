@@ -43,6 +43,7 @@
 {
   return [self findActiveChildVC].supportedInterfaceOrientations;
 }
+#endif
 
 - (UIViewController *)findActiveChildVC
 {
@@ -54,7 +55,6 @@
   }
   return [[self childViewControllers] lastObject];
 }
-#endif
 
 @end
 

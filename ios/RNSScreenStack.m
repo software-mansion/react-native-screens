@@ -47,6 +47,24 @@
 }
 #endif
 
+- (void)viewSafeAreaInsetsDidChange
+{
+  [super viewSafeAreaInsetsDidChange];
+  // After we set additionSafeAreaInsets in viewSafeAreaInsetsDidChange of RNSScreen, this method is instantly
+  // triggered. Second time it is triggered is after the transition, when the navctr gets correct inset, we then want to
+  // remove the additional safe area.
+  if (_additionalInsetSet) {
+    _additionalInsetSet = NO;
+  } else if (_additionalTopInset > 0) {
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(
+        self.additionalSafeAreaInsets.top - _additionalTopInset,
+        self.additionalSafeAreaInsets.left,
+        self.additionalSafeAreaInsets.bottom,
+        self.additionalSafeAreaInsets.right);
+    _additionalTopInset = 0;
+  }
+}
+
 @end
 
 #if !TARGET_OS_TV

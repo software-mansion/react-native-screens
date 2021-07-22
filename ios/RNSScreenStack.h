@@ -5,6 +5,9 @@
 
 @interface RNScreensNavigationController : UINavigationController <RNScreensViewControllerDelegate>
 
+@property (nonatomic) BOOL additionalInsetSet;
+@property (nonatomic) CGFloat additionalTopInset;
+
 @end
 
 @interface RNSScreenStackView : UIView <RNSScreenContainerDelegate, RCTInvalidating>
