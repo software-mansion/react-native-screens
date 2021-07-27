@@ -379,7 +379,6 @@
   if (self = [super init]) {
     self.view = view;
     _shouldNotify = YES;
-    _goingBackWithJS = NO;
     _fakeView = [UIView new];
   }
   return self;
@@ -543,19 +542,11 @@
 {
   [super viewWillAppear:animated];
 
-  int selfIndex = [self getIndexOfView:self.view];
-  int parentChildrenCount = [self getParentChildrenCount];
-
-  // the appearing view is on top of stack so
-  // in the most basic case we are going forward
-  _goingForward = parentChildrenCount - 1 == selfIndex;
-
   if (!_isSwiping) {
     [((RNSScreenView *)self.view) notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
       // we started dismissing with swipe gesture
       _isSwiping = YES;
-      _goingForward = NO;
     }
   } else {
     // this event is also triggered if we cancelled the swipe.
@@ -563,11 +554,8 @@
     _shouldNotify = NO;
   }
 
-  if (_goingBackWithJS) {
-    // we are going back with JS, so previous assumptions may have been wrong
-    _goingForward = !_goingBackWithJS;
-    _goingBackWithJS = NO;
-  }
+  // as per documentation of these methods
+  _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
 
   [RNSScreenWindowTraits updateWindowTraits];
   if (_shouldNotify) {
@@ -590,16 +578,8 @@
     int selfIndex = [self getIndexOfView:self.view];
     int targetIndex = [self getIndexOfView:self.navigationController.topViewController.view];
     _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
-    _goingForward = targetIndex > selfIndex;
   } else {
     _dismissCount = 1;
-    _goingForward = NO;
-  }
-
-  if (_goingBackWithJS) {
-    // same flow as in viewWillAppear
-    _goingForward = !_goingBackWithJS;
-    _goingBackWithJS = NO;
   }
 
   // same flow as in viewWillAppear
@@ -611,6 +591,9 @@
   } else {
     _shouldNotify = NO;
   }
+
+  // as per documentation of these methods
+  _goingForward = !([self isBeingDismissed] || [self isMovingFromParentViewController]);
 
   if (_shouldNotify) {
     _closing = YES;
