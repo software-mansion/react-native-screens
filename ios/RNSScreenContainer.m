@@ -259,7 +259,7 @@ RCT_EXPORT_MODULE()
 {
   // we want the attaching/detaching of children to be always made on main queue, which
   // is currently true for `react-navigation` since the changes of `Animated` value in stack's
-  // transition and mounting/unmounting views in tabs and drawer are dispatched on main queue.
+  // transition
   RCTAssertMainQueue();
   [container updateContainer];
 }

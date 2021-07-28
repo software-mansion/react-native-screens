@@ -45,10 +45,10 @@
 {
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[UINavigationController class]]) {
+  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
     [super reactSetFrame:frame];
   }
-  // when screen is mounted under UINavigationController it's size is controller
+  // when screen is mounted under RNScreensNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
   // the controller. In that case we ignore react layout system from managing
   // the screen dimensions and we wait for the screen VC to update and then we
@@ -483,71 +483,18 @@
   [super viewDidLayoutSubviews];
 
   // The below code makes the screen view adapt dimensions provided by the system. We take these
-  // into account only when the view is mounted under UINavigationController in which case system
+  // into account only when the view is mounted under RNScreensNavigationController in which case system
   // provides additional padding to account for possible header, and in the case when screen is
   // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
   // screen size
-  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
+  BOOL isDisplayedWithinUINavController =
+      [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
   if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
       !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
     [((RNSScreenView *)self.viewIfLoaded) updateBounds];
   }
-}
-
-- (void)viewSafeAreaInsetsDidChange
-{
-  [super viewSafeAreaInsetsDidChange];
-  if (self.transitionCoordinator == nil) {
-    // if we are not transitioning, insets should not be set
-    return;
-  }
-  if (@available(iOS 11.0, *)) {
-    RNScreensNavigationController *childNavCtr = [self findChildNavigationControllerWithNavigationBarVisible];
-    if (childNavCtr != nil && !childNavCtr.additionalInsetSet) {
-      childNavCtr.additionalInsetSet = YES;
-      childNavCtr.additionalTopInset = self.view.safeAreaInsets.top;
-      childNavCtr.additionalSafeAreaInsets = UIEdgeInsetsMake(
-          childNavCtr.additionalSafeAreaInsets.top + self.view.safeAreaInsets.top,
-          childNavCtr.additionalSafeAreaInsets.left,
-          childNavCtr.additionalSafeAreaInsets.bottom,
-          childNavCtr.additionalSafeAreaInsets.right);
-    }
-  }
-}
-
-- (RNScreensNavigationController *)findChildNavigationControllerWithNavigationBarVisible
-{
-  // if we are a child of ScreenStack with navigationBar hidden, and there is no parent ScreenStack with navigationBar
-  // visible, this method will be triggered and the inset should be passed to child ScreenStacks. But if the child is a
-  // ScreenContainer, it will not propagate the inset to its children. If that ScreenContainer has a nested ScreenStack
-  // with navigationBar visible as a child, the nested ScreenStack's navigationBar will not have the proper inset during
-  // the transition because of it. We then set the additional inset for during the transition and remove it when the
-  // proper inset comes, which happens after the transition. This search won't work if we have ScreenStack nested in
-  // child ScreenContainer, and we want to search for children in this ScreenStack. It happens because at this moment,
-  // children of this ScreenStack will not be set yet, so even if there is a child ScreenStack with navigation bar
-  // visible, it won't get proper inset. Hopefully it is rare enough case, that it does not matter.
-  if ([self.parentViewController isKindOfClass:[RNScreensNavigationController class]] &&
-      !((RNScreensNavigationController *)self.parentViewController).additionalInsetSet &&
-      self.childViewControllers.count > 0 &&
-      [self.childViewControllers[0] isKindOfClass:[RNScreensViewController class]]) {
-    UIViewController *containerChild = [((RNScreensViewController *)self.childViewControllers[0]) findActiveChildVC];
-    while (containerChild.childViewControllers.count > 0) {
-      containerChild = containerChild.childViewControllers[0];
-      if ([containerChild isKindOfClass:[RNScreensNavigationController class]]) {
-        RNScreensNavigationController *navctr = (RNScreensNavigationController *)containerChild;
-        if (!navctr.navigationBar.isHidden) {
-          return navctr;
-        } else {
-          containerChild = navctr.topViewController;
-        }
-      } else if ([containerChild isKindOfClass:[RNScreensViewController class]]) {
-        containerChild = [((RNScreensViewController *)containerChild) findActiveChildVC];
-      }
-    }
-  }
-  return nil;
 }
 
 - (id)findFirstResponder:(UIView *)parent
