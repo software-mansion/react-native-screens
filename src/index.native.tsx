@@ -47,6 +47,8 @@ function enableScreens(shouldEnableScreens = true): void {
 
 // const that tells if the library should use new implementation, will be undefined for older versions
 const shouldUseActivityState = true;
+const isNavigationContainerAvailable =
+  UIManager.getViewManagerConfig('RNSScreenNavigationContainer') !== null;
 
 function screensEnabled(): boolean {
   return ENABLE_SCREENS;
@@ -198,7 +200,7 @@ class ScreenContainer extends React.Component<ScreenContainerProps> {
     } = this.props;
 
     if (enabled && isPlatformSupported) {
-      if (tabsOrDrawer) {
+      if (tabsOrDrawer && isNavigationContainerAvailable) {
         return (
           <ScreensNativeModules.NativeScreenNavigationContainer {...rest} />
         );
