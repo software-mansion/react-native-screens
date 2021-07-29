@@ -8,6 +8,8 @@ export { default as createNativeStackNavigator } from './navigators/createNative
  */
 export { default as NativeStackView } from './views/NativeStackView';
 
+export { useHeaderHeight } from '@react-navigation/stack';
+
 /**
  * Types
  */
