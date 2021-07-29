@@ -45,6 +45,30 @@
 {
   return [self topViewController].supportedInterfaceOrientations;
 }
+
+- (void)viewDidLoad
+{
+  [super viewDidLoad];
+  [self setupFullWidthBackGesture];
+}
+
+- (void)setupFullWidthBackGesture
+{
+  NSArray *targets = [self.interactivePopGestureRecognizer valueForKey:@"_targets"];
+  if ([targets isKindOfClass:[NSArray class]]) {
+    @try {
+      id interactivePanTarget = [[targets firstObject] valueForKey:@"target"];
+      UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:interactivePanTarget action:NSSelectorFromString(@"handleNavigationTransition:")];
+      [self.view addGestureRecognizer:panRecognizer];
+      
+      self.interactivePopGestureRecognizer.enabled = NO;
+    }
+    @catch (NSException *exception) {
+      NSLog(@"%@", exception);
+    }
+  }
+}
+
 #endif
 
 @end
