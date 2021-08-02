@@ -22,7 +22,6 @@ import com.google.android.material.appbar.AppBarLayout;
 
 public class ScreenStackFragment extends ScreenFragment {
 
-  private static final float TOOLBAR_ELEVATION = PixelUtil.toPixelFromDIP(4);
   private AppBarLayout mAppBarLayout;
   private Toolbar mToolbar;
   private boolean mShadowHidden;
@@ -59,7 +58,7 @@ public class ScreenStackFragment extends ScreenFragment {
 
   public void setToolbarShadowHidden(boolean hidden) {
     if (mShadowHidden != hidden) {
-      mAppBarLayout.setTargetElevation(hidden ? 0 : TOOLBAR_ELEVATION);
+      mAppBarLayout.setTargetElevation(hidden ? 0 : PixelUtil.toPixelFromDIP(4));
       mShadowHidden = hidden;
     }
   }
