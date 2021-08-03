@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, I18nManager, Platform} from 'react-native';
+import {View, StyleSheet, I18nManager} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -73,9 +73,8 @@ const App = (): JSX.Element => (
       component={Alert}
       options={{
         stackPresentation: 'transparentModal',
-        headerShown: Platform.OS === 'android' ? false : undefined,
-        stackAnimation:
-          Platform.OS === 'android' ? 'slide_from_left' : 'default',
+        headerShown: false,
+        stackAnimation: 'slide_from_bottom',
       }}
     />
   </Stack.Navigator>

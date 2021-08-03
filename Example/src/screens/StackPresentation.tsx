@@ -5,7 +5,6 @@ import {
   View,
   ImageBackground,
   I18nManager,
-  Platform,
 } from 'react-native';
 import {ParamListBase} from '@react-navigation/native';
 import {
@@ -125,9 +124,8 @@ const App = (): JSX.Element => (
       component={Alert}
       options={{
         stackPresentation: 'transparentModal',
-        headerShown: Platform.OS === 'android' ? false : undefined,
-        stackAnimation:
-          Platform.OS === 'android' ? 'slide_from_left' : 'default',
+        headerShown: false,
+        stackAnimation: 'slide_from_bottom',
       }}
     />
     <Stack.Screen
@@ -140,14 +138,17 @@ const App = (): JSX.Element => (
       component={Dialog}
       options={{
         stackPresentation: 'containedTransparentModal',
-        headerShown: Platform.OS === 'android' ? false : undefined,
+        headerShown: false,
         stackAnimation: 'fade',
       }}
     />
     <Stack.Screen
       name="FullScreenModal"
       component={FullScreenModalScreen}
-      options={{stackPresentation: 'fullScreenModal'}}
+      options={{
+        stackPresentation: 'fullScreenModal',
+        headerShown: false,
+      }}
     />
     <Stack.Screen
       name="FormSheet"
