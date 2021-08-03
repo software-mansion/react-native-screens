@@ -69,7 +69,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private static boolean needsDrawReordering(ScreenStackFragment fragment) {
     return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM
-        || fragment.getScreen().getStackAnimation() == Screen.StackAnimation.FADE_FROM_BOTTOM;
+        || fragment.getScreen().getStackAnimation() == Screen.StackAnimation.FADE_FROM_BOTTOM
+        || fragment.getScreen().getStackAnimation() == Screen.StackAnimation.CUSTOM;
   }
 
   public void dismiss(ScreenStackFragment screenFragment) {
@@ -249,6 +250,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction()
                 .setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350);
             break;
+          case CUSTOM:
+            getOrCreateTransaction()
+                .setCustomAnimations(
+                    R.anim.rns_no_animation_medium, R.anim.rns_no_animation_medium);
         }
       } else {
         transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
@@ -270,6 +275,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction()
                 .setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom);
             break;
+          case CUSTOM:
+            getOrCreateTransaction()
+                .setCustomAnimations(
+                    R.anim.rns_no_animation_medium, R.anim.rns_no_animation_medium);
         }
       }
     }

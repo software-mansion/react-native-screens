@@ -9,12 +9,18 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.GuardedRunnable;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.UIManagerModule;
 
 public class Screen extends ViewGroup {
@@ -47,6 +53,8 @@ public class Screen extends ViewGroup {
   private Boolean mStatusBarTranslucent;
   private Integer mStatusBarColor;
   private Boolean mStatusBarAnimated;
+  private AnimationSet mCustomEnteringAnimations;
+  private AnimationSet mCustomExitingAnimations;
 
   public Screen(ReactContext context) {
     super(context);
@@ -355,6 +363,67 @@ public class Screen extends ViewGroup {
     mStatusBarAnimated = statusBarAnimated;
   }
 
+  public void setAnimationSpec(ReadableMap animationSpec) {
+    ReadableMap enteringSpec = animationSpec.getMap("entering");
+    ReadableMap exitingSpec = animationSpec.getMap("exiting");
+
+    if (enteringSpec == null || exitingSpec == null) {
+      throw new IllegalArgumentException(
+          "Both `exiting` and `entering` animations have to be provided for custom animations");
+    }
+    mCustomEnteringAnimations = addAnimationsFromSpec(enteringSpec);
+    mCustomExitingAnimations = addAnimationsFromSpec(exitingSpec);
+  }
+
+  private AnimationSet addAnimationsFromSpec(ReadableMap animationSpec) {
+    AnimationSet animationSet = new AnimationSet(true);
+    ReadableMap alphaSpec = animationSpec.getMap("alpha");
+    if (alphaSpec != null) {
+      float fromAlpha = (float) alphaSpec.getDouble("fromAlpha");
+      float toAlpha = (float) alphaSpec.getDouble("toAlpha");
+      AlphaAnimation alphaAnimation = new AlphaAnimation(fromAlpha, toAlpha);
+      animationSet.addAnimation(alphaAnimation);
+    }
+    ReadableMap scaleSpec = animationSpec.getMap("scale");
+    if (scaleSpec != null) {
+      // TODO: cover all options
+      float fromX = (float) scaleSpec.getDouble("fromX");
+      float toX = (float) scaleSpec.getDouble("toX");
+      float fromY = (float) scaleSpec.getDouble("fromY");
+      float toY = (float) scaleSpec.getDouble("toY");
+      ScaleAnimation scaleAnimation = new ScaleAnimation(fromX, toX, fromY, toY);
+      animationSet.addAnimation(scaleAnimation);
+    }
+    ReadableMap rotateSpec = animationSpec.getMap("rotate");
+    if (rotateSpec != null) {
+      // TODO: cover all options
+      float fromDegrees = (float) rotateSpec.getDouble("fromDegrees");
+      float toDegrees = (float) rotateSpec.getDouble("toDegrees");
+      RotateAnimation rotateAnimation = new RotateAnimation(fromDegrees, toDegrees);
+      animationSet.addAnimation(rotateAnimation);
+    }
+    ReadableMap translateSpec = animationSpec.getMap("translate");
+    if (translateSpec != null) {
+      // TODO: cover all options
+      float fromXDelta = (float) translateSpec.getDouble("fromXDelta");
+      float toXDelta = (float) translateSpec.getDouble("toXDelta");
+      float fromYDelta = (float) translateSpec.getDouble("fromYDelta");
+      float toYDelta = (float) translateSpec.getDouble("toYDelta");
+      TranslateAnimation translateAnimation =
+          new TranslateAnimation(fromXDelta, toXDelta, fromYDelta, toYDelta);
+      animationSet.addAnimation(translateAnimation);
+    }
+    return animationSet;
+  }
+
+  public AnimationSet getCustomEnteringAnimations() {
+    return mCustomEnteringAnimations;
+  }
+
+  public AnimationSet getCustomExitingAnimations() {
+    return mCustomExitingAnimations;
+  }
+
   public enum StackPresentation {
     PUSH,
     MODAL,
@@ -369,6 +438,7 @@ public class Screen extends ViewGroup {
     SLIDE_FROM_RIGHT,
     SLIDE_FROM_LEFT,
     FADE_FROM_BOTTOM,
+    CUSTOM,
   }
 
   public enum ReplaceAnimation {

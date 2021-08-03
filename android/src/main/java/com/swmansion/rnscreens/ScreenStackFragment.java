@@ -219,6 +219,20 @@ public class ScreenStackFragment extends ScreenFragment {
       mFragment = fragment;
     }
 
+    private void addCustomAnimations(AnimationSet animationSet, boolean entering) {
+      long duration = animationSet.getDuration();
+      AnimationSet customAnimations;
+      if (entering) {
+        customAnimations = mFragment.getScreen().getCustomEnteringAnimations();
+      } else {
+        customAnimations = mFragment.getScreen().getCustomExitingAnimations();
+      }
+      for (Animation animation : customAnimations.getAnimations()) {
+        animation.setDuration(duration);
+        animationSet.addAnimation(animation);
+      }
+    }
+
     @Override
     public void startAnimation(Animation animation) {
       // For some reason View##onAnimationEnd doesn't get called for
@@ -230,11 +244,21 @@ public class ScreenStackFragment extends ScreenFragment {
       // and also this is not necessary when going back since the lifecycle methods
       // are correctly dispatched then.
       if (animation instanceof AnimationSet && !mFragment.isRemoving()) {
+        if (mFragment.getScreen().getStackAnimation() == Screen.StackAnimation.CUSTOM) {
+          addCustomAnimations((AnimationSet) animation, false);
+        }
         animation.setAnimationListener(mAnimationListener);
         super.startAnimation(animation);
       } else {
         AnimationSet set = new AnimationSet(true);
         set.addAnimation(animation);
+        if (mFragment.getScreen().getStackAnimation() == Screen.StackAnimation.CUSTOM) {
+          if (mFragment.isRemoving()) {
+            addCustomAnimations(set, false);
+          } else {
+            addCustomAnimations(set, true);
+          }
+        }
         set.setAnimationListener(mAnimationListener);
         super.startAnimation(set);
       }

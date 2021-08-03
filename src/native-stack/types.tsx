@@ -68,6 +68,7 @@ export type NativeStackNavigationHelpers = NavigationHelpers<
 export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
+  animationSpec?: ScreenProps['animationSpec'];
   /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
@@ -267,6 +268,7 @@ export type NativeStackNavigationOptions = {
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
+   * - "custom" – resolves in no animation, should be used to provide custom animations with `animationSpec` prop.
    */
   stackAnimation?: ScreenProps['stackAnimation'];
   /**

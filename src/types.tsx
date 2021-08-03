@@ -24,7 +24,8 @@ export type StackAnimationTypes =
   | 'simple_push'
   | 'slide_from_bottom'
   | 'slide_from_right'
-  | 'slide_from_left';
+  | 'slide_from_left'
+  | 'custom';
 export type BlurEffectTypes =
   | 'extraLight'
   | 'light'
@@ -63,7 +64,45 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+type AlphaAnimation = {
+  fromAlpha: number;
+  toAlpha: number;
+};
+
+type ScaleAnimation = {
+  fromX: number;
+  toX: number;
+  fromY: number;
+  toY: number;
+};
+
+type RotateAnimation = {
+  fromDegrees: number;
+  toDegrees: number;
+};
+
+type TranslateAnimation = {
+  fromXDelta: number;
+  toXDelta: number;
+  fromYDelta: number;
+  toYDelta: number;
+};
+
+type AnimationOptions = {
+  alpha?: AlphaAnimation;
+  scale?: ScaleAnimation;
+  rotate?: RotateAnimation;
+  translate?: TranslateAnimation;
+};
+
+export type AnimationSpec = {
+  // TODO: interpolators, duration, all options for each transition
+  entering: AnimationOptions;
+  exiting: AnimationOptions;
+};
+
 export interface ScreenProps extends ViewProps {
+  animationSpec?: AnimationSpec;
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
@@ -133,6 +172,7 @@ export interface ScreenProps extends ViewProps {
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
+   * - "custom" – resolves in no animation, should be used to provide custom animations with `animationSpec` prop.
    */
   stackAnimation?: StackAnimationTypes;
   /**

@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -77,6 +78,8 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
       view.setStackAnimation(Screen.StackAnimation.SLIDE_FROM_BOTTOM);
     } else if ("fade_from_bottom".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.FADE_FROM_BOTTOM);
+    } else if ("custom".equals(animation)) {
+      view.setStackAnimation(Screen.StackAnimation.CUSTOM);
     }
   }
 
@@ -123,6 +126,11 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
   @ReactProp(name = "statusBarHidden")
   public void setStatusBarHidden(Screen view, Boolean statusBarHidden) {
     view.setStatusBarHidden(statusBarHidden);
+  }
+
+  @ReactProp(name = "animationSpec")
+  public void setAnimationSpec(Screen view, ReadableMap animationSpec) {
+    view.setAnimationSpec(animationSpec);
   }
 
   @Nullable

@@ -125,6 +125,7 @@ export default function NativeStackView({
       {routes.map((route, index) => {
         const { options, render: renderScene } = descriptors[route.key];
         const {
+          animationSpec,
           gestureEnabled,
           headerShown,
           replaceAnimation = 'pop',
@@ -164,6 +165,7 @@ export default function NativeStackView({
             statusBarHidden={statusBarHidden}
             statusBarStyle={statusBarStyle}
             statusBarTranslucent={statusBarTranslucent}
+            animationSpec={animationSpec}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',

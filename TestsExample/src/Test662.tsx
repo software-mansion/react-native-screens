@@ -17,12 +17,42 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackAnimation: 'fade_from_bottom',
-          // stackAnimation: 'slide_from_bottom',
+          // stackAnimation: 'fade_from_bottom',
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} options={{
           replaceAnimation: 'push',
+          stackAnimation: 'custom',
+          animationSpec: {
+            entering: {
+              alpha: {
+                fromAlpha: 0.0,
+                toAlpha: 1.0,
+              },
+              translate: {
+                fromXDelta: -200,
+                toXDelta: 0,
+                fromYDelta: -200,
+                toYDelta: 0,
+              },
+              rotate: {
+                fromDegrees: 20,
+                toDegrees: 0,
+              }
+            },
+            exiting: {
+              alpha: {
+                fromAlpha: 1.0,
+                toAlpha: 0.0,
+              },
+              translate: {
+                fromXDelta: 0,
+                toXDelta: -200,
+                fromYDelta: 0,
+                toYDelta: -200,
+              },
+            }
+          }
         }}/>
         <Stack.Screen name="Third" component={Third} />
         <Stack.Screen name="Fourth" component={Fourth} />
