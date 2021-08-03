@@ -96,7 +96,7 @@ type AnimationOptions = {
 };
 
 export type AnimationSpec = {
-  // TODO: interpolators, duration, all options for each transition
+  // TODO: interpolators, duration, all options for each transition, string values with %
   entering: AnimationOptions;
   exiting: AnimationOptions;
 };

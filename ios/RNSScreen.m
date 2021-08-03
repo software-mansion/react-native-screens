@@ -156,6 +156,7 @@
     case RNSScreenStackAnimationSimplePush:
     case RNSScreenStackAnimationSlideFromBottom:
     case RNSScreenStackAnimationFadeFromBottom:
+    case RNSScreenStackAnimationCustom:
       // Default
       break;
   }
@@ -640,6 +641,10 @@ RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+RCT_CUSTOM_VIEW_PROPERTY(animationSpec, NSDictionary, RNSScreenView)
+{
+  [view setAnimationSpecification:[RCTConvert animationSpec:json]];
+}
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
@@ -675,6 +680,7 @@ RCT_ENUM_CONVERTER(
     RNSScreenStackAnimation,
     (@{
       @"default" : @(RNSScreenStackAnimationDefault),
+      @"custom" : @(RNSScreenStackAnimationCustom),
       @"none" : @(RNSScreenStackAnimationNone),
       @"fade" : @(RNSScreenStackAnimationFade),
       @"fade_from_bottom" : @(RNSScreenStackAnimationFadeFromBottom),
@@ -731,5 +737,11 @@ RCT_ENUM_CONVERTER(
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 #endif
+
++ (NSDictionary *)animationSpec:(id)json
+{
+  json = [self NSDictionary:json];
+  return json;
+}
 
 @end

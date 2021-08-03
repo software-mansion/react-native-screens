@@ -63,6 +63,10 @@
       [self animateFadeFromBottomWithTransitionContext:transitionContext
                                                   toVC:toViewController
                                                 fromVC:fromViewController];
+    } else if (screen.stackAnimation == RNSScreenStackAnimationCustom) {
+      [self animateCustomTransitionWithTransitionContext:transitionContext
+                                                    toVC:toViewController
+                                                  fromVC:fromViewController];
     }
   }
 }
@@ -247,6 +251,77 @@
                      }
                      completion:nil];
   }
+}
+
+- (void)animateCustomTransitionWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                                toVC:(UIViewController *)toViewController
+                                              fromVC:(UIViewController *)fromViewController
+{
+  RNSScreenView *toView = ((RNSScreenView *)toViewController.view);
+  RNSScreenView *fromView = ((RNSScreenView *)fromViewController.view);
+
+  NSDictionary *toViewAnimationSpec = toView.animationSpecification;
+  NSDictionary *fromViewAnimationSpec = fromView.animationSpecification;
+
+  [self setAnimationsForView:toView withSpecification:toViewAnimationSpec[@"entering"] starting:YES];
+  [self setAnimationsForView:fromView withSpecification:fromViewAnimationSpec[@"exiting"] starting:YES];
+  if (_operation == UINavigationControllerOperationPush) {
+    [[transitionContext containerView] addSubview:toView];
+  } else if (_operation == UINavigationControllerOperationPop) {
+    [[transitionContext containerView] insertSubview:toView belowSubview:fromView];
+  }
+  [UIView animateWithDuration:[self transitionDuration:transitionContext]
+      animations:^{
+        [self setAnimationsForView:toView withSpecification:toViewAnimationSpec[@"entering"] starting:NO];
+        [self setAnimationsForView:fromView withSpecification:fromViewAnimationSpec[@"exiting"] starting:NO];
+      }
+      completion:^(BOOL finished) {
+        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+      }];
+}
+
+- (void)setAnimationsForView:(UIView *)view withSpecification:(NSDictionary *)specification starting:(BOOL)starting
+{
+  CGAffineTransform trasforms = CGAffineTransformIdentity;
+  if (specification[@"alpha"] != nil) {
+    if (starting) {
+      view.alpha = [specification[@"alpha"][@"fromAlpha"] floatValue];
+    } else {
+      view.alpha = [specification[@"alpha"][@"toAlpha"] floatValue];
+    }
+  }
+  if (specification[@"scale"] != nil) {
+    if (starting) {
+      float fromX = [specification[@"scale"][@"fromX"] floatValue];
+      float fromY = [specification[@"scale"][@"fromY"] floatValue];
+      trasforms = CGAffineTransformScale(trasforms, fromX, fromY);
+    } else {
+      float toX = [specification[@"scale"][@"toX"] floatValue];
+      float toY = [specification[@"scale"][@"toY"] floatValue];
+      trasforms = CGAffineTransformScale(trasforms, toX, toY);
+    }
+  }
+  if (specification[@"rotate"] != nil) {
+    if (starting) {
+      float fromDegrees = [specification[@"rotate"][@"fromDegrees"] floatValue] * M_PI / 180;
+      trasforms = CGAffineTransformRotate(trasforms, fromDegrees);
+    } else {
+      float toDegrees = [specification[@"rotate"][@"toDegrees"] floatValue] * M_PI / 180;
+      trasforms = CGAffineTransformRotate(trasforms, toDegrees);
+    }
+  }
+  if (specification[@"translate"] != nil) {
+    if (starting) {
+      float fromXDelta = [specification[@"translate"][@"fromXDelta"] floatValue];
+      float fromYDelta = [specification[@"translate"][@"fromYDelta"] floatValue];
+      trasforms = CGAffineTransformTranslate(trasforms, fromXDelta, fromYDelta);
+    } else {
+      float toXDelta = [specification[@"translate"][@"toXDelta"] floatValue];
+      float toYDelta = [specification[@"translate"][@"toYDelta"] floatValue];
+      trasforms = CGAffineTransformTranslate(trasforms, toXDelta, toYDelta);
+    }
+  }
+  view.transform = trasforms;
 }
 
 @end

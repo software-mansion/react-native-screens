@@ -24,6 +24,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
   RNSScreenStackAnimationFlip,
   RNSScreenStackAnimationSlideFromBottom,
   RNSScreenStackAnimationSimplePush,
+  RNSScreenStackAnimationCustom,
 };
 
 typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
@@ -55,6 +56,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
 + (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
++ (NSDictionary *)animationSpec:(id)json;
 
 #if !TARGET_OS_TV
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
@@ -93,6 +95,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic) BOOL hasStatusBarStyleSet;
 @property (nonatomic) BOOL hasStatusBarAnimationSet;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;
+@property (nonatomic, retain) NSDictionary *animationSpecification;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
