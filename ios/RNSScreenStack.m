@@ -526,7 +526,7 @@
   return nil;
 }
 
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+- (void)cancelTouchesInParent
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
   // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
@@ -540,13 +540,17 @@
     [touchHandler cancel];
     [touchHandler reset];
   }
+}
 
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
   if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
     return NO;
   }
 #if TARGET_OS_TV
+  [self cancelTouchHandlerIfExists];
   return YES;
 #else
   if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
@@ -556,13 +560,15 @@
                           ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
         (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
          ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
-    if (isCorrectEdge) {
-      return topScreen.stackAnimation == RNSScreenStackAnimationSimplePush;
+    if (isCorrectEdge && topScreen.stackAnimation == RNSScreenStackAnimationSimplePush) {
+      [self cancelTouchesInParent];
+      return YES;
     }
-    return NO;
-  } else {
-    return topScreen.stackAnimation != RNSScreenStackAnimationSimplePush;
+  } else if (topScreen.stackAnimation != RNSScreenStackAnimationSimplePush) {
+    [self cancelTouchesInParent];
+    return YES;
   }
+  return NO;
 #endif
 }
 
