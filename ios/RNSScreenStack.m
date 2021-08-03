@@ -526,7 +526,7 @@
   return nil;
 }
 
-- (void)cancelTouchHandlerIfExists
+- (void)cancelTouchesInParent
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
   // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
@@ -561,12 +561,11 @@
         (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
          ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
     if (isCorrectEdge && topScreen.stackAnimation == RNSScreenStackAnimationSimplePush) {
-      [self cancelTouchHandlerIfExists];
+      [self cancelTouchesInParent];
       return YES;
     }
-    return NO;
   } else if (topScreen.stackAnimation != RNSScreenStackAnimationSimplePush) {
-    [self cancelTouchHandlerIfExists];
+    [self cancelTouchesInParent];
     return YES;
   }
   return NO;
