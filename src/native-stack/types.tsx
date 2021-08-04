@@ -6,17 +6,22 @@ import {
   ParamListBase,
   StackNavigationState,
   StackRouterOptions,
+  StackActionHelpers,
+  RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
+  SearchBarProps,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
   /**
    * Event which fires when the screen appears.
+   *
+   * @deprecated Use `transitionEnd` event with `data.closing: false` instead.
    */
   appear: { data: undefined };
   /**
@@ -39,31 +44,18 @@ export type NativeStackNavigationProp<
 > = NavigationProp<
   ParamList,
   RouteName,
-  StackNavigationState,
+  StackNavigationState<ParamList>,
   NativeStackNavigationOptions,
   NativeStackNavigationEventMap
-> & {
-  /**
-   * Push a new screen onto the stack.
-   *
-   * @param name Name of the route for the tab.
-   * @param [params] Params object for the route.
-   */
-  push<RouteName extends keyof ParamList>(
-    ...args: ParamList[RouteName] extends undefined | any
-      ? [RouteName] | [RouteName, ParamList[RouteName]]
-      : [RouteName, ParamList[RouteName]]
-  ): void;
+> &
+  StackActionHelpers<ParamList>;
 
-  /**
-   * Pop a screen from the stack.
-   */
-  pop(count?: number): void;
-
-  /**
-   * Pop to the first route in the stack, dismissing all other screens.
-   */
-  popToTop(): void;
+export type NativeStackScreenProps<
+  ParamList extends ParamListBase,
+  RouteName extends keyof ParamList = string
+> = {
+  navigation: NativeStackNavigationProp<ParamList, RouteName>;
+  route: RouteProp<ParamList, RouteName>;
 };
 
 export type NativeStackNavigationHelpers = NavigationHelpers<
@@ -71,22 +63,40 @@ export type NativeStackNavigationHelpers = NavigationHelpers<
   NativeStackNavigationEventMap
 >;
 
-export type NativeStackNavigationConfig = Record<string, unknown>;
+// We want it to be an empty object beacuse navigator does not have any additional config
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
-  /**
-   * String that can be displayed in the header as a fallback for `headerTitle`.
-   */
-  title?: string;
-  /**
-   * String to display in the header as title. Defaults to scene `title`.
-   */
-  headerTitle?: string;
   /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
    */
   backButtonImage?: ImageSourcePropType;
+  /**
+   * Whether to show the back button with custom left side of the header.
+   */
+  backButtonInCustomView?: boolean;
+  /**
+   * Style object for the scene content.
+   */
+  contentStyle?: StyleProp<ViewStyle>;
+  /**
+   * Whether the stack should be in rtl or ltr form.
+   */
+  direction?: 'rtl' | 'ltr';
+  /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
+  /**
+   * Whether you can use gestures to dismiss this screen. Defaults to `true`.
+   * Only supported on iOS.
+   *
+   * @platform ios
+   */
+  gestureEnabled?: boolean;
   /**
    * Title to display in the back button.
    * Only supported on iOS.
@@ -94,115 +104,6 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   headerBackTitle?: string;
-  /**
-   * Whether the back button title should be visible or not. Defaults to `true`.
-   * Only supported on iOS.
-   *
-   * @platform ios
-   */
-  headerBackTitleVisible?: boolean;
-  /**
-   * Whether to show the header.
-   */
-  headerShown?: boolean;
-  /**
-   * Whether to show the back button with custom left side of the header.
-   */
-  backButtonInCustomView?: boolean;
-  /**
-   * Boolean indicating whether the navigation bar is translucent.
-   * Only supported on iOS.
-   *
-   * @platform ios
-   */
-  headerTranslucent?: boolean;
-  /**
-   * Boolean to set native property to prefer large title header (like in iOS setting).
-   * For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`.
-   * If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
-   * Only supported on iOS.
-   *
-   * @platform ios
-   */
-  headerLargeTitle?: boolean;
-  /**
-   * Whether the stack should be in rtl or ltr form.
-   */
-  direction?: 'rtl' | 'ltr';
-  /**
-   * Function which returns a React Element to display on the right side of the header.
-   */
-  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
-  /**
-   * Function which returns a React Element to display on the left side of the header.
-   */
-  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
-  /**
-   * Function which returns a React Element to display in the center of the header.
-   */
-  headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
-  /**
-   * Tint color for the header. Changes the color of back button and title.
-   */
-  headerTintColor?: string;
-  /**
-   * Boolean indicating whether to hide the back button in header.
-   * Only supported on Android.
-   *
-   * @platform android
-   */
-  headerHideBackButton?: boolean;
-  /**
-   * Boolean indicating whether to hide the elevation shadow or the bottom border on the header.
-   */
-  headerHideShadow?: boolean;
-  /**
-   * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
-   */
-  headerLargeTitleHideShadow?: boolean;
-  /**
-   * Style object for header title. Supported properties:
-   * - backgroundColor
-   * - blurEffect
-   */
-  headerStyle?: {
-    backgroundColor?: string;
-    blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
-  };
-  /**
-   * Controls the style of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar. Supported properties:
-   * - backgroundColor
-   *
-   * @platform ios
-   */
-  headerLargeStyle?: {
-    backgroundColor?: string;
-  };
-  /**
-   * Style object for header title. Supported properties:
-   * - fontFamily
-   * - fontSize
-   * - color
-   */
-  headerTitleStyle?: {
-    fontFamily?: string;
-    fontSize?: number;
-    color?: string;
-  };
-  /**
-   * Style object for header large title. Supported properties:
-   * - fontFamily
-   * - fontSize
-   *
-   * Only supported on iOS.
-   *
-   * @platform ios
-   */
-  headerLargeTitleStyle?: {
-    fontFamily?: string;
-    fontSize?: number;
-    color?: string;
-  };
   /**
    * Style object for header back title. Supported properties:
    * - fontFamily
@@ -217,6 +118,105 @@ export type NativeStackNavigationOptions = {
     fontSize?: number;
   };
   /**
+   * Whether the back button title should be visible or not. Defaults to `true`.
+   * Only supported on iOS.
+   *
+   * @platform ios
+   */
+  headerBackTitleVisible?: boolean;
+  /**
+   * Function which returns a React Element to display in the center of the header.
+   */
+  headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
+  /**
+   * Boolean indicating whether to hide the back button in header.
+   */
+  headerHideBackButton?: boolean;
+  /**
+   * Boolean indicating whether to hide the elevation shadow or the bottom border on the header.
+   */
+  headerHideShadow?: boolean;
+  /**
+   * Controls the style of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar. Supported properties:
+   * - backgroundColor
+   *
+   * @platform ios
+   */
+  headerLargeStyle?: {
+    backgroundColor?: string;
+  };
+  /**
+   * Boolean to set native property to prefer large title header (like in iOS setting).
+   * For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`.
+   * If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
+   * Only supported on iOS.
+   *
+   * @platform ios
+   */
+  headerLargeTitle?: boolean;
+  /**
+   * Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
+   */
+  headerLargeTitleHideShadow?: boolean;
+  /**
+   * Style object for header large title. Supported properties:
+   * - fontFamily
+   * - fontSize
+   * - color
+   *
+   * Only supported on iOS.
+   *
+   * @platform ios
+   */
+  headerLargeTitleStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    color?: string;
+  };
+  /**
+   * Function which returns a React Element to display on the left side of the header.
+   */
+  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
+  /**
+   * Function which returns a React Element to display on the right side of the header.
+   */
+  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
+  /**
+   * Whether to show the header.
+   */
+  headerShown?: boolean;
+  /**
+   * Style object for header title. Supported properties:
+   * - backgroundColor
+   * - blurEffect
+   */
+  headerStyle?: {
+    backgroundColor?: string;
+    blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
+  };
+  /**
+   * Tint color for the header. Changes the color of back button and title.
+   */
+  headerTintColor?: string;
+  /**
+   * String to display in the header as title. Defaults to scene `title`.
+   */
+  headerTitle?: string;
+  /**
+   * Style object for header title. Supported properties:
+   * - fontFamily
+   * - fontSize
+   * - fontWeight
+   * - color
+   */
+  headerTitleStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    color?: string;
+  };
+  /**
    * A flag to that lets you opt out of insetting the header. You may want to
    * set this to `false` if you use an opaque status bar. Defaults to `true`.
    * Only supported on Android. Insets are always applied on iOS because the
@@ -226,16 +226,9 @@ export type NativeStackNavigationOptions = {
    */
   headerTopInsetEnabled?: boolean;
   /**
-   * Style object for the scene content.
+   * Boolean indicating whether the navigation bar is translucent.
    */
-  contentStyle?: StyleProp<ViewStyle>;
-  /**
-   * Whether you can use gestures to dismiss this screen. Defaults to `true`.
-   * Only supported on iOS.
-   *
-   * @platform ios
-   */
-  gestureEnabled?: boolean;
+  headerTranslucent?: boolean;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
@@ -243,6 +236,39 @@ export type NativeStackNavigationOptions = {
    * - "pop" – the new screen will perform pop animation.
    */
   replaceAnimation?: ScreenProps['replaceAnimation'];
+  /**
+   * In which orientation should the screen appear.
+   * The following values are currently supported:
+   * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.
+   * - "all" – all orientations are permitted
+   * - "portrait" – portrait orientations are permitted
+   * - "portrait_up" – right-side portrait orientation is permitted
+   * - "portrait_down" – upside-down portrait orientation is permitted
+   * - "landscape" – landscape orientations are permitted
+   * - "landscape_left" – landscape-left orientation is permitted
+   * - "landscape_right" – landscape-right orientation is permitted
+   */
+  screenOrientation?: ScreenProps['screenOrientation'];
+  /**
+   * Object in which you should pass props in order to render native iOS searchBar.
+   *
+   * @platform ios
+   */
+  searchBar?: SearchBarProps;
+  /**
+   * How the screen should appear/disappear when pushed or popped at the top of the stack.
+   * The following values are currently supported:
+   * - "default" – uses a platform default animation
+   * - "fade" – fades screen in or out
+   * - "fade_from_bottom" – performs a fade from bottom animation
+   * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+   * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
+   * - "slide_from_bottom" – performs a slide from bottom animation
+   * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
+   * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "none" – the screen appears/dissapears without an animation
+   */
+  stackAnimation?: ScreenProps['stackAnimation'];
   /**
    * How should the screen be presented.
    * The following values are currently supported:
@@ -256,14 +282,33 @@ export type NativeStackNavigationOptions = {
    */
   stackPresentation?: ScreenProps['stackPresentation'];
   /**
-   * How the screen should appear/disappear when pushed or popped at the top of the stack.
-   * The following values are currently supported:
-   * - "default" – uses a platform default animation
-   * - "fade" – fades screen in or out
-   * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
-   * - "none" – the screen appears/dissapears without an animation
+   * Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS.
    */
-  stackAnimation?: ScreenProps['stackAnimation'];
+  statusBarAnimation?: ScreenProps['statusBarAnimation'];
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
+   *
+   * @platform android
+   */
+  statusBarColor?: string;
+  /**
+   * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
+   */
+  statusBarHidden?: boolean;
+  /**
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
+   */
+  statusBarStyle?: ScreenProps['statusBarStyle'];
+  /**
+   * Sets the translucency of the status bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  statusBarTranslucent?: boolean;
+  /**
+   * String that can be displayed in the header as a fallback for `headerTitle`.
+   */
+  title?: string;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<
@@ -275,7 +320,7 @@ export type NativeStackNavigatorProps = DefaultNavigatorOptions<
 export type NativeStackDescriptor = Descriptor<
   ParamListBase,
   string,
-  StackNavigationState,
+  StackNavigationState<ParamListBase>,
   NativeStackNavigationOptions
 >;
 

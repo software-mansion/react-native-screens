@@ -1,46 +1,62 @@
 import { Route, useTheme } from '@react-navigation/native';
 import * as React from 'react';
+import { Platform } from 'react-native';
 import {
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
   ScreenStackHeaderConfig,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderRightView,
+  ScreenStackHeaderSearchBarView,
+  SearchBar,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
+import { processFonts } from './FontProcessor';
 
 type Props = NativeStackNavigationOptions & {
   route: Route<string>;
 };
 
 export default function HeaderConfig({
-  route,
-  title,
-  headerRight,
-  headerLeft,
-  headerCenter,
-  headerTitle,
-  headerBackTitle,
-  headerBackTitleVisible = true,
   backButtonImage,
-  headerHideBackButton,
-  headerHideShadow,
-  headerLargeTitleHideShadow,
-  headerTintColor,
-  headerTopInsetEnabled = true,
-  headerLargeTitle,
-  headerTranslucent,
-  headerStyle = {},
-  headerLargeStyle = {},
-  headerTitleStyle = {},
-  headerLargeTitleStyle = {},
-  headerBackTitleStyle = {},
-  headerShown,
   backButtonInCustomView,
   direction,
+  disableBackButtonMenu,
+  headerBackTitle,
+  headerBackTitleStyle = {},
+  headerBackTitleVisible = true,
+  headerCenter,
+  headerHideBackButton,
+  headerHideShadow,
+  headerLargeStyle = {},
+  headerLargeTitle,
+  headerLargeTitleHideShadow,
+  headerLargeTitleStyle = {},
+  headerLeft,
+  headerRight,
+  headerShown,
+  headerStyle = {},
+  headerTintColor,
+  headerTitle,
+  headerTitleStyle = {},
+  headerTopInsetEnabled = true,
+  headerTranslucent,
+  route,
+  searchBar,
+  title,
 }: Props): JSX.Element {
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
+
+  const [
+    backTitleFontFamily,
+    largeTitleFontFamily,
+    titleFontFamily,
+  ] = processFonts([
+    headerBackTitleStyle.fontFamily,
+    headerLargeTitleStyle.fontFamily,
+    headerTitleStyle.fontFamily,
+  ]);
 
   return (
     <ScreenStackHeaderConfig
@@ -49,19 +65,21 @@ export default function HeaderConfig({
         headerStyle.backgroundColor ? headerStyle.backgroundColor : colors.card
       }
       backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
-      backTitleFontFamily={headerBackTitleStyle.fontFamily}
+      backTitleFontFamily={backTitleFontFamily}
       backTitleFontSize={headerBackTitleStyle.fontSize}
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
       direction={direction}
+      disableBackButtonMenu={disableBackButtonMenu}
       hidden={headerShown === false}
       hideBackButton={headerHideBackButton}
       hideShadow={headerHideShadow}
       largeTitle={headerLargeTitle}
       largeTitleBackgroundColor={headerLargeStyle.backgroundColor}
       largeTitleColor={headerLargeTitleStyle.color}
-      largeTitleFontFamily={headerLargeTitleStyle.fontFamily}
+      largeTitleFontFamily={largeTitleFontFamily}
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
+      largeTitleFontWeight={headerLargeTitleStyle.fontWeight}
       largeTitleHideShadow={headerLargeTitleHideShadow}
       title={
         headerTitle !== undefined
@@ -77,8 +95,9 @@ export default function HeaderConfig({
           ? headerTintColor
           : colors.text
       }
-      titleFontFamily={headerTitleStyle.fontFamily}
+      titleFontFamily={titleFontFamily}
       titleFontSize={headerTitleStyle.fontSize}
+      titleFontWeight={headerTitleStyle.fontWeight}
       topInsetEnabled={headerTopInsetEnabled}
       translucent={headerTranslucent === true}>
       {headerRight !== undefined ? (
@@ -101,6 +120,11 @@ export default function HeaderConfig({
         <ScreenStackHeaderCenterView>
           {headerCenter({ tintColor })}
         </ScreenStackHeaderCenterView>
+      ) : null}
+      {Platform.OS === 'ios' && searchBar !== undefined ? (
+        <ScreenStackHeaderSearchBarView>
+          <SearchBar {...searchBar} />
+        </ScreenStackHeaderSearchBarView>
       ) : null}
     </ScreenStackHeaderConfig>
   );

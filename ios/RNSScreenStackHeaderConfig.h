@@ -1,7 +1,8 @@
-#import <React/RCTViewManager.h>
 #import <React/RCTConvert.h>
+#import <React/RCTViewManager.h>
 
 #import "RNSScreen.h"
+#import "RNSSearchBar.h"
 
 @interface RNSScreenStackHeaderConfig : UIView
 
@@ -10,6 +11,7 @@
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *titleFontFamily;
 @property (nonatomic, retain) NSNumber *titleFontSize;
+@property (nonatomic, retain) NSString *titleFontWeight;
 @property (nonatomic, retain) UIColor *titleColor;
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) NSString *backTitleFontFamily;
@@ -21,16 +23,20 @@
 @property (nonatomic) BOOL largeTitle;
 @property (nonatomic, retain) NSString *largeTitleFontFamily;
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
+@property (nonatomic, retain) NSString *largeTitleFontWeight;
 @property (nonatomic, retain) UIColor *largeTitleBackgroundColor;
 @property (nonatomic) BOOL largeTitleHideShadow;
 @property (nonatomic, retain) UIColor *largeTitleColor;
 @property (nonatomic) BOOL hideBackButton;
 @property (nonatomic) BOOL backButtonInCustomView;
+@property (nonatomic) BOOL disableBackButtonMenu;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
 @property (nonatomic) UISemanticContentAttribute direction;
 
-+ (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
++ (void)willShowViewController:(UIViewController *)vc
+                      animated:(BOOL)animated
+                    withConfig:(RNSScreenStackHeaderConfig *)config;
 
 @end
 
@@ -44,13 +50,14 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
   RNSScreenStackHeaderSubviewTypeRight,
   RNSScreenStackHeaderSubviewTypeTitle,
   RNSScreenStackHeaderSubviewTypeCenter,
+  RNSScreenStackHeaderSubviewTypeSearchBar,
 };
 
 @interface RCTConvert (RNSScreenStackHeader)
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
-+ (UISemanticContentAttribute)RNSScreenDirection:(id)json;
++ (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
 
 @end
 

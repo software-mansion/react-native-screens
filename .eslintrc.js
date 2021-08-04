@@ -16,7 +16,7 @@ module.exports = {
   },
 
   settings: {
-    'import/core-modules': ['react-native-screens'],
+    'import/core-modules': ['react-native-screens', 'react-native-screens/native-stack', 'react-native-screens/createNativeStackNavigator'],
     'import/ignore': ['node_modules/react-native/index\\.js$'],
     'import/resolver': {
       node: {
@@ -87,6 +87,14 @@ module.exports = {
         'no-unused-vars': 'off',
         'no-array-constructor': 'off',
         'no-use-before-define': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/ban-ts-comment': [
+          'error',
+          {
+            'ts-ignore': 'allow-with-description',
+            'ts-expect-error': 'allow-with-description',
+          },
+        ],
       },
     },
   ],

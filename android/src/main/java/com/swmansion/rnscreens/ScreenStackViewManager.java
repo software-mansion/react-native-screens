@@ -2,7 +2,6 @@ package com.swmansion.rnscreens;
 
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
@@ -44,6 +43,11 @@ public class ScreenStackViewManager extends ViewGroupManager<ScreenStack> {
     for (int i = 0, size = parent.getChildCount(); i < size; i++) {
       View child = parent.getChildAt(i);
       parent.startViewTransition(child);
+      if (child instanceof ScreenStackHeaderConfig) {
+        // we want to start transition on children of the toolbar too,
+        // which is not a child of ScreenStackHeaderConfig
+        startTransitionRecursive(((ScreenStackHeaderConfig) child).getToolbar());
+      }
       if (child instanceof ViewGroup) {
         startTransitionRecursive((ViewGroup) child);
       }

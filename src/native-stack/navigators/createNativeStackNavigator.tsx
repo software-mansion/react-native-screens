@@ -2,13 +2,14 @@ import {
   createNavigatorFactory,
   EventArg,
   StackActions,
+  StackActionHelpers,
   StackNavigationState,
   StackRouter,
   StackRouterOptions,
+  ParamListBase,
   useNavigationBuilder,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { screensEnabled } from 'react-native-screens';
 import {
   NativeStackNavigationEventMap,
   NativeStackNavigationOptions,
@@ -22,15 +23,10 @@ function NativeStackNavigator({
   screenOptions,
   ...rest
 }: NativeStackNavigatorProps) {
-  if (!screensEnabled()) {
-    throw new Error(
-      'Native stack is only available if React Native Screens is enabled.'
-    );
-  }
-
   const { state, descriptors, navigation } = useNavigationBuilder<
-    StackNavigationState,
+    StackNavigationState<ParamListBase>,
     StackRouterOptions,
+    StackActionHelpers<ParamListBase>,
     NativeStackNavigationOptions,
     NativeStackNavigationEventMap
   >(StackRouter, {
@@ -75,7 +71,7 @@ function NativeStackNavigator({
 }
 
 export default createNavigatorFactory<
-  StackNavigationState,
+  StackNavigationState<ParamListBase>,
   NativeStackNavigationOptions,
   NativeStackNavigationEventMap,
   typeof NativeStackNavigator

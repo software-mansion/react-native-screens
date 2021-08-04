@@ -1,15 +1,18 @@
 {
   "name": "react-native-screens",
-  "version": "2.10.1",
+  "version": "3.5.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "check-types": "tsc --noEmit",
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "npm run format && npm run lint && npm run test:unit",
-    "test:unit": "jest",
-    "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
-    "lint": "eslint --ext '.js,.ts,.tsx' --fix src && npm run check-types",
-    "precommit": "lint-staged",
+    "start": "react-native start",
+    "test:unit": "jest --passWithNoTests",
+    "format": "yarn prettier && yarn clang-format-ios && yarn clang-format-windows && yarn lint-java",
+    "prettier": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
+    "lint-java": "node ./scripts/lint-java.js",
+    "clang-format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
+    "clang-format-windows": "find windows/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
+    "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types",
+    "precommit": "yarn format && yarn lint",
     "release": "npm login && release-it",
     "prepare": "bob build"
   },
@@ -17,7 +20,7 @@
   "module": "lib/module/index",
   "react-native": "src/index",
   "source": "src/index",
-  "types": "src/index.d.ts",
+  "types": "lib/typescript/index",
   "files": [
     "src/",
     "lib/",
@@ -25,6 +28,7 @@
     "createNativeStackNavigator/",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
+    "android/src/main/res",
     "android/build.gradle",
     "ios/",
     "RNScreens.podspec",
@@ -33,7 +37,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kmagiera/react-native-screens.git"
+    "url": "git+https://github.com/software-mansion/react-native-screens.git"
   },
   "author": {
     "email": "krzys.magiera@gmail.com",
@@ -42,18 +46,21 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/kmagiera/react-native-screens/issues"
+    "url": "https://github.com/software-mansion/react-native-screens/issues"
   },
-  "homepage": "https://github.com/kmagiera/react-native-screens#readme",
+  "homepage": "https://github.com/software-mansion/react-native-screens#readme",
+  "dependencies": {
+    "warn-once": "^0.1.0"
+  },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.11.0",
-    "@react-native-community/bob": "^0.15.1",
-    "@react-navigation/native": "^5.7.2",
-    "@react-navigation/stack": "^5.8.0",
+    "@react-native-community/bob": "^0.17.1",
+    "@react-navigation/native": "^5.8.0",
+    "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^26.0.8",
     "@types/react": "^16.9.44",
     "@types/react-native": "^0.63.2",
@@ -62,6 +69,7 @@
     "@typescript-eslint/parser": "^3.7.1",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.2.2",
+    "clang-format": "^1.5.0",
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.1",
@@ -81,6 +89,10 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "^0.63.2",
+    "react-native-safe-area-context": "^3.1.9",
+    "react-native-windows": "^0.64.8",
+    "react-navigation": "^4.4.3",
+    "react-navigation-stack": "^2.9.0",
     "react-test-renderer": "^16.13.1",
     "release-it": "^13.5.2",
     "typescript": "^3.9.7"
@@ -97,7 +109,12 @@
     "targets": [
       "commonjs",
       "module",
-      "typescript"
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
     ]
   },
   "eslintIgnore": [
