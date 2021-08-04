@@ -73,6 +73,30 @@
 #endif
 }
 
+- (void)hideCancelButton
+{
+#if !TARGET_OS_TV
+  if (@available(iOS 13, *)) {
+    // On iOS 13+ UISearchController automatically shows/hides cancel button
+    // https://developer.apple.com/documentation/uikit/uisearchcontroller/3152926-automaticallyshowscancelbutton?language=objc
+  } else {
+    [_controller.searchBar setShowsCancelButton:NO animated:YES];
+  }
+#endif
+}
+
+- (void)showCancelButton
+{
+#if !TARGET_OS_TV
+  if (@available(iOS 13, *)) {
+    // On iOS 13+ UISearchController automatically shows/hides cancel button
+    // https://developer.apple.com/documentation/uikit/uisearchcontroller/3152926-automaticallyshowscancelbutton?language=objc
+  } else {
+    [_controller.searchBar setShowsCancelButton:YES animated:YES];
+  }
+#endif
+}
+
 #pragma mark delegate methods
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
@@ -88,9 +112,7 @@
   }
 #endif
 
-#if !TARGET_OS_TV
-  [_controller.searchBar setShowsCancelButton:YES animated:YES];
-#endif
+  [self showCancelButton];
   [self becomeFirstResponder];
 
   if (self.onFocus) {
@@ -103,6 +125,7 @@
   if (self.onBlur) {
     self.onBlur(@{});
   }
+  [self hideCancelButton];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
@@ -128,7 +151,7 @@
 {
   _controller.searchBar.text = @"";
   [self resignFirstResponder];
-  [_controller.searchBar setShowsCancelButton:NO animated:YES];
+  [self hideCancelButton];
 
   if (self.onCancelButtonPress) {
     self.onCancelButtonPress(@{});
