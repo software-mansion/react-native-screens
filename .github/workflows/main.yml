@@ -11,11 +11,11 @@ on:
 jobs:
   install-and-lint:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
-          yarn
+          yarn && yarn --cwd Example
       - name: Test formatting and linting
         run: |
           yarn format && yarn lint
