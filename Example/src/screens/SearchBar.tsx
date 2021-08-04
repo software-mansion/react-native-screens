@@ -1,6 +1,6 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {I18nManager, Platform, Button, ScrollView, Text} from 'react-native';
-import {SearchBarProps} from 'react-native-screens';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { I18nManager, Platform, Button, ScrollView, Text } from 'react-native';
+import { SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -16,7 +16,7 @@ import {
 
 type StackParamList = {
   Main: undefined;
-  Snack: {backgroundColor: string; message: string};
+  Snack: { backgroundColor: string; message: string };
   Search: undefined;
 };
 
@@ -28,7 +28,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [search, setSearch] = useState('');
   const [placeholder, setPlaceholder] = useState('Search for something...');
   const [barTintColor, setBarTintColor] = useState<BarTintColor>('white');
@@ -36,7 +36,7 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
   const [obscureBackground, setObscureBackground] = useState(false);
   const [hideNavigationBar, setHideNavigationBar] = useState(false);
   const [autoCapitalize, setAutoCapitalize] = useState<AutoCapitalize>(
-    'sentences',
+    'sentences'
   );
 
   useLayoutEffect(() => {
@@ -135,7 +135,7 @@ interface SearchScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Search'>;
 }
 
-const SearchScreen = ({navigation}: SearchScreenProps) => {
+const SearchScreen = ({ navigation }: SearchScreenProps) => {
   const [search, setSearch] = useState('');
 
   const places = [
@@ -174,7 +174,7 @@ const SearchScreen = ({navigation}: SearchScreenProps) => {
       keyboardDismissMode="on-drag">
       {places
         .filter(
-          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1,
+          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1
         )
         .map((place) => (
           <ListItem

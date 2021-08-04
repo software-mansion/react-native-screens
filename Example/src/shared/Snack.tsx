@@ -1,19 +1,19 @@
-import React, {useEffect} from 'react';
-import {Text, StyleSheet, Dimensions, View, Pressable} from 'react-native';
-import {NavigatorScreenParams, ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import React, { useEffect } from 'react';
+import { Text, StyleSheet, Dimensions, View, Pressable } from 'react-native';
+import { NavigatorScreenParams, ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationProp } from 'react-native-screens/native-stack';
 
 const DISAPPEAR_AFTER = 2000; // ms
 
 interface Props {
   route: NavigatorScreenParams<{
-    params: {backgroundColor: string; message: string};
+    params: { backgroundColor: string; message: string };
   }>;
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-export const Snack = ({route, navigation}: Props): JSX.Element => {
-  const {backgroundColor, message} = route.params ?? {
+export const Snack = ({ route, navigation }: Props): JSX.Element => {
+  const { backgroundColor, message } = route.params ?? {
     backgroundColor: 'white',
     message: 'Hi!',
   };
@@ -27,7 +27,7 @@ export const Snack = ({route, navigation}: Props): JSX.Element => {
 
   return (
     <Pressable style={styles.container} onPress={() => navigation.goBack()}>
-      <View style={{...styles.alert, backgroundColor}}>
+      <View style={{ ...styles.alert, backgroundColor }}>
         <Text style={styles.text}>{message}</Text>
       </View>
     </Pressable>

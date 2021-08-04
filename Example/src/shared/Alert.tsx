@@ -1,6 +1,6 @@
 import React from 'react';
-import {Text, StyleSheet, Dimensions, View, Pressable} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { Text, StyleSheet, Dimensions, View, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export const Alert = (): JSX.Element => {
   const navigation = useNavigation();
@@ -15,7 +15,7 @@ export const Alert = (): JSX.Element => {
 
   return (
     <Pressable onPress={() => navigation.goBack()} style={styles.container}>
-      <View style={{...styles.alert, backgroundColor: bgColor}}>
+      <View style={{ ...styles.alert, backgroundColor: bgColor }}>
         <Text style={styles.text}>Oh, hi! 👋</Text>
       </View>
     </Pressable>
