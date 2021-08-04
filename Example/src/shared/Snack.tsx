@@ -1,11 +1,5 @@
 import React, {useEffect} from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  View,
-} from 'react-native';
+import {Text, StyleSheet, Dimensions, View, Pressable} from 'react-native';
 import {NavigatorScreenParams, ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from 'react-native-screens/native-stack';
 
@@ -32,13 +26,11 @@ export const Snack = ({route, navigation}: Props): JSX.Element => {
   }, []);
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => navigation.goBack()}>
+    <Pressable style={styles.container} onPress={() => navigation.goBack()}>
       <View style={{...styles.alert, backgroundColor}}>
         <Text style={styles.text}>{message}</Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

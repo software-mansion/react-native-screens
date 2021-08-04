@@ -207,9 +207,8 @@ const App = (): JSX.Element => (
       component={Snack}
       options={{
         stackPresentation: 'transparentModal',
-        headerShown: Platform.OS === 'android' ? false : undefined,
-        stackAnimation:
-          Platform.OS === 'android' ? 'slide_from_left' : 'default',
+        headerShown: false,
+        stackAnimation: 'slide_from_bottom',
       }}
     />
     <Stack.Screen
