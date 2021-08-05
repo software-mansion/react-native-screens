@@ -437,22 +437,10 @@ class StackView extends React.Component<Props> {
     const { screenProps } = this.props;
     return (
       <Screen
-        animationSpec={options.animationSpec}
         key={`screen_${route.key}`}
         enabled
         style={[StyleSheet.absoluteFill, options.cardStyle]}
-        stackAnimation={stackAnimation}
-        stackPresentation={stackPresentation}
-        replaceAnimation={
-          options.replaceAnimation === undefined
-            ? 'pop'
-            : options.replaceAnimation
-        }
-        pointerEvents={
-          index === this.props.navigation.state.routes.length - 1
-            ? 'auto'
-            : 'none'
-        }
+        animationSpec={options.animationSpec}
         gestureEnabled={
           Platform.OS === 'android'
             ? false
@@ -460,7 +448,19 @@ class StackView extends React.Component<Props> {
             ? true
             : options.gestureEnabled
         }
+        pointerEvents={
+          index === this.props.navigation.state.routes.length - 1
+            ? 'auto'
+            : 'none'
+        }
+        replaceAnimation={
+          options.replaceAnimation === undefined
+            ? 'pop'
+            : options.replaceAnimation
+        }
         screenOrientation={options.screenOrientation}
+        stackAnimation={stackAnimation}
+        stackPresentation={stackPresentation}
         statusBarAnimation={options.statusBarAnimation}
         statusBarColor={options.statusBarColor}
         statusBarHidden={options.statusBarHidden}

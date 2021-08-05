@@ -16,6 +16,7 @@ export type StackPresentationTypes =
   | 'fullScreenModal'
   | 'formSheet';
 export type StackAnimationTypes =
+  | 'custom'
   | 'default'
   | 'fade'
   | 'fade_from_bottom'
@@ -24,8 +25,7 @@ export type StackAnimationTypes =
   | 'simple_push'
   | 'slide_from_bottom'
   | 'slide_from_right'
-  | 'slide_from_left'
-  | 'custom';
+  | 'slide_from_left';
 export type BlurEffectTypes =
   | 'extraLight'
   | 'light'

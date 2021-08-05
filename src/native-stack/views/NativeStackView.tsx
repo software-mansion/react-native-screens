@@ -155,6 +155,7 @@ export default function NativeStackView({
             key={route.key}
             enabled
             style={StyleSheet.absoluteFill}
+            animationSpec={animationSpec}
             gestureEnabled={isAndroid ? false : gestureEnabled}
             replaceAnimation={replaceAnimation}
             screenOrientation={screenOrientation}
@@ -165,7 +166,6 @@ export default function NativeStackView({
             statusBarHidden={statusBarHidden}
             statusBarStyle={statusBarStyle}
             statusBarTranslucent={statusBarTranslucent}
-            animationSpec={animationSpec}
             onWillAppear={() => {
               navigation.emit({
                 type: 'transitionStart',
