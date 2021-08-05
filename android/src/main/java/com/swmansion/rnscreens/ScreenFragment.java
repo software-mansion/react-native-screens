@@ -33,7 +33,8 @@ public class ScreenFragment extends Fragment {
 
   public ScreenFragment() {
     throw new IllegalStateException(
-        "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.");
+      "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
+    );
   }
 
   @SuppressLint("ValidFragment")
@@ -69,11 +70,15 @@ public class ScreenFragment extends Fragment {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    LayoutInflater inflater,
+    @Nullable ViewGroup container,
+    @Nullable Bundle savedInstanceState
+  ) {
     FrameLayout wrapper = new FrameLayout(getContext());
-    FrameLayout.LayoutParams params =
-        new FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    );
     mScreenView.setLayoutParams(params);
     wrapper.addView(recycleView(mScreenView));
     return wrapper;
@@ -177,10 +182,9 @@ public class ScreenFragment extends Fragment {
       default:
         throw new IllegalStateException("Tried to dispatch unknown event: " + event.toString());
     }
-    ((ReactContext) screen.getContext())
-        .getNativeModule(UIManagerModule.class)
-        .getEventDispatcher()
-        .dispatchEvent(lifecycleEvent);
+    ((ReactContext) screen.getContext()).getNativeModule(UIManagerModule.class)
+      .getEventDispatcher()
+      .dispatchEvent(lifecycleEvent);
 
     fragment.dispatchEventInChildContainers(event);
   }
@@ -189,9 +193,11 @@ public class ScreenFragment extends Fragment {
     for (ScreenContainer sc : mChildScreenContainers) {
       if (sc.getScreenCount() > 0) {
         Screen topScreen = sc.getTopScreen();
-        if (topScreen != null
-            && topScreen.getFragment() != null
-            && (topScreen.getStackAnimation() != Screen.StackAnimation.NONE || isRemoving())) {
+        if (
+          topScreen != null &&
+          topScreen.getFragment() != null &&
+          (topScreen.getStackAnimation() != Screen.StackAnimation.NONE || isRemoving())
+        ) {
           // we do not dispatch events in child when it has `none` animation
           // and we are going forward since then they will be dispatched in child via
           // `onCreateAnimation` of ScreenStackFragment
@@ -221,12 +227,13 @@ public class ScreenFragment extends Fragment {
       // practical way to fix this is delaying dispatching the appear events at the end of the
       // frame.
       UiThreadUtil.runOnUiThread(
-          new Runnable() {
-            @Override
-            public void run() {
-              dispatchOnWillAppear();
-            }
-          });
+        new Runnable() {
+          @Override
+          public void run() {
+            dispatchOnWillAppear();
+          }
+        }
+      );
     } else {
       dispatchOnWillDisappear();
     }
@@ -239,12 +246,13 @@ public class ScreenFragment extends Fragment {
     if (isResumed()) {
       // See the comment in onViewAnimationStart for why this event is delayed.
       UiThreadUtil.runOnUiThread(
-          new Runnable() {
-            @Override
-            public void run() {
-              dispatchOnAppear();
-            }
-          });
+        new Runnable() {
+          @Override
+          public void run() {
+            dispatchOnAppear();
+          }
+        }
+      );
     } else {
       dispatchOnDisappear();
     }
@@ -256,10 +264,9 @@ public class ScreenFragment extends Fragment {
     ScreenContainer container = mScreenView.getContainer();
     if (container == null || !container.hasScreen(this)) {
       // we only send dismissed even when the screen has been removed from its container
-      ((ReactContext) mScreenView.getContext())
-          .getNativeModule(UIManagerModule.class)
-          .getEventDispatcher()
-          .dispatchEvent(new ScreenDismissedEvent(mScreenView.getId()));
+      ((ReactContext) mScreenView.getContext()).getNativeModule(UIManagerModule.class)
+        .getEventDispatcher()
+        .dispatchEvent(new ScreenDismissedEvent(mScreenView.getId()));
     }
     mChildScreenContainers.clear();
   }

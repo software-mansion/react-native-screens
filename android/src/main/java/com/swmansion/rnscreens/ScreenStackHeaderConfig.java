@@ -47,24 +47,23 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
   private final int mDefaultStartInset;
   private final int mDefaultStartInsetWithNavigation;
-  private final OnClickListener mBackClickListener =
-      new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          ScreenStackFragment fragment = getScreenFragment();
-          if (fragment != null) {
-            ScreenStack stack = getScreenStack();
-            if (stack != null && stack.getRootScreen() == fragment.getScreen()) {
-              Fragment parentFragment = fragment.getParentFragment();
-              if (parentFragment instanceof ScreenStackFragment) {
-                ((ScreenStackFragment) parentFragment).dismiss();
-              }
-            } else {
-              fragment.dismiss();
-            }
+  private final OnClickListener mBackClickListener = new OnClickListener() {
+    @Override
+    public void onClick(View view) {
+      ScreenStackFragment fragment = getScreenFragment();
+      if (fragment != null) {
+        ScreenStack stack = getScreenStack();
+        if (stack != null && stack.getRootScreen() == fragment.getScreen()) {
+          Fragment parentFragment = fragment.getParentFragment();
+          if (parentFragment instanceof ScreenStackFragment) {
+            ((ScreenStackFragment) parentFragment).dismiss();
           }
+        } else {
+          fragment.dismiss();
         }
-      };
+      }
+    }
+  };
 
   public ScreenStackHeaderConfig(Context context) {
     super(context);
@@ -211,7 +210,8 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     // hide back button
     actionBar.setDisplayHomeAsUpEnabled(
-        getScreenFragment().canNavigateBack() && !mIsBackButtonHidden);
+      getScreenFragment().canNavigateBack() && !mIsBackButtonHidden
+    );
 
     // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
     // navigation click listener. The default behavior set in the wrapper is to call into
@@ -238,9 +238,13 @@ public class ScreenStackHeaderConfig extends ViewGroup {
     }
     if (titleTextView != null) {
       if (mTitleFontFamily != null || mTitleFontWeight > 0) {
-        Typeface titleTypeface =
-            ReactTypefaceUtils.applyStyles(
-                null, 0, mTitleFontWeight, mTitleFontFamily, getContext().getAssets());
+        Typeface titleTypeface = ReactTypefaceUtils.applyStyles(
+          null,
+          0,
+          mTitleFontWeight,
+          mTitleFontFamily,
+          getContext().getAssets()
+        );
         titleTextView.setTypeface(titleTypeface);
       }
       if (mTitleFontSize > 0) {
@@ -277,14 +281,17 @@ public class ScreenStackHeaderConfig extends ViewGroup {
         View firstChild = view.getChildAt(0);
         if (!(firstChild instanceof ImageView)) {
           throw new JSApplicationIllegalArgumentException(
-              "Back button header config view should have Image as first child");
+            "Back button header config view should have Image as first child"
+          );
         }
         actionBar.setHomeAsUpIndicator(((ImageView) firstChild).getDrawable());
         continue;
       }
 
-      Toolbar.LayoutParams params =
-          new Toolbar.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+      Toolbar.LayoutParams params = new Toolbar.LayoutParams(
+        LayoutParams.WRAP_CONTENT,
+        LayoutParams.MATCH_PARENT
+      );
 
       switch (type) {
         case LEFT:
@@ -421,10 +428,9 @@ public class ScreenStackHeaderConfig extends ViewGroup {
 
     @Override
     public boolean showOverflowMenu() {
-      ((ReactApplication) getContext().getApplicationContext())
-          .getReactNativeHost()
-          .getReactInstanceManager()
-          .showDevOptionsDialog();
+      ((ReactApplication) getContext().getApplicationContext()).getReactNativeHost()
+        .getReactInstanceManager()
+        .showDevOptionsDialog();
       return true;
     }
   }

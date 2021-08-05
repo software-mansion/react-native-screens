@@ -27,7 +27,8 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   public void addView(ScreenStackHeaderConfig parent, View child, int index) {
     if (!(child instanceof ScreenStackHeaderSubview)) {
       throw new JSApplicationCausedNativeException(
-          "Config children should be of type " + ScreenStackHeaderSubviewManager.REACT_CLASS);
+        "Config children should be of type " + ScreenStackHeaderSubviewManager.REACT_CLASS
+      );
     }
     parent.addConfigSubview((ScreenStackHeaderSubview) child, index);
   }
@@ -130,7 +131,9 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
 
   @ReactProp(name = "backButtonInCustomView")
   public void setBackButtonInCustomView(
-      ScreenStackHeaderConfig config, boolean backButtonInCustomView) {
+    ScreenStackHeaderConfig config,
+    boolean backButtonInCustomView
+  ) {
     config.setBackButtonInCustomView(backButtonInCustomView);
   }
 
@@ -138,7 +141,6 @@ public class ScreenStackHeaderConfigViewManager extends ViewGroupManager<ScreenS
   public void setDirection(ScreenStackHeaderConfig config, String direction) {
     config.setDirection(direction);
   }
-
   //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
   //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
   //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)

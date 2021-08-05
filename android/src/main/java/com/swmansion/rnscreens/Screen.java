@@ -19,22 +19,26 @@ import com.facebook.react.uimanager.UIManagerModule;
 
 public class Screen extends ViewGroup {
 
-  private static final OnAttachStateChangeListener sShowSoftKeyboardOnAttach =
-      new OnAttachStateChangeListener() {
+  private static final OnAttachStateChangeListener sShowSoftKeyboardOnAttach = new OnAttachStateChangeListener() {
+    @Override
+    public void onViewAttachedToWindow(View view) {
+      InputMethodManager inputMethodManager = (InputMethodManager) view
+        .getContext()
+        .getSystemService(Context.INPUT_METHOD_SERVICE);
+      inputMethodManager.showSoftInput(view, 0);
+      view.removeOnAttachStateChangeListener(sShowSoftKeyboardOnAttach);
+    }
 
-        @Override
-        public void onViewAttachedToWindow(View view) {
-          InputMethodManager inputMethodManager =
-              (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-          inputMethodManager.showSoftInput(view, 0);
-          view.removeOnAttachStateChangeListener(sShowSoftKeyboardOnAttach);
-        }
+    @Override
+    public void onViewDetachedFromWindow(View view) {}
+  };
 
-        @Override
-        public void onViewDetachedFromWindow(View view) {}
-      };
-  private @Nullable ScreenFragment mFragment;
-  private @Nullable ScreenContainer mContainer;
+  @Nullable
+  private ScreenFragment mFragment;
+
+  @Nullable
+  private ScreenContainer mContainer;
+
   private ActivityState mActivityState;
   private boolean mTransitioning;
   private StackPresentation mStackPresentation = StackPresentation.PUSH;
@@ -98,14 +102,15 @@ public class Screen extends ViewGroup {
       final int height = b - t;
       final ReactContext reactContext = (ReactContext) getContext();
       reactContext.runOnNativeModulesQueueThread(
-          new GuardedRunnable(reactContext) {
-            @Override
-            public void runGuarded() {
-              reactContext
-                  .getNativeModule(UIManagerModule.class)
-                  .updateNodeSize(getId(), width, height);
-            }
-          });
+        new GuardedRunnable(reactContext) {
+          @Override
+          public void runGuarded() {
+            reactContext
+              .getNativeModule(UIManagerModule.class)
+              .updateNodeSize(getId(), width, height);
+          }
+        }
+      );
     }
   }
 
@@ -155,8 +160,9 @@ public class Screen extends ViewGroup {
       return;
     }
     super.setLayerType(
-        transitioning && !isWebViewInScreen ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE,
-        null);
+      transitioning && !isWebViewInScreen ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE,
+      null
+    );
   }
 
   private boolean hasWebView(ViewGroup viewGroup) {
@@ -296,7 +302,10 @@ public class Screen extends ViewGroup {
     mStatusBarStyle = statusBarStyle;
     if (getFragment() != null) {
       ScreenWindowTraits.setStyle(
-          this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+        this,
+        getFragment().tryGetActivity(),
+        getFragment().tryGetContext()
+      );
     }
   }
 
@@ -323,7 +332,10 @@ public class Screen extends ViewGroup {
     mStatusBarTranslucent = statusBarTranslucent;
     if (getFragment() != null) {
       ScreenWindowTraits.setTranslucent(
-          this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+        this,
+        getFragment().tryGetActivity(),
+        getFragment().tryGetContext()
+      );
     }
   }
 
@@ -343,7 +355,10 @@ public class Screen extends ViewGroup {
     mStatusBarColor = statusBarColor;
     if (getFragment() != null) {
       ScreenWindowTraits.setColor(
-          this, getFragment().tryGetActivity(), getFragment().tryGetContext());
+        this,
+        getFragment().tryGetActivity(),
+        getFragment().tryGetContext()
+      );
     }
   }
 
@@ -358,7 +373,7 @@ public class Screen extends ViewGroup {
   public enum StackPresentation {
     PUSH,
     MODAL,
-    TRANSPARENT_MODAL
+    TRANSPARENT_MODAL,
   }
 
   public enum StackAnimation {
@@ -373,13 +388,13 @@ public class Screen extends ViewGroup {
 
   public enum ReplaceAnimation {
     PUSH,
-    POP
+    POP,
   }
 
   public enum ActivityState {
     INACTIVE,
     TRANSITIONING_OR_BELOW_TOP,
-    ON_TOP
+    ON_TOP,
   }
 
   public enum WindowTraits {
@@ -388,6 +403,6 @@ public class Screen extends ViewGroup {
     STYLE,
     TRANSLUCENT,
     HIDDEN,
-    ANIMATED
+    ANIMATED,
   }
 }

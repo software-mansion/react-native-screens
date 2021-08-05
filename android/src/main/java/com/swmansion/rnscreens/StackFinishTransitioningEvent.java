@@ -5,6 +5,7 @@ import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 public class StackFinishTransitioningEvent extends Event<ScreenAppearEvent> {
+
   public static final String EVENT_NAME = "topFinishTransitioning";
 
   public StackFinishTransitioningEvent(int viewId) {

@@ -22,31 +22,38 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
   protected final ArrayList<T> mScreenFragments = new ArrayList<>();
 
-  protected @Nullable FragmentManager mFragmentManager;
-  private @Nullable FragmentTransaction mCurrentTransaction;
-  private @Nullable FragmentTransaction mProcessingTransaction;
+  @Nullable
+  protected FragmentManager mFragmentManager;
+
+  @Nullable
+  private FragmentTransaction mCurrentTransaction;
+
+  @Nullable
+  private FragmentTransaction mProcessingTransaction;
+
   private boolean mNeedUpdate;
   private boolean mIsAttached;
-  private final ChoreographerCompat.FrameCallback mFrameCallback =
-      new ChoreographerCompat.FrameCallback() {
-        @Override
-        public void doFrame(long frameTimeNanos) {
-          updateIfNeeded();
-        }
-      };
+  private final ChoreographerCompat.FrameCallback mFrameCallback = new ChoreographerCompat.FrameCallback() {
+    @Override
+    public void doFrame(long frameTimeNanos) {
+      updateIfNeeded();
+    }
+  };
   private boolean mLayoutEnqueued = false;
-  private final ChoreographerCompat.FrameCallback mLayoutCallback =
-      new ChoreographerCompat.FrameCallback() {
-        @Override
-        public void doFrame(long frameTimeNanos) {
-          mLayoutEnqueued = false;
-          measure(
-              MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-              MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-          layout(getLeft(), getTop(), getRight(), getBottom());
-        }
-      };
-  private @Nullable ScreenFragment mParentScreenFragment = null;
+  private final ChoreographerCompat.FrameCallback mLayoutCallback = new ChoreographerCompat.FrameCallback() {
+    @Override
+    public void doFrame(long frameTimeNanos) {
+      mLayoutEnqueued = false;
+      measure(
+        MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+        MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY)
+      );
+      layout(getLeft(), getTop(), getRight(), getBottom());
+    }
+  };
+
+  @Nullable
+  private ScreenFragment mParentScreenFragment = null;
 
   public ScreenContainer(Context context) {
     super(context);
@@ -75,8 +82,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     // detect that in removeView as super.removeView causes the input view to un focus while keeping
     // the keyboard open).
     if (view == getFocusedChild()) {
-      ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
-          .hideSoftInputFromWindow(getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+      (
+        (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE)
+      ).hideSoftInputFromWindow(getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
     super.removeView(view);
   }
@@ -89,9 +97,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       mLayoutEnqueued = true;
       // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
       // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-      ReactChoreographer.getInstance()
-          .postFrameCallback(
-              ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mLayoutCallback);
+      ReactChoreographer
+        .getInstance()
+        .postFrameCallback(ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mLayoutCallback);
     }
   }
 
@@ -104,9 +112,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       mNeedUpdate = true;
       // enqueue callback of NATIVE_ANIMATED_MODULE type as all view operations are executed in
       // DISPATCH_UI type and we want the callback to be called right after in the same frame.
-      ReactChoreographer.getInstance()
-          .postFrameCallback(
-              ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mFrameCallback);
+      ReactChoreographer
+        .getInstance()
+        .postFrameCallback(ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mFrameCallback);
     }
   }
 
@@ -165,8 +173,9 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
   private void setupFragmentManager() {
     ViewParent parent = this;
     // We traverse view hierarchy up until we find screen parent or a root view
-    while (!(parent instanceof ReactRootView || parent instanceof Screen)
-        && parent.getParent() != null) {
+    while (
+      !(parent instanceof ReactRootView || parent instanceof Screen) && parent.getParent() != null
+    ) {
       parent = parent.getParent();
     }
     // If parent is of type Screen it means we are inside a nested fragment structure.
@@ -195,7 +204,8 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     }
     if (!(context instanceof FragmentActivity)) {
       throw new IllegalStateException(
-          "In order to use RNScreens components your app's activity need to extend ReactFragmentActivity or ReactCompatActivity");
+        "In order to use RNScreens components your app's activity need to extend ReactFragmentActivity or ReactCompatActivity"
+      );
     }
     setFragmentManager(((FragmentActivity) context).getSupportFragmentManager());
   }
@@ -213,18 +223,19 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
       final FragmentTransaction transaction = mCurrentTransaction;
       mProcessingTransaction = transaction;
       mProcessingTransaction.runOnCommit(
-          new Runnable() {
-            @Override
-            public void run() {
-              if (mProcessingTransaction == transaction) {
-                // we need to take into account that commit is initiated with some other transaction
-                // while the previous one is still processing. In this case mProcessingTransaction
-                // gets overwritten and we don't want to set it to null until the second transaction
-                // is finished.
-                mProcessingTransaction = null;
-              }
+        new Runnable() {
+          @Override
+          public void run() {
+            if (mProcessingTransaction == transaction) {
+              // we need to take into account that commit is initiated with some other transaction
+              // while the previous one is still processing. In this case mProcessingTransaction
+              // gets overwritten and we don't want to set it to null until the second transaction
+              // is finished.
+              mProcessingTransaction = null;
             }
-          });
+          }
+        }
+      );
       mCurrentTransaction.commitAllowingStateLoss();
       mCurrentTransaction = null;
     }
@@ -266,8 +277,10 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     boolean hasFragments = false;
 
     for (Fragment fragment : mFragmentManager.getFragments()) {
-      if (fragment instanceof ScreenFragment
-          && ((ScreenFragment) fragment).mScreenView.getContainer() == this) {
+      if (
+        fragment instanceof ScreenFragment &&
+        ((ScreenFragment) fragment).mScreenView.getContainer() == this
+      ) {
         transaction.remove(fragment);
         hasFragments = true;
       }
@@ -349,8 +362,10 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
     // detach screens that are no longer active
     Set<Fragment> orphaned = new HashSet<>(mFragmentManager.getFragments());
     for (ScreenFragment screenFragment : mScreenFragments) {
-      if (getActivityState(screenFragment) == Screen.ActivityState.INACTIVE
-          && screenFragment.isAdded()) {
+      if (
+        getActivityState(screenFragment) == Screen.ActivityState.INACTIVE &&
+        screenFragment.isAdded()
+      ) {
         detachScreen(screenFragment);
       }
       orphaned.remove(screenFragment);
