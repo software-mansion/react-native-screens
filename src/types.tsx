@@ -64,41 +64,33 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
-type AlphaAnimation = {
-  fromAlpha: number;
-  toAlpha: number;
-};
-
-type ScaleAnimation = {
-  fromX: number;
-  toX: number;
-  fromY: number;
-  toY: number;
-};
-
-type RotateAnimation = {
-  fromDegrees: number;
-  toDegrees: number;
-};
-
-type TranslateAnimation = {
-  fromXDelta: number;
-  toXDelta: number;
-  fromYDelta: number;
-  toYDelta: number;
-};
+type AnimationInterpolators = 'easeIn' | 'easeOut' | 'easeInOut' | 'linear';
 
 type AnimationOptions = {
-  alpha?: AlphaAnimation;
-  scale?: ScaleAnimation;
-  rotate?: RotateAnimation;
-  translate?: TranslateAnimation;
+  alpha?: number;
+  duration?: number;
+  interpolator?: AnimationInterpolators;
+  pivot?: {
+    x: number;
+    y: number;
+  };
+  rotate?: {
+    degrees: number;
+  };
+  scale?: {
+    x: number;
+    y: number;
+  };
+  translate?: {
+    x: number;
+    y: number;
+  };
 };
 
 export type AnimationSpec = {
-  // TODO: interpolators, duration, all options for each transition, string values with %
-  entering: AnimationOptions;
-  exiting: AnimationOptions;
+  // TODO: duration and interpolator per animation
+  entering?: AnimationOptions;
+  exiting?: AnimationOptions;
 };
 
 export interface ScreenProps extends ViewProps {

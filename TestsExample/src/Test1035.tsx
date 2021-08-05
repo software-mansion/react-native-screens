@@ -5,6 +5,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
+import { SafeAreaProvider, useSafeAreaFrame } from 'react-native-safe-area-context';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -12,62 +13,64 @@ type Props = {
 
 const Stack = createNativeStackNavigator();
 
-export default function App(): JSX.Element {
+export default function Wrapper(): JSX.Element {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} options={{
-          stackAnimation: 'custom',
-          animationSpec: {
-            entering: {
-              alpha: {
-                fromAlpha: 0.0,
-                toAlpha: 1.0,
+    <SafeAreaProvider>
+      <App />
+    </SafeAreaProvider>
+  )
+}
+
+function App(): JSX.Element {
+  return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="First" component={First} options={{stackAnimation: 'custom'}}/>
+          <Stack.Screen name="Second" component={Second} options={{
+            stackAnimation: 'custom',
+            animationSpec: {
+              entering: {
+                alpha: 0,
+                translate: {
+                  x: -200,
+                  y: -200,
+                },
+                rotate: {
+                  degrees: 50,
+                },
+                scale: {
+                  x: 0.5,
+                  y: 0.5
+                },
+                interpolator: 'easeInOut',
+                pivot: {
+                  x: useSafeAreaFrame().width / 2,
+                  y: useSafeAreaFrame().height / 2,
+                }
               },
-              translate: {
-                fromXDelta: -200,
-                toXDelta: 0,
-                fromYDelta: -200,
-                toYDelta: 0,
-              },
-              rotate: {
-                fromDegrees: 50,
-                toDegrees: 0,
-              },
-              scale: {
-                fromX: 0.5,
-                toX: 1.0,
-                fromY: 0.5,
-                toY: 1.0,
-              }
-            },
-            exiting: {
-              alpha: {
-                fromAlpha: 1.0,
-                toAlpha: 0.0,
-              },
-              translate: {
-                fromXDelta: 0,
-                toXDelta: -200,
-                fromYDelta: 0,
-                toYDelta: -200,
-              },
-              rotate: {
-                fromDegrees: 0,
-                toDegrees: 50,
-              },
-              scale: {
-                fromX: 1.0,
-                toX: 0.5,
-                fromY: 1.0,
-                toY: 0.5,
+              exiting: {
+                alpha: 0,
+                translate: {
+                  x: -200,
+                  y: -200,
+                },
+                rotate: {
+                  degrees: 50,
+                },
+                scale: {
+                  x: 0.5,
+                  y: 0.5
+                },
+                interpolator: 'linear',
+                pivot: {
+                  x: useSafeAreaFrame().width / 2,
+                  y: useSafeAreaFrame().height / 2,
+                }
               }
             }
-          }
-        }}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+          }}/>
+        </Stack.Navigator>
+      </NavigationContainer>
   );
 }
 

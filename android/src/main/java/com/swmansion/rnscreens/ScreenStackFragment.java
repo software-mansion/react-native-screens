@@ -220,13 +220,24 @@ public class ScreenStackFragment extends ScreenFragment {
     }
 
     private void addCustomAnimations(AnimationSet animationSet, boolean entering) {
-      long duration = animationSet.getDuration();
       AnimationSet customAnimations;
       if (entering) {
         customAnimations = mFragment.getScreen().getCustomEnteringAnimations();
       } else {
         customAnimations = mFragment.getScreen().getCustomExitingAnimations();
       }
+
+      if (customAnimations == null) {
+        AnimationSet defaultSet = new AnimationSet(true);
+        defaultSet.setDuration(400); // medium animation duration
+        customAnimations = defaultSet;
+      }
+
+      long duration = customAnimations.getDuration();
+
+      animationSet.setDuration(duration);
+      animationSet.setInterpolator(customAnimations.getInterpolator());
+
       for (Animation animation : customAnimations.getAnimations()) {
         animation.setDuration(duration);
         animationSet.addAnimation(animation);
@@ -253,11 +264,7 @@ public class ScreenStackFragment extends ScreenFragment {
         AnimationSet set = new AnimationSet(true);
         set.addAnimation(animation);
         if (mFragment.getScreen().getStackAnimation() == Screen.StackAnimation.CUSTOM) {
-          if (mFragment.isRemoving()) {
-            addCustomAnimations(set, false);
-          } else {
-            addCustomAnimations(set, true);
-          }
+          addCustomAnimations(set, !mFragment.isRemoving());
         }
         set.setAnimationListener(mAnimationListener);
         super.startAnimation(set);

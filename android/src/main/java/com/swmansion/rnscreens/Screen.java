@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
+import android.view.animation.PathInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 import com.facebook.react.bridge.GuardedRunnable;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 
 public class Screen extends ViewGroup {
@@ -367,52 +369,109 @@ public class Screen extends ViewGroup {
     ReadableMap enteringSpec = animationSpec.getMap("entering");
     ReadableMap exitingSpec = animationSpec.getMap("exiting");
 
+    AnimationSet emptySet = null;
     if (enteringSpec == null || exitingSpec == null) {
-      throw new IllegalArgumentException(
-          "Both `exiting` and `entering` animations have to be provided for custom animations");
+      emptySet = new AnimationSet(true);
+      emptySet.setDuration(400); // medium animation duration
     }
-    mCustomEnteringAnimations = addAnimationsFromSpec(enteringSpec);
-    mCustomExitingAnimations = addAnimationsFromSpec(exitingSpec);
+
+    mCustomEnteringAnimations =
+        enteringSpec == null ? emptySet : addAnimationsFromSpec(enteringSpec, true);
+    mCustomExitingAnimations =
+        exitingSpec == null ? emptySet : addAnimationsFromSpec(exitingSpec, false);
   }
 
-  private AnimationSet addAnimationsFromSpec(ReadableMap animationSpec) {
+  private AnimationSet addAnimationsFromSpec(ReadableMap animationSpec, boolean entering) {
     AnimationSet animationSet = new AnimationSet(true);
-    ReadableMap alphaSpec = animationSpec.getMap("alpha");
-    if (alphaSpec != null) {
-      float fromAlpha = (float) alphaSpec.getDouble("fromAlpha");
-      float toAlpha = (float) alphaSpec.getDouble("toAlpha");
-      AlphaAnimation alphaAnimation = new AlphaAnimation(fromAlpha, toAlpha);
+
+    if (animationSpec.hasKey("alpha")) {
+      float alpha = (float) animationSpec.getDouble("alpha");
+      AlphaAnimation alphaAnimation;
+      if (entering) {
+        alphaAnimation = new AlphaAnimation(alpha, 1f);
+      } else {
+        alphaAnimation = new AlphaAnimation(1f, alpha);
+      }
       animationSet.addAnimation(alphaAnimation);
     }
-    ReadableMap scaleSpec = animationSpec.getMap("scale");
-    if (scaleSpec != null) {
-      // TODO: cover all options
-      float fromX = (float) scaleSpec.getDouble("fromX");
-      float toX = (float) scaleSpec.getDouble("toX");
-      float fromY = (float) scaleSpec.getDouble("fromY");
-      float toY = (float) scaleSpec.getDouble("toY");
-      ScaleAnimation scaleAnimation = new ScaleAnimation(fromX, toX, fromY, toY);
-      animationSet.addAnimation(scaleAnimation);
+
+    if (animationSpec.hasKey("duration")) {
+      int duration = animationSpec.getInt("duration");
+      animationSet.setDuration(duration);
+    } else {
+      animationSet.setDuration(400); // medium time value
     }
-    ReadableMap rotateSpec = animationSpec.getMap("rotate");
-    if (rotateSpec != null) {
-      // TODO: cover all options
-      float fromDegrees = (float) rotateSpec.getDouble("fromDegrees");
-      float toDegrees = (float) rotateSpec.getDouble("toDegrees");
-      RotateAnimation rotateAnimation = new RotateAnimation(fromDegrees, toDegrees);
-      animationSet.addAnimation(rotateAnimation);
+
+    if (animationSpec.hasKey("interpolator")) {
+      String interpolator = animationSpec.getString("interpolator");
+      // Values taken from
+      // https://stackoverflow.com/a/19081554/13006595
+      if ("easeIn".equals(interpolator)) {
+        animationSet.setInterpolator(new PathInterpolator(0.42f, 0.0f, 1.0f, 1.0f));
+      } else if ("easeOut".equals(interpolator)) {
+        animationSet.setInterpolator(new PathInterpolator(0.0f, 0.0f, 0.58f, 1.0f));
+      } else if ("easeInOut".equals(interpolator)) {
+        animationSet.setInterpolator(new PathInterpolator(0.42f, 0.0f, 0.58f, 1.0f));
+      } else if ("linear".equals(interpolator)) {
+        animationSet.setInterpolator(new PathInterpolator(0.0f, 0.0f, 1.0f, 1.0f));
+      }
     }
-    ReadableMap translateSpec = animationSpec.getMap("translate");
-    if (translateSpec != null) {
-      // TODO: cover all options
-      float fromXDelta = (float) translateSpec.getDouble("fromXDelta");
-      float toXDelta = (float) translateSpec.getDouble("toXDelta");
-      float fromYDelta = (float) translateSpec.getDouble("fromYDelta");
-      float toYDelta = (float) translateSpec.getDouble("toYDelta");
-      TranslateAnimation translateAnimation =
-          new TranslateAnimation(fromXDelta, toXDelta, fromYDelta, toYDelta);
-      animationSet.addAnimation(translateAnimation);
+
+    float pivotX = 0f;
+    float pivotY = 0f;
+
+    if (animationSpec.hasKey("pivot")) {
+      ReadableMap pivotSpec = animationSpec.getMap("pivot");
+      if (pivotSpec != null) {
+        pivotX = PixelUtil.toPixelFromDIP(pivotSpec.getDouble("x"));
+        pivotY = PixelUtil.toPixelFromDIP(pivotSpec.getDouble("y"));
+      }
     }
+
+    if (animationSpec.hasKey("rotate")) {
+      ReadableMap rotateSpec = animationSpec.getMap("rotate");
+      if (rotateSpec != null) {
+        float degrees = (float) rotateSpec.getDouble("degrees");
+        RotateAnimation rotateAnimation;
+        if (entering) {
+          rotateAnimation = new RotateAnimation(degrees, 0f, pivotX, pivotY);
+        } else {
+          rotateAnimation = new RotateAnimation(0f, degrees, pivotX, pivotY);
+        }
+        animationSet.addAnimation(rotateAnimation);
+      }
+    }
+
+    if (animationSpec.hasKey("scale")) {
+      ReadableMap scaleSpec = animationSpec.getMap("scale");
+      if (scaleSpec != null) {
+        float x = (float) scaleSpec.getDouble("x");
+        float y = (float) scaleSpec.getDouble("y");
+        ScaleAnimation scaleAnimation;
+        if (entering) {
+          scaleAnimation = new ScaleAnimation(x, 1f, y, 1f, pivotX, pivotY);
+        } else {
+          scaleAnimation = new ScaleAnimation(1f, x, 1f, y, pivotX, pivotY);
+        }
+        animationSet.addAnimation(scaleAnimation);
+      }
+    }
+
+    if (animationSpec.hasKey("translate")) {
+      ReadableMap translateSpec = animationSpec.getMap("translate");
+      if (translateSpec != null) {
+        float x = (float) translateSpec.getDouble("x");
+        float y = (float) translateSpec.getDouble("y");
+        TranslateAnimation translateAnimation;
+        if (entering) {
+          translateAnimation = new TranslateAnimation(x, 0, y, 0);
+        } else {
+          translateAnimation = new TranslateAnimation(0, x, 0, y);
+        }
+        animationSet.addAnimation(translateAnimation);
+      }
+    }
+
     return animationSet;
   }
 

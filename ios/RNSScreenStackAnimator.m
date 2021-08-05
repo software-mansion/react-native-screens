@@ -260,68 +260,122 @@
   RNSScreenView *toView = ((RNSScreenView *)toViewController.view);
   RNSScreenView *fromView = ((RNSScreenView *)fromViewController.view);
 
-  NSDictionary *toViewAnimationSpec = toView.animationSpecification;
-  NSDictionary *fromViewAnimationSpec = fromView.animationSpecification;
+  NSDictionary *toViewAnimationSpec = toView.animationSpecification[@"entering"];
+  NSDictionary *fromViewAnimationSpec = fromView.animationSpecification[@"exiting"];
 
-  [self setAnimationsForView:toView withSpecification:toViewAnimationSpec[@"entering"] starting:YES];
-  [self setAnimationsForView:fromView withSpecification:fromViewAnimationSpec[@"exiting"] starting:YES];
+  CGPoint toViewAnchorPoint = toView.layer.anchorPoint;
+  CGPoint fromViewAnchorPoint = fromView.layer.anchorPoint;
+
+  [self setAnimationsForView:toView withSpecification:toViewAnimationSpec];
+
+  float duration = 0;
+  if (_operation == UINavigationControllerOperationPush) {
+    duration = [toViewAnimationSpec[@"duration"] intValue] / 1000.0f;
+  } else if (_operation == UINavigationControllerOperationPop) {
+    duration = [fromViewAnimationSpec[@"duration"] intValue] / 1000.0f;
+  }
+  if (duration <= 0) {
+    duration = _transitionDuration;
+  }
+
+  UIViewAnimationOptions curve = UIViewAnimationOptionCurveEaseInOut;
+  NSString *interpolator = toViewAnimationSpec[@"interpolator"];
+  if ([interpolator isEqualToString:@"easeIn"]) {
+    curve = UIViewAnimationOptionCurveEaseIn;
+  } else if ([interpolator isEqualToString:@"easeOut"]) {
+    curve = UIViewAnimationOptionCurveEaseOut;
+  } else if ([interpolator isEqualToString:@"easeInOut"]) {
+    curve = UIViewAnimationOptionCurveEaseInOut;
+  } else if ([interpolator isEqualToString:@"linear"]) {
+    curve = UIViewAnimationOptionCurveLinear;
+  }
+
   if (_operation == UINavigationControllerOperationPush) {
     [[transitionContext containerView] addSubview:toView];
   } else if (_operation == UINavigationControllerOperationPop) {
     [[transitionContext containerView] insertSubview:toView belowSubview:fromView];
   }
-  [UIView animateWithDuration:[self transitionDuration:transitionContext]
+  [UIView animateWithDuration:duration
+      delay:0.0
+      options:curve
       animations:^{
-        [self setAnimationsForView:toView withSpecification:toViewAnimationSpec[@"entering"] starting:NO];
-        [self setAnimationsForView:fromView withSpecification:fromViewAnimationSpec[@"exiting"] starting:NO];
+        toView.transform = CGAffineTransformIdentity;
+        toView.alpha = 1.0;
+        [self setAnimationsForView:fromView withSpecification:fromViewAnimationSpec];
       }
       completion:^(BOOL finished) {
+        // we might have changed the anchor points of these views
+        [self setAnchorPoint:toViewAnchorPoint inView:toView];
+        [self setAnchorPoint:fromViewAnchorPoint inView:fromView];
         [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
       }];
 }
 
-- (void)setAnimationsForView:(UIView *)view withSpecification:(NSDictionary *)specification starting:(BOOL)starting
+- (void)setAnimationsForView:(UIView *)view withSpecification:(NSDictionary *)specification
 {
-  CGAffineTransform trasforms = CGAffineTransformIdentity;
+  if (specification == nil) {
+    return;
+  }
+
+  CGAffineTransform trasform = CGAffineTransformIdentity;
+
   if (specification[@"alpha"] != nil) {
-    if (starting) {
-      view.alpha = [specification[@"alpha"][@"fromAlpha"] floatValue];
-    } else {
-      view.alpha = [specification[@"alpha"][@"toAlpha"] floatValue];
-    }
+    view.alpha = [specification[@"alpha"] floatValue];
   }
-  if (specification[@"scale"] != nil) {
-    if (starting) {
-      float fromX = [specification[@"scale"][@"fromX"] floatValue];
-      float fromY = [specification[@"scale"][@"fromY"] floatValue];
-      trasforms = CGAffineTransformScale(trasforms, fromX, fromY);
-    } else {
-      float toX = [specification[@"scale"][@"toX"] floatValue];
-      float toY = [specification[@"scale"][@"toY"] floatValue];
-      trasforms = CGAffineTransformScale(trasforms, toX, toY);
-    }
+
+  float pivotX = 0;
+  float pivotY = 0;
+  NSDictionary *pivot = specification[@"pivot"];
+  if (pivot != nil) {
+    // on iOS the pivot is in range [0,1] so we scale it
+    pivotX = [pivot[@"x"] floatValue] / view.frame.size.width;
+    pivotY = [pivot[@"y"] floatValue] / view.frame.size.height;
   }
-  if (specification[@"rotate"] != nil) {
-    if (starting) {
-      float fromDegrees = [specification[@"rotate"][@"fromDegrees"] floatValue] * M_PI / 180;
-      trasforms = CGAffineTransformRotate(trasforms, fromDegrees);
-    } else {
-      float toDegrees = [specification[@"rotate"][@"toDegrees"] floatValue] * M_PI / 180;
-      trasforms = CGAffineTransformRotate(trasforms, toDegrees);
-    }
+
+  NSDictionary *rotate = specification[@"rotate"];
+  if (rotate != nil) {
+    float degrees = [rotate[@"degrees"] floatValue] * M_PI / 180;
+    trasform = CGAffineTransformRotate(trasform, degrees);
   }
-  if (specification[@"translate"] != nil) {
-    if (starting) {
-      float fromXDelta = [specification[@"translate"][@"fromXDelta"] floatValue];
-      float fromYDelta = [specification[@"translate"][@"fromYDelta"] floatValue];
-      trasforms = CGAffineTransformTranslate(trasforms, fromXDelta, fromYDelta);
-    } else {
-      float toXDelta = [specification[@"translate"][@"toXDelta"] floatValue];
-      float toYDelta = [specification[@"translate"][@"toYDelta"] floatValue];
-      trasforms = CGAffineTransformTranslate(trasforms, toXDelta, toYDelta);
-    }
+
+  NSDictionary *scale = specification[@"scale"];
+  if (scale != nil) {
+    float x = [scale[@"x"] floatValue];
+    float y = [scale[@"y"] floatValue];
+    trasform = CGAffineTransformScale(trasform, x, y);
   }
-  view.transform = trasforms;
+
+  NSDictionary *translate = specification[@"translate"];
+  if (translate != nil) {
+    float x = [translate[@"x"] floatValue];
+    float y = [translate[@"y"] floatValue];
+    trasform = CGAffineTransformTranslate(trasform, x, y);
+  }
+
+  [self setAnchorPoint:CGPointMake(pivotX, pivotY) inView:view];
+  view.transform = trasform;
+}
+
+// method taken from
+// https://www.hackingwithswift.com/example-code/calayer/how-to-change-a-views-anchor-point-without-moving-it
+- (void)setAnchorPoint:(CGPoint)point inView:(UIView *)view
+{
+  CGPoint newPoint = CGPointMake(view.bounds.size.width * point.x, view.bounds.size.height * point.y);
+  CGPoint oldPoint = CGPointMake(
+      view.bounds.size.width * view.layer.anchorPoint.x, view.bounds.size.height * view.layer.anchorPoint.y);
+
+  newPoint = CGPointApplyAffineTransform(newPoint, view.transform);
+  oldPoint = CGPointApplyAffineTransform(oldPoint, view.transform);
+  CGPoint position = view.layer.position;
+
+  position.x -= oldPoint.x;
+  position.x += newPoint.x;
+
+  position.y -= oldPoint.y;
+  position.y += newPoint.y;
+
+  view.layer.position = position;
+  view.layer.anchorPoint = point;
 }
 
 @end
