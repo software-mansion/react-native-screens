@@ -57,6 +57,10 @@ Default options to use for the screens in the navigator.
 
 The `options` prop can be used to configure individual screens inside the navigator. Supported options are:
 
+#### `animationSpec`
+
+Animation specification for defining custom screen transition animations. In order for it to be used, set `stackAnimation: 'custom'`.
+
 #### `backButtonInCustomView`
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
@@ -189,15 +193,16 @@ Defaults to `pop`.
 
 How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
 
+- `custom` - Resolves in no animation, should be used to provide custom animations with `animationSpec` prop.
 - `default` - uses a platform default animation
 - `fade` - fades screen in or out.
 - `fade_from_bottom` – performs a fade from bottom animation
 - `flip` – flips the screen, requires stackPresentation: `modal` (iOS only)
+- `none` - the screen appears/disappears without an animation.
 - `simple_push` – performs a default animation, but without shadow and native header transition (iOS only)
 - `slide_from_bottom` – performs a slide from bottom animation
 - `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-- `none` - the screen appears/disappears without an animation.
 
 Defaults to `default`.
 

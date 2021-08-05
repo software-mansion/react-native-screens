@@ -36,6 +36,10 @@ Screen stack component expects one or more `Screen` components as direct childre
 
 Below is the list of additional properties that can be used for `Screen` component:
 
+### `animationSpec`
+
+Animation specification for defining custom screen transition animations. In order for it to be used, set `stackAnimation: 'custom'`.
+
 ### `gestureEnabled` (iOS only)
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
@@ -85,15 +89,16 @@ Defaults to `default` on iOS.
 
 Allows for the customization of how the given screen should appear/disappear when pushed or popped at the top of the stack. The following values are currently supported:
 
-- `"default"` – uses a platform default animation
-- `"fade"` – fades screen in or out
+- `custom` - Resolves in no animation, should be used to provide custom animations with `animationSpec` prop.
+- `default` – uses a platform default animation
+- `fade` – fades screen in or out
 - `fade_from_bottom` – performs a fade from bottom animation
-- `"flip"` – flips the screen, requires `stackPresentation: "modal"` (iOS only)
-- `"simple_push"` – performs a default animation, but without shadow and native header transition (iOS only)
-- `"slide_from_bottom"` - slide in the new screen from bottom to top
-- `"slide_from_right"` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
-- `"slide_from_left"` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-- `"none"` – the screen appears/disappears without an animation
+- `flip` – flips the screen, requires `stackPresentation: "modal"` (iOS only)
+- `none` – the screen appears/disappears without an animation
+- `simple_push` – performs a default animation, but without shadow and native header transition (iOS only)
+- `slide_from_bottom` - slide in the new screen from bottom to top
+- `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
+- `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
 
 ### `stackPresentation`
 

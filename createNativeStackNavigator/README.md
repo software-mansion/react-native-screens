@@ -73,6 +73,10 @@ Legacy options (these props differ from the ones used in v5 `native-stack`, and 
 - `largeTitleHideShadow` - see `headerLargeTitleHideShadow`.
 - `translucent` - see `headerTranslucent`.
 
+#### `animationSpec`
+
+Animation specification for defining custom screen transition animations. In order for it to be used, set `stackAnimation: 'custom'`.
+
 #### `backButtonInCustomView`
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
@@ -198,15 +202,16 @@ Defaults to `pop`.
 
 How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
 
+- `custom` - Resolves in no animation, should be used to provide custom animations with `animationSpec` prop.
 - `default` - Uses a platform default animation.
 - `fade` - Fades screen in or out.
 - `fade_from_bottom` – performs a fade from bottom animation
 - `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only).
+- `none` - The screen appears/disappears without an animation.
 - `simple_push` – performs a default animation, but without shadow and native header transition (iOS only)
 - `slide_from_bottom` – performs a slide from bottom animation
 - `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-- `none` - The screen appears/disappears without an animation.
 
 Defaults to `default`.
 

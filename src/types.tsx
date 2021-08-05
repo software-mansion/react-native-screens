@@ -94,6 +94,9 @@ export type AnimationSpec = {
 };
 
 export interface ScreenProps extends ViewProps {
+  /**
+   * Animation specification for `custom` stackAnimation. Not providing values for each of options will resolve in using platform defaults.
+   */
   animationSpec?: AnimationSpec;
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
@@ -155,16 +158,16 @@ export interface ScreenProps extends ViewProps {
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
+   * - "custom" – resolves in no animation, should be used to provide custom animations with `animationSpec` prop.
    * - "default" – uses a platform default animation
    * - "fade" – fades screen in or out
    * - "fade_from_bottom" – performs a fade from bottom animation
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
+   * - "none" – the screen appears/dissapears without an animation
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-   * - "none" – the screen appears/dissapears without an animation
-   * - "custom" – resolves in no animation, should be used to provide custom animations with `animationSpec` prop.
    */
   stackAnimation?: StackAnimationTypes;
   /**
