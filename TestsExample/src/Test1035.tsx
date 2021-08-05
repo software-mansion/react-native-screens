@@ -25,12 +25,14 @@ function App(): JSX.Element {
   return (
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="First" component={First} options={{stackAnimation: 'custom'}}/>
+          <Stack.Screen name="First" component={First} options={{stackAnimation: 'custom', animationSpec:{exiting: {duration: 2000}}}}/>
           <Stack.Screen name="Second" component={Second} options={{
             stackAnimation: 'custom',
             animationSpec: {
               entering: {
-                alpha: 0,
+                alpha: {
+                  value: 0,
+                },
                 translate: {
                   x: -200,
                   y: -200,
@@ -40,16 +42,21 @@ function App(): JSX.Element {
                 },
                 scale: {
                   x: 0.5,
-                  y: 0.5
+                  y: 0.5,
+                  duration: 500,
+                  interpolator: 'linear',
                 },
-                interpolator: 'easeInOut',
+                interpolator: 'easeIn',
+                duration: 1000,
                 pivot: {
                   x: useSafeAreaFrame().width / 2,
                   y: useSafeAreaFrame().height / 2,
                 }
               },
               exiting: {
-                alpha: 0,
+                alpha: {
+                  value: 0,
+                },
                 translate: {
                   x: -200,
                   y: -200,

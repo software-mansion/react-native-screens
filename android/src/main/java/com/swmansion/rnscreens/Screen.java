@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.Interpolator;
 import android.view.animation.PathInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
@@ -382,104 +384,122 @@ public class Screen extends ViewGroup {
   }
 
   private AnimationSet addAnimationsFromSpec(ReadableMap animationSpec, boolean entering) {
-    AnimationSet animationSet = new AnimationSet(true);
+    AnimationSet animationSet = new AnimationSet(false);
 
-    if (animationSpec.hasKey("alpha")) {
-      float alpha = (float) animationSpec.getDouble("alpha");
+    int defaultDuration = 400;
+    if (animationSpec.hasKey("duration")) {
+      defaultDuration = animationSpec.getInt("duration");
+    }
+
+    Interpolator defaultInterpolator = new PathInterpolator(0.42f, 0.0f, 0.58f, 1.0f);
+    if (animationSpec.hasKey("interpolator")) {
+      defaultInterpolator = interpolatorForName(animationSpec.getString("interpolator"));
+    }
+
+    ReadableMap alphaSpec = animationSpec.getMap("alpha");
+    if (alphaSpec != null) {
+      float alpha = (float) alphaSpec.getDouble("value");
       AlphaAnimation alphaAnimation;
       if (entering) {
         alphaAnimation = new AlphaAnimation(alpha, 1f);
       } else {
         alphaAnimation = new AlphaAnimation(1f, alpha);
       }
+      setCommonOptions(alphaAnimation, defaultDuration, defaultInterpolator, alphaSpec);
       animationSet.addAnimation(alphaAnimation);
-    }
-
-    if (animationSpec.hasKey("duration")) {
-      int duration = animationSpec.getInt("duration");
-      animationSet.setDuration(duration);
-    } else {
-      animationSet.setDuration(400); // medium time value
-    }
-
-    if (animationSpec.hasKey("interpolator")) {
-      String interpolator = animationSpec.getString("interpolator");
-      // Values taken from
-      // https://stackoverflow.com/a/19081554/13006595
-      if ("easeIn".equals(interpolator)) {
-        animationSet.setInterpolator(new PathInterpolator(0.42f, 0.0f, 1.0f, 1.0f));
-      } else if ("easeOut".equals(interpolator)) {
-        animationSet.setInterpolator(new PathInterpolator(0.0f, 0.0f, 0.58f, 1.0f));
-      } else if ("easeInOut".equals(interpolator)) {
-        animationSet.setInterpolator(new PathInterpolator(0.42f, 0.0f, 0.58f, 1.0f));
-      } else if ("linear".equals(interpolator)) {
-        animationSet.setInterpolator(new PathInterpolator(0.0f, 0.0f, 1.0f, 1.0f));
-      }
     }
 
     float pivotX = 0f;
     float pivotY = 0f;
 
-    if (animationSpec.hasKey("pivot")) {
-      ReadableMap pivotSpec = animationSpec.getMap("pivot");
-      if (pivotSpec != null) {
-        pivotX = PixelUtil.toPixelFromDIP(pivotSpec.getDouble("x"));
-        pivotY = PixelUtil.toPixelFromDIP(pivotSpec.getDouble("y"));
-      }
+    ReadableMap pivotSpec = animationSpec.getMap("pivot");
+    if (pivotSpec != null) {
+      pivotX = PixelUtil.toPixelFromDIP(pivotSpec.getDouble("x"));
+      pivotY = PixelUtil.toPixelFromDIP(pivotSpec.getDouble("y"));
     }
 
-    if (animationSpec.hasKey("rotate")) {
-      ReadableMap rotateSpec = animationSpec.getMap("rotate");
-      if (rotateSpec != null) {
-        float degrees = (float) rotateSpec.getDouble("degrees");
-        RotateAnimation rotateAnimation;
-        if (entering) {
-          rotateAnimation = new RotateAnimation(degrees, 0f, pivotX, pivotY);
-        } else {
-          rotateAnimation = new RotateAnimation(0f, degrees, pivotX, pivotY);
-        }
-        animationSet.addAnimation(rotateAnimation);
+    ReadableMap rotateSpec = animationSpec.getMap("rotate");
+    if (rotateSpec != null) {
+      float degrees = (float) rotateSpec.getDouble("degrees");
+      RotateAnimation rotateAnimation;
+      if (entering) {
+        rotateAnimation = new RotateAnimation(degrees, 0f, pivotX, pivotY);
+      } else {
+        rotateAnimation = new RotateAnimation(0f, degrees, pivotX, pivotY);
       }
+      setCommonOptions(rotateAnimation, defaultDuration, defaultInterpolator, rotateSpec);
+      animationSet.addAnimation(rotateAnimation);
     }
 
-    if (animationSpec.hasKey("scale")) {
-      ReadableMap scaleSpec = animationSpec.getMap("scale");
-      if (scaleSpec != null) {
-        float x = (float) scaleSpec.getDouble("x");
-        float y = (float) scaleSpec.getDouble("y");
-        ScaleAnimation scaleAnimation;
-        if (entering) {
-          scaleAnimation = new ScaleAnimation(x, 1f, y, 1f, pivotX, pivotY);
-        } else {
-          scaleAnimation = new ScaleAnimation(1f, x, 1f, y, pivotX, pivotY);
-        }
-        animationSet.addAnimation(scaleAnimation);
+    ReadableMap scaleSpec = animationSpec.getMap("scale");
+    if (scaleSpec != null) {
+      float x = (float) scaleSpec.getDouble("x");
+      float y = (float) scaleSpec.getDouble("y");
+      ScaleAnimation scaleAnimation;
+      if (entering) {
+        scaleAnimation = new ScaleAnimation(x, 1f, y, 1f, pivotX, pivotY);
+      } else {
+        scaleAnimation = new ScaleAnimation(1f, x, 1f, y, pivotX, pivotY);
       }
+      setCommonOptions(scaleAnimation, defaultDuration, defaultInterpolator, scaleSpec);
+      animationSet.addAnimation(scaleAnimation);
     }
 
-    if (animationSpec.hasKey("translate")) {
-      ReadableMap translateSpec = animationSpec.getMap("translate");
-      if (translateSpec != null) {
-        float x = (float) translateSpec.getDouble("x");
-        float y = (float) translateSpec.getDouble("y");
-        TranslateAnimation translateAnimation;
-        if (entering) {
-          translateAnimation = new TranslateAnimation(x, 0, y, 0);
-        } else {
-          translateAnimation = new TranslateAnimation(0, x, 0, y);
-        }
-        animationSet.addAnimation(translateAnimation);
+    ReadableMap translateSpec = animationSpec.getMap("translate");
+    if (translateSpec != null) {
+      float x = (float) translateSpec.getDouble("x");
+      float y = (float) translateSpec.getDouble("y");
+      TranslateAnimation translateAnimation;
+      if (entering) {
+        translateAnimation = new TranslateAnimation(x, 0, y, 0);
+      } else {
+        translateAnimation = new TranslateAnimation(0, x, 0, y);
       }
+      setCommonOptions(translateAnimation, defaultDuration, defaultInterpolator, translateSpec);
+      animationSet.addAnimation(translateAnimation);
     }
 
     return animationSet;
   }
 
-  public AnimationSet getCustomEnteringAnimations() {
+  void setCommonOptions(
+      Animation animation,
+      int defaultDuration,
+      Interpolator defaultInterpolator,
+      ReadableMap animationSpec) {
+    if (animationSpec.hasKey("duration")) {
+      animation.setDuration(animationSpec.getInt("duration"));
+    } else {
+      animation.setDuration(defaultDuration);
+    }
+    if (animationSpec.hasKey("interpolator")) {
+      Interpolator interpolator = interpolatorForName(animationSpec.getString("interpolator"));
+      animation.setInterpolator(interpolator);
+    } else {
+      animation.setInterpolator(defaultInterpolator);
+    }
+  }
+
+  private static Interpolator interpolatorForName(String name) {
+    // Values taken from
+    // https://stackoverflow.com/a/19081554/13006595
+    if ("easeIn".equals(name)) {
+      return new PathInterpolator(0.42f, 0.0f, 1.0f, 1.0f);
+    } else if ("easeOut".equals(name)) {
+      return new PathInterpolator(0.0f, 0.0f, 0.58f, 1.0f);
+    } else if ("easeInOut".equals(name)) {
+      return new PathInterpolator(0.42f, 0.0f, 0.58f, 1.0f);
+    } else if ("linear".equals(name)) {
+      return new PathInterpolator(0.0f, 0.0f, 1.0f, 1.0f);
+    }
+    return new PathInterpolator(0.42f, 0.0f, 0.58f, 1.0f);
+  }
+
+  public @Nullable AnimationSet getCustomEnteringAnimations() {
     return mCustomEnteringAnimations;
   }
 
-  public AnimationSet getCustomExitingAnimations() {
+  public @Nullable AnimationSet getCustomExitingAnimations() {
     return mCustomExitingAnimations;
   }
 

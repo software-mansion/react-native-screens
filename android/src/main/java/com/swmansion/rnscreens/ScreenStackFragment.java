@@ -219,7 +219,7 @@ public class ScreenStackFragment extends ScreenFragment {
       mFragment = fragment;
     }
 
-    private void addCustomAnimations(AnimationSet animationSet, boolean entering) {
+    private @NonNull AnimationSet customAnimationSet(boolean entering) {
       AnimationSet customAnimations;
       if (entering) {
         customAnimations = mFragment.getScreen().getCustomEnteringAnimations();
@@ -227,21 +227,7 @@ public class ScreenStackFragment extends ScreenFragment {
         customAnimations = mFragment.getScreen().getCustomExitingAnimations();
       }
 
-      if (customAnimations == null) {
-        AnimationSet defaultSet = new AnimationSet(true);
-        defaultSet.setDuration(400); // medium animation duration
-        customAnimations = defaultSet;
-      }
-
-      long duration = customAnimations.getDuration();
-
-      animationSet.setDuration(duration);
-      animationSet.setInterpolator(customAnimations.getInterpolator());
-
-      for (Animation animation : customAnimations.getAnimations()) {
-        animation.setDuration(duration);
-        animationSet.addAnimation(animation);
-      }
+      return customAnimations != null ? customAnimations : new AnimationSet(true);
     }
 
     @Override
@@ -255,17 +241,17 @@ public class ScreenStackFragment extends ScreenFragment {
       // and also this is not necessary when going back since the lifecycle methods
       // are correctly dispatched then.
       if (animation instanceof AnimationSet && !mFragment.isRemoving()) {
-        if (mFragment.getScreen().getStackAnimation() == Screen.StackAnimation.CUSTOM) {
-          addCustomAnimations((AnimationSet) animation, false);
-        }
         animation.setAnimationListener(mAnimationListener);
         super.startAnimation(animation);
       } else {
-        AnimationSet set = new AnimationSet(true);
-        set.addAnimation(animation);
+        AnimationSet set;
         if (mFragment.getScreen().getStackAnimation() == Screen.StackAnimation.CUSTOM) {
-          addCustomAnimations(set, !mFragment.isRemoving());
+          set = customAnimationSet(!mFragment.isRemoving());
+          animation.setDuration(0); // we do not want to animate it
+        } else {
+          set = new AnimationSet(true);
         }
+        set.addAnimation(animation);
         set.setAnimationListener(mAnimationListener);
         super.startAnimation(set);
       }

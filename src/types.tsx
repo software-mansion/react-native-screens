@@ -66,25 +66,30 @@ export type HeaderSubviewTypes =
 
 type AnimationInterpolators = 'easeIn' | 'easeOut' | 'easeInOut' | 'linear';
 
-type AnimationOptions = {
-  alpha?: number;
+type CommonAnimationOptions = {
   duration?: number;
   interpolator?: AnimationInterpolators;
+};
+
+type AnimationOptions = CommonAnimationOptions & {
+  alpha?: {
+    value: number;
+  } & CommonAnimationOptions;
   pivot?: {
     x: number;
     y: number;
-  };
+  } & CommonAnimationOptions;
   rotate?: {
     degrees: number;
-  };
+  } & CommonAnimationOptions;
   scale?: {
     x: number;
     y: number;
-  };
+  } & CommonAnimationOptions;
   translate?: {
     x: number;
     y: number;
-  };
+  } & CommonAnimationOptions;
 };
 
 export type AnimationSpec = {
@@ -98,6 +103,7 @@ export interface ScreenProps extends ViewProps {
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   /**
    * Animation specification for `custom` stackAnimation. Not providing values for each of options will resolve in using platform defaults.
+   * Not specifying duration or interpolator for each of animations will resolve in using the top-level values.
    */
   animationSpec?: AnimationSpec;
   children?: React.ReactNode;
