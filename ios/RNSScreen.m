@@ -174,11 +174,6 @@
   _gestureEnabled = gestureEnabled;
 }
 
-- (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
-{
-  _replaceAnimation = replaceAnimation;
-}
-
 #if !TARGET_OS_TV
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
@@ -641,10 +636,7 @@ RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
-RCT_CUSTOM_VIEW_PROPERTY(animationSpec, NSDictionary, RNSScreenView)
-{
-  [view setAnimationSpecification:[RCTConvert animationSpec:json]];
-}
+RCT_EXPORT_VIEW_PROPERTY(animationSpec, NSDictionary);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
@@ -737,11 +729,5 @@ RCT_ENUM_CONVERTER(
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 #endif
-
-+ (NSDictionary *)animationSpec:(id)json
-{
-  json = [self NSDictionary:json];
-  return json;
-}
 
 @end

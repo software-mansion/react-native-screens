@@ -260,8 +260,8 @@
   RNSScreenView *toView = ((RNSScreenView *)toViewController.view);
   RNSScreenView *fromView = ((RNSScreenView *)fromViewController.view);
 
-  NSDictionary *toViewAnimationSpec = toView.animationSpecification[@"entering"];
-  NSDictionary *fromViewAnimationSpec = fromView.animationSpecification[@"exiting"];
+  NSDictionary *toViewAnimationSpec = toView.animationSpec[@"entering"];
+  NSDictionary *fromViewAnimationSpec = fromView.animationSpec[@"exiting"];
 
   CGPoint toViewAnchorPoint = toView.layer.anchorPoint;
   CGPoint fromViewAnchorPoint = fromView.layer.anchorPoint;
