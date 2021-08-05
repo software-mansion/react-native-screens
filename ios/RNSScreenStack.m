@@ -550,7 +550,7 @@
     return NO;
   }
 #if TARGET_OS_TV
-  [self cancelTouchHandlerIfExists];
+  [self cancelTouchesInParent];
   return YES;
 #else
   if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
