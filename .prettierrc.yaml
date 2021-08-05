@@ -1,0 +1,8 @@
+singleQuote: true
+jsxBracketSameLine: true
+
+overrides:
+  - files:
+      - "*.java"
+    options:
+      printWidth: 100
