@@ -94,12 +94,12 @@ export type AnimationSpec = {
 };
 
 export interface ScreenProps extends ViewProps {
+  active?: 0 | 1 | Animated.AnimatedInterpolation;
+  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   /**
    * Animation specification for `custom` stackAnimation. Not providing values for each of options will resolve in using platform defaults.
    */
   animationSpec?: AnimationSpec;
-  active?: 0 | 1 | Animated.AnimatedInterpolation;
-  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
   /**
    * All children screens should have the same value of their "enabled" prop as their container.
