@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  View,
-} from 'react-native';
+import {Text, StyleSheet, Dimensions, View, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
 export const Alert = (): JSX.Element => {
@@ -20,13 +14,11 @@ export const Alert = (): JSX.Element => {
   const bgColor = backgrounds[Math.floor(Math.random() * backgrounds.length)];
 
   return (
-    <TouchableOpacity
-      onPress={() => navigation.goBack()}
-      style={styles.container}>
+    <Pressable onPress={() => navigation.goBack()} style={styles.container}>
       <View style={{...styles.alert, backgroundColor: bgColor}}>
         <Text style={styles.text}>Oh, hi! 👋</Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

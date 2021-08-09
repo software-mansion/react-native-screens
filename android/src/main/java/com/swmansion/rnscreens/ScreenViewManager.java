@@ -63,10 +63,7 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
 
   @ReactProp(name = "stackAnimation")
   public void setStackAnimation(Screen view, String animation) {
-    if (animation == null
-        || "default".equals(animation)
-        || "slide_from_bottom".equals(animation)
-        || "simple_push".equals(animation)) {
+    if (animation == null || "default".equals(animation) || "simple_push".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.DEFAULT);
     } else if ("none".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.NONE);
@@ -76,6 +73,10 @@ public class ScreenViewManager extends ViewGroupManager<Screen> {
       view.setStackAnimation(Screen.StackAnimation.SLIDE_FROM_RIGHT);
     } else if ("slide_from_left".equals(animation)) {
       view.setStackAnimation(Screen.StackAnimation.SLIDE_FROM_LEFT);
+    } else if ("slide_from_bottom".equals(animation)) {
+      view.setStackAnimation(Screen.StackAnimation.SLIDE_FROM_BOTTOM);
+    } else if ("fade_from_bottom".equals(animation)) {
+      view.setStackAnimation(Screen.StackAnimation.FADE_FROM_BOTTOM);
     }
   }
 

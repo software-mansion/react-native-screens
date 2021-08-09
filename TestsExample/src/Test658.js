@@ -14,6 +14,7 @@ export default function App() {
           component={Screen}
           options={{
             stackPresentation: 'transparentModal',
+            stackAnimation: 'slide_from_bottom',
             headerMode: 'none',
             headerShown: false,
           }}

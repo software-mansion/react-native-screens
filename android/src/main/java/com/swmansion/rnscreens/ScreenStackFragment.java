@@ -22,7 +22,6 @@ import com.google.android.material.appbar.AppBarLayout;
 
 public class ScreenStackFragment extends ScreenFragment {
 
-  private static final float TOOLBAR_ELEVATION = PixelUtil.toPixelFromDIP(4);
   private AppBarLayout mAppBarLayout;
   private Toolbar mToolbar;
   private boolean mShadowHidden;
@@ -59,7 +58,7 @@ public class ScreenStackFragment extends ScreenFragment {
 
   public void setToolbarShadowHidden(boolean hidden) {
     if (mShadowHidden != hidden) {
-      mAppBarLayout.setTargetElevation(hidden ? 0 : TOOLBAR_ELEVATION);
+      mAppBarLayout.setTargetElevation(hidden ? 0 : PixelUtil.toPixelFromDIP(4));
       mShadowHidden = hidden;
     }
   }
@@ -98,32 +97,24 @@ public class ScreenStackFragment extends ScreenFragment {
     if (transit == 0
         && !isHidden()
         && getScreen().getStackAnimation() == Screen.StackAnimation.NONE) {
-      // If the container is nested then appear events will be dispatched by their parent screen so
-      // they must not be triggered here.
-      ScreenContainer container = getScreen().getContainer();
-      boolean isNested = container != null && container.isNested();
       if (enter) {
-        if (!isNested) {
-          // Android dispatches the animation start event for the fragment that is being added first
-          // however we want the one being dismissed first to match iOS. It also makes more sense
-          // from  a navigation point of view to have the disappear event first.
-          // Since there are no explicit relationships between the fragment being added / removed
-          // the practical way to fix this is delaying dispatching the appear events at the end of
-          // the frame.
-          UiThreadUtil.runOnUiThread(
-              new Runnable() {
-                @Override
-                public void run() {
-                  dispatchOnWillAppear();
-                  dispatchOnAppear();
-                }
-              });
-        }
+        // Android dispatches the animation start event for the fragment that is being added first
+        // however we want the one being dismissed first to match iOS. It also makes more sense
+        // from  a navigation point of view to have the disappear event first.
+        // Since there are no explicit relationships between the fragment being added / removed
+        // the practical way to fix this is delaying dispatching the appear events at the end of
+        // the frame.
+        UiThreadUtil.runOnUiThread(
+            new Runnable() {
+              @Override
+              public void run() {
+                dispatchOnWillAppear();
+                dispatchOnAppear();
+              }
+            });
       } else {
-        if (!isNested) {
-          dispatchOnWillDisappear();
-          dispatchOnDisappear();
-        }
+        dispatchOnWillDisappear();
+        dispatchOnDisappear();
         notifyViewAppearTransitionEnd();
       }
     }
@@ -231,11 +222,22 @@ public class ScreenStackFragment extends ScreenFragment {
     @Override
     public void startAnimation(Animation animation) {
       // For some reason View##onAnimationEnd doesn't get called for
-      // exit transitions so we use this hack.
-      AnimationSet set = new AnimationSet(true);
-      set.addAnimation(animation);
-      set.setAnimationListener(mAnimationListener);
-      super.startAnimation(set);
+      // exit transitions so we explicitly attach animation listener.
+      // We also have some animations that are an AnimationSet, so we don't wrap them
+      // in another set since it causes some visual glitches when going forward.
+      // We also set the listener only when going forward, since when going back,
+      // there is already a listener for dismiss action added, which would be overridden
+      // and also this is not necessary when going back since the lifecycle methods
+      // are correctly dispatched then.
+      if (animation instanceof AnimationSet && !mFragment.isRemoving()) {
+        animation.setAnimationListener(mAnimationListener);
+        super.startAnimation(animation);
+      } else {
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(animation);
+        set.setAnimationListener(mAnimationListener);
+        super.startAnimation(set);
+      }
     }
   }
 }

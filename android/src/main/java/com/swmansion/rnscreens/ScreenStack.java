@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -9,7 +10,9 @@ import androidx.fragment.app.FragmentTransaction;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
@@ -18,6 +21,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   private final ArrayList<ScreenStackFragment> mStack = new ArrayList<>();
   private final Set<ScreenStackFragment> mDismissed = new HashSet<>();
+  private final List<DrawingOp> drawingOpPool = new ArrayList<>();
+  private final List<DrawingOp> drawingOps = new ArrayList<>();
 
   private ScreenStackFragment mTopScreen = null;
   private final FragmentManager.OnBackStackChangedListener mBackStackListener =
@@ -32,6 +37,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           }
         }
       };
+
   private final FragmentManager.FragmentLifecycleCallbacks mLifecycleCallbacks =
       new FragmentManager.FragmentLifecycleCallbacks() {
         @Override
@@ -42,19 +48,28 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         }
       };
   private boolean mRemovalTransitionStarted = false;
+  private boolean isDetachingCurrentScreen = false;
+  private boolean reverseLastTwoChildren = false;
+  private int previousChildrenCount = 0;
 
   public ScreenStack(Context context) {
     super(context);
   }
 
-  private static boolean isCustomAnimation(Screen.StackAnimation stackAnimation) {
-    return stackAnimation == Screen.StackAnimation.SLIDE_FROM_RIGHT
-        || stackAnimation == Screen.StackAnimation.SLIDE_FROM_LEFT;
+  private static boolean isSystemAnimation(Screen.StackAnimation stackAnimation) {
+    return stackAnimation == Screen.StackAnimation.DEFAULT
+        || stackAnimation == Screen.StackAnimation.FADE
+        || stackAnimation == Screen.StackAnimation.NONE;
   }
 
   private static boolean isTransparent(ScreenStackFragment fragment) {
     return fragment.getScreen().getStackPresentation()
         == Screen.StackPresentation.TRANSPARENT_MODAL;
+  }
+
+  private static boolean needsDrawReordering(ScreenStackFragment fragment) {
+    return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM
+        || fragment.getScreen().getStackAnimation() == Screen.StackAnimation.FADE_FROM_BOTTOM;
   }
 
   public void dismiss(ScreenStackFragment screenFragment) {
@@ -160,20 +175,18 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
     ScreenStackFragment visibleBottom =
         null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+    isDetachingCurrentScreen = false; // we reset it so the previous value is not used by mistake
 
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
       ScreenStackFragment screen = mScreenFragments.get(i);
       if (!mDismissed.contains(screen)) {
         if (newTop == null) {
           newTop = screen;
-          if (!isTransparent(newTop)) {
-            break;
-          }
         } else {
           visibleBottom = screen;
-          if (!isTransparent(screen)) {
-            break;
-          }
+        }
+        if (!isTransparent(screen)) {
+          break;
         }
       }
     }
@@ -227,10 +240,18 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             getOrCreateTransaction()
                 .setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
             break;
+          case SLIDE_FROM_BOTTOM:
+            getOrCreateTransaction()
+                .setCustomAnimations(
+                    R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium);
+            break;
+          case FADE_FROM_BOTTOM:
+            getOrCreateTransaction()
+                .setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350);
+            break;
         }
       } else {
         transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE;
-
         switch (stackAnimation) {
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction()
@@ -239,6 +260,15 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           case SLIDE_FROM_LEFT:
             getOrCreateTransaction()
                 .setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+            break;
+          case SLIDE_FROM_BOTTOM:
+            getOrCreateTransaction()
+                .setCustomAnimations(
+                    R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom);
+            break;
+          case FADE_FROM_BOTTOM:
+            getOrCreateTransaction()
+                .setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom);
             break;
         }
       }
@@ -251,10 +281,24 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
       transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE;
     }
 
-    if (stackAnimation != null && !isCustomAnimation(stackAnimation)) {
+    if (stackAnimation != null && isSystemAnimation(stackAnimation)) {
       getOrCreateTransaction().setTransition(transition);
     }
     // animation logic end
+
+    if (shouldUseOpenAnimation
+        && newTop != null
+        && needsDrawReordering(newTop)
+        && visibleBottom == null) {
+      // When using an open animation in which two screens overlap (eg. fade_from_bottom or
+      // slide_from_bottom), we want to draw the previous screen under the new one,
+      // which is apparently not the default option. Android always draws the disappearing view
+      // on top of the appearing one. We then reverse the order of the views so the new screen
+      // appears on top of the previous one. You can read more about in the comment
+      // for the code we use to change that behavior:
+      // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
+      isDetachingCurrentScreen = true;
+    }
 
     // remove all screens previously on stack
     for (ScreenStackFragment screen : mStack) {
@@ -264,14 +308,14 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
 
     for (ScreenStackFragment screen : mScreenFragments) {
-      // detach all screens that should not be visible
-      if (screen != newTop && screen != visibleBottom && !mDismissed.contains(screen)) {
-        getOrCreateTransaction().remove(screen);
-      }
       // Stop detaching screens when reaching visible bottom. All screens above bottom should be
       // visible.
       if (screen == visibleBottom) {
         break;
+      }
+      // detach all screens that should not be visible
+      if (screen != newTop && !mDismissed.contains(screen)) {
+        getOrCreateTransaction().remove(screen);
       }
     }
 
@@ -287,7 +331,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
             beneathVisibleBottom = false;
           } else continue;
         }
-        // when founding first visible screen, make all screens after that visible
+        // when first visible screen found, make all screens after that visible
         getOrCreateTransaction()
             .add(getId(), screen)
             .runOnCommit(
@@ -331,11 +375,11 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
    * in `mBackStackListener`.
    *
    * <p>We pop that "fake" transaction each time we update stack and we add a new one in case the
-   * top screen is allowed to be dismised using hw back button. This way in the listener we can tell
-   * if back button was pressed based on the count of the items on back stack. We expect 0 items in
-   * case hw back is pressed becakse we try to keep the number of items at 1 by always resetting and
-   * adding new items. In case we don't add a new item to back stack we remove listener so that it
-   * does not get triggered.
+   * top screen is allowed to be dismissed using hw back button. This way in the listener we can
+   * tell if back button was pressed based on the count of the items on back stack. We expect 0
+   * items in case hw back is pressed because we try to keep the number of items at 1 by always
+   * resetting and adding new items. In case we don't add a new item to back stack we remove
+   * listener so that it does not get triggered.
    *
    * <p>It is important that we don't install back handler when stack contains a single screen as in
    * that case we want the parent navigator or activity handler to take over.
@@ -357,6 +401,7 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         break;
       }
     }
+
     if (topScreen != firstScreen && topScreen.isDismissable()) {
       mFragmentManager
           .beginTransaction()
@@ -365,6 +410,88 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
           .setPrimaryNavigationFragment(topScreen)
           .commitAllowingStateLoss();
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
+    }
+  }
+
+  // below methods are taken from
+  // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L43
+  // and are used to swap the order of drawing views when navigating forward with the transitions
+  // that are making transitioning fragments appear one on another. See more info in the comment to
+  // the linked class.
+  @Override
+  public void removeView(final View view) {
+    // we set this property to reverse the order of drawing views
+    // when we want to push new fragment on top of the previous one and their animations collide.
+    // More information in:
+    // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L17
+    if (isDetachingCurrentScreen) {
+      isDetachingCurrentScreen = false;
+      reverseLastTwoChildren = true;
+    }
+
+    super.removeView(view);
+  }
+
+  private void drawAndRelease() {
+    for (int i = 0; i < drawingOps.size(); i++) {
+      DrawingOp op = drawingOps.get(i);
+      op.draw();
+      drawingOpPool.add(op);
+    }
+    drawingOps.clear();
+  }
+
+  @Override
+  protected void dispatchDraw(Canvas canvas) {
+    super.dispatchDraw(canvas);
+
+    // check the view removal is completed (by comparing the previous children count)
+    if (drawingOps.size() < previousChildrenCount) {
+      reverseLastTwoChildren = false;
+    }
+    previousChildrenCount = drawingOps.size();
+
+    if (reverseLastTwoChildren && drawingOps.size() >= 2) {
+      Collections.swap(drawingOps, drawingOps.size() - 1, drawingOps.size() - 2);
+    }
+
+    drawAndRelease();
+  }
+
+  @Override
+  protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+    drawingOps.add(obtainDrawingOp().set(canvas, child, drawingTime));
+    return true;
+  }
+
+  private void performDraw(DrawingOp op) {
+    super.drawChild(op.canvas, op.child, op.drawingTime);
+  }
+
+  private DrawingOp obtainDrawingOp() {
+    if (drawingOpPool.isEmpty()) {
+      return new DrawingOp();
+    }
+    return drawingOpPool.remove(drawingOpPool.size() - 1);
+  }
+
+  private final class DrawingOp {
+    private Canvas canvas;
+    private View child;
+    private long drawingTime;
+
+    DrawingOp set(Canvas canvas, View child, long drawingTime) {
+      this.canvas = canvas;
+      this.child = child;
+      this.drawingTime = drawingTime;
+      return this;
+    }
+
+    void draw() {
+      performDraw(this);
+      canvas = null;
+      child = null;
+      drawingTime = 0;
     }
   }
 }

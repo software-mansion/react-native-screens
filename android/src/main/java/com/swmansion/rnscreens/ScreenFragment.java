@@ -14,10 +14,18 @@ import androidx.fragment.app.Fragment;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.UIManagerModule;
+import com.facebook.react.uimanager.events.Event;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScreenFragment extends Fragment {
+
+  public enum ScreenLifecycleEvent {
+    Appear,
+    WillAppear,
+    Disappear,
+    WillDisappear,
+  }
 
   protected Screen mScreenView;
   private final List<ScreenContainer> mChildScreenContainers = new ArrayList<>();
@@ -135,57 +143,60 @@ public class ScreenFragment extends Fragment {
   }
 
   protected void dispatchOnWillAppear() {
-    ((ReactContext) mScreenView.getContext())
-        .getNativeModule(UIManagerModule.class)
-        .getEventDispatcher()
-        .dispatchEvent(new ScreenWillAppearEvent(mScreenView.getId()));
-
-    for (ScreenContainer sc : mChildScreenContainers) {
-      if (sc.getScreenCount() > 0) {
-        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
-        topScreen.getFragment().dispatchOnWillAppear();
-      }
-    }
+    dispatchEvent(ScreenLifecycleEvent.WillAppear, this);
   }
 
   protected void dispatchOnAppear() {
-    ((ReactContext) mScreenView.getContext())
-        .getNativeModule(UIManagerModule.class)
-        .getEventDispatcher()
-        .dispatchEvent(new ScreenAppearEvent(mScreenView.getId()));
-
-    for (ScreenContainer sc : mChildScreenContainers) {
-      if (sc.getScreenCount() > 0) {
-        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
-        topScreen.getFragment().dispatchOnAppear();
-      }
-    }
+    dispatchEvent(ScreenLifecycleEvent.Appear, this);
   }
 
   protected void dispatchOnWillDisappear() {
-    ((ReactContext) mScreenView.getContext())
-        .getNativeModule(UIManagerModule.class)
-        .getEventDispatcher()
-        .dispatchEvent(new ScreenWillDisappearEvent(mScreenView.getId()));
-
-    for (ScreenContainer sc : mChildScreenContainers) {
-      if (sc.getScreenCount() > 0) {
-        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
-        topScreen.getFragment().dispatchOnWillDisappear();
-      }
-    }
+    dispatchEvent(ScreenLifecycleEvent.WillDisappear, this);
   }
 
   protected void dispatchOnDisappear() {
-    ((ReactContext) mScreenView.getContext())
+    dispatchEvent(ScreenLifecycleEvent.Disappear, this);
+  }
+
+  private void dispatchEvent(ScreenLifecycleEvent event, ScreenFragment fragment) {
+    Screen screen = fragment.getScreen();
+    Event lifecycleEvent;
+    switch (event) {
+      case WillAppear:
+        lifecycleEvent = new ScreenWillAppearEvent(screen.getId());
+        break;
+      case Appear:
+        lifecycleEvent = new ScreenAppearEvent(screen.getId());
+        break;
+      case WillDisappear:
+        lifecycleEvent = new ScreenWillDisappearEvent(screen.getId());
+        break;
+      case Disappear:
+        lifecycleEvent = new ScreenDisappearEvent(screen.getId());
+        break;
+      default:
+        throw new IllegalStateException("Tried to dispatch unknown event: " + event.toString());
+    }
+    ((ReactContext) screen.getContext())
         .getNativeModule(UIManagerModule.class)
         .getEventDispatcher()
-        .dispatchEvent(new ScreenDisappearEvent(mScreenView.getId()));
+        .dispatchEvent(lifecycleEvent);
 
+    fragment.dispatchEventInChildContainers(event);
+  }
+
+  private void dispatchEventInChildContainers(ScreenLifecycleEvent event) {
     for (ScreenContainer sc : mChildScreenContainers) {
       if (sc.getScreenCount() > 0) {
-        Screen topScreen = sc.getScreenAt(sc.getScreenCount() - 1);
-        topScreen.getFragment().dispatchOnDisappear();
+        Screen topScreen = sc.getTopScreen();
+        if (topScreen != null
+            && topScreen.getFragment() != null
+            && (topScreen.getStackAnimation() != Screen.StackAnimation.NONE || isRemoving())) {
+          // we do not dispatch events in child when it has `none` animation
+          // and we are going forward since then they will be dispatched in child via
+          // `onCreateAnimation` of ScreenStackFragment
+          dispatchEvent(event, topScreen.getFragment());
+        }
       }
     }
   }

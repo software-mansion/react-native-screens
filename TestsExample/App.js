@@ -21,6 +21,7 @@ import Test648 from './src/Test648';
 import Test649 from './src/Test649';
 import Test654 from './src/Test654';
 import Test658 from './src/Test658';
+import Test662 from './src/Test662';
 import Test691 from './src/Test691';
 import Test702 from './src/Test702';
 import Test706 from './src/Test706';
@@ -47,6 +48,8 @@ import Test865 from './src/Test865';
 import Test881 from './src/Test881';
 import Test898 from './src/Test898';
 import Test913 from './src/Test913';
+import Test999 from './src/Test999';
+import Test1032 from './src/Test1032';
 
 export default function App() {
   return <Test42 />;

@@ -1,8 +1,10 @@
 # Native Stack Navigator
 
+> **_NOTE:_**  This README is dedicated for using `native-stack` with React Navigation **v5**. For using `native-stack` in React Navigation **v6** please refer to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator).
+
 Provides a way for your app to transition between screens where each new screen is placed on top of a stack.
 
-By default the stack navigator is configured to have the familiar iOS and Android look & feel: new screens slide in from the right on iOS, fade in from the bottom on Android. On iOS, the stack navigator can also be configured to a modal style where screens slide in from the bottom.
+By default the stack navigator is configured to have the familiar iOS and Android look & feel: new screens slide in from the right on iOS, fade in and scale from center on Android. On iOS, the stack navigator can also be configured to a modal style where screens slide in from the bottom.
 
 This navigator uses native navigation primitives (`UINavigationController` on iOS and `Fragment` on Android) for navigation under the hood. The main difference from React Navigation's JS-based [stack navigator](https://reactnavigation.org/docs/stack-navigator.html) is that the JS-based navigator re-implements animations and gestures while the native stack navigator relies on the platform primitives for animations and gestures. You should use this navigator if you want native feeling and performance for navigation and don't need much customization, as the customization options of this navigator are limited.
 
@@ -204,14 +206,15 @@ Defaults to `pop`.
 
 How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
 
-- `default` - Uses a platform default animation.
-- `fade` - Fades screen in or out.
-- `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only)
+- `default` - uses a platform default animation
+- `fade` - fades screen in or out.
+- `fade_from_bottom` – performs a fade from bottom animation
+- `flip` – flips the screen, requires stackPresentation: `modal` (iOS only)
 - `simple_push` – performs a default animation, but without shadow and native header transition (iOS only)
-- `slide_from_bottom` – performs a slide from bottom animation (iOS only)
+- `slide_from_bottom` – performs a slide from bottom animation
 - `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-- `none` - The screen appears/disappears without an animation.
+- `none` - the screen appears/disappears without an animation.
 
 Defaults to `default`.
 
