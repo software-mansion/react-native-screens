@@ -383,7 +383,7 @@ public class Screen extends ViewGroup {
         exitingSpec == null ? emptySet : addAnimationsFromSpec(exitingSpec, false);
   }
 
-  private AnimationSet addAnimationsFromSpec(ReadableMap animationSpec, boolean entering) {
+  private static AnimationSet addAnimationsFromSpec(ReadableMap animationSpec, boolean entering) {
     AnimationSet animationSet = new AnimationSet(false);
 
     int defaultDuration = 400;
@@ -462,7 +462,7 @@ public class Screen extends ViewGroup {
     return animationSet;
   }
 
-  void setCommonOptions(
+  private static void setCommonOptions(
       Animation animation,
       int defaultDuration,
       Interpolator defaultInterpolator,
