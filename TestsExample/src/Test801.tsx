@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{stackPresentation: 'push', preventSwipeDismiss: true, onSwipeCancelled: () => console.warn('swipe cancelled')}}>
+      <Stack.Navigator screenOptions={{stackPresentation: 'push', preventNativeDismiss: true}}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen
           name="Second"
@@ -62,6 +62,9 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<ParamListBa
   );
 
   return (
-    <Button title="Tap me to go back" onPress={() => navigation.goBack()} />
+    <>
+      <Button title="Tap me to go back" onPress={() => navigation.goBack()} />
+      <Button title="Push more second screens" onPress={() => navigation.push('Second')} />
+    </>
   );
 }

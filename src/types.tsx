@@ -107,11 +107,15 @@ export interface ScreenProps extends ViewProps {
    */
   onHeaderBackButtonClicked?: () => void;
   /**
-   * A callback that gets called when you set `cancelSwipe` to `true` and try to swipe back the screen or dismiss modal with gesture on iOS.
+   * A callback that gets called when you set `preventNativeDismiss` to `true` and dismiss a screen natively.
+   * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
+   * It calls `navigation.pop` of all dismissed screens by default.
    *
    * @platform ios
    */
-  onSwipeCancelled?: () => void;
+  onNativeDismissCancelled?: (
+    e: NativeSyntheticEvent<{ dismissCount: number }>
+  ) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
@@ -121,11 +125,12 @@ export interface ScreenProps extends ViewProps {
    */
   onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * Boolean indicating whether you are able to dimiss the screen or modal using swipe gesture. If you set it to `true`, the `onSwipeCancelled` event is called when trying to dismiss the screen.
+   * Boolean indicating whether you are able to dimiss the screen or modal natively by swiping it or tapping default native header back button.
+   * If you set it to `true`, the natively dismissed screen is pushed back and `onNativeDismissCancelled` event is called.
    *
    * @platform ios
    */
-  preventSwipeDismiss?: boolean;
+  preventNativeDismiss?: boolean;
   ref?: React.Ref<View>;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.

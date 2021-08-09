@@ -32,7 +32,6 @@
     _gestureEnabled = YES;
     _replaceAnimation = RNSScreenReplaceAnimationPop;
     _dismissed = NO;
-    _preventSwipeDismiss = NO;
     _hasStatusBarStyleSet = NO;
     _hasStatusBarAnimationSet = NO;
     _hasStatusBarHiddenSet = NO;
@@ -174,11 +173,6 @@
   _gestureEnabled = gestureEnabled;
 }
 
-- (void)setPreventSwipeDismiss:(BOOL)preventSwipeDismiss
-{
-  _preventSwipeDismiss = preventSwipeDismiss;
-}
-
 - (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
 {
   _replaceAnimation = replaceAnimation;
@@ -282,6 +276,13 @@
   }
 }
 
+- (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
+{
+  if (self.onNativeDismissCancelled) {
+    self.onNativeDismissCancelled(@{@"dismissCount" : @(dismissCount)});
+  }
+}
+
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
@@ -339,10 +340,8 @@
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
-  if (_preventSwipeDismiss) {
-    if (self.onSwipeCancelled) {
-      self.onSwipeCancelled(nil);
-    }
+  if (_preventNativeDismiss) {
+    [self notifyDismissCancelledWithDismissCount:1];
     return NO;
   }
   return YES;
@@ -601,8 +600,15 @@
   [super viewDidDisappear:animated];
 
   if (self.parentViewController == nil && self.presentingViewController == nil) {
-    // screen dismissed, send event
-    [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
+    if (((RNSScreenView *)self.view).preventNativeDismiss) {
+      // if we want to prevent the native dismiss, we do not send dismissal event,
+      // but instead call `updateContainer`, which restores the JS navigation stack
+      [((RNSScreenView *)self.view).reactSuperview updateContainer];
+      [((RNSScreenView *)self.view) notifyDismissCancelledWithDismissCount:_dismissCount];
+    } else {
+      // screen dismissed, send event
+      [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
+    }
   }
 
   // same flow as in viewDidAppear
@@ -647,14 +653,14 @@ RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
-RCT_EXPORT_VIEW_PROPERTY(preventSwipeDismiss, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
 
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onSwipeCancelled, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)

@@ -128,8 +128,8 @@ export default function NativeStackView({
           enableNativeBackButtonDismissal = false,
           gestureEnabled,
           headerShown,
-          onSwipeCancelled,
-          preventSwipeDismiss = false,
+          onNativeDismissCancelled,
+          preventNativeDismiss = false,
           replaceAnimation = 'pop',
           screenOrientation,
           stackAnimation,
@@ -159,7 +159,7 @@ export default function NativeStackView({
             style={StyleSheet.absoluteFill}
             gestureEnabled={isAndroid ? false : gestureEnabled}
             enableNativeBackButtonDismissal={enableNativeBackButtonDismissal}
-            preventSwipeDismiss={preventSwipeDismiss}
+            preventNativeDismiss={preventNativeDismiss}
             replaceAnimation={replaceAnimation}
             screenOrientation={screenOrientation}
             stackAnimation={stackAnimation}
@@ -170,8 +170,21 @@ export default function NativeStackView({
                 target: key,
               });
             }}
-            onSwipeCancelled={() => {
-              onSwipeCancelled?.();
+            onNativeDismissCancelled={(e) => {
+              if (onNativeDismissCancelled === undefined) {
+                const dismissCount =
+                  e.nativeEvent.dismissCount > 0
+                    ? e.nativeEvent.dismissCount
+                    : 1;
+
+                navigation.dispatch({
+                  ...StackActions.pop(dismissCount),
+                  source: route.key,
+                  target: key,
+                });
+              } else {
+                onNativeDismissCancelled(e);
+              }
             }}
             stackPresentation={stackPresentation}
             statusBarAnimation={statusBarAnimation}

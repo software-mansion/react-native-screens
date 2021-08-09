@@ -3,6 +3,7 @@
 @protocol RNSScreenContainerDelegate
 
 - (void)markChildUpdated;
+- (void)updateContainer;
 
 @end
 

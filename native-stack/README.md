@@ -80,6 +80,8 @@ Boolean indicating whether to show the menu on longPress of iOS >= 14 back butto
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
 Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft`.
 
+For `iOS` option, see `preventNativeDismiss`.
+
 Defaults to `false`.
 
 #### `gestureEnabled`
@@ -185,13 +187,19 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
-#### `onSwipeCancelled` (iOS only)
+#### `onNativeDismissCancelled` (iOS only)
 
-A callback that gets called when you set `cancelSwipe` to `true` and try to swipe back the screen or dismiss modal with gesture on iOS.
+A callback that gets called when you set `preventNativeDismiss` to `true` and dismiss a screen natively. The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
 
-#### `preventSwipeDismiss` (iOS only)
+It calls `navigation.pop` of all dismissed screens by default.
 
-Boolean indicating whether you are able to dimiss the screen or modal using swipe gesture. If you set it to `true`, the `onSwipeCancelled` event is called when trying to dismiss the screen.
+#### `preventNativeDismiss` (iOS only)
+
+Boolean indicating whether you are able to dimiss the screen or modal natively by swiping it or tapping default native header back button. If you set it to `true`, the natively dismissed screen is pushed back and `onNativeDismissCancelled` event is called.
+
+For `Android` option, see `enableNativeBackButtonDismissal`.
+
+Defaults to `false`.
 
 #### `replaceAnimation`
 
