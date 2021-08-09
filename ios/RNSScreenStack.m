@@ -478,8 +478,8 @@
     }
   }
 
-  [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
+  [self setPushViewControllers:pushControllers];
 }
 
 - (void)layoutSubviews
