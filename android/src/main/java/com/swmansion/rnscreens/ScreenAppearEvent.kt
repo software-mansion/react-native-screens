@@ -4,7 +4,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.RCTEventEmitter
 
-class ScreenAppearEvent(viewId: Int) : Event<ScreenAppearEvent?>(viewId) {
+class ScreenAppearEvent(viewId: Int) : Event<ScreenAppearEvent>(viewId) {
     override fun getEventName(): String {
         return EVENT_NAME
     }
