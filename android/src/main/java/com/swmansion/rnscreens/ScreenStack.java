@@ -25,26 +25,28 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   private final List<DrawingOp> drawingOps = new ArrayList<>();
 
   private ScreenStackFragment mTopScreen = null;
-  private final FragmentManager.OnBackStackChangedListener mBackStackListener = new FragmentManager.OnBackStackChangedListener() {
-    @Override
-    public void onBackStackChanged() {
-      if (mFragmentManager.getBackStackEntryCount() == 0) {
-        // when back stack entry count hits 0 it means the user's navigated back using hw back
-        // button. As the "fake" transaction we installed on the back stack does nothing we need
-        // to handle back navigation on our own.
-        dismiss(mTopScreen);
-      }
-    }
-  };
+  private final FragmentManager.OnBackStackChangedListener mBackStackListener =
+      new FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+          if (mFragmentManager.getBackStackEntryCount() == 0) {
+            // when back stack entry count hits 0 it means the user's navigated back using hw back
+            // button. As the "fake" transaction we installed on the back stack does nothing we need
+            // to handle back navigation on our own.
+            dismiss(mTopScreen);
+          }
+        }
+      };
 
-  private final FragmentManager.FragmentLifecycleCallbacks mLifecycleCallbacks = new FragmentManager.FragmentLifecycleCallbacks() {
-    @Override
-    public void onFragmentResumed(FragmentManager fm, Fragment f) {
-      if (mTopScreen == f) {
-        setupBackHandlerIfNeeded(mTopScreen);
-      }
-    }
-  };
+  private final FragmentManager.FragmentLifecycleCallbacks mLifecycleCallbacks =
+      new FragmentManager.FragmentLifecycleCallbacks() {
+        @Override
+        public void onFragmentResumed(FragmentManager fm, Fragment f) {
+          if (mTopScreen == f) {
+            setupBackHandlerIfNeeded(mTopScreen);
+          }
+        }
+      };
   private boolean mRemovalTransitionStarted = false;
   private boolean isDetachingCurrentScreen = false;
   private boolean reverseLastTwoChildren = false;
@@ -55,24 +57,19 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   private static boolean isSystemAnimation(Screen.StackAnimation stackAnimation) {
-    return (
-      stackAnimation == Screen.StackAnimation.DEFAULT ||
-      stackAnimation == Screen.StackAnimation.FADE ||
-      stackAnimation == Screen.StackAnimation.NONE
-    );
+    return stackAnimation == Screen.StackAnimation.DEFAULT
+        || stackAnimation == Screen.StackAnimation.FADE
+        || stackAnimation == Screen.StackAnimation.NONE;
   }
 
   private static boolean isTransparent(ScreenStackFragment fragment) {
-    return (
-      fragment.getScreen().getStackPresentation() == Screen.StackPresentation.TRANSPARENT_MODAL
-    );
+    return fragment.getScreen().getStackPresentation()
+        == Screen.StackPresentation.TRANSPARENT_MODAL;
   }
 
   private static boolean needsDrawReordering(ScreenStackFragment fragment) {
-    return (
-      fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM ||
-      fragment.getScreen().getStackAnimation() == Screen.StackAnimation.FADE_FROM_BOTTOM
-    );
+    return fragment.getScreen().getStackAnimation() == Screen.StackAnimation.SLIDE_FROM_BOTTOM
+        || fragment.getScreen().getStackAnimation() == Screen.StackAnimation.FADE_FROM_BOTTOM;
   }
 
   public void dismiss(ScreenStackFragment screenFragment) {
@@ -145,9 +142,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   private void dispatchOnFinishTransitioning() {
-    ((ReactContext) getContext()).getNativeModule(UIManagerModule.class)
-      .getEventDispatcher()
-      .dispatchEvent(new StackFinishTransitioningEvent(getId()));
+    ((ReactContext) getContext())
+        .getNativeModule(UIManagerModule.class)
+        .getEventDispatcher()
+        .dispatchEvent(new StackFinishTransitioningEvent(getId()));
   }
 
   @Override
@@ -165,16 +163,18 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
   @Override
   protected boolean hasScreen(ScreenFragment screenFragment) {
-    return (super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment));
+    return super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment);
   }
 
   @Override
   protected void performUpdate() {
+
     // When going back from a nested stack with a single screen on it, we may hit an edge case
     // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
     // handle the case of newTop being NULL, which happens in several places below
     ScreenStackFragment newTop = null; // newTop is nullable, see the above comment ^
-    ScreenStackFragment visibleBottom = null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+    ScreenStackFragment visibleBottom =
+        null; // this is only set if newTop has TRANSPARENT_MODAL presentation mode
     isDetachingCurrentScreen = false; // we reset it so the previous value is not used by mistake
 
     for (int i = mScreenFragments.size() - 1; i >= 0; i--) {
@@ -204,8 +204,8 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         // before, probably replace or reset was called, so we play the "close animation".
         // Otherwise it's open animation
         shouldUseOpenAnimation =
-          mScreenFragments.contains(mTopScreen) ||
-          newTop.getScreen().getReplaceAnimation() != Screen.ReplaceAnimation.POP;
+            mScreenFragments.contains(mTopScreen)
+                || newTop.getScreen().getReplaceAnimation() != Screen.ReplaceAnimation.POP;
         stackAnimation = newTop.getScreen().getStackAnimation();
       } else if (mTopScreen == null && newTop != null) {
         // mTopScreen was not present before so newTop is the first screen added to a stack
@@ -234,19 +234,20 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         switch (stackAnimation) {
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction()
-              .setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+                .setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
             break;
           case SLIDE_FROM_LEFT:
             getOrCreateTransaction()
-              .setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
+                .setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
             break;
           case SLIDE_FROM_BOTTOM:
             getOrCreateTransaction()
-              .setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium);
+                .setCustomAnimations(
+                    R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium);
             break;
           case FADE_FROM_BOTTOM:
             getOrCreateTransaction()
-              .setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350);
+                .setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350);
             break;
         }
       } else {
@@ -254,19 +255,20 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         switch (stackAnimation) {
           case SLIDE_FROM_RIGHT:
             getOrCreateTransaction()
-              .setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
+                .setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right);
             break;
           case SLIDE_FROM_LEFT:
             getOrCreateTransaction()
-              .setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
+                .setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left);
             break;
           case SLIDE_FROM_BOTTOM:
             getOrCreateTransaction()
-              .setCustomAnimations(R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom);
+                .setCustomAnimations(
+                    R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom);
             break;
           case FADE_FROM_BOTTOM:
             getOrCreateTransaction()
-              .setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom);
+                .setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom);
             break;
         }
       }
@@ -284,12 +286,10 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
     }
     // animation logic end
 
-    if (
-      shouldUseOpenAnimation &&
-      newTop != null &&
-      needsDrawReordering(newTop) &&
-      visibleBottom == null
-    ) {
+    if (shouldUseOpenAnimation
+        && newTop != null
+        && needsDrawReordering(newTop)
+        && visibleBottom == null) {
       // When using an open animation in which two screens overlap (eg. fade_from_bottom or
       // slide_from_bottom), we want to draw the previous screen under the new one,
       // which is apparently not the default option. Android always draws the disappearing view
@@ -333,15 +333,14 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
         }
         // when first visible screen found, make all screens after that visible
         getOrCreateTransaction()
-          .add(getId(), screen)
-          .runOnCommit(
-            new Runnable() {
-              @Override
-              public void run() {
-                top.getScreen().bringToFront();
-              }
-            }
-          );
+            .add(getId(), screen)
+            .runOnCommit(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    top.getScreen().bringToFront();
+                  }
+                });
       }
     } else if (newTop != null && !newTop.isAdded()) {
       getOrCreateTransaction().add(getId(), newTop);
@@ -405,11 +404,11 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
 
     if (topScreen != firstScreen && topScreen.isDismissable()) {
       mFragmentManager
-        .beginTransaction()
-        .show(topScreen)
-        .addToBackStack(BACK_STACK_TAG)
-        .setPrimaryNavigationFragment(topScreen)
-        .commitAllowingStateLoss();
+          .beginTransaction()
+          .show(topScreen)
+          .addToBackStack(BACK_STACK_TAG)
+          .setPrimaryNavigationFragment(topScreen)
+          .commitAllowingStateLoss();
       mFragmentManager.addOnBackStackChangedListener(mBackStackListener);
     }
   }
@@ -477,7 +476,6 @@ public class ScreenStack extends ScreenContainer<ScreenStackFragment> {
   }
 
   private final class DrawingOp {
-
     private Canvas canvas;
     private View child;
     private long drawingTime;

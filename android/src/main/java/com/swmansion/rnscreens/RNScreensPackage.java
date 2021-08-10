@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class RNScreensPackage implements ReactPackage {
-
   @Override
   public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
     return Collections.emptyList();
@@ -18,11 +17,10 @@ public class RNScreensPackage implements ReactPackage {
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
     return Arrays.<ViewManager>asList(
-      new ScreenContainerViewManager(),
-      new ScreenViewManager(),
-      new ScreenStackViewManager(),
-      new ScreenStackHeaderConfigViewManager(),
-      new ScreenStackHeaderSubviewManager()
-    );
+        new ScreenContainerViewManager(),
+        new ScreenViewManager(),
+        new ScreenStackViewManager(),
+        new ScreenStackHeaderConfigViewManager(),
+        new ScreenStackHeaderSubviewManager());
   }
 }

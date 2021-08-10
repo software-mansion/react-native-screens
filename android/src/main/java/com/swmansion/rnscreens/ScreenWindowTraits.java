@@ -17,7 +17,6 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.UiThreadUtil;
 
 public class ScreenWindowTraits {
-
   // Methods concerning statusBar management were taken from `react-native`'s status bar module:
   // https://github.com/facebook/react-native/blob/master/ReactAndroid/src/main/java/com/facebook/react/modules/statusbar/StatusBarModule.java
 
@@ -46,10 +45,8 @@ public class ScreenWindowTraits {
       return;
     }
 
-    Screen screenForOrientation = ScreenWindowTraits.findScreenForTrait(
-      screen,
-      Screen.WindowTraits.ORIENTATION
-    );
+    Screen screenForOrientation =
+        ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.ORIENTATION);
 
     final Integer orientation;
 
@@ -63,9 +60,9 @@ public class ScreenWindowTraits {
   }
 
   protected static void setColor(Screen screen, final Activity activity, ReactContext context) {
-    if (
-      activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
-    ) {
+    if (activity == null
+        || context == null
+        || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
       return;
     }
 
@@ -73,14 +70,10 @@ public class ScreenWindowTraits {
       mDefaultStatusBarColor = activity.getWindow().getStatusBarColor();
     }
 
-    Screen screenForColor = ScreenWindowTraits.findScreenForTrait(
-      screen,
-      Screen.WindowTraits.COLOR
-    );
-    Screen screenForAnimated = ScreenWindowTraits.findScreenForTrait(
-      screen,
-      Screen.WindowTraits.ANIMATED
-    );
+    Screen screenForColor =
+        ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.COLOR);
+    Screen screenForAnimated =
+        ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.ANIMATED);
 
     final Integer color;
     final boolean animated;
@@ -98,37 +91,32 @@ public class ScreenWindowTraits {
     }
 
     UiThreadUtil.runOnUiThread(
-      new GuardedRunnable(context) {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void runGuarded() {
-          activity
-            .getWindow()
-            .addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-          int curColor = activity.getWindow().getStatusBarColor();
-          ValueAnimator colorAnimation = ValueAnimator.ofObject(
-            new ArgbEvaluator(),
-            curColor,
-            color
-          );
-          colorAnimation.addUpdateListener(
-            new ValueAnimator.AnimatorUpdateListener() {
-              @Override
-              public void onAnimationUpdate(ValueAnimator animator) {
-                activity.getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
-              }
-            }
-          );
+        new GuardedRunnable(context) {
+          @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+          @Override
+          public void runGuarded() {
+            activity
+                .getWindow()
+                .addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            int curColor = activity.getWindow().getStatusBarColor();
+            ValueAnimator colorAnimation =
+                ValueAnimator.ofObject(new ArgbEvaluator(), curColor, color);
+            colorAnimation.addUpdateListener(
+                new ValueAnimator.AnimatorUpdateListener() {
+                  @Override
+                  public void onAnimationUpdate(ValueAnimator animator) {
+                    activity.getWindow().setStatusBarColor((Integer) animator.getAnimatedValue());
+                  }
+                });
 
-          if (animated) {
-            colorAnimation.setDuration(300).setStartDelay(0);
-          } else {
-            colorAnimation.setDuration(0).setStartDelay(300);
+            if (animated) {
+              colorAnimation.setDuration(300).setStartDelay(0);
+            } else {
+              colorAnimation.setDuration(0).setStartDelay(300);
+            }
+            colorAnimation.start();
           }
-          colorAnimation.start();
-        }
-      }
-    );
+        });
   }
 
   protected static void setStyle(Screen screen, final Activity activity, ReactContext context) {
@@ -136,10 +124,8 @@ public class ScreenWindowTraits {
       return;
     }
 
-    Screen screenForStyle = ScreenWindowTraits.findScreenForTrait(
-      screen,
-      Screen.WindowTraits.STYLE
-    );
+    Screen screenForStyle =
+        ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.STYLE);
 
     final String style;
 
@@ -151,39 +137,33 @@ public class ScreenWindowTraits {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       UiThreadUtil.runOnUiThread(
-        new Runnable() {
-          @TargetApi(Build.VERSION_CODES.M)
-          @Override
-          public void run() {
-            View decorView = activity.getWindow().getDecorView();
-            int systemUiVisibilityFlags = decorView.getSystemUiVisibility();
-            if ("dark".equals(style)) {
-              systemUiVisibilityFlags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            } else {
-              systemUiVisibilityFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+          new Runnable() {
+            @TargetApi(Build.VERSION_CODES.M)
+            @Override
+            public void run() {
+              View decorView = activity.getWindow().getDecorView();
+              int systemUiVisibilityFlags = decorView.getSystemUiVisibility();
+              if ("dark".equals(style)) {
+                systemUiVisibilityFlags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+              } else {
+                systemUiVisibilityFlags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+              }
+              decorView.setSystemUiVisibility(systemUiVisibilityFlags);
             }
-            decorView.setSystemUiVisibility(systemUiVisibilityFlags);
-          }
-        }
-      );
+          });
     }
   }
 
   protected static void setTranslucent(
-    Screen screen,
-    final Activity activity,
-    ReactContext context
-  ) {
+      Screen screen, final Activity activity, ReactContext context) {
     if (activity == null || context == null) {
       return;
     }
 
     final boolean translucent;
 
-    Screen screenForTranslucent = ScreenWindowTraits.findScreenForTrait(
-      screen,
-      Screen.WindowTraits.TRANSLUCENT
-    );
+    Screen screenForTranslucent =
+        ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.TRANSLUCENT);
 
     if (screenForTranslucent != null && screenForTranslucent.isStatusBarTranslucent() != null) {
       translucent = screenForTranslucent.isStatusBarTranslucent();
@@ -192,36 +172,33 @@ public class ScreenWindowTraits {
     }
 
     UiThreadUtil.runOnUiThread(
-      new GuardedRunnable(context) {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void runGuarded() {
-          // If the status bar is translucent hook into the window insets calculations
-          // and consume all the top insets so no padding will be added under the status bar.
-          View decorView = activity.getWindow().getDecorView();
-          if (translucent) {
-            decorView.setOnApplyWindowInsetsListener(
-              new View.OnApplyWindowInsetsListener() {
-                @Override
-                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                  WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
-                  return defaultInsets.replaceSystemWindowInsets(
-                    defaultInsets.getSystemWindowInsetLeft(),
-                    0,
-                    defaultInsets.getSystemWindowInsetRight(),
-                    defaultInsets.getSystemWindowInsetBottom()
-                  );
-                }
-              }
-            );
-          } else {
-            decorView.setOnApplyWindowInsetsListener(null);
-          }
+        new GuardedRunnable(context) {
+          @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+          @Override
+          public void runGuarded() {
+            // If the status bar is translucent hook into the window insets calculations
+            // and consume all the top insets so no padding will be added under the status bar.
+            View decorView = activity.getWindow().getDecorView();
+            if (translucent) {
+              decorView.setOnApplyWindowInsetsListener(
+                  new View.OnApplyWindowInsetsListener() {
+                    @Override
+                    public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                      WindowInsets defaultInsets = v.onApplyWindowInsets(insets);
+                      return defaultInsets.replaceSystemWindowInsets(
+                          defaultInsets.getSystemWindowInsetLeft(),
+                          0,
+                          defaultInsets.getSystemWindowInsetRight(),
+                          defaultInsets.getSystemWindowInsetBottom());
+                    }
+                  });
+            } else {
+              decorView.setOnApplyWindowInsetsListener(null);
+            }
 
-          ViewCompat.requestApplyInsets(decorView);
-        }
-      }
-    );
+            ViewCompat.requestApplyInsets(decorView);
+          }
+        });
   }
 
   protected static void setHidden(Screen screen, final Activity activity) {
@@ -231,10 +208,8 @@ public class ScreenWindowTraits {
 
     final boolean hidden;
 
-    Screen screenForHidden = ScreenWindowTraits.findScreenForTrait(
-      screen,
-      Screen.WindowTraits.HIDDEN
-    );
+    Screen screenForHidden =
+        ScreenWindowTraits.findScreenForTrait(screen, Screen.WindowTraits.HIDDEN);
 
     if (screenForHidden != null && screenForHidden.isStatusBarHidden() != null) {
       hidden = screenForHidden.isStatusBarHidden();
@@ -243,19 +218,18 @@ public class ScreenWindowTraits {
     }
 
     UiThreadUtil.runOnUiThread(
-      new Runnable() {
-        @Override
-        public void run() {
-          if (hidden) {
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-          } else {
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        new Runnable() {
+          @Override
+          public void run() {
+            if (hidden) {
+              activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+              activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            } else {
+              activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+              activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
           }
-        }
-      }
-    );
+        });
   }
 
   protected static void trySetWindowTraits(Screen screen, Activity activity, ReactContext context) {
@@ -299,9 +273,7 @@ public class ScreenWindowTraits {
   }
 
   protected static @Nullable Screen childScreenWithTraitSet(
-    Screen screen,
-    Screen.WindowTraits trait
-  ) {
+      Screen screen, Screen.WindowTraits trait) {
     if (screen == null || screen.getFragment() == null) {
       return null;
     }
