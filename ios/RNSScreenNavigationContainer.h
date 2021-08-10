@@ -7,8 +7,10 @@
 
 @end
 
-@interface RNSScreenNavigationContainerView : UIView <RNSScreenContainerDelegate, RCTInvalidating>
+@interface RNSScreenNavigationContainerView : RNSScreenContainerView
 
-- (void)markChildUpdated;
+@end
+
+@interface RNSScreenNavigationContainerManager : RNSScreenContainerManager
 
 @end

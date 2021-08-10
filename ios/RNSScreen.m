@@ -20,8 +20,6 @@
   CGRect _reactFrame;
 }
 
-@synthesize controller = _controller;
-
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {

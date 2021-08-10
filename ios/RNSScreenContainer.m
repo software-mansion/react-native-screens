@@ -1,26 +1,6 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreen.h"
 
-#import <React/RCTUIManager.h>
-#import <React/RCTUIManagerObserverCoordinator.h>
-#import <React/RCTUIManagerUtils.h>
-
-@interface RNSScreenContainerManager : RCTViewManager
-
-- (void)markUpdated:(RNSScreenContainerView *)screen;
-
-@end
-
-@interface RNSScreenContainerView () <RCTInvalidating>
-
-@property (nonatomic, retain) UIViewController *controller;
-@property (nonatomic, retain) NSMutableSet<RNSScreenView *> *activeScreens;
-@property (nonatomic, retain) NSMutableArray<RNSScreenView *> *reactSubviews;
-
-- (void)updateContainer;
-
-@end
-
 @implementation RNScreensViewController
 
 #if !TARGET_OS_TV
@@ -58,11 +38,7 @@
 
 @end
 
-@implementation RNSScreenContainerView {
-  BOOL _needUpdate;
-  BOOL _invalidated;
-  __weak RNSScreenContainerManager *_manager;
-}
+@implementation RNSScreenContainerView
 
 - (instancetype)initWithManager:(RNSScreenContainerManager *)manager
 {
@@ -200,8 +176,14 @@
     }
   }
 
-  if ((screenRemoved || screenAdded) && _controller.presentedViewController == nil &&
-      _controller.presentingViewController == nil) {
+  if (screenRemoved || screenAdded) {
+    [self maybeDismissVC];
+  }
+}
+
+- (void)maybeDismissVC
+{
+  if (_controller.presentedViewController == nil && _controller.presentingViewController == nil) {
     // if user has reachability enabled (one hand use) and the window is slided down the below
     // method will force it to slide back up as it is expected to happen with UINavController when
     // we push or pop views.

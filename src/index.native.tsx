@@ -193,11 +193,7 @@ class Screen extends React.Component<ScreenProps> {
 
 class ScreenContainer extends React.Component<ScreenContainerProps> {
   render() {
-    const {
-      enabled = ENABLE_SCREENS,
-      tabsOrDrawer = false,
-      ...rest
-    } = this.props;
+    const { enabled = ENABLE_SCREENS, tabsOrDrawer, ...rest } = this.props;
 
     if (enabled && isPlatformSupported) {
       if (tabsOrDrawer && isNavigationContainerAvailable) {
