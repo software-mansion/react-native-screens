@@ -9,6 +9,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
+import com.swmansion.rnscreens.events.StackFinishTransitioningEvent;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;

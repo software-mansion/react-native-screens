@@ -15,6 +15,12 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.events.Event;
+import com.swmansion.rnscreens.events.ScreenAppearEvent;
+import com.swmansion.rnscreens.events.ScreenDisappearEvent;
+import com.swmansion.rnscreens.events.ScreenDismissedEvent;
+import com.swmansion.rnscreens.events.ScreenWillAppearEvent;
+import com.swmansion.rnscreens.events.ScreenWillDisappearEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 

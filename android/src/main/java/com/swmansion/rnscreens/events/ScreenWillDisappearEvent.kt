@@ -1,10 +1,10 @@
-package com.swmansion.rnscreens
+package com.swmansion.rnscreens.events
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.RCTEventEmitter
 
-class ScreenAppearEvent(viewId: Int) : Event<ScreenAppearEvent>(viewId) {
+class ScreenWillDisappearEvent(viewId: Int) : Event<ScreenWillDisappearEvent>(viewId) {
     override fun getEventName() = EVENT_NAME
 
     // All events for a given view can be coalesced.
@@ -15,6 +15,6 @@ class ScreenAppearEvent(viewId: Int) : Event<ScreenAppearEvent>(viewId) {
     }
 
     companion object {
-        const val EVENT_NAME = "topAppear"
+        const val EVENT_NAME = "topWillDisappear"
     }
 }

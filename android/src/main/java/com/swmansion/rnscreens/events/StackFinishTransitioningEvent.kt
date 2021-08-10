@@ -1,4 +1,4 @@
-package com.swmansion.rnscreens
+package com.swmansion.rnscreens.events
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.events.Event
