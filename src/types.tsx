@@ -180,9 +180,9 @@ export interface ScreenContainerProps extends ViewProps {
    */
   enabled?: boolean;
   /**
-   * A prop to be used in drawer and bottom-tabs navigators for better implementation of ScreenContainer on iOS.
+   * A prop to be used in navigators always showing only one screen (providing only `0` or `2` `activityState` values) for better implementation of `ScreenContainer` on iOS.
    */
-  tabsOrDrawer?: boolean;
+  hasTwoStates?: boolean;
 }
 
 export interface ScreenStackProps extends ViewProps {
