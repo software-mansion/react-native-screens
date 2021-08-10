@@ -3,22 +3,12 @@ package com.swmansion.rnscreens
 import android.content.Context
 import com.facebook.react.bridge.ReactContext
 import android.view.ViewGroup
-import com.swmansion.rnscreens.ScreenFragment
-import com.swmansion.rnscreens.ScreenContainer
-import com.swmansion.rnscreens.Screen.ActivityState
-import com.swmansion.rnscreens.Screen.StackPresentation
-import com.swmansion.rnscreens.Screen.ReplaceAnimation
-import com.swmansion.rnscreens.Screen.StackAnimation
 import android.util.SparseArray
 import android.os.Parcelable
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.uimanager.UIManagerModule
-import android.os.Build
 import android.widget.TextView
-import com.swmansion.rnscreens.Screen
-import com.swmansion.rnscreens.ScreenStackHeaderConfig
 import android.webkit.WebView
-import com.swmansion.rnscreens.ScreenWindowTraits
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.view.View
@@ -42,18 +32,15 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
     private var mStatusBarTranslucent: Boolean? = null
     private var mStatusBarColor: Int? = null
     var isStatusBarAnimated: Boolean? = null
+
     override fun onAnimationStart() {
         super.onAnimationStart()
-        if (fragment != null) {
-            fragment!!.onViewAnimationStart()
-        }
+        fragment?.onViewAnimationStart()
     }
 
     override fun onAnimationEnd() {
         super.onAnimationEnd()
-        if (fragment != null) {
-            fragment!!.onViewAnimationEnd()
-        }
+        fragment?.onViewAnimationEnd()
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -72,13 +59,13 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
             val height = b - t
             val reactContext = context as ReactContext
             reactContext.runOnNativeModulesQueueThread(
-                    object : GuardedRunnable(reactContext) {
-                        override fun runGuarded() {
-                            reactContext
-                                    .getNativeModule(UIManagerModule::class.java)
-                                    .updateNodeSize(id, width, height)
-                        }
-                    })
+                object : GuardedRunnable(reactContext) {
+                    override fun runGuarded() {
+                        reactContext
+                            .getNativeModule(UIManagerModule::class.java)
+                            ?.updateNodeSize(id, width, height)
+                    }
+                })
         }
     }
 
@@ -88,17 +75,15 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
         // autoFocus is implemented it sometimes gets triggered before native text view is mounted. As
         // a result Android ignores calls for opening soft keyboard and here we trigger it manually
         // again after the screen is attached.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            var view = focusedChild
-            if (view != null) {
-                while (view is ViewGroup) {
-                    view = view.focusedChild
-                }
-                if (view is TextView) {
-                    val textView = view
-                    if (textView.showSoftInputOnFocus) {
-                        textView.addOnAttachStateChangeListener(sShowSoftKeyboardOnAttach)
-                    }
+        var view = focusedChild
+        if (view != null) {
+            while (view is ViewGroup) {
+                view = view.focusedChild
+            }
+            if (view is TextView) {
+                val textView = view
+                if (textView.showSoftInputOnFocus) {
+                    textView.addOnAttachStateChangeListener(sShowSoftKeyboardOnAttach)
                 }
             }
         }
@@ -127,8 +112,9 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
             return
         }
         super.setLayerType(
-                if (transitioning && !isWebViewInScreen) LAYER_TYPE_HARDWARE else LAYER_TYPE_NONE,
-                null)
+            if (transitioning && !isWebViewInScreen) LAYER_TYPE_HARDWARE else LAYER_TYPE_NONE,
+            null
+        )
     }
 
     private fun hasWebView(viewGroup: ViewGroup): Boolean {
@@ -154,9 +140,7 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
             return
         }
         this.activityState = activityState
-        if (container != null) {
-            container!!.notifyChildUpdate()
-        }
+        container?.notifyChildUpdate()
     }
 
     fun setScreenOrientation(screenOrientation: String?) {
@@ -165,19 +149,18 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
             return
         }
         ScreenWindowTraits.applyDidSetOrientation()
-        when (screenOrientation) {
-            "all" -> this.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-            "portrait" -> this.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-            "portrait_up" -> this.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            "portrait_down" -> this.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-            "landscape" -> this.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            "landscape_left" -> this.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-            "landscape_right" -> this.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            else -> this.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        this.screenOrientation = when (screenOrientation) {
+            "all" -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+            "portrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            "portrait_up" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            "portrait_down" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+            "landscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            "landscape_left" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+            "landscape_right" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
-        if (fragment != null) {
-            ScreenWindowTraits.setOrientation(this, fragment!!.tryGetActivity())
-        }
+
+        ScreenWindowTraits.setOrientation(this, fragment?.tryGetActivity())
     }
 
     var statusBarStyle: String?
@@ -187,11 +170,9 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarStyle = statusBarStyle
-            if (fragment != null) {
-                ScreenWindowTraits.setStyle(
-                        this, fragment!!.tryGetActivity(), fragment!!.tryGetContext())
-            }
+            ScreenWindowTraits.setStyle(this, fragment?.tryGetActivity(), fragment?.tryGetContext())
         }
+
     var isStatusBarHidden: Boolean?
         get() = mStatusBarHidden
         set(statusBarHidden) {
@@ -199,10 +180,9 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarHidden = statusBarHidden
-            if (fragment != null) {
-                ScreenWindowTraits.setHidden(this, fragment!!.tryGetActivity())
-            }
+            ScreenWindowTraits.setHidden(this, fragment?.tryGetActivity())
         }
+
     var isStatusBarTranslucent: Boolean?
         get() = mStatusBarTranslucent
         set(statusBarTranslucent) {
@@ -210,11 +190,13 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarTranslucent = statusBarTranslucent
-            if (fragment != null) {
-                ScreenWindowTraits.setTranslucent(
-                        this, fragment!!.tryGetActivity(), fragment!!.tryGetContext())
-            }
+            ScreenWindowTraits.setTranslucent(
+                this,
+                fragment?.tryGetActivity(),
+                fragment?.tryGetContext()
+            )
         }
+
     var statusBarColor: Int?
         get() = mStatusBarColor
         set(statusBarColor) {
@@ -222,10 +204,7 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarColor = statusBarColor
-            if (fragment != null) {
-                ScreenWindowTraits.setColor(
-                        this, fragment!!.tryGetActivity(), fragment!!.tryGetContext())
-            }
+            ScreenWindowTraits.setColor(this, fragment?.tryGetActivity(), fragment?.tryGetContext())
         }
 
     enum class StackPresentation {
@@ -249,15 +228,17 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
     }
 
     companion object {
-        private val sShowSoftKeyboardOnAttach: OnAttachStateChangeListener = object : OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(view: View) {
-                val inputMethodManager = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.showSoftInput(view, 0)
-                view.removeOnAttachStateChangeListener(Companion.this)
-            }
+        private val sShowSoftKeyboardOnAttach: OnAttachStateChangeListener =
+            object : OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(view: View) {
+                    val inputMethodManager =
+                        view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.showSoftInput(view, 0)
+                    view.removeOnAttachStateChangeListener(this)
+                }
 
-            override fun onViewDetachedFromWindow(view: View) {}
-        }
+                override fun onViewDetachedFromWindow(view: View) {}
+            }
     }
 
     init {
@@ -265,7 +246,7 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
         // fact that TextView implementation is expected to be attached to window when layout happens.
         // Then, at the moment of layout it checks whether window type is in a reasonable range to tell
-        // whether it should enable selection controlls (see Editor.java#prepareCursorControllers).
+        // whether it should enable selection controls (see Editor.java#prepareCursorControllers).
         // With screens, however, the text input component can be laid out before it is attached, in
         // that case TextView tries to get window type property from the oldest existing parent, which
         // in this case is a Screen class, as it is the root of the screen that is about to be attached.
