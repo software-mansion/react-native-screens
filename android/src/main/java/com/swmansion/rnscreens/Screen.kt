@@ -1,19 +1,19 @@
 package com.swmansion.rnscreens
 
 import android.content.Context
-import com.facebook.react.bridge.ReactContext
-import android.view.ViewGroup
-import android.util.SparseArray
-import android.os.Parcelable
-import com.facebook.react.bridge.GuardedRunnable
-import com.facebook.react.uimanager.UIManagerModule
-import android.widget.TextView
-import android.webkit.WebView
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
+import android.os.Parcelable
+import android.util.SparseArray
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.webkit.WebView
+import android.widget.TextView
+import com.facebook.react.bridge.GuardedRunnable
+import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerModule
 
 class Screen(context: ReactContext?) : ViewGroup(context) {
     var fragment: ScreenFragment? = null
