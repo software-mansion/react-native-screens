@@ -14,9 +14,8 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.swmansion.rnscreens.Screen.ActivityState
-import java.util.*
 
-open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(context) {
+open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
     @JvmField
     protected val mScreenFragments = ArrayList<T>()
     @JvmField
@@ -35,8 +34,9 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
         override fun doFrame(frameTimeNanos: Long) {
             mLayoutEnqueued = false
             measure(
-                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY))
+                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+            )
             layout(left, top, right, bottom)
         }
     }
@@ -66,7 +66,7 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
         // the keyboard open).
         if (view === focusedChild) {
             (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                    .hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+                .hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         }
         super.removeView(view)
     }
@@ -78,8 +78,9 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
             // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
             // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
             ReactChoreographer.getInstance()
-                    .postFrameCallback(
-                            ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mLayoutCallback)
+                .postFrameCallback(
+                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mLayoutCallback
+                )
         }
     }
 
@@ -92,12 +93,13 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
             // enqueue callback of NATIVE_ANIMATED_MODULE type as all view operations are executed in
             // DISPATCH_UI type and we want the callback to be called right after in the same frame.
             ReactChoreographer.getInstance()
-                    .postFrameCallback(
-                            ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mFrameCallback)
+                .postFrameCallback(
+                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mFrameCallback
+                )
         }
     }
 
-    protected fun notifyChildUpdate() {
+    fun notifyChildUpdate() {
         markUpdated()
     }
 
@@ -114,14 +116,14 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
     }
 
     open fun removeScreenAt(index: Int) {
-        mScreenFragments[index]!!.screen.container = null
+        mScreenFragments[index].screen?.container = null
         mScreenFragments.removeAt(index)
         markUpdated()
     }
 
     open fun removeAllScreens() {
         for (screenFragment in mScreenFragments) {
-            screenFragment.screen.container = null
+            screenFragment.screen?.container = null
         }
         mScreenFragments.clear()
         markUpdated()
@@ -130,8 +132,8 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
     val screenCount: Int
         get() = mScreenFragments.size
 
-    fun getScreenAt(index: Int): Screen {
-        return mScreenFragments[index]!!.screen
+    fun getScreenAt(index: Int): Screen? {
+        return mScreenFragments[index].screen
     }
 
     open val topScreen: Screen?
@@ -152,17 +154,19 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
     private fun setupFragmentManager() {
         var parent: ViewParent = this
         // We traverse view hierarchy up until we find screen parent or a root view
-        while (!(parent is ReactRootView || parent is Screen)
-                && parent.parent != null) {
+        while (!(parent is ReactRootView || parent is Screen) &&
+            parent.parent != null
+        ) {
             parent = parent.parent
         }
         // If parent is of type Screen it means we are inside a nested fragment structure.
         // Otherwise we expect to connect directly with root view and get root fragment manager
         if (parent is Screen) {
             val screenFragment = parent.fragment
+            check(screenFragment != null) { "Parent Screen does not have its Fragment attached" }
             mParentScreenFragment = screenFragment
-            mParentScreenFragment!!.registerChildScreenContainer(this)
-            setFragmentManager(screenFragment!!.childFragmentManager)
+            screenFragment.registerChildScreenContainer(this)
+            setFragmentManager(screenFragment.childFragmentManager)
             return
         }
 
@@ -182,18 +186,17 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
         setFragmentManager(context.supportFragmentManager)
     }
 
-    protected val orCreateTransaction: FragmentTransaction
-        protected get() {
-            if (mCurrentTransaction == null) {
-                mCurrentTransaction = mFragmentManager!!.beginTransaction()
-                mCurrentTransaction!!.setReorderingAllowed(true)
-            }
-            return mCurrentTransaction!!
+    protected fun getOrCreateTransaction(): FragmentTransaction {
+        if (mCurrentTransaction == null) {
+            mCurrentTransaction = mFragmentManager!!.beginTransaction()
+            mCurrentTransaction!!.setReorderingAllowed(true)
         }
+        return mCurrentTransaction!!
+    }
 
     protected fun tryCommitTransaction() {
         if (mCurrentTransaction != null) {
-            val transaction: FragmentTransaction = mCurrentTransaction
+            val transaction: FragmentTransaction = mCurrentTransaction!!
             mProcessingTransaction = transaction
             mProcessingTransaction!!.runOnCommit {
                 if (mProcessingTransaction === transaction) {
@@ -209,21 +212,21 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
         }
     }
 
-    private fun attachScreen(screenFragment: ScreenFragment) {
-        orCreateTransaction.add(id, screenFragment)
+    private fun attachScreen(screenFragment: T) {
+        getOrCreateTransaction().add(id, screenFragment)
     }
 
     private fun moveToFront(screenFragment: ScreenFragment) {
-        val transaction = orCreateTransaction
+        val transaction = getOrCreateTransaction()
         transaction.remove(screenFragment)
         transaction.add(id, screenFragment)
     }
 
     private fun detachScreen(screenFragment: ScreenFragment) {
-        orCreateTransaction.remove(screenFragment)
+        getOrCreateTransaction().remove(screenFragment)
     }
 
-    protected fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
+    private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
         return screenFragment.screen.activityState
     }
 
@@ -243,8 +246,9 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
         val transaction = mFragmentManager!!.beginTransaction()
         var hasFragments = false
         for (fragment in mFragmentManager!!.fragments) {
-            if (fragment is ScreenFragment
-                    && fragment.mScreenView.container === this) {
+            if (fragment is ScreenFragment &&
+                fragment.mScreenView.container === this
+            ) {
                 transaction.remove(fragment)
                 hasFragments = true
             }
@@ -322,20 +326,21 @@ open class ScreenContainer<T : ScreenFragment?>(context: Context?) : ViewGroup(c
 
     protected open fun performUpdate() {
         // detach screens that are no longer active
-        val orphaned: MutableSet<Fragment> = HashSet(mFragmentManager!!.fragments)
+        val orphaned: MutableSet<Fragment> = HashSet(mFragmentManager?.fragments)
         for (screenFragment in mScreenFragments) {
-            if (getActivityState(screenFragment) === ActivityState.INACTIVE
-                    && screenFragment.isAdded) {
+            if (getActivityState(screenFragment) === ActivityState.INACTIVE &&
+                screenFragment.isAdded
+            ) {
                 detachScreen(screenFragment)
             }
             orphaned.remove(screenFragment)
         }
-        if (!orphaned.isEmpty()) {
-            val orphanedAry: Array<Any> = orphaned.toTypedArray()
-            for (i in orphanedAry.indices) {
-                if (orphanedAry[i] is ScreenFragment) {
-                    if ((orphanedAry[i] as ScreenFragment).screen.container == null) {
-                        detachScreen(orphanedAry[i] as ScreenFragment)
+        if (orphaned.isNotEmpty()) {
+            val orphanedAry = orphaned.toTypedArray()
+            for (fragment in orphanedAry) {
+                if (fragment is ScreenFragment) {
+                    if (fragment.screen.container == null) {
+                        detachScreen(fragment)
                     }
                 }
             }

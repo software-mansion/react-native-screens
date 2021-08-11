@@ -1,29 +1,16 @@
 package com.swmansion.rnscreens
 
-import com.swmansion.rnscreens.Screen.setActivityState
-import com.swmansion.rnscreens.Screen.stackPresentation
-import com.swmansion.rnscreens.Screen.stackAnimation
-import com.swmansion.rnscreens.Screen.isGestureEnabled
-import com.swmansion.rnscreens.Screen.replaceAnimation
-import com.swmansion.rnscreens.Screen.setScreenOrientation
-import com.swmansion.rnscreens.Screen.isStatusBarAnimated
-import com.swmansion.rnscreens.Screen.statusBarColor
-import com.swmansion.rnscreens.Screen.statusBarStyle
-import com.swmansion.rnscreens.Screen.isStatusBarTranslucent
-import com.swmansion.rnscreens.Screen.isStatusBarHidden
-import com.facebook.react.module.annotations.ReactModule
-import com.swmansion.rnscreens.ScreenViewManager
-import com.facebook.react.uimanager.ViewGroupManager
-import com.swmansion.rnscreens.Screen
-import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
+import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.annotations.ReactProp
+import com.swmansion.rnscreens.events.ScreenAppearEvent
+import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
-import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
-import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
@@ -45,12 +32,10 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
             // any updates as the actual non-null value will follow immediately.
             return
         }
-        if (activityState == 0) {
-            view.setActivityState(Screen.ActivityState.INACTIVE)
-        } else if (activityState == 1) {
-            view.setActivityState(Screen.ActivityState.TRANSITIONING_OR_BELOW_TOP)
-        } else if (activityState == 2) {
-            view.setActivityState(Screen.ActivityState.ON_TOP)
+        when (activityState) {
+            0 -> view.setActivityState(Screen.ActivityState.INACTIVE)
+            1 -> view.setActivityState(Screen.ActivityState.TRANSITIONING_OR_BELOW_TOP)
+            2 -> view.setActivityState(Screen.ActivityState.ON_TOP)
         }
     }
 
@@ -134,7 +119,7 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any>? {
-        return MapBuilder.of<String, Map<String, String>>(
+        return MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDismissed"),
             ScreenWillAppearEvent.EVENT_NAME,

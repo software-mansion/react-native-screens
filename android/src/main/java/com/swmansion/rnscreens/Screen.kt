@@ -1,8 +1,10 @@
 package com.swmansion.rnscreens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
+import android.os.Build
 import android.os.Parcelable
 import android.util.SparseArray
 import android.view.View
@@ -15,7 +17,7 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
 
-class Screen(context: ReactContext?) : ViewGroup(context) {
+class Screen @SuppressLint("ViewConstructor") constructor(context: ReactContext?) : ViewGroup(context) {
     var fragment: ScreenFragment? = null
     var container: ScreenContainer<*>? = null
     var activityState: ActivityState? = null
@@ -32,6 +34,20 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
     private var mStatusBarTranslucent: Boolean? = null
     private var mStatusBarColor: Int? = null
     var isStatusBarAnimated: Boolean? = null
+
+    init {
+        // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
+        // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
+        // fact that TextView implementation is expected to be attached to window when layout happens.
+        // Then, at the moment of layout it checks whether window type is in a reasonable range to tell
+        // whether it should enable selection controls (see Editor.java#prepareCursorControllers).
+        // With screens, however, the text input component can be laid out before it is attached, in
+        // that case TextView tries to get window type property from the oldest existing parent, which
+        // in this case is a Screen class, as it is the root of the screen that is about to be attached.
+        // Setting params this way is not the most elegant way to solve this problem but workarounds it
+        // for the time being
+        layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
+    }
 
     override fun onAnimationStart() {
         super.onAnimationStart()
@@ -75,15 +91,17 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
         // autoFocus is implemented it sometimes gets triggered before native text view is mounted. As
         // a result Android ignores calls for opening soft keyboard and here we trigger it manually
         // again after the screen is attached.
-        var view = focusedChild
-        if (view != null) {
-            while (view is ViewGroup) {
-                view = view.focusedChild
-            }
-            if (view is TextView) {
-                val textView = view
-                if (textView.showSoftInputOnFocus) {
-                    textView.addOnAttachStateChangeListener(sShowSoftKeyboardOnAttach)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            var view = focusedChild
+            if (view != null) {
+                while (view is ViewGroup) {
+                    view = view.focusedChild
+                }
+                if (view is TextView) {
+                    val textView = view
+                    if (textView.showSoftInputOnFocus) {
+                        textView.addOnAttachStateChangeListener(sShowSoftKeyboardOnAttach)
+                    }
                 }
             }
         }
@@ -239,19 +257,5 @@ class Screen(context: ReactContext?) : ViewGroup(context) {
 
                 override fun onViewDetachedFromWindow(view: View) {}
             }
-    }
-
-    init {
-        // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
-        // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
-        // fact that TextView implementation is expected to be attached to window when layout happens.
-        // Then, at the moment of layout it checks whether window type is in a reasonable range to tell
-        // whether it should enable selection controls (see Editor.java#prepareCursorControllers).
-        // With screens, however, the text input component can be laid out before it is attached, in
-        // that case TextView tries to get window type property from the oldest existing parent, which
-        // in this case is a Screen class, as it is the root of the screen that is about to be attached.
-        // Setting params this way is not the most elegant way to solve this problem but workarounds it
-        // for the time being
-        layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
     }
 }
