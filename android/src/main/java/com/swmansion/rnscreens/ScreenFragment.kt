@@ -13,9 +13,11 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.Event
-import com.swmansion.rnscreens.Screen
-import com.swmansion.rnscreens.events.*
-import java.util.*
+import com.swmansion.rnscreens.events.ScreenAppearEvent
+import com.swmansion.rnscreens.events.ScreenDisappearEvent
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.events.ScreenWillAppearEvent
+import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 
 open class ScreenFragment : Fragment {
     enum class ScreenLifecycleEvent {
@@ -24,12 +26,13 @@ open class ScreenFragment : Fragment {
 
     var screen: Screen? = null
         protected set
-    private val mChildScreenContainers: MutableList<ScreenContainer<ScreenFragment>> = ArrayList()
+    private val mChildScreenContainers: MutableList<ScreenContainer<*>> = ArrayList()
     private var shouldUpdateOnResume = false
 
     constructor() {
         throw IllegalStateException(
-                "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.")
+            "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
+        )
     }
 
     @SuppressLint("ValidFragment")
@@ -46,10 +49,14 @@ open class ScreenFragment : Fragment {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val wrapper = FrameLayout(context!!)
         val params = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        )
         screen!!.layoutParams = params
         wrapper.addView(recycleView(screen))
         return wrapper
@@ -68,7 +75,7 @@ open class ScreenFragment : Fragment {
         ScreenWindowTraits.trySetWindowTraits(screen, activity, tryGetContext())
     }
 
-    protected fun tryGetActivity(): Activity? {
+    fun tryGetActivity(): Activity? {
         if (activity != null) {
             return activity
         }
@@ -108,14 +115,14 @@ open class ScreenFragment : Fragment {
         return null
     }
 
-    val childScreenContainers: List<ScreenContainer<ScreenFragment>>
+    val childScreenContainers: List<ScreenContainer<*>>
         get() = mChildScreenContainers
 
-    protected fun dispatchOnWillAppear() {
+    fun dispatchOnWillAppear() {
         dispatchEvent(ScreenLifecycleEvent.WillAppear, this)
     }
 
-    protected fun dispatchOnAppear() {
+    fun dispatchOnAppear() {
         dispatchEvent(ScreenLifecycleEvent.Appear, this)
     }
 
@@ -135,12 +142,11 @@ open class ScreenFragment : Fragment {
             ScreenLifecycleEvent.Appear -> ScreenAppearEvent(screen!!.id)
             ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(screen!!.id)
             ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(screen!!.id)
-            else -> throw IllegalStateException("Tried to dispatch unknown event: $event")
         }
         (screen.context as ReactContext)
-                .getNativeModule(UIManagerModule::class.java)
-                .getEventDispatcher()
-                .dispatchEvent(lifecycleEvent)
+            .getNativeModule(UIManagerModule::class.java)
+            ?.eventDispatcher
+            ?.dispatchEvent(lifecycleEvent)
         fragment.dispatchEventInChildContainers(event)
     }
 
@@ -148,7 +154,7 @@ open class ScreenFragment : Fragment {
         for (sc in mChildScreenContainers) {
             if (sc.screenCount > 0) {
                 val topScreen = sc.topScreen
-                if (topScreen != null && topScreen.fragment != null && (topScreen.stackAnimation !== Screen.StackAnimation.NONE || isRemoving)) {
+                if (topScreen?.fragment != null && (topScreen.stackAnimation !== Screen.StackAnimation.NONE || isRemoving)) {
                     // we do not dispatch events in child when it has `none` animation
                     // and we are going forward since then they will be dispatched in child via
                     // `onCreateAnimation` of ScreenStackFragment
@@ -158,11 +164,11 @@ open class ScreenFragment : Fragment {
         }
     }
 
-    fun registerChildScreenContainer(screenContainer: ScreenContainer<ScreenFragment>) {
+    fun registerChildScreenContainer(screenContainer: ScreenContainer<*>) {
         mChildScreenContainers.add(screenContainer)
     }
 
-    fun unregisterChildScreenContainer(screenContainer: ScreenContainer<ScreenFragment>) {
+    fun unregisterChildScreenContainer(screenContainer: ScreenContainer<*>) {
         mChildScreenContainers.remove(screenContainer)
     }
 
@@ -201,15 +207,16 @@ open class ScreenFragment : Fragment {
         if (container == null || !container.hasScreen(this)) {
             // we only send dismissed even when the screen has been removed from its container
             (screen!!.context as ReactContext)
-                    .getNativeModule(UIManagerModule::class.java)
-                    .getEventDispatcher()
-                    .dispatchEvent(ScreenDismissedEvent(screen!!.id))
+                .getNativeModule(UIManagerModule::class.java)
+                ?.eventDispatcher
+                ?.dispatchEvent(ScreenDismissedEvent(screen!!.id))
         }
         mChildScreenContainers.clear()
     }
 
     companion object {
-        protected fun recycleView(view: View?): View? {
+        @JvmStatic
+        protected fun recycleView(view: View?): View {
             // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
             // view it needs to be detached from the view hierarchy to allow the fragment to attach it back.
             val parent = view!!.parent

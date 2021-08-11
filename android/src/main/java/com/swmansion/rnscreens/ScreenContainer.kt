@@ -132,7 +132,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     val screenCount: Int
         get() = mScreenFragments.size
 
-    fun getScreenAt(index: Int): Screen {
+    fun getScreenAt(index: Int): Screen? {
         return mScreenFragments[index].screen
     }
 
@@ -227,10 +227,10 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
-        return screenFragment.screen.activityState
+        return screenFragment.screen?.activityState
     }
 
-    protected open fun hasScreen(screenFragment: ScreenFragment?): Boolean {
+    open fun hasScreen(screenFragment: ScreenFragment?): Boolean {
         return mScreenFragments.contains(screenFragment)
     }
 
@@ -247,7 +247,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         var hasFragments = false
         for (fragment in mFragmentManager!!.fragments) {
             if (fragment is ScreenFragment &&
-                fragment.mScreenView.container === this
+                fragment.screen?.container === this
             ) {
                 transaction.remove(fragment)
                 hasFragments = true
@@ -339,7 +339,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             val orphanedAry = orphaned.toTypedArray()
             for (fragment in orphanedAry) {
                 if (fragment is ScreenFragment) {
-                    if (fragment.screen.container == null) {
+                    if (fragment.screen?.container == null) {
                         detachScreen(fragment)
                     }
                 }
@@ -362,7 +362,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             } else if (activityState !== ActivityState.INACTIVE && addedBefore) {
                 moveToFront(screenFragment)
             }
-            screenFragment.screen.setTransitioning(transitioning)
+            screenFragment.screen?.setTransitioning(transitioning)
         }
         tryCommitTransaction()
     }
