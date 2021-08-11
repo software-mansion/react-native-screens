@@ -7,7 +7,7 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.swmansion.rnscreens.ScreenContainerViewManager
 
 @ReactModule(name = ScreenContainerViewManager.REACT_CLASS)
-class ScreenContainerViewManager : ViewGroupManager<ScreenContainer<ScreenFragment>>() {
+class ScreenContainerViewManager : ViewGroupManager<ScreenContainer<*>>() {
     override fun getName(): String {
         return REACT_CLASS
     }
