@@ -98,10 +98,7 @@
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
-    "src/**/*.{js,ts,tsx}": [
-      "yarn lint",
-      "bash -c \"tsc --noEmit\""
-    ],
+    "src/**/*.{js,ts,tsx}": "yarn lint",
     "android/**/*.java": "yarn format-android",
     "{ios,windows}/**/*.{h,m,cpp}": [
       "yarn format-ios",

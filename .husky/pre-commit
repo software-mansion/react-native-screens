@@ -12,3 +12,4 @@ v=${b%%[)| ]*}
 export PATH="$NVM_DIR/versions/node/$v/bin:$PATH"
 
 yarn lint-staged
+yarn check-types
