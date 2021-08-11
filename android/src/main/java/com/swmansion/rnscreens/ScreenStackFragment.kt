@@ -24,8 +24,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mIsTranslucent = false
 
     @SuppressLint("ValidFragment")
-    constructor(screenView: Screen?) : super(screenView) {
-    }
+    constructor(screenView: Screen?) : super(screenView)
 
     constructor() {
         throw IllegalStateException(
@@ -54,7 +53,7 @@ class ScreenStackFragment : ScreenFragment {
 
     fun setToolbarShadowHidden(hidden: Boolean) {
         if (mShadowHidden != hidden) {
-            mAppBarLayout!!.setTargetElevation(if (hidden) 0 else PixelUtil.toPixelFromDIP(4f))
+            mAppBarLayout!!.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
             mShadowHidden = hidden
         }
     }
@@ -145,35 +144,29 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     val isDismissable: Boolean
-        get() = screen!!.isGestureEnabled()
+        get() = screen!!.isGestureEnabled
 
     fun canNavigateBack(): Boolean {
-        val container: ScreenContainer<*> = screen.getContainer()
-        return if (container is ScreenStack) {
-            if (container.rootScreen == screen) {
-                // this screen is the root of the container, if it is nested we can check parent container
-                // if it is also a root or not
-                val parentFragment = parentFragment
-                if (parentFragment is ScreenStackFragment) {
-                    parentFragment.canNavigateBack()
-                } else {
-                    false
-                }
+        val container: ScreenContainer<*>? = screen?.container
+        check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
+        return if (container.rootScreen == screen) {
+            // this screen is the root of the container, if it is nested we can check parent container
+            // if it is also a root or not
+            val parentFragment = parentFragment
+            if (parentFragment is ScreenStackFragment) {
+                parentFragment.canNavigateBack()
             } else {
-                true
+                false
             }
         } else {
-            throw IllegalStateException("ScreenStackFragment added into a non-stack container")
+            true
         }
     }
 
     fun dismiss() {
-        val container: ScreenContainer<*> = screen.getContainer()
-        if (container is ScreenStack) {
-            container.dismiss(this)
-        } else {
-            throw IllegalStateException("ScreenStackFragment added into a non-stack container")
-        }
+        val container: ScreenContainer<*>? = screen?.container
+        check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
+        container.dismiss(this)
     }
 
     private class NotifyingCoordinatorLayout(context: Context, private val mFragment: ScreenFragment) : CoordinatorLayout(context) {
