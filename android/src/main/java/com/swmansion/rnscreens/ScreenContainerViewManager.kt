@@ -4,7 +4,6 @@ import android.view.View
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
-import com.swmansion.rnscreens.ScreenContainerViewManager
 
 @ReactModule(name = ScreenContainerViewManager.REACT_CLASS)
 class ScreenContainerViewManager : ViewGroupManager<ScreenContainer<*>>() {
