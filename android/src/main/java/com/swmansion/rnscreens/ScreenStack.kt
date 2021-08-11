@@ -14,9 +14,9 @@ import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
-class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(context) {
-    private val mStack = ArrayList<ScreenStackFragment?>()
-    private val mDismissed: MutableSet<ScreenStackFragment?> = HashSet()
+class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(context) {
+    private val mStack = ArrayList<ScreenStackFragment>()
+    private val mDismissed: MutableSet<ScreenStackFragment> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp?> = ArrayList()
     private val drawingOps: MutableList<DrawingOp?> = ArrayList()
     private var mTopScreen: ScreenStackFragment? = null
@@ -25,7 +25,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
             // when back stack entry count hits 0 it means the user's navigated back using hw back
             // button. As the "fake" transaction we installed on the back stack does nothing we need
             // to handle back navigation on our own.
-            dismiss(mTopScreen)
+            dismiss(mTopScreen!!)
         }
     }
     private val mLifecycleCallbacks: FragmentManager.FragmentLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
@@ -39,20 +39,20 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
     private var isDetachingCurrentScreen = false
     private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
-    fun dismiss(screenFragment: ScreenStackFragment?) {
+    fun dismiss(screenFragment: ScreenStackFragment) {
         mDismissed.add(screenFragment)
         markUpdated()
     }
 
     override val topScreen: Screen?
         get() = if (mTopScreen != null) mTopScreen!!.screen else null
-    val rootScreen: Screen?
+    val rootScreen: Screen
         get() {
             var i = 0
             val size = screenCount
             while (i < size) {
                 val screen = getScreenAt(i)
-                if (!mDismissed.contains(screen!!.fragment)) {
+                if (!mDismissed.contains(screen.fragment)) {
                     return screen
                 }
                 i++
@@ -107,22 +107,22 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
     private fun dispatchOnFinishTransitioning() {
         (context as ReactContext)
             .getNativeModule(UIManagerModule::class.java)
-            .getEventDispatcher()
-            .dispatchEvent(StackFinishTransitioningEvent(id))
+            ?.eventDispatcher
+            ?.dispatchEvent(StackFinishTransitioningEvent(id))
     }
 
     override fun removeScreenAt(index: Int) {
         val toBeRemoved = getScreenAt(index)
-        mDismissed.remove(toBeRemoved!!.fragment)
+        mDismissed.remove(toBeRemoved.fragment)
         super.removeScreenAt(index)
     }
 
-    protected override fun removeAllScreens() {
+    override fun removeAllScreens() {
         mDismissed.clear()
         super.removeAllScreens()
     }
 
-    protected override fun hasScreen(screenFragment: ScreenFragment?): Boolean {
+    override fun hasScreen(screenFragment: ScreenFragment?): Boolean {
         return super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
     }
 
@@ -135,7 +135,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
         var visibleBottom: ScreenStackFragment? = null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
         for (i in mScreenFragments.indices.reversed()) {
-            val screen = mScreenFragments[i]!!
+            val screen = mScreenFragments[i]
             if (!mDismissed.contains(screen)) {
                 if (newTop == null) {
                     newTop = screen
@@ -197,6 +197,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
                         )
                     StackAnimation.FADE_FROM_BOTTOM -> getOrCreateTransaction()
                         .setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
+                    else -> {}
                 }
             } else {
                 transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE
@@ -211,6 +212,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
                         )
                     StackAnimation.FADE_FROM_BOTTOM -> getOrCreateTransaction()
                         .setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
+                    else -> {}
                 }
             }
         }
@@ -241,7 +243,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
         // remove all screens previously on stack
         for (screen in mStack) {
             if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
-                getOrCreateTransaction().remove(screen!!)
+                getOrCreateTransaction().remove(screen)
             }
         }
         for (screen in mScreenFragments) {
@@ -286,7 +288,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
 
     override fun notifyContainerUpdate() {
         for (screen in mStack) {
-            screen!!.onContainerUpdate()
+            screen.onContainerUpdate()
         }
     }
 
@@ -333,7 +335,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment?>(con
             i++
         }
         if (topScreen !== firstScreen && topScreen!!.isDismissable) {
-            mFragmentManager
+            mFragmentManager!!
                 .beginTransaction()
                 .show(topScreen)
                 .addToBackStack(BACK_STACK_TAG)

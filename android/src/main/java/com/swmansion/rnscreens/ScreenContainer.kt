@@ -132,7 +132,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     val screenCount: Int
         get() = mScreenFragments.size
 
-    fun getScreenAt(index: Int): Screen? {
+    fun getScreenAt(index: Int): Screen {
         return mScreenFragments[index].screen
     }
 
@@ -230,7 +230,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         return screenFragment.screen.activityState
     }
 
-    open fun hasScreen(screenFragment: ScreenFragment?): Boolean {
+    protected open fun hasScreen(screenFragment: ScreenFragment?): Boolean {
         return mScreenFragments.contains(screenFragment)
     }
 
