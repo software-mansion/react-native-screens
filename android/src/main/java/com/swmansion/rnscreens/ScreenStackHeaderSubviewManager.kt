@@ -18,7 +18,7 @@ class ScreenStackHeaderSubviewManager : ReactViewManager() {
 
     @ReactProp(name = "type")
     fun setType(view: ScreenStackHeaderSubview, type: String) {
-        when(type) {
+        when (type) {
             "left" -> view.type = ScreenStackHeaderSubview.Type.LEFT
             "center" -> view.type = ScreenStackHeaderSubview.Type.CENTER
             "right" -> view.type = ScreenStackHeaderSubview.Type.RIGHT

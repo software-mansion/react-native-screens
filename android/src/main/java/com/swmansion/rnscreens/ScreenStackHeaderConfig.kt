@@ -168,7 +168,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // hide back button
         actionBar!!.setDisplayHomeAsUpEnabled(
-                screenFragment!!.canNavigateBack() && !mIsBackButtonHidden)
+            screenFragment!!.canNavigateBack() && !mIsBackButtonHidden
+        )
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
         // navigation click listener. The default behavior set in the wrapper is to call into
@@ -196,7 +197,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         if (titleTextView != null) {
             if (mTitleFontFamily != null || mTitleFontWeight > 0) {
                 val titleTypeface = ReactTypefaceUtils.applyStyles(
-                        null, 0, mTitleFontWeight, mTitleFontFamily, context.assets)
+                    null, 0, mTitleFontWeight, mTitleFontFamily, context.assets
+                )
                 titleTextView.typeface = titleTypeface
             }
             if (mTitleFontSize > 0) {
@@ -230,8 +232,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                 // we special case BACK button header config type as we don't add it as a view into toolbar
                 // but instead just copy the drawable from imageview that's added as a first child to it.
                 val firstChild = view.getChildAt(0) as? ImageView
-                        ?: throw JSApplicationIllegalArgumentException(
-                                "Back button header config view should have Image as first child")
+                    ?: throw JSApplicationIllegalArgumentException(
+                        "Back button header config view should have Image as first child"
+                    )
                 actionBar.setHomeAsUpIndicator(firstChild.drawable)
                 i++
                 continue
@@ -364,9 +367,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private class DebugMenuToolbar(context: Context?) : Toolbar(context) {
         override fun showOverflowMenu(): Boolean {
             (context.applicationContext as ReactApplication)
-                    .reactNativeHost
-                    .reactInstanceManager
-                    .showDevOptionsDialog()
+                .reactNativeHost
+                .reactInstanceManager
+                .showDevOptionsDialog()
             return true
         }
     }
