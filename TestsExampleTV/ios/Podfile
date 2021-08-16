@@ -16,6 +16,8 @@ target 'TestsExampleTV' do
     :hermes_enabled => false
   )
 
+  pod 'RNScreens', :path => '../../'
+
   target 'TestsExampleTVTests' do
     inherit! :complete
     # Pods for testing
@@ -31,6 +33,8 @@ target 'TestsExampleTV-tvOS' do
 
   # Hermes not yet available on tvOS
   use_react_native!(:path => config["reactNativePath"])
+
+  pod 'RNScreens', :path => '../../'
 
   target 'TestsExampleTV-tvOSTests' do
     inherit! :complete
