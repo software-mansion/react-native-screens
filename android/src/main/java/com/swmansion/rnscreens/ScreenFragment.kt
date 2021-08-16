@@ -44,7 +44,7 @@ open class ScreenFragment : Fragment {
         super.onResume()
         if (shouldUpdateOnResume) {
             shouldUpdateOnResume = false
-            ScreenWindowTraits.trySetWindowTraits(screen, tryGetActivity(), tryGetContext())
+            screen?.let { ScreenWindowTraits.trySetWindowTraits(it, tryGetActivity(), tryGetContext()) }
         }
     }
 
@@ -72,7 +72,7 @@ open class ScreenFragment : Fragment {
             shouldUpdateOnResume = true
             return
         }
-        ScreenWindowTraits.trySetWindowTraits(screen, activity, tryGetContext())
+        screen?.let { ScreenWindowTraits.trySetWindowTraits(it, activity, tryGetContext()) }
     }
 
     fun tryGetActivity(): Activity? {
@@ -136,8 +136,7 @@ open class ScreenFragment : Fragment {
 
     private fun dispatchEvent(event: ScreenLifecycleEvent, fragment: ScreenFragment?) {
         val screen = fragment!!.screen
-        val lifecycleEvent: Event<*>
-        lifecycleEvent = when (event) {
+        val lifecycleEvent: Event<*> = when (event) {
             ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(screen!!.id)
             ScreenLifecycleEvent.Appear -> ScreenAppearEvent(screen!!.id)
             ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(screen!!.id)

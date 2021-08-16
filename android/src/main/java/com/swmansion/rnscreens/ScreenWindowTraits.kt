@@ -25,15 +25,11 @@ object ScreenWindowTraits {
         mDidSetOrientation = true
     }
 
-    fun didSetOrientation(): Boolean {
-        return mDidSetOrientation
-    }
-
     internal fun applyDidSetStatusBarAppearance() {
         mDidSetStatusBarAppearance = true
     }
 
-    fun didSetStatusBarAppearance(): Boolean {
+    private fun didSetStatusBarAppearance(): Boolean {
         return mDidSetStatusBarAppearance
     }
 
@@ -42,8 +38,7 @@ object ScreenWindowTraits {
             return
         }
         val screenForOrientation = findScreenForTrait(screen, WindowTraits.ORIENTATION)
-        val orientation: Int?
-        orientation = if (screenForOrientation != null && screenForOrientation.screenOrientation != null) {
+        val orientation: Int? = if (screenForOrientation?.screenOrientation != null) {
             screenForOrientation.screenOrientation
         } else {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -60,36 +55,34 @@ object ScreenWindowTraits {
         }
         val screenForColor = findScreenForTrait(screen, WindowTraits.COLOR)
         val screenForAnimated = findScreenForTrait(screen, WindowTraits.ANIMATED)
-        val color: Int?
-        val animated: Boolean
-        color = if (screenForColor != null && screenForColor.statusBarColor != null) {
+        val color: Int? = if (screenForColor?.statusBarColor != null) {
             screenForColor.statusBarColor
         } else {
             mDefaultStatusBarColor
         }
-        animated = if (screenForAnimated != null && screenForAnimated.isStatusBarAnimated != null) {
+        val animated: Boolean = if (screenForAnimated?.isStatusBarAnimated != null) {
             screenForAnimated.isStatusBarAnimated!!
         } else {
             false
         }
         UiThreadUtil.runOnUiThread(
-                object : GuardedRunnable(context) {
-                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                    override fun runGuarded() {
-                        activity
-                                .window
-                                .addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                        val curColor = activity.window.statusBarColor
-                        val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), curColor, color)
-                        colorAnimation.addUpdateListener { animator -> activity.window.statusBarColor = (animator.animatedValue as Int) }
-                        if (animated) {
-                            colorAnimation.setDuration(300).startDelay = 0
-                        } else {
-                            colorAnimation.setDuration(0).startDelay = 300
-                        }
-                        colorAnimation.start()
+            object : GuardedRunnable(context) {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                override fun runGuarded() {
+                    activity
+                        .window
+                        .addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                    val curColor = activity.window.statusBarColor
+                    val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), curColor, color)
+                    colorAnimation.addUpdateListener { animator -> activity.window.statusBarColor = (animator.animatedValue as Int) }
+                    if (animated) {
+                        colorAnimation.setDuration(300).startDelay = 0
+                    } else {
+                        colorAnimation.setDuration(0).startDelay = 300
                     }
-                })
+                    colorAnimation.start()
+                }
+            })
     }
 
     internal fun setStyle(screen: Screen, activity: Activity?, context: ReactContext?) {
@@ -97,8 +90,7 @@ object ScreenWindowTraits {
             return
         }
         val screenForStyle = findScreenForTrait(screen, WindowTraits.STYLE)
-        val style: String?
-        style = if (screenForStyle != null && screenForStyle.statusBarStyle != null) {
+        val style: String? = if (screenForStyle?.statusBarStyle != null) {
             screenForStyle.statusBarStyle
         } else {
             "light"
@@ -118,48 +110,51 @@ object ScreenWindowTraits {
     }
 
     internal fun setTranslucent(
-            screen: Screen, activity: Activity?, context: ReactContext?) {
+        screen: Screen,
+        activity: Activity?,
+        context: ReactContext?
+    ) {
         if (activity == null || context == null) {
             return
         }
         val translucent: Boolean
         val screenForTranslucent = findScreenForTrait(screen, WindowTraits.TRANSLUCENT)
-        translucent = if (screenForTranslucent != null && screenForTranslucent.isStatusBarTranslucent != null) {
+        translucent = if (screenForTranslucent?.isStatusBarTranslucent != null) {
             screenForTranslucent.isStatusBarTranslucent!!
         } else {
             false
         }
         UiThreadUtil.runOnUiThread(
-                object : GuardedRunnable(context) {
-                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                    override fun runGuarded() {
-                        // If the status bar is translucent hook into the window insets calculations
-                        // and consume all the top insets so no padding will be added under the status bar.
-                        val decorView = activity.window.decorView
-                        if (translucent) {
-                            decorView.setOnApplyWindowInsetsListener { v, insets ->
-                                val defaultInsets = v.onApplyWindowInsets(insets)
-                                defaultInsets.replaceSystemWindowInsets(
-                                        defaultInsets.systemWindowInsetLeft,
-                                        0,
-                                        defaultInsets.systemWindowInsetRight,
-                                        defaultInsets.systemWindowInsetBottom)
-                            }
-                        } else {
-                            decorView.setOnApplyWindowInsetsListener(null)
+            object : GuardedRunnable(context) {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                override fun runGuarded() {
+                    // If the status bar is translucent hook into the window insets calculations
+                    // and consume all the top insets so no padding will be added under the status bar.
+                    val decorView = activity.window.decorView
+                    if (translucent) {
+                        decorView.setOnApplyWindowInsetsListener { v, insets ->
+                            val defaultInsets = v.onApplyWindowInsets(insets)
+                            defaultInsets.replaceSystemWindowInsets(
+                                defaultInsets.systemWindowInsetLeft,
+                                0,
+                                defaultInsets.systemWindowInsetRight,
+                                defaultInsets.systemWindowInsetBottom
+                            )
                         }
-                        ViewCompat.requestApplyInsets(decorView)
+                    } else {
+                        decorView.setOnApplyWindowInsetsListener(null)
                     }
-                })
+                    ViewCompat.requestApplyInsets(decorView)
+                }
+            })
     }
 
     internal fun setHidden(screen: Screen, activity: Activity?) {
         if (activity == null) {
             return
         }
-        val hidden: Boolean
         val screenForHidden = findScreenForTrait(screen, WindowTraits.HIDDEN)
-        hidden = if (screenForHidden != null && screenForHidden.isStatusBarHidden != null) {
+        val hidden = if (screenForHidden?.isStatusBarHidden != null) {
             screenForHidden.isStatusBarHidden!!
         } else {
             false
@@ -176,7 +171,7 @@ object ScreenWindowTraits {
     }
 
     internal fun trySetWindowTraits(screen: Screen, activity: Activity?, context: ReactContext?) {
-        if (didSetOrientation()) {
+        if (mDidSetOrientation) {
             setOrientation(screen, activity)
         }
         if (didSetStatusBarAppearance()) {
@@ -187,7 +182,7 @@ object ScreenWindowTraits {
         }
     }
 
-    internal fun findScreenForTrait(screen: Screen, trait: WindowTraits): Screen? {
+    private fun findScreenForTrait(screen: Screen, trait: WindowTraits): Screen? {
         val childWithTrait = childScreenWithTraitSet(screen, trait)
         if (childWithTrait != null) {
             return childWithTrait
@@ -214,9 +209,11 @@ object ScreenWindowTraits {
         return null
     }
 
-    internal fun childScreenWithTraitSet(
-            screen: Screen?, trait: WindowTraits): Screen? {
-        if (screen == null || screen.fragment == null) {
+    private fun childScreenWithTraitSet(
+        screen: Screen?,
+        trait: WindowTraits
+    ): Screen? {
+        if (screen?.fragment == null) {
             return null
         }
         for (sc in screen.fragment!!.childScreenContainers) {
@@ -241,7 +238,6 @@ object ScreenWindowTraits {
             WindowTraits.TRANSLUCENT -> screen.isStatusBarTranslucent != null
             WindowTraits.HIDDEN -> screen.isStatusBarHidden != null
             WindowTraits.ANIMATED -> screen.isStatusBarAnimated != null
-            else -> throw IllegalArgumentException("Wrong trait passed: $trait")
         }
     }
 }

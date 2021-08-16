@@ -125,14 +125,13 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the
             // first setting of props similar thing is done for Screens of ScreenContainers, but in
             // `onContainerUpdate` of their Fragment
-            val screen = screen
             var context: ReactContext? = null
             if (getContext() is ReactContext) {
                 context = getContext() as ReactContext
             } else if (screen!!.fragment != null) {
-                context = screen.fragment!!.tryGetContext()
+                context = screen!!.fragment!!.tryGetContext()
             }
-            ScreenWindowTraits.trySetWindowTraits(screen, activity, context)
+            ScreenWindowTraits.trySetWindowTraits(screen!!, activity, context)
         }
         if (mIsHidden) {
             if (toolbar.parent != null) {
