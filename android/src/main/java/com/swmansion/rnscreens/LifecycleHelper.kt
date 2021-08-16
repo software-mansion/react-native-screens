@@ -42,9 +42,9 @@ class LifecycleHelper {
         view!!.addOnLayoutChangeListener(mRegisterOnLayoutChange)
     }
 
-    fun <T> unregister(view: T) where T : View?, T : LifecycleObserver? {
-        val lifecycle = mViewToLifecycleMap.get(view)
-        lifecycle?.removeObserver(view)
+    fun <T> unregister(view: T) where T : View, T : LifecycleObserver? {
+        val lifecycle = mViewToLifecycleMap[view]
+        lifecycle?.removeObserver(view!!)
     }
 
     companion object {
