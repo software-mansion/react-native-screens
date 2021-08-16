@@ -9,8 +9,9 @@ class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context)
     private var mReactHeight = 0
     var type = Type.RIGHT
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY
-                && MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
+        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY &&
+            MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
+        ) {
             // dimensions provided by react
             mReactWidth = MeasureSpec.getSize(widthMeasureSpec)
             mReactHeight = MeasureSpec.getSize(heightMeasureSpec)
