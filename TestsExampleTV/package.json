@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "postinstall": "patch-package",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "tv-os": "react-native run-ios --scheme=\"TestsExampleTV-tvOS\" --simulator=\"Apple TV\"",
