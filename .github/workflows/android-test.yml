@@ -1,0 +1,21 @@
+name: Test android app
+on: 
+  pull_request:
+    branches: [ master ]
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Install dependencies
+        run: yarn && cd TestsExample && yarn
+      - name: run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: cd TestsExample && npx react-native run-android --variant=release
