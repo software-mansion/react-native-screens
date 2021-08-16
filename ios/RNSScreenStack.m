@@ -550,7 +550,7 @@
     return NO;
   }
 #if TARGET_OS_TV
-  [self cancelTouchesInParent];
+  [self cancelTouchesInParent_1];
   return YES;
 #else
   if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
@@ -565,7 +565,7 @@
       return YES;
     }
   } else if (topScreen.stackAnimation != RNSScreenStackAnimationSimplePush) {
-    [self cancelTouchesInParent];
+    [self cancelTouchesInParent_2];
     return YES;
   }
   return NO;

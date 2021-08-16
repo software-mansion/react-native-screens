@@ -74,6 +74,7 @@ public class Screen extends ViewGroup {
   @Override
   protected void onAnimationEnd() {
     super.onAnimationEnd();
+    x = y + 2;
     if (mFragment != null) {
       mFragment.onViewAnimationEnd();
     }
