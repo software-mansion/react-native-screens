@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.R
 import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Build
@@ -18,7 +17,6 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.text.ReactTypefaceUtils
-import java.util.*
 
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
@@ -76,14 +74,14 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     }
 
     private val screen: Screen?
-        private get() {
+        get() {
             val screen = parent
             return if (screen is Screen) {
                 screen
             } else null
         }
     private val screenStack: ScreenStack?
-        private get() {
+        get() {
             val screen = screen
             if (screen != null) {
                 val container = screen.container
@@ -93,8 +91,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             return null
         }
-    protected val screenFragment: ScreenStackFragment?
-        protected get() {
+    private val screenFragment: ScreenStackFragment?
+        get() {
             val screen = parent
             if (screen is Screen) {
                 val fragment: Fragment? = screen.fragment
@@ -106,7 +104,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
     fun onUpdate() {
-        val parent = parent as Screen
+        val parent = parent as Screen?
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
         if (!mIsAttachedToWindow || !isTop || mDestroyed) {
@@ -255,6 +253,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                     params.gravity = Gravity.CENTER_HORIZONTAL
                     toolbar.title = null
                 }
+                else -> {}
             }
             view.layoutParams = params
             toolbar.addView(view)
@@ -297,9 +296,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             while (i < size) {
                 val view = toolbar.getChildAt(i)
                 if (view is TextView) {
-                    val tv = view
-                    if (tv.text == toolbar.title) {
-                        return tv
+                    if (view.text == toolbar.title) {
+                        return view
                     }
                 }
                 i++
