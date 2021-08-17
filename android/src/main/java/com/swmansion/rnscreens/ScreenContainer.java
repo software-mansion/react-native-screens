@@ -50,6 +50,7 @@ public class ScreenContainer<T extends ScreenFragment> extends ViewGroup {
 
   public ScreenContainer(Context context) {
     super(context);
+    a=x+y+z;
   }
 
   @Override
