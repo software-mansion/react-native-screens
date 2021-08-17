@@ -1,5 +1,5 @@
-import React, {useState, useLayoutEffect, useEffect} from 'react';
-import {StyleSheet, ScrollView, Text, I18nManager} from 'react-native';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
+import { StyleSheet, ScrollView, Text, I18nManager } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -22,7 +22,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   useEffect(() => {
     navigation.navigate('Settings');
   }, []);
@@ -44,7 +44,7 @@ interface SettingsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Settings'>;
 }
 
-const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
+const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
   const [headerTitle, setHeaderTitle] = useState('Settings');
   const [backButtonVisible, setBackButtonVisible] = useState(true);
   const [headerShown, setHeaderShown] = useState(true);
@@ -54,7 +54,7 @@ const SettingsScreen = ({navigation}: SettingsScreenProps): JSX.Element => {
   const [headerHideShadow, setHeaderHideShadow] = useState(true);
   const [headerTranslucent, setHeaderTranslucent] = useState(true);
 
-  const square = (props: {tintColor?: string}) => (
+  const square = (props: { tintColor?: string }) => (
     <Square {...props} color="green" size={20} />
   );
 

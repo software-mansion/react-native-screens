@@ -6,12 +6,12 @@ import {
   ImageBackground,
   I18nManager,
 } from 'react-native';
-import {ParamListBase} from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {Button, Form, Choose, Alert, Dialog} from '../shared';
+import { Button, Form, Choose, Alert, Dialog } from '../shared';
 
 type StackParamList = {
   Main: undefined;
@@ -28,9 +28,9 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => {
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   return (
-    <ScrollView style={{...styles.container, backgroundColor: 'thistle'}}>
+    <ScrollView style={{ ...styles.container, backgroundColor: 'thistle' }}>
       <Button title="push" onPress={() => navigation.navigate('Push')} />
       <Button title="modal" onPress={() => navigation.navigate('Modal')} />
       <Button
@@ -62,8 +62,8 @@ interface FormScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const FormScreen = ({navigation}: FormScreenProps): JSX.Element => (
-  <View style={{...styles.container, backgroundColor: 'white'}}>
+const FormScreen = ({ navigation }: FormScreenProps): JSX.Element => (
+  <View style={{ ...styles.container, backgroundColor: 'white' }}>
     <Form />
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </View>
@@ -73,7 +73,7 @@ interface ModalScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const ModalScreen = ({navigation}: ModalScreenProps): JSX.Element => (
+const ModalScreen = ({ navigation }: ModalScreenProps): JSX.Element => (
   <View style={styles.container}>
     <Choose />
     <Button title="Go back" onPress={() => navigation.goBack()} />
@@ -87,7 +87,7 @@ interface FullScreenModalProps {
 const FullScreenModalScreen = ({
   navigation,
 }: FullScreenModalProps): JSX.Element => (
-  <View style={{flex: 1}}>
+  <View style={{ flex: 1 }}>
     <ImageBackground
       style={styles.image}
       source={require('../assets/trees.jpg')}>
@@ -107,17 +107,17 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="Main"
       component={MainScreen}
-      options={{title: 'Stack Presentation'}}
+      options={{ title: 'Stack Presentation' }}
     />
     <Stack.Screen
       name="Push"
       component={FormScreen}
-      options={{stackPresentation: 'push'}}
+      options={{ stackPresentation: 'push' }}
     />
     <Stack.Screen
       name="Modal"
       component={ModalScreen}
-      options={{stackPresentation: 'modal'}}
+      options={{ stackPresentation: 'modal' }}
     />
     <Stack.Screen
       name="TransparentModal"
@@ -131,7 +131,7 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="ContainedModal"
       component={ModalScreen}
-      options={{stackPresentation: 'containedModal'}}
+      options={{ stackPresentation: 'containedModal' }}
     />
     <Stack.Screen
       name="ContainedTransparentModal"
@@ -153,7 +153,7 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="FormSheet"
       component={FormScreen}
-      options={{stackPresentation: 'formSheet'}}
+      options={{ stackPresentation: 'formSheet' }}
     />
   </Stack.Navigator>
 );
