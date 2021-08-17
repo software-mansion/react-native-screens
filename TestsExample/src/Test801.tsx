@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Button, Alert} from 'react-native';
 import { NavigationContainer, ParamListBase } from "@react-navigation/native";
-import { createNativeStackNavigator, NativeStackNavigationProp } from "react-native-screens/native-stack";
+import { createNativeStackNavigator, NativeStackNavigationProp, usePreventDismiss } from "react-native-screens/native-stack";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,11 +35,19 @@ function First({navigation}: {navigation: NativeStackNavigationProp<ParamListBas
 }
 
 function Second({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
+  const {enabled, onDismissCancelled} = usePreventDismiss();
+  const [dismiss, setDismiss] = React.useState(false);
   React.useEffect(
     () =>
       navigation.addListener('beforeRemove', (e) => {
         // Prevent default behavior of leaving the screen
-        e.preventDefault();
+        if (dismiss) {
+          enabled(true);
+          e.preventDefault();
+        } else {
+          enabled(false);
+          return;
+        }
 
         // Prompt the user before leaving the screen
         Alert.alert(
@@ -58,7 +66,7 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<ParamListBa
           ]
         );
       }),
-    [navigation]
+    [navigation, dismiss, enabled]
   );
 
   return (

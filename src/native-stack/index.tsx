@@ -9,6 +9,11 @@ export { default as createNativeStackNavigator } from './navigators/createNative
 export { default as NativeStackView } from './views/NativeStackView';
 
 /**
+ * Utilities
+ */
+ export { default as usePreventDismiss } from './utils/usePreventDismiss';
+
+/**
  * Types
  */
 export type {

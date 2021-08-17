@@ -22,6 +22,7 @@ import {
   NativeStackNavigationOptions,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
+import PreventDismissContext from '../utils/PreventDismissContext';
 
 const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
@@ -129,7 +130,6 @@ export default function NativeStackView({
           gestureEnabled,
           headerShown,
           onNativeDismissCancelled,
-          preventNativeDismiss = false,
           replaceAnimation = 'pop',
           screenOrientation,
           stackAnimation,
@@ -140,7 +140,7 @@ export default function NativeStackView({
           statusBarTranslucent,
         } = options;
 
-        let { stackPresentation = 'push' } = options;
+        let { stackPresentation = 'push', preventNativeDismiss = false } = options;
 
         if (index === 0) {
           // first screen should always be treated as `push`, it resolves problems with no header animation
@@ -153,6 +153,8 @@ export default function NativeStackView({
           : stackPresentation === 'push' && headerShown !== false;
 
         return (
+          <PreventDismissContext.Provider value={{enabled: (shouldPrevent) => {preventNativeDismiss = shouldPrevent}, onDismissCancelled: () => {}}}>
+
           <Screen
             key={route.key}
             enabled
@@ -239,18 +241,19 @@ export default function NativeStackView({
                 target: key,
               });
             }}>
-            <HeaderConfig
-              {...options}
-              route={route}
-              headerShown={isHeaderInPush}
-            />
-            <MaybeNestedStack
-              options={options}
-              route={route}
-              stackPresentation={stackPresentation}>
-              {renderScene()}
-            </MaybeNestedStack>
+              <HeaderConfig
+                {...options}
+                route={route}
+                headerShown={isHeaderInPush}
+              />
+              <MaybeNestedStack
+                options={options}
+                route={route}
+                stackPresentation={stackPresentation}>
+                {renderScene()}
+              </MaybeNestedStack>
           </Screen>
+          </PreventDismissContext.Provider>
         );
       })}
     </ScreenStack>
