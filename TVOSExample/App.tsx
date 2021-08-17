@@ -5,6 +5,7 @@ import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import HomeScreen from './src/HomeScreen';
 import BottomTabsExample from './src/BottomTabsExample';
 import ModalsExample from './src/ModalsExample';
+import NativeStackExample from './src/NativeStackExample';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ export default function App() {
         />
         <Stack.Screen name="Bottom Tabs" component={BottomTabsExample} />
         <Stack.Screen name="Modals" component={ModalsExample} />
+        <Stack.Screen name="Native Stack" component={NativeStackExample} />
       </Stack.Navigator>
     </NavigationContainer>
   );

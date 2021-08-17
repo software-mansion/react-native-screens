@@ -1,1 +1,1 @@
-export const EXAMPLES = ['Bottom Tabs', 'Modals'] as const;
+export const EXAMPLES = ['Bottom Tabs', 'Modals', 'Native Stack'] as const;
