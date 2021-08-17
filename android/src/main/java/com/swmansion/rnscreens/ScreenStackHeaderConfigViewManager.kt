@@ -1,36 +1,12 @@
 package com.swmansion.rnscreens
 
 import android.view.View
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.addConfigSubview
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.destroy
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.removeAllConfigSubviews
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.removeConfigSubview
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.configSubviewsCount
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.getConfigSubview
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.onUpdate
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setTitle
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setTitleFontFamily
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setTitleFontSize
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setTitleFontWeight
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setTitleColor
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setBackgroundColor
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setHideShadow
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setHideBackButton
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setTopInsetEnabled
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setTintColor
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setHidden
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setTranslucent
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setBackButtonInCustomView
-import com.swmansion.rnscreens.ScreenStackHeaderConfig.setDirection
-import com.facebook.react.module.annotations.ReactModule
-import com.swmansion.rnscreens.ScreenStackHeaderConfigViewManager
-import com.facebook.react.uimanager.ViewGroupManager
-import com.swmansion.rnscreens.ScreenStackHeaderConfig
-import com.facebook.react.uimanager.ThemedReactContext
-import com.swmansion.rnscreens.ScreenStackHeaderSubview
 import com.facebook.react.bridge.JSApplicationCausedNativeException
-import com.swmansion.rnscreens.ScreenStackHeaderSubviewManager
+import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
+import javax.annotation.Nonnull
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
 class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderConfig>() {
@@ -142,7 +118,8 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
 
     @ReactProp(name = "backButtonInCustomView")
     fun setBackButtonInCustomView(
-        config: ScreenStackHeaderConfig, backButtonInCustomView: Boolean
+        config: ScreenStackHeaderConfig,
+        backButtonInCustomView: Boolean
     ) {
         config.setBackButtonInCustomView(backButtonInCustomView)
     }
