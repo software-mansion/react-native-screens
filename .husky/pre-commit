@@ -1,5 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+yarn lint-android
 yarn lint-staged
 yarn check-types
