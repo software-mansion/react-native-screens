@@ -101,8 +101,11 @@
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
-    "src/**/*.{js,ts,tsx}": "yarn lint",
-    "android/**/*.java": "yarn format-android",
+    "src/**/*.{js,ts,tsx}": "yarn lint-js",
+    "android/**/*.kt": [
+      "yarn format-android",
+      "yarn lint-android"
+    ],
     "{ios,windows}/**/*.{h,m,cpp}": [
       "yarn format-ios",
       "yarn format-windows"
