@@ -550,7 +550,7 @@
     return NO;
   }
 #if TARGET_OS_TV
-  [self cancelTouchesInParent];
+  [self cancelTouchesInParent_1];
   return YES;
 #else
   if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
@@ -561,7 +561,7 @@
         (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
          ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
     if (isCorrectEdge && topScreen.stackAnimation == RNSScreenStackAnimationSimplePush) {
-      [self cancelTouchesInParent];
+      [self cancelTouchesInParent_2];
       return YES;
     }
   } else if (topScreen.stackAnimation != RNSScreenStackAnimationSimplePush) {
