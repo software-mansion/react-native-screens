@@ -11,6 +11,6 @@ const fileName = process.argv[2] ?? '';
 exec(`${ktlintFormatCommand}${fileName}`, (error, stdout) => {
   if (error) {
     console.log(stdout);
-    return exit(0);
+    return exit(1);
   }
 });
