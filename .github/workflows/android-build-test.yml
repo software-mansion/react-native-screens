@@ -16,7 +16,4 @@ jobs:
       - name: Install dependencies
         run: yarn && cd TestsExample && yarn
       - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 21
-          script: cd TestsExample && npx react-native run-android --variant=release
+        run: cd TestsExample/android && ./gradlew assembleDebug --console=plain
