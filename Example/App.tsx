@@ -8,12 +8,12 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import RNRestart from 'react-native-restart';
 
-import {ListItem, SettingsSwitch} from './src/shared';
+import { ListItem, SettingsSwitch } from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import StackPresentation from './src/screens/StackPresentation';
@@ -103,7 +103,7 @@ interface MainScreenProps {
   navigation: StackNavigationProp<RootStackParamList, 'Main'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
   <ScrollView>
     <SafeAreaView>
       <SettingsSwitch
@@ -147,7 +147,7 @@ const ExampleApp = (): JSX.Element => (
       }}>
       <Stack.Screen
         name="Main"
-        options={{title: '📱 React Native Screens Examples'}}
+        options={{ title: '📱 React Native Screens Examples' }}
         component={MainScreen}
       />
       {Object.keys(SCREENS).map((name) => (
@@ -155,7 +155,7 @@ const ExampleApp = (): JSX.Element => (
           key={name}
           name={name}
           getComponent={() => SCREENS[name].component}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
       ))}
     </Stack.Navigator>

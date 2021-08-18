@@ -11,11 +11,18 @@ on:
 jobs:
   install-and-lint:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
           yarn
-      - name: Test formatting and linting
+      - name: Format code
         run: |
-          yarn format && yarn lint
+          yarn format
+      - name: Run linter
+        run: |
+          yarn lint
+      - name: Check types
+        run: |
+          yarn check-types
+

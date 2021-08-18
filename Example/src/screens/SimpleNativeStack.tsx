@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, StyleSheet, I18nManager} from 'react-native';
+import { View, StyleSheet, I18nManager } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {Button} from '../shared';
+import { Button } from '../shared';
 
 type StackParamList = {
   Main: undefined;
@@ -15,8 +15,8 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
-  <View style={{...styles.container, backgroundColor: 'moccasin'}}>
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+  <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
     <Button
       title="Go to detail"
       onPress={() => navigation.navigate('Detail')}
@@ -29,8 +29,8 @@ interface DetailScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Detail'>;
 }
 
-const DetailScreen = ({navigation}: DetailScreenProps): JSX.Element => (
-  <View style={{...styles.container, backgroundColor: 'thistle'}}>
+const DetailScreen = ({ navigation }: DetailScreenProps): JSX.Element => (
+  <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </View>
 );
@@ -46,7 +46,7 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="Main"
       component={MainScreen}
-      options={{title: 'Simple Native Stack'}}
+      options={{ title: 'Simple Native Stack' }}
     />
     <Stack.Screen name="Detail" component={DetailScreen} />
   </Stack.Navigator>
