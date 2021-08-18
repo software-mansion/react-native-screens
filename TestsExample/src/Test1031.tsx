@@ -30,7 +30,7 @@ function First({navigation}: {navigation: NativeStackNavigationProp<ParamListBas
 function Second({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
   console.log(useHeaderHeight());
   return (
-    <Button title="Tap me for second screen" onPress={() => navigation.navigate('First')} />
+    <Button title="Tap me for first screen" onPress={() => navigation.navigate('First')} />
   );
 }
 
