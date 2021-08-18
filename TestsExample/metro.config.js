@@ -12,7 +12,6 @@ const modules = [
   'react-navigation',
   'react-navigation-stack',
   'react-native-safe-area-context',
-  'react-native-gesture-handler',
   ...Object.keys(pack.peerDependencies),
 ];
 

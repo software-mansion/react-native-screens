@@ -24,7 +24,6 @@ import {
   NavigationState,
   PartialState,
 } from '@react-navigation/native';
-import { HeaderHeightContext } from '@react-navigation/stack';
 import {
   useSafeAreaFrame,
   useSafeAreaInsets,
@@ -38,6 +37,7 @@ import {
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
+import HeaderHeightContext from '../utils/HeaderHeightContext';
 
 const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
