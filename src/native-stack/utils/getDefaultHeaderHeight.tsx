@@ -7,7 +7,8 @@ export default function getDefaultHeaderHeight(
   isModalPresentation: boolean,
   statusBarHeight: number
 ): number {
-  let headerHeight = 64;
+  // default header heights
+  let headerHeight = Platform.OS === 'android' ? 56 : 64;
 
   const isLandscape = layout.width > layout.height;
 
@@ -21,9 +22,7 @@ export default function getDefaultHeaderHeight(
         headerHeight = isModalPresentation ? 56 : 44;
       }
     }
-  } else if (Platform.OS === 'android') {
-    headerHeight = 56;
   }
-
+  
   return headerHeight + statusBarHeight;
 }
