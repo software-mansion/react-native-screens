@@ -35,6 +35,18 @@ function NativeStackNavigator({
     screenOptions,
   });
 
+  // Starting from React Navigation v6 @react-navigation/native-stack should be used.
+  // react-native-screens/native-stack works kinda okay for v6 (still) but types
+  // are different and it isn't supported for v6 so we have to warn users about this.
+  React.useEffect(() => {
+    // navigation.dangerouslyGetParent was removed in v6
+    if (navigation.dangerouslyGetParent === undefined) {
+      console.warn(
+        'It appears that you are importing native-stack from react-native-screens. Since version 6 of react-navigation, native-stack should be used as separate package @react-navigation/native-stack to take full advantage of new functionalities added to react-navigation'
+      );
+    }
+  }, [navigation]);
+
   React.useEffect(
     () =>
       navigation?.addListener?.('tabPress', (e) => {
