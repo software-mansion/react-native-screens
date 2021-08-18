@@ -17,7 +17,8 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
 
-class Screen @SuppressLint("ViewConstructor") constructor(context: ReactContext?) : ViewGroup(context) {
+@SuppressLint("ViewConstructor")
+class Screen constructor(context: ReactContext?) : ViewGroup(context) {
     var fragment: ScreenFragment? = null
     var container: ScreenContainer<*>? = null
     var activityState: ActivityState? = null

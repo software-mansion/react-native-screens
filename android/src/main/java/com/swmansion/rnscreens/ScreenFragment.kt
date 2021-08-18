@@ -53,12 +53,15 @@ open class ScreenFragment : Fragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val wrapper = FrameLayout(context!!)
-        val params = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        screen!!.layoutParams = params
-        wrapper.addView(recycleView(screen))
+        val wrapper = context?.let { FrameLayout(it) }
+
+        screen?.let {
+            val params = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            it.layoutParams = params
+            wrapper?.addView(recycleView(it))
+        }
         return wrapper
     }
 
@@ -79,19 +82,19 @@ open class ScreenFragment : Fragment {
         if (activity != null) {
             return activity
         }
-        val context = screen!!.context
-        if (context is ReactContext && context.currentActivity != null) {
-            return context.currentActivity
-        }
-        var parent: ViewParent? = screen!!.container
-        while (parent != null) {
-            if (parent is Screen) {
-                val fragment = parent.fragment
-                if (fragment != null && fragment.activity != null) {
-                    return fragment.activity
-                }
+        screen?.let {
+            val context = it.context
+            if (context is ReactContext && context.currentActivity != null) {
+                return context.currentActivity
             }
-            parent = parent.parent
+            var parent: ViewParent? = it.container
+            while (parent != null) {
+                if (parent is Screen) {
+                    val fragment = parent.fragment
+                    fragment?.activity?.let { activity -> return activity }
+                }
+                parent = parent.parent
+            }
         }
         return null
     }
@@ -100,17 +103,19 @@ open class ScreenFragment : Fragment {
         if (context is ReactContext) {
             return context as ReactContext?
         }
-        if (screen!!.context is ReactContext) {
-            return screen!!.context as ReactContext
-        }
-        var parent: ViewParent? = screen!!.container
-        while (parent != null) {
-            if (parent is Screen) {
-                if (parent.context is ReactContext) {
-                    return parent.context as ReactContext
-                }
+        screen?.let {
+            if (it.context is ReactContext) {
+                return it.context as ReactContext
             }
-            parent = parent.parent
+            var parent: ViewParent? = it.container
+            while (parent != null) {
+                if (parent is Screen) {
+                    if (parent.context is ReactContext) {
+                        return parent.context as ReactContext
+                    }
+                }
+                parent = parent.parent
+            }
         }
         return null
     }
@@ -135,18 +140,19 @@ open class ScreenFragment : Fragment {
     }
 
     private fun dispatchEvent(event: ScreenLifecycleEvent, fragment: ScreenFragment?) {
-        val screen = fragment!!.screen
-        val lifecycleEvent: Event<*> = when (event) {
-            ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(screen!!.id)
-            ScreenLifecycleEvent.Appear -> ScreenAppearEvent(screen!!.id)
-            ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(screen!!.id)
-            ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(screen!!.id)
+        fragment?.screen?.let {
+            val lifecycleEvent: Event<*> = when (event) {
+                ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
+                ScreenLifecycleEvent.Appear -> ScreenAppearEvent(it.id)
+                ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(it.id)
+                ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(it.id)
+            }
+            (it.context as ReactContext)
+                .getNativeModule(UIManagerModule::class.java)
+                ?.eventDispatcher
+                ?.dispatchEvent(lifecycleEvent)
+            fragment.dispatchEventInChildContainers(event)
         }
-        (screen.context as ReactContext)
-            .getNativeModule(UIManagerModule::class.java)
-            ?.eventDispatcher
-            ?.dispatchEvent(lifecycleEvent)
-        fragment.dispatchEventInChildContainers(event)
     }
 
     private fun dispatchEventInChildContainers(event: ScreenLifecycleEvent) {
@@ -202,23 +208,27 @@ open class ScreenFragment : Fragment {
 
     override fun onDestroy() {
         super.onDestroy()
-        val container = screen!!.container
-        if (container == null || !container.hasScreen(this)) {
-            // we only send dismissed even when the screen has been removed from its container
-            (screen!!.context as ReactContext)
-                .getNativeModule(UIManagerModule::class.java)
-                ?.eventDispatcher
-                ?.dispatchEvent(ScreenDismissedEvent(screen!!.id))
+        screen?.let {
+            val container = it.container
+            if (container == null || !container.hasScreen(this)) {
+                // we only send dismissed even when the screen has been removed from its container
+                if (it.context is ReactContext) {
+                    (it.context as ReactContext)
+                            .getNativeModule(UIManagerModule::class.java)
+                            ?.eventDispatcher
+                            ?.dispatchEvent(ScreenDismissedEvent(it.id))
+                }
+            }
         }
         mChildScreenContainers.clear()
     }
 
     companion object {
         @JvmStatic
-        protected fun recycleView(view: View?): View {
+        protected fun recycleView(view: View): View {
             // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
             // view it needs to be detached from the view hierarchy to allow the fragment to attach it back.
-            val parent = view!!.parent
+            val parent = view.parent
             if (parent != null) {
                 (parent as ViewGroup).endViewTransition(view)
                 parent.removeView(view)

@@ -32,19 +32,21 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>() {
 
     private fun startTransitionRecursive(parent: ViewGroup?) {
         var i = 0
-        val size = parent!!.childCount
-        while (i < size) {
-            val child = parent.getChildAt(i)
-            parent.startViewTransition(child)
-            if (child is ScreenStackHeaderConfig) {
-                // we want to start transition on children of the toolbar too,
-                // which is not a child of ScreenStackHeaderConfig
-                startTransitionRecursive(child.toolbar)
+        parent?.let {
+            val size = parent.childCount
+            while (i < size) {
+                val child = parent.getChildAt(i)
+                parent.startViewTransition(child)
+                if (child is ScreenStackHeaderConfig) {
+                    // we want to start transition on children of the toolbar too,
+                    // which is not a child of ScreenStackHeaderConfig
+                    startTransitionRecursive(child.toolbar)
+                }
+                if (child is ViewGroup) {
+                    startTransitionRecursive(child)
+                }
+                i++
             }
-            if (child is ViewGroup) {
-                startTransitionRecursive(child)
-            }
-            i++
         }
     }
 
@@ -52,8 +54,8 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>() {
         return parent.screenCount
     }
 
-    override fun getChildAt(parent: ScreenStack, index: Int): View {
-        return parent.getScreenAt(index)!!
+    override fun getChildAt(parent: ScreenStack, index: Int): View? {
+        return parent.getScreenAt(index)
     }
 
     override fun needsCustomLayoutForChildren(): Boolean {

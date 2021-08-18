@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Build
@@ -103,6 +104,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             return null
         }
 
+    @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     fun onUpdate() {
         val parent = parent as Screen?
         val stack = screenStack
@@ -110,7 +112,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         if (!mIsAttachedToWindow || !isTop || mDestroyed) {
             return
         }
-        val activity = screenFragment!!.activity as AppCompatActivity? ?: return
+        val activity = screenFragment?.activity as AppCompatActivity? ?: return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mDirection != null) {
             if (mDirection == "rtl") {
                 toolbar.layoutDirection = LAYOUT_DIRECTION_RTL
@@ -120,27 +122,26 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         // orientation and status bar management
-        if (screen != null) {
+        screen?.let  {
             // we set the traits here too, not only when the prop for Screen is passed
             // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the
             // first setting of props similar thing is done for Screens of ScreenContainers, but in
             // `onContainerUpdate` of their Fragment
-            var context: ReactContext? = null
-            if (getContext() is ReactContext) {
-                context = getContext() as ReactContext
-            } else if (screen!!.fragment != null) {
-                context = screen!!.fragment!!.tryGetContext()
+            val reactContext = if (context is ReactContext) {
+                context as ReactContext
+            } else {
+                it.fragment?.tryGetContext()
             }
-            ScreenWindowTraits.trySetWindowTraits(screen!!, activity, context)
+            ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }
         if (mIsHidden) {
             if (toolbar.parent != null) {
-                screenFragment!!.removeToolbar()
+                screenFragment?.removeToolbar()
             }
             return
         }
         if (toolbar.parent == null) {
-            screenFragment!!.setToolbar(toolbar)
+            screenFragment?.setToolbar(toolbar)
         }
         if (mIsTopInsetEnabled) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -166,8 +167,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         toolbar.setContentInsetsRelative(mDefaultStartInset, mDefaultStartInset)
 
         // hide back button
-        actionBar!!.setDisplayHomeAsUpEnabled(
-            screenFragment!!.canNavigateBack() && !mIsBackButtonHidden
+        actionBar?.setDisplayHomeAsUpEnabled(
+            screenFragment?.canNavigateBack() == true && !mIsBackButtonHidden
         )
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
@@ -176,13 +177,13 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         toolbar.setNavigationOnClickListener(mBackClickListener)
 
         // shadow
-        screenFragment!!.setToolbarShadowHidden(mIsShadowHidden)
+        screenFragment?.setToolbarShadowHidden(mIsShadowHidden)
 
         // translucent
-        screenFragment!!.setToolbarTranslucent(mIsTranslucent)
+        screenFragment?.setToolbarTranslucent(mIsTranslucent)
 
         // title
-        actionBar.title = mTitle
+        actionBar?.title = mTitle
         if (TextUtils.isEmpty(mTitle)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
             // views. When it is set to default it'd take up additional distance from the back button
@@ -206,9 +207,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         // background
-        if (mBackgroundColor != null) {
-            toolbar.setBackgroundColor(mBackgroundColor!!)
-        }
+        mBackgroundColor?.let { toolbar.setBackgroundColor(it) }
 
         // color
         if (mTintColor != 0) {
@@ -234,7 +233,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                     ?: throw JSApplicationIllegalArgumentException(
                         "Back button header config view should have Image as first child"
                     )
-                actionBar.setHomeAsUpIndicator(firstChild.drawable)
+                actionBar?.setHomeAsUpIndicator(firstChild.drawable)
                 i++
                 continue
             }

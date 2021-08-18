@@ -30,7 +30,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
     private var mLayoutEnqueued = false
-    private val mLayoutCallback: ChoreographerCompat.FrameCallback? = object : ChoreographerCompat.FrameCallback() {
+    private val mLayoutCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
         override fun doFrame(frameTimeNanos: Long) {
             mLayoutEnqueued = false
             measure(
@@ -73,6 +73,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     override fun requestLayout() {
         super.requestLayout()
+        @Suppress("SENSELESS_COMPARISON") // mLayoutCallback can be null here since this method can be called in init
         if (!mLayoutEnqueued && mLayoutCallback != null) {
             mLayoutEnqueued = true
             // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
@@ -104,6 +105,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     protected open fun adapt(screen: Screen?): T {
+        @Suppress("UNCHECKED_CAST")
         return ScreenFragment(screen) as T
     }
 
@@ -186,19 +188,19 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         setFragmentManager(context.supportFragmentManager)
     }
 
-    protected fun getOrCreateTransaction(): FragmentTransaction {
+    protected fun getOrCreateTransaction(): FragmentTransaction? {
         if (mCurrentTransaction == null) {
-            mCurrentTransaction = mFragmentManager!!.beginTransaction()
-            mCurrentTransaction!!.setReorderingAllowed(true)
+            mCurrentTransaction = mFragmentManager?.beginTransaction()
+            mCurrentTransaction?.setReorderingAllowed(true)
         }
-        return mCurrentTransaction!!
+        return mCurrentTransaction
     }
 
     protected fun tryCommitTransaction() {
         if (mCurrentTransaction != null) {
-            val transaction: FragmentTransaction = mCurrentTransaction!!
+            val transaction = mCurrentTransaction
             mProcessingTransaction = transaction
-            mProcessingTransaction!!.runOnCommit {
+            mProcessingTransaction?.runOnCommit {
                 if (mProcessingTransaction === transaction) {
                     // we need to take into account that commit is initiated with some other transaction
                     // while the previous one is still processing. In this case mProcessingTransaction
@@ -207,23 +209,23 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
                     mProcessingTransaction = null
                 }
             }
-            mCurrentTransaction!!.commitAllowingStateLoss()
+            mCurrentTransaction?.commitAllowingStateLoss()
             mCurrentTransaction = null
         }
     }
 
     private fun attachScreen(screenFragment: T) {
-        getOrCreateTransaction().add(id, screenFragment)
+        getOrCreateTransaction()?.add(id, screenFragment)
     }
 
     private fun moveToFront(screenFragment: ScreenFragment) {
         val transaction = getOrCreateTransaction()
-        transaction.remove(screenFragment)
-        transaction.add(id, screenFragment)
+        transaction?.remove(screenFragment)
+        transaction?.add(id, screenFragment)
     }
 
     private fun detachScreen(screenFragment: ScreenFragment) {
-        getOrCreateTransaction().remove(screenFragment)
+        getOrCreateTransaction()?.remove(screenFragment)
     }
 
     private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
@@ -243,18 +245,21 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     /** Removes fragments from fragment manager that are attached to this container  */
     private fun removeMyFragments() {
-        val transaction = mFragmentManager!!.beginTransaction()
+        val transaction = mFragmentManager?.beginTransaction()
         var hasFragments = false
-        for (fragment in mFragmentManager!!.fragments) {
-            if (fragment is ScreenFragment &&
-                fragment.screen?.container === this
-            ) {
-                transaction.remove(fragment)
-                hasFragments = true
+        mFragmentManager?.let {
+            for (fragment in it.fragments) {
+                if (fragment is ScreenFragment &&
+                        fragment.screen?.container === this
+                ) {
+                    transaction?.remove(fragment)
+                    hasFragments = true
+                }
             }
         }
+
         if (hasFragments) {
-            transaction.commitNowAllowingStateLoss()
+            transaction?.commitNowAllowingStateLoss()
         }
     }
 
@@ -264,14 +269,14 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // view. We also need to make sure all the fragments attached to the given container are removed
         // from fragment manager as in some cases fragment manager may be reused and in such case it'd
         // attempt to reattach previously registered fragments that are not removed
-        if (mFragmentManager != null && !mFragmentManager!!.isDestroyed) {
+        if (mFragmentManager?.isDestroyed != true) {
             removeMyFragments()
-            mFragmentManager!!.executePendingTransactions()
+            mFragmentManager?.executePendingTransactions()
         }
-        if (mParentScreenFragment != null) {
-            mParentScreenFragment!!.unregisterChildScreenContainer(this)
-            mParentScreenFragment = null
-        }
+
+        mParentScreenFragment?.unregisterChildScreenContainer(this)
+        mParentScreenFragment = null
+
         super.onDetachedFromWindow()
         mIsAttached = false
         // When fragment container view is detached we force all its children to be removed.
@@ -319,7 +324,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // need to flush them here such that Fragment#isAdded checks reflect the
         // reality and that we don't have enqueued fragment add commands that will
         // execute shortly and cause "Fragment already added" crash.
-        mFragmentManager!!.executePendingTransactions()
+        mFragmentManager?.executePendingTransactions()
         performUpdate()
         notifyContainerUpdate()
     }
@@ -369,8 +374,6 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     protected open fun notifyContainerUpdate() {
         val topScreen = topScreen
-        if (topScreen != null) {
-            topScreen.fragment!!.onContainerUpdate()
-        }
+        topScreen?.fragment?.onContainerUpdate()
     }
 }
