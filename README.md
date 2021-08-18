@@ -28,6 +28,10 @@ protected void onCreate(Bundle savedInstanceState) {
 
 For people that must handle cases like this, there is [a more detailed discussion of the difficulties in a series of related comments](https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704633).
 
+### Windows
+
+Installation on Windows should be completely handled with auto-linking when using React Native Windows 0.63+. For earlier versions, you must [manually link](https://microsoft.github.io/react-native-windows/docs/native-modules-using) the native module.
+
 ## How can I take advantage of that?
 
 Screens are already integrated with the React Native's most popular navigation library [react-navigation](https://github.com/react-navigation/react-navigation) and [Expo](https://expo.io).
@@ -72,7 +76,8 @@ You can also disable the usage of native screens per navigator with [`detachInac
 ### Using `createNativeStackNavigator` with React Navigation
 
 To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer:
-- for React Navigation >= v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) 
+- for React Navigation >= v6 to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator)
+- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) 
 - for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator) 
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)

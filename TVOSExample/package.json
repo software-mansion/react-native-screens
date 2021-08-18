@@ -1,0 +1,55 @@
+{
+  "name": "TVOSExample",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "postinstall": "patch-package",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "tv-os": "react-native run-ios --scheme=\"TVOSExample-tvOS\" --simulator=\"Apple TV\"",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/bottom-tabs": "^5.11.10",
+    "@react-navigation/drawer": "^5.12.5",
+    "@react-navigation/material-bottom-tabs": "^5.3.9",
+    "@react-navigation/material-top-tabs": "^5.3.9",
+    "@react-navigation/native": "^5.9.4",
+    "@react-navigation/stack": "^5.14.5",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
+    "react": "17.0.1",
+    "react-native": "npm:react-native-tvos@0.64.2-2",
+    "react-native-appearance": "^0.3.4",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-native-paper": "^4.3.1",
+    "react-native-reanimated": "^2.1.0",
+    "react-native-redash": "^15.11.1",
+    "react-native-safe-area-context": "^3.1.9",
+    "react-native-vector-icons": "^7.1.0",
+    "react-native-webview": "^11.0.0",
+    "react-navigation": "^4.4.3",
+    "react-navigation-material-bottom-tabs": "^2.3.3",
+    "react-navigation-stack": "^2.10.1",
+    "react-navigation-tabs": "^2.10.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/runtime": "^7.15.3",
+    "@react-native-community/eslint-config": "^3.0.0",
+    "babel-jest": "^27.0.6",
+    "eslint": "^7.32.0",
+    "jest": "^27.0.6",
+    "metro-react-native-babel-preset": "^0.66.2",
+    "react-test-renderer": "17.0.1",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "babel-preset-expo": "^8.3.0",
+    "glob-to-regexp": "^0.4.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
