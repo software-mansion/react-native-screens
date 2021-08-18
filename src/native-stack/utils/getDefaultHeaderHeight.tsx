@@ -1,12 +1,11 @@
 import { Platform } from 'react-native';
-import { StackPresentationTypes } from 'src/types';
-
+import { StackPresentationTypes } from 'react-native-screens';
 type Layout = { width: number; height: number };
 
 export default function getDefaultHeaderHeight(
   layout: Layout,
   topInset: number,
-  stackPresentation: StackPresentationTypes,
+  stackPresentation: StackPresentationTypes
 ): number {
   // default header heights
   let headerHeight = Platform.OS === 'android' ? 56 : 64;
@@ -32,6 +31,6 @@ export default function getDefaultHeaderHeight(
       }
     }
   }
-  
+
   return headerHeight + statusBarHeight;
 }

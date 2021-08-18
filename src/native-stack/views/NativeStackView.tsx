@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  Platform,
-  PlatformIOSStatic,
-  StyleSheet,
-  View,
-  ViewProps,
-} from 'react-native';
+import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
@@ -114,7 +108,7 @@ const MaybeNestedStack = ({
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
     topInset,
-    stackPresentation,
+    stackPresentation
   );
 
   if (isHeaderInModal) {
@@ -184,7 +178,7 @@ const RouteView = ({
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
     topInset,
-    stackPresentation,
+    stackPresentation
   );
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
 
