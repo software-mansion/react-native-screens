@@ -11,7 +11,7 @@
     "format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
     "format-windows": "find windows/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
     "format": "yarn format-js && yarn format-android && yarn format-ios && yarn format-windows",
-    "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types",
+    "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
     "lint-android": "./android/gradlew -p android ktlint -q",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "npm login && release-it",
