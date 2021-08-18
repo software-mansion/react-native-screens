@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [master]
 jobs:
-  test:
+  build:
     runs-on: macos-latest
     steps:
       - name: checkout
@@ -15,8 +15,11 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'TVOSExample/yarn.lock'
       - name: Install node dependencies
-        run: cd TVOSExample && yarn
+        working-directory: TVOSExample
+        run: yarn
       - name: Install pods
-        run: cd TVOSExample/ios && pod install
+        working-directory: TVOSExample/ios
+        run: pod install
       - name: Build app
-        run: cd TVOSExample && yarn tv-os
+        working-directory: TVOSExample
+        run: yarn tv-os

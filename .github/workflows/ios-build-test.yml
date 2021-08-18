@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [master]
 jobs:
-  test:
+  build:
     runs-on: macos-latest
     steps:
       - name: checkout
@@ -15,8 +15,11 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'TestsExample/yarn.lock'
       - name: Install node dependencies
-        run: cd TestsExample && yarn
+        working-directory: TestsExample
+        run: yarn
       - name: Install pods
-        run: cd TestsExample/ios && pod install
+        working-directory: TestsExample/ios
+        run: pod install
       - name: Build app
-        run: cd TestsExample && xcodebuild -workspace ios/TestsExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 8' -scheme TestsExample -parallelizeTargets -configuration Debug -derivedDataPath ios/build -UseModernBuildSystem=YES | xcpretty
+        working-directory: TestsExample
+        run: xcodebuild -workspace ios/TestsExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 8' -scheme TestsExample -parallelizeTargets -configuration Debug -derivedDataPath ios/build -UseModernBuildSystem=YES | xcpretty

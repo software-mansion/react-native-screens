@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [master]
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -13,7 +13,9 @@ jobs:
         with:
           node-version: 14
           cache: 'yarn'
-      - name: Install dependencies
-        run: yarn && cd TestsExample && yarn
+      - name: Install node dependencies
+        working-directory: TestsExample
+        run: yarn
       - name: Build app
-        run: cd TestsExample/android && ./gradlew assembleDebug --console=plain
+        working-directory: TestsExample/android
+        run: ./gradlew assembleDebug --console=plain
