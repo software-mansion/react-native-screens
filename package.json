@@ -6,12 +6,14 @@
     "check-types": "tsc --noEmit",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
-    "format": "yarn format-js && yarn format-android && yarn format-ios && yarn format-windows",
     "format-js": "prettier --write --list-different './{src,Example}/**/*.{js,ts,tsx}'",
-    "format-android": "node ./scripts/lint-java.js",
+    "format-android": "node ./scripts/format-android.js",
     "format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
     "format-windows": "find windows/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
-    "lint": "eslint --ext '.js,.ts,.tsx' --fix src",
+    "format": "yarn format-js && yarn format-android && yarn format-ios && yarn format-windows",
+    "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
+    "lint-android": "node ./scripts/lint-android.js",
+    "lint": "yarn lint-js && yarn lint-android",
     "release": "npm login && release-it",
     "prepare": "bob build && husky install"
   },
@@ -99,8 +101,11 @@
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
-    "src/**/*.{js,ts,tsx}": "yarn lint",
-    "android/**/*.java": "yarn format-android",
+    "src/**/*.{js,ts,tsx}": "yarn lint-js",
+    "android/**/*.kt": [
+      "yarn format-android",
+      "yarn lint-android"
+    ],
     "{ios,windows}/**/*.{h,m,cpp}": [
       "yarn format-ios",
       "yarn format-windows"

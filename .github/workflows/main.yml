@@ -16,6 +16,13 @@ jobs:
       - name: Install dependencies
         run: |
           yarn
-      - name: Test formatting and linting
+      - name: Format code
         run: |
-          yarn format && yarn lint
+          yarn format
+      - name: Run linter
+        run: |
+          yarn lint
+      - name: Check types
+        run: |
+          yarn check-types
+
