@@ -2,6 +2,8 @@ import { Platform } from 'react-native';
 import { StackPresentationTypes } from 'react-native-screens';
 type Layout = { width: number; height: number };
 
+const formSheetModalHeight = 56;
+
 export default function getDefaultHeaderHeight(
   layout: Layout,
   topInset: number,
@@ -20,7 +22,6 @@ export default function getDefaultHeaderHeight(
       statusBarHeight = 0;
     }
 
-    const formSheetModalHeight = 56;
     if (Platform.isPad || Platform.isTVOS) {
       headerHeight = isFromSheetModal ? formSheetModalHeight : 50;
     } else {
