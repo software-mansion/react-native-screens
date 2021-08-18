@@ -13,9 +13,7 @@ jobs:
         with:
           node-version: 14
           cache: 'yarn'
-          cache-dependency-path: |
-            'TVOSExample/yarn.lock'
-            'yarn.lock'
+          cache-dependency-path: 'TVOSExample/yarn.lock'
       - name: Install node dependencies
         run: cd TVOSExample && yarn
       - name: Install pods
