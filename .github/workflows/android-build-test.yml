@@ -1,0 +1,21 @@
+name: Test android build
+on:
+  pull_request:
+    branches: [master]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: 'yarn'
+      - name: Install node dependencies
+        working-directory: TestsExample
+        run: yarn
+      - name: Build app
+        working-directory: TestsExample/android
+        run: ./gradlew assembleDebug --console=plain
