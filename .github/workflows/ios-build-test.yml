@@ -19,4 +19,4 @@ jobs:
       - name: Install pods
         run: cd TestsExample/ios && pod install
       - name: Build app
-        run: cd TestsExample && yarn ios
+        run: cd TestsExample && xcodebuild -workspace ios/TestsExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 8' -scheme TestsExample -parallelizeTargets -configuration Debug -derivedDataPath ios/build -UseModernBuildSystem=YES | xcpretty
