@@ -54,7 +54,6 @@ object ScreenWindowTraits {
 
         UiThreadUtil.runOnUiThread(
             object : GuardedRunnable(context) {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 override fun runGuarded() {
                     activity
                         .window

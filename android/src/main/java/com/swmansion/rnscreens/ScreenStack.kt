@@ -265,9 +265,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                         } else continue
                     }
                     // when first visible screen found, make all screens after that visible
-                    it
-                            .add(id, screen)
-                            .runOnCommit { top?.screen?.bringToFront() }
+                    it.add(id, screen).runOnCommit { top?.screen?.bringToFront() }
                 }
             } else if (newTop != null && !newTop.isAdded) {
                 it.add(id, newTop)
@@ -329,7 +327,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 }
                 i++
             }
-            if (topScreen !== firstScreen && topScreen.isDismissable) {
+            if (topScreen !== firstScreen && topScreen.isDismissible) {
                 it
                         .beginTransaction()
                         .show(topScreen)

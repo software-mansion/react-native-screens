@@ -41,16 +41,15 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mDefaultStartInset: Int
     private val mDefaultStartInsetWithNavigation: Int
     private val mBackClickListener = OnClickListener {
-        val fragment = screenFragment
-        if (fragment != null) {
+        screenFragment?.let {
             val stack = screenStack
-            if (stack != null && stack.rootScreen == fragment.screen) {
-                val parentFragment = fragment.parentFragment
+            if (stack != null && stack.rootScreen == it.screen) {
+                val parentFragment = it.parentFragment
                 if (parentFragment is ScreenStackFragment) {
                     parentFragment.dismiss()
                 }
             } else {
-                fragment.dismiss()
+                it.dismiss()
             }
         }
     }
@@ -125,7 +124,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         screen?.let  {
             // we set the traits here too, not only when the prop for Screen is passed
             // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the
-            // first setting of props similar thing is done for Screens of ScreenContainers, but in
+            // first setting of props. Similar thing is done for Screens of ScreenContainers, but in
             // `onContainerUpdate` of their Fragment
             val reactContext = if (context is ReactContext) {
                 context as ReactContext

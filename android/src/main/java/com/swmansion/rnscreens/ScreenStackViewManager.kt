@@ -33,10 +33,10 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>() {
     private fun startTransitionRecursive(parent: ViewGroup?) {
         var i = 0
         parent?.let {
-            val size = parent.childCount
+            val size = it.childCount
             while (i < size) {
-                val child = parent.getChildAt(i)
-                parent.startViewTransition(child)
+                val child = it.getChildAt(i)
+                child?.let {view -> it.startViewTransition(view)}
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig

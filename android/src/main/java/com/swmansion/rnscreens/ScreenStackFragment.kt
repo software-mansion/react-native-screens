@@ -146,7 +146,7 @@ class ScreenStackFragment : ScreenFragment {
         return view
     }
 
-    val isDismissable: Boolean
+    val isDismissible: Boolean
         get() = screen?.isGestureEnabled ?: false
 
     fun canNavigateBack(): Boolean {

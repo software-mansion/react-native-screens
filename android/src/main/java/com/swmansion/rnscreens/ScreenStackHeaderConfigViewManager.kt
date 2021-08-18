@@ -127,11 +127,8 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     @ReactProp(name = "direction")
     fun setDirection(config: ScreenStackHeaderConfig, direction: String?) {
         config.setDirection(direction)
-    } //  RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
+    }
 
-    //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
-    //  RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSString)
-    //  // `hidden` is an UIView property, we need to use different name internally
     companion object {
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"
     }

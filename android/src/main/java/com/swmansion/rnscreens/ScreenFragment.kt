@@ -57,7 +57,7 @@ open class ScreenFragment : Fragment {
 
         screen?.let {
             val params = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             )
             it.layoutParams = params
             wrapper?.addView(recycleView(it))
@@ -79,9 +79,7 @@ open class ScreenFragment : Fragment {
     }
 
     fun tryGetActivity(): Activity? {
-        if (activity != null) {
-            return activity
-        }
+        activity?.let { return it }
         screen?.let {
             val context = it.context
             if (context is ReactContext && context.currentActivity != null) {
@@ -101,7 +99,7 @@ open class ScreenFragment : Fragment {
 
     fun tryGetContext(): ReactContext? {
         if (context is ReactContext) {
-            return context as ReactContext?
+            return context as ReactContext
         }
         screen?.let {
             if (it.context is ReactContext) {
@@ -214,9 +212,9 @@ open class ScreenFragment : Fragment {
                 // we only send dismissed even when the screen has been removed from its container
                 if (it.context is ReactContext) {
                     (it.context as ReactContext)
-                            .getNativeModule(UIManagerModule::class.java)
-                            ?.eventDispatcher
-                            ?.dispatchEvent(ScreenDismissedEvent(it.id))
+                        .getNativeModule(UIManagerModule::class.java)
+                        ?.eventDispatcher
+                        ?.dispatchEvent(ScreenDismissedEvent(it.id))
                 }
             }
         }

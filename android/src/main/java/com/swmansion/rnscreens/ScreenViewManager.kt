@@ -41,35 +41,25 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
 
     @ReactProp(name = "stackPresentation")
     fun setStackPresentation(view: Screen, presentation: String) {
-        if ("push" == presentation) {
-            view.stackPresentation = Screen.StackPresentation.PUSH
-        } else if ("modal" == presentation || "containedModal" == presentation || "fullScreenModal" == presentation || "formSheet" == presentation) {
-            // at the moment Android implementation does not handle contained vs regular modals
-            view.stackPresentation = Screen.StackPresentation.MODAL
-        } else if ("transparentModal" == presentation || "containedTransparentModal" == presentation) {
-            // at the moment Android implementation does not handle contained vs regular modals
-            view.stackPresentation = Screen.StackPresentation.TRANSPARENT_MODAL
-        } else {
-            throw JSApplicationIllegalArgumentException("Unknown presentation type $presentation")
+        when (presentation) {
+            "push" -> view.stackPresentation = Screen.StackPresentation.PUSH
+            "modal", "containedModal", "fullScreenModal", "formSheet" -> view.stackPresentation = Screen.StackPresentation.MODAL
+            "transparentModal", "containedTransparentModal" -> view.stackPresentation = Screen.StackPresentation.TRANSPARENT_MODAL
+            else -> throw JSApplicationIllegalArgumentException("Unknown presentation type $presentation")
         }
     }
 
     @ReactProp(name = "stackAnimation")
     fun setStackAnimation(view: Screen, animation: String?) {
-        if (animation == null || "default" == animation || "simple_push" == animation) {
-            view.stackAnimation = Screen.StackAnimation.DEFAULT
-        } else if ("none" == animation) {
-            view.stackAnimation = Screen.StackAnimation.NONE
-        } else if ("fade" == animation) {
-            view.stackAnimation = Screen.StackAnimation.FADE
-        } else if ("slide_from_right" == animation) {
-            view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_RIGHT
-        } else if ("slide_from_left" == animation) {
-            view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_LEFT
-        } else if ("slide_from_bottom" == animation) {
-            view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_BOTTOM
-        } else if ("fade_from_bottom" == animation) {
-            view.stackAnimation = Screen.StackAnimation.FADE_FROM_BOTTOM
+        when (animation) {
+            null, "default", "simple_push" -> Screen.StackAnimation.DEFAULT
+            "none" -> view.stackAnimation = Screen.StackAnimation.NONE
+            "fade" -> view.stackAnimation = Screen.StackAnimation.FADE
+            "slide_from_right" -> view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_RIGHT
+            "slide_from_left" -> view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_LEFT
+            "slide_from_bottom" -> view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_BOTTOM
+            "fade_from_bottom" -> view.stackAnimation = Screen.StackAnimation.FADE_FROM_BOTTOM
+            else -> throw JSApplicationIllegalArgumentException("Unknown animation type $animation")
         }
     }
 
