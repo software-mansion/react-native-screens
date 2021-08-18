@@ -1,25 +1,34 @@
 import { Platform } from 'react-native';
+import { StackPresentationTypes } from 'src/types';
 
 type Layout = { width: number; height: number };
 
 export default function getDefaultHeaderHeight(
   layout: Layout,
-  isModalPresentation: boolean,
-  statusBarHeight: number
+  topInset: number,
+  stackPresentation: StackPresentationTypes,
 ): number {
   // default header heights
   let headerHeight = Platform.OS === 'android' ? 56 : 64;
-
-  const isLandscape = layout.width > layout.height;
+  let statusBarHeight = topInset;
 
   if (Platform.OS === 'ios') {
-    if (Platform.isPad) {
-      headerHeight = isModalPresentation ? 56 : 50;
+    const isLandscape = layout.width > layout.height;
+    const isFromSheetModal =
+      stackPresentation === 'modal' || stackPresentation === 'formSheet';
+    if (isFromSheetModal && !isLandscape) {
+      // `modal` and `formSheet` presentations do not take whole screen, so should not take the inset.
+      statusBarHeight = 0;
+    }
+
+    const formSheetModalHeight = 56;
+    if (Platform.isPad || Platform.isTVOS) {
+      headerHeight = isFromSheetModal ? formSheetModalHeight : 50;
     } else {
       if (isLandscape) {
         headerHeight = 32;
       } else {
-        headerHeight = isModalPresentation ? 56 : 44;
+        headerHeight = isFromSheetModal ? formSheetModalHeight : 44;
       }
     }
   }

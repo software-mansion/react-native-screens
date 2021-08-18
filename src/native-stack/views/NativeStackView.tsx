@@ -109,21 +109,12 @@ const MaybeNestedStack = ({
     </Container>
   );
 
-  const insets = useSafeAreaInsets();
+  const topInset = useSafeAreaInsets().top;
   const dimensions = useSafeAreaFrame();
-  // landscape is meaningful only for iPhone
-  const isLandscape =
-    dimensions.width > dimensions.height &&
-    !(Platform as PlatformIOSStatic).isPad &&
-    !(Platform as PlatformIOSStatic).isTVOS;
-  // `modal` and `formSheet` presentations do not take whole screen, so should not take the inset.
-  const isFullScreenModal =
-    stackPresentation !== 'modal' && stackPresentation !== 'formSheet';
-  const topInset = isFullScreenModal && !isLandscape ? insets.top : 0;
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
-    !isFullScreenModal,
-    topInset
+    topInset,
+    stackPresentation,
   );
 
   if (isHeaderInModal) {
@@ -188,13 +179,14 @@ const RouteView = ({
     ? headerShown
     : stackPresentation === 'push' && headerShown !== false;
 
-  const headerStatusBarHeight = useSafeAreaInsets().top;
-  const parentHeaderHeight = React.useContext(HeaderHeightContext);
+  const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
   const headerHeight = getDefaultHeaderHeight(
-    useSafeAreaFrame(),
-    false,
-    headerStatusBarHeight
+    dimensions,
+    topInset,
+    stackPresentation,
   );
+  const parentHeaderHeight = React.useContext(HeaderHeightContext);
 
   return (
     <Screen
