@@ -244,22 +244,20 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     /** Removes fragments from fragment manager that are attached to this container  */
-    private fun removeMyFragments() {
-        val transaction = mFragmentManager?.beginTransaction()
+    private fun removeMyFragments(fragmentManager: FragmentManager) {
+        val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
-        mFragmentManager?.let {
-            for (fragment in it.fragments) {
-                if (fragment is ScreenFragment &&
-                        fragment.screen?.container === this
-                ) {
-                    transaction?.remove(fragment)
-                    hasFragments = true
-                }
+        for (fragment in fragmentManager.fragments) {
+            if (fragment is ScreenFragment &&
+                fragment.screen?.container === this
+            ) {
+                transaction.remove(fragment)
+                hasFragments = true
             }
         }
 
         if (hasFragments) {
-            transaction?.commitNowAllowingStateLoss()
+            transaction.commitNowAllowingStateLoss()
         }
     }
 
@@ -269,9 +267,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // view. We also need to make sure all the fragments attached to the given container are removed
         // from fragment manager as in some cases fragment manager may be reused and in such case it'd
         // attempt to reattach previously registered fragments that are not removed
-        if (mFragmentManager?.isDestroyed != true) {
-            removeMyFragments()
-            mFragmentManager?.executePendingTransactions()
+        mFragmentManager?.let {
+            if (!it.isDestroyed) {
+                removeMyFragments(it)
+                it.executePendingTransactions()
+            }
         }
 
         mParentScreenFragment?.unregisterChildScreenContainer(this)
@@ -351,7 +351,6 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             }
         }
         var transitioning = true
-        val topScreen = topScreen
         if (topScreen != null) {
             // if there is an "onTop" screen it means the transition has ended
             transitioning = false
@@ -373,7 +372,6 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     protected open fun notifyContainerUpdate() {
-        val topScreen = topScreen
         topScreen?.fragment?.onContainerUpdate()
     }
 }
