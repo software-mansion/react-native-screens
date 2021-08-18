@@ -13,7 +13,9 @@ jobs:
         with:
           node-version: 14
           cache: 'yarn'
-          cache-dependency-path: 'TestsExample/yarn.lock'
+          cache-dependency-path: |
+            'TestsExample/yarn.lock'
+            'yarn.lock'
       - name: Install node dependencies
         run: cd TestsExample && yarn
       - name: Install pods
