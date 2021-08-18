@@ -15,5 +15,5 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn && cd TestsExample && yarn
-      - name: run tests
+      - name: Build app
         run: cd TestsExample/android && ./gradlew assembleDebug --console=plain

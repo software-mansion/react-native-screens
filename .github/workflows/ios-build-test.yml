@@ -15,28 +15,6 @@ jobs:
           cache: 'yarn'
       - name: Install node dependencies
         run: cd TestsExample && yarn
-      - name: Cache home pods
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-home-pods
-        with:
-          path: ~/Library/Caches/CocoaPods
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Podfile') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-      - name: Cache local pods
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-local-pods
-        with:
-          path: TestsExample/Pods
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/Podfile') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
       - name: Install pods
         run: cd TestsExample/ios && pod install
       - name: Build app
