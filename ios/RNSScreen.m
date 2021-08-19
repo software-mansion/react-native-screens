@@ -405,7 +405,8 @@
   UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
-    return ((RNSScreenView *)vc.view).screenOrientation;
+    UIInterfaceOrientationMask orientation = ((RNSScreenView *)vc.view).screenOrientation;
+    return orientation ? orientation : UIInterfaceOrientationMaskAllButUpsideDown;
   }
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
