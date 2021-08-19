@@ -119,14 +119,14 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     open fun removeScreenAt(index: Int) {
-        mScreenFragments[index].screen?.container = null
+        mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
         markUpdated()
     }
 
     open fun removeAllScreens() {
         for (screenFragment in mScreenFragments) {
-            screenFragment.screen?.container = null
+            screenFragment.screen.container = null
         }
         mScreenFragments.clear()
         markUpdated()
@@ -135,7 +135,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     val screenCount: Int
         get() = mScreenFragments.size
 
-    fun getScreenAt(index: Int): Screen? {
+    fun getScreenAt(index: Int): Screen {
         return mScreenFragments[index].screen
     }
 
@@ -233,7 +233,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
-        return screenFragment.screen?.activityState
+        return screenFragment.screen.activityState
     }
 
     open fun hasScreen(screenFragment: ScreenFragment?): Boolean {
@@ -253,7 +253,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         var hasFragments = false
         for (fragment in fragmentManager.fragments) {
             if (fragment is ScreenFragment &&
-                fragment.screen?.container === this
+                fragment.screen.container === this
             ) {
                 transaction.remove(fragment)
                 hasFragments = true
@@ -348,7 +348,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             val orphanedAry = orphaned.toTypedArray()
             for (fragment in orphanedAry) {
                 if (fragment is ScreenFragment) {
-                    if (fragment.screen?.container == null) {
+                    if (fragment.screen.container == null) {
                         detachScreen(fragment)
                     }
                 }
@@ -370,7 +370,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             } else if (activityState !== ActivityState.INACTIVE && addedBefore) {
                 moveToFront(screenFragment)
             }
-            screenFragment.screen?.setTransitioning(transitioning)
+            screenFragment.screen.setTransitioning(transitioning)
         }
         tryCommitTransaction()
     }

@@ -45,7 +45,7 @@ open class ScreenFragment : Fragment {
         super.onResume()
         if (shouldUpdateOnResume) {
             shouldUpdateOnResume = false
-            screen?.let { ScreenWindowTraits.trySetWindowTraits(it, tryGetActivity(), tryGetContext()) }
+            ScreenWindowTraits.trySetWindowTraits(screen, tryGetActivity(), tryGetContext())
         }
     }
 
@@ -56,13 +56,11 @@ open class ScreenFragment : Fragment {
     ): View? {
         val wrapper = context?.let { FrameLayout(it) }
 
-        screen?.let {
-            val params = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            it.layoutParams = params
-            wrapper?.addView(recycleView(it))
-        }
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        screen.layoutParams = params
+        wrapper?.addView(recycleView(screen))
         return wrapper
     }
 
@@ -76,24 +74,22 @@ open class ScreenFragment : Fragment {
             shouldUpdateOnResume = true
             return
         }
-        screen?.let { ScreenWindowTraits.trySetWindowTraits(it, activity, tryGetContext()) }
+        ScreenWindowTraits.trySetWindowTraits(screen, activity, tryGetContext())
     }
 
     fun tryGetActivity(): Activity? {
         activity?.let { return it }
-        screen?.let {
-            val context = it.context
-            if (context is ReactContext && context.currentActivity != null) {
-                return context.currentActivity
+        val context = screen.context
+        if (context is ReactContext && context.currentActivity != null) {
+            return context.currentActivity
+        }
+        var parent: ViewParent? = screen.container
+        while (parent != null) {
+            if (parent is Screen) {
+                val fragment = parent.fragment
+                fragment?.activity?.let { return it }
             }
-            var parent: ViewParent? = it.container
-            while (parent != null) {
-                if (parent is Screen) {
-                    val fragment = parent.fragment
-                    fragment?.activity?.let { activity -> return activity }
-                }
-                parent = parent.parent
-            }
+            parent = parent.parent
         }
         return null
     }
@@ -102,19 +98,17 @@ open class ScreenFragment : Fragment {
         if (context is ReactContext) {
             return context as ReactContext
         }
-        screen?.let {
-            if (it.context is ReactContext) {
-                return it.context as ReactContext
-            }
-            var parent: ViewParent? = it.container
-            while (parent != null) {
-                if (parent is Screen) {
-                    if (parent.context is ReactContext) {
-                        return parent.context as ReactContext
-                    }
+        if (screen.context is ReactContext) {
+            return screen.context as ReactContext
+        }
+        var parent: ViewParent? = screen.container
+        while (parent != null) {
+            if (parent is Screen) {
+                if (parent.context is ReactContext) {
+                    return parent.context as ReactContext
                 }
-                parent = parent.parent
             }
+            parent = parent.parent
         }
         return null
     }
@@ -138,8 +132,8 @@ open class ScreenFragment : Fragment {
         dispatchEvent(ScreenLifecycleEvent.Disappear, this)
     }
 
-    private fun dispatchEvent(event: ScreenLifecycleEvent, fragment: ScreenFragment?) {
-        fragment?.screen?.let {
+    private fun dispatchEvent(event: ScreenLifecycleEvent, fragment: ScreenFragment) {
+        fragment.screen.let {
             val lifecycleEvent: Event<*> = when (event) {
                 ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
                 ScreenLifecycleEvent.Appear -> ScreenAppearEvent(it.id)
@@ -157,12 +151,13 @@ open class ScreenFragment : Fragment {
     private fun dispatchEventInChildContainers(event: ScreenLifecycleEvent) {
         for (sc in mChildScreenContainers) {
             if (sc.screenCount > 0) {
-                val topScreen = sc.topScreen
-                if (topScreen?.fragment != null && (topScreen.stackAnimation !== Screen.StackAnimation.NONE || isRemoving)) {
-                    // we do not dispatch events in child when it has `none` animation
-                    // and we are going forward since then they will be dispatched in child via
-                    // `onCreateAnimation` of ScreenStackFragment
-                    dispatchEvent(event, topScreen.fragment)
+                sc.topScreen?.let {
+                    if (it.stackAnimation !== Screen.StackAnimation.NONE || isRemoving) {
+                        // we do not dispatch events in child when it has `none` animation
+                        // and we are going forward since then they will be dispatched in child via
+                        // `onCreateAnimation` of ScreenStackFragment
+                        sc.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
+                    }
                 }
             }
         }
@@ -207,16 +202,14 @@ open class ScreenFragment : Fragment {
 
     override fun onDestroy() {
         super.onDestroy()
-        screen?.let {
-            val container = it.container
-            if (container == null || !container.hasScreen(this)) {
-                // we only send dismissed even when the screen has been removed from its container
-                if (it.context is ReactContext) {
-                    (it.context as ReactContext)
-                        .getNativeModule(UIManagerModule::class.java)
-                        ?.eventDispatcher
-                        ?.dispatchEvent(ScreenDismissedEvent(it.id))
-                }
+        val container = screen.container
+        if (container == null || !container.hasScreen(this)) {
+            // we only send dismissed even when the screen has been removed from its container
+            if (screen.context is ReactContext) {
+                (screen.context as ReactContext)
+                    .getNativeModule(UIManagerModule::class.java)
+                    ?.eventDispatcher
+                    ?.dispatchEvent(ScreenDismissedEvent(screen.id))
             }
         }
         mChildScreenContainers.clear()

@@ -62,14 +62,14 @@ class ScreenStackFragment : ScreenFragment {
 
     fun setToolbarTranslucent(translucent: Boolean) {
         if (mIsTranslucent != translucent) {
-            val params = screen?.layoutParams
+            val params = screen.layoutParams
             (params as CoordinatorLayout.LayoutParams).behavior = if (translucent) null else ScrollingViewBehavior()
             mIsTranslucent = translucent
         }
     }
 
     override fun onContainerUpdate() {
-        val headerConfig = screen?.headerConfig
+        val headerConfig = screen.headerConfig
         headerConfig?.onUpdate()
     }
 
@@ -85,7 +85,7 @@ class ScreenStackFragment : ScreenFragment {
         // When using the Toolbar back button this is called an extra time with transit = 0 but in
         // this case we don't want to notify. The way I found to detect is case is check isHidden.
         if (transit == 0 && !isHidden &&
-            screen?.stackAnimation === Screen.StackAnimation.NONE
+            screen.stackAnimation === Screen.StackAnimation.NONE
         ) {
             if (enter) {
                 // Android dispatches the animation start event for the fragment that is being added first
@@ -120,14 +120,12 @@ class ScreenStackFragment : ScreenFragment {
         savedInstanceState: Bundle?
     ): View? {
         val view: NotifyingCoordinatorLayout? = context?.let { NotifyingCoordinatorLayout(it, this) }
-        screen?.let {
-            val params = CoordinatorLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
-            )
-            params.behavior = if (mIsTranslucent) null else ScrollingViewBehavior()
-            it.layoutParams = params
-            view?.addView(recycleView(it))
-        }
+        val params = CoordinatorLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
+        )
+        params.behavior = if (mIsTranslucent) null else ScrollingViewBehavior()
+        screen.layoutParams = params
+        view?.addView(recycleView(screen))
 
         mAppBarLayout = context?.let { AppBarLayout(it) }
         // By default AppBarLayout will have a background color set but since we cover the whole layout
@@ -147,10 +145,10 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     val isDismissible: Boolean
-        get() = screen?.isGestureEnabled ?: false
+        get() = screen.isGestureEnabled
 
     fun canNavigateBack(): Boolean {
-        val container: ScreenContainer<*>? = screen?.container
+        val container: ScreenContainer<*>? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         return if (container.rootScreen == screen) {
             // this screen is the root of the container, if it is nested we can check parent container
@@ -167,7 +165,7 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     fun dismiss() {
-        val container: ScreenContainer<*>? = screen?.container
+        val container: ScreenContainer<*>? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         container.dismiss(this)
     }

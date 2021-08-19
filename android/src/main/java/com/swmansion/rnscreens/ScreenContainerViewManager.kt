@@ -32,7 +32,7 @@ class ScreenContainerViewManager : ViewGroupManager<ScreenContainer<*>>() {
         return parent.screenCount
     }
 
-    override fun getChildAt(parent: ScreenContainer<*>, index: Int): View? {
+    override fun getChildAt(parent: ScreenContainer<*>, index: Int): View {
         return parent.getScreenAt(index)
     }
 

@@ -105,7 +105,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     fun onUpdate() {
-        val parent = parent as Screen?
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
         if (!mIsAttachedToWindow || !isTop || mDestroyed) {

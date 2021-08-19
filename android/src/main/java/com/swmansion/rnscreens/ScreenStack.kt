@@ -46,13 +46,13 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     override val topScreen: Screen?
         get() = mTopScreen?.screen
-    val rootScreen: Screen?
+    val rootScreen: Screen
         get() {
             var i = 0
             val size = screenCount
             while (i < size) {
                 val screen = getScreenAt(i)
-                if (!mDismissed.contains(screen?.fragment)) {
+                if (!mDismissed.contains(screen.fragment)) {
                     return screen
                 }
                 i++
@@ -113,7 +113,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     override fun removeScreenAt(index: Int) {
         val toBeRemoved = getScreenAt(index)
-        mDismissed.remove(toBeRemoved?.fragment)
+        mDismissed.remove(toBeRemoved.fragment)
         super.removeScreenAt(index)
     }
 
@@ -160,9 +160,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 // Otherwise it's open animation
                 shouldUseOpenAnimation = (
                     mScreenFragments.contains(mTopScreen) ||
-                        newTop.screen?.replaceAnimation !== Screen.ReplaceAnimation.POP
+                        newTop.screen.replaceAnimation !== Screen.ReplaceAnimation.POP
                     )
-                stackAnimation = newTop.screen?.stackAnimation
+                stackAnimation = newTop.screen.stackAnimation
             } else if (mTopScreen == null && newTop != null) {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering, but we want to send the
@@ -171,7 +171,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 // ScreenStackFragment).
                 // We don't do it if the stack is nested since the parent will trigger these events in child
                 stackAnimation = StackAnimation.NONE
-                if (newTop.screen?.stackAnimation !== StackAnimation.NONE && !isNested) {
+                if (newTop.screen.stackAnimation !== StackAnimation.NONE && !isNested) {
                     newTop.dispatchOnWillAppear()
                     newTop.dispatchOnAppear()
                 }
@@ -421,15 +421,15 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
         private fun isTransparent(fragment: ScreenStackFragment): Boolean {
             return (
-                fragment.screen?.stackPresentation
+                fragment.screen.stackPresentation
                     === Screen.StackPresentation.TRANSPARENT_MODAL
                 )
         }
 
         private fun needsDrawReordering(fragment: ScreenStackFragment): Boolean {
             return (
-                fragment.screen?.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
-                    fragment.screen?.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
+                fragment.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+                    fragment.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
                 )
         }
     }

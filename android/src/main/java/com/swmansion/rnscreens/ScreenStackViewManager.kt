@@ -54,7 +54,7 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>() {
         return parent.screenCount
     }
 
-    override fun getChildAt(parent: ScreenStack, index: Int): View? {
+    override fun getChildAt(parent: ScreenStack, index: Int): View {
         return parent.getScreenAt(index)
     }
 
