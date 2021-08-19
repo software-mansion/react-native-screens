@@ -179,7 +179,7 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
             else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
 
-        ScreenWindowTraits.setOrientation(this, fragment?.tryGetActivity())
+        fragment?.let { ScreenWindowTraits.setOrientation(this, it.tryGetActivity()) }
     }
 
     var statusBarStyle: String?
@@ -189,7 +189,7 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarStyle = statusBarStyle
-            ScreenWindowTraits.setStyle(this, fragment?.tryGetActivity(), fragment?.tryGetContext())
+            fragment?.let { ScreenWindowTraits.setStyle(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
     var isStatusBarHidden: Boolean?
@@ -199,7 +199,7 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarHidden = statusBarHidden
-            ScreenWindowTraits.setHidden(this, fragment?.tryGetActivity())
+            fragment?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
     var isStatusBarTranslucent: Boolean?
@@ -209,11 +209,13 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarTranslucent = statusBarTranslucent
-            ScreenWindowTraits.setTranslucent(
-                this,
-                fragment?.tryGetActivity(),
-                fragment?.tryGetContext()
-            )
+            fragment?.let {
+                ScreenWindowTraits.setTranslucent(
+                    this,
+                    it.tryGetActivity(),
+                    it.tryGetContext()
+                )
+            }
         }
 
     var statusBarColor: Int?
@@ -223,7 +225,7 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarColor = statusBarColor
-            ScreenWindowTraits.setColor(this, fragment?.tryGetActivity(), fragment?.tryGetContext())
+            fragment?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
     enum class StackPresentation {
