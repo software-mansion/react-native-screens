@@ -60,7 +60,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             throw IllegalStateException("Stack has no root screen set")
         }
 
-    override fun adapt(screen: Screen?): ScreenStackFragment {
+    override fun adapt(screen: Screen): ScreenStackFragment {
         return ScreenStackFragment(screen)
     }
 

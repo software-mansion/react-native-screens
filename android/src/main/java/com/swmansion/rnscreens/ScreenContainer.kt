@@ -105,7 +105,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         markUpdated()
     }
 
-    protected open fun adapt(screen: Screen?): T {
+    protected open fun adapt(screen: Screen): T {
         @Suppress("UNCHECKED_CAST")
         return ScreenFragment(screen) as T
     }

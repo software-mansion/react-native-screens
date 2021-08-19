@@ -24,8 +24,9 @@ open class ScreenFragment : Fragment {
         Appear, WillAppear, Disappear, WillDisappear
     }
 
-    var screen: Screen? = null
-        protected set
+    // if we call empty constructor, there is no screen to be assigned so not sure why it is suggested
+    @Suppress("JoinDeclarationAndAssignment")
+    lateinit var screen: Screen
     private val mChildScreenContainers: MutableList<ScreenContainer<*>> = ArrayList()
     private var shouldUpdateOnResume = false
 
@@ -36,7 +37,7 @@ open class ScreenFragment : Fragment {
     }
 
     @SuppressLint("ValidFragment")
-    constructor(screenView: Screen?) : super() {
+    constructor(screenView: Screen) : super() {
         screen = screenView
     }
 

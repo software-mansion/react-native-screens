@@ -24,7 +24,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mIsTranslucent = false
 
     @SuppressLint("ValidFragment")
-    constructor(screenView: Screen?) : super(screenView)
+    constructor(screenView: Screen) : super(screenView)
 
     constructor() {
         throw IllegalStateException(
