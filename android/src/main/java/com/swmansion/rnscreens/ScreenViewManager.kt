@@ -41,24 +41,26 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
 
     @ReactProp(name = "stackPresentation")
     fun setStackPresentation(view: Screen, presentation: String) {
-        when (presentation) {
-            "push" -> view.stackPresentation = Screen.StackPresentation.PUSH
-            "modal", "containedModal", "fullScreenModal", "formSheet" -> view.stackPresentation = Screen.StackPresentation.MODAL
-            "transparentModal", "containedTransparentModal" -> view.stackPresentation = Screen.StackPresentation.TRANSPARENT_MODAL
+        view.stackPresentation = when (presentation) {
+            "push" -> Screen.StackPresentation.PUSH
+            "modal", "containedModal", "fullScreenModal", "formSheet" ->
+                Screen.StackPresentation.MODAL
+            "transparentModal", "containedTransparentModal" ->
+                Screen.StackPresentation.TRANSPARENT_MODAL
             else -> throw JSApplicationIllegalArgumentException("Unknown presentation type $presentation")
         }
     }
 
     @ReactProp(name = "stackAnimation")
     fun setStackAnimation(view: Screen, animation: String?) {
-        when (animation) {
+        view.stackAnimation = when (animation) {
             null, "default", "simple_push" -> Screen.StackAnimation.DEFAULT
-            "none" -> view.stackAnimation = Screen.StackAnimation.NONE
-            "fade" -> view.stackAnimation = Screen.StackAnimation.FADE
-            "slide_from_right" -> view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_RIGHT
-            "slide_from_left" -> view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_LEFT
-            "slide_from_bottom" -> view.stackAnimation = Screen.StackAnimation.SLIDE_FROM_BOTTOM
-            "fade_from_bottom" -> view.stackAnimation = Screen.StackAnimation.FADE_FROM_BOTTOM
+            "none" -> Screen.StackAnimation.NONE
+            "fade" -> Screen.StackAnimation.FADE
+            "slide_from_right" -> Screen.StackAnimation.SLIDE_FROM_RIGHT
+            "slide_from_left" -> Screen.StackAnimation.SLIDE_FROM_LEFT
+            "slide_from_bottom" -> Screen.StackAnimation.SLIDE_FROM_BOTTOM
+            "fade_from_bottom" -> Screen.StackAnimation.FADE_FROM_BOTTOM
             else -> throw JSApplicationIllegalArgumentException("Unknown animation type $animation")
         }
     }
@@ -70,10 +72,10 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
 
     @ReactProp(name = "replaceAnimation")
     fun setReplaceAnimation(view: Screen, animation: String?) {
-        if (animation == null || "pop" == animation) {
-            view.replaceAnimation = Screen.ReplaceAnimation.POP
-        } else if ("push" == animation) {
-            view.replaceAnimation = Screen.ReplaceAnimation.PUSH
+        view.replaceAnimation = when (animation) {
+            null, "pop" -> Screen.ReplaceAnimation.POP
+            "push" -> Screen.ReplaceAnimation.PUSH
+            else -> throw JSApplicationIllegalArgumentException("Unknown replace animation type $animation")
         }
     }
 

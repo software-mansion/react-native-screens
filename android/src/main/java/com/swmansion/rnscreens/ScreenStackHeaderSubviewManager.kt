@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
@@ -18,11 +19,12 @@ class ScreenStackHeaderSubviewManager : ReactViewManager() {
 
     @ReactProp(name = "type")
     fun setType(view: ScreenStackHeaderSubview, type: String) {
-        when (type) {
-            "left" -> view.type = ScreenStackHeaderSubview.Type.LEFT
-            "center" -> view.type = ScreenStackHeaderSubview.Type.CENTER
-            "right" -> view.type = ScreenStackHeaderSubview.Type.RIGHT
-            "back" -> view.type = ScreenStackHeaderSubview.Type.BACK
+        view.type = when (type) {
+            "left" -> ScreenStackHeaderSubview.Type.LEFT
+            "center" -> ScreenStackHeaderSubview.Type.CENTER
+            "right" -> ScreenStackHeaderSubview.Type.RIGHT
+            "back" -> ScreenStackHeaderSubview.Type.BACK
+            else -> throw JSApplicationIllegalArgumentException("Unknown type $type")
         }
     }
 
