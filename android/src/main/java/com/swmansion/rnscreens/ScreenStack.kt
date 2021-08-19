@@ -182,7 +182,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             stackAnimation = mTopScreen?.screen?.stackAnimation
         }
 
-        getOrCreateTransaction()?.let {
+        getOrCreateTransaction().let {
             // animation logic start
             if (stackAnimation != null) {
                 if (shouldUseOpenAnimation) {

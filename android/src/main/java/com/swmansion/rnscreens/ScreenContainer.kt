@@ -14,6 +14,7 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.swmansion.rnscreens.Screen.ActivityState
+import java.lang.IllegalStateException
 
 open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
     @JvmField
@@ -188,12 +189,15 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         setFragmentManager(context.supportFragmentManager)
     }
 
-    protected fun getOrCreateTransaction(): FragmentTransaction? {
+    protected fun getOrCreateTransaction(): FragmentTransaction {
         if (mCurrentTransaction == null) {
-            mCurrentTransaction = mFragmentManager?.beginTransaction()
-            mCurrentTransaction?.setReorderingAllowed(true)
+            val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
+            val transaction = fragmentManager.beginTransaction()
+            transaction.setReorderingAllowed(true)
+            mCurrentTransaction = transaction
         }
-        return mCurrentTransaction
+        mCurrentTransaction?.let { return it }
+        throw IllegalStateException("mCurrentTransaction changed to null during creating transaction")
     }
 
     protected fun tryCommitTransaction() {
@@ -215,17 +219,17 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun attachScreen(screenFragment: T) {
-        getOrCreateTransaction()?.add(id, screenFragment)
+        getOrCreateTransaction().add(id, screenFragment)
     }
 
     private fun moveToFront(screenFragment: ScreenFragment) {
         val transaction = getOrCreateTransaction()
-        transaction?.remove(screenFragment)
-        transaction?.add(id, screenFragment)
+        transaction.remove(screenFragment)
+        transaction.add(id, screenFragment)
     }
 
     private fun detachScreen(screenFragment: ScreenFragment) {
-        getOrCreateTransaction()?.remove(screenFragment)
+        getOrCreateTransaction().remove(screenFragment)
     }
 
     private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
