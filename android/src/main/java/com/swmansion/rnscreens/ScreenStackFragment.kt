@@ -34,7 +34,7 @@ class ScreenStackFragment : ScreenFragment {
 
     fun removeToolbar() {
         mAppBarLayout?.let {
-            mToolbar?.let {toolbar ->
+            mToolbar?.let { toolbar ->
                 if (toolbar.parent === it) {
                     it.removeView(toolbar)
                 }
@@ -46,7 +46,7 @@ class ScreenStackFragment : ScreenFragment {
     fun setToolbar(toolbar: Toolbar) {
         mAppBarLayout?.addView(toolbar)
         val params = AppBarLayout.LayoutParams(
-                AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
+            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
         )
         params.scrollFlags = 0
         toolbar.layoutParams = params
@@ -122,7 +122,7 @@ class ScreenStackFragment : ScreenFragment {
         val view: NotifyingCoordinatorLayout? = context?.let { NotifyingCoordinatorLayout(it, this) }
         screen?.let {
             val params = CoordinatorLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
             )
             params.behavior = if (mIsTranslucent) null else ScrollingViewBehavior()
             it.layoutParams = params

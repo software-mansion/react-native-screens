@@ -121,7 +121,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         // orientation and status bar management
-        screen?.let  {
+        screen?.let {
             // we set the traits here too, not only when the prop for Screen is passed
             // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the
             // first setting of props. Similar thing is done for Screens of ScreenContainers, but in

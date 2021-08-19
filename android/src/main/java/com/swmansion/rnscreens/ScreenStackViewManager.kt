@@ -36,7 +36,7 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>() {
             val size = it.childCount
             while (i < size) {
                 val child = it.getChildAt(i)
-                child?.let {view -> it.startViewTransition(view)}
+                child?.let { view -> it.startViewTransition(view) }
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig

@@ -191,8 +191,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
                         StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
                         StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
-                                        R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
-                                )
+                            R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
+                        )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
                         else -> {
                         }
@@ -203,8 +203,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
                         StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
                         StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
-                                        R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
-                                )
+                            R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
+                        )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
                         else -> {
                         }
@@ -222,8 +222,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             }
             // animation logic end
             if (shouldUseOpenAnimation &&
-                    newTop != null && needsDrawReordering(newTop) &&
-                    visibleBottom == null
+                newTop != null && needsDrawReordering(newTop) &&
+                visibleBottom == null
             ) {
                 // When using an open animation in which two screens overlap (eg. fade_from_bottom or
                 // slide_from_bottom), we want to draw the previous screen under the new one,
@@ -274,7 +274,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             mStack.clear()
             mStack.addAll(mScreenFragments)
             tryCommitTransaction()
-            mTopScreen?.let {screen -> setupBackHandlerIfNeeded(screen)}
+            mTopScreen?.let { screen -> setupBackHandlerIfNeeded(screen) }
         }
     }
 
@@ -329,11 +329,11 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             }
             if (topScreen !== firstScreen && topScreen.isDismissible) {
                 it
-                        .beginTransaction()
-                        .show(topScreen)
-                        .addToBackStack(BACK_STACK_TAG)
-                        .setPrimaryNavigationFragment(topScreen)
-                        .commitAllowingStateLoss()
+                    .beginTransaction()
+                    .show(topScreen)
+                    .addToBackStack(BACK_STACK_TAG)
+                    .setPrimaryNavigationFragment(topScreen)
+                    .commitAllowingStateLoss()
                 it.addOnBackStackChangedListener(mBackStackListener)
             }
         }
