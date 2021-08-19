@@ -35,6 +35,17 @@ function NativeStackNavigator({
     screenOptions,
   });
 
+  // Starting from React Navigation v6, `native-stack` should be imported from
+  // `@react-navigation/native-stack` rather than `react-native-screens/native-stack`
+  React.useEffect(() => {
+    // @ts-ignore navigation.dangerouslyGetParent was removed in v6
+    if (navigation?.dangerouslyGetParent === undefined) {
+      console.warn(
+        'Looks like you are importing `native-stack` from `react-native-screens/native-stack`. Since version 6 of `react-navigation`, it should be imported from `@react-navigation/native-stack`.'
+      );
+    }
+  }, [navigation]);
+
   React.useEffect(
     () =>
       navigation?.addListener?.('tabPress', (e) => {
