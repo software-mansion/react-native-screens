@@ -201,8 +201,8 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     protected fun tryCommitTransaction() {
-        if (mCurrentTransaction != null) {
-            val transaction = mCurrentTransaction
+        val transaction = mCurrentTransaction
+        if (transaction != null) {
             mProcessingTransaction = transaction
             mProcessingTransaction?.runOnCommit {
                 if (mProcessingTransaction === transaction) {
@@ -213,7 +213,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
                     mProcessingTransaction = null
                 }
             }
-            mCurrentTransaction?.commitAllowingStateLoss()
+            transaction.commitAllowingStateLoss()
             mCurrentTransaction = null
         }
     }
@@ -335,7 +335,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     protected open fun performUpdate() {
         // detach screens that are no longer active
-        val orphaned: MutableSet<Fragment> = HashSet(mFragmentManager?.fragments)
+        val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
         for (screenFragment in mScreenFragments) {
             if (getActivityState(screenFragment) === ActivityState.INACTIVE &&
                 screenFragment.isAdded

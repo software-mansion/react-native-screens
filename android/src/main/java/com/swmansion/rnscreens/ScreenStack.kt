@@ -82,7 +82,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        mFragmentManager?.registerFragmentLifecycleCallbacks(mLifecycleCallbacks, false)
+        val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when ScreenStack attached to window" })
+        fragmentManager.registerFragmentLifecycleCallbacks(mLifecycleCallbacks, false)
     }
 
     override fun startViewTransition(view: View) {
