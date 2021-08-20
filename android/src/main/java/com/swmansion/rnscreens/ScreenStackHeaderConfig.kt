@@ -154,7 +154,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
         }
         activity.setSupportActionBar(toolbar)
-        val actionBar = activity.supportActionBar
+        // non-null toolbar is set in the line above and it is used here
+        val actionBar = requireNotNull(activity.supportActionBar)
 
         // Reset toolbar insets. By default we set symmetric inset for start and end to match iOS
         // implementation where both right and left icons are offset from the edge by default. We also
@@ -165,7 +166,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         toolbar.setContentInsetsRelative(mDefaultStartInset, mDefaultStartInset)
 
         // hide back button
-        actionBar?.setDisplayHomeAsUpEnabled(
+        actionBar.setDisplayHomeAsUpEnabled(
             screenFragment?.canNavigateBack() == true && !mIsBackButtonHidden
         )
 
@@ -181,7 +182,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         screenFragment?.setToolbarTranslucent(mIsTranslucent)
 
         // title
-        actionBar?.title = mTitle
+        actionBar.title = mTitle
         if (TextUtils.isEmpty(mTitle)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
             // views. When it is set to default it'd take up additional distance from the back button
@@ -231,7 +232,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                     ?: throw JSApplicationIllegalArgumentException(
                         "Back button header config view should have Image as first child"
                     )
-                actionBar?.setHomeAsUpIndicator(firstChild.drawable)
+                actionBar.setHomeAsUpIndicator(firstChild.drawable)
                 i++
                 continue
             }
