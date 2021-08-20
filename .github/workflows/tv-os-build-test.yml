@@ -1,10 +1,21 @@
 name: Test tvOS build
 on:
   pull_request:
-    branches: [master]
+    branches:
+      - master
+    paths:
+      - 'ios/**'
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      WORKING_DIRECTORY: TVOSExample
+    concurrency:
+      group: ios-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -15,11 +26,11 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'TVOSExample/yarn.lock'
       - name: Install node dependencies
-        working-directory: TVOSExample
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
       - name: Install pods
-        working-directory: TVOSExample/ios
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
       - name: Build app
-        working-directory: TVOSExample
-        run: xcodebuild -workspace ios/TVOSExample.xcworkspace -destination 'platform=tvOS Simulator,name=Apple TV' -scheme TVOSExample-tvOS -parallelizeTargets -configuration Release -derivedDataPath ios/build -UseModernBuildSystem=YES -quiet | xcpretty
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn tv-os
