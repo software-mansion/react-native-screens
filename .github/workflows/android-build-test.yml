@@ -1,10 +1,21 @@
-name: Test android build
+name: Test Android build
 on:
   pull_request:
-    branches: [master]
+    branches:
+      - master
+    paths:
+      - 'android/**'
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      WORKING_DIRECTORY: TestsExample
+    concurrency:
+      group: android-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -14,8 +25,8 @@ jobs:
           node-version: 14
           cache: 'yarn'
       - name: Install node dependencies
-        working-directory: TestsExample
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
       - name: Build app
-        working-directory: TestsExample/android
+        working-directory: ${{ env.WORKING_DIRECTORY }}/android
         run: ./gradlew assembleDebug --console=plain
