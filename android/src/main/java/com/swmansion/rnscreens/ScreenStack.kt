@@ -280,7 +280,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         mTopScreen = newTop
         mStack.clear()
         mStack.addAll(mScreenFragments)
-        tryCommitTransaction()
+        commitNowAllowingStateLoss()
         if (mTopScreen != null) {
             setupBackHandlerIfNeeded(mTopScreen)
         }
