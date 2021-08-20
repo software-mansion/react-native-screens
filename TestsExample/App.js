@@ -50,6 +50,7 @@ import Test913 from './src/Test913';
 import Test999 from './src/Test999';
 import Test1031 from './src/Test1031';
 import Test1032 from './src/Test1032';
+import Issue1017 from './src/Issue1017';
 
 export default function App() {
   return <Test42 />;
