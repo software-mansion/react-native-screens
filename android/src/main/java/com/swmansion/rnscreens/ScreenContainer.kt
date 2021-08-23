@@ -14,14 +14,12 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.swmansion.rnscreens.Screen.ActivityState
-import java.lang.IllegalStateException
 
 open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
     @JvmField
     protected val mScreenFragments = ArrayList<T>()
     @JvmField
     protected var mFragmentManager: FragmentManager? = null
-    private var mCurrentTransaction: FragmentTransaction? = null
     private var mIsAttached = false
     private var mLayoutEnqueued = false
     private val mLayoutCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
@@ -174,38 +172,26 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         setFragmentManager(context.supportFragmentManager)
     }
 
-    protected fun getOrCreateTransaction(): FragmentTransaction {
-        if (mCurrentTransaction == null) {
-            val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
-            val transaction = fragmentManager.beginTransaction()
-            transaction.setReorderingAllowed(true)
-            mCurrentTransaction = transaction
-        }
-        mCurrentTransaction?.let { return it }
-        throw IllegalStateException("mCurrentTransaction changed to null during creating transaction")
-    }
-
-    protected fun commitNowAllowingStateLoss() {
-        val transaction = requireNotNull(mCurrentTransaction, { "mCurrentTransaction is null when committing transaction" })
-        transaction.commitNowAllowingStateLoss()
-        mCurrentTransaction = null
+    protected fun createTransaction(): FragmentTransaction {
+        val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
+        val transaction = fragmentManager.beginTransaction()
+        transaction.setReorderingAllowed(true)
+        return transaction
     }
 
     private fun attachScreen(screenFragment: T) {
-        getOrCreateTransaction().add(id, screenFragment)
-        commitNowAllowingStateLoss()
+        createTransaction().add(id, screenFragment).commitAllowingStateLoss()
     }
 
     private fun moveToFront(screenFragment: ScreenFragment) {
-        val transaction = getOrCreateTransaction()
+        val transaction = createTransaction()
         transaction.remove(screenFragment)
         transaction.add(id, screenFragment)
-        commitNowAllowingStateLoss()
+        transaction.commitNowAllowingStateLoss()
     }
 
     private fun detachScreen(screenFragment: ScreenFragment) {
-        getOrCreateTransaction().remove(screenFragment)
-        commitNowAllowingStateLoss()
+        createTransaction().remove(screenFragment).commitNowAllowingStateLoss()
     }
 
     private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {

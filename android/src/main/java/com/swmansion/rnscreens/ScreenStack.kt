@@ -183,7 +183,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             stackAnimation = mTopScreen?.screen?.stackAnimation
         }
 
-        getOrCreateTransaction().let {
+        createTransaction().let {
             // animation logic start
             if (stackAnimation != null) {
                 if (shouldUseOpenAnimation) {
@@ -274,7 +274,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             mTopScreen = newTop
             mStack.clear()
             mStack.addAll(mScreenFragments)
-            commitNowAllowingStateLoss()
+            it.commitNowAllowingStateLoss()
             mTopScreen?.let { screen -> setupBackHandlerIfNeeded(screen) }
         }
     }
