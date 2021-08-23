@@ -1,5 +1,4 @@
 name: Lint
-
 on:
   push:
     branches:
@@ -7,15 +6,29 @@ on:
   pull_request:
     branches:
       - master
-
 jobs:
   install-and-lint:
     runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v2
-      - name: Install dependencies
+    concurrency: 
+      group: install-and-lint-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: 'yarn'
+      - name: Install node dependencies
+        run: yarn
+      - name: Format code
         run: |
-          yarn
-      - name: Test formatting and linting
+          yarn format
+      - name: Run linter
         run: |
-          yarn format && yarn lint
+          yarn lint
+      - name: Check types
+        run: |
+          yarn check-types
+

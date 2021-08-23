@@ -5,9 +5,9 @@ module.exports = {
       'module-resolver',
       {
         alias: {
-          'react-native-screens': '../src'
+          'react-native-screens': '../src',
         },
       },
     ],
-  ]
+  ],
 };
