@@ -78,7 +78,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  enableNativeBackButtonDismissal?: boolean;
+  nativeBackButtonDismissalEnabled?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.

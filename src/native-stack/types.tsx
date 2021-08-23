@@ -10,12 +10,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
-import {
-  ImageSourcePropType,
-  NativeSyntheticEvent,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
@@ -102,7 +97,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  enableNativeBackButtonDismissal?: boolean;
+  nativeBackButtonDismissalEnabled?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
@@ -242,23 +237,6 @@ export type NativeStackNavigationOptions = {
    * Boolean indicating whether the navigation bar is translucent.
    */
   headerTranslucent?: boolean;
-  /**
-   * A callback that gets called when you set `preventNativeDismiss` to `true` and dismiss a screen natively.
-   * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
-   * It calls `navigation.pop` of all dismissed screens by default.
-   *
-   * @platform ios
-   */
-  onNativeDismissCancelled?: (
-    e: NativeSyntheticEvent<{ dismissCount: number }>
-  ) => void;
-  /**
-   * Boolean indicating whether you are able to dimiss the screen or modal natively by swiping it or tapping default native header back button.
-   * If you set it to `true`, the natively dismissed screen is pushed back and `onNativeDismissCancelled` event is called.
-   *
-   * @platform ios
-   */
-  preventNativeDismiss?: boolean;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:

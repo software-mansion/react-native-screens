@@ -6,13 +6,13 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
-import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 class ScreenViewManager : ViewGroupManager<Screen>() {
@@ -111,10 +111,12 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
         view.isStatusBarHidden = statusBarHidden
     }
 
-    @ReactProp(name = "enableNativeBackButtonDismissal")
-    fun setEnableNativeBackButtonDismissal(
-            view: Screen, enableNativeBackButtonDismissal: Boolean) {
-        view.nativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
+    @ReactProp(name = "nativeBackButtonDismissalEnabled")
+    fun setNativeBackButtonDismissalEnabled(
+        view: Screen,
+        nativeBackButtonDismissalEnabled: Boolean
+    ) {
+        view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any>? {

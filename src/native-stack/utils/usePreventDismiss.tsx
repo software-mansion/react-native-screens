@@ -3,13 +3,13 @@ import * as React from 'react';
 import PreventDismissContext from './PreventDismissContext';
 
 export default function usePreventDismiss() {
-  const progress = React.useContext(PreventDismissContext);
+  const preventDismiss = React.useContext(PreventDismissContext);
 
-  if (progress === undefined) {
+  if (preventDismiss === undefined) {
     throw new Error(
-      "Couldn't find values for transition progress. Are you inside a screen in Native Stack?"
+      "Couldn't find value for preventing dismiss. Are you inside a screen in Native Stack?"
     );
   }
 
-  return progress;
+  return preventDismiss;
 }

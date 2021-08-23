@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, Alert} from 'react-native';
+import {Button, Alert, TextInput} from 'react-native';
 import { NavigationContainer, ParamListBase } from "@react-navigation/native";
 import { createNativeStackNavigator, NativeStackNavigationProp, usePreventDismiss } from "react-native-screens/native-stack";
 
@@ -8,12 +8,11 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{stackPresentation: 'push', preventNativeDismiss: true}}>
+      <Stack.Navigator>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen
           name="Second"
           component={Second}
-          options={{gestureEnabled: true}}
         />
         <Stack.Screen
           name="Modal"
@@ -35,17 +34,16 @@ function First({navigation}: {navigation: NativeStackNavigationProp<ParamListBas
 }
 
 function Second({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
-  const {enabled, onDismissCancelled} = usePreventDismiss();
-  const [dismiss, setDismiss] = React.useState(false);
+  const {preventDismiss} = usePreventDismiss();
+  const [text, setText] = React.useState('');
+  const hasUnsavedChanges = Boolean(text);
   React.useEffect(
     () =>
       navigation.addListener('beforeRemove', (e) => {
-        // Prevent default behavior of leaving the screen
-        if (dismiss) {
-          enabled(true);
+        if (hasUnsavedChanges) {
+          // Prevent default behavior of leaving the screen
           e.preventDefault();
         } else {
-          enabled(false);
           return;
         }
 
@@ -66,12 +64,20 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<ParamListBa
           ]
         );
       }),
-    [navigation, dismiss, enabled]
+    [navigation, hasUnsavedChanges]
   );
 
   return (
     <>
       <Button title="Tap me to go back" onPress={() => navigation.goBack()} />
+      <TextInput
+        value={text}
+        placeholder="Type something…"
+        onChangeText={(text) => {
+          setText(text);
+          preventDismiss(hasUnsavedChanges);
+        }}
+      />
       <Button title="Push more second screens" onPress={() => navigation.push('Second')} />
     </>
   );

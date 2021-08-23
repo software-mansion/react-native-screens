@@ -32,6 +32,7 @@ import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
+import PreventDismissContext from '../utils/PreventDismissContext';
 
 const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
@@ -147,13 +148,13 @@ const RouteView = ({
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
 }) => {
+  const [preventNativeDismiss, setPreventNativeDismiss] = React.useState(false);
+
   const { options, render: renderScene } = descriptors[route.key];
   const {
-    enableNativeBackButtonDismissal = false,
+    nativeBackButtonDismissalEnabled = false,
     gestureEnabled,
     headerShown,
-    onNativeDismissCancelled,
-    preventNativeDismiss = false,
     replaceAnimation = 'pop',
     screenOrientation,
     stackAnimation,
@@ -186,31 +187,32 @@ const RouteView = ({
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
 
   return (
-    <Screen
-      key={route.key}
-      enabled
-      style={StyleSheet.absoluteFill}
-      enableNativeBackButtonDismissal={enableNativeBackButtonDismissal}
-      gestureEnabled={isAndroid ? false : gestureEnabled}
-      preventNativeDismiss={preventNativeDismiss}
-      replaceAnimation={replaceAnimation}
-      screenOrientation={screenOrientation}
-      stackAnimation={stackAnimation}
-      stackPresentation={stackPresentation}
-      statusBarAnimation={statusBarAnimation}
-      statusBarColor={statusBarColor}
-      statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle}
-      statusBarTranslucent={statusBarTranslucent}
-      onHeaderBackButtonClicked={() => {
-        navigation.dispatch({
-          ...StackActions.pop(),
-          source: route.key,
-          target: stateKey,
-        });
-      }}
-      onNativeDismissCancelled={(e) => {
-        if (onNativeDismissCancelled === undefined) {
+    <PreventDismissContext.Provider
+      value={{ preventDismiss: setPreventNativeDismiss }}>
+      <Screen
+        key={route.key}
+        enabled
+        style={StyleSheet.absoluteFill}
+        nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
+        gestureEnabled={isAndroid ? false : gestureEnabled}
+        preventNativeDismiss={preventNativeDismiss}
+        replaceAnimation={replaceAnimation}
+        screenOrientation={screenOrientation}
+        stackAnimation={stackAnimation}
+        stackPresentation={stackPresentation}
+        statusBarAnimation={statusBarAnimation}
+        statusBarColor={statusBarColor}
+        statusBarHidden={statusBarHidden}
+        statusBarStyle={statusBarStyle}
+        statusBarTranslucent={statusBarTranslucent}
+        onHeaderBackButtonClicked={() => {
+          navigation.dispatch({
+            ...StackActions.pop(),
+            source: route.key,
+            target: stateKey,
+          });
+        }}
+        onNativeDismissCancelled={(e) => {
           const dismissCount =
             e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
 
@@ -219,70 +221,72 @@ const RouteView = ({
             source: route.key,
             target: stateKey,
           });
-        } else {
-          onNativeDismissCancelled(e);
-        }
-      }}
-      onWillAppear={() => {
-        navigation.emit({
-          type: 'transitionStart',
-          data: { closing: false },
-          target: route.key,
-        });
-      }}
-      onWillDisappear={() => {
-        navigation.emit({
-          type: 'transitionStart',
-          data: { closing: true },
-          target: route.key,
-        });
-      }}
-      onAppear={() => {
-        navigation.emit({
-          type: 'appear',
-          target: route.key,
-        });
-        navigation.emit({
-          type: 'transitionEnd',
-          data: { closing: false },
-          target: route.key,
-        });
-      }}
-      onDisappear={() => {
-        navigation.emit({
-          type: 'transitionEnd',
-          data: { closing: true },
-          target: route.key,
-        });
-      }}
-      onDismissed={(e) => {
-        navigation.emit({
-          type: 'dismiss',
-          target: route.key,
-        });
+        }}
+        onWillAppear={() => {
+          navigation.emit({
+            type: 'transitionStart',
+            data: { closing: false },
+            target: route.key,
+          });
+        }}
+        onWillDisappear={() => {
+          navigation.emit({
+            type: 'transitionStart',
+            data: { closing: true },
+            target: route.key,
+          });
+        }}
+        onAppear={() => {
+          navigation.emit({
+            type: 'appear',
+            target: route.key,
+          });
+          navigation.emit({
+            type: 'transitionEnd',
+            data: { closing: false },
+            target: route.key,
+          });
+        }}
+        onDisappear={() => {
+          navigation.emit({
+            type: 'transitionEnd',
+            data: { closing: true },
+            target: route.key,
+          });
+        }}
+        onDismissed={(e) => {
+          navigation.emit({
+            type: 'dismiss',
+            target: route.key,
+          });
 
-        const dismissCount =
-          e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
+          const dismissCount =
+            e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
 
-        navigation.dispatch({
-          ...StackActions.pop(dismissCount),
-          source: route.key,
-          target: stateKey,
-        });
-      }}>
-      <HeaderHeightContext.Provider
-        value={
-          isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
-        }>
-        <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
-        <MaybeNestedStack
-          options={options}
-          route={route}
-          stackPresentation={stackPresentation}>
-          {renderScene()}
-        </MaybeNestedStack>
-      </HeaderHeightContext.Provider>
-    </Screen>
+          navigation.dispatch({
+            ...StackActions.pop(dismissCount),
+            source: route.key,
+            target: stateKey,
+          });
+        }}>
+        <HeaderHeightContext.Provider
+          value={
+            isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
+          }>
+          <HeaderConfig
+            {...options}
+            route={route}
+            headerShown={isHeaderInPush}
+          />
+          <MaybeNestedStack
+            options={options}
+            route={route}
+            stackPresentation={stackPresentation}>
+            {renderScene()}
+          </MaybeNestedStack>
+        </HeaderHeightContext.Provider>
+      </Screen>
+    </PreventDismissContext.Provider>
   );
 };
 

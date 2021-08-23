@@ -459,10 +459,9 @@ class StackView extends React.Component<Props> {
             ? true
             : options.gestureEnabled
         }
-        enableNativeBackButtonDismissal={
-          options.enableNativeBackButtonDismissal
+        nativeBackButtonDismissalEnabled={
+          options.nativeBackButtonDismissalEnabled
         }
-        preventNativeDismiss={options.preventNativeDismiss}
         screenOrientation={options.screenOrientation}
         statusBarAnimation={options.statusBarAnimation}
         statusBarColor={options.statusBarColor}
@@ -474,13 +473,6 @@ class StackView extends React.Component<Props> {
         onWillDisappear={() => options?.onWillDisappear?.()}
         onDisappear={() => options?.onDisappear?.()}
         onHeaderBackButtonClicked={() => this.removeScene(route, 1)}
-        onNativeDismissCancelled={(e) => {
-          if (options.onNativeDismissCancelled === undefined) {
-            this.removeScene(route, e.nativeEvent.dismissCount);
-          } else {
-            options.onNativeDismissCancelled(e);
-          }
-        }}
         onDismissed={(e) =>
           this.removeScene(route, e.nativeEvent.dismissCount)
         }>
