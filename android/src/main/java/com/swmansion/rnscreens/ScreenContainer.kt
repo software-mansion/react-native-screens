@@ -179,19 +179,17 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         return transaction
     }
 
-    private fun attachScreen(screenFragment: T) {
-        createTransaction().add(id, screenFragment).commitAllowingStateLoss()
+    private fun attachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
+        transaction.add(id, screenFragment)
     }
 
-    private fun moveToFront(screenFragment: ScreenFragment) {
-        val transaction = createTransaction()
+    private fun moveToFront(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
         transaction.remove(screenFragment)
         transaction.add(id, screenFragment)
-        transaction.commitNowAllowingStateLoss()
     }
 
-    private fun detachScreen(screenFragment: ScreenFragment) {
-        createTransaction().remove(screenFragment).commitNowAllowingStateLoss()
+    private fun detachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
+        transaction.remove(screenFragment)
     }
 
     private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
@@ -287,11 +285,12 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     protected open fun performUpdate() {
         // detach screens that are no longer active
         val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
+        val transaction = createTransaction()
         for (screenFragment in mScreenFragments) {
             if (getActivityState(screenFragment) === ActivityState.INACTIVE &&
                 screenFragment.isAdded
             ) {
-                detachScreen(screenFragment)
+                detachScreen(transaction, screenFragment)
             }
             orphaned.remove(screenFragment)
         }
@@ -300,7 +299,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             for (fragment in orphanedAry) {
                 if (fragment is ScreenFragment) {
                     if (fragment.screen.container == null) {
-                        detachScreen(fragment)
+                        detachScreen(transaction, fragment)
                     }
                 }
             }
@@ -317,12 +316,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             val activityState = getActivityState(screenFragment)
             if (activityState !== ActivityState.INACTIVE && !screenFragment.isAdded) {
                 addedBefore = true
-                attachScreen(screenFragment)
+                attachScreen(transaction, screenFragment)
             } else if (activityState !== ActivityState.INACTIVE && addedBefore) {
-                moveToFront(screenFragment)
+                moveToFront(transaction, screenFragment)
             }
             screenFragment.screen.setTransitioning(transitioning)
         }
+        transaction.commitNowAllowingStateLoss()
     }
 
     protected open fun notifyContainerUpdate() {
