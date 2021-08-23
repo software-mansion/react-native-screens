@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Build
@@ -40,16 +41,15 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mDefaultStartInset: Int
     private val mDefaultStartInsetWithNavigation: Int
     private val mBackClickListener = OnClickListener {
-        val fragment = screenFragment
-        if (fragment != null) {
+        screenFragment?.let {
             val stack = screenStack
-            if (stack != null && stack.rootScreen == fragment.screen) {
-                val parentFragment = fragment.parentFragment
+            if (stack != null && stack.rootScreen == it.screen) {
+                val parentFragment = it.parentFragment
                 if (parentFragment is ScreenStackFragment) {
                     parentFragment.dismiss()
                 }
             } else {
-                fragment.dismiss()
+                it.dismiss()
             }
         }
     }
@@ -103,14 +103,14 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             return null
         }
 
+    @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     fun onUpdate() {
-        val parent = parent as Screen?
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
         if (!mIsAttachedToWindow || !isTop || mDestroyed) {
             return
         }
-        val activity = screenFragment!!.activity as AppCompatActivity? ?: return
+        val activity = screenFragment?.activity as AppCompatActivity? ?: return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mDirection != null) {
             if (mDirection == "rtl") {
                 toolbar.layoutDirection = LAYOUT_DIRECTION_RTL
@@ -120,27 +120,26 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         // orientation and status bar management
-        if (screen != null) {
+        screen?.let {
             // we set the traits here too, not only when the prop for Screen is passed
             // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the
-            // first setting of props similar thing is done for Screens of ScreenContainers, but in
+            // first setting of props. Similar thing is done for Screens of ScreenContainers, but in
             // `onContainerUpdate` of their Fragment
-            var context: ReactContext? = null
-            if (getContext() is ReactContext) {
-                context = getContext() as ReactContext
-            } else if (screen!!.fragment != null) {
-                context = screen!!.fragment!!.tryGetContext()
+            val reactContext = if (context is ReactContext) {
+                context as ReactContext
+            } else {
+                it.fragment?.tryGetContext()
             }
-            ScreenWindowTraits.trySetWindowTraits(screen!!, activity, context)
+            ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }
         if (mIsHidden) {
             if (toolbar.parent != null) {
-                screenFragment!!.removeToolbar()
+                screenFragment?.removeToolbar()
             }
             return
         }
         if (toolbar.parent == null) {
-            screenFragment!!.setToolbar(toolbar)
+            screenFragment?.setToolbar(toolbar)
         }
         if (mIsTopInsetEnabled) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -155,7 +154,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
         }
         activity.setSupportActionBar(toolbar)
-        val actionBar = activity.supportActionBar
+        // non-null toolbar is set in the line above and it is used here
+        val actionBar = requireNotNull(activity.supportActionBar)
 
         // Reset toolbar insets. By default we set symmetric inset for start and end to match iOS
         // implementation where both right and left icons are offset from the edge by default. We also
@@ -166,8 +166,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         toolbar.setContentInsetsRelative(mDefaultStartInset, mDefaultStartInset)
 
         // hide back button
-        actionBar!!.setDisplayHomeAsUpEnabled(
-            screenFragment!!.canNavigateBack() && !mIsBackButtonHidden
+        actionBar.setDisplayHomeAsUpEnabled(
+            screenFragment?.canNavigateBack() == true && !mIsBackButtonHidden
         )
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
@@ -176,10 +176,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         toolbar.setNavigationOnClickListener(mBackClickListener)
 
         // shadow
-        screenFragment!!.setToolbarShadowHidden(mIsShadowHidden)
+        screenFragment?.setToolbarShadowHidden(mIsShadowHidden)
 
         // translucent
-        screenFragment!!.setToolbarTranslucent(mIsTranslucent)
+        screenFragment?.setToolbarTranslucent(mIsTranslucent)
 
         // title
         actionBar.title = mTitle
@@ -206,9 +206,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         // background
-        if (mBackgroundColor != null) {
-            toolbar.setBackgroundColor(mBackgroundColor!!)
-        }
+        mBackgroundColor?.let { toolbar.setBackgroundColor(it) }
 
         // color
         if (mTintColor != 0) {

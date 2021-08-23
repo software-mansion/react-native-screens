@@ -17,21 +17,21 @@ import kotlin.collections.HashSet
 class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(context) {
     private val mStack = ArrayList<ScreenStackFragment>()
     private val mDismissed: MutableSet<ScreenStackFragment> = HashSet()
-    private val drawingOpPool: MutableList<DrawingOp?> = ArrayList()
-    private val drawingOps: MutableList<DrawingOp?> = ArrayList()
+    private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
+    private val drawingOps: MutableList<DrawingOp> = ArrayList()
     private var mTopScreen: ScreenStackFragment? = null
     private val mBackStackListener = FragmentManager.OnBackStackChangedListener {
-        if (mFragmentManager!!.backStackEntryCount == 0) {
+        if (mFragmentManager?.backStackEntryCount == 0) {
             // when back stack entry count hits 0 it means the user's navigated back using hw back
             // button. As the "fake" transaction we installed on the back stack does nothing we need
             // to handle back navigation on our own.
-            dismiss(mTopScreen!!)
+            mTopScreen?.let { dismiss(it) }
         }
     }
     private val mLifecycleCallbacks: FragmentManager.FragmentLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
         override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
             if (mTopScreen === f) {
-                setupBackHandlerIfNeeded(mTopScreen)
+                setupBackHandlerIfNeeded(f)
             }
         }
     }
@@ -45,36 +45,36 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override val topScreen: Screen?
-        get() = if (mTopScreen != null) mTopScreen!!.screen else null
+        get() = mTopScreen?.screen
     val rootScreen: Screen
         get() {
             var i = 0
             val size = screenCount
             while (i < size) {
                 val screen = getScreenAt(i)
-                if (!mDismissed.contains(screen?.fragment)) {
-                    return screen!!
+                if (!mDismissed.contains(screen.fragment)) {
+                    return screen
                 }
                 i++
             }
             throw IllegalStateException("Stack has no root screen set")
         }
 
-    override fun adapt(screen: Screen?): ScreenStackFragment {
+    override fun adapt(screen: Screen): ScreenStackFragment {
         return ScreenStackFragment(screen)
     }
 
     override fun onDetachedFromWindow() {
-        if (mFragmentManager != null) {
-            mFragmentManager!!.removeOnBackStackChangedListener(mBackStackListener)
-            mFragmentManager!!.unregisterFragmentLifecycleCallbacks(mLifecycleCallbacks)
-            if (!mFragmentManager!!.isStateSaved && !mFragmentManager!!.isDestroyed) {
+        mFragmentManager?.let {
+            it.removeOnBackStackChangedListener(mBackStackListener)
+            it.unregisterFragmentLifecycleCallbacks(mLifecycleCallbacks)
+            if (!it.isStateSaved && !it.isDestroyed) {
                 // State save means that the container where fragment manager was installed has been
                 // unmounted.
                 // This could happen as a result of dismissing nested stack. In such a case we don't need to
                 // reset back stack as it'd result in a crash caused by the fact the fragment manager is no
                 // longer attached.
-                mFragmentManager!!.popBackStack(BACK_STACK_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                it.popBackStack(BACK_STACK_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             }
         }
         super.onDetachedFromWindow()
@@ -82,7 +82,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        mFragmentManager!!.registerFragmentLifecycleCallbacks(mLifecycleCallbacks, false)
+        val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when ScreenStack attached to window" })
+        fragmentManager.registerFragmentLifecycleCallbacks(mLifecycleCallbacks, false)
     }
 
     override fun startViewTransition(view: View) {
@@ -113,7 +114,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     override fun removeScreenAt(index: Int) {
         val toBeRemoved = getScreenAt(index)
-        mDismissed.remove(toBeRemoved?.fragment)
+        mDismissed.remove(toBeRemoved.fragment)
         super.removeScreenAt(index)
     }
 
@@ -160,9 +161,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 // Otherwise it's open animation
                 shouldUseOpenAnimation = (
                     mScreenFragments.contains(mTopScreen) ||
-                        newTop.screen?.replaceAnimation !== Screen.ReplaceAnimation.POP
+                        newTop.screen.replaceAnimation !== Screen.ReplaceAnimation.POP
                     )
-                stackAnimation = newTop.screen?.stackAnimation
+                stackAnimation = newTop.screen.stackAnimation
             } else if (mTopScreen == null && newTop != null) {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering, but we want to send the
@@ -171,7 +172,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 // ScreenStackFragment).
                 // We don't do it if the stack is nested since the parent will trigger these events in child
                 stackAnimation = StackAnimation.NONE
-                if (newTop.screen?.stackAnimation !== StackAnimation.NONE && !isNested) {
+                if (newTop.screen.stackAnimation !== StackAnimation.NONE && !isNested) {
                     newTop.dispatchOnWillAppear()
                     newTop.dispatchOnAppear()
                 }
@@ -179,110 +180,102 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         } else if (mTopScreen != null && mTopScreen != newTop) {
             // otherwise if we are performing top screen change we do "close animation"
             shouldUseOpenAnimation = false
-            stackAnimation = mTopScreen!!.screen?.stackAnimation
+            stackAnimation = mTopScreen?.screen?.stackAnimation
         }
 
-        // animation logic start
-        if (stackAnimation != null) {
-            if (shouldUseOpenAnimation) {
-                transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN
-                when (stackAnimation) {
-                    StackAnimation.SLIDE_FROM_RIGHT -> getOrCreateTransaction()
-                        .setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
-                    StackAnimation.SLIDE_FROM_LEFT -> getOrCreateTransaction()
-                        .setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
-                    StackAnimation.SLIDE_FROM_BOTTOM -> getOrCreateTransaction()
-                        .setCustomAnimations(
+        getOrCreateTransaction().let {
+            // animation logic start
+            if (stackAnimation != null) {
+                if (shouldUseOpenAnimation) {
+                    transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN
+                    when (stackAnimation) {
+                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
+                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
+                        StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
                             R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
                         )
-                    StackAnimation.FADE_FROM_BOTTOM -> getOrCreateTransaction()
-                        .setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
-                    else -> {}
-                }
-            } else {
-                transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE
-                when (stackAnimation) {
-                    StackAnimation.SLIDE_FROM_RIGHT -> getOrCreateTransaction()
-                        .setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
-                    StackAnimation.SLIDE_FROM_LEFT -> getOrCreateTransaction()
-                        .setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
-                    StackAnimation.SLIDE_FROM_BOTTOM -> getOrCreateTransaction()
-                        .setCustomAnimations(
+                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
+                        else -> {
+                        }
+                    }
+                } else {
+                    transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE
+                    when (stackAnimation) {
+                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
+                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
+                        StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
                             R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
                         )
-                    StackAnimation.FADE_FROM_BOTTOM -> getOrCreateTransaction()
-                        .setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
-                    else -> {}
+                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
+                        else -> {
+                        }
+                    }
                 }
             }
-        }
-        if (stackAnimation === StackAnimation.NONE) {
-            transition = FragmentTransaction.TRANSIT_NONE
-        }
-        if (stackAnimation === StackAnimation.FADE) {
-            transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE
-        }
-        if (stackAnimation != null && isSystemAnimation(stackAnimation)) {
-            getOrCreateTransaction().setTransition(transition)
-        }
-        // animation logic end
-        if (shouldUseOpenAnimation &&
-            newTop != null && needsDrawReordering(newTop) &&
-            visibleBottom == null
-        ) {
-            // When using an open animation in which two screens overlap (eg. fade_from_bottom or
-            // slide_from_bottom), we want to draw the previous screen under the new one,
-            // which is apparently not the default option. Android always draws the disappearing view
-            // on top of the appearing one. We then reverse the order of the views so the new screen
-            // appears on top of the previous one. You can read more about in the comment
-            // for the code we use to change that behavior:
-            // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
-            isDetachingCurrentScreen = true
-        }
+            if (stackAnimation === StackAnimation.NONE) {
+                transition = FragmentTransaction.TRANSIT_NONE
+            }
+            if (stackAnimation === StackAnimation.FADE) {
+                transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE
+            }
+            if (stackAnimation != null && isSystemAnimation(stackAnimation)) {
+                it.setTransition(transition)
+            }
+            // animation logic end
+            if (shouldUseOpenAnimation &&
+                newTop != null && needsDrawReordering(newTop) &&
+                visibleBottom == null
+            ) {
+                // When using an open animation in which two screens overlap (eg. fade_from_bottom or
+                // slide_from_bottom), we want to draw the previous screen under the new one,
+                // which is apparently not the default option. Android always draws the disappearing view
+                // on top of the appearing one. We then reverse the order of the views so the new screen
+                // appears on top of the previous one. You can read more about in the comment
+                // for the code we use to change that behavior:
+                // https://github.com/airbnb/native-navigation/blob/9cf50bf9b751b40778f473f3b19fcfe2c4d40599/lib/android/src/main/java/com/airbnb/android/react/navigation/ScreenCoordinatorLayout.java#L18
+                isDetachingCurrentScreen = true
+            }
 
-        // remove all screens previously on stack
-        for (screen in mStack) {
-            if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
-                getOrCreateTransaction().remove(screen)
+            // remove all screens previously on stack
+            for (screen in mStack) {
+                if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
+                    it.remove(screen)
+                }
             }
-        }
-        for (screen in mScreenFragments) {
-            // Stop detaching screens when reaching visible bottom. All screens above bottom should be
-            // visible.
-            if (screen === visibleBottom) {
-                break
-            }
-            // detach all screens that should not be visible
-            if (screen !== newTop && !mDismissed.contains(screen)) {
-                getOrCreateTransaction().remove(screen)
-            }
-        }
-
-        // attach screens that just became visible
-        if (visibleBottom != null && !visibleBottom.isAdded) {
-            val top = newTop
-            var beneathVisibleBottom = true
             for (screen in mScreenFragments) {
-                // ignore all screens beneath the visible bottom
-                if (beneathVisibleBottom) {
-                    beneathVisibleBottom = if (screen === visibleBottom) {
-                        false
-                    } else continue
+                // Stop detaching screens when reaching visible bottom. All screens above bottom should be
+                // visible.
+                if (screen === visibleBottom) {
+                    break
                 }
-                // when first visible screen found, make all screens after that visible
-                getOrCreateTransaction()
-                    .add(id, screen)
-                    .runOnCommit { top!!.screen?.bringToFront() }
+                // detach all screens that should not be visible
+                if (screen !== newTop && !mDismissed.contains(screen)) {
+                    it.remove(screen)
+                }
             }
-        } else if (newTop != null && !newTop.isAdded) {
-            getOrCreateTransaction().add(id, newTop)
-        }
-        mTopScreen = newTop
-        mStack.clear()
-        mStack.addAll(mScreenFragments)
-        tryCommitTransaction()
-        if (mTopScreen != null) {
-            setupBackHandlerIfNeeded(mTopScreen)
+
+            // attach screens that just became visible
+            if (visibleBottom != null && !visibleBottom.isAdded) {
+                val top = newTop
+                var beneathVisibleBottom = true
+                for (screen in mScreenFragments) {
+                    // ignore all screens beneath the visible bottom
+                    if (beneathVisibleBottom) {
+                        beneathVisibleBottom = if (screen === visibleBottom) {
+                            false
+                        } else continue
+                    }
+                    // when first visible screen found, make all screens after that visible
+                    it.add(id, screen).runOnCommit { top?.screen?.bringToFront() }
+                }
+            } else if (newTop != null && !newTop.isAdded) {
+                it.add(id, newTop)
+            }
+            mTopScreen = newTop
+            mStack.clear()
+            mStack.addAll(mScreenFragments)
+            tryCommitTransaction()
+            mTopScreen?.let { screen -> setupBackHandlerIfNeeded(screen) }
         }
     }
 
@@ -314,34 +307,36 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
      * It is important that we don't install back handler when stack contains a single screen as in
      * that case we want the parent navigator or activity handler to take over.
      */
-    private fun setupBackHandlerIfNeeded(topScreen: ScreenStackFragment?) {
-        if (!mTopScreen!!.isResumed) {
+    private fun setupBackHandlerIfNeeded(topScreen: ScreenStackFragment) {
+        if (mTopScreen?.isResumed != true) {
             // if the top fragment is not in a resumed state, adding back stack transaction would throw.
             // In such a case we skip installing back handler and use FragmentLifecycleCallbacks to get
             // notified when it gets resumed so that we can install the handler.
             return
         }
-        mFragmentManager!!.removeOnBackStackChangedListener(mBackStackListener)
-        mFragmentManager!!.popBackStack(BACK_STACK_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        var firstScreen: ScreenStackFragment? = null
-        var i = 0
-        val size = mStack.size
-        while (i < size) {
-            val screen = mStack[i]
-            if (!mDismissed.contains(screen)) {
-                firstScreen = screen
-                break
+        mFragmentManager?.let {
+            it.removeOnBackStackChangedListener(mBackStackListener)
+            it.popBackStack(BACK_STACK_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            var firstScreen: ScreenStackFragment? = null
+            var i = 0
+            val size = mStack.size
+            while (i < size) {
+                val screen = mStack[i]
+                if (!mDismissed.contains(screen)) {
+                    firstScreen = screen
+                    break
+                }
+                i++
             }
-            i++
-        }
-        if (topScreen !== firstScreen && topScreen!!.isDismissable) {
-            mFragmentManager!!
-                .beginTransaction()
-                .show(topScreen)
-                .addToBackStack(BACK_STACK_TAG)
-                .setPrimaryNavigationFragment(topScreen)
-                .commitAllowingStateLoss()
-            mFragmentManager!!.addOnBackStackChangedListener(mBackStackListener)
+            if (topScreen !== firstScreen && topScreen.isDismissible) {
+                it
+                    .beginTransaction()
+                    .show(topScreen)
+                    .addToBackStack(BACK_STACK_TAG)
+                    .setPrimaryNavigationFragment(topScreen)
+                    .commitAllowingStateLoss()
+                it.addOnBackStackChangedListener(mBackStackListener)
+            }
         }
     }
 
@@ -365,7 +360,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private fun drawAndRelease() {
         for (i in drawingOps.indices) {
             val op = drawingOps[i]
-            op!!.draw()
+            op.draw()
             drawingOpPool.add(op)
         }
         drawingOps.clear()
@@ -386,7 +381,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
-        drawingOps.add(obtainDrawingOp()!!.set(canvas, child, drawingTime))
+        drawingOps.add(obtainDrawingOp().set(canvas, child, drawingTime))
         return true
     }
 
@@ -394,7 +389,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         super.drawChild(op.canvas, op.child, op.drawingTime)
     }
 
-    private fun obtainDrawingOp(): DrawingOp? {
+    private fun obtainDrawingOp(): DrawingOp {
         return if (drawingOpPool.isEmpty()) {
             DrawingOp()
         } else drawingOpPool.removeAt(drawingOpPool.size - 1)
@@ -427,15 +422,15 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
         private fun isTransparent(fragment: ScreenStackFragment): Boolean {
             return (
-                fragment.screen?.stackPresentation
+                fragment.screen.stackPresentation
                     === Screen.StackPresentation.TRANSPARENT_MODAL
                 )
         }
 
         private fun needsDrawReordering(fragment: ScreenStackFragment): Boolean {
             return (
-                fragment.screen?.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
-                    fragment.screen?.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
+                fragment.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+                    fragment.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
                 )
         }
     }

@@ -1,9 +1,11 @@
 package com.swmansion.rnscreens
 
+import android.annotation.SuppressLint
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 
+@SuppressLint("ViewConstructor")
 class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context) {
     private var mReactWidth = 0
     private var mReactHeight = 0

@@ -24,7 +24,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mIsTranslucent = false
 
     @SuppressLint("ValidFragment")
-    constructor(screenView: Screen?) : super(screenView)
+    constructor(screenView: Screen) : super(screenView)
 
     constructor() {
         throw IllegalStateException(
@@ -33,41 +33,43 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     fun removeToolbar() {
-        if (mAppBarLayout != null && mToolbar != null && mToolbar!!.parent === mAppBarLayout) {
-            mAppBarLayout!!.removeView(mToolbar)
+        mAppBarLayout?.let {
+            mToolbar?.let { toolbar ->
+                if (toolbar.parent === it) {
+                    it.removeView(toolbar)
+                }
+            }
         }
         mToolbar = null
     }
 
-    fun setToolbar(toolbar: Toolbar?) {
-        if (mAppBarLayout != null) {
-            mAppBarLayout!!.addView(toolbar)
-        }
-        mToolbar = toolbar
+    fun setToolbar(toolbar: Toolbar) {
+        mAppBarLayout?.addView(toolbar)
         val params = AppBarLayout.LayoutParams(
             AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
         )
         params.scrollFlags = 0
-        mToolbar!!.layoutParams = params
+        toolbar.layoutParams = params
+        mToolbar = toolbar
     }
 
     fun setToolbarShadowHidden(hidden: Boolean) {
         if (mShadowHidden != hidden) {
-            mAppBarLayout!!.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
+            mAppBarLayout?.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
             mShadowHidden = hidden
         }
     }
 
     fun setToolbarTranslucent(translucent: Boolean) {
         if (mIsTranslucent != translucent) {
-            val params = screen!!.layoutParams
+            val params = screen.layoutParams
             (params as CoordinatorLayout.LayoutParams).behavior = if (translucent) null else ScrollingViewBehavior()
             mIsTranslucent = translucent
         }
     }
 
     override fun onContainerUpdate() {
-        val headerConfig = screen!!.headerConfig
+        val headerConfig = screen.headerConfig
         headerConfig?.onUpdate()
     }
 
@@ -83,7 +85,7 @@ class ScreenStackFragment : ScreenFragment {
         // When using the Toolbar back button this is called an extra time with transit = 0 but in
         // this case we don't want to notify. The way I found to detect is case is check isHidden.
         if (transit == 0 && !isHidden &&
-            screen!!.stackAnimation === Screen.StackAnimation.NONE
+            screen.stackAnimation === Screen.StackAnimation.NONE
         ) {
             if (enter) {
                 // Android dispatches the animation start event for the fragment that is being added first
@@ -106,7 +108,7 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     private fun notifyViewAppearTransitionEnd() {
-        val screenStack = if (view != null) view!!.parent else null
+        val screenStack = view?.parent
         if (screenStack is ScreenStack) {
             screenStack.onViewAppearTransitionEnd()
         }
@@ -117,37 +119,36 @@ class ScreenStackFragment : ScreenFragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: CoordinatorLayout = NotifyingCoordinatorLayout(context!!, this)
+        val view: NotifyingCoordinatorLayout? = context?.let { NotifyingCoordinatorLayout(it, this) }
         val params = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         )
         params.behavior = if (mIsTranslucent) null else ScrollingViewBehavior()
-        screen!!.layoutParams = params
-        view.addView(recycleView(screen))
-        mAppBarLayout = AppBarLayout(context!!)
+        screen.layoutParams = params
+        view?.addView(recycleView(screen))
+
+        mAppBarLayout = context?.let { AppBarLayout(it) }
         // By default AppBarLayout will have a background color set but since we cover the whole layout
         // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
         // role. On top of that it breaks screens animations when alfa offscreen compositing is off
         // (which is the default)
-        mAppBarLayout!!.setBackgroundColor(Color.TRANSPARENT)
-        mAppBarLayout!!.layoutParams = AppBarLayout.LayoutParams(
+        mAppBarLayout?.setBackgroundColor(Color.TRANSPARENT)
+        mAppBarLayout?.layoutParams = AppBarLayout.LayoutParams(
             AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
         )
-        view.addView(mAppBarLayout)
+        view?.addView(mAppBarLayout)
         if (mShadowHidden) {
-            mAppBarLayout!!.targetElevation = 0f
+            mAppBarLayout?.targetElevation = 0f
         }
-        if (mToolbar != null) {
-            mAppBarLayout!!.addView(recycleView(mToolbar))
-        }
+        mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
         return view
     }
 
-    val isDismissable: Boolean
-        get() = screen!!.isGestureEnabled
+    val isDismissible: Boolean
+        get() = screen.isGestureEnabled
 
     fun canNavigateBack(): Boolean {
-        val container: ScreenContainer<*>? = screen?.container
+        val container: ScreenContainer<*>? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         return if (container.rootScreen == screen) {
             // this screen is the root of the container, if it is nested we can check parent container
@@ -164,7 +165,7 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     fun dismiss() {
-        val container: ScreenContainer<*>? = screen?.container
+        val container: ScreenContainer<*>? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         container.dismiss(this)
     }

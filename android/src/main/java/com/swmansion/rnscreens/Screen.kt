@@ -17,7 +17,8 @@ import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
 
-class Screen @SuppressLint("ViewConstructor") constructor(context: ReactContext?) : ViewGroup(context) {
+@SuppressLint("ViewConstructor")
+class Screen constructor(context: ReactContext?) : ViewGroup(context) {
     var fragment: ScreenFragment? = null
     var container: ScreenContainer<*>? = null
     var activityState: ActivityState? = null
@@ -178,7 +179,7 @@ class Screen @SuppressLint("ViewConstructor") constructor(context: ReactContext?
             else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
 
-        ScreenWindowTraits.setOrientation(this, fragment?.tryGetActivity())
+        fragment?.let { ScreenWindowTraits.setOrientation(this, it.tryGetActivity()) }
     }
 
     var statusBarStyle: String?
@@ -188,7 +189,7 @@ class Screen @SuppressLint("ViewConstructor") constructor(context: ReactContext?
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarStyle = statusBarStyle
-            ScreenWindowTraits.setStyle(this, fragment?.tryGetActivity(), fragment?.tryGetContext())
+            fragment?.let { ScreenWindowTraits.setStyle(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
     var isStatusBarHidden: Boolean?
@@ -198,7 +199,7 @@ class Screen @SuppressLint("ViewConstructor") constructor(context: ReactContext?
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarHidden = statusBarHidden
-            ScreenWindowTraits.setHidden(this, fragment?.tryGetActivity())
+            fragment?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
     var isStatusBarTranslucent: Boolean?
@@ -208,11 +209,13 @@ class Screen @SuppressLint("ViewConstructor") constructor(context: ReactContext?
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarTranslucent = statusBarTranslucent
-            ScreenWindowTraits.setTranslucent(
-                this,
-                fragment?.tryGetActivity(),
-                fragment?.tryGetContext()
-            )
+            fragment?.let {
+                ScreenWindowTraits.setTranslucent(
+                    this,
+                    it.tryGetActivity(),
+                    it.tryGetContext()
+                )
+            }
         }
 
     var statusBarColor: Int?
@@ -222,7 +225,7 @@ class Screen @SuppressLint("ViewConstructor") constructor(context: ReactContext?
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarColor = statusBarColor
-            ScreenWindowTraits.setColor(this, fragment?.tryGetActivity(), fragment?.tryGetContext())
+            fragment?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
     enum class StackPresentation {
