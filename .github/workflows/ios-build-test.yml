@@ -1,10 +1,21 @@
 name: Test iOS build
 on:
   pull_request:
-    branches: [master]
+    branches: 
+      - master
+    paths:
+      - 'ios/**'
+  push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      WORKING_DIRECTORY: TestsExample
+    concurrency:
+      group: ios-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -15,11 +26,11 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'TestsExample/yarn.lock'
       - name: Install node dependencies
-        working-directory: TestsExample
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
       - name: Install pods
-        working-directory: TestsExample/ios
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
       - name: Build app
-        working-directory: TestsExample
-        run: xcodebuild -workspace ios/TestsExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 8' -scheme TestsExample -parallelizeTargets -configuration Debug -derivedDataPath ios/build -UseModernBuildSystem=YES -quiet | xcpretty
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn ios

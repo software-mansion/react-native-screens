@@ -14,6 +14,7 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.swmansion.rnscreens.Screen.ActivityState
+import java.lang.IllegalStateException
 
 open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
     @JvmField
@@ -23,7 +24,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     private var mCurrentTransaction: FragmentTransaction? = null
     private var mIsAttached = false
     private var mLayoutEnqueued = false
-    private val mLayoutCallback: ChoreographerCompat.FrameCallback? = object : ChoreographerCompat.FrameCallback() {
+    private val mLayoutCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
         override fun doFrame(frameTimeNanos: Long) {
             mLayoutEnqueued = false
             measure(
@@ -66,6 +67,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     override fun requestLayout() {
         super.requestLayout()
+        @Suppress("SENSELESS_COMPARISON") // mLayoutCallback can be null here since this method can be called in init
         if (!mLayoutEnqueued && mLayoutCallback != null) {
             mLayoutEnqueued = true
             // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
@@ -88,7 +90,8 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         markUpdated()
     }
 
-    protected open fun adapt(screen: Screen?): T {
+    protected open fun adapt(screen: Screen): T {
+        @Suppress("UNCHECKED_CAST")
         return ScreenFragment(screen) as T
     }
 
@@ -101,14 +104,14 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     open fun removeScreenAt(index: Int) {
-        mScreenFragments[index].screen?.container = null
+        mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
         markUpdated()
     }
 
     open fun removeAllScreens() {
         for (screenFragment in mScreenFragments) {
-            screenFragment.screen?.container = null
+            screenFragment.screen.container = null
         }
         mScreenFragments.clear()
         markUpdated()
@@ -117,7 +120,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     val screenCount: Int
         get() = mScreenFragments.size
 
-    fun getScreenAt(index: Int): Screen? {
+    fun getScreenAt(index: Int): Screen {
         return mScreenFragments[index].screen
     }
 
@@ -172,19 +175,20 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     protected fun getOrCreateTransaction(): FragmentTransaction {
-        if (mCurrentTransaction != null) {
-            return mCurrentTransaction!!
+        if (mCurrentTransaction == null) {
+            val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
+            val transaction = fragmentManager.beginTransaction()
+            transaction.setReorderingAllowed(true)
+            mCurrentTransaction = transaction
         }
-        mCurrentTransaction = mFragmentManager!!.beginTransaction()
-        mCurrentTransaction!!.setReorderingAllowed(true)
-        return mCurrentTransaction!!
+        mCurrentTransaction?.let { return it }
+        throw IllegalStateException("mCurrentTransaction changed to null during creating transaction")
     }
 
     protected fun commitNowAllowingStateLoss() {
-        if (mCurrentTransaction != null) {
-            mCurrentTransaction!!.commitNowAllowingStateLoss()
-            mCurrentTransaction = null
-        }
+        val transaction = requireNotNull(mCurrentTransaction, { "mCurrentTransaction is null when committing transaction" })
+        transaction.commitNowAllowingStateLoss()
+        mCurrentTransaction = null
     }
 
     private fun attachScreen(screenFragment: T) {
@@ -205,7 +209,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
-        return screenFragment.screen?.activityState
+        return screenFragment.screen.activityState
     }
 
     open fun hasScreen(screenFragment: ScreenFragment?): Boolean {
@@ -219,17 +223,18 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     /** Removes fragments from fragment manager that are attached to this container  */
-    private fun removeMyFragments() {
-        val transaction = mFragmentManager!!.beginTransaction()
+    private fun removeMyFragments(fragmentManager: FragmentManager) {
+        val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
-        for (fragment in mFragmentManager!!.fragments) {
+        for (fragment in fragmentManager.fragments) {
             if (fragment is ScreenFragment &&
-                fragment.screen?.container === this
+                fragment.screen.container === this
             ) {
                 transaction.remove(fragment)
                 hasFragments = true
             }
         }
+
         if (hasFragments) {
             transaction.commitNowAllowingStateLoss()
         }
@@ -241,14 +246,16 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // view. We also need to make sure all the fragments attached to the given container are removed
         // from fragment manager as in some cases fragment manager may be reused and in such case it'd
         // attempt to reattach previously registered fragments that are not removed
-        if (mFragmentManager != null && !mFragmentManager!!.isDestroyed) {
-            removeMyFragments()
-            mFragmentManager!!.executePendingTransactions()
+        mFragmentManager?.let {
+            if (!it.isDestroyed) {
+                removeMyFragments(it)
+                it.executePendingTransactions()
+            }
         }
-        if (mParentScreenFragment != null) {
-            mParentScreenFragment!!.unregisterChildScreenContainer(this)
-            mParentScreenFragment = null
-        }
+
+        mParentScreenFragment?.unregisterChildScreenContainer(this)
+        mParentScreenFragment = null
+
         super.onDetachedFromWindow()
         mIsAttached = false
         // When fragment container view is detached we force all its children to be removed.
@@ -293,7 +300,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     protected open fun performUpdate() {
         // detach screens that are no longer active
-        val orphaned: MutableSet<Fragment> = HashSet(mFragmentManager?.fragments)
+        val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
         for (screenFragment in mScreenFragments) {
             if (getActivityState(screenFragment) === ActivityState.INACTIVE &&
                 screenFragment.isAdded
@@ -306,14 +313,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             val orphanedAry = orphaned.toTypedArray()
             for (fragment in orphanedAry) {
                 if (fragment is ScreenFragment) {
-                    if (fragment.screen?.container == null) {
+                    if (fragment.screen.container == null) {
                         detachScreen(fragment)
                     }
                 }
             }
         }
         var transitioning = true
-        val topScreen = topScreen
         if (topScreen != null) {
             // if there is an "onTop" screen it means the transition has ended
             transitioning = false
@@ -329,14 +335,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             } else if (activityState !== ActivityState.INACTIVE && addedBefore) {
                 moveToFront(screenFragment)
             }
-            screenFragment.screen?.setTransitioning(transitioning)
+            screenFragment.screen.setTransitioning(transitioning)
         }
     }
 
     protected open fun notifyContainerUpdate() {
-        val topScreen = topScreen
-        if (topScreen != null) {
-            topScreen.fragment!!.onContainerUpdate()
-        }
+        topScreen?.fragment?.onContainerUpdate()
     }
 }

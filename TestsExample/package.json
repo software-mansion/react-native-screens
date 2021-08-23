@@ -20,12 +20,12 @@
     "@react-navigation/stack": "^5.14.5",
     "patch-package": "^6.2.2",
     "postinstall-postinstall": "^2.1.0",
-    "react": "17.0.1",
-    "react-native": "0.64.2",
+    "react": "17.0.2",
+    "react-native": "0.65.1",
     "react-native-appearance": "^0.3.4",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-paper": "^4.3.1",
-    "react-native-reanimated": "^2.1.0",
+    "react-native-reanimated": "^2.3.0-alpha.2",
     "react-native-redash": "^15.11.1",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-vector-icons": "^7.1.0",
@@ -36,17 +36,19 @@
     "react-navigation-tabs": "^2.10.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/runtime": "^7.12.5",
-    "@react-native-community/eslint-config": "^2.0.0",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
+    "@babel/runtime": "^7.15.3",
+    "@react-native-community/eslint-config": "^3.0.0",
     "babel-jest": "^26.6.3",
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-preset-expo": "^8.3.0",
     "eslint": "^7.14.0",
     "glob-to-regexp": "^0.4.1",
     "jest": "^26.6.3",
-    "metro-react-native-babel-preset": "^0.64.0",
-    "react-test-renderer": "17.0.1"
+    "metro-react-native-babel-preset": "^0.66.2",
+    "react-native-codegen": "^0.0.7",
+    "react-test-renderer": "17.0.2"
   },
   "jest": {
     "preset": "react-native"

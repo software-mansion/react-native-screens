@@ -33,7 +33,7 @@ class ScreenContainerViewManager : ViewGroupManager<ScreenContainer<*>>() {
     }
 
     override fun getChildAt(parent: ScreenContainer<*>, index: Int): View {
-        return parent.getScreenAt(index)!!
+        return parent.getScreenAt(index)
     }
 
     override fun needsCustomLayoutForChildren(): Boolean {

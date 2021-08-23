@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.pm.ActivityInfo
@@ -29,23 +30,16 @@ object ScreenWindowTraits {
         mDidSetStatusBarAppearance = true
     }
 
-    private fun didSetStatusBarAppearance(): Boolean {
-        return mDidSetStatusBarAppearance
-    }
-
     internal fun setOrientation(screen: Screen, activity: Activity?) {
         if (activity == null) {
             return
         }
         val screenForOrientation = findScreenForTrait(screen, WindowTraits.ORIENTATION)
-        val orientation: Int? = if (screenForOrientation?.screenOrientation != null) {
-            screenForOrientation.screenOrientation
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }
-        activity.requestedOrientation = orientation!!
+        val orientation = screenForOrientation?.screenOrientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        activity.requestedOrientation = orientation
     }
 
+    @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     internal fun setColor(screen: Screen, activity: Activity?, context: ReactContext?) {
         if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return
@@ -55,19 +49,11 @@ object ScreenWindowTraits {
         }
         val screenForColor = findScreenForTrait(screen, WindowTraits.COLOR)
         val screenForAnimated = findScreenForTrait(screen, WindowTraits.ANIMATED)
-        val color: Int? = if (screenForColor?.statusBarColor != null) {
-            screenForColor.statusBarColor
-        } else {
-            mDefaultStatusBarColor
-        }
-        val animated: Boolean = if (screenForAnimated?.isStatusBarAnimated != null) {
-            screenForAnimated.isStatusBarAnimated!!
-        } else {
-            false
-        }
+        val color = screenForColor?.statusBarColor ?: mDefaultStatusBarColor
+        val animated = screenForAnimated?.isStatusBarAnimated ?: false
+
         UiThreadUtil.runOnUiThread(
             object : GuardedRunnable(context) {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 override fun runGuarded() {
                     activity
                         .window
@@ -90,11 +76,8 @@ object ScreenWindowTraits {
             return
         }
         val screenForStyle = findScreenForTrait(screen, WindowTraits.STYLE)
-        val style: String? = if (screenForStyle?.statusBarStyle != null) {
-            screenForStyle.statusBarStyle
-        } else {
-            "light"
-        }
+        val style = screenForStyle?.statusBarStyle ?: "light"
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             UiThreadUtil.runOnUiThread {
                 val decorView = activity.window.decorView
@@ -117,13 +100,8 @@ object ScreenWindowTraits {
         if (activity == null || context == null) {
             return
         }
-        val translucent: Boolean
         val screenForTranslucent = findScreenForTrait(screen, WindowTraits.TRANSLUCENT)
-        translucent = if (screenForTranslucent?.isStatusBarTranslucent != null) {
-            screenForTranslucent.isStatusBarTranslucent!!
-        } else {
-            false
-        }
+        val translucent = screenForTranslucent?.isStatusBarTranslucent ?: false
         UiThreadUtil.runOnUiThread(
             object : GuardedRunnable(context) {
                 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -154,11 +132,7 @@ object ScreenWindowTraits {
             return
         }
         val screenForHidden = findScreenForTrait(screen, WindowTraits.HIDDEN)
-        val hidden = if (screenForHidden?.isStatusBarHidden != null) {
-            screenForHidden.isStatusBarHidden!!
-        } else {
-            false
-        }
+        val hidden = screenForHidden?.isStatusBarHidden ?: false
         UiThreadUtil.runOnUiThread {
             if (hidden) {
                 activity.window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -174,7 +148,7 @@ object ScreenWindowTraits {
         if (mDidSetOrientation) {
             setOrientation(screen, activity)
         }
-        if (didSetStatusBarAppearance()) {
+        if (mDidSetStatusBarAppearance) {
             setColor(screen, activity, context)
             setStyle(screen, activity, context)
             setTranslucent(screen, activity, context)
@@ -213,18 +187,17 @@ object ScreenWindowTraits {
         screen: Screen?,
         trait: WindowTraits
     ): Screen? {
-        if (screen?.fragment == null) {
-            return null
-        }
-        for (sc in screen.fragment!!.childScreenContainers) {
-            // we check only the top screen for the trait
-            val topScreen = sc.topScreen
-            val child = childScreenWithTraitSet(topScreen, trait)
-            if (child != null) {
-                return child
-            }
-            if (topScreen != null && checkTraitForScreen(topScreen, trait)) {
-                return topScreen
+        screen?.fragment?.let {
+            for (sc in it.childScreenContainers) {
+                // we check only the top screen for the trait
+                val topScreen = sc.topScreen
+                val child = childScreenWithTraitSet(topScreen, trait)
+                if (child != null) {
+                    return child
+                }
+                if (topScreen != null && checkTraitForScreen(topScreen, trait)) {
+                    return topScreen
+                }
             }
         }
         return null
