@@ -1,15 +1,15 @@
-import React, {useLayoutEffect} from 'react';
-import {I18nManager, SafeAreaView, StyleSheet} from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { useLayoutEffect } from 'react';
+import { I18nManager, SafeAreaView, StyleSheet } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {RouteProp} from '@react-navigation/native';
-import {Button} from '../shared';
+import { RouteProp } from '@react-navigation/native';
+import { Button } from '../shared';
 
 type StackParamList = {
-  Details: {index: number};
+  Details: { index: number };
 };
 
 interface DetailsScreenProps {
@@ -45,10 +45,11 @@ const DetailsScreen = ({
     index < colors.length ? colors[index] : colors[colors.length - 1];
 
   return (
-    <SafeAreaView style={{...styles.container, backgroundColor: currentColor}}>
+    <SafeAreaView
+      style={{ ...styles.container, backgroundColor: currentColor }}>
       <Button
         title={`More details ${index}`}
-        onPress={() => navigation.push('Details', {index: index + 1})}
+        onPress={() => navigation.push('Details', { index: index + 1 })}
       />
       {index === 0 ? (
         <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />

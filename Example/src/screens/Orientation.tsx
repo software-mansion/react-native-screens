@@ -1,12 +1,12 @@
-import React, {useLayoutEffect, useState} from 'react';
-import {StyleSheet, SafeAreaView, I18nManager} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import React, { useLayoutEffect, useState } from 'react';
+import { StyleSheet, SafeAreaView, I18nManager } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {Button, SettingsPicker} from '../shared';
+import { Button, SettingsPicker } from '../shared';
 
 type StackParamList = {
   First: undefined;
@@ -22,9 +22,9 @@ interface FirstScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'First'>;
 }
 
-const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
+const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
   const [screenOrientation, setScreenOrientation] = useState<ScreenOrientation>(
-    'default',
+    'default'
   );
 
   useLayoutEffect(() => {
@@ -34,7 +34,7 @@ const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
   }, [navigation, screenOrientation]);
 
   return (
-    <SafeAreaView style={{...styles.container, backgroundColor: 'aliceblue'}}>
+    <SafeAreaView style={{ ...styles.container, backgroundColor: 'aliceblue' }}>
       <ScrollView>
         <SettingsPicker<ScreenOrientation>
           style={styles.margin}
@@ -66,8 +66,8 @@ interface SecondScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Second'>;
 }
 
-const SecondScreen = ({navigation}: SecondScreenProps): JSX.Element => (
-  <SafeAreaView style={{...styles.container, backgroundColor: 'honeydew'}}>
+const SecondScreen = ({ navigation }: SecondScreenProps): JSX.Element => (
+  <SafeAreaView style={{ ...styles.container, backgroundColor: 'honeydew' }}>
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </SafeAreaView>
 );
@@ -83,7 +83,7 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="First"
       component={FirstScreen}
-      options={{title: 'Orientation'}}
+      options={{ title: 'Orientation' }}
     />
     <Stack.Screen name="Second" component={SecondScreen} />
   </Stack.Navigator>
