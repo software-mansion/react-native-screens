@@ -54,7 +54,7 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
     @ReactProp(name = "stackAnimation")
     fun setStackAnimation(view: Screen, animation: String?) {
         view.stackAnimation = when (animation) {
-            null, "default", "simple_push" -> Screen.StackAnimation.DEFAULT
+            null, "default", "flip", "simple_push" -> Screen.StackAnimation.DEFAULT
             "none" -> Screen.StackAnimation.NONE
             "fade" -> Screen.StackAnimation.FADE
             "slide_from_right" -> Screen.StackAnimation.SLIDE_FROM_RIGHT
