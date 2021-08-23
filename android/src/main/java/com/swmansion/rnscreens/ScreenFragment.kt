@@ -16,12 +16,11 @@ import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
-import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import kotlin.math.max
 import kotlin.math.min
-
 
 open class ScreenFragment : Fragment {
     enum class ScreenLifecycleEvent {
@@ -157,9 +156,9 @@ open class ScreenFragment : Fragment {
                     ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(it.id)
                 }
                 (it.context as ReactContext)
-                        .getNativeModule(UIManagerModule::class.java)
-                        ?.eventDispatcher
-                        ?.dispatchEvent(lifecycleEvent)
+                    .getNativeModule(UIManagerModule::class.java)
+                    ?.eventDispatcher
+                    ?.dispatchEvent(lifecycleEvent)
                 fragment.dispatchEventInChildContainers(event)
             }
         }
@@ -194,11 +193,13 @@ open class ScreenFragment : Fragment {
                 check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
                 val goingForward = container.goingForward
                 (screen.context as ReactContext)
-                        .getNativeModule(UIManagerModule::class.java)
-                        ?.eventDispatcher
-                        ?.dispatchEvent(
-                                ScreenTransitionProgressEvent(
-                                        screen.id, mProgress, closing, goingForward, coalescingKey))
+                    .getNativeModule(UIManagerModule::class.java)
+                    ?.eventDispatcher
+                    ?.dispatchEvent(
+                        ScreenTransitionProgressEvent(
+                            screen.id, mProgress, closing, goingForward, coalescingKey
+                        )
+                    )
             }
         }
     }

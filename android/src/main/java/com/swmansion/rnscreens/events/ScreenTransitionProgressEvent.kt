@@ -5,7 +5,12 @@ import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.RCTEventEmitter
 
 class ScreenTransitionProgressEvent(
-        viewId: Int, private val mProgress: Float, private val mClosing: Boolean, private val mGoingForward: Boolean, private val mCoalescingKey: Short) : Event<ScreenAppearEvent?>(viewId) {
+    viewId: Int,
+    private val mProgress: Float,
+    private val mClosing: Boolean,
+    private val mGoingForward: Boolean,
+    private val mCoalescingKey: Short
+) : Event<ScreenAppearEvent?>(viewId) {
     override fun getEventName(): String {
         return EVENT_NAME
     }
