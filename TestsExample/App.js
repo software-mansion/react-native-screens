@@ -50,8 +50,8 @@ import Test913 from './src/Test913';
 import Test999 from './src/Test999';
 import Test1031 from './src/Test1031';
 import Test1032 from './src/Test1032';
-import TestNew from './src/TestNew';
+import Test1072 from './src/Test1072';
 
 export default function App() {
-  return <TestNew />;
+  return <Test42 />;
 }

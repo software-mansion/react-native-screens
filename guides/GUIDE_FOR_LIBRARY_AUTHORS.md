@@ -36,6 +36,10 @@ Screen stack component expects one or more `Screen` components as direct childre
 
 Below is the list of additional properties that can be used for `Screen` component:
 
+#### `fullWidthGestureEnabled` (iOS only)
+
+Boolean indicating whether the swipe gesture should work on whole screen. It results in the same transition animation as `simple_push`. Defaults to `false`.
+
 ### `gestureEnabled` (iOS only)
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
@@ -211,9 +215,9 @@ Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenSt
 
 Controls whether the stack should be in `rtl` or `ltr` form.
 
-#### `disableBackButtonMenu`
+#### `disableBackButtonMenu` (iOS only)
 
-Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. Only supported on iOS.
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 
 ### `hidden`
 

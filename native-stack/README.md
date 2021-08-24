@@ -71,15 +71,17 @@ Style object for the scene content.
 
 String that applies `rtl` or `ltr` form to the stack. On Android, you have to add `android:supportsRtl="true"` in the manifest of your app to enable `rtl`. On Android, if you set the above flag in the manifest, the orientation changes without the need to do it programmatically if the phone has `rtl` direction enabled. On iOS, the direction defaults to `ltr`, and only way to change it is via this prop.
 
-#### `disableBackButtonMenu`
+#### `disableBackButtonMenu` (iOS only)
 
-Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. Only supported on iOS.
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 
-#### `gestureEnabled`
+#### `fullWidthGestureEnabled` (iOS only)
+
+Boolean indicating whether the swipe gesture should work on whole screen. It results in the same transition animation as `simple_push`. Defaults to `false`.
+
+#### `gestureEnabled` (iOS only)
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`,
-
-Gestures are only supported on iOS.
 
 #### `headerBackTitle`
 
@@ -92,9 +94,9 @@ Style object for header back title. Supported properties:
 - `fontFamily`
 - `fontSize`
 
-#### `headerBackTitleVisible`
+#### `headerBackTitleVisible` (iOS only)
 
-Whether the back button title should be visible or not. Defaults to `true`. Only supported on iOS.
+Whether the back button title should be visible or not. Defaults to `true`.
 
 #### `headerCenter`
 
@@ -114,13 +116,11 @@ Style object for the large header. Supported properties:
 
 - `backgroundColor`
 
-#### `headerLargeTitle`
+#### `headerLargeTitle` (iOS only)
 
 Boolean used to set a native property to prefer a large title header (like in iOS setting).
 
 For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
-
-Only supported on iOS.
 
 #### `headerLargeTitleHideShadow` (iOS only)
 
@@ -170,9 +170,9 @@ Style object for header title. Supported properties:
 - `fontWeight`
 - `color`
 
-#### `headerTopInsetEnabled`
+#### `headerTopInsetEnabled` (Android only)
 
-A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque. Only supported on Android.
+A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque.
 
 #### `headerTranslucent`
 
