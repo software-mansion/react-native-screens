@@ -4,10 +4,9 @@ import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
 import {
-  Screen as ScreenComponent,
-  ScreenProps,
   ScreenStack,
   StackPresentationTypes,
+  ScreenContext,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -33,7 +32,6 @@ import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 
-const Screen = (ScreenComponent as unknown) as React.ComponentType<ScreenProps>;
 const isAndroid = Platform.OS === 'android';
 
 let Container = View;
@@ -69,6 +67,8 @@ const MaybeNestedStack = ({
 }) => {
   const { colors } = useTheme();
   const { headerShown = true, contentStyle } = options;
+
+  const Screen = React.useContext(ScreenContext);
 
   const isHeaderInModal = isAndroid
     ? false
@@ -114,7 +114,7 @@ const MaybeNestedStack = ({
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.container}>
-        <Screen enabled style={StyleSheet.absoluteFill}>
+        <Screen enabled isNativeStack style={StyleSheet.absoluteFill}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -181,12 +181,14 @@ const RouteView = ({
     stackPresentation
   );
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
+  const Screen = React.useContext(ScreenContext);
 
   return (
     <Screen
       key={route.key}
       enabled
       style={StyleSheet.absoluteFill}
+      isNativeStack
       gestureEnabled={isAndroid ? false : gestureEnabled}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}
