@@ -40,6 +40,7 @@
 
 @implementation RNSScreenContainerView {
   BOOL _invalidated;
+  NSMutableSet *_activeScreens;
 }
 
 - (instancetype)init

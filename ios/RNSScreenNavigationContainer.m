@@ -17,9 +17,10 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    self.reactSubviews = [NSMutableArray new];
     self.controller = [[RNScreensContainerNavigationController alloc] init];
     [(RNScreensContainerNavigationController *)self.controller setNavigationBarHidden:YES animated:NO];
+    // remove controller's view added by RNSScreenContainer
+    [self.subviews[0] removeFromSuperview];
     [self addSubview:self.controller.view];
   }
   return self;

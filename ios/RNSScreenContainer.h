@@ -21,7 +21,6 @@
 @interface RNSScreenContainerView : UIView <RNSScreenContainerDelegate, RCTInvalidating>
 
 @property (nonatomic, retain) UIViewController *controller;
-@property (nonatomic, retain) NSMutableSet *activeScreens;
 @property (nonatomic, retain) NSMutableArray *reactSubviews;
 
 - (void)updateContainer;
