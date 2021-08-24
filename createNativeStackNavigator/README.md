@@ -91,7 +91,7 @@ Boolean indicating whether the swipe gesture should work on whole screen. It res
 
 #### `gestureEnabled` (iOS only)
 
-Whether you can use gestures to dismiss this screen. Defaults to `true`,
+Whether you can use gestures to dismiss this screen. Defaults to `true`.
 
 #### `headerBackTitle`
 
