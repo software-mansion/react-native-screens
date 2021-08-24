@@ -120,8 +120,8 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any>? {
-        return MapBuilder.of(
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
+        val map: MutableMap<String, Any> = MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDismissed"),
             ScreenWillAppearEvent.EVENT_NAME,
@@ -136,9 +136,10 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
             MapBuilder.of("registrationName", "onFinishTransitioning"),
             HeaderBackButtonClickedEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onHeaderBackButtonClicked")
-            ScreenTransitionProgressEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onTransitionProgress"),
         )
+        // there is no `MapBuilder.of` with more than 7 items
+        map[ScreenTransitionProgressEvent.EVENT_NAME] = MapBuilder.of("registrationName", "onTransitionProgress")
+        return map
     }
 
     companion object {
