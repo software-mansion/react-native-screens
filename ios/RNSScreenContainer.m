@@ -38,17 +38,17 @@
 
 @end
 
-@implementation RNSScreenContainerView
+@implementation RNSScreenContainerView {
+  BOOL _invalidated;
+}
 
-- (instancetype)initWithManager:(RNSScreenContainerManager *)manager
+- (instancetype)init
 {
   if (self = [super init]) {
     _activeScreens = [NSMutableSet new];
     _reactSubviews = [NSMutableArray new];
     _controller = [[RNScreensViewController alloc] init];
-    _needUpdate = NO;
     _invalidated = NO;
-    _manager = manager;
     [self addSubview:_controller.view];
   }
   return self;
@@ -56,13 +56,12 @@
 
 - (void)markChildUpdated
 {
-  // We want 'updateContainer' to be executed on main thread after all enqueued operations in
-  // uimanager are complete. For that we collect all marked containers in manager class and enqueue
-  // operation on ui thread that should run once all the updates are completed.
-  if (!_needUpdate) {
-    _needUpdate = YES;
-    [_manager markUpdated:self];
-  }
+  // We want the attaching/detaching of children to be always made on main queue, which
+  // is currently true for `react-navigation` since this method is triggered
+  // by the changes of `Animated` value in stack's transition or adding/removing screens
+  // in all navigators
+  RCTAssertMainQueue();
+  [self updateContainer];
 }
 
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
@@ -129,7 +128,6 @@
 
 - (void)updateContainer
 {
-  _needUpdate = NO;
   BOOL screenRemoved = NO;
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
@@ -234,16 +232,7 @@ RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-  return [[RNSScreenContainerView alloc] initWithManager:self];
-}
-
-- (void)markUpdated:(RNSScreenContainerView *)container
-{
-  // we want the attaching/detaching of children to be always made on main queue, which
-  // is currently true for `react-navigation` since the changes of `Animated` value in stack's
-  // transition
-  RCTAssertMainQueue();
-  [container updateContainer];
+  return [[RNSScreenContainerView alloc] init];
 }
 
 @end
