@@ -228,6 +228,8 @@ function ScreenContainer(props: ScreenContainerProps) {
     }
     return <ScreensNativeModules.NativeScreenContainer {...rest} />;
   }
+
+  return <View {...rest} />;
 }
 
 const styles = StyleSheet.create({
