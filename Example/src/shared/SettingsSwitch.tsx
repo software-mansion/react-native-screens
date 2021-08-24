@@ -22,7 +22,7 @@ export const SettingsSwitch = ({
 }: Props): JSX.Element => {
   return (
     <TouchableOpacity onPress={() => onValueChange(!value)}>
-      <View style={{...styles.container, ...style}}>
+      <View style={{ ...styles.container, ...style }}>
         <Text style={styles.label}>{`${label}: ${value}`}</Text>
       </View>
     </TouchableOpacity>

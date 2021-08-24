@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Text, TextInput} from 'react-native';
+import { View, StyleSheet, Text, TextInput } from 'react-native';
 
 export const Form = (): JSX.Element => (
   <View style={styles.wrapper}>

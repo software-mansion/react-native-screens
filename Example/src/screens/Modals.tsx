@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, StyleSheet, I18nManager, Platform} from 'react-native';
+import { View, StyleSheet, I18nManager } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {Button, Alert} from '../shared';
+import { Button, Alert } from '../shared';
 
 type StackParamList = {
   Main: undefined;
@@ -17,8 +17,8 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
-  <View style={{...styles.container, backgroundColor: 'bisque'}}>
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+  <View style={{ ...styles.container, backgroundColor: 'bisque' }}>
     <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
     <Button
       title="Open fullscreen modal"
@@ -33,8 +33,8 @@ interface ModalScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Modal'>;
 }
 
-const ModalScreen = ({navigation}: ModalScreenProps): JSX.Element => (
-  <View style={{...styles.container, backgroundColor: 'thistle'}}>
+const ModalScreen = ({ navigation }: ModalScreenProps): JSX.Element => (
+  <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
     <Button title="Open modal" onPress={() => navigation.push('Modal')} />
     <Button
       title="Open fullscreen modal"
@@ -56,26 +56,25 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="Main"
       component={MainScreen}
-      options={{title: 'Modals'}}
+      options={{ title: 'Modals' }}
     />
     <Stack.Screen
       name="Modal"
       component={ModalScreen}
-      options={{stackPresentation: 'modal'}}
+      options={{ stackPresentation: 'modal' }}
     />
     <Stack.Screen
       name="FullscreenModal"
       component={ModalScreen}
-      options={{stackPresentation: 'fullScreenModal'}}
+      options={{ stackPresentation: 'fullScreenModal' }}
     />
     <Stack.Screen
       name="Alert"
       component={Alert}
       options={{
         stackPresentation: 'transparentModal',
-        headerShown: Platform.OS === 'android' ? false : undefined,
-        stackAnimation:
-          Platform.OS === 'android' ? 'slide_from_left' : 'default',
+        headerShown: false,
+        stackAnimation: 'slide_from_bottom',
       }}
     />
   </Stack.Navigator>

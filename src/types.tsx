@@ -63,6 +63,12 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type TransitionProgressEventType = {
+  progress: number;
+  closing: number;
+  goingForward: number;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
@@ -71,6 +77,10 @@ export interface ScreenProps extends ViewProps {
    * All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
+  /**
+   * Internal boolean used to not attach events used only by native-stack. It prevents non native-stack navigators from sending transition progress from their Screen components.
+   */
+  isNativeStack?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
@@ -92,6 +102,12 @@ export interface ScreenProps extends ViewProps {
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
+   * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
+   */
+  onTransitionProgress?: (
+    e: NativeSyntheticEvent<TransitionProgressEventType>
+  ) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */

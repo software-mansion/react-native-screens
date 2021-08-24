@@ -14,6 +14,8 @@ import {
 // eslint-disable-next-line import/default
 import processColor from 'react-native/Libraries/StyleSheet/processColor';
 
+import TransitionProgressContext from './TransitionProgressContext';
+import useTransitionProgress from './useTransitionProgress';
 import {
   StackPresentationTypes,
   StackAnimationTypes,
@@ -114,6 +116,9 @@ const ScreensNativeModules = {
 
 class Screen extends React.Component<ScreenProps> {
   private ref: React.ElementRef<typeof View> | null = null;
+  private closing = new Animated.Value(0);
+  private progress = new Animated.Value(0);
+  private goingForward = new Animated.Value(0);
 
   setNativeProps(props: ScreenProps): void {
     this.ref?.setNativeProps(props);
@@ -125,7 +130,7 @@ class Screen extends React.Component<ScreenProps> {
   };
 
   render() {
-    const { enabled = ENABLE_SCREENS } = this.props;
+    const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
     if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
@@ -136,14 +141,13 @@ class Screen extends React.Component<ScreenProps> {
         // Filter out active prop in this case because it is unused and
         // can cause problems depending on react-native version:
         // https://github.com/react-navigation/react-navigation/issues/4886
-        // same for enabled prop
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        enabled,
         active,
         activityState,
+        children,
+        isNativeStack,
         statusBarColor,
-        ...rest
-      } = this.props;
+        ...props
+      } = rest;
 
       if (active !== undefined && activityState === undefined) {
         console.warn(
@@ -156,11 +160,39 @@ class Screen extends React.Component<ScreenProps> {
 
       return (
         <AnimatedNativeScreen
-          {...rest}
+          {...props}
           statusBarColor={processedColor}
           activityState={activityState}
           ref={this.setRef}
-        />
+          onTransitionProgress={
+            !isNativeStack
+              ? undefined
+              : Animated.event(
+                  [
+                    {
+                      nativeEvent: {
+                        progress: this.progress,
+                        closing: this.closing,
+                        goingForward: this.goingForward,
+                      },
+                    },
+                  ],
+                  { useNativeDriver: true }
+                )
+          }>
+          {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
+            children
+          ) : (
+            <TransitionProgressContext.Provider
+              value={{
+                progress: this.progress,
+                closing: this.closing,
+                goingForward: this.goingForward,
+              }}>
+              {children}
+            </TransitionProgressContext.Provider>
+          )}
+        </AnimatedNativeScreen>
       );
     } else {
       // same reason as above
@@ -169,11 +201,9 @@ class Screen extends React.Component<ScreenProps> {
         activityState,
         style,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        enabled,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onComponentRef,
-        ...rest
-      } = this.props;
+        ...props
+      } = rest;
 
       if (active !== undefined && activityState === undefined) {
         activityState = active !== 0 ? 2 : 0;
@@ -182,27 +212,21 @@ class Screen extends React.Component<ScreenProps> {
         <Animated.View
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
           ref={this.setRef}
-          {...rest}
+          {...props}
         />
       );
     }
   }
 }
 
-class ScreenContainer extends React.Component<ScreenContainerProps> {
-  render() {
-    const { enabled = ENABLE_SCREENS, hasTwoStates, ...rest } = this.props;
+function ScreenContainer(props: ScreenContainerProps) {
+  const { enabled = ENABLE_SCREENS, hasTwoStates, ...rest } = props;
 
-    if (enabled && isPlatformSupported) {
-      if (hasTwoStates) {
-        return (
-          <ScreensNativeModules.NativeScreenNavigationContainer {...rest} />
-        );
-      }
-      return <ScreensNativeModules.NativeScreenContainer {...rest} />;
+  if (enabled && isPlatformSupported) {
+    if (hasTwoStates) {
+      return <ScreensNativeModules.NativeScreenNavigationContainer {...rest} />;
     }
-
-    return <View {...rest} />;
+    return <ScreensNativeModules.NativeScreenContainer {...rest} />;
   }
 }
 
@@ -279,11 +303,16 @@ export type {
   SearchBarProps,
 };
 
+// context to be used when the user wants to use enhanced implementation
+// e.g. to use `react-native-reanimated` (see `reanimated` folder in repo)
+const ScreenContext = React.createContext(Screen);
+
 module.exports = {
   // these are classes so they are not evaluated until used
   // so no need to use getters for them
   Screen,
   ScreenContainer,
+  ScreenContext,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
@@ -328,4 +357,5 @@ module.exports = {
   enableScreens,
   screensEnabled,
   shouldUseActivityState,
+  useTransitionProgress,
 };
