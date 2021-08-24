@@ -228,7 +228,6 @@ function ScreenContainer(props: ScreenContainerProps) {
     }
     return <ScreensNativeModules.NativeScreenContainer {...rest} />;
   }
-
   return <View {...rest} />;
 }
 

@@ -1,12 +1,6 @@
-
 #import "RNSScreenNavigationContainer.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
-#import "RNSScreenStack.h"
-
-#import <React/RCTUIManager.h>
-#import <React/RCTUIManagerObserverCoordinator.h>
-#import <React/RCTUIManagerUtils.h>
 
 @implementation RNScreensContainerNavigationController
 
