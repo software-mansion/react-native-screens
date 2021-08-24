@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
+import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -79,9 +80,9 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        // this means that the fragment will appear without transition, in this case
-        // onViewAnimationStart and onViewAnimationEnd won't be called and we need to notify
-        // stack directly from here.
+        // this means that the fragment will appear with a custom transition, in the case
+        // of animation: 'none', onViewAnimationStart and onViewAnimationEnd
+        // won't be called and we need to notify stack directly from here.
         // When using the Toolbar back button this is called an extra time with transit = 0 but in
         // this case we don't want to notify. The way I found to detect is case is check isHidden.
         if (transit == 0 && !isHidden &&
@@ -192,7 +193,11 @@ class ScreenStackFragment : ScreenFragment {
             // there is already a listener for dismiss action added, which would be overridden
             // and also this is not necessary when going back since the lifecycle methods
             // are correctly dispatched then.
+            // We also add fakeAnimation to the set of animations, which sends the progress of animation
+            val fakeAnimation = ScreensAnimation(mFragment)
+            fakeAnimation.duration = animation.duration
             if (animation is AnimationSet && !mFragment.isRemoving) {
+                animation.addAnimation(fakeAnimation)
                 animation.setAnimationListener(mAnimationListener)
                 super.startAnimation(animation)
             } else {
@@ -201,6 +206,14 @@ class ScreenStackFragment : ScreenFragment {
                 set.setAnimationListener(mAnimationListener)
                 super.startAnimation(set)
             }
+        }
+    }
+
+    private class ScreensAnimation(private val mFragment: ScreenFragment) : Animation() {
+        override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
+            super.applyTransformation(interpolatedTime, t)
+            // interpolated time should be the progress of the current transition
+            mFragment.dispatchTransitionProgress(interpolatedTime, !mFragment.isResumed)
         }
     }
 }

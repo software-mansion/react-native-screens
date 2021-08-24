@@ -16,8 +16,11 @@ import com.facebook.react.uimanager.events.Event
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
+import kotlin.math.max
+import kotlin.math.min
 
 open class ScreenFragment : Fragment {
     enum class ScreenLifecycleEvent {
@@ -29,6 +32,9 @@ open class ScreenFragment : Fragment {
     lateinit var screen: Screen
     private val mChildScreenContainers: MutableList<ScreenContainer<*>> = ArrayList()
     private var shouldUpdateOnResume = false
+    // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
+    // due to progress value being already 0.0f
+    private var mProgress = -1f
 
     constructor() {
         throw IllegalStateException(
@@ -118,33 +124,43 @@ open class ScreenFragment : Fragment {
 
     fun dispatchOnWillAppear() {
         dispatchEvent(ScreenLifecycleEvent.WillAppear, this)
+
+        dispatchTransitionProgress(0.0f, false)
     }
 
     fun dispatchOnAppear() {
         dispatchEvent(ScreenLifecycleEvent.Appear, this)
+
+        dispatchTransitionProgress(1.0f, false)
     }
 
     protected fun dispatchOnWillDisappear() {
         dispatchEvent(ScreenLifecycleEvent.WillDisappear, this)
+
+        dispatchTransitionProgress(0.0f, true)
     }
 
     protected fun dispatchOnDisappear() {
         dispatchEvent(ScreenLifecycleEvent.Disappear, this)
+
+        dispatchTransitionProgress(1.0f, true)
     }
 
     private fun dispatchEvent(event: ScreenLifecycleEvent, fragment: ScreenFragment) {
-        fragment.screen.let {
-            val lifecycleEvent: Event<*> = when (event) {
-                ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
-                ScreenLifecycleEvent.Appear -> ScreenAppearEvent(it.id)
-                ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(it.id)
-                ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(it.id)
+        if (fragment is ScreenStackFragment) {
+            fragment.screen.let {
+                val lifecycleEvent: Event<*> = when (event) {
+                    ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
+                    ScreenLifecycleEvent.Appear -> ScreenAppearEvent(it.id)
+                    ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(it.id)
+                    ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(it.id)
+                }
+                (it.context as ReactContext)
+                    .getNativeModule(UIManagerModule::class.java)
+                    ?.eventDispatcher
+                    ?.dispatchEvent(lifecycleEvent)
+                fragment.dispatchEventInChildContainers(event)
             }
-            (it.context as ReactContext)
-                .getNativeModule(UIManagerModule::class.java)
-                ?.eventDispatcher
-                ?.dispatchEvent(lifecycleEvent)
-            fragment.dispatchEventInChildContainers(event)
         }
     }
 
@@ -159,6 +175,31 @@ open class ScreenFragment : Fragment {
                         sc.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
                     }
                 }
+            }
+        }
+    }
+
+    fun dispatchTransitionProgress(alpha: Float, closing: Boolean) {
+        if (this is ScreenStackFragment) {
+            if (mProgress != alpha) {
+                mProgress = max(0.0f, min(1.0f, alpha))
+                /* We want value of 0 and 1 to be always dispatched so we base coalescing key on the progress:
+                 - progress is 0 -> key 1
+                 - progress is 1 -> key 2
+                 - progress is between 0 and 1 -> key 3
+             */
+                val coalescingKey = (if (mProgress == 0.0f) 1 else if (mProgress == 1.0f) 2 else 3).toShort()
+                val container: ScreenContainer<*>? = screen.container
+                check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
+                val goingForward = container.goingForward
+                (screen.context as ReactContext)
+                    .getNativeModule(UIManagerModule::class.java)
+                    ?.eventDispatcher
+                    ?.dispatchEvent(
+                        ScreenTransitionProgressEvent(
+                            screen.id, mProgress, closing, goingForward, coalescingKey
+                        )
+                    )
             }
         }
     }

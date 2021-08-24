@@ -39,6 +39,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private var isDetachingCurrentScreen = false
     private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
+    var goingForward = false
     fun dismiss(screenFragment: ScreenStackFragment) {
         mDismissed.add(screenFragment)
         markUpdated()
@@ -173,6 +174,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 // We don't do it if the stack is nested since the parent will trigger these events in child
                 stackAnimation = StackAnimation.NONE
                 if (newTop.screen.stackAnimation !== StackAnimation.NONE && !isNested) {
+                    goingForward = true
                     newTop.dispatchOnWillAppear()
                     newTop.dispatchOnAppear()
                 }
@@ -222,6 +224,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 it.setTransition(transition)
             }
             // animation logic end
+            goingForward = shouldUseOpenAnimation
+
             if (shouldUseOpenAnimation &&
                 newTop != null && needsDrawReordering(newTop) &&
                 visibleBottom == null
