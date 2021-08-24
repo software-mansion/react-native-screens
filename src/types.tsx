@@ -63,6 +63,12 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type TransitionProgressEventType = {
+  progress: number;
+  closing: number;
+  goingForward: number;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
@@ -72,13 +78,9 @@ export interface ScreenProps extends ViewProps {
    */
   enabled?: boolean;
   /**
-   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft`.
-   * Defaults to `false`.
-   *
-   * @platform android
+   * Internal boolean used to not attach events used only by native-stack. It prevents non native-stack navigators from sending transition progress from their Screen components.
    */
-  nativeBackButtonDismissalEnabled?: boolean;
+  isNativeStack?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
@@ -86,6 +88,14 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   gestureEnabled?: boolean;
+  /**
+   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft`.
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
+  nativeBackButtonDismissalEnabled?: boolean;
   /**
    * A callback that gets called when the current screen appears.
    */
@@ -115,6 +125,12 @@ export interface ScreenProps extends ViewProps {
    */
   onNativeDismissCancelled?: (
     e: NativeSyntheticEvent<{ dismissCount: number }>
+  ) => void;
+  /**
+   * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
+   */
+  onTransitionProgress?: (
+    e: NativeSyntheticEvent<TransitionProgressEventType>
   ) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
