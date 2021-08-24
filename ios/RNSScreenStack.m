@@ -50,10 +50,16 @@
 @end
 
 #if !TARGET_OS_TV
-@interface RNSGestureRecognizer : UIScreenEdgePanGestureRecognizer
+@interface RNSScreenEdgeGestureRecognizer : UIScreenEdgePanGestureRecognizer
 @end
 
-@implementation RNSGestureRecognizer
+@implementation RNSScreenEdgeGestureRecognizer
+@end
+
+@interface RNSPanGestureRecognizer : UIPanGestureRecognizer
+@end
+
+@implementation RNSPanGestureRecognizer
 @end
 #endif
 
@@ -519,8 +525,10 @@
   } else if (operation == UINavigationControllerOperationPop) {
     screen = (RNSScreenView *)fromVC.view;
   }
-  if (screen != nil && screen.stackAnimation != RNSScreenStackAnimationFlip &&
-      screen.stackAnimation != RNSScreenStackAnimationDefault) {
+  if (screen != nil &&
+      (screen.fullWidthGestureEnabled ||
+       (screen.stackAnimation != RNSScreenStackAnimationFlip &&
+        screen.stackAnimation != RNSScreenStackAnimationDefault))) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -553,13 +561,23 @@
   [self cancelTouchesInParent];
   return YES;
 #else
-  if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
+  if (topScreen.fullWidthGestureEnabled) {
+    // we want only `RNSPanGestureRecognizer` to be able to recognize when
+    // `fullWidthGestureEnabled` is set
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+      [self cancelTouchesInParent];
+      return YES;
+    }
+    return NO;
+  }
+
+  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
     // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
     // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
     BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
-                          ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
+                          ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
         (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
-         ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
+         ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
     if (isCorrectEdge && topScreen.stackAnimation == RNSScreenStackAnimationSimplePush) {
       [self cancelTouchesInParent];
       return YES;
@@ -576,20 +594,26 @@
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
-  RNSGestureRecognizer *leftEdgeSwipeGestureRecognizer =
-      [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  RNSScreenEdgeGestureRecognizer *leftEdgeSwipeGestureRecognizer =
+      [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
   leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
   leftEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
 
-  RNSGestureRecognizer *rightEdgeSwipeGestureRecognizer =
-      [[RNSGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  RNSScreenEdgeGestureRecognizer *rightEdgeSwipeGestureRecognizer =
+      [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
   rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
   rightEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:rightEdgeSwipeGestureRecognizer];
+
+  // gesture recognizer for full width swipe gesture
+  RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(handleSwipe:)];
+  panRecognizer.delegate = self;
+  [self addGestureRecognizer:panRecognizer];
 }
 
-- (void)handleSwipe:(RNSGestureRecognizer *)gestureRecognizer
+- (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
   float translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
   float velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].x;

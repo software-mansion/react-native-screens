@@ -50,10 +50,7 @@
   }
 
   if (screen != nil) {
-    if (screen.stackAnimation == RNSScreenStackAnimationSimplePush) {
-      [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
-    } else if (
-        screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone) {
+    if (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone) {
       [self animateFadeWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     } else if (screen.stackAnimation == RNSScreenStackAnimationSlideFromBottom) {
       [self animateSlideFromBottomWithTransitionContext:transitionContext
@@ -63,6 +60,8 @@
       [self animateFadeFromBottomWithTransitionContext:transitionContext
                                                   toVC:toViewController
                                                 fromVC:fromViewController];
+    } else {
+      [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     }
   }
 }

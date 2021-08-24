@@ -72,6 +72,11 @@ export interface ScreenProps extends ViewProps {
    */
   enabled?: boolean;
   /**
+   * Boolean indicating whether the swipe gesture should work on whole screen. It results in the same transition animation as `simple_push`.
+   * @platform ios
+   */
+  fullWidthGestureEnabled?: boolean;
+  /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
    *

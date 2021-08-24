@@ -149,6 +149,7 @@ const RouteView = ({
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
+    fullWidthGestureEnabled,
     gestureEnabled,
     headerShown,
     replaceAnimation = 'pop',
@@ -188,6 +189,7 @@ const RouteView = ({
       enabled
       style={StyleSheet.absoluteFill}
       gestureEnabled={isAndroid ? false : gestureEnabled}
+      fullWidthGestureEnabled={fullWidthGestureEnabled}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}
       stackAnimation={stackAnimation}
