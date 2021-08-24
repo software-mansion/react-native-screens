@@ -81,6 +81,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
 @property (nonatomic, copy) RCTDirectEventBlock onWillAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
+@property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
@@ -102,6 +103,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 #endif
 
 - (void)notifyFinishTransitioning;
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 
 @end
 

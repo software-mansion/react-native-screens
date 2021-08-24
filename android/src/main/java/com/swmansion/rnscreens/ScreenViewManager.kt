@@ -9,6 +9,7 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
@@ -54,7 +55,7 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
     @ReactProp(name = "stackAnimation")
     fun setStackAnimation(view: Screen, animation: String?) {
         view.stackAnimation = when (animation) {
-            null, "default", "simple_push" -> Screen.StackAnimation.DEFAULT
+            null, "default", "flip", "simple_push" -> Screen.StackAnimation.DEFAULT
             "none" -> Screen.StackAnimation.NONE
             "fade" -> Screen.StackAnimation.FADE
             "slide_from_right" -> Screen.StackAnimation.SLIDE_FROM_RIGHT
@@ -123,7 +124,9 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
             ScreenDisappearEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDisappear"),
             StackFinishTransitioningEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onFinishTransitioning")
+            MapBuilder.of("registrationName", "onFinishTransitioning"),
+            ScreenTransitionProgressEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onTransitionProgress"),
         )
     }
 
