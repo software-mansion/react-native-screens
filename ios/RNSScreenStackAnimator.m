@@ -49,8 +49,17 @@
     screen = (RNSScreenView *)fromViewController.view;
   }
 
+  if (transitionContext.isInteractive && screen.fullWidthGestureEnabled) {
+    // swiping back with full width recognizing should mimic default swipe back behavior
+    [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
+    return;
+  }
+
   if (screen != nil) {
-    if (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone) {
+    if (screen.stackAnimation == RNSScreenStackAnimationSimplePush) {
+      [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
+    } else if (
+        screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone) {
       [self animateFadeWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     } else if (screen.stackAnimation == RNSScreenStackAnimationSlideFromBottom) {
       [self animateSlideFromBottomWithTransitionContext:transitionContext
@@ -60,8 +69,6 @@
       [self animateFadeFromBottomWithTransitionContext:transitionContext
                                                   toVC:toViewController
                                                 fromVC:fromViewController];
-    } else {
-      [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
     }
   }
 }
@@ -246,6 +253,11 @@
                      }
                      completion:nil];
   }
+}
+
++ (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
+{
+  return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
 }
 
 @end

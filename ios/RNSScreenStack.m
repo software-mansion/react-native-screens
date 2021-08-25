@@ -71,6 +71,7 @@
   BOOL _invalidated;
   UIPercentDrivenInteractiveTransition *_interactionController;
   BOOL _updateScheduled;
+  BOOL _isUsingCustomRecognizer;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
@@ -526,9 +527,8 @@
     screen = (RNSScreenView *)fromVC.view;
   }
   if (screen != nil &&
-      (screen.fullWidthGestureEnabled ||
-       (screen.stackAnimation != RNSScreenStackAnimationFlip &&
-        screen.stackAnimation != RNSScreenStackAnimationDefault))) {
+      // we need to return the animator when full width swiping, otherwise the screen will be just popped immediately
+      (_isUsingCustomRecognizer || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -583,6 +583,7 @@
       return YES;
     }
   } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    // it should only recognize with `fullWidthGestureEnabled` set to `true`
     return NO;
   } else if (topScreen.stackAnimation != RNSScreenStackAnimationSimplePush) {
     [self cancelTouchesInParent];
@@ -630,6 +631,7 @@
 
   switch (gestureRecognizer.state) {
     case UIGestureRecognizerStateBegan: {
+      _isUsingCustomRecognizer = YES;
       _interactionController = [UIPercentDrivenInteractiveTransition new];
       [_controller popViewControllerAnimated:YES];
       break;
@@ -641,11 +643,13 @@
     }
 
     case UIGestureRecognizerStateCancelled: {
+      _isUsingCustomRecognizer = NO;
       [_interactionController cancelInteractiveTransition];
       break;
     }
 
     case UIGestureRecognizerStateEnded: {
+      _isUsingCustomRecognizer = NO;
       // values taken from
       // https://github.com/react-navigation/react-navigation/blob/54739828598d7072c1bf7b369659e3682db3edc5/packages/stack/src/views/Stack/Card.tsx#L316
       BOOL shouldFinishTransition = (translation + velocity * 0.3) > (distance / 2);
