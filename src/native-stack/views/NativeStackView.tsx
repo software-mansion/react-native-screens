@@ -4,6 +4,7 @@ import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
 import {
+  PreventDismissContext,
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
@@ -31,7 +32,6 @@ import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
-import PreventDismissContext from '../utils/PreventDismissContext';
 
 const isAndroid = Platform.OS === 'android';
 

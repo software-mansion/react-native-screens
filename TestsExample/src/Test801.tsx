@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {Button, Alert, TextInput} from 'react-native';
 import { NavigationContainer, ParamListBase } from "@react-navigation/native";
-import { createNativeStackNavigator, NativeStackNavigationProp, usePreventDismiss } from "react-native-screens/native-stack";
+import { createNativeStackNavigator, NativeStackNavigationProp } from "react-native-screens/native-stack";
+import {usePreventDismiss} from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
 

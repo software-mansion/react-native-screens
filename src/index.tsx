@@ -10,7 +10,9 @@ import {
 } from './types';
 
 export * from './types';
-export { default as useTransitionProgress } from './useTransitionProgress';
+export { default as useTransitionProgress } from './utils/useTransitionProgress';
+export { default as PreventDismissContext } from './utils/PreventDismissContext';
+export { default as usePreventDismiss } from './utils/usePreventDismiss';
 
 let ENABLE_SCREENS = true;
 

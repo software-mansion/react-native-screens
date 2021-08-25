@@ -14,8 +14,10 @@ import {
 // eslint-disable-next-line import/default
 import processColor from 'react-native/Libraries/StyleSheet/processColor';
 
-import TransitionProgressContext from './TransitionProgressContext';
-import useTransitionProgress from './useTransitionProgress';
+import TransitionProgressContext from './utils/TransitionProgressContext';
+import useTransitionProgress from './utils/useTransitionProgress';
+import PreventDismissContext from './utils/PreventDismissContext';
+import usePreventDismiss from './utils/usePreventDismiss';
 import {
   StackPresentationTypes,
   StackAnimationTypes,
@@ -303,6 +305,7 @@ module.exports = {
   Screen,
   ScreenContainer,
   ScreenContext,
+  PreventDismissContext,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
@@ -341,4 +344,5 @@ module.exports = {
   screensEnabled,
   shouldUseActivityState,
   useTransitionProgress,
+  usePreventDismiss,
 };

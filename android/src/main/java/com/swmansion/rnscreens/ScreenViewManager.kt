@@ -134,11 +134,11 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
             MapBuilder.of("registrationName", "onDisappear"),
             StackFinishTransitioningEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onFinishTransitioning"),
-            HeaderBackButtonClickedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onHeaderBackButtonClicked")
+            ScreenTransitionProgressEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onTransitionProgress")
         )
         // there is no `MapBuilder.of` with more than 7 items
-        map[ScreenTransitionProgressEvent.EVENT_NAME] = MapBuilder.of("registrationName", "onTransitionProgress")
+        map[HeaderBackButtonClickedEvent.EVENT_NAME] = MapBuilder.of("registrationName", "onHeaderBackButtonClicked")
         return map
     }
 
