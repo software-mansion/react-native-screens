@@ -582,6 +582,8 @@
       [self cancelTouchesInParent];
       return YES;
     }
+  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    return NO;
   } else if (topScreen.stackAnimation != RNSScreenStackAnimationSimplePush) {
     [self cancelTouchesInParent];
     return YES;
