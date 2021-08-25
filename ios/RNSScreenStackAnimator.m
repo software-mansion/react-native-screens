@@ -249,4 +249,9 @@
   }
 }
 
++ (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
+{
+  return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
+}
+
 @end
