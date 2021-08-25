@@ -193,6 +193,7 @@ const RouteView = ({
       <Screen
         key={route.key}
         enabled
+        isNativeStack
         style={StyleSheet.absoluteFill}
         nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
         gestureEnabled={isAndroid ? false : gestureEnabled}
