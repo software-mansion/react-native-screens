@@ -46,7 +46,7 @@ export default function App() {
         <Stack.Navigator
           screenOptions={{
             gestureEnabled: true,
-            fullWidthGestureEnabled: false,
+            fullWidthGestureEnabled: true,
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />
