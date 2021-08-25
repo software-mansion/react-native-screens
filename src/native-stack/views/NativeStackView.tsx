@@ -148,7 +148,12 @@ const RouteView = ({
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
 }) => {
-  const [preventNativeDismiss, setPreventNativeDismiss] = React.useState(false);
+  const [preventNativeDismissMap, setPreventNativeDismissMap] = React.useState<
+    Record<symbol, boolean>[]
+  >([]);
+  const preventNativeDismiss = preventNativeDismissMap
+    .map((el) => Object.values(el)[0])
+    .some((el) => el === true);
 
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -189,7 +194,21 @@ const RouteView = ({
 
   return (
     <PreventDismissContext.Provider
-      value={{ preventDismiss: setPreventNativeDismiss }}>
+      value={{
+        setPreventDismiss: (symbol, enabled) => {
+          const arr = preventNativeDismissMap;
+          // @ts-ignore symbols cannot be used in obj, see
+          // https://github.com/Microsoft/TypeScript/issues/24587
+          arr.push({ [symbol]: enabled });
+          setPreventNativeDismissMap(arr);
+        },
+        removePreventDismiss: (symbol) => {
+          setPreventNativeDismissMap(
+            // @ts-ignore same as above
+            preventNativeDismissMap.filter((el) => el[symbol] === undefined)
+          );
+        },
+      }}>
       <Screen
         key={route.key}
         enabled

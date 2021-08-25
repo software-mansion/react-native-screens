@@ -2,14 +2,24 @@ import * as React from 'react';
 
 import PreventDismissContext from './PreventDismissContext';
 
-export default function usePreventDismiss() {
-  const preventDismiss = React.useContext(PreventDismissContext);
+type Options = {
+  enabled: boolean;
+};
 
-  if (preventDismiss === undefined) {
+export default function usePreventDismiss({ enabled }: Options) {
+  const [symbol] = React.useState(() => Symbol(''));
+  const context = React.useContext(PreventDismissContext);
+  if (context === undefined) {
     throw new Error(
       "Couldn't find value for preventing dismiss. Are you inside a screen in Native Stack?"
     );
   }
 
-  return preventDismiss;
+  const { setPreventDismiss, removePreventDismiss } = context;
+
+  React.useEffect(() => {
+    setPreventDismiss(symbol, enabled);
+
+    return () => removePreventDismiss(symbol);
+  }, [symbol, enabled]);
 }

@@ -1,7 +1,8 @@
 import * as React from 'react';
 
 type PreventDismissContextBody = {
-  preventDismiss: (shouldPrevent: boolean) => void;
+  setPreventDismiss: (symbol: symbol, enabled: boolean) => void;
+  removePreventDismiss: (symbol: symbol) => void;
 };
 
 export default React.createContext<PreventDismissContextBody | undefined>(
