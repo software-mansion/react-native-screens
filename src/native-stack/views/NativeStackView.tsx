@@ -28,6 +28,7 @@ import {
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
 } from '../types';
+import { PreventDismissContextBody } from '../../utils/PreventDismissContext';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
@@ -149,11 +150,12 @@ const RouteView = ({
   stateKey: string;
 }) => {
   const [preventNativeDismissMap, setPreventNativeDismissMap] = React.useState<
-    Record<symbol, boolean>[]
+    Map<symbol, boolean>[]
   >([]);
   const preventNativeDismiss = preventNativeDismissMap
-    .map((el) => Object.values(el)[0])
-    .some((el) => el === true);
+    .map((map) => map.values())
+    .map((value) => value.next().value)
+    .some((item) => item);
 
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -192,23 +194,25 @@ const RouteView = ({
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const Screen = React.useContext(ScreenContext);
 
+  const dissmissContextValue = React.useMemo<PreventDismissContextBody>(
+    () => ({
+      setPreventDismiss: (symbol, enabled) => {
+        const map = new Map();
+        map.set(symbol, enabled);
+        const copy = [...preventNativeDismissMap, map];
+        setPreventNativeDismissMap(copy);
+      },
+      removePreventDismiss: (symbol) => {
+        setPreventNativeDismissMap(
+          preventNativeDismissMap.filter((el) => el.get(symbol) === undefined)
+        );
+      },
+    }),
+    [preventNativeDismissMap, setPreventNativeDismissMap]
+  );
+
   return (
-    <PreventDismissContext.Provider
-      value={{
-        setPreventDismiss: (symbol, enabled) => {
-          const arr = preventNativeDismissMap;
-          // @ts-ignore symbols cannot be used in obj, see
-          // https://github.com/Microsoft/TypeScript/issues/24587
-          arr.push({ [symbol]: enabled });
-          setPreventNativeDismissMap(arr);
-        },
-        removePreventDismiss: (symbol) => {
-          setPreventNativeDismissMap(
-            // @ts-ignore same as above
-            preventNativeDismissMap.filter((el) => el[symbol] === undefined)
-          );
-        },
-      }}>
+    <PreventDismissContext.Provider value={dissmissContextValue}>
       <Screen
         key={route.key}
         enabled

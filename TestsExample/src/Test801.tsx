@@ -35,9 +35,10 @@ function First({navigation}: {navigation: NativeStackNavigationProp<ParamListBas
 }
 
 function Second({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
-  const {preventDismiss} = usePreventDismiss();
   const [text, setText] = React.useState('');
   const hasUnsavedChanges = Boolean(text);
+  usePreventDismiss(hasUnsavedChanges);
+
   React.useEffect(
     () =>
       navigation.addListener('beforeRemove', (e) => {
@@ -74,10 +75,7 @@ function Second({navigation}: {navigation: NativeStackNavigationProp<ParamListBa
       <TextInput
         value={text}
         placeholder="Type something…"
-        onChangeText={(text) => {
-          setText(text);
-          preventDismiss(hasUnsavedChanges);
-        }}
+        onChangeText={setText}
       />
       <Button title="Push more second screens" onPress={() => navigation.push('Second')} />
     </>

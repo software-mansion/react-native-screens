@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-type PreventDismissContextBody = {
+export type PreventDismissContextBody = {
   setPreventDismiss: (symbol: symbol, enabled: boolean) => void;
   removePreventDismiss: (symbol: symbol) => void;
 };

@@ -2,12 +2,8 @@ import * as React from 'react';
 
 import PreventDismissContext from './PreventDismissContext';
 
-type Options = {
-  enabled: boolean;
-};
-
-export default function usePreventDismiss({ enabled }: Options) {
-  const [symbol] = React.useState(() => Symbol(''));
+export default function usePreventDismiss(enabled: boolean) {
+  const [symbol] = React.useState(() => Symbol('id'));
   const context = React.useContext(PreventDismissContext);
   if (context === undefined) {
     throw new Error(
