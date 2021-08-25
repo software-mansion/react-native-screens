@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
 
 import Test42 from './src/Test42';
@@ -59,10 +58,8 @@ import Test1072 from './src/Test1072';
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ReanimatedScreenProvider>
-        <Test42 />
-      </ReanimatedScreenProvider>
-    </GestureHandlerRootView>
+    <ReanimatedScreenProvider>
+      <Test42 />
+    </ReanimatedScreenProvider>
   );
 }

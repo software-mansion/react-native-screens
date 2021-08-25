@@ -6,6 +6,7 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {
+  GestureHandlerRootView,
   ScrollView,
   State,
   TapGestureHandler,
@@ -40,16 +41,18 @@ function Second() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          gestureEnabled: true,
-          fullWidthGestureEnabled: true,
-        }}>
-        <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            gestureEnabled: true,
+            fullWidthGestureEnabled: false,
+          }}>
+          <Stack.Screen name="First" component={First} />
+          <Stack.Screen name="Second" component={Second} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 
