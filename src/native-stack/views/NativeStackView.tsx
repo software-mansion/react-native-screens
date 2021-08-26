@@ -155,6 +155,23 @@ const RouteView = ({
   const preventNativeDismiss = [...preventNativeDismissMap.values()].some(
     (item) => item
   );
+  const dismissContextValue = React.useMemo<PreventDismissContextBody>(
+    () => ({
+      setPreventDismiss: (symbol, enabled) => {
+        setPreventNativeDismissMap((prevMap) =>
+          new Map(prevMap).set(symbol, enabled)
+        );
+      },
+      removePreventDismiss: (symbol) => {
+        setPreventNativeDismissMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          newMap.delete(symbol);
+          return newMap;
+        });
+      },
+    }),
+    [setPreventNativeDismissMap]
+  );
 
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -193,26 +210,8 @@ const RouteView = ({
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const Screen = React.useContext(ScreenContext);
 
-  const dissmissContextValue = React.useMemo<PreventDismissContextBody>(
-    () => ({
-      setPreventDismiss: (symbol, enabled) => {
-        setPreventNativeDismissMap((prevMap) =>
-          new Map(prevMap).set(symbol, enabled)
-        );
-      },
-      removePreventDismiss: (symbol) => {
-        setPreventNativeDismissMap((prevMap) => {
-          const newMap = new Map(prevMap);
-          newMap.delete(symbol);
-          return newMap;
-        });
-      },
-    }),
-    [setPreventNativeDismissMap]
-  );
-
   return (
-    <PreventDismissContext.Provider value={dissmissContextValue}>
+    <PreventDismissContext.Provider value={dismissContextValue}>
       <Screen
         key={route.key}
         enabled
