@@ -149,6 +149,7 @@ const RouteView = ({
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
+    customAnimationOnSwipe,
     fullWidthGestureEnabled,
     gestureEnabled,
     headerShown,
@@ -190,6 +191,7 @@ const RouteView = ({
       enabled
       style={StyleSheet.absoluteFill}
       isNativeStack
+      customAnimationOnSwipe={customAnimationOnSwipe}
       gestureEnabled={isAndroid ? false : gestureEnabled}
       fullWidthGestureEnabled={fullWidthGestureEnabled}
       replaceAnimation={replaceAnimation}

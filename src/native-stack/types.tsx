@@ -82,6 +82,12 @@ export type NativeStackNavigationOptions = {
    */
   contentStyle?: StyleProp<ViewStyle>;
   /**
+   * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  customAnimationOnSwipe?: boolean;
+  /**
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';

@@ -49,27 +49,24 @@
     screen = (RNSScreenView *)fromViewController.view;
   }
 
-  if (transitionContext.isInteractive && screen.fullWidthGestureEnabled) {
-    // swiping back with full width recognizing should mimic default swipe back behavior
-    [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
-    return;
-  }
-
   if (screen != nil) {
-    if (screen.stackAnimation == RNSScreenStackAnimationSimplePush) {
-      [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
-    } else if (
-        screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone) {
-      [self animateFadeWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
-    } else if (screen.stackAnimation == RNSScreenStackAnimationSlideFromBottom) {
-      [self animateSlideFromBottomWithTransitionContext:transitionContext
-                                                   toVC:toViewController
-                                                 fromVC:fromViewController];
-    } else if (screen.stackAnimation == RNSScreenStackAnimationFadeFromBottom) {
-      [self animateFadeFromBottomWithTransitionContext:transitionContext
-                                                  toVC:toViewController
-                                                fromVC:fromViewController];
+    if (screen.fullWidthGestureEnabled && transitionContext.isInteractive) {
+      // we are swiping with full width gesture
+      if (screen.customAnimationOnSwipe) {
+        [self animateTransitionWithStackAnimation:screen.stackAnimation
+                                transitionContext:transitionContext
+                                             toVC:toViewController
+                                           fromVC:fromViewController];
+      } else {
+        [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
+      }
+      return;
     }
+    // we are going forward since or provided custom animation on swipe
+    [self animateTransitionWithStackAnimation:screen.stackAnimation
+                            transitionContext:transitionContext
+                                         toVC:toViewController
+                                       fromVC:fromViewController];
   }
 }
 
@@ -258,6 +255,28 @@
 + (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
 {
   return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
+}
+
+- (void)animateTransitionWithStackAnimation:(RNSScreenStackAnimation)animation
+                          transitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                       toVC:(UIViewController *)toVC
+                                     fromVC:(UIViewController *)fromVC
+{
+  if (animation == RNSScreenStackAnimationSimplePush) {
+    [self animateSimplePushWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+    return;
+  } else if (animation == RNSScreenStackAnimationFade || animation == RNSScreenStackAnimationNone) {
+    [self animateFadeWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+    return;
+  } else if (animation == RNSScreenStackAnimationSlideFromBottom) {
+    [self animateSlideFromBottomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+    return;
+  } else if (animation == RNSScreenStackAnimationFadeFromBottom) {
+    [self animateFadeFromBottomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+    return;
+  }
+  // simple_push is the default custom animation
+  [self animateSimplePushWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
 }
 
 @end

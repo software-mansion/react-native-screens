@@ -36,7 +36,11 @@ Screen stack component expects one or more `Screen` components as direct childre
 
 Below is the list of additional properties that can be used for `Screen` component:
 
-#### `fullWidthGestureEnabled` (iOS only)
+### `customAnimationOnSwipe` (iOS only)
+
+Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+
+### `fullWidthGestureEnabled` (iOS only)
 
 Boolean indicating whether the swipe gesture should work on whole screen. It results in the same transition animation as `simple_push`. Defaults to `false`.
 

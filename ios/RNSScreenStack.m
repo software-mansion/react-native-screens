@@ -71,7 +71,7 @@
   BOOL _invalidated;
   UIPercentDrivenInteractiveTransition *_interactionController;
   BOOL _updateScheduled;
-  BOOL _isUsingCustomRecognizer;
+  BOOL _isFullWidthSwiping;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
@@ -527,8 +527,9 @@
     screen = (RNSScreenView *)fromVC.view;
   }
   if (screen != nil &&
-      // we need to return the animator when full width swiping, otherwise the screen will be just popped immediately
-      (_isUsingCustomRecognizer || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+      // we need to return the animator when full width swiping even if the animation is not custom,
+      // otherwise the screen will be just popped immediately due to no animation
+      (_isFullWidthSwiping || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -563,33 +564,40 @@
 #else
   if (topScreen.fullWidthGestureEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
-    // `fullWidthGestureEnabled` is set
+    // `fullWidthGestureEnabled` is set and only then
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+      _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
     }
     return NO;
   }
 
-  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
-    // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
-    // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
-    BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
-                          ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
-        (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
-         ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
-    if (isCorrectEdge && topScreen.stackAnimation == RNSScreenStackAnimationSimplePush) {
-      [self cancelTouchesInParent];
-      return YES;
+  if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
+    if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+      // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
+      // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
+      BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
+                            ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
+          (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
+           ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
+      if (isCorrectEdge) {
+        [self cancelTouchesInParent];
+        return YES;
+      }
     }
-  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    // it should only recognize with `fullWidthGestureEnabled` set to `true`
     return NO;
-  } else if (topScreen.stackAnimation != RNSScreenStackAnimationSimplePush) {
+  } else {
+    if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+      // it should only recognize with `customAnimationOnSwipe` set
+      return NO;
+    } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+      // it should only recognize with `fullWidthGestureEnabled` set
+      return NO;
+    }
     [self cancelTouchesInParent];
     return YES;
   }
-  return NO;
 #endif
 }
 
@@ -631,7 +639,6 @@
 
   switch (gestureRecognizer.state) {
     case UIGestureRecognizerStateBegan: {
-      _isUsingCustomRecognizer = YES;
       _interactionController = [UIPercentDrivenInteractiveTransition new];
       [_controller popViewControllerAnimated:YES];
       break;
@@ -643,13 +650,11 @@
     }
 
     case UIGestureRecognizerStateCancelled: {
-      _isUsingCustomRecognizer = NO;
       [_interactionController cancelInteractiveTransition];
       break;
     }
 
     case UIGestureRecognizerStateEnded: {
-      _isUsingCustomRecognizer = NO;
       // values taken from
       // https://github.com/react-navigation/react-navigation/blob/54739828598d7072c1bf7b369659e3682db3edc5/packages/stack/src/views/Stack/Card.tsx#L316
       BOOL shouldFinishTransition = (translation + velocity * 0.3) > (distance / 2);

@@ -45,8 +45,9 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            gestureEnabled: true,
             fullWidthGestureEnabled: true,
+            stackAnimation: 'fade_from_bottom',
+            customAnimationOnSwipe: true,
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />
