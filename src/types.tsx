@@ -74,6 +74,12 @@ export interface ScreenProps extends ViewProps {
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
   /**
+   * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  customAnimationOnSwipe?: boolean;
+  /**
    * All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
@@ -83,7 +89,6 @@ export interface ScreenProps extends ViewProps {
   isNativeStack?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
-   * Only supported on iOS.
    *
    * @platform ios
    */

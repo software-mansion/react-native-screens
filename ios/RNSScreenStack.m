@@ -553,22 +553,28 @@
   [self cancelTouchesInParent];
   return YES;
 #else
-  if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
-    // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
-    // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
-    BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
-                          ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
-        (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
-         ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
-    if (isCorrectEdge && topScreen.stackAnimation == RNSScreenStackAnimationSimplePush) {
-      [self cancelTouchesInParent];
-      return YES;
+  // custom animation should be always served by custom recognizers
+  if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
+    if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
+      // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
+      // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
+      BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
+                            ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
+          (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
+           ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
+      if (isCorrectEdge) {
+        [self cancelTouchesInParent];
+        return YES;
+      }
     }
-  } else if (topScreen.stackAnimation != RNSScreenStackAnimationSimplePush) {
+    return NO;
+  } else {
+    if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
+      return NO;
+    }
     [self cancelTouchesInParent];
     return YES;
   }
-  return NO;
 #endif
 }
 
