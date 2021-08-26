@@ -149,13 +149,12 @@ const RouteView = ({
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
 }) => {
-  const [preventNativeDismissMap, setPreventNativeDismissMap] = React.useState<
-    Map<symbol, boolean>[]
-  >([]);
-  const preventNativeDismiss = preventNativeDismissMap
-    .map((map) => map.values())
-    .map((value) => value.next().value)
-    .some((item) => item);
+  const [preventNativeDismissMap, setPreventNativeDismissMap] = React.useState(
+    new Map<symbol, boolean>()
+  );
+  const preventNativeDismiss = [...preventNativeDismissMap.values()].some(
+    (item) => item
+  );
 
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -197,18 +196,19 @@ const RouteView = ({
   const dissmissContextValue = React.useMemo<PreventDismissContextBody>(
     () => ({
       setPreventDismiss: (symbol, enabled) => {
-        const map = new Map();
-        map.set(symbol, enabled);
-        const copy = [...preventNativeDismissMap, map];
-        setPreventNativeDismissMap(copy);
-      },
-      removePreventDismiss: (symbol) => {
-        setPreventNativeDismissMap(
-          preventNativeDismissMap.filter((el) => el.get(symbol) === undefined)
+        setPreventNativeDismissMap((prevMap) =>
+          new Map(prevMap).set(symbol, enabled)
         );
       },
+      removePreventDismiss: (symbol) => {
+        setPreventNativeDismissMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          newMap.delete(symbol);
+          return newMap;
+        });
+      },
     }),
-    [preventNativeDismissMap, setPreventNativeDismissMap]
+    [setPreventNativeDismissMap]
   );
 
   return (

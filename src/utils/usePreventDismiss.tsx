@@ -3,7 +3,8 @@ import * as React from 'react';
 import PreventDismissContext from './PreventDismissContext';
 
 export default function usePreventDismiss(enabled: boolean) {
-  const [symbol] = React.useState(() => Symbol('id'));
+  // eslint-disable-next-line symbol-description
+  const [symbol] = React.useState(() => Symbol());
   const context = React.useContext(PreventDismissContext);
   if (context === undefined) {
     throw new Error(
