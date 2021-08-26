@@ -90,7 +90,7 @@ export interface ScreenProps extends ViewProps {
   gestureEnabled?: boolean;
   /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft`.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft` or use `usePreventDismiss` hook.
    * Defaults to `false`.
    *
    * @platform android
@@ -111,15 +111,15 @@ export interface ScreenProps extends ViewProps {
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
   /**
-   * A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
+   * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
    * @platform android
    */
   onHeaderBackButtonClicked?: () => void;
   /**
-   * A callback that gets called when you set `preventNativeDismiss` to `true` and dismiss a screen natively.
+   * An internal callback that gets called when you set `preventNativeDismiss` to `true` and dismiss a screen natively.
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
-   * It calls `navigation.pop` of all dismissed screens by default.
+   * It calls `navigation.pop` of all dismissed screens.
    *
    * @platform ios
    */
@@ -141,7 +141,7 @@ export interface ScreenProps extends ViewProps {
    */
   onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * Boolean indicating whether you are able to dimiss the screen or modal natively by swiping it or tapping default native header back button.
+   * An internal boolean indicating whether you are able to dimiss the screen or modal natively by swiping it or tapping default native header back button.
    * If you set it to `true`, the natively dismissed screen is pushed back and `onNativeDismissCancelled` event is called.
    *
    * @platform ios

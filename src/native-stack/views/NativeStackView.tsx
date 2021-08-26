@@ -5,6 +5,7 @@ import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
 import {
   PreventDismissContext,
+  PreventDismissContextBody,
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
@@ -28,7 +29,6 @@ import {
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
 } from '../types';
-import { PreventDismissContextBody } from '../../utils/PreventDismissContext';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';

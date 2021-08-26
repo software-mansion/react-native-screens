@@ -16,7 +16,9 @@ import processColor from 'react-native/Libraries/StyleSheet/processColor';
 
 import TransitionProgressContext from './utils/TransitionProgressContext';
 import useTransitionProgress from './utils/useTransitionProgress';
-import PreventDismissContext from './utils/PreventDismissContext';
+import PreventDismissContext, {
+  PreventDismissContextBody,
+} from './utils/PreventDismissContext';
 import usePreventDismiss from './utils/usePreventDismiss';
 import {
   StackPresentationTypes,
@@ -293,6 +295,7 @@ export type {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
+  PreventDismissContextBody,
 };
 
 // context to be used when the user wants to use enhanced implementation

@@ -75,15 +75,6 @@ String that applies `rtl` or `ltr` form to the stack. On Android, you have to ad
 
 Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. Only supported on iOS.
 
-#### `enableNativeBackButtonDismissal` (Android only)
-
-Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft`.
-
-For `iOS` option, see `preventNativeDismiss`.
-
-Defaults to `false`.
-
 #### `gestureEnabled`
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`,
@@ -160,7 +151,7 @@ Whether to show or hide the header for the screen. The header is shown by defaul
 Style object for the header. Supported properties:
 
 - `backgroundColor`
-- `blurEffect` (iOS only). Possible values can be checked in `index.d.ts` file.
+- `blurEffect` (iOS only).
 
 #### `headerTintColor`
 
@@ -187,17 +178,10 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
-#### `onNativeDismissCancelled` (iOS only)
+#### `nativeBackButtonDismissalEnabled` (Android only)
 
-A callback that gets called when you set `preventNativeDismiss` to `true` and dismiss a screen natively. The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
-
-It calls `navigation.pop` of all dismissed screens by default.
-
-#### `preventNativeDismiss` (iOS only)
-
-Boolean indicating whether you are able to dimiss the screen or modal natively by swiping it or tapping default native header back button. If you set it to `true`, the natively dismissed screen is pushed back and `onNativeDismissCancelled` event is called.
-
-For `Android` option, see `enableNativeBackButtonDismissal`.
+Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft` or use `usePreventDismiss` hook.
 
 Defaults to `false`.
 
@@ -248,7 +232,7 @@ A string that can be used as a fallback for `headerTitle`.
 
 #### `useTransitionProgress`
 
-Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
+Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 3 values:
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
 - `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
@@ -274,7 +258,7 @@ function Home() {
 
 #### `useReanimatedTransitionProgress`
 
-A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 3 shared values:
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
 - `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
@@ -312,6 +296,58 @@ function Home() {
 
   return (
     <Animated.View style={reaStyle} />
+  );
+}
+```
+
+#### `usePreventDismiss` (iOS only)
+
+A hook to be used in order to prevent the native dismissal options (swipe and default header back button) on iOS. It should be used along with `react-navigation` `beforeRemove` listener to provide the behavior similar to the one in `stack` navigator. Example of usage: 
+
+```jsx
+import {usePreventDismiss} from 'react-native-screens';
+
+function Example({navigation}) {
+  const [text, setText] = React.useState('');
+  const hasUnsavedChanges = Boolean(text);
+  usePreventDismiss(hasUnsavedChanges);
+
+  React.useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+        if (hasUnsavedChanges) {
+          // Prevent default behavior of leaving the screen
+          e.preventDefault();
+        } else {
+          return;
+        }
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          'Discard changes?',
+          'You have unsaved changes. Are you sure to discard them and leave the screen?',
+          [
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            { text: "Don't leave", style: 'cancel', onPress: () => {} },
+            {
+              text: 'Discard',
+              style: 'destructive',
+              // If the user confirmed, then we dispatch the action we blocked earlier
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ]
+        );
+      }),
+    [navigation, hasUnsavedChanges]
+  );
+
+  return (
+    <TextInput
+      value={text}
+      placeholder="Type something…"
+      onChangeText={setText}
+    />
   );
 }
 ```
