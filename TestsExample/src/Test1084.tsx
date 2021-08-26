@@ -13,7 +13,7 @@ export default function App() {
         <Stack.Screen
           name="Second"
           component={Second}
-          options={{customAnimatonOnSwipe: true, stackAnimation: 'fade'}}
+          options={{customAnimationOnSwipe: true, stackAnimation: 'fade'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

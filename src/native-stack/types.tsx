@@ -86,7 +86,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform ios
    */
-  customAnimatonOnSwipe?: boolean;
+  customAnimationOnSwipe?: boolean;
   /**
    * Whether the stack should be in rtl or ltr form.
    */

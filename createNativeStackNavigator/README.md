@@ -77,7 +77,7 @@ Legacy options (these props differ from the ones used in v5 `native-stack`, and 
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
 
-#### `customAnimatonOnSwipe` (iOS only)
+#### `customAnimationOnSwipe` (iOS only)
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
 

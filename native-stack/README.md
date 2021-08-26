@@ -67,7 +67,7 @@ Boolean indicating whether to hide the back button while using `headerLeft` func
 
 Style object for the scene content.
 
-#### `customAnimatonOnSwipe` (iOS only)
+#### `customAnimationOnSwipe` (iOS only)
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
 

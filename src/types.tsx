@@ -78,7 +78,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  customAnimatonOnSwipe?: boolean;
+  customAnimationOnSwipe?: boolean;
   /**
    * All children screens should have the same value of their "enabled" prop as their container.
    */

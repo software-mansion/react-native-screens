@@ -36,7 +36,7 @@ Screen stack component expects one or more `Screen` components as direct childre
 
 Below is the list of additional properties that can be used for `Screen` component:
 
-#### `customAnimatonOnSwipe` (iOS only)
+#### `customAnimationOnSwipe` (iOS only)
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
 

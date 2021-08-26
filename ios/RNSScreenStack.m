@@ -554,7 +554,7 @@
   return YES;
 #else
   // custom animation should be always served by custom recognizers
-  if (topScreen.customAnimatonOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
+  if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
       // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
