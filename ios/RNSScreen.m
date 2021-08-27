@@ -7,7 +7,7 @@
 #import "RNSScreenWindowTraits.h"
 #import "RNSSharedElementAnimator.h"
 
-#import <React/RCTEventDispatcher.h>
+#import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
 #import <React/RCTUIManager.h>
 
@@ -676,7 +676,6 @@
 {
   if (self.transitionCoordinator != nil) {
     _fakeView.alpha = 0.0;
-
     _sharedElements = [RNSSharedElementAnimator prepareSharedElementsArrayForVC:self closing:_closing];
 
     [self.transitionCoordinator
