@@ -425,10 +425,6 @@
     [_controller setViewControllers:controllers animated:NO];
   } else if (top != lastTop) {
     if (![controllers containsObject:lastTop]) {
-      if ([lastTop isKindOfClass:[RNSScreen class]] && [top isKindOfClass:[RNSScreen class]]) {
-        ((RNSScreen *)lastTop).goingBackWithJS = YES;
-        ((RNSScreen *)top).goingBackWithJS = YES;
-      }
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top] &&

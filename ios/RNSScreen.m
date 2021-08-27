@@ -173,11 +173,6 @@
   _gestureEnabled = gestureEnabled;
 }
 
-- (void)setSharedElements:(NSArray *)sharedElements
-{
-  _sharedElements = sharedElements;
-}
-
 - (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
 {
   _replaceAnimation = replaceAnimation;
@@ -550,19 +545,11 @@
 {
   [super viewWillAppear:animated];
 
-  int selfIndex = [self getIndexOfView:self.view];
-  int parentChildrenCount = [self getParentChildrenCount];
-
-  // the appearing view is on top of stack so
-  // in the most basic case we are going forward
-  _goingForward = parentChildrenCount - 1 == selfIndex;
-
   if (!_isSwiping) {
     [((RNSScreenView *)self.view) notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
       // we started dismissing with swipe gesture
       _isSwiping = YES;
-      _goingForward = NO;
     }
   } else {
     // this event is also triggered if we cancelled the swipe.
@@ -594,16 +581,8 @@
     int selfIndex = [self getIndexOfView:self.view];
     int targetIndex = [self getIndexOfView:self.navigationController.topViewController.view];
     _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
-    _goingForward = targetIndex > selfIndex;
   } else {
     _dismissCount = 1;
-    _goingForward = NO;
-  }
-
-  if (_goingBackWithJS) {
-    // same flow as in viewWillAppear
-    _goingForward = !_goingBackWithJS;
-    _goingBackWithJS = NO;
   }
 
   // same flow as in viewWillAppear
@@ -701,10 +680,10 @@
     _sharedElements = [RNSSharedElementAnimator prepareSharedElementsArrayForVC:self closing:_closing];
 
     [self.transitionCoordinator
-        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull transitionContext) {
-          [[transitionContext containerView] addSubview:self->_fakeView];
+        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-          [self asignEndingValuesWithTransitionContext:transitionContext];
+          [self asignEndingValuesWithTransitionContext:context];
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
           [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
@@ -712,11 +691,6 @@
           [self resetSharedViewsAndFakeView];
         }];
   }
-}
-
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
-{
-  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
 
 - (void)handleAnimation
@@ -729,6 +703,11 @@
       [self updateSharedElements:_currentAlpha];
     }
   }
+}
+
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+{
+  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
 
 - (void)asignEndingValuesWithTransitionContext:

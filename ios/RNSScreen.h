@@ -65,8 +65,6 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 
 @interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
 
-@property (nonatomic) BOOL goingBackWithJS;
-
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
 
