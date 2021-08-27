@@ -1,11 +1,11 @@
-import React, {useLayoutEffect, useState} from 'react';
-import {View, ScrollView, StyleSheet, I18nManager, Text} from 'react-native';
+import React, { useLayoutEffect, useState } from 'react';
+import { View, ScrollView, StyleSheet, I18nManager, Text } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
-import {SettingsPicker, SettingsSwitch, Button} from '../shared';
+import { SettingsPicker, SettingsSwitch, Button } from '../shared';
 
 type StackParamList = {
   First: undefined;
@@ -27,7 +27,7 @@ interface FirstScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'First'>;
 }
 
-const FirstScreen = ({navigation}: FirstScreenProps): JSX.Element => {
+const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
   const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>('auto');
   const [statusBarHidden, setStatusBarHidden] = useState(false);
   const [statusBarAnimation, setStatusBarAnimation] = useState<
@@ -98,7 +98,7 @@ interface SecondScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Second'>;
 }
 
-const SecondScreen = ({navigation}: SecondScreenProps): JSX.Element => (
+const SecondScreen = ({ navigation }: SecondScreenProps): JSX.Element => (
   <View style={styles.container}>
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </View>
@@ -129,7 +129,7 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="Modal"
       component={SecondScreen}
-      options={{stackPresentation: 'modal'}}
+      options={{ stackPresentation: 'modal' }}
     />
   </Stack.Navigator>
 );

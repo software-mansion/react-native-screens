@@ -394,7 +394,6 @@
   if (self = [super init]) {
     self.view = view;
     _shouldNotify = YES;
-    _goingBackWithJS = NO;
     _fakeView = [UIView new];
   }
   return self;
@@ -578,11 +577,8 @@
     _shouldNotify = NO;
   }
 
-  if (_goingBackWithJS) {
-    // we are going back with JS, so previous assumptions may have been wrong
-    _goingForward = !_goingBackWithJS;
-    _goingBackWithJS = NO;
-  }
+  // as per documentation of these methods
+  _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
 
   [RNSScreenWindowTraits updateWindowTraits];
   if (_shouldNotify) {
@@ -626,6 +622,9 @@
   } else {
     _shouldNotify = NO;
   }
+
+  // as per documentation of these methods
+  _goingForward = !([self isBeingDismissed] || [self isMovingFromParentViewController]);
 
   if (_shouldNotify) {
     _closing = YES;
@@ -960,6 +959,7 @@ RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)

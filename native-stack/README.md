@@ -1,8 +1,10 @@
 # Native Stack Navigator
 
+> **_NOTE:_**  This README is dedicated for using `native-stack` with React Navigation **v5**. For using `native-stack` in React Navigation **v6** please refer to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator).
+
 Provides a way for your app to transition between screens where each new screen is placed on top of a stack.
 
-By default the stack navigator is configured to have the familiar iOS and Android look & feel: new screens slide in from the right on iOS, fade in from the bottom on Android. On iOS, the stack navigator can also be configured to a modal style where screens slide in from the bottom.
+By default the stack navigator is configured to have the familiar iOS and Android look & feel: new screens slide in from the right on iOS, fade in and scale from center on Android. On iOS, the stack navigator can also be configured to a modal style where screens slide in from the bottom.
 
 This navigator uses native navigation primitives (`UINavigationController` on iOS and `Fragment` on Android) for navigation under the hood. The main difference from React Navigation's JS-based [stack navigator](https://reactnavigation.org/docs/stack-navigator.html) is that the JS-based navigator re-implements animations and gestures while the native stack navigator relies on the platform primitives for animations and gestures. You should use this navigator if you want native feeling and performance for navigation and don't need much customization, as the customization options of this navigator are limited.
 
@@ -64,6 +66,10 @@ Boolean indicating whether to hide the back button while using `headerLeft` func
 #### `contentStyle`
 
 Style object for the scene content.
+
+#### `customAnimationOnSwipe` (iOS only)
+
+Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
 
 #### `direction`
 
@@ -571,21 +577,13 @@ navigation.popToTop();
 
 ## Additional options
 
-### Measuring header's height on iOS
+### Measuring header's height
 
-Using translucent header on iOS can result in the need of measuring your header's height. In order to do it, you can use `react-native-safe-area-context`. It can be measured like this:
-```js
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+To measure header's height, you can use `useHeaderHeight` hook.
 
-...
-
-const statusBarInset = useSafeAreaInsets().top; // inset of the status bar
-const smallHeaderInset = statusBarInset + 44; // inset to use for a small header since it's frame is equal to 44 + the frame of status bar
-const largeHeaderInset = statusBarInset + 96; // inset to use for a large header since it's frame is equal to 96 + the frame of status bar
+```tsx
+import {useHeaderHeight} from 'react-native-screens/native-stack';
 ```
-
-You can also see an example of using these values with a `ScrollView` here: https://snack.expo.io/@wolewicki/ios-header-height.
-
 
 ## Example
 

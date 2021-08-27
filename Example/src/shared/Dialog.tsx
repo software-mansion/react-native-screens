@@ -7,7 +7,7 @@ import {
   Dimensions,
   SafeAreaView,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 export const Dialog = (): JSX.Element => {
   const navigation = useNavigation();
@@ -17,7 +17,7 @@ export const Dialog = (): JSX.Element => {
       <View style={styles.wrapper}>
         <Text style={styles.heading}>Hey! Sign up for our newsletter!</Text>
         <TouchableOpacity
-          style={{...styles.button}}
+          style={{ ...styles.button }}
           onPress={() => navigation.goBack()}>
           <Text style={styles.buttonText}>Please no.</Text>
         </TouchableOpacity>

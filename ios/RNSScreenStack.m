@@ -530,7 +530,7 @@
   return nil;
 }
 
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+- (void)cancelTouchesInParent
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
   // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
@@ -544,28 +544,40 @@
     [touchHandler cancel];
     [touchHandler reset];
   }
+}
 
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
   if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
     return NO;
   }
 #if TARGET_OS_TV
+  [self cancelTouchesInParent];
   return YES;
 #else
-  if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
-    // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
-    // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
-    BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
-                          ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
-        (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
-         ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
-    if (isCorrectEdge) {
-      return topScreen.stackAnimation == RNSScreenStackAnimationSimplePush;
+  // custom animation should be always served by custom recognizers
+  if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
+    if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
+      // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
+      // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
+      BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
+                            ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
+          (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
+           ((RNSGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
+      if (isCorrectEdge) {
+        [self cancelTouchesInParent];
+        return YES;
+      }
     }
     return NO;
   } else {
-    return topScreen.stackAnimation != RNSScreenStackAnimationSimplePush;
+    if ([gestureRecognizer isKindOfClass:[RNSGestureRecognizer class]]) {
+      return NO;
+    }
+    [self cancelTouchesInParent];
+    return YES;
   }
 #endif
 }

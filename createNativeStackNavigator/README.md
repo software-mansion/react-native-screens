@@ -77,6 +77,10 @@ Legacy options (these props differ from the ones used in v5 `native-stack`, and 
 
 Boolean indicating whether to hide the back button while using `headerLeft` function.
 
+#### `customAnimationOnSwipe` (iOS only)
+
+Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+
 #### `direction`
 
 String that applies `rtl` or `ltr` form to the stack. On Android, you have to add `android:supportsRtl="true"` in the manifest of your app to enable `rtl`. On Android, if you set the above flag in the manifest, the orientation changes without the need to do it programmatically if the phone has `rtl` direction enabled. On iOS, the direction defaults to `ltr`, and only way to change it is via this prop.
@@ -482,17 +486,10 @@ navigation.popToTop();
 
 ## Additional options
 
-### Measuring header's height on iOS
+### Measuring header's height
 
-Using translucent header on iOS can result in the need of measuring your header's height. In order to do it, you can use `react-native-safe-area-context`. It can be measured like this:
-```js
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+To measure header's height, you can use `useHeaderHeight` hook.
 
-...
-
-const statusBarInset = useSafeAreaInsets().top; // inset of the status bar
-const smallHeaderInset = statusBarInset + 44; // inset to use for a small header since it's frame is equal to 44 + the frame of status bar
-const largeHeaderInset = statusBarInset + 96; // inset to use for a large header since it's frame is equal to 96 + the frame of status bar
+```tsx
+import {useHeaderHeight} from 'react-native-screens/native-stack';
 ```
-
-You can also see an example of using these values with a `ScrollView` here: https://snack.expo.io/@wolewicki/ios-header-height.

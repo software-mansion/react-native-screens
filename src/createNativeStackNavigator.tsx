@@ -461,6 +461,7 @@ function StackView({
             isNativeStack
             style={[StyleSheet.absoluteFill, options.cardStyle]}
             stackAnimation={stackAnimation}
+            customAnimationOnSwipe={options.customAnimationOnSwipe}
             stackPresentation={stackPresentation}
             replaceAnimation={
               options.replaceAnimation === undefined

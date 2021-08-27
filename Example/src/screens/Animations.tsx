@@ -1,11 +1,11 @@
-import React, {useState, useLayoutEffect} from 'react';
-import {View, StyleSheet, I18nManager} from 'react-native';
+import React, { useState, useLayoutEffect } from 'react';
+import { View, StyleSheet, I18nManager } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
-import {SettingsPicker, Button} from '../shared';
+import { SettingsPicker, Button } from '../shared';
 
 type StackParamList = {
   Main: undefined;
@@ -38,7 +38,7 @@ const MainScreen = ({
   }, [navigation, stackAnimation]);
 
   return (
-    <View style={{...styles.container, backgroundColor: 'lightsteelblue'}}>
+    <View style={{ ...styles.container, backgroundColor: 'lightsteelblue' }}>
       <SettingsPicker<StackAnimation>
         label="Stack animation"
         value={stackAnimation}
@@ -89,7 +89,7 @@ const ReplaceScreen = ({
   }, [navigation, stackAnimation]);
 
   return (
-    <View style={{...styles.container, backgroundColor: 'wheat'}}>
+    <View style={{ ...styles.container, backgroundColor: 'wheat' }}>
       <Button title="Go back" onPress={() => navigation.replace('Main')} />
     </View>
   );
@@ -111,7 +111,7 @@ const NavigateScreen = ({
   }, [navigation, stackAnimation]);
 
   return (
-    <View style={{...styles.container, backgroundColor: 'pink'}}>
+    <View style={{ ...styles.container, backgroundColor: 'pink' }}>
       <Button title="Go back" onPress={() => navigation.navigate('Main')} />
     </View>
   );
@@ -121,7 +121,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => {
   const [stackAnimation, setStackAnimation] = useState<StackAnimation>(
-    'default',
+    'default'
   );
   return (
     <Stack.Navigator
@@ -129,8 +129,8 @@ const App = (): JSX.Element => {
         headerHideBackButton: true,
         direction: I18nManager.isRTL ? 'rtl' : 'ltr',
       }}>
-      <Stack.Screen name="Main" options={{title: 'Animations'}}>
-        {({navigation}) => (
+      <Stack.Screen name="Main" options={{ title: 'Animations' }}>
+        {({ navigation }) => (
           <MainScreen
             navigation={navigation}
             stackAnimation={stackAnimation}
@@ -143,7 +143,7 @@ const App = (): JSX.Element => {
         options={{
           replaceAnimation: 'push',
         }}>
-        {({navigation}) => (
+        {({ navigation }) => (
           <ReplaceScreen
             navigation={navigation}
             stackAnimation={stackAnimation}
@@ -155,7 +155,7 @@ const App = (): JSX.Element => {
         options={{
           replaceAnimation: 'pop',
         }}>
-        {({navigation}) => (
+        {({ navigation }) => (
           <ReplaceScreen
             navigation={navigation}
             stackAnimation={stackAnimation}
@@ -167,7 +167,7 @@ const App = (): JSX.Element => {
         options={{
           stackPresentation: 'modal',
         }}>
-        {({navigation}) => (
+        {({ navigation }) => (
           <NavigateScreen
             navigation={navigation}
             stackAnimation={stackAnimation}
@@ -175,7 +175,7 @@ const App = (): JSX.Element => {
         )}
       </Stack.Screen>
       <Stack.Screen name="Screen">
-        {({navigation}) => (
+        {({ navigation }) => (
           <NavigateScreen
             navigation={navigation}
             stackAnimation={stackAnimation}
