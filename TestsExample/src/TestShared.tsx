@@ -18,6 +18,16 @@ const Stack = createNativeStackNavigator();
 
 const NestedStack = createStackNavigator();
 
+const width = 375;
+const height = 250;
+const picURI = `https://picsum.photos/id/3/${width}/${height}`;
+
+const sharedElements = [
+  {fromID: 'view3000', toID: 'view3000Dest'},
+  {fromID: 'ImageRandom0', toID: 'ImageRandomDest'},
+  {fromID: 'TextRandom0', toID: 'TextRandomDest'},
+];
+
 // Nested stack to check if transition progress values are passed properly through non native-stack navigators
 function NestedFirst() {
   return (
@@ -37,21 +47,24 @@ type NativeIDs = {
   imageNativeID: string;
   textNativeID: string;
   navigation: NativeStackNavigationProp<SimpleStackParams, 'First'>;
-  imageUri: string;
 };
 
-function CarElement({viewNativeID, imageNativeID, textNativeID, navigation, imageUri}: NativeIDs) {
+function Element({viewNativeID, imageNativeID, textNativeID, navigation}: NativeIDs) {
+  const width = 200;
+  const height = 120;
+
   return (
     <TouchableOpacity 
       onPress={() => navigation.navigate('Second')} 
-      style={{flexDirection: 'row', backgroundColor: 'yellow', width: '100%', height: 120, borderBottomColor: 'powderblue', borderBottomWidth: 3}} 
+      style={{flexDirection: 'row', backgroundColor: 'yellow', width: '100%', height: 120}} 
       nativeID={viewNativeID}>
-      <Image 
-        source={{uri: imageUri}}
-        style={{width: 200, height: 120}} 
+      <Image
+        resizeMethod="scale"
+        source={{uri: picURI}}
+        style={{width, height}} 
         nativeID={imageNativeID}
-        resizeMode="cover" />
-      <Text nativeID={textNativeID} style={{fontSize: 20, color: 'red'}}>Nissan GTR</Text>
+         />
+      <Text nativeID={textNativeID} style={{fontSize: 20, color: 'red'}}>Text</Text>
     </TouchableOpacity>
   )
 }
@@ -62,26 +75,9 @@ function First({
   navigation: NativeStackNavigationProp<SimpleStackParams, 'First'>;
 }) {
 
-  const sharedElements = [
-    {fromID: 'view3000', toID: 'view3000Dest'},
-    {fromID: 'ImageGTR0', toID: 'ImageGTRDest'},
-    {fromID: 'TextGTR0', toID: 'TextGTRDest'},
-  ];
-
-  React.useEffect(() => {
-    navigation.dangerouslyGetParent()?.setOptions({
-      sharedElements,
-    });
-  }, [navigation]);
-
   return (
     <ScrollView style={{flex: 1}}>
-      <CarElement viewNativeID={sharedElements[0].fromID} imageNativeID={sharedElements[1].fromID} textNativeID={sharedElements[2].fromID} navigation={navigation} 
-        imageUri={'https://c8.alamy.com/comp/2AD68EG/white-nissan-gtr-on-gravel-road-with-windmills-in-background-2AD68EG.jpg'}/>
-      <CarElement viewNativeID={"view3001"} imageNativeID={"ImageGTR1"} textNativeID={"TextGTR1"}/>
-      <CarElement viewNativeID={"view3002"} imageNativeID={"ImageGTR2"} textNativeID={"TextGTR2"}/>
-      <CarElement viewNativeID={"view3003"} imageNativeID={"ImageGTR3"} textNativeID={"TextGTR3"}/>
-      <CarElement viewNativeID={"view3004"} imageNativeID={"ImageGTR4"} textNativeID={"TextGTR4"}/>
+      <Element viewNativeID={sharedElements[0].fromID} imageNativeID={sharedElements[1].fromID} textNativeID={sharedElements[2].fromID} navigation={navigation} />
     </ScrollView>
   );
 }
@@ -91,11 +87,6 @@ function Second({
 }: {
   navigation: NativeStackNavigationProp<SimpleStackParams, 'Second'>;
 }) {
-  const sharedElements = [
-    {fromID: 'view3000', toID: 'view3000Dest'},
-    {fromID: 'ImageGTR0', toID: 'ImageGTRDest'},
-    {fromID: 'TextGTR0', toID: 'TextGTRDest'},
-  ];
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -106,16 +97,12 @@ function Second({
   return (
     <View style={{flex: 1}}>
       <View style={{width: '100%', height: 290, backgroundColor: 'blue'}} nativeID={sharedElements[0].toID}>
-        <Image resizeMode="stretch" source={{uri: 'https://c8.alamy.com/comp/2AD68EG/white-nissan-gtr-on-gravel-road-with-windmills-in-background-2AD68EG.jpg'}}  style={{width: 375, height: 250}} nativeID={sharedElements[1].toID}/>
-        <Text style={{fontSize: 30, color: 'red', fontWeight: '900'}} nativeID={sharedElements[2].toID}>Nissan GTR!</Text>
+        <Image source={{uri: picURI}}  style={{width, height}} nativeID={sharedElements[1].toID}/>
+        <Text style={{fontSize: 20, color: 'red'}} nativeID={sharedElements[2].toID}>Text</Text>
       </View>
       <Button
         title="Tap me for first screen"
         onPress={() => navigation.navigate('First')}
-      />
-      <Button
-        title="Tap me for second screen"
-        onPress={() => navigation.push('Second')}
       />
     </View>
   );
@@ -127,14 +114,9 @@ export default function App(): JSX.Element {
       <Stack.Navigator
         screenOptions={{
           stackAnimation: 'default',
-          // stackPresentation: 'transparentModal',
         }}>
-        <Stack.Screen name="First" component={NestedFirst} />
-        <Stack.Screen name="Second" component={Second} options={{headerShown: false, sharedElements: [
-          {fromID: 'view3000', toID: 'view3000Dest'},
-          {fromID: 'ImageGTR', toID: 'ImageGTRDest'},
-          {fromID: 'TextGTR', toID: 'TextGTRDest'},
-          ]}}/>
+        <Stack.Screen name="First" component={NestedFirst} options={{sharedElements}}/>
+        <Stack.Screen name="Second" component={Second} options={{headerShown: false, sharedElements}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
