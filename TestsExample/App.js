@@ -55,12 +55,12 @@ import Test1031 from './src/Test1031';
 import Test1032 from './src/Test1032';
 import Test1036 from './src/Test1036';
 import Test1084 from './src/Test1084';
-import TestShared from './src/TestShared';
+import Test1089 from './src/Test1089';
 
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <TestShared />
+      <Test1089 />
     </ReanimatedScreenProvider>
   );
 }
