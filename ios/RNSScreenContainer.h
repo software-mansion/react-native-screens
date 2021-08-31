@@ -23,7 +23,6 @@
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, retain) NSMutableArray *reactSubviews;
 
-- (void)updateContainer;
 - (void)maybeDismissVC;
 
 @end

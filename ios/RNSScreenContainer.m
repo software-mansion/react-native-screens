@@ -48,11 +48,16 @@
   if (self = [super init]) {
     _activeScreens = [NSMutableSet new];
     _reactSubviews = [NSMutableArray new];
-    _controller = [[RNScreensViewController alloc] init];
+    [self setupController];
     _invalidated = NO;
-    [self addSubview:_controller.view];
   }
   return self;
+}
+
+- (void)setupController
+{
+  _controller = [[RNScreensViewController alloc] init];
+  [self addSubview:_controller.view];
 }
 
 - (void)markChildUpdated

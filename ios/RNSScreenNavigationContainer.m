@@ -8,16 +8,11 @@
 
 @implementation RNSScreenNavigationContainerView
 
-- (instancetype)init
+- (void)setupController
 {
-  if (self = [super init]) {
-    self.controller = [[RNScreensContainerNavigationController alloc] init];
-    [(RNScreensContainerNavigationController *)self.controller setNavigationBarHidden:YES animated:NO];
-    // remove controller's view added by RNSScreenContainer
-    [self.subviews[0] removeFromSuperview];
-    [self addSubview:self.controller.view];
-  }
-  return self;
+  self.controller = [[RNScreensContainerNavigationController alloc] init];
+  [(RNScreensContainerNavigationController *)self.controller setNavigationBarHidden:YES animated:NO];
+  [self addSubview:self.controller.view];
 }
 
 - (void)updateContainer
