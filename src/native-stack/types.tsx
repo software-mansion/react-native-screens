@@ -103,7 +103,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform ios
    */
-  fullWidthGestureEnabled?: boolean;
+  fullScreenSwipeEnabled?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.

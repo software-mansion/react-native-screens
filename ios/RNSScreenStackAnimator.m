@@ -50,7 +50,7 @@
   }
 
   if (screen != nil) {
-    if (screen.fullWidthGestureEnabled && transitionContext.isInteractive) {
+    if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
       // we are swiping with full width gesture
       if (screen.customAnimationOnSwipe) {
         [self animateTransitionWithStackAnimation:screen.stackAnimation
@@ -58,15 +58,17 @@
                                              toVC:toViewController
                                            fromVC:fromViewController];
       } else {
+        // we have to provide an animation when swiping, otherwise the screen will be popped immediately,
+        // so in case of no custom animation on swipe set, we provide the one closest to the default
         [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
       }
-      return;
+    } else {
+      // we are going forward or provided custom animation on swipe or clicked native header back button
+      [self animateTransitionWithStackAnimation:screen.stackAnimation
+                              transitionContext:transitionContext
+                                           toVC:toViewController
+                                         fromVC:fromViewController];
     }
-    // we are going forward since or provided custom animation on swipe
-    [self animateTransitionWithStackAnimation:screen.stackAnimation
-                            transitionContext:transitionContext
-                                         toVC:toViewController
-                                       fromVC:fromViewController];
   }
 }
 

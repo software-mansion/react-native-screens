@@ -94,7 +94,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  fullWidthGestureEnabled?: boolean;
+  fullScreenSwipeEnabled?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    *

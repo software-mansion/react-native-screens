@@ -45,7 +45,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            fullWidthGestureEnabled: true,
+            fullScreenSwipeEnabled: true,
             stackAnimation: 'fade_from_bottom',
             customAnimationOnSwipe: true,
           }}>

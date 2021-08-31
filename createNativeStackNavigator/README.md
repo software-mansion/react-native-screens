@@ -89,7 +89,7 @@ String that applies `rtl` or `ltr` form to the stack. On Android, you have to ad
 
 Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 
-#### `fullWidthGestureEnabled` (iOS only)
+#### `fullScreenSwipeEnabled` (iOS only)
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
 

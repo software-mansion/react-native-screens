@@ -562,9 +562,9 @@
   [self cancelTouchesInParent];
   return YES;
 #else
-  if (topScreen.fullWidthGestureEnabled) {
+  if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
-    // `fullWidthGestureEnabled` is set and only then
+    // `fullScreenSwipeEnabled` is set
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
@@ -592,7 +592,7 @@
       // it should only recognize with `customAnimationOnSwipe` set
       return NO;
     } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-      // it should only recognize with `fullWidthGestureEnabled` set
+      // it should only recognize with `fullScreenSwipeEnabled` set
       return NO;
     }
     [self cancelTouchesInParent];

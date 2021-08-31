@@ -478,7 +478,7 @@ function StackView({
                 ? true
                 : options.gestureEnabled
             }
-            fullWidthGestureEnabled={options.fullWidthGestureEnabled}
+            fullScreenSwipeEnabled={options.fullScreenSwipeEnabled}
             screenOrientation={options.screenOrientation}
             statusBarAnimation={options.statusBarAnimation}
             statusBarColor={options.statusBarColor}
