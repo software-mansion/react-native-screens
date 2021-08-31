@@ -42,7 +42,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     var goingForward = false
     fun dismiss(screenFragment: ScreenStackFragment) {
         mDismissed.add(screenFragment)
-        markUpdated()
+        performUpdate()
     }
 
     override val topScreen: Screen?
@@ -128,7 +128,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         return super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
     }
 
-    override fun performUpdate() {
+    override fun onUpdate() {
 
         // When going back from a nested stack with a single screen on it, we may hit an edge case
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully

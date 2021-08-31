@@ -80,12 +80,8 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     val isNested: Boolean
         get() = mParentScreenFragment != null
 
-    protected fun markUpdated() {
-        updateIfNeeded()
-    }
-
     fun notifyChildUpdate() {
-        markUpdated()
+        performUpdate()
     }
 
     protected open fun adapt(screen: Screen): T {
@@ -98,13 +94,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         screen.fragment = fragment
         mScreenFragments.add(index, fragment)
         screen.container = this
-        markUpdated()
+        performUpdate()
     }
 
     open fun removeScreenAt(index: Int) {
         mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
-        markUpdated()
+        performUpdate()
     }
 
     open fun removeAllScreens() {
@@ -112,7 +108,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             screenFragment.screen.container = null
         }
         mScreenFragments.clear()
-        markUpdated()
+        performUpdate()
     }
 
     val screenCount: Int
@@ -134,7 +130,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     private fun setFragmentManager(fm: FragmentManager) {
         mFragmentManager = fm
-        updateIfNeeded()
+        performUpdate()
     }
 
     private fun setupFragmentManager() {
@@ -269,19 +265,15 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
 
-    private fun updateIfNeeded() {
+    protected fun performUpdate() {
         if (!mIsAttached || mFragmentManager == null) {
             return
         }
         onUpdate()
-    }
-
-    private fun onUpdate() {
-        performUpdate()
         notifyContainerUpdate()
     }
 
-    protected open fun performUpdate() {
+    protected open fun onUpdate() {
         // detach screens that are no longer active
         val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
         for (screenFragment in mScreenFragments) {
