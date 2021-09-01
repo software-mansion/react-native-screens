@@ -54,6 +54,7 @@ import Test999 from './src/Test999';
 import Test1031 from './src/Test1031';
 import Test1032 from './src/Test1032';
 import Test1036 from './src/Test1036';
+import Test1072 from './src/Test1072';
 import Test1084 from './src/Test1084';
 
 export default function App() {

@@ -150,6 +150,7 @@ const RouteView = ({
   const { options, render: renderScene } = descriptors[route.key];
   const {
     customAnimationOnSwipe,
+    fullScreenSwipeEnabled,
     gestureEnabled,
     headerShown,
     replaceAnimation = 'pop',
@@ -192,6 +193,7 @@ const RouteView = ({
       isNativeStack
       customAnimationOnSwipe={customAnimationOnSwipe}
       gestureEnabled={isAndroid ? false : gestureEnabled}
+      fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}
       stackAnimation={stackAnimation}

@@ -95,6 +95,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic) BOOL hasStatusBarAnimationSet;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;
 @property (nonatomic) BOOL customAnimationOnSwipe;
+@property (nonatomic) BOOL fullScreenSwipeEnabled;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
