@@ -7,6 +7,7 @@ import {
   ScreenStackHeaderConfigProps,
   HeaderSubviewTypes,
   SearchBarProps,
+  OverlayViewProps,
 } from './types';
 
 export * from './types';
@@ -59,6 +60,8 @@ export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
 export const ScreenStack: React.ComponentType<ScreenStackProps> = View;
+
+export const OverlayView: React.ComponentType<OverlayViewProps> = View;
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps
