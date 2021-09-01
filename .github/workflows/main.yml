@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 jobs:
   install-and-lint:
     runs-on: ubuntu-latest
