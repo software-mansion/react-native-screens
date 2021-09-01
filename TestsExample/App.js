@@ -56,12 +56,12 @@ import Test1032 from './src/Test1032';
 import Test1036 from './src/Test1036';
 import Test1072 from './src/Test1072';
 import Test1084 from './src/Test1084';
-import TestNew from './src/TestNew';
+import Test1096 from './src/Test1096';
 
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <TestNew />
+      <Test42 />
     </ReanimatedScreenProvider>
   );
 }
