@@ -82,6 +82,12 @@ export type NativeStackNavigationOptions = {
    */
   contentStyle?: StyleProp<ViewStyle>;
   /**
+   * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  customAnimationOnSwipe?: boolean;
+  /**
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
@@ -90,6 +96,14 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   disableBackButtonMenu?: boolean;
+  /**
+   * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
+   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  fullScreenSwipeEnabled?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.

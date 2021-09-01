@@ -190,8 +190,7 @@ open class ScreenFragment : Fragment {
              */
                 val coalescingKey = (if (mProgress == 0.0f) 1 else if (mProgress == 1.0f) 2 else 3).toShort()
                 val container: ScreenContainer<*>? = screen.container
-                check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
-                val goingForward = container.goingForward
+                val goingForward = if (container is ScreenStack) container.goingForward else false
                 (screen.context as ReactContext)
                     .getNativeModule(UIManagerModule::class.java)
                     ?.eventDispatcher

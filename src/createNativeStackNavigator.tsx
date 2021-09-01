@@ -461,6 +461,7 @@ function StackView({
             isNativeStack
             style={[StyleSheet.absoluteFill, options.cardStyle]}
             stackAnimation={stackAnimation}
+            customAnimationOnSwipe={options.customAnimationOnSwipe}
             stackPresentation={stackPresentation}
             replaceAnimation={
               options.replaceAnimation === undefined
@@ -477,6 +478,7 @@ function StackView({
                 ? true
                 : options.gestureEnabled
             }
+            fullScreenSwipeEnabled={options.fullScreenSwipeEnabled}
             screenOrientation={options.screenOrientation}
             statusBarAnimation={options.statusBarAnimation}
             statusBarColor={options.statusBarColor}
