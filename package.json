@@ -107,7 +107,7 @@
       "yarn format-android",
       "yarn lint-android"
     ],
-    "{ios}/**/*.{h,m,cpp}": [
+    "ios/**/*.{h,m,cpp}": [
       "yarn format-ios"
     ]
   },
