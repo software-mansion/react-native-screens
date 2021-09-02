@@ -20,7 +20,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     protected val mScreenFragments = ArrayList<T>()
     @JvmField
     protected var mFragmentManager: FragmentManager? = null
-    private var mIsAttached = false
+    protected var mIsAttached = false
     private var mLayoutEnqueued = false
     private val mLayoutCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
         override fun doFrame(frameTimeNanos: Long) {
@@ -128,7 +128,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             return null
         }
 
-    private fun setFragmentManager(fm: FragmentManager) {
+    protected open fun setFragmentManager(fm: FragmentManager) {
         mFragmentManager = fm
         performUpdate()
     }
@@ -265,7 +265,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
 
-    protected fun performUpdate() {
+    protected open fun performUpdate() {
         if (!mIsAttached || mFragmentManager == null) {
             return
         }

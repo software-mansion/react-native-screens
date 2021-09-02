@@ -20,6 +20,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private val drawingOps: MutableList<DrawingOp> = ArrayList()
     private var mTopScreen: ScreenStackFragment? = null
+    private var mNeedUpdate = false
     private val mBackStackListener = FragmentManager.OnBackStackChangedListener {
         if (mFragmentManager?.backStackEntryCount == 0) {
             // when back stack entry count hits 0 it means the user's navigated back using hw back
@@ -42,7 +43,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     var goingForward = false
     fun dismiss(screenFragment: ScreenStackFragment) {
         mDismissed.add(screenFragment)
-        performUpdate()
+        updateImmediately()
     }
 
     override val topScreen: Screen?
@@ -128,7 +129,25 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         return super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
     }
 
-    override fun onUpdate() {
+    public override fun performUpdate() {
+        mNeedUpdate = true
+    }
+
+    public override fun setFragmentManager(fm: FragmentManager) {
+        mFragmentManager = fm
+        updateImmediately()
+    }
+
+    private fun updateImmediately() {
+        mNeedUpdate = true
+        onUpdate()
+    }
+
+    public override fun onUpdate() {
+        if (!mNeedUpdate || !mIsAttached || mFragmentManager == null) {
+            return
+        }
+        mNeedUpdate = false
 
         // When going back from a nested stack with a single screen on it, we may hit an edge case
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
@@ -281,6 +300,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             it.commitNowAllowingStateLoss()
             mTopScreen?.let { screen -> setupBackHandlerIfNeeded(screen) }
         }
+        notifyContainerUpdate()
     }
 
     override fun notifyContainerUpdate() {
