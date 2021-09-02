@@ -203,6 +203,7 @@ class ScreenStackFragment : ScreenFragment {
             } else {
                 val set = AnimationSet(true)
                 set.addAnimation(animation)
+                set.addAnimation(fakeAnimation)
                 set.setAnimationListener(mAnimationListener)
                 super.startAnimation(set)
             }
