@@ -5,6 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
+    "windows": "react-native run-windows",
     "start": "react-native start",
     "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types && yarn format",
@@ -29,7 +30,8 @@
     "react-native-vector-icons": "^8.0.0",
     "react-native-webview": "^11.2.3",
     "react-navigation": "^4.4.4",
-    "react-navigation-stack": "^2.10.3"
+    "react-navigation-stack": "^2.10.3",
+    "react-native-windows": "0.65.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
