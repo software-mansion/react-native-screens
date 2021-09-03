@@ -195,6 +195,8 @@ dependencies {
     debugImplementation files(hermesPath + "hermes-debug.aar")
     releaseImplementation files(hermesPath + "hermes-release.aar")
     androidTestImplementation('com.wix:detox:+'){
+        // Both rn-screens and detox are using this class
+        // https://github.com/wix/Detox/issues/2848 
         exclude group: 'com.google.android.material'
     }
 }
