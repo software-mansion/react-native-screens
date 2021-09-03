@@ -3,10 +3,15 @@
   "runnerConfig": "e2e/config.json",
   "skipLegacyWorkersInjection": true,
   "apps": {
-    "ios": {
+    "ios.debug": {
       "type": "ios.app",
       "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/ScreensExample.app",
-      "build": "xcodebuild -workspace ios/ScreensExample.xcworkspace -UseNewBuildSystem=YES -scheme ScreensExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet"
+      "build": "xcodebuild -workspace ios/ScreensExample.xcworkspace -UseNewBuildSystem=YES -scheme ScreensExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet | xcpretty"
+    },
+    "ios.release": {
+      "type": "ios.app",
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/ScreensExample.app",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/ScreensExample.xcodeproj -UseNewBuildSystem=YES -scheme ScreensExample -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet"
     },
     "android.debug": {
       "type": "android.apk",
@@ -37,6 +42,14 @@
     "ios": {
       "device": "simulator",
       "app": "ios"
+    },
+    "ios.debug": {
+      "device": "simulator",
+      "app": "ios.debug"
+    },
+    "ios.release": {
+      "device": "simulator",
+      "app": "ios.release"
     },
     "android.debug": {
       "device": "emulator",
