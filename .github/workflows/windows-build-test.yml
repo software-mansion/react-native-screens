@@ -1,0 +1,35 @@
+name: Test Windows build
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'windows/**'
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-2019
+    env:
+      WORKING_DIRECTORY: Example
+    concurrency:
+      group: windows-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.0.2
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: 'yarn'
+      - name: Install node dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn
+      - name: Build app
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: npx react-native run-windows --release --no-packager --no-launch --no-deploy --logging
