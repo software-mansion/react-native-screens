@@ -130,6 +130,12 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     public override fun performUpdate() {
+        // we perform update in `onBeforeLayout` of `ScreensShadowNode` by adding an UIBlock
+        // which is called after updating children of the ScreenStack.
+        // We do it there because `onUpdate` logic requires all changes of children to be already
+        // made in order to provide proper animation for fragment transition.
+        // The exception to this rule is `updateImmediately` which is triggered by actions
+        // not connected to React view hierarchy changes, but rather internal events
         mNeedUpdate = true
     }
 
@@ -139,6 +145,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun updateImmediately() {
+        // we want to update the immediately when the fragment manager is set or native back button
+        // dismiss is dispatched since it is not connected to React view hierarchy changes and will
+        // not trigger `onBeforeLayout` method of `ScreensShadowNode`
         mNeedUpdate = true
         onUpdate()
     }
