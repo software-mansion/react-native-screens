@@ -30,7 +30,7 @@ if (Platform.OS === 'android') {
   StatusBar.setTranslucent(true);
 }
 
-const SCREENS: Record<
+export const SCREENS: Record<
   string,
   {
     title: string;
@@ -123,6 +123,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
         .map((name) => (
           <ListItem
             key={name}
+            testID={`root-screen-example-${name}`}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
           />
