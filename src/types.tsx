@@ -103,7 +103,7 @@ export interface ScreenProps extends ViewProps {
   gestureEnabled?: boolean;
   /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft` or use `usePreventDismiss` hook.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
    * Defaults to `false`.
    *
    * @platform android
@@ -130,16 +130,6 @@ export interface ScreenProps extends ViewProps {
    */
   onHeaderBackButtonClicked?: () => void;
   /**
-   * An internal callback that gets called when you set `preventNativeDismiss` to `true` and dismiss a screen natively.
-   * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
-   * It calls `navigation.pop` of all dismissed screens.
-   *
-   * @platform ios
-   */
-  onNativeDismissCancelled?: (
-    e: NativeSyntheticEvent<{ dismissCount: number }>
-  ) => void;
-  /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
   onTransitionProgress?: (
@@ -153,13 +143,6 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
   onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * An internal boolean indicating whether you are able to dimiss the screen or modal natively by swiping it or tapping default native header back button.
-   * If you set it to `true`, the natively dismissed screen is pushed back and `onNativeDismissCancelled` event is called.
-   *
-   * @platform ios
-   */
-  preventNativeDismiss?: boolean;
   ref?: React.Ref<View>;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.

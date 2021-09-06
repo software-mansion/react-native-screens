@@ -245,7 +245,7 @@ export type NativeStackNavigationOptions = {
   headerTranslucent?: boolean;
   /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft` or use `usePreventDismiss` hook.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
    * Defaults to `false`.
    *
    * @platform android

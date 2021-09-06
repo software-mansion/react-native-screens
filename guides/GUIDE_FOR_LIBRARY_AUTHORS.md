@@ -51,7 +51,7 @@ When set to `false` the back swipe gesture will be disabled. The default value i
 ### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft` or use `usePreventDismiss` hook.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
 
 Defaults to `false`.
 
@@ -71,12 +71,6 @@ A callback that gets called when the current screen is dismissed by hardware bac
 
 A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
 
-### `onNativeDismissCancelled` (iOS only)
-
-A callback that gets called when you set `preventNativeDismiss` to `true` and dismiss a screen natively. The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
-
-It calls `navigation.pop` of all dismissed screens by default.
-
 ### `onWillAppear`
 
 A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
@@ -85,21 +79,13 @@ A callback that gets called when the current screen will appear. This is called 
 
 A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
 
-### `preventNativeDismiss` (iOS only)
-
-Boolean indicating whether you are able to dimiss the screen or modal natively by swiping it or tapping default native header back button. If you set it to `true`, the natively dismissed screen is pushed back and `onNativeDismissCancelled` event is called.
-
-For `Android` option, see `enableNativeBackButtonDismissal`.
-
-Defaults to `false`.
-
 ### `replaceAnimation`
 
 Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
 - `push` – performs push animation
 - `pop` – performs pop animation (default)
 
-### `screenOrientation`
+#### `screenOrientation`
 
 Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
 
@@ -156,35 +142,35 @@ For Android:
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
-### `statusBarAnimation`
+#### `statusBarAnimation`
 
 Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Possible values: `fade`, `none`, `slide`. On Android, this prop considers the transition of changing status bar color (see https://reactnative.dev/docs/statusbar#animated). There will be no animation if `none` provided.
 
 Defaults to `fade` on iOS and `none` on Android.
 
-### `statusBarColor` (Android only)
+#### `statusBarColor` (Android only)
 
 Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
-### `statusBarHidden`
+#### `statusBarHidden`
 
 When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
 
 Defaults to `false`.
 
-### `statusBarStyle`
+#### `statusBarStyle`
 
 Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
 
 Defaults to `auto`.
 
-### `statusBarTranslucent` (Android only)
+#### `statusBarTranslucent` (Android only)
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
-### `useTransitionProgress`
+#### `useTransitionProgress`
 
-Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 3 values:
+Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
 - `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
@@ -208,9 +194,9 @@ function Home() {
 }
 ```
 
-### `useReanimatedTransitionProgress`
+#### `useReanimatedTransitionProgress`
 
-A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 3 shared values:
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
 - `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
@@ -251,59 +237,6 @@ function Home() {
   );
 }
 ```
-
-### `usePreventDismiss`
-
-In order to use this hook in the navigation library, it is necessary to couple it with the logic of `onNativeDismissCancelled` and `preventNativeDismiss`. An example of that logic can be seen in `NativeStackView` in `native-stack` folder. It consists of:
-
-- importing the `PreventDismissContext`
-
-```tsx
-import {PreventDismissContext, PreventDismissContextBody} from 'react-native-screens';
-```
-
-- adding a logic for checking if there is a component wanting to prevent the dismiss
-
-```tsx
-const [preventNativeDismissMap, setPreventNativeDismissMap] = React.useState(
-  new Map<symbol, boolean>()
-);
-const preventNativeDismiss = [...preventNativeDismissMap.values()].some(
-  (item) => item
-);
-const dismissContextValue = React.useMemo<PreventDismissContextBody>(
-  () => ({
-    setPreventDismiss: (symbol, enabled) => {
-      setPreventNativeDismissMap((prevMap) =>
-        new Map(prevMap).set(symbol, enabled)
-      );
-    },
-    removePreventDismiss: (symbol) => {
-      setPreventNativeDismissMap((prevMap) => {
-        const newMap = new Map(prevMap);
-        newMap.delete(symbol);
-        return newMap;
-      });
-    },
-  }),
-  [setPreventNativeDismissMap]
-);
-```
-
-- adding context `Provider` and props for the `Screen` component
-
-```jsx
-<PreventDismissContext.Provider value={dismissContextValue}>
-  <Screen
-    preventNativeDismiss={preventNativeDismiss}
-    onNativeDismissCancelled={(e) => {
-      // ...
-    }}
-    // ...
-  />
-</PreventDismissContext.Provider>
-```
-
 
 ## `<ScreenStackHeaderConfig>`
 

@@ -4,8 +4,6 @@ import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
 import {
-  PreventDismissContext,
-  PreventDismissContextBody,
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
@@ -149,30 +147,6 @@ const RouteView = ({
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
 }) => {
-  const [preventNativeDismissMap, setPreventNativeDismissMap] = React.useState(
-    new Map<symbol, boolean>()
-  );
-  const preventNativeDismiss = [...preventNativeDismissMap.values()].some(
-    (item) => item
-  );
-  const dismissContextValue = React.useMemo<PreventDismissContextBody>(
-    () => ({
-      setPreventDismiss: (symbol, enabled) => {
-        setPreventNativeDismissMap((prevMap) =>
-          new Map(prevMap).set(symbol, enabled)
-        );
-      },
-      removePreventDismiss: (symbol) => {
-        setPreventNativeDismissMap((prevMap) => {
-          const newMap = new Map(prevMap);
-          newMap.delete(symbol);
-          return newMap;
-        });
-      },
-    }),
-    [setPreventNativeDismissMap]
-  );
-
   const { options, render: renderScene } = descriptors[route.key];
   const {
     customAnimationOnSwipe,
@@ -213,107 +187,91 @@ const RouteView = ({
   const Screen = React.useContext(ScreenContext);
 
   return (
-    <PreventDismissContext.Provider value={dismissContextValue}>
-      <Screen
-        key={route.key}
-        enabled
-        isNativeStack
-        style={StyleSheet.absoluteFill}
-        customAnimationOnSwipe={customAnimationOnSwipe}
-        fullScreenSwipeEnabled={fullScreenSwipeEnabled}
-        gestureEnabled={isAndroid ? false : gestureEnabled}
-        nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
-        preventNativeDismiss={preventNativeDismiss}
-        replaceAnimation={replaceAnimation}
-        screenOrientation={screenOrientation}
-        stackAnimation={stackAnimation}
-        stackPresentation={stackPresentation}
-        statusBarAnimation={statusBarAnimation}
-        statusBarColor={statusBarColor}
-        statusBarHidden={statusBarHidden}
-        statusBarStyle={statusBarStyle}
-        statusBarTranslucent={statusBarTranslucent}
-        onHeaderBackButtonClicked={() => {
-          navigation.dispatch({
-            ...StackActions.pop(),
-            source: route.key,
-            target: stateKey,
-          });
-        }}
-        onNativeDismissCancelled={(e) => {
-          const dismissCount =
-            e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
-          navigation.dispatch({
-            ...StackActions.pop(dismissCount),
-            source: route.key,
-            target: stateKey,
-          });
-        }}
-        onWillAppear={() => {
-          navigation.emit({
-            type: 'transitionStart',
-            data: { closing: false },
-            target: route.key,
-          });
-        }}
-        onWillDisappear={() => {
-          navigation.emit({
-            type: 'transitionStart',
-            data: { closing: true },
-            target: route.key,
-          });
-        }}
-        onAppear={() => {
-          navigation.emit({
-            type: 'appear',
-            target: route.key,
-          });
-          navigation.emit({
-            type: 'transitionEnd',
-            data: { closing: false },
-            target: route.key,
-          });
-        }}
-        onDisappear={() => {
-          navigation.emit({
-            type: 'transitionEnd',
-            data: { closing: true },
-            target: route.key,
-          });
-        }}
-        onDismissed={(e) => {
-          navigation.emit({
-            type: 'dismiss',
-            target: route.key,
-          });
+    <Screen
+      key={route.key}
+      enabled
+      isNativeStack
+      style={StyleSheet.absoluteFill}
+      customAnimationOnSwipe={customAnimationOnSwipe}
+      fullScreenSwipeEnabled={fullScreenSwipeEnabled}
+      gestureEnabled={isAndroid ? false : gestureEnabled}
+      nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
+      replaceAnimation={replaceAnimation}
+      screenOrientation={screenOrientation}
+      stackAnimation={stackAnimation}
+      stackPresentation={stackPresentation}
+      statusBarAnimation={statusBarAnimation}
+      statusBarColor={statusBarColor}
+      statusBarHidden={statusBarHidden}
+      statusBarStyle={statusBarStyle}
+      statusBarTranslucent={statusBarTranslucent}
+      onHeaderBackButtonClicked={() => {
+        navigation.dispatch({
+          ...StackActions.pop(),
+          source: route.key,
+          target: stateKey,
+        });
+      }}
+      onWillAppear={() => {
+        navigation.emit({
+          type: 'transitionStart',
+          data: { closing: false },
+          target: route.key,
+        });
+      }}
+      onWillDisappear={() => {
+        navigation.emit({
+          type: 'transitionStart',
+          data: { closing: true },
+          target: route.key,
+        });
+      }}
+      onAppear={() => {
+        navigation.emit({
+          type: 'appear',
+          target: route.key,
+        });
+        navigation.emit({
+          type: 'transitionEnd',
+          data: { closing: false },
+          target: route.key,
+        });
+      }}
+      onDisappear={() => {
+        navigation.emit({
+          type: 'transitionEnd',
+          data: { closing: true },
+          target: route.key,
+        });
+      }}
+      onDismissed={(e) => {
+        navigation.emit({
+          type: 'dismiss',
+          target: route.key,
+        });
 
-          const dismissCount =
-            e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
+        const dismissCount =
+          e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
 
-          navigation.dispatch({
-            ...StackActions.pop(dismissCount),
-            source: route.key,
-            target: stateKey,
-          });
-        }}>
-        <HeaderHeightContext.Provider
-          value={
-            isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
-          }>
-          <HeaderConfig
-            {...options}
-            route={route}
-            headerShown={isHeaderInPush}
-          />
-          <MaybeNestedStack
-            options={options}
-            route={route}
-            stackPresentation={stackPresentation}>
-            {renderScene()}
-          </MaybeNestedStack>
-        </HeaderHeightContext.Provider>
-      </Screen>
-    </PreventDismissContext.Provider>
+        navigation.dispatch({
+          ...StackActions.pop(dismissCount),
+          source: route.key,
+          target: stateKey,
+        });
+      }}>
+      <HeaderHeightContext.Provider
+        value={
+          isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
+        }>
+        <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
+        <MaybeNestedStack
+          options={options}
+          route={route}
+          stackPresentation={stackPresentation}>
+          {renderScene()}
+        </MaybeNestedStack>
+      </HeaderHeightContext.Provider>
+    </Screen>
   );
 };
 

@@ -185,7 +185,7 @@ Boolean indicating whether the navigation bar is translucent.
 #### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft` or use `usePreventDismiss` hook.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
 
 Defaults to `false`.
 
@@ -236,7 +236,7 @@ A string that can be used as a fallback for `headerTitle`.
 
 #### `useTransitionProgress`
 
-Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 3 values:
+Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
 - `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
@@ -262,7 +262,7 @@ function Home() {
 
 #### `useReanimatedTransitionProgress`
 
-A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 3 shared values:
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
 - `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
@@ -300,58 +300,6 @@ function Home() {
 
   return (
     <Animated.View style={reaStyle} />
-  );
-}
-```
-
-#### `usePreventDismiss` (iOS only)
-
-A hook to be used in order to prevent the native dismissal options (swipe and default header back button) on iOS. It should be used along with `react-navigation` `beforeRemove` listener to provide the behavior similar to the one in `stack` navigator. Example of usage: 
-
-```jsx
-import {usePreventDismiss} from 'react-native-screens';
-
-function Example({navigation}) {
-  const [text, setText] = React.useState('');
-  const hasUnsavedChanges = Boolean(text);
-  usePreventDismiss(hasUnsavedChanges);
-
-  React.useEffect(
-    () =>
-      navigation.addListener('beforeRemove', (e) => {
-        if (hasUnsavedChanges) {
-          // Prevent default behavior of leaving the screen
-          e.preventDefault();
-        } else {
-          return;
-        }
-
-        // Prompt the user before leaving the screen
-        Alert.alert(
-          'Discard changes?',
-          'You have unsaved changes. Are you sure to discard them and leave the screen?',
-          [
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            { text: "Don't leave", style: 'cancel', onPress: () => {} },
-            {
-              text: 'Discard',
-              style: 'destructive',
-              // If the user confirmed, then we dispatch the action we blocked earlier
-              // This will continue the action that had triggered the removal of the screen
-              onPress: () => navigation.dispatch(e.data.action),
-            },
-          ]
-        );
-      }),
-    [navigation, hasUnsavedChanges]
-  );
-
-  return (
-    <TextInput
-      value={text}
-      placeholder="Type something…"
-      onChangeText={setText}
-    />
   );
 }
 ```

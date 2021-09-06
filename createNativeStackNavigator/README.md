@@ -192,7 +192,7 @@ Boolean indicating whether the navigation bar is translucent.
 #### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there. In order to prevent the dismiss there, you should provide your own back button using `headerLeft`.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
 
 Defaults to `false`.
 
@@ -243,7 +243,7 @@ A string that can be used as a fallback for `headerTitle`.
 
 #### `useTransitionProgress`
 
-Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 3 values:
+Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
 - `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
@@ -269,7 +269,7 @@ function Home() {
 
 #### `useReanimatedTransitionProgress`
 
-A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 3 shared values:
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
 - `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
