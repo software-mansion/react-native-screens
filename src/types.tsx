@@ -354,9 +354,18 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
 
 export interface SearchBarProps {
   /**
-   * Indicates whether to to obscure the underlying content
+   * The auto-capitalization behavior
    */
-  obscureBackground?: boolean;
+  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  /**
+   * The search field background color
+   */
+  barTintColor?: string;
+  /**
+   * The text to be used instead of default `Cancel` button text
+   */
+  cancelButtonText?: string;
+
   /**
    * Indicates whether to hide the navigation bar
    */
@@ -365,26 +374,29 @@ export interface SearchBarProps {
    * Indicates whether to hide the search bar when scrolling
    */
   hideWhenScrolling?: boolean;
+
   /**
-   * The auto-capitalization behavior
+   * Indicates whether to to obscure the underlying content
    */
-  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  obscureBackground?: boolean;
   /**
-   * Text displayed when search field is empty
+   * A callback that gets called when search bar has lost focus
    */
-  placeholder?: string;
-  /**
-   * The search field background color
-   */
-  barTintColor?: string;
-  /**
-   * A callback that gets called when the text changes. It receives the current text value of the search bar.
-   */
-  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the cancel button is pressed
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+
+  /**
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
+   */
+  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+
+  /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
@@ -392,13 +404,9 @@ export interface SearchBarProps {
     e: NativeSyntheticEvent<TextInputFocusEventData>
   ) => void;
   /**
-   * A callback that gets called when search bar has received focus
+   * Text displayed when search field is empty
    */
-  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * A callback that gets called when search bar has lost focus
-   */
-  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  placeholder?: string;
   /**
    * The search field text color
    */

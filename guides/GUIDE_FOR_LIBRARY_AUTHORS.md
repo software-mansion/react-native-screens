@@ -242,6 +242,7 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 
 - `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences`.
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
+- `cancelButtonText` - The text to be used instead of default `Cancel` button text.
 - `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`.
 - `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`.
 - `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`.
