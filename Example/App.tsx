@@ -30,7 +30,7 @@ if (Platform.OS === 'android') {
   StatusBar.setTranslucent(true);
 }
 
-export const SCREENS: Record<
+const SCREENS: Record<
   string,
   {
     title: string;
