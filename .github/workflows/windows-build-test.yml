@@ -1,14 +1,5 @@
 name: Test Windows build
-on:
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'windows/**'
-  push:
-    branches:
-      - master
-  workflow_dispatch:
+on: [pull_request, push, workflow_dispatch]
 jobs:
   build:
     runs-on: windows-2019
