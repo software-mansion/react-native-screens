@@ -4,8 +4,6 @@
 
 #import "RNSScreenContainer.h"
 
-@class RNSScreenContainerView;
-
 typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
   RNSScreenStackPresentationPush,
   RNSScreenStackPresentationModal,

@@ -208,6 +208,10 @@ export interface ScreenContainerProps extends ViewProps {
    * A prop that gives users an option to switch between using Screens for the navigator (container). All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
+  /**
+   * A prop to be used in navigators always showing only one screen (providing only `0` or `2` `activityState` values) for better implementation of `ScreenContainer` on iOS.
+   */
+  hasTwoStates?: boolean;
 }
 
 export interface ScreenStackProps extends ViewProps {
