@@ -73,6 +73,11 @@
 #endif
 }
 
+- (void)setCancelButtonText:(NSString *)text
+{
+  [_controller.searchBar setValue:text forKey:@"cancelButtonText"];
+}
+
 - (void)hideCancelButton
 {
 #if !TARGET_OS_TV
@@ -182,6 +187,7 @@ RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
 RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)

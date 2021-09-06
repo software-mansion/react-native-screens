@@ -384,6 +384,10 @@ The search field background color.
 
 By default bar tint color is translucent.
 
+#### `cancelButtonText`
+
+The text to be used instead of default `Cancel` button text.
+
 #### `hideNavigationBar`
 
 Boolean indicating whether to hide the navigation bar during searching.
