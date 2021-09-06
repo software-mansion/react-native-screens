@@ -58,6 +58,7 @@ function screensEnabled(): boolean {
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
 let NativeScreenValue: React.ComponentType<ScreenProps>;
 let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
+let NativeScreenNavigationContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenStack: React.ComponentType<ScreenStackProps>;
 let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
 let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
@@ -78,6 +79,13 @@ const ScreensNativeModules = {
       NativeScreenContainerValue ||
       requireNativeComponent('RNSScreenContainer');
     return NativeScreenContainerValue;
+  },
+
+  get NativeScreenNavigationContainer() {
+    NativeScreenNavigationContainerValue =
+      NativeScreenNavigationContainerValue ||
+      requireNativeComponent('RNSScreenNavigationContainer');
+    return NativeScreenNavigationContainerValue;
   },
 
   get NativeScreenStack() {
@@ -212,9 +220,12 @@ class Screen extends React.Component<ScreenProps> {
 }
 
 function ScreenContainer(props: ScreenContainerProps) {
-  const { enabled = ENABLE_SCREENS, ...rest } = props;
+  const { enabled = ENABLE_SCREENS, hasTwoStates, ...rest } = props;
 
   if (enabled && isPlatformSupported) {
+    if (hasTwoStates) {
+      return <ScreensNativeModules.NativeScreenNavigationContainer {...rest} />;
+    }
     return <ScreensNativeModules.NativeScreenContainer {...rest} />;
   }
   return <View {...rest} />;
@@ -309,6 +320,13 @@ module.exports = {
   },
 
   get NativeScreenContainer() {
+    return ScreensNativeModules.NativeScreenContainer;
+  },
+
+  get NativeScreenNavigationContainer() {
+    if (Platform.OS === 'ios') {
+      return ScreensNativeModules.NativeScreenNavigationContainer;
+    }
     return ScreensNativeModules.NativeScreenContainer;
   },
 

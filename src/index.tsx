@@ -58,6 +58,8 @@ export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
 export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
+export const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps> = View;
+
 export const ScreenStack: React.ComponentType<ScreenStackProps> = View;
 
 export const ScreenStackHeaderBackButtonImage = (

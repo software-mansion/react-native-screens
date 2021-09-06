@@ -88,6 +88,14 @@ export interface ScreenProps extends ViewProps {
    */
   isNativeStack?: boolean;
   /**
+   * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
+   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  fullScreenSwipeEnabled?: boolean;
+  /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    *
    * @platform ios
@@ -200,6 +208,10 @@ export interface ScreenContainerProps extends ViewProps {
    * A prop that gives users an option to switch between using Screens for the navigator (container). All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
+  /**
+   * A prop to be used in navigators always showing only one screen (providing only `0` or `2` `activityState` values) for better implementation of `ScreenContainer` on iOS.
+   */
+  hasTwoStates?: boolean;
 }
 
 export interface ScreenStackProps extends ViewProps {
