@@ -1,7 +1,7 @@
+#include "pch.h"
 #include "RNScreens.h"
 #include "JSValueXaml.h"
 #include "RNScreensModule.g.cpp"
-#include "pch.h"
 
 namespace winrt {
 using namespace Microsoft::ReactNative;

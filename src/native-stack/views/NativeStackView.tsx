@@ -176,6 +176,7 @@ const RouteView = ({
   const { options, render: renderScene } = descriptors[route.key];
   const {
     customAnimationOnSwipe,
+    fullScreenSwipeEnabled,
     gestureEnabled,
     headerShown,
     nativeBackButtonDismissalEnabled = false,
@@ -218,9 +219,10 @@ const RouteView = ({
         enabled
         isNativeStack
         style={StyleSheet.absoluteFill}
-        nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
         customAnimationOnSwipe={customAnimationOnSwipe}
+        fullScreenSwipeEnabled={fullScreenSwipeEnabled}
         gestureEnabled={isAndroid ? false : gestureEnabled}
+        nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
         preventNativeDismiss={preventNativeDismiss}
         replaceAnimation={replaceAnimation}
         screenOrientation={screenOrientation}

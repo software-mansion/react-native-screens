@@ -481,6 +481,7 @@ function StackView({
             nativeBackButtonDismissalEnabled={
               options.nativeBackButtonDismissalEnabled
             }
+            fullScreenSwipeEnabled={options.fullScreenSwipeEnabled}
             screenOrientation={options.screenOrientation}
             statusBarAnimation={options.statusBarAnimation}
             statusBarColor={options.statusBarColor}
