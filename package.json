@@ -9,8 +9,7 @@
     "format-js": "prettier --write --list-different './{src,Example}/**/*.{js,ts,tsx}'",
     "format-android": "node ./scripts/format-android.js",
     "format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
-    "format-windows": "find windows/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
-    "format": "yarn format-js && yarn format-android && yarn format-ios && yarn format-windows",
+    "format": "yarn format-js && yarn format-android && yarn format-ios",
     "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
     "lint": "yarn lint-js && yarn lint-android",
@@ -105,10 +104,7 @@
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
     "src/**/*.{js,ts,tsx}": "yarn lint-js",
     "android/**/*.kt": "yarn format-android",
-    "{ios,windows}/**/*.{h,m,cpp}": [
-      "yarn format-ios",
-      "yarn format-windows"
-    ]
+    "ios/**/*.{h,m,cpp}": "yarn format-ios"
   },
   "@react-native-community/bob": {
     "source": "src",

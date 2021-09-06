@@ -36,9 +36,13 @@ Screen stack component expects one or more `Screen` components as direct childre
 
 Below is the list of additional properties that can be used for `Screen` component:
 
-#### `customAnimationOnSwipe` (iOS only)
+### `customAnimationOnSwipe` (iOS only)
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+
+### `fullScreenSwipeEnabled` (iOS only)
+
+Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
 
 ### `gestureEnabled` (iOS only)
 
@@ -285,9 +289,9 @@ Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenSt
 
 Controls whether the stack should be in `rtl` or `ltr` form.
 
-#### `disableBackButtonMenu`
+#### `disableBackButtonMenu` (iOS only)
 
-Boolean indicating whether to show the menu on longPress of iOS >= 14 back button. Only supported on iOS.
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 
 ### `hidden`
 
