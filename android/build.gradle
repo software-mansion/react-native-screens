@@ -10,6 +10,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.diffplug.spotless" version "5.14.1"
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
@@ -55,26 +59,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20"
 }
 
-configurations {
-    ktlint
-}
+plugins.apply("com.diffplug.spotless")
 
-dependencies {
-    ktlint "com.pinterest:ktlint:0.40.0"
-}
-
-task ktlint(type: JavaExec, group: "verification") {
-    description = "Check Kotlin code style."
-    main = "com.pinterest.ktlint.Main"
-    classpath = configurations.ktlint
-    args project.findProperty("file") ?: "src/**/*.kt"
-}
-
-check.dependsOn ktlint
-
-task ktlintFormat(type: JavaExec, group: "formatting") {
-    description = "Fix Kotlin code style deviations."
-    main = "com.pinterest.ktlint.Main"
-    classpath = configurations.ktlint
-    args "-F", project.findProperty("file") ?: "src/**/*.kt"
+spotless {
+    kotlin {
+        target 'src/**/*.kt'
+        ktlint("0.40.0")
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
 }
