@@ -30,30 +30,49 @@ interface MainScreenProps {
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   return (
-    <ScrollView style={{ ...styles.container, backgroundColor: 'thistle' }}>
-      <Button title="push" onPress={() => navigation.navigate('Push')} />
-      <Button title="modal" onPress={() => navigation.navigate('Modal')} />
+    <ScrollView
+      style={{ ...styles.container, backgroundColor: 'thistle' }}
+      testID="stack-presentation-root-scroll-view">
+      <Button
+        title="push"
+        onPress={() => navigation.navigate('Push')}
+        testID="stack-presentation-push-button"
+      />
+      <Button
+        title="modal"
+        onPress={() => navigation.navigate('Modal')}
+        testID="stack-presentation-modal-button"
+      />
       <Button
         title="transparentModal"
         onPress={() => navigation.navigate('TransparentModal')}
+        testID="stack-presentation-transparent-modal-button"
       />
       <Button
         title="containedModal"
         onPress={() => navigation.navigate('ContainedModal')}
+        testID="stack-presentation-contained-modal-button"
       />
       <Button
         title="containedTransparentModal"
         onPress={() => navigation.navigate('ContainedTransparentModal')}
+        testID="stack-presentation-contained-transparent-modal-button"
       />
       <Button
         title="fullScreenModal"
         onPress={() => navigation.navigate('FullScreenModal')}
+        testID="stack-presentation-full-screen-modal-button"
       />
       <Button
         title="formSheet"
         onPress={() => navigation.navigate('FormSheet')}
+        testID="stack-presentation-form-sheet-button"
       />
-      <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
+      <Button
+        testID="stack-presentation-go-back-button"
+        onPress={() => navigation.pop()}
+        title="🔙 Back to Examples"
+      />
     </ScrollView>
   );
 };
@@ -65,7 +84,11 @@ interface FormScreenProps {
 const FormScreen = ({ navigation }: FormScreenProps): JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'white' }}>
     <Form />
-    <Button title="Go back" onPress={() => navigation.goBack()} />
+    <Button
+      testID="stack-presentation-form-screen-go-back-button"
+      title="Go back"
+      onPress={() => navigation.goBack()}
+    />
   </View>
 );
 
@@ -76,7 +99,11 @@ interface ModalScreenProps {
 const ModalScreen = ({ navigation }: ModalScreenProps): JSX.Element => (
   <View style={styles.container}>
     <Choose />
-    <Button title="Go back" onPress={() => navigation.goBack()} />
+    <Button
+      testID="stack-presentation-modal-screen-go-back-button"
+      title="Go back"
+      onPress={() => navigation.goBack()}
+    />
   </View>
 );
 
@@ -91,7 +118,11 @@ const FullScreenModalScreen = ({
     <ImageBackground
       style={styles.image}
       source={require('../assets/trees.jpg')}>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+      <Button
+        testID="stack-presentation-fullscreen-modal-go-back-button"
+        title="Go back"
+        onPress={() => navigation.goBack()}
+      />
     </ImageBackground>
   </View>
 );
