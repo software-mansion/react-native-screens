@@ -353,7 +353,7 @@
     [self notifyDismissCancelledWithDismissCount:1];
     return NO;
   }
-  return YES;
+  return _gestureEnabled;
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController

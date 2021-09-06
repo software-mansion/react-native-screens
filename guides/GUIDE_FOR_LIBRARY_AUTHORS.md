@@ -69,7 +69,7 @@ A callback that gets called when the current screen is dismissed by hardware bac
 
 ### `onHeaderBackButtonClicked` (Android only)
 
-A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
+A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`.
 
 ### `onWillAppear`
 
