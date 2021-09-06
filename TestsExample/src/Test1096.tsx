@@ -50,7 +50,7 @@ function Home({
           />
         </View>
       </Modal>
-      <OverlayView shown={shown} draggable={draggable} interceptTouches={interceptTouches}>
+      <OverlayView style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center' }} shown={shown} draggable={draggable} interceptTouches={interceptTouches}>
         <View style={styles.box} />
         <Button title="click me" onPress={() => console.warn('clicked')} />
       </OverlayView>
