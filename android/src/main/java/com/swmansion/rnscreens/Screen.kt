@@ -35,6 +35,7 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
     private var mStatusBarTranslucent: Boolean? = null
     private var mStatusBarColor: Int? = null
     var isStatusBarAnimated: Boolean? = null
+    private var mNativeBackButtonDismissalEnabled = true
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -226,6 +227,12 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
             }
             mStatusBarColor = statusBarColor
             fragment?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
+        }
+
+    var nativeBackButtonDismissalEnabled: Boolean
+        get() = mNativeBackButtonDismissalEnabled
+        set(enableNativeBackButtonDismissal) {
+            mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
         }
 
     enum class StackPresentation {

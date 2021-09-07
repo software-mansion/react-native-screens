@@ -558,6 +558,7 @@
   if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
     return NO;
   }
+
 #if TARGET_OS_TV
   [self cancelTouchesInParent];
   return YES;

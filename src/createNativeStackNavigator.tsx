@@ -478,6 +478,9 @@ function StackView({
                 ? true
                 : options.gestureEnabled
             }
+            nativeBackButtonDismissalEnabled={
+              options.nativeBackButtonDismissalEnabled
+            }
             fullScreenSwipeEnabled={options.fullScreenSwipeEnabled}
             screenOrientation={options.screenOrientation}
             statusBarAnimation={options.statusBarAnimation}
@@ -489,6 +492,9 @@ function StackView({
             onWillAppear={() => options?.onWillAppear?.()}
             onWillDisappear={() => options?.onWillDisappear?.()}
             onDisappear={() => options?.onDisappear?.()}
+            onHeaderBackButtonClicked={() =>
+              removeScene(route, 1, routeNavigationProp)
+            }
             onDismissed={(e) =>
               removeScene(
                 route,

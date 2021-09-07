@@ -102,6 +102,14 @@ export interface ScreenProps extends ViewProps {
    */
   gestureEnabled?: boolean;
   /**
+   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
+  nativeBackButtonDismissalEnabled?: boolean;
+  /**
    * A callback that gets called when the current screen appears.
    */
   onAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
@@ -115,6 +123,12 @@ export interface ScreenProps extends ViewProps {
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
+   * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
+   *
+   * @platform android
+   */
+  onHeaderBackButtonClicked?: () => void;
   /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */

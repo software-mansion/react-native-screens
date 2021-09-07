@@ -48,6 +48,13 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
 
+### `nativeBackButtonDismissalEnabled` (Android only)
+
+Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+
+Defaults to `false`.
+
 ### `onAppear`
 
 A callback that gets called when the current screen appears.
@@ -59,6 +66,10 @@ A callback that gets called when the current screen disappears.
 ### `onDismissed`
 
 A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+
+### `onHeaderBackButtonClicked` (Android only)
+
+A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`.
 
 ### `onWillAppear`
 
