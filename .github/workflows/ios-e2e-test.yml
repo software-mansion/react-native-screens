@@ -21,6 +21,8 @@ jobs:
         with:
           node-version: 14
           cache: 'yarn'
+      - name: Get Xcode version
+        run: xcodebuild -version
       - name: Install root node dependencies
         run: yarn
       - name: Install node dependencies
