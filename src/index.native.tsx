@@ -65,7 +65,7 @@ let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
 >>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 let NativeSearchBar: React.ComponentType<SearchBarProps>;
-let NativeOverlayView: React.ComponentType<View>;
+let NativeFullWindowOverlay: React.ComponentType<View>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -106,10 +106,10 @@ const ScreensNativeModules = {
     return NativeSearchBar;
   },
 
-  get NativeOverlayView() {
-    NativeOverlayView =
-      NativeOverlayView || requireNativeComponent('RNSOverlayView');
-    return NativeOverlayView;
+  get NativeFullWindowOverlay() {
+    NativeFullWindowOverlay =
+      NativeFullWindowOverlay || requireNativeComponent('RNSFullWindowOverlay');
+    return NativeFullWindowOverlay;
   },
 };
 
@@ -336,13 +336,13 @@ module.exports = {
 
     return ScreensNativeModules.NativeSearchBar;
   },
-  get OverlayView() {
+  get FullWindowOverlay() {
     if (Platform.OS !== 'ios') {
-      console.warn('Importing OverlayView is only valid on iOS devices.');
+      console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
       return View;
     }
 
-    return ScreensNativeModules.NativeOverlayView;
+    return ScreensNativeModules.NativeFullWindowOverlay;
   },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them

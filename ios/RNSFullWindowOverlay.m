@@ -1,10 +1,10 @@
 #import <UIKit/UIKit.h>
 
-#import "RNSOverlayView.h"
+#import "RNSFullWindowOverlay.h"
 
 #import <React/RCTTouchHandler.h>
 
-@implementation RNSOverlayViewContainer
+@implementation RNSFullWindowOverlayContainer
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
@@ -18,9 +18,9 @@
 
 @end
 
-@implementation RNSOverlayView {
+@implementation RNSFullWindowOverlay {
   __weak RCTBridge *_bridge;
-  RNSOverlayViewContainer *_container;
+  RNSFullWindowOverlayContainer *_container;
   CGRect _reactFrame;
   RCTTouchHandler *_touchHandler;
 }
@@ -48,10 +48,10 @@
   [_container addSubview:view];
 }
 
-- (RNSOverlayViewContainer *)container
+- (RNSFullWindowOverlayContainer *)container
 {
   if (_container == nil) {
-    _container = [[RNSOverlayViewContainer alloc] initWithFrame:_reactFrame];
+    _container = [[RNSFullWindowOverlayContainer alloc] initWithFrame:_reactFrame];
   }
 
   return _container;
@@ -93,13 +93,13 @@
 
 @end
 
-@implementation RNSOverlayViewManager
+@implementation RNSFullWindowOverlayManager
 
 RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-  return [[RNSOverlayView alloc] initWithBridge:self.bridge];
+  return [[RNSFullWindowOverlay alloc] initWithBridge:self.bridge];
 }
 
 @end

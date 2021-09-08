@@ -60,7 +60,7 @@ export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> = 
 
 export const ScreenStack: React.ComponentType<ScreenStackProps> = View;
 
-export const OverlayView = View;
+export const FullWindowOverlay = View;
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps

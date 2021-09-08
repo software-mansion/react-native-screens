@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Button, StyleSheet, View, Modal } from 'react-native';
-import {OverlayView} from 'react-native-screens';
+import {FullWindowOverlay} from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -34,10 +34,10 @@ function Home({
           />
         </View>
       </Modal>
-      <OverlayView style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center'}}>
+      <FullWindowOverlay style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center'}}>
         <View style={styles.box} />
         <Button title="click me" onPress={() => console.warn('clicked')} />
-      </OverlayView>
+      </FullWindowOverlay>
     </View>
   );
 }
