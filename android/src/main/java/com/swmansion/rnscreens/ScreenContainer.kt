@@ -14,22 +14,13 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.swmansion.rnscreens.Screen.ActivityState
-import java.lang.IllegalStateException
 
 open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
     @JvmField
     protected val mScreenFragments = ArrayList<T>()
     @JvmField
     protected var mFragmentManager: FragmentManager? = null
-    private var mCurrentTransaction: FragmentTransaction? = null
-    private var mProcessingTransaction: FragmentTransaction? = null
-    private var mNeedUpdate = false
-    private var mIsAttached = false
-    private val mFrameCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
-        override fun doFrame(frameTimeNanos: Long) {
-            updateIfNeeded()
-        }
-    }
+    protected var mIsAttached = false
     private var mLayoutEnqueued = false
     private val mLayoutCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
         override fun doFrame(frameTimeNanos: Long) {
@@ -89,20 +80,8 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     val isNested: Boolean
         get() = mParentScreenFragment != null
 
-    protected fun markUpdated() {
-        if (!mNeedUpdate) {
-            mNeedUpdate = true
-            // enqueue callback of NATIVE_ANIMATED_MODULE type as all view operations are executed in
-            // DISPATCH_UI type and we want the callback to be called right after in the same frame.
-            ReactChoreographer.getInstance()
-                .postFrameCallback(
-                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, mFrameCallback
-                )
-        }
-    }
-
     fun notifyChildUpdate() {
-        markUpdated()
+        onScreenChanged()
     }
 
     protected open fun adapt(screen: Screen): T {
@@ -115,13 +94,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         screen.fragment = fragment
         mScreenFragments.add(index, fragment)
         screen.container = this
-        markUpdated()
+        onScreenChanged()
     }
 
     open fun removeScreenAt(index: Int) {
         mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
-        markUpdated()
+        onScreenChanged()
     }
 
     open fun removeAllScreens() {
@@ -129,7 +108,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             screenFragment.screen.container = null
         }
         mScreenFragments.clear()
-        markUpdated()
+        onScreenChanged()
     }
 
     val screenCount: Int
@@ -149,9 +128,9 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             return null
         }
 
-    private fun setFragmentManager(fm: FragmentManager) {
+    protected open fun setFragmentManager(fm: FragmentManager) {
         mFragmentManager = fm
-        updateIfNeeded()
+        onScreenChanged()
     }
 
     private fun setupFragmentManager() {
@@ -189,47 +168,23 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         setFragmentManager(context.supportFragmentManager)
     }
 
-    protected fun getOrCreateTransaction(): FragmentTransaction {
-        if (mCurrentTransaction == null) {
-            val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
-            val transaction = fragmentManager.beginTransaction()
-            transaction.setReorderingAllowed(true)
-            mCurrentTransaction = transaction
-        }
-        mCurrentTransaction?.let { return it }
-        throw IllegalStateException("mCurrentTransaction changed to null during creating transaction")
+    protected fun createTransaction(): FragmentTransaction {
+        val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
+        val transaction = fragmentManager.beginTransaction()
+        transaction.setReorderingAllowed(true)
+        return transaction
     }
 
-    protected fun tryCommitTransaction() {
-        val transaction = mCurrentTransaction
-        if (transaction != null) {
-            mProcessingTransaction = transaction
-            mProcessingTransaction?.runOnCommit {
-                if (mProcessingTransaction === transaction) {
-                    // we need to take into account that commit is initiated with some other transaction
-                    // while the previous one is still processing. In this case mProcessingTransaction
-                    // gets overwritten and we don't want to set it to null until the second transaction
-                    // is finished.
-                    mProcessingTransaction = null
-                }
-            }
-            transaction.commitAllowingStateLoss()
-            mCurrentTransaction = null
-        }
-    }
-
-    private fun attachScreen(screenFragment: T) {
-        getOrCreateTransaction().add(id, screenFragment)
+    private fun attachScreen(screenFragment: ScreenFragment) {
+        createTransaction().add(id, screenFragment).commitNowAllowingStateLoss()
     }
 
     private fun moveToFront(screenFragment: ScreenFragment) {
-        val transaction = getOrCreateTransaction()
-        transaction.remove(screenFragment)
-        transaction.add(id, screenFragment)
+        createTransaction().remove(screenFragment).add(id, screenFragment).commitNowAllowingStateLoss()
     }
 
     private fun detachScreen(screenFragment: ScreenFragment) {
-        getOrCreateTransaction().remove(screenFragment)
+        createTransaction().remove(screenFragment).commitNowAllowingStateLoss()
     }
 
     private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
@@ -243,7 +198,6 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         mIsAttached = true
-        mNeedUpdate = true
         setupFragmentManager()
     }
 
@@ -311,29 +265,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
 
-    private fun updateIfNeeded() {
-        if (!mNeedUpdate || !mIsAttached || mFragmentManager == null) {
+    protected open fun onScreenChanged() {
+        if (!mIsAttached || mFragmentManager == null) {
             return
         }
-        mNeedUpdate = false
-        onUpdate()
-    }
 
-    private fun onUpdate() {
-        // We double check if fragment manager have any pending transactions to run.
-        // In performUpdate we often check whether some fragments are added to
-        // manager to avoid adding them for the second time (which result in crash).
-        // By design performUpdate should be called at most once per frame, so this
-        // should never happen, but in case there are some pending transaction we
-        // need to flush them here such that Fragment#isAdded checks reflect the
-        // reality and that we don't have enqueued fragment add commands that will
-        // execute shortly and cause "Fragment already added" crash.
-        mFragmentManager?.executePendingTransactions()
-        performUpdate()
-        notifyContainerUpdate()
-    }
-
-    protected open fun performUpdate() {
         // detach screens that are no longer active
         val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
         for (screenFragment in mScreenFragments) {
@@ -372,7 +308,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             }
             screenFragment.screen.setTransitioning(transitioning)
         }
-        tryCommitTransaction()
+        notifyContainerUpdate()
     }
 
     protected open fun notifyContainerUpdate() {
