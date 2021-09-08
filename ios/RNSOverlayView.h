@@ -1,3 +1,4 @@
+#import <React/RCTInvalidating.h>
 #import <React/RCTView.h>
 #import <React/RCTViewManager.h>
 
@@ -9,10 +10,6 @@
 
 @end
 
-@interface RNSOverlayView : RCTView
-
-@property (nonatomic) BOOL shown;
-@property (nonatomic) BOOL draggable;
-@property (nonatomic) BOOL interceptTouches;
+@interface RNSOverlayView : RCTView <RCTInvalidating>
 
 @end

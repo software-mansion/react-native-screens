@@ -28,7 +28,6 @@ import {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-  OverlayViewProps,
 } from './types';
 
 // web implementation is taken from `index.tsx`
@@ -66,7 +65,7 @@ let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
 >>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 let NativeSearchBar: React.ComponentType<SearchBarProps>;
-let NativeOverlayView: React.ComponentType<OverlayViewProps>;
+let NativeOverlayView: React.ComponentType<View>;
 
 const ScreensNativeModules = {
   get NativeScreen() {

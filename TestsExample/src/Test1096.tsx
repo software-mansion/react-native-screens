@@ -13,22 +13,10 @@ function Home({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
-  const [shown, setShown] = React.useState(true);
-  const [draggable, setDraggable] = React.useState(true);
   const [isShowModal, setIsShowModal] = React.useState(false);
-  const [interceptTouches, setInterceptTouches] = React.useState(true);
 
   return (
     <View style={styles.container}>
-      <Button title="Show/hide window view" onPress={() => setShown(!shown)} />
-      <Button
-        title="Enable/disable dragging behavior"
-        onPress={() => setDraggable(!draggable)}
-      />
-      <Button
-        title="Enable/disable intercepting touches"
-        onPress={() => setInterceptTouches(!interceptTouches)}
-      />
       <Button title="show rn modal" onPress={() => setIsShowModal(true)} />
       <Button
         title="Go to RNScreens modal"
@@ -44,13 +32,9 @@ function Home({
             title="dismiss rn modal"
             onPress={() => setIsShowModal(false)}
           />
-          <Button
-            title="Show/hide window view"
-            onPress={() => setShown(!shown)}
-          />
         </View>
       </Modal>
-      <OverlayView style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center' }} shown={shown} draggable={draggable} interceptTouches={interceptTouches}>
+      <OverlayView style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center'}}>
         <View style={styles.box} />
         <Button title="click me" onPress={() => console.warn('clicked')} />
       </OverlayView>
