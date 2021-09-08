@@ -81,7 +81,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         get() = mParentScreenFragment != null
 
     fun notifyChildUpdate() {
-        performUpdate()
+        onScreenChanged()
     }
 
     protected open fun adapt(screen: Screen): T {
@@ -94,13 +94,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         screen.fragment = fragment
         mScreenFragments.add(index, fragment)
         screen.container = this
-        performUpdate()
+        onScreenChanged()
     }
 
     open fun removeScreenAt(index: Int) {
         mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
-        performUpdate()
+        onScreenChanged()
     }
 
     open fun removeAllScreens() {
@@ -108,7 +108,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             screenFragment.screen.container = null
         }
         mScreenFragments.clear()
-        performUpdate()
+        onScreenChanged()
     }
 
     val screenCount: Int
@@ -130,7 +130,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     protected open fun setFragmentManager(fm: FragmentManager) {
         mFragmentManager = fm
-        performUpdate()
+        onScreenChanged()
     }
 
     private fun setupFragmentManager() {
@@ -265,15 +265,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
 
-    protected open fun performUpdate() {
+    protected open fun onScreenChanged() {
         if (!mIsAttached || mFragmentManager == null) {
             return
         }
-        onUpdate()
-        notifyContainerUpdate()
-    }
 
-    protected open fun onUpdate() {
         // detach screens that are no longer active
         val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
         for (screenFragment in mScreenFragments) {
@@ -312,6 +308,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             }
             screenFragment.screen.setTransitioning(transitioning)
         }
+        notifyContainerUpdate()
     }
 
     protected open fun notifyContainerUpdate() {

@@ -12,7 +12,7 @@ internal class ScreensShadowNode(private var mContext: ReactContext) : LayoutSha
         (mContext.getNativeModule(UIManagerModule::class.java))?.addUIBlock { nativeViewHierarchyManager: NativeViewHierarchyManager ->
             val view = nativeViewHierarchyManager.resolveView(reactTag)
             if (view is ScreenStack) {
-                view.onUpdate()
+                view.performUpdates()
             }
         }
     }

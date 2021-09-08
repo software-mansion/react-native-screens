@@ -43,7 +43,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     var goingForward = false
     fun dismiss(screenFragment: ScreenStackFragment) {
         mDismissed.add(screenFragment)
-        updateImmediately()
+        performUpdatesNow()
     }
 
     override val topScreen: Screen?
@@ -129,7 +129,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         return super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
     }
 
-    public override fun performUpdate() {
+    public override fun onScreenChanged() {
         // we perform update in `onBeforeLayout` of `ScreensShadowNode` by adding an UIBlock
         // which is called after updating children of the ScreenStack.
         // We do it there because `onUpdate` logic requires all changes of children to be already
@@ -141,18 +141,18 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     public override fun setFragmentManager(fm: FragmentManager) {
         mFragmentManager = fm
-        updateImmediately()
+        performUpdatesNow()
     }
 
-    private fun updateImmediately() {
+    private fun performUpdatesNow() {
         // we want to update the immediately when the fragment manager is set or native back button
         // dismiss is dispatched since it is not connected to React view hierarchy changes and will
         // not trigger `onBeforeLayout` method of `ScreensShadowNode`
         mNeedUpdate = true
-        onUpdate()
+        performUpdates()
     }
 
-    public override fun onUpdate() {
+    fun performUpdates() {
         if (!mNeedUpdate || !mIsAttached || mFragmentManager == null) {
             return
         }
