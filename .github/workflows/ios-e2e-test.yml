@@ -27,6 +27,8 @@ jobs:
           cache: 'yarn'
       - name: Get Xcode version
         run: xcodebuild -version
+      - name: Install AppleSimulatorUtils
+        run: brew tap wix/brew && brew install applesimutils
       - name: Install root node dependencies
         run: yarn
       - name: Install node dependencies
