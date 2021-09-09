@@ -20,7 +20,6 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private val drawingOps: MutableList<DrawingOp> = ArrayList()
     private var mTopScreen: ScreenStackFragment? = null
-    private var mNeedUpdate = false
     private val mBackStackListener = FragmentManager.OnBackStackChangedListener {
         if (mFragmentManager?.backStackEntryCount == 0) {
             // when back stack entry count hits 0 it means the user's navigated back using hw back
@@ -129,35 +128,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         return super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
     }
 
-    public override fun onScreenChanged() {
-        // we perform update in `onBeforeLayout` of `ScreensShadowNode` by adding an UIBlock
-        // which is called after updating children of the ScreenStack.
-        // We do it there because `onUpdate` logic requires all changes of children to be already
-        // made in order to provide proper animation for fragment transition.
-        // The exception to this rule is `updateImmediately` which is triggered by actions
-        // not connected to React view hierarchy changes, but rather internal events
-        mNeedUpdate = true
-    }
-
-    public override fun setFragmentManager(fm: FragmentManager) {
-        mFragmentManager = fm
-        performUpdatesNow()
-    }
-
-    private fun performUpdatesNow() {
-        // we want to update the immediately when the fragment manager is set or native back button
-        // dismiss is dispatched since it is not connected to React view hierarchy changes and will
-        // not trigger `onBeforeLayout` method of `ScreensShadowNode`
-        mNeedUpdate = true
-        performUpdates()
-    }
-
-    fun performUpdates() {
-        if (!mNeedUpdate || !mIsAttached || mFragmentManager == null) {
-            return
-        }
-        mNeedUpdate = false
-
+    override fun onUpdate() {
         // When going back from a nested stack with a single screen on it, we may hit an edge case
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
         // handle the case of newTop being NULL, which happens in several places below
@@ -309,7 +280,6 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             it.commitNowAllowingStateLoss()
             mTopScreen?.let { screen -> setupBackHandlerIfNeeded(screen) }
         }
-        notifyContainerUpdate()
     }
 
     override fun notifyContainerUpdate() {

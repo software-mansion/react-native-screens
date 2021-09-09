@@ -20,7 +20,8 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     protected val mScreenFragments = ArrayList<T>()
     @JvmField
     protected var mFragmentManager: FragmentManager? = null
-    protected var mIsAttached = false
+    private var mIsAttached = false
+    private var mNeedUpdate = false
     private var mLayoutEnqueued = false
     private val mLayoutCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
         override fun doFrame(frameTimeNanos: Long) {
@@ -81,7 +82,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         get() = mParentScreenFragment != null
 
     fun notifyChildUpdate() {
-        onScreenChanged()
+        performUpdatesNow()
     }
 
     protected open fun adapt(screen: Screen): T {
@@ -128,9 +129,9 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             return null
         }
 
-    protected open fun setFragmentManager(fm: FragmentManager) {
+    private fun setFragmentManager(fm: FragmentManager) {
         mFragmentManager = fm
-        onScreenChanged()
+        performUpdatesNow()
     }
 
     private fun setupFragmentManager() {
@@ -242,7 +243,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // delayed lifecycle (due to transitions). As a result due to ongoing transitions the fragment
         // may choose not to remove the view despite the parent container being completely detached
         // from the view hierarchy until the transition is over. In such a case when the container gets
-        // re-attached while tre transition is ongoing, the child view would still be there and we'd
+        // re-attached while the transition is ongoing, the child view would still be there and we'd
         // attempt to re-attach it to with a misconfigured fragment. This would result in a crash. To
         // avoid it we clear all the children here as we attach all the child fragments when the
         // container is reattached anyways. We don't use `removeAllViews` since it does not check if the
@@ -265,11 +266,36 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
 
-    protected open fun onScreenChanged() {
-        if (!mIsAttached || mFragmentManager == null) {
+    private fun onScreenChanged() {
+        // we perform update in `onBeforeLayout` of `ScreensShadowNode` by adding an UIBlock
+        // which is called after updating children of the ScreenContainer.
+        // We do it there because `onUpdate` logic requires all changes of children to be already
+        // made in order to provide proper animation for fragment transition for ScreenStack
+        // and this in turn makes nested ScreenContainers detach too early and disappear
+        // before transition if also not dispatched after children updates.
+        // The exception to this rule is `updateImmediately` which is triggered by actions
+        // not connected to React view hierarchy changes, but rather internal events
+        mNeedUpdate = true
+    }
+
+    protected fun performUpdatesNow() {
+        // we want to update the immediately when the fragment manager is set or native back button
+        // dismiss is dispatched or Screen's activityState changes since it is not connected to React
+        // view hierarchy changes and will not trigger `onBeforeLayout` method of `ScreensShadowNode`
+        mNeedUpdate = true
+        performUpdates()
+    }
+
+    fun performUpdates() {
+        if (!mNeedUpdate || !mIsAttached || mFragmentManager == null) {
             return
         }
+        mNeedUpdate = false
+        onUpdate()
+        notifyContainerUpdate()
+    }
 
+    open fun onUpdate() {
         // detach screens that are no longer active
         val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
         for (screenFragment in mScreenFragments) {
@@ -308,7 +334,6 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             }
             screenFragment.screen.setTransitioning(transitioning)
         }
-        notifyContainerUpdate()
     }
 
     protected open fun notifyContainerUpdate() {
