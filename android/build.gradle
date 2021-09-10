@@ -7,11 +7,13 @@ buildscript {
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:5.15.0"
     }
 }
 
-plugins {
-    id "com.diffplug.spotless" version "5.14.1"
+// spotless is only accessible within react-native-screens repo
+if (project == rootProject) {
+    apply from: 'spotless.gradle'
 }
 
 apply plugin: 'com.android.library'
@@ -57,16 +59,4 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
     implementation "androidx.core:core-ktx:1.6.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20"
-}
-
-plugins.apply("com.diffplug.spotless")
-
-spotless {
-    kotlin {
-        target 'src/**/*.kt'
-        ktlint("0.40.0")
-        trimTrailingWhitespace()
-        indentWithSpaces()
-        endWithNewline()
-    }
 }
