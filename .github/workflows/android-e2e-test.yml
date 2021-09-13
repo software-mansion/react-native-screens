@@ -1,4 +1,4 @@
-name: Test iOS e2e
+name: Test Android e2e
 on:
   pull_request:
     # paths:
