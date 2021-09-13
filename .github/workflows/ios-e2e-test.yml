@@ -34,6 +34,8 @@ jobs:
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
+      - name: List devices
+        run: ls /Users/runner/Library/Developer/CoreSimulator/Devices
       - name: Install pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
