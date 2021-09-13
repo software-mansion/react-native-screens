@@ -2,13 +2,13 @@ name: Test iOS e2e
 on:
   pull_request:
     paths:
-      - 'Example/**'
+        - 'Example/**'
   push:
     branches:
       - master
   workflow_dispatch:
 env:
-  DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
+   DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
 jobs:
   build:
     runs-on: macos-latest
@@ -27,8 +27,6 @@ jobs:
           cache: 'yarn'
       - name: Get Xcode version
         run: xcodebuild -version
-      - name: Rebuild detox
-        run: yarn detox clean-framework-cache && yarn detox build-framework-cache
       - name: Install AppleSimulatorUtils
         run: brew tap wix/brew && brew install applesimutils
       - name: Install root node dependencies
