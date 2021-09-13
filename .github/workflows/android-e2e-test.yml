@@ -1,8 +1,8 @@
 name: Test iOS e2e
 on:
   pull_request:
-    paths:
-        - 'Example/**'
+    # paths:
+    #     - 'Example/**'
   push:
     branches:
       - master
