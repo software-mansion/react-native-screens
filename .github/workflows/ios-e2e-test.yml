@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     runs-on: macos-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     env:
       WORKING_DIRECTORY: Example
     concurrency:
