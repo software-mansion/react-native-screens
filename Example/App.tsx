@@ -123,6 +123,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
         .map((name) => (
           <ListItem
             key={name}
+            testID={`root-screen-example-${name}`}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
           />
