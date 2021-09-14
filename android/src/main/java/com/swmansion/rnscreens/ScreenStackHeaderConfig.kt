@@ -369,7 +369,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         mDirection = direction
     }
 
-    private class DebugMenuToolbar(context: Context?) : Toolbar(context) {
+    private class DebugMenuToolbar(context: Context) : Toolbar(context) {
         override fun showOverflowMenu(): Boolean {
             (context.applicationContext as ReactApplication)
                 .reactNativeHost
