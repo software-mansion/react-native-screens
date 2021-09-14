@@ -18,7 +18,7 @@
 {
   if (self = [super init]) {
     _bridge = bridge;
-    _controller = [UISearchController new];
+    _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
     _controller.searchBar.delegate = self;
     _hideWhenScrolling = YES;
   }
@@ -71,6 +71,11 @@
     [_controller.searchBar.searchTextField setTextColor:_textColor];
   }
 #endif
+}
+
+- (void)setCancelButtonText:(NSString *)text
+{
+  [_controller.searchBar setValue:text forKey:@"cancelButtonText"];
 }
 
 - (void)hideCancelButton
@@ -182,6 +187,7 @@ RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
 RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)
