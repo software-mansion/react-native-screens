@@ -60,3 +60,12 @@ dependencies {
     implementation "androidx.core:core-ktx:1.6.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20"
 }
+
+// Resolve dependencies to use the same kotlin versions
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name == 'kotlin-stdlib-jdk8') {
+            details.useVersion "1.5.20"
+        }
+    }
+}
