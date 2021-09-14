@@ -15,7 +15,7 @@ jobs:
     env:
       WORKING_DIRECTORY: TVOSExample
     concurrency:
-      group: ios-${{ github.ref }}
+      group: ios-tv-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: checkout
