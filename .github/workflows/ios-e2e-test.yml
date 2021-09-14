@@ -14,7 +14,7 @@ jobs:
     env:
       WORKING_DIRECTORY: Example
     concurrency:
-      group: ios-${{ github.ref }}
+      group: ios-e2e-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: checkout
