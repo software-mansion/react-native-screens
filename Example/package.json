@@ -8,7 +8,11 @@
     "start": "react-native start",
     "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types && yarn format",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "build-e2e-ios": "detox build --configuration ios.release",
+    "build-e2e-android": "detox build --configuration android.release",
+    "test-e2e-ios": "detox test --configuration ios.release",
+    "test-e2e-android": "detox test --configuration android.release"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",

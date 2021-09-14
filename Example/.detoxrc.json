@@ -11,7 +11,7 @@
     "ios.release": {
       "type": "ios.app",
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/ScreensExample.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -project ios/ScreensExample.xcodeproj -UseNewBuildSystem=YES -scheme ScreensExample -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet"
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild ONLY_ACTIVE_ARCH=YES -workspace ios/ScreensExample.xcworkspace -UseNewBuildSystem=YES -scheme ScreensExample -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet | xcpretty"
     },
     "android.debug": {
       "type": "android.apk",
