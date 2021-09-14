@@ -1,4 +1,7 @@
 buildscript {
+    ext.safeExtGet = {prop, fallback ->
+        rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+    }
     repositories {
         google()
         jcenter()
@@ -6,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.5.20')}"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.15.0"
     }
 }
@@ -18,10 +21,6 @@ if (project == rootProject) {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-
-def safeExtGet(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-}
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
@@ -58,14 +57,6 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation "androidx.core:core-ktx:1.6.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${safeExtGet('kotlinVersion', '1.5.20')}"
 }
 
-// Resolve dependencies to use the same kotlin versions
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name == 'kotlin-stdlib-jdk8') {
-            details.useVersion "1.5.20"
-        }
-    }
-}
