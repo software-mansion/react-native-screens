@@ -6,26 +6,35 @@ jobs:
     env:
       WORKING_DIRECTORY: Example
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: Gather environment info
-        run: npx envinfo
-
-      - name: Use Node.js 14
+      - uses: actions/checkout@v2
+        name: Checkout Code
+      
+      - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: '12.9.1'
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Check node modules cache
+        uses: actions/cache@v1
+        id: yarn-cache
         with:
-          vs-version: 16.8
+          path: ./node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
-      - name: Install node dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn --frozen-lockfile
+      - name: Install node modules
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn --pure-lockfile
 
-      - name: Run Windows x64 release
+      - name: Install Example node modules
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native run-windows --arch x64 --release --no-packager --logging
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn --pure-lockfile
+
+      - name: Build x64 release
+        shell: powershell
+        run: npx react-native run-windows --root Example --arch x64 --release --no-packager --no-deploy --logging
