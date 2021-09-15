@@ -35,6 +35,10 @@ jobs:
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn --pure-lockfile
 
+      - name: Check RNW requirements
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run:  powershell -ExecutionPolicy Bypass -File .\node_modules\react-native-windows\Scripts\rnw-dependencies.ps1
+
       - name: Build x64 release
         working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: powershell
