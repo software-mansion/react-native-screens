@@ -31,7 +31,7 @@
     "react-native-webview": "^11.13.0",
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.3",
-    "react-native-windows": "0.65.1"
+    "react-native-windows": "0.65.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

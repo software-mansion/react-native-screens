@@ -7059,10 +7059,10 @@ react-native-webview@^11.13.0:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
 
-react-native-windows@0.65.1:
-  version "0.65.1"
-  resolved "https://registry.yarnpkg.com/react-native-windows/-/react-native-windows-0.65.1.tgz#0c8605e62fcf0e051380b900ad80b741814c30c5"
-  integrity sha512-+cu1kkGjMJDcBVQlJ3WtSEQc74dSjDBEwzIQX5woxmR8raUmYy5/9CFcR8eY3FLfEe2MGX8tyVR5s5XotRHscA==
+react-native-windows@0.65.2:
+  version "0.65.2"
+  resolved "https://registry.yarnpkg.com/react-native-windows/-/react-native-windows-0.65.2.tgz#2e63bb6746fa6bced5c1fbfd4de4c24d7a549d4b"
+  integrity sha512-m8iEf9QaN3Z/FlqSMBIm6s6JWELUyUho4ZyuE6f3eV83jGP6uF1oUI1gTOTexahnGEipMU5e1/TVeoYL5+uV0Q==
   dependencies:
     "@babel/runtime" "^7.0.0"
     "@jest/create-cache-key-function" "^27.0.1"
