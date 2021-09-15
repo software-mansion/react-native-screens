@@ -115,12 +115,15 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
           RNRestart.Restart();
         }}
       />
-      <Text style={styles.label}>Examples</Text>
+      <Text style={styles.label} testID="root-screen-examples-header">
+        Examples
+      </Text>
       {Object.keys(SCREENS)
         .filter((name) => SCREENS[name].type === 'example')
         .map((name) => (
           <ListItem
             key={name}
+            testID={`root-screen-example-${name}`}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
           />

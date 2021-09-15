@@ -6,6 +6,7 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -111,8 +112,16 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
         view.isStatusBarHidden = statusBarHidden
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any>? {
-        return MapBuilder.of(
+    @ReactProp(name = "nativeBackButtonDismissalEnabled")
+    fun setNativeBackButtonDismissalEnabled(
+        view: Screen,
+        nativeBackButtonDismissalEnabled: Boolean
+    ) {
+        view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
+    }
+
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
+        val map: MutableMap<String, Any> = MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDismissed"),
             ScreenWillAppearEvent.EVENT_NAME,
@@ -126,8 +135,11 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
             StackFinishTransitioningEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onFinishTransitioning"),
             ScreenTransitionProgressEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onTransitionProgress"),
+            MapBuilder.of("registrationName", "onTransitionProgress")
         )
+        // there is no `MapBuilder.of` with more than 7 items
+        map[HeaderBackButtonClickedEvent.EVENT_NAME] = MapBuilder.of("registrationName", "onHeaderBackButtonClicked")
+        return map
     }
 
     companion object {
