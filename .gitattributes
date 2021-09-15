@@ -2,3 +2,4 @@
 # specific for windows script files
 *.bat text eol=crlf
 windows/* text=auto eol=crlf
+Example/windows/* text=auto eol=crlf
