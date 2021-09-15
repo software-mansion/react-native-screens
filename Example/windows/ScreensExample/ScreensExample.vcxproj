@@ -6,7 +6,7 @@
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <MinimalCoreWin>true</MinimalCoreWin>
-    <ProjectGuid>{57a4d8ad-9184-451d-92d9-65e48ba57fd6}</ProjectGuid>
+    <ProjectGuid>{1608b966-eae5-4631-8b9f-b970da32f6f6}</ProjectGuid>
     <ProjectName>ScreensExample</ProjectName>
     <RootNamespace>ScreensExample</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -17,7 +17,7 @@
     <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0.18362.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.16299.0</WindowsTargetPlatformMinVersion>
     <PackageCertificateKeyFile>ScreensExample_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>93A0AE869677BAD2B6AAE32986AC139694EBB694</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>1CE2BC52D9DC17E60DB6D805963A767FEF7375B3</PackageCertificateThumbprint>
     <PackageCertificatePassword>password</PackageCertificatePassword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
