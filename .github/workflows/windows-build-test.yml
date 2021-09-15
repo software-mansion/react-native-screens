@@ -36,5 +36,6 @@ jobs:
         run: yarn --pure-lockfile
 
       - name: Build x64 release
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: powershell
         run: npx react-native run-windows --root Example --arch x64 --release --no-packager --no-deploy --logging
