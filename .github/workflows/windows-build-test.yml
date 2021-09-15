@@ -5,25 +5,32 @@ jobs:
     runs-on: windows-latest
     env:
       WORKING_DIRECTORY: Example
-    concurrency:
-      group: windows-${{ github.ref }}
-      cancel-in-progress: true
     steps:
       - name: checkout
         uses: actions/checkout@v2
+
       - name: Gather environment info
         run: npx envinfo
+
       - name: Use Node.js 14
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v1
         with:
           node-version: 14
           cache: 'yarn'
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.0.2
+        with:
+          vs-version: 16.8
+
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn
-      - name: Build app
-        shell: powershell
+        run: yarn --frozen-lockfile
+
+      - name: Run yarn build
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native run-windows --logging --no-packager --no-launch --arch x64
+        run:  yarn build
+
+      - name: Run Windows x64 release
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: npx react-native run-windows --arch x64 --release --no-packager --logging
