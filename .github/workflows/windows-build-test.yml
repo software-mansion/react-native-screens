@@ -2,7 +2,7 @@ name: Test Windows build
 on: [pull_request, push, workflow_dispatch]
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-latest
     env:
       WORKING_DIRECTORY: Example
     concurrency:
@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - name: Gather environment info
+        run: npx envinfo
       - name: Use Node.js 14
         uses: actions/setup-node@v2
         with:
@@ -24,4 +26,4 @@ jobs:
       - name: Build app
         shell: powershell
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native run-windows --root example --arch x64 --release --no-packager --no-deploy --logging --no-launch
+        run: npx react-native run-windows --logging --no-packager --no-launch --arch x64
