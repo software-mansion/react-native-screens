@@ -95,6 +95,7 @@ module.exports = {
             'ts-expect-error': 'allow-with-description',
           },
         ],
+        'import/namespace': 'off',
       },
     },
   ],

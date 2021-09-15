@@ -6,11 +6,11 @@
     "check-types": "tsc --noEmit",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
-    "format-js": "prettier --write --list-different './{src,Example}/**/*.{js,ts,tsx}'",
+    "format-js": "prettier --write --list-different \"./{src,Example}/**/*.{js,ts,tsx}\"",
     "format-android": "node ./scripts/format-android.js",
     "format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
     "format": "yarn format-js && yarn format-android && yarn format-ios",
-    "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
+    "lint-js": "eslint --ext \".js,.ts,.tsx\" --fix src",
     "lint-android": "node ./scripts/lint-android.js",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "npm login && release-it",
@@ -75,7 +75,7 @@
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-import": "^2.24.1",
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
@@ -107,9 +107,7 @@
       "yarn format-android",
       "yarn lint-android"
     ],
-    "ios/**/*.{h,m,cpp}": [
-      "yarn format-ios"
-    ]
+    "ios/**/*.{h,m,cpp}": "yarn format-ios"
   },
   "@react-native-community/bob": {
     "source": "src",
