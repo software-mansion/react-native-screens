@@ -1,3 +1,4 @@
 * text=auto eol=lf
 # specific for windows script files
 *.bat text eol=crlf
+windows/* text=auto eol=crlf
