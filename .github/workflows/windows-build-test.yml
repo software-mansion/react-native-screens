@@ -26,10 +26,6 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn --frozen-lockfile
 
-      - name: Run yarn build
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run:  yarn build
-
       - name: Run Windows x64 release
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: npx react-native run-windows --arch x64 --release --no-packager --logging
