@@ -37,6 +37,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReactNativeWebView", "..\no
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebViewBridgeComponent", "..\node_modules\react-native-webview\windows\WebViewBridgeComponent\WebViewBridgeComponent.vcxproj", "{FCB612AD-FACC-410C-828C-24B5940B2762}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RNScreens", "..\..\windows\RNScreens\RNScreens.vcxproj", "{D638F49E-29D2-4699-AC52-FACD82FA7138}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\node_modules\react-native-windows\Shared\Shared.vcxitems*{2049dbe9-8d13-42c9-ae4b-413ae38fffd0}*SharedItemsImports = 9
