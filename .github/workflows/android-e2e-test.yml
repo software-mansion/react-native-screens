@@ -50,3 +50,7 @@ jobs:
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-android
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android-fail-screen-shoots
+          path: ${{ env.WORKING_DIRECTORY }}/artifacts
