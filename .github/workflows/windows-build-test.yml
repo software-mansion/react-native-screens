@@ -22,6 +22,9 @@ jobs:
         uses: microsoft/setup-msbuild@v1.0.2
 
       - name: Install node dependencies
+        run: yarn
+
+      - name: Install Example node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
 
