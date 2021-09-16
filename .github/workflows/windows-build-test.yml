@@ -1,43 +1,29 @@
 name: Test Windows build
-on: [pull_request, push, workflow_dispatch]
+on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: windows-latest
     env:
       WORKING_DIRECTORY: Example
+    concurrency:
+      group: windows-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v2
         name: Checkout Code
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
         with:
           node-version: 14
+          cache: 'yarn'
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.0.2
 
-      - name: Check node modules cache
-        uses: actions/cache@v1
-        id: yarn-cache
-        with:
-          path: ./node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Install node modules
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn --pure-lockfile
-
-      - name: Install Example node modules
+      - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn --pure-lockfile
-
-      - name: Check RNW requirements
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run:  powershell -ExecutionPolicy Bypass -File .\node_modules\react-native-windows\Scripts\rnw-dependencies.ps1
+        run: yarn
 
       - name: Build x64 release
         working-directory: ${{ env.WORKING_DIRECTORY }}
