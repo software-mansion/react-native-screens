@@ -181,7 +181,8 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun moveToFront(screenFragment: ScreenFragment) {
-        createTransaction().remove(screenFragment).add(id, screenFragment).commitNowAllowingStateLoss()
+        createTransaction().remove(screenFragment).commitNowAllowingStateLoss()
+        createTransaction().add(id, screenFragment).commitNowAllowingStateLoss()
     }
 
     private fun detachScreen(screenFragment: ScreenFragment) {
