@@ -168,6 +168,9 @@
     <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppApp.targets" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppApp.targets')" />
   </ImportGroup>
   <ItemGroup>
+      <ProjectReference Include="..\..\..\node_modules\react-native-windows\Microsoft.ReactNative\Microsoft.ReactNative.vcxproj">
+      <Project>{da8b35b3-da00-4b02-bde6-6a397b3fg46b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\windows\RNScreens\RNScreens.vcxproj">
       <Project>{d638f49e-29d2-4699-ac52-facd82fa7138}</Project>
     </ProjectReference>
