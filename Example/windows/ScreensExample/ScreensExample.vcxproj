@@ -169,7 +169,7 @@
   </ImportGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\windows\RNScreens\RNScreens.vcxproj">
-      <Project>{D638F49E-29D2-4699-AC52-FACD82FA7138}</Project>
+      <Project>{d638f49e-29d2-4699-ac52-facd82fa7138}</Project>
     </ProjectReference>
   </ItemGroup>
   <Target Name="EnsureReactNativeWindowsTargets" BeforeTargets="PrepareForBuild">
