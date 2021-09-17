@@ -6,7 +6,7 @@
     <CppWinRTOptimized>true</CppWinRTOptimized>
     <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
     <MinimalCoreWin>true</MinimalCoreWin>
-    <ProjectGuid>{1608b966-eae5-4631-8b9f-b970da32f6f6}</ProjectGuid>
+    <ProjectGuid>{6bdbae30-a062-4150-a289-22577d0b4df4}</ProjectGuid>
     <ProjectName>ScreensExample</ProjectName>
     <RootNamespace>ScreensExample</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -17,7 +17,7 @@
     <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0.18362.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.16299.0</WindowsTargetPlatformMinVersion>
     <PackageCertificateKeyFile>ScreensExample_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>1CE2BC52D9DC17E60DB6D805963A767FEF7375B3</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>F216C0E4E58FE53F7ECE4B8A3BAE6A2C38D0F397</PackageCertificateThumbprint>
     <PackageCertificatePassword>password</PackageCertificatePassword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -167,6 +167,11 @@
   <ImportGroup Label="ReactNativeWindowsTargets">
     <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppApp.targets" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppApp.targets')" />
   </ImportGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\windows\RNScreens\RNScreens.vcxproj">
+      <Project>{D638F49E-29D2-4699-AC52-FACD82FA7138}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Target Name="EnsureReactNativeWindowsTargets" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references targets in your node_modules\react-native-windows folder that are missing. The missing file is {0}.</ErrorText>
