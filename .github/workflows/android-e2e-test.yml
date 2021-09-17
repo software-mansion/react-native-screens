@@ -30,14 +30,14 @@ jobs:
           echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --force --name e2e_emulator --device "Nexus 5X" -k 'system-images;android-29;google_apis;x86'
           echo "################\n  EMULATORS\n################"
           $ANDROID_HOME/emulator/emulator -list-avds
-      - name: Install root node dependencies
-        run: yarn
-      - name: Install node dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn
-      - name: Build app
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn build-e2e-android
+      # - name: Install root node dependencies
+      #   run: yarn
+      # - name: Install node dependencies
+      #   working-directory: ${{ env.WORKING_DIRECTORY }}
+      #   run: yarn
+      # - name: Build app
+      #   working-directory: ${{ env.WORKING_DIRECTORY }}
+      #   run: yarn build-e2e-android
       - name: Run Android Emulator
         timeout-minutes: 10
         continue-on-error: true
@@ -53,9 +53,9 @@ jobs:
       - name: Take screenshot
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: $ANDROID_HOME/platform-tools/adb exec-out screencap -p > artifacts/screen.png
-      - name: Test app
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn test-e2e-android || echo "failed"
+      # - name: Test app
+      #   working-directory: ${{ env.WORKING_DIRECTORY }}
+      #   run: yarn test-e2e-android || echo "failed"
       - uses: actions/upload-artifact@v2
         with:
           name: android-fail-screen-shoots
