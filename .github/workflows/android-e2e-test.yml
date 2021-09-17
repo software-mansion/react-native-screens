@@ -49,7 +49,7 @@ jobs:
           echo "Emulator started"
       - name: Take screenshot
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: adb exec-out screencap -p > artifacts/screen.png
+        run: $ANDROID_HOME/platform-tools/adb exec-out screencap -p > artifacts/screen.png
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-android || echo "failed"
