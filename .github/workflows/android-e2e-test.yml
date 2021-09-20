@@ -38,10 +38,9 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: 29
           avd-name: e2e_emulator
-          script: yarn test-e2e-android && echo "SUCCESS=true"  || echo "SUCCESS=false" >> $GITHUB_ENV
+          script: yarn test-e2e-android 
       - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
         with:
           name: android-fail-screen-shoots
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
-      - name: Check result
-        run: ${{ env.SUCCESS }} && exit 0 || exit 1
