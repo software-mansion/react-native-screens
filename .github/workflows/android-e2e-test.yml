@@ -1,8 +1,8 @@
 name: Test Android e2e
 on:
   pull_request:
-    # paths:
-    #     - 'Example/**'
+    paths:
+        - 'Example/**'
   push:
     branches:
       - master
@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     runs-on: macos-latest
-    # timeout-minutes: 50
+    timeout-minutes: 40
     env:
       WORKING_DIRECTORY: Example
     concurrency:
