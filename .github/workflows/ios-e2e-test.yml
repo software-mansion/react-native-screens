@@ -45,5 +45,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:
-          name: android-fail-screen-shoots
+          name: ios-fail-screen-shoots
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
