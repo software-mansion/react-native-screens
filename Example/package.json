@@ -12,7 +12,7 @@
     "build-e2e-ios": "detox build --configuration ios.release",
     "build-e2e-android": "detox build --configuration android.release",
     "test-e2e-ios": "detox test --configuration ios.release",
-    "test-e2e-android": "detox test --configuration android.release"
+    "test-e2e-android": "detox test --configuration android.release --take-screenshots failing"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
