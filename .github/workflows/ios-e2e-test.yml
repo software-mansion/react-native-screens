@@ -2,7 +2,7 @@ name: Test iOS e2e
 on:
   pull_request:
     paths:
-        - 'Example/**'
+      - 'Example/**'
   push:
     branches:
       - master
@@ -42,3 +42,8 @@ jobs:
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: ios-fail-screen-shoots
+          path: ${{ env.WORKING_DIRECTORY }}/artifacts
