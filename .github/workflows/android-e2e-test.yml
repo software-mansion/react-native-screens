@@ -1,8 +1,8 @@
-name: Test iOS e2e
+name: Test Android e2e
 on:
   pull_request:
     paths:
-      - 'Example/**'
+        - 'Example/**'
   push:
     branches:
       - master
@@ -14,7 +14,7 @@ jobs:
     env:
       WORKING_DIRECTORY: Example
     concurrency:
-      group: ios-e2e-${{ github.ref }}
+      group: android-e2e-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: checkout
@@ -24,26 +24,23 @@ jobs:
         with:
           node-version: 14
           cache: 'yarn'
-      - name: Get Xcode version
-        run: xcodebuild -version
-      - name: Install AppleSimulatorUtils
-        run: brew tap wix/brew && brew install applesimutils
       - name: Install root node dependencies
         run: yarn
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
-      - name: Install pods
-        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
-        run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn build-e2e-ios
-      - name: Test app
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn test-e2e-ios
+        run: yarn build-e2e-android
+      - name: Run emulator and tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+          api-level: 29
+          avd-name: e2e_emulator
+          script: yarn test-e2e-android 
       - uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:
-          name: ios-fail-screen-shoots
+          name: android-fail-screen-shoots
           path: ${{ env.WORKING_DIRECTORY }}/artifacts
