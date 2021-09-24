@@ -444,8 +444,10 @@
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
 
-  if (config.direction == UISemanticContentAttributeForceLeftToRight ||
-      config.direction == UISemanticContentAttributeForceRightToLeft) {
+  if ((config.direction == UISemanticContentAttributeForceLeftToRight ||
+       config.direction == UISemanticContentAttributeForceRightToLeft) &&
+      // iOS 12 cancels swipe gesture when direction is changed. See #1091
+      navctr.view.semanticContentAttribute != config.direction) {
     navctr.view.semanticContentAttribute = config.direction;
     navctr.navigationBar.semanticContentAttribute = config.direction;
   }
