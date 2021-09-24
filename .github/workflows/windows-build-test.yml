@@ -11,7 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout Code
-      
+
+      - name: Gather environment info
+        run: npx envinfo
+
       - name: Use Node.js 14
         uses: actions/setup-node@v2
         with:
@@ -30,7 +33,10 @@ jobs:
 
       - name: Check RNW requirements
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run:  powershell -ExecutionPolicy Bypass -File .\node_modules\react-native-windows\Scripts\rnw-dependencies.ps1
+        run: powershell -ExecutionPolicy Bypass -File .\node_modules\react-native-windows\Scripts\rnw-dependencies.ps1
+
+      - name: Print directory structure
+        run: dir /s/b
 
       - name: Build x64 release
         working-directory: ${{ env.WORKING_DIRECTORY }}
