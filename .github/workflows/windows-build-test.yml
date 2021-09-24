@@ -40,3 +40,10 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: powershell
         run: npx react-native run-windows --root Example --arch x64 --release --no-packager --no-deploy --logging
+
+      - name: Upload binlogs
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: binlogs
+          path: 'Example/*.binlog'
