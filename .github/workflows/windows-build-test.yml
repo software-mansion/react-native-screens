@@ -33,6 +33,7 @@ jobs:
         run: powershell -ExecutionPolicy Bypass -File .\node_modules\react-native-windows\Scripts\rnw-dependencies.ps1
 
       - name: Print directory structure
+        shell: cmd
         run: dir /s/b
 
       - name: Build x64 release
