@@ -58,6 +58,7 @@ import Test1036 from './src/Test1036';
 import Test1072 from './src/Test1072';
 import Test1084 from './src/Test1084';
 import Test1096 from './src/Test1096';
+import Test1153 from './src/Test1153';
 
 export default function App() {
   return (
