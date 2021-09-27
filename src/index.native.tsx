@@ -85,7 +85,9 @@ const ScreensNativeModules = {
   get NativeScreenNavigationContainer() {
     NativeScreenNavigationContainerValue =
       NativeScreenNavigationContainerValue ||
-      requireNativeComponent('RNSScreenNavigationContainer');
+      (Platform.OS === 'ios'
+        ? requireNativeComponent('RNSScreenNavigationContainer')
+        : this.NativeScreenContainer);
     return NativeScreenNavigationContainerValue;
   },
 
@@ -331,10 +333,7 @@ module.exports = {
   },
 
   get NativeScreenNavigationContainer() {
-    if (Platform.OS === 'ios') {
-      return ScreensNativeModules.NativeScreenNavigationContainer;
-    }
-    return ScreensNativeModules.NativeScreenContainer;
+    return ScreensNativeModules.NativeScreenNavigationContainer;
   },
 
   get ScreenStack() {
