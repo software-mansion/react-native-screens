@@ -564,6 +564,26 @@
     _shouldNotify = NO;
   }
 
+#if !TARGET_OS_TV
+  NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
+
+  if (@available(iOS 11.0, *) && currentIndex > 0) {
+    UINavigationItem *prevNavigationItem =
+        [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
+
+    BOOL wasSearchBarActiveActive = prevNavigationItem.searchController.active;
+    BOOL shouldHideHeader = ((RNSScreenStackHeaderConfig *)self.view.reactSubviews[0]).hide;
+    if (wasSearchBarActiveActive && shouldHideHeader) {
+      double delayInSeconds = 0;
+      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+      dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+        // We need to hide header beacuse if searchbar was active, then iOS would show deafult header for some reason
+        [self.navigationController setNavigationBarHidden:YES animated:NO];
+      });
+    }
+  }
+#endif
+
   // as per documentation of these methods
   _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
 
