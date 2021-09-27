@@ -17,4 +17,8 @@
 + (UIInterfaceOrientationMask)maskFromOrientation:(UIInterfaceOrientation)orientation;
 #endif
 
++ (BOOL)shouldAskScreensForTrait:(RNSWindowTrait)trait
+                 includingModals:(BOOL)includingModals
+                inViewController:(UIViewController *)vc;
+
 @end
