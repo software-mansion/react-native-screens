@@ -574,10 +574,9 @@
     BOOL wasSearchBarActiveActive = prevNavigationItem.searchController.active;
     BOOL shouldHideHeader = ((RNSScreenStackHeaderConfig *)self.view.reactSubviews[0]).hide;
     if (wasSearchBarActiveActive && shouldHideHeader) {
-      double delayInSeconds = 0;
-      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
       dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-        // We need to hide header beacuse if searchbar was active, then iOS would show deafult header for some reason
+        // We need to hide header beacuse if searchbar was active, then iOS would show default header for some reason
         [self.navigationController setNavigationBarHidden:YES animated:NO];
       });
     }
