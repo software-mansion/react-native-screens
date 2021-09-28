@@ -564,9 +564,7 @@
     _shouldNotify = NO;
   }
 
-#if !TARGET_OS_TV
   [self hideHeaderIfNecessary];
-#endif
 
   // as per documentation of these methods
   _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
@@ -581,6 +579,7 @@
 
 - (void)hideHeaderIfNecessary
 {
+#if !TARGET_OS_TV
   if (@available(iOS 13.0, *)) {
     NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
 
@@ -601,6 +600,7 @@
       }
     }
   }
+#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated
