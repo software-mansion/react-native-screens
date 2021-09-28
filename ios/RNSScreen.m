@@ -565,9 +565,25 @@
   }
 
 #if !TARGET_OS_TV
-  NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
+  [self hideHeaderIfNecessary];
+#endif
 
+  // as per documentation of these methods
+  _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
+
+  [RNSScreenWindowTraits updateWindowTraits];
+  if (_shouldNotify) {
+    _closing = NO;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self setupProgressNotification];
+  }
+}
+
+- (void)hideHeaderIfNecessary
+{
   if (@available(iOS 11.0, *)) {
+    NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
+
     if (currentIndex > 0 && [self.view.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
       UINavigationItem *prevNavigationItem =
           [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
@@ -584,17 +600,6 @@
         });
       }
     }
-  }
-#endif
-
-  // as per documentation of these methods
-  _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
-
-  [RNSScreenWindowTraits updateWindowTraits];
-  if (_shouldNotify) {
-    _closing = NO;
-    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
-    [self setupProgressNotification];
   }
 }
 
