@@ -101,6 +101,21 @@ This library should work out of the box with all existing react-native libraries
 If you are building a navigation library you may want to use `react-native-screens` to have control over which parts of the React component tree are attached to the native view hierarchy.
 To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/master/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
 
+## Common problems
+
+### Problems with header on iOS
+- [Focused search bar causes new screens to have incorrect header](https://github.com/software-mansion/react-native-screens/issues/996)
+- [Scrollable content gets cut off by the header with a search bar](https://github.com/software-mansion/react-native-screens/issues/1120)
+- [RefreshControl does not work properly with NativeStackNavigator and largeTitle](https://github.com/software-mansion/react-native-screens/issues/395)
+
+#### Solution
+Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a main container of the screen and set `headerTranslucent: true` in screen options.
+
+### Other problems
+- [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)
+- [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843)
+- [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649) - [fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) 
+
 ## Contributing
 
 There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/kmagiera/react-native-screens/tree/master/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
