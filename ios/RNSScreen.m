@@ -567,18 +567,22 @@
 #if !TARGET_OS_TV
   NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
 
-  if (@available(iOS 11.0, *) && currentIndex > 0) {
-    UINavigationItem *prevNavigationItem =
-        [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
+  if (@available(iOS 11.0, *)) {
+    if (currentIndex > 0 && [self.view.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      UINavigationItem *prevNavigationItem =
+          [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
+      RNSScreenStackHeaderConfig *config = ((RNSScreenStackHeaderConfig *)self.view.reactSubviews[0]);
 
-    BOOL wasSearchBarActiveActive = prevNavigationItem.searchController.active;
-    BOOL shouldHideHeader = ((RNSScreenStackHeaderConfig *)self.view.reactSubviews[0]).hide;
-    if (wasSearchBarActiveActive && shouldHideHeader) {
-      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
-      dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-        // We need to hide header beacuse if searchbar was active, then iOS would show default header for some reason
-        [self.navigationController setNavigationBarHidden:YES animated:NO];
-      });
+      BOOL wasSearchBarActiveActive = prevNavigationItem.searchController.active;
+      BOOL shouldHideHeader = config.hide;
+
+      if (wasSearchBarActiveActive && shouldHideHeader) {
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+          // We need to hide header beacuse if searchbar was active, then iOS would show default header for some reason
+          [self.navigationController setNavigationBarHidden:YES animated:NO];
+        });
+      }
     }
   }
 #endif
