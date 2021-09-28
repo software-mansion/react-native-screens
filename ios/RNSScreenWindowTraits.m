@@ -211,4 +211,12 @@
   return NO;
 }
 
+// same method as above, but directly for orientation
++ (BOOL)shouldAskScreensForScreenOrientationInViewController:(UIViewController *)vc
+{
+  return [RNSScreenWindowTraits shouldAskScreensForTrait:RNSWindowTraitOrientation
+                                         includingModals:YES
+                                        inViewController:vc];
+}
+
 @end

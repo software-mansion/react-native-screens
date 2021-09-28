@@ -20,5 +20,6 @@
 + (BOOL)shouldAskScreensForTrait:(RNSWindowTrait)trait
                  includingModals:(BOOL)includingModals
                 inViewController:(UIViewController *)vc;
++ (BOOL)shouldAskScreensForScreenOrientationInViewController:(UIViewController *)vc;
 
 @end
