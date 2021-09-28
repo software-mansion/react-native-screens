@@ -581,7 +581,7 @@
 
 - (void)hideHeaderIfNecessary
 {
-  if (@available(iOS 11.0, *)) {
+  if (@available(iOS 13.0, *)) {
     NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
 
     if (currentIndex > 0 && [self.view.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
