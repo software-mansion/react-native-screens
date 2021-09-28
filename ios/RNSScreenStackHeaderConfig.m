@@ -21,16 +21,6 @@
 - (id<RCTImageCache>)imageCache;
 @end
 
-@interface RNSScreenStackHeaderSubview : UIView
-
-@property (nonatomic, weak) RCTBridge *bridge;
-@property (nonatomic, weak) UIView *reactSuperview;
-@property (nonatomic) RNSScreenStackHeaderSubviewType type;
-
-- (instancetype)initWithBridge:(RCTBridge *)bridge;
-
-@end
-
 @implementation RNSScreenStackHeaderSubview
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge

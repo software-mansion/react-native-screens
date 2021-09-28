@@ -1,3 +1,4 @@
+#import <React/RCTBridge.h>
 #import <React/RCTConvert.h>
 #import <React/RCTViewManager.h>
 
@@ -64,5 +65,15 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 @interface RNSScreenStackHeaderSubviewManager : RCTViewManager
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
+
+@end
+
+@interface RNSScreenStackHeaderSubview : UIView
+
+@property (nonatomic, weak) RCTBridge *bridge;
+@property (nonatomic, weak) UIView *reactSuperview;
+@property (nonatomic) RNSScreenStackHeaderSubviewType type;
+
+- (instancetype)initWithBridge:(RCTBridge *)bridge;
 
 @end

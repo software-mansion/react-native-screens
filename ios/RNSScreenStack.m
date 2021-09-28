@@ -489,6 +489,30 @@
   [self setModalViewControllers:modalControllers];
 }
 
+// By default, the header buttons that are not inside the native hit area
+// cannot be clicked, so we check it by ourselves
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+  // headerConfig should be the first subview of the topmost screen
+  UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
+  if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]] &&
+      !((RNSScreenStackHeaderConfig *)headerConfig).hide) {
+    for (UIView *subview in [headerConfig reactSubviews]) {
+      if (((RNSScreenStackHeaderSubview *)subview).type == RNSScreenStackHeaderSubviewTypeLeft ||
+          ((RNSScreenStackHeaderSubview *)subview).type == RNSScreenStackHeaderSubviewTypeRight) {
+        // we wrap the headerLeft/Right component in a UIBarButtonItem
+        // so we need to use the only subview of it to retrieve the correct view
+        UIView *headerComponent = subview.subviews.firstObject;
+        CGPoint convertedPoint = [self convertPoint:point toView:headerComponent];
+        if (CGRectContainsPoint(headerComponent.frame, convertedPoint)) {
+          return headerComponent;
+        }
+      }
+    }
+  }
+  return [super hitTest:point withEvent:event];
+}
+
 - (void)layoutSubviews
 {
   [super layoutSubviews];
