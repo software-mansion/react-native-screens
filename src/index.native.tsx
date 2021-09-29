@@ -346,11 +346,6 @@ module.exports = {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
   get SearchBar() {
-    if (Platform.OS !== 'ios') {
-      console.warn('Importing SearchBar is only valid on iOS devices.');
-      return View;
-    }
-
     return ScreensNativeModules.NativeSearchBar;
   },
   get FullWindowOverlay() {

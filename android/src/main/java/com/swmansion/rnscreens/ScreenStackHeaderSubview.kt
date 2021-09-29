@@ -31,6 +31,6 @@ class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context)
     }
 
     enum class Type {
-        LEFT, CENTER, RIGHT, BACK
+        LEFT, CENTER, RIGHT, BACK, SEARCH_BAR
     }
 }

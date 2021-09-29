@@ -262,7 +262,7 @@ function renderHeaderConfig(
     );
   }
 
-  if (Platform.OS === 'ios' && options.searchBar) {
+  if (options.searchBar) {
     children.push(
       <ScreenStackHeaderSearchBarView>
         <SearchBar {...options.searchBar} />
