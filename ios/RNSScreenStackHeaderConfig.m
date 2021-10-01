@@ -138,7 +138,7 @@
   }
 }
 
-- (void)layoutNavigtationController
+- (void)layoutNavigationControllerView
 {
   UIViewController *vc = _screenView.controller;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
@@ -151,7 +151,7 @@
   [super didSetProps:changedProps];
   [self updateViewControllerIfNeeded];
   if ([changedProps containsObject:@"translucent"]) {
-    [self layoutNavigtationController];
+    [self layoutNavigationController];
   }
 }
 
