@@ -143,7 +143,6 @@
   UIViewController *vc = _screenView.controller;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
   [navctr.view setNeedsLayout];
-  [navctr.view layoutIfNeeded];
 }
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
