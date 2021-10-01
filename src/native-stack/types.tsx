@@ -20,6 +20,8 @@ import {
 export type NativeStackNavigationEventMap = {
   /**
    * Event which fires when the screen appears.
+   *
+   * @deprecated Use `transitionEnd` event with `data.closing: false` instead.
    */
   appear: { data: undefined };
   /**
@@ -80,9 +82,28 @@ export type NativeStackNavigationOptions = {
    */
   contentStyle?: StyleProp<ViewStyle>;
   /**
+   * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  customAnimationOnSwipe?: boolean;
+  /**
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
+  /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
+  /**
+   * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
+   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  fullScreenSwipeEnabled?: boolean;
   /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    * Only supported on iOS.
@@ -223,6 +244,14 @@ export type NativeStackNavigationOptions = {
    */
   headerTranslucent?: boolean;
   /**
+   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
+  nativeBackButtonDismissalEnabled?: boolean;
+  /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
    * - "push" – the new screen will perform push animation.
@@ -253,9 +282,10 @@ export type NativeStackNavigationOptions = {
    * The following values are currently supported:
    * - "default" – uses a platform default animation
    * - "fade" – fades screen in or out
+   * - "fade_from_bottom" – performs a fade from bottom animation
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
-   * - `slide_from_bottom` – performs a slide from bottom animation (iOS only)
+   * - "slide_from_bottom" – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation

@@ -1,14 +1,15 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface Props {
   title: string;
   onPress: () => void;
+  testID?: string;
 }
 
-export const ListItem = ({title, onPress}: Props): JSX.Element => {
+export const ListItem = ({ title, onPress, testID }: Props): JSX.Element => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} testID={testID}>
       <View style={styles.container}>
         <Text style={styles.title}>{title}</Text>
       </View>

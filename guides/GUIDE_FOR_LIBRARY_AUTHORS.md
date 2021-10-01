@@ -36,9 +36,24 @@ Screen stack component expects one or more `Screen` components as direct childre
 
 Below is the list of additional properties that can be used for `Screen` component:
 
+### `customAnimationOnSwipe` (iOS only)
+
+Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+
+### `fullScreenSwipeEnabled` (iOS only)
+
+Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
+
 ### `gestureEnabled` (iOS only)
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
+
+### `nativeBackButtonDismissalEnabled` (Android only)
+
+Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+
+Defaults to `false`.
 
 ### `onAppear`
 
@@ -51,6 +66,10 @@ A callback that gets called when the current screen disappears.
 ### `onDismissed`
 
 A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+
+### `onHeaderBackButtonClicked` (Android only)
+
+A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`.
 
 ### `onWillAppear`
 
@@ -87,8 +106,10 @@ Allows for the customization of how the given screen should appear/disappear whe
 
 - `"default"` – uses a platform default animation
 - `"fade"` – fades screen in or out
+- `fade_from_bottom` – performs a fade from bottom animation
 - `"flip"` – flips the screen, requires `stackPresentation: "modal"` (iOS only)
 - `"simple_push"` – performs a default animation, but without shadow and native header transition (iOS only)
+- `"slide_from_bottom"` - slide in the new screen from bottom to top
 - `"slide_from_right"` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `"slide_from_left"` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
 - `"none"` – the screen appears/disappears without an animation
@@ -147,6 +168,76 @@ Defaults to `auto`.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
+#### `useTransitionProgress`
+
+Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
+- `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
+- `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
+- `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
+
+```jsx
+import {Animated} from 'react-native';
+import {useTransitionProgress} from 'react-native-screens';
+
+function Home() {
+  const {progress} = useTransitionProgress();
+
+  const opacity = progress.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1.0, 0.0 ,1.0],
+    extrapolate: 'clamp',
+  });
+
+  return (
+    <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+  );
+}
+```
+
+#### `useReanimatedTransitionProgress`
+
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
+- `progress` - between `0.0` and `1.0` with the progress of the current transition.
+- `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
+- `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
+
+In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
+
+```jsx
+import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
+
+export default function App() {
+  return (
+    <ReanimatedScreenProvider>
+      <YourApp />
+    </ReanimatedScreenProvider>
+  );
+}
+```
+
+Then you can use `useReanimatedTransitionProgress` to get the shared values:
+
+```jsx
+import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
+import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
+
+function Home() {
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
+
+  return (
+    <Animated.View style={reaStyle} />
+  );
+}
+```
+
 ## `<ScreenStackHeaderConfig>`
 
 The config component is expected to be rendered as a direct child of `<Screen>`. It provides an ability to configure native navigation header that gets rendered as a part of the native screen stack. The component acts as a "virtual" element that is not directly rendered under `Screen`. You can use its properties to customize platform native header for the parent screen and also render react-native components that you'd like to be displayed inside the header (e.g. in the title are or on the side).
@@ -162,6 +253,7 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 
 - `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences`.
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
+- `cancelButtonText` - The text to be used instead of default `Cancel` button text.
 - `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`.
 - `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`.
 - `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`.
@@ -171,6 +263,7 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `onFocus` - A callback that gets called when search bar has received focus.
 - `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
+- `textColor` - The search field text color.
 
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
@@ -207,6 +300,10 @@ Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenSt
 ### `direction`
 
 Controls whether the stack should be in `rtl` or `ltr` form.
+
+#### `disableBackButtonMenu` (iOS only)
+
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 
 ### `hidden`
 
@@ -315,3 +412,7 @@ Check [LifecycleAwareView.java](https://github.com/kmagiera/react-native-screens
 In addition to that, you will need to register for receiving these updates. This can be done using [`LifecycleHelper.register`](https://github.com/kmagiera/react-native-screens/blob/master/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L50).
 Remember to call [`LifecycleHelper.unregister`](https://github.com/kmagiera/react-native-screens/blob/master/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L59) before the view is dropped.
 Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/kmagiera/react-native-screens/blob/master/Example/android/app/src/main/java/com/swmansion/rnscreens/example/SampleLifecycleAwareViewManager.java) from our example app to see what are the best ways of using the above methods.
+
+## Android hardware back button
+
+In order to properly handle the hardware back button on Android, you should implement the navigation logic concerning it. You can see an example of how it is done in `react-navigation` here: https://github.com/react-navigation/react-navigation/blob/6cba517b74f5fd092db21d5574b558ef2d80897b/packages/native/src/useBackButton.tsx.

@@ -1,5 +1,5 @@
-#import <React/RCTViewManager.h>
 #import <React/RCTConvert.h>
+#import <React/RCTViewManager.h>
 
 #import "RNSScreen.h"
 #import "RNSSearchBar.h"
@@ -29,11 +29,14 @@
 @property (nonatomic, retain) UIColor *largeTitleColor;
 @property (nonatomic) BOOL hideBackButton;
 @property (nonatomic) BOOL backButtonInCustomView;
+@property (nonatomic) BOOL disableBackButtonMenu;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
 @property (nonatomic) UISemanticContentAttribute direction;
 
-+ (void)willShowViewController:(UIViewController *)vc animated:(BOOL)animated withConfig:(RNSScreenStackHeaderConfig*)config;
++ (void)willShowViewController:(UIViewController *)vc
+                      animated:(BOOL)animated
+                    withConfig:(RNSScreenStackHeaderConfig *)config;
 
 @end
 

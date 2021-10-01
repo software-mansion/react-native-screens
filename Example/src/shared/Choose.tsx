@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export const Choose = (): JSX.Element => {
   const navigation = useNavigation();
@@ -9,12 +9,12 @@ export const Choose = (): JSX.Element => {
       <Text style={styles.heading}>Choose wisely</Text>
       <View style={styles.row}>
         <TouchableOpacity
-          style={{...styles.button, backgroundColor: 'dodgerblue'}}
+          style={{ ...styles.button, backgroundColor: 'dodgerblue' }}
           onPress={() => navigation.goBack()}>
           <Text style={styles.buttonText}>Blue pill</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{...styles.button, backgroundColor: 'crimson'}}
+          style={{ ...styles.button, backgroundColor: 'crimson' }}
           onPress={() => navigation.goBack()}>
           <Text style={styles.buttonText}>Red pill</Text>
         </TouchableOpacity>

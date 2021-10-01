@@ -39,11 +39,13 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
 
   const searchBarOptions: SearchBarProps = {
     barTintColor: 'powderblue',
+    textColor: 'red',
     hideWhenScrolling: true,
     obscureBackground: false,
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
+    cancelButtonText: 'Some text',
     onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
       setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),

@@ -1,8 +1,10 @@
 # Native Stack Navigator
 
+> **_NOTE:_**  This README is dedicated for using `native-stack` with React Navigation **v5**. For using `native-stack` in React Navigation **v6** please refer to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator).
+
 Provides a way for your app to transition between screens where each new screen is placed on top of a stack.
 
-By default the stack navigator is configured to have the familiar iOS and Android look & feel: new screens slide in from the right on iOS, fade in from the bottom on Android. On iOS, the stack navigator can also be configured to a modal style where screens slide in from the bottom.
+By default the stack navigator is configured to have the familiar iOS and Android look & feel: new screens slide in from the right on iOS, fade in and scale from center on Android. On iOS, the stack navigator can also be configured to a modal style where screens slide in from the bottom.
 
 This navigator uses native navigation primitives (`UINavigationController` on iOS and `Fragment` on Android) for navigation under the hood. The main difference from React Navigation's JS-based [stack navigator](https://reactnavigation.org/docs/stack-navigator.html) is that the JS-based navigator re-implements animations and gestures while the native stack navigator relies on the platform primitives for animations and gestures. You should use this navigator if you want native feeling and performance for navigation and don't need much customization, as the customization options of this navigator are limited.
 
@@ -65,15 +67,25 @@ Boolean indicating whether to hide the back button while using `headerLeft` func
 
 Style object for the scene content.
 
+#### `customAnimationOnSwipe` (iOS only)
+
+Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+
 #### `direction`
 
 String that applies `rtl` or `ltr` form to the stack. On Android, you have to add `android:supportsRtl="true"` in the manifest of your app to enable `rtl`. On Android, if you set the above flag in the manifest, the orientation changes without the need to do it programmatically if the phone has `rtl` direction enabled. On iOS, the direction defaults to `ltr`, and only way to change it is via this prop.
 
-#### `gestureEnabled`
+#### `disableBackButtonMenu` (iOS only)
 
-Whether you can use gestures to dismiss this screen. Defaults to `true`,
+Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 
-Gestures are only supported on iOS.
+#### `fullScreenSwipeEnabled` (iOS only)
+
+Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
+
+#### `gestureEnabled` (iOS only)
+
+Whether you can use gestures to dismiss this screen. Defaults to `true`.
 
 #### `headerBackTitle`
 
@@ -86,9 +98,9 @@ Style object for header back title. Supported properties:
 - `fontFamily`
 - `fontSize`
 
-#### `headerBackTitleVisible`
+#### `headerBackTitleVisible` (iOS only)
 
-Whether the back button title should be visible or not. Defaults to `true`. Only supported on iOS.
+Whether the back button title should be visible or not. Defaults to `true`.
 
 #### `headerCenter`
 
@@ -108,13 +120,11 @@ Style object for the large header. Supported properties:
 
 - `backgroundColor`
 
-#### `headerLargeTitle`
+#### `headerLargeTitle` (iOS only)
 
 Boolean used to set a native property to prefer a large title header (like in iOS setting).
 
 For the large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`. If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
-
-Only supported on iOS.
 
 #### `headerLargeTitleHideShadow` (iOS only)
 
@@ -145,7 +155,7 @@ Whether to show or hide the header for the screen. The header is shown by defaul
 Style object for the header. Supported properties:
 
 - `backgroundColor`
-- `blurEffect` (iOS only). Possible values can be checked in `index.d.ts` file.
+- `blurEffect` (iOS only).
 
 #### `headerTintColor`
 
@@ -164,13 +174,20 @@ Style object for header title. Supported properties:
 - `fontWeight`
 - `color`
 
-#### `headerTopInsetEnabled`
+#### `headerTopInsetEnabled` (Android only)
 
-A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque. Only supported on Android.
+A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque.
 
 #### `headerTranslucent`
 
 Boolean indicating whether the navigation bar is translucent.
+
+#### `nativeBackButtonDismissalEnabled` (Android only)
+
+Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+
+Defaults to `false`.
 
 #### `replaceAnimation`
 
@@ -185,14 +202,15 @@ Defaults to `pop`.
 
 How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
 
-- `default` - Uses a platform default animation.
-- `fade` - Fades screen in or out.
-- `flip` – Flips the screen, requires stackPresentation: `modal` (iOS only)
+- `default` - uses a platform default animation
+- `fade` - fades screen in or out.
+- `fade_from_bottom` – performs a fade from bottom animation
+- `flip` – flips the screen, requires stackPresentation: `modal` (iOS only)
 - `simple_push` – performs a default animation, but without shadow and native header transition (iOS only)
-- `slide_from_bottom` – performs a slide from bottom animation (iOS only)
+- `slide_from_bottom` – performs a slide from bottom animation
 - `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-- `none` - The screen appears/disappears without an animation.
+- `none` - the screen appears/disappears without an animation.
 
 Defaults to `default`.
 
@@ -215,6 +233,76 @@ Using `containedModal` and `containedTransparentModal` with other types of modal
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.
+
+#### `useTransitionProgress`
+
+Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
+- `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
+- `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
+- `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
+
+```jsx
+import {Animated} from 'react-native';
+import {useTransitionProgress} from 'react-native-screens';
+
+function Home() {
+  const {progress} = useTransitionProgress();
+
+  const opacity = progress.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1.0, 0.0 ,1.0],
+    extrapolate: 'clamp',
+  });
+
+  return (
+    <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+  );
+}
+```
+
+#### `useReanimatedTransitionProgress`
+
+A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
+- `progress` - between `0.0` and `1.0` with the progress of the current transition.
+- `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
+- `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
+
+In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
+
+```jsx
+import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
+
+export default function App() {
+  return (
+    <ReanimatedScreenProvider>
+      <YourApp />
+    </ReanimatedScreenProvider>
+  );
+}
+```
+
+Then you can use `useReanimatedTransitionProgress` to get the shared values:
+
+```jsx
+import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
+import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
+
+function Home() {
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
+
+  return (
+    <Animated.View style={reaStyle} />
+  );
+}
+```
 
 ### Status bar and orientation managment
 
@@ -303,6 +391,10 @@ The search field background color.
 
 By default bar tint color is translucent.
 
+#### `cancelButtonText`
+
+The text to be used instead of default `Cancel` button text.
+
 #### `hideNavigationBar`
 
 Boolean indicating whether to hide the navigation bar during searching.
@@ -361,11 +453,17 @@ Text displayed when search field is empty.
 
 Defaults to an empty string.
 
+#### `textColor`
+
+The search field text color.
+
 ### Events
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:
 
-#### `appear`
+#### `appear` - deprecated
+
+Use `transitionEnd` event with `data.closing: false` instead.
 
 Event which fires when the screen appears.
 
@@ -490,21 +588,13 @@ navigation.popToTop();
 
 ## Additional options
 
-### Measuring header's height on iOS
+### Measuring header's height
 
-Using translucent header on iOS can result in the need of measuring your header's height. In order to do it, you can use `react-native-safe-area-context`. It can be measured like this:
-```js
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+To measure header's height, you can use `useHeaderHeight` hook.
 
-...
-
-const statusBarInset = useSafeAreaInsets().top; // inset of the status bar
-const smallHeaderInset = statusBarInset + 44; // inset to use for a small header since it's frame is equal to 44 + the frame of status bar
-const largeHeaderInset = statusBarInset + 96; // inset to use for a large header since it's frame is equal to 96 + the frame of status bar
+```tsx
+import {useHeaderHeight} from 'react-native-screens/native-stack';
 ```
-
-You can also see an example of using these values with a `ScrollView` here: https://snack.expo.io/@wolewicki/ios-header-height.
-
 
 ## Example
 

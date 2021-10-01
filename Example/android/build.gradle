@@ -1,12 +1,21 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext {
+        buildToolsVersion = "30.0.2"
+        minSdkVersion = 21
+        compileSdkVersion = 30
+        targetSdkVersion = 30
+        ndkVersion = "20.1.5948944"
+        kotlinVersion = "1.4.10"
+    }
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:4.1.0')
+        classpath('com.android.tools.build:gradle:4.2.1')
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
@@ -18,15 +27,11 @@ allprojects {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
         }
-        jcenter()
+        maven {
+            // All of Detox' artifacts are provided via the npm module
+            url "$rootDir/../node_modules/detox/Detox-android"
+        }
+        mavenCentral()
         maven { url 'https://www.jitpack.io' }
     }
-}
-
-ext {
-    buildToolsVersion = "29.0.3"
-    minSdkVersion = 21
-    compileSdkVersion = 29
-    targetSdkVersion = 29
-    ndkVersion = "20.1.5948944"
 }

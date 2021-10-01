@@ -8,13 +8,12 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import {enableScreens} from 'react-native-screens';
-import {NavigationContainer} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import RNRestart from 'react-native-restart';
 
-import {ListItem, SettingsSwitch} from './src/shared';
+import { ListItem, SettingsSwitch } from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import StackPresentation from './src/screens/StackPresentation';
@@ -27,8 +26,6 @@ import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
 import Events from './src/screens/Events';
-
-enableScreens();
 
 if (Platform.OS === 'android') {
   StatusBar.setTranslucent(true);
@@ -112,7 +109,7 @@ interface MainScreenProps {
   navigation: StackNavigationProp<RootStackParamList, 'Main'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
   <ScrollView>
     <SafeAreaView>
       <SettingsSwitch
@@ -124,12 +121,15 @@ const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
           RNRestart.Restart();
         }}
       />
-      <Text style={styles.label}>Examples</Text>
+      <Text style={styles.label} testID="root-screen-examples-header">
+        Examples
+      </Text>
       {Object.keys(SCREENS)
         .filter((name) => SCREENS[name].type === 'example')
         .map((name) => (
           <ListItem
             key={name}
+            testID={`root-screen-example-${name}`}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
           />
@@ -156,7 +156,7 @@ const ExampleApp = (): JSX.Element => (
       }}>
       <Stack.Screen
         name="Main"
-        options={{title: '📱 React Native Screens Examples'}}
+        options={{ title: '📱 React Native Screens Examples' }}
         component={MainScreen}
       />
       {Object.keys(SCREENS).map((name) => (
@@ -164,7 +164,7 @@ const ExampleApp = (): JSX.Element => (
           key={name}
           name={name}
           getComponent={() => SCREENS[name].component}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
       ))}
     </Stack.Navigator>

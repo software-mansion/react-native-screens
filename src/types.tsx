@@ -1,7 +1,6 @@
 import {
   Animated,
   NativeSyntheticEvent,
-  NativeTouchEvent,
   ViewProps,
   View,
   TargetedEvent,
@@ -19,6 +18,7 @@ export type StackPresentationTypes =
 export type StackAnimationTypes =
   | 'default'
   | 'fade'
+  | 'fade_from_bottom'
   | 'flip'
   | 'none'
   | 'simple_push'
@@ -63,42 +63,86 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type TransitionProgressEventType = {
+  progress: number;
+  closing: number;
+  goingForward: number;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
   /**
+   * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  customAnimationOnSwipe?: boolean;
+  /**
    * All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
   /**
+   * Internal boolean used to not attach events used only by native-stack. It prevents non native-stack navigators from sending transition progress from their Screen components.
+   */
+  isNativeStack?: boolean;
+  /**
+   * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
+   * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  fullScreenSwipeEnabled?: boolean;
+  /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
-   * Only supported on iOS.
    *
    * @platform ios
    */
   gestureEnabled?: boolean;
   /**
+   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
+  nativeBackButtonDismissalEnabled?: boolean;
+  /**
    * A callback that gets called when the current screen appears.
    */
-  onAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   onComponentRef?: (view: unknown) => void;
   /**
    * A callback that gets called when the current screen disappears.
    */
-  onDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
+   * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
-  onDismissed?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
+   * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
+   *
+   * @platform android
+   */
+  onHeaderBackButtonClicked?: () => void;
+  /**
+   * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
+   */
+  onTransitionProgress?: (
+    e: NativeSyntheticEvent<TransitionProgressEventType>
+  ) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
    */
-  onWillAppear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onWillAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
-  onWillDisappear?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   ref?: React.Ref<View>;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
@@ -125,9 +169,10 @@ export interface ScreenProps extends ViewProps {
    * The following values are currently supported:
    * - "default" – uses a platform default animation
    * - "fade" – fades screen in or out
+   * - "fade_from_bottom" – performs a fade from bottom animation
    * - "flip" – flips the screen, requires stackPresentation: "modal" (iOS only)
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
-   * - `slide_from_bottom` – performs a slide from bottom animation (iOS only)
+   * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
@@ -177,6 +222,10 @@ export interface ScreenContainerProps extends ViewProps {
    * A prop that gives users an option to switch between using Screens for the navigator (container). All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
+  /**
+   * A prop to be used in navigators always showing only one screen (providing only `0` or `2` `activityState` values) for better implementation of `ScreenContainer` on iOS.
+   */
+  hasTwoStates?: boolean;
 }
 
 export interface ScreenStackProps extends ViewProps {
@@ -184,7 +233,7 @@ export interface ScreenStackProps extends ViewProps {
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
-  onFinishTransitioning?: (e: NativeSyntheticEvent<NativeTouchEvent>) => void;
+  onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -198,9 +247,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   backgroundColor?: string;
   /**
    * Title to display in the back button.
-   * Only supported on iOS.
-   *
-   *
+   * @platform ios.
    */
   backTitle?: string;
   /**
@@ -230,6 +277,11 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Whether the stack should be in rtl or ltr form.
    */
   direction?: 'rtl' | 'ltr';
+  /**
+   * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
+   * @platform ios
+   */
+  disableBackButtonMenu?: boolean;
   /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
@@ -316,9 +368,18 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
 
 export interface SearchBarProps {
   /**
-   * Indicates whether to to obscure the underlying content
+   * The auto-capitalization behavior
    */
-  obscureBackground?: boolean;
+  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  /**
+   * The search field background color
+   */
+  barTintColor?: string;
+  /**
+   * The text to be used instead of default `Cancel` button text
+   */
+  cancelButtonText?: string;
+
   /**
    * Indicates whether to hide the navigation bar
    */
@@ -327,26 +388,29 @@ export interface SearchBarProps {
    * Indicates whether to hide the search bar when scrolling
    */
   hideWhenScrolling?: boolean;
+
   /**
-   * The auto-capitalization behavior
+   * Indicates whether to to obscure the underlying content
    */
-  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  obscureBackground?: boolean;
   /**
-   * Text displayed when search field is empty
+   * A callback that gets called when search bar has lost focus
    */
-  placeholder?: string;
-  /**
-   * The search field background color
-   */
-  barTintColor?: string;
-  /**
-   * A callback that gets called when the text changes. It receives the current text value of the search bar.
-   */
-  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the cancel button is pressed
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+
+  /**
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
+   */
+  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+
+  /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
@@ -354,11 +418,11 @@ export interface SearchBarProps {
     e: NativeSyntheticEvent<TextInputFocusEventData>
   ) => void;
   /**
-   * A callback that gets called when search bar has received focus
+   * Text displayed when search field is empty
    */
-  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  placeholder?: string;
   /**
-   * A callback that gets called when search bar has lost focus
+   * The search field text color
    */
-  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  textColor?: string;
 }
