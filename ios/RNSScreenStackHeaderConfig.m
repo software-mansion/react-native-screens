@@ -151,7 +151,7 @@
   [super didSetProps:changedProps];
   [self updateViewControllerIfNeeded];
   if ([changedProps containsObject:@"translucent"]) {
-    [self layoutNavigationController];
+    [self layoutNavigationControllerView];
   }
 }
 
