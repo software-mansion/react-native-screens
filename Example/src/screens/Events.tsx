@@ -1,11 +1,11 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, I18nManager, Text, Alert} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, I18nManager, Text, Alert } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {createStackNavigator} from '@react-navigation/stack';
-import {Button, ToastProvider, useToast} from '../shared';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Button, ToastProvider, useToast } from '../shared';
 
 type StackParamList = {
   Main: undefined;
@@ -21,8 +21,8 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
-  <View style={{...styles.container, backgroundColor: 'aliceblue'}}>
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+  <View style={{ ...styles.container, backgroundColor: 'aliceblue' }}>
     <Button
       title="focus and blur"
       onPress={() => navigation.navigate('NavigationEvents')}
@@ -49,18 +49,21 @@ const ScreensEventsScreen = ({
   const toast = useToast();
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('transitionStart', ({data}) => {
-      toast.push({
-        message: `transitionStart: ${data.closing ? 'closing' : 'opening'}`,
-        backgroundColor: 'orange',
-      });
-    });
+    const unsubscribe = navigation.addListener(
+      'transitionStart',
+      ({ data }) => {
+        toast.push({
+          message: `transitionStart: ${data.closing ? 'closing' : 'opening'}`,
+          backgroundColor: 'orange',
+        });
+      }
+    );
 
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('transitionEnd', ({data}) => {
+    const unsubscribe = navigation.addListener('transitionEnd', ({ data }) => {
       toast.push({
         message: `transitionEnd: ${data.closing ? 'closing' : 'opening'}`,
         backgroundColor: 'dodgerblue',
@@ -71,7 +74,7 @@ const ScreensEventsScreen = ({
   }, [navigation]);
 
   return (
-    <View style={{...styles.container, backgroundColor: 'lavenderblush'}}>
+    <View style={{ ...styles.container, backgroundColor: 'lavenderblush' }}>
       <Button
         title="Navigate to next screen"
         onPress={() => navigation.navigate('Next')}
@@ -91,18 +94,21 @@ const NavigationEventsScreen = ({
   const toast = useToast();
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('transitionStart', ({data}) => {
-      toast.push({
-        message: `transitionStart: ${data.closing ? 'closing' : 'opening'}`,
-        backgroundColor: 'orange',
-      });
-    });
+    const unsubscribe = navigation.addListener(
+      'transitionStart',
+      ({ data }) => {
+        toast.push({
+          message: `transitionStart: ${data.closing ? 'closing' : 'opening'}`,
+          backgroundColor: 'orange',
+        });
+      }
+    );
 
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('transitionEnd', ({data}) => {
+    const unsubscribe = navigation.addListener('transitionEnd', ({ data }) => {
       toast.push({
         message: `transitionEnd: ${data.closing ? 'closing' : 'opening'}`,
         backgroundColor: 'dodgerblue',
@@ -135,7 +141,7 @@ const NavigationEventsScreen = ({
   }, [navigation]);
 
   return (
-    <View style={{...styles.container, backgroundColor: 'lavenderblush'}}>
+    <View style={{ ...styles.container, backgroundColor: 'lavenderblush' }}>
       <Button
         title="Navigate to next screen"
         onPress={() => navigation.navigate('Next')}
@@ -155,7 +161,7 @@ interface HomeScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Home'>;
 }
 
-const HomeScreen = ({navigation}: HomeScreenProps): JSX.Element => (
+const HomeScreen = ({ navigation }: HomeScreenProps): JSX.Element => (
   <View style={styles.container}>
     <Button
       title="Go to details"
@@ -169,7 +175,7 @@ interface DetailsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Details'>;
 }
 
-const DetailsScreen = ({navigation}: DetailsScreenProps): JSX.Element => {
+const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       Alert.alert('You went to details screen.');
@@ -233,7 +239,7 @@ const App = (): JSX.Element => (
       <NavigationStack.Screen
         name="Main"
         component={MainScreen}
-        options={{title: 'Simple Native Stack'}}
+        options={{ title: 'Simple Native Stack' }}
       />
       <Stack.Screen name="NativeEvents" component={NativeNavigator} />
       <Stack.Screen name="NavigationEvents" component={NavigationNavigator} />
