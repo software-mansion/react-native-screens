@@ -16,8 +16,17 @@ module.exports = {
   },
 
   settings: {
-    'import/core-modules': ['react-native-screens', 'react-native-screens/native-stack', 'react-native-screens/createNativeStackNavigator', 'react-native-screens/reanimated'],
-    'import/ignore': ['node_modules/react-native/index\\.js$'],
+    'import/core-modules': [
+      'react-native-screens',
+      'react-native-screens/native-stack',
+      'react-native-screens/createNativeStackNavigator',
+      'react-native-screens/reanimated',
+    ],
+    'import/ignore': [
+      'node_modules/react-native/index\\.js$',
+      'node_modules/react-native/Libraries/Components/View/ReactNativeStyleAttributes.js',
+      'node_modules/react-native/Libraries/ReactNative/AppContainer.js',
+    ],
     'import/resolver': {
       node: {
         paths: ['src'],

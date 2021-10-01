@@ -17,7 +17,6 @@
 		2DCD954D1E0B4F2C00145EB5 /* TestsExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TestsExampleTests.m */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		D52DF6CF10F670A639011FB6 /* libPods-TestsExample-TestsExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9D0418D614033220D475C24 /* libPods-TestsExample-TestsExampleTests.a */; };
-		F72A47455DF6241231140CB6 /* libPods-TestsExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87A478D4B5C17458F81AEAD7 /* libPods-TestsExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,7 +73,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F72A47455DF6241231140CB6 /* libPods-TestsExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

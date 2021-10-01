@@ -6942,14 +6942,13 @@ react-native-paper@^4.3.1:
     color "^3.1.2"
     react-native-safe-area-view "^0.14.9"
 
-react-native-reanimated@^2.3.0-alpha.2:
-  version "2.3.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.3.0-alpha.2.tgz#2bd0655f7a3b90606f93c59199a99885ee72b745"
-  integrity sha512-SpzW1rPMjpy7dMEKo30873pmgj0cgczBgUHvrOKKCCPJbaQXR6w6pOGrTW5M6BQtM8zpIPPwSJN+p3G9W49aiA==
+react-native-reanimated@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.2.2.tgz#8bc81c7ee93d599991507bb826050a5eeee1e7f2"
+  integrity sha512-Lfv4ogbNLU9x3DqhXUFza9pnzyTvPrw5xGC1wWA6aGXqZgyaikNLgC5dNWzxVbfEwRdOuLPFsai3LAcIM92TCg==
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.10.4"
-    invariant "^2.2.4"
-    lodash.isequal "^4.5.0"
+    fbjs "^3.0.0"
     mockdate "^3.0.2"
     string-hash-64 "^1.0.3"
 
