@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <!-- 
+    Due to the mono-repo setup in this repo, we should ensure that when building the example project the projects
+    are pointing to the same place for react-native and react-native-windows.
+    -->
+
+  <PropertyGroup>
+    <ReactNativeWindowsDir>$(MSBuildThisFileDirectory)\Example\node_modules\react-native-windows\</ReactNativeWindowsDir>
+    <ReactNativePackageDir>$(MSBuildThisFileDirectory)\Example\node_modules\react-native\</ReactNativePackageDir>
+  </PropertyGroup>
+
+</Project>
