@@ -141,7 +141,7 @@
 - (void)layoutNavigationControllerView
 {
   UIViewController *vc = _screenView.controller;
-  UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
+  UINavigationController *navctr = vc.navigationController;
   [navctr.view setNeedsLayout];
 }
 
