@@ -118,6 +118,27 @@
   _screenView = nil;
 }
 
+// this method is never invoked by the system since this view
+// is not added to native view hierarchy so we can apply our logic
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+  for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
+    if (subview.type == RNSScreenStackHeaderSubviewTypeLeft || subview.type == RNSScreenStackHeaderSubviewTypeRight) {
+      // we wrap the headerLeft/Right component in a UIBarButtonItem
+      // so we need to use the only subview of it to retrieve the correct view
+      UIView *headerComponent = subview.subviews.firstObject;
+      // we convert the point to RNSScreenStackView since it always contains the header inside it
+      CGPoint convertedPoint = [_screenView.reactSuperview convertPoint:point toView:headerComponent];
+
+      UIView *hitTestResult = [headerComponent hitTest:convertedPoint withEvent:event];
+      if (hitTestResult != nil) {
+        return hitTestResult;
+      }
+    }
+  }
+  return nil;
+}
+
 - (void)updateViewControllerIfNeeded
 {
   UIViewController *vc = _screenView.controller;
