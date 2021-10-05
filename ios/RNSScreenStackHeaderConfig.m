@@ -138,10 +138,23 @@
   }
 }
 
+- (void)layoutNavigationControllerView
+{
+  UIViewController *vc = _screenView.controller;
+  UINavigationController *navctr = vc.navigationController;
+  [navctr.view setNeedsLayout];
+}
+
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
   [self updateViewControllerIfNeeded];
+  // We need to layout navigation controller view after translucent prop changes, because otherwise
+  // frame of RNSScreen will not be changed and screen content will remain the same size.
+  // For more details look at https://github.com/software-mansion/react-native-screens/issues/1158
+  if ([changedProps containsObject:@"translucent"]) {
+    [self layoutNavigationControllerView];
+  }
 }
 
 - (void)didUpdateReactSubviews
