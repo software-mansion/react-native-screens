@@ -22,7 +22,7 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
-    val toolbar: RNSToolbar
+    val toolbar: Toolbar
     var mTitle: String? = null
     private var mTitleColor = 0
     private var mTitleFontFamily: String? = null
@@ -231,8 +231,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             navigationIcon?.setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP)
         }
 
-        toolbar.updateMenu()
-
         // subviews
         for (i in toolbar.childCount - 1 downTo 0) {
             if (toolbar.getChildAt(i) is ScreenStackHeaderSubview) {
@@ -272,9 +270,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                     params.gravity = Gravity.CENTER_HORIZONTAL
                     toolbar.title = null
                 }
-                else -> {
-                    type
-                }
+                else -> {}
             }
             view.layoutParams = params
             toolbar.addView(view)
@@ -382,7 +378,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         mDirection = direction
     }
 
-    private class DebugMenuToolbar(context: Context) : RNSToolbar(context) {
+    private class DebugMenuToolbar(context: Context) : Toolbar(context) {
         override fun showOverflowMenu(): Boolean {
             (context.applicationContext as ReactApplication)
                 .reactNativeHost
@@ -394,7 +390,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     init {
         visibility = GONE
-        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context) else RNSToolbar(context)
+        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context) else Toolbar(context)
         mDefaultStartInset = toolbar.contentInsetStart
         mDefaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 
