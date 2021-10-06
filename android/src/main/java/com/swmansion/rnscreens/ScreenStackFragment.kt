@@ -4,13 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.Transformation
 import android.widget.LinearLayout
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.bridge.UiThreadUtil
@@ -142,7 +141,32 @@ class ScreenStackFragment : ScreenFragment {
             mAppBarLayout?.targetElevation = 0f
         }
         mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
+        setHasOptionsMenu(true)
         return view
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
+        if(screen?.headerConfig?.mTitle=="search"){
+            val item = menu.add(0, 0, 0, "")
+            val searchView = SearchView(context)
+            item.actionView = searchView
+            item.setShowAsAction(2)
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        if(screen?.headerConfig?.mTitle=="search"){
+            val item = menu.add(0, 0, 0, "")
+            val searchView = SearchView(context)
+            item.actionView = searchView
+            item.setShowAsAction(2)
+        }
+
+
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     fun canNavigateBack(): Boolean {

@@ -3,10 +3,6 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewParent
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
@@ -33,6 +29,7 @@ open class ScreenFragment : Fragment {
     lateinit var screen: Screen
     private val mChildScreenContainers: MutableList<ScreenContainer<*>> = ArrayList()
     private var shouldUpdateOnResume = false
+
     // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
     // due to progress value being already 0.0f
     private var mProgress = -1f
@@ -196,7 +193,8 @@ open class ScreenFragment : Fragment {
                  - progress is 1 -> key 2
                  - progress is between 0 and 1 -> key 3
              */
-                val coalescingKey = (if (mProgress == 0.0f) 1 else if (mProgress == 1.0f) 2 else 3).toShort()
+                val coalescingKey =
+                    (if (mProgress == 0.0f) 1 else if (mProgress == 1.0f) 2 else 3).toShort()
                 val container: ScreenContainer<*>? = screen.container
                 val goingForward = if (container is ScreenStack) container.goingForward else false
                 (screen.context as ReactContext)

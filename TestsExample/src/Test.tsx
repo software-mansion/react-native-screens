@@ -15,7 +15,7 @@ export default function App() {
         <Stack.Screen
           name="First"
           component={First}
-          options={{searchBar: {}}}
+          options={{searchBar: {}, title: "search"}}
         />
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>
