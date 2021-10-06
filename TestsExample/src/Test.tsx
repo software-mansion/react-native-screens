@@ -15,7 +15,9 @@ export default function App() {
         <Stack.Screen
           name="First"
           component={First}
-          options={{searchBar: {}, title: "search"}}
+          options={{
+            searchBar: {},
+          }}
         />
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>
@@ -28,8 +30,21 @@ function First({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
+  const [isSearchBarVisible, setIsSearchBarVisible] = React.useState(true);
+  const toggleSearchBarButtonTitle = `${
+    isSearchBarVisible ? 'Hide' : 'Show'
+  } search bar`;
+  React.useEffect(() => {
+    navigation.setOptions({
+      searchBar: isSearchBarVisible ? {} : undefined,
+    });
+  }, [isSearchBarVisible]);
   return (
     <View style={{flex: 1, backgroundColor: 'red'}}>
+      <Button
+        title={toggleSearchBarButtonTitle}
+        onPress={() => setIsSearchBarVisible((prev) => !prev)}
+      />
       <Button
         title="Tap me for second screen"
         onPress={() => navigation.navigate('Second')}

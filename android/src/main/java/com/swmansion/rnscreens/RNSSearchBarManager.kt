@@ -7,7 +7,6 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.views.view.ReactViewGroup
 import com.facebook.react.views.view.ReactViewManager
-import javax.annotation.Nonnull
 
 @ReactModule(name = RNSSearchBarManager.REACT_CLASS)
 class RNSSearchBarManager : ReactViewManager() {
@@ -22,11 +21,6 @@ class RNSSearchBarManager : ReactViewManager() {
     @ReactProp(name = "autoCapitalize")
     fun setAutoCapitalize(view: RNSSearchBarView, autoCapitalize: Int) {
         view.searchView?.inputType = autoCapitalize
-    }
-
-    @Nonnull
-    protected fun createViewInstance(@Nonnull reactContext: ThemedReactContext?): RNSSearchBarView {
-        return RNSSearchBarView(reactContext)
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {

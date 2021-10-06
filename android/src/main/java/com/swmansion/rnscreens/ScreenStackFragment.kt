@@ -146,27 +146,37 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.clear()
-        if(screen?.headerConfig?.mTitle=="search"){
-            val item = menu.add(0, 0, 0, "")
-            val searchView = SearchView(context)
-            item.actionView = searchView
-            item.setShowAsAction(2)
-        }
+        updateToolbarMenu(menu)
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        updateToolbarMenu(menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun shouldShowSearchBar(): Boolean {
+        val config = screen.headerConfig
+        val numberOfSubViews = config?.configSubviewsCount ?: 0
+        if (config != null && numberOfSubViews > 0) {
+            for (i in 0 until numberOfSubViews) {
+                val subView = config.getConfigSubview((i))
+                if (subView.type == ScreenStackHeaderSubview.Type.SEARCH_BAR) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun updateToolbarMenu(menu: Menu) {
         menu.clear()
-        if(screen?.headerConfig?.mTitle=="search"){
-            val item = menu.add(0, 0, 0, "")
+        if (shouldShowSearchBar()) {
+            val item = menu.add( "")
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             val searchView = SearchView(context)
             item.actionView = searchView
-            item.setShowAsAction(2)
         }
-
-
-        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     fun canNavigateBack(): Boolean {
