@@ -5,6 +5,9 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -174,7 +177,7 @@ class ScreenStackFragment : ScreenFragment {
     private fun updateToolbarMenu(menu: Menu) {
         menu.clear()
         if (shouldShowSearchBar()) {
-            val item = menu.add( "")
+            val item = menu.add("")
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             val searchView = SearchView(context)
             item.actionView = searchView
