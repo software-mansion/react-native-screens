@@ -61,6 +61,7 @@ import Test1091 from './src/Test1091';
 import Test1096 from './src/Test1096';
 import Test1157 from './src/Test1157';
 import Test1162 from './src/Test1162';
+import Test from './src/Test';
 
 export default function App() {
   return (
