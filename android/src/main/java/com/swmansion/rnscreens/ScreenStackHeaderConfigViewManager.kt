@@ -130,7 +130,7 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     @ReactProp(name = "resetHeaderInsets")
-    fun setDirection(config: ScreenStackHeaderConfig, resetHeaderInsets: Boolean) {
+    fun setResetHeaderInsets(config: ScreenStackHeaderConfig, resetHeaderInsets: Boolean) {
         config.setResetHeaderInsets(resetHeaderInsets)
     }
 
