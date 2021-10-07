@@ -332,6 +332,11 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   largeTitleHideShadow?: boolean;
   /**
+   * Boolean that resets the insets of header subviews on Android in order to be able to place responsive content there.
+   * @platform android
+   */
+  resetHeaderInsets?: boolean;
+  /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;

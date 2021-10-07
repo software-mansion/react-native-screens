@@ -349,6 +349,11 @@ Customize the weight of the font to be used for the large title.
 
 Boolean that allows for disabling drop shadow under navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
 
+### `resetHeaderInsets` (Android only)
+
+Boolean that resets the insets of header subviews on Android in order to be able to place responsive content there.
+Defaults to `false`.
+
 ### `title`
 
 String representing screen title that will get rendered in the middle section of the header. On iOS the title is centered on the header while on Android it is aligned to the left and placed next to back button (if one is present).

@@ -200,6 +200,7 @@ function renderHeaderConfig(
     hideShadow,
     largeTitle,
     largeTitleHideShadow,
+    resetHeaderInsets,
     title,
     translucent,
   } = options;
@@ -232,6 +233,7 @@ function renderHeaderConfig(
     largeTitleFontSize: headerLargeTitleStyle?.fontSize,
     largeTitleFontWeight: headerLargeTitleStyle?.fontWeight,
     largeTitleHideShadow: largeTitleHideShadow || headerLargeTitleHideShadow,
+    resetHeaderInsets,
     title,
     titleColor: headerTitleStyle?.color || headerTintColor,
     titleFontFamily: headerTitleStyle?.fontFamily,

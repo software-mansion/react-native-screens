@@ -205,6 +205,11 @@ The following values are currently supported:
 
 Defaults to `pop`.
 
+#### `resetHeaderInsets` (Android only)
+
+Boolean that resets the insets of header subviews on Android in order to be able to place responsive content there.
+Defaults to `false`.
+
 #### `stackAnimation`
 
 How the given screen should appear/disappear when pushed or popped at the top of the stack. Possible values:
