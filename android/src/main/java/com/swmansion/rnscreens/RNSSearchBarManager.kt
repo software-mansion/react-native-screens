@@ -26,6 +26,7 @@ class RNSSearchBarManager : ReactViewManager() {
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         return MapBuilder.builder<String, Any>()
             .put("onChangeText", MapBuilder.of("registrationName", "onChangeText"))
+            .put("onTextSubmit", MapBuilder.of("registrationName", "onTextSubmit"))
             .put("onExpand", MapBuilder.of("registrationName", "onExpand"))
             .put("onCollapse", MapBuilder.of("registrationName", "onCollapse"))
             .build()

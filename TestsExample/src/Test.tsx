@@ -10,7 +10,9 @@ import {SearchBarProps} from 'react-native-screens';
 const Stack = createNativeStackNavigator();
 
 const searchBar: SearchBarProps = {
-  onChangeText: (e) => console.log(e.nativeEvent.text)
+  onChangeText: (e) => console.log(e.nativeEvent.text),
+  onTextSubmit: (e) => console.log(e.nativeEvent.text),
+  // autoCapitalize: 'characters'
 };
 
 export default function App() {

@@ -28,6 +28,8 @@ class ScreenStackFragment : ScreenFragment {
     private var mShadowHidden = false
     private var mIsTranslucent = false
 
+    var searchView: SearchView? = null
+
     var onTextChangeListener: SearchView.OnQueryTextListener? = null
 
     @SuppressLint("ValidFragment")
@@ -181,9 +183,9 @@ class ScreenStackFragment : ScreenFragment {
         if (shouldShowSearchBar()) {
             val item = menu.add("")
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            val searchView = SearchView(context)
+            searchView = SearchView(context)
             item.actionView = searchView
-            if(onTextChangeListener != null)searchView.setOnQueryTextListener(onTextChangeListener)
+            if(onTextChangeListener != null)searchView?.setOnQueryTextListener(onTextChangeListener)
         }
     }
 
