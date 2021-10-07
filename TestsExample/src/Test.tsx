@@ -5,8 +5,13 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
+import {SearchBarProps} from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
+
+const searchBar: SearchBarProps = {
+  onChangeText: (e) => console.log(e.nativeEvent.text)
+};
 
 export default function App() {
   return (
@@ -16,7 +21,7 @@ export default function App() {
           name="First"
           component={First}
           options={{
-            searchBar: {},
+            searchBar,
           }}
         />
         <Stack.Screen name="Second" component={Second} />
@@ -36,7 +41,7 @@ function First({
   } search bar`;
   React.useEffect(() => {
     navigation.setOptions({
-      searchBar: isSearchBarVisible ? {} : undefined,
+      searchBar: isSearchBarVisible ? searchBar : undefined,
     });
   }, [isSearchBarVisible]);
   return (
