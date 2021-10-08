@@ -597,6 +597,8 @@
     [((RNSScreenView *)self.view) notifyWillDisappear];
     if (self.transitionCoordinator.isInteractive) {
       _isSwiping = YES;
+      // keyboard should hide on swipe
+      [self.view endEditing:YES];
     }
   } else {
     _shouldNotify = NO;

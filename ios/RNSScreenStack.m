@@ -580,9 +580,6 @@
   [self cancelTouchesInParent];
   return YES;
 #else
-  // keyboard should hide on swipe
-  [_controller.view endEditing:YES];
-
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
     // `fullScreenSwipeEnabled` is set
