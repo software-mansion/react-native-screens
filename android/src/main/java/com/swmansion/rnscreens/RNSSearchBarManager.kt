@@ -1,6 +1,6 @@
 package com.swmansion.rnscreens
 
-import android.text.InputType
+import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -19,8 +19,31 @@ class RNSSearchBarManager : ReactViewManager() {
     }
 
     @ReactProp(name = "autoCapitalize")
-    fun setAutoCapitalize(view: RNSSearchBarView, autoCapitalize: Int) {
-        view.searchView?.inputType = autoCapitalize
+    fun setAutoCapitalize(view: RNSSearchBarView, autoCapitalize: String?) {
+        view.autoCapitalize = when (autoCapitalize) {
+            null, "none" -> RNSSearchBarView.RNSSearchBarAutoCapitalize.NONE
+            "words" -> RNSSearchBarView.RNSSearchBarAutoCapitalize.WORDS
+            "sentences" -> RNSSearchBarView.RNSSearchBarAutoCapitalize.SENTENCES
+            "characters" -> RNSSearchBarView.RNSSearchBarAutoCapitalize.CHARACTERS
+            else -> throw JSApplicationIllegalArgumentException(
+                "Forbidden auto capitalize value passed"
+            )
+        }
+        view.didPropsChange()
+    }
+
+    @ReactProp(name = "inputType")
+    fun setInputType(view: RNSSearchBarView, inputType: String?) {
+        view.inputType = when (inputType) {
+            null, "text" -> RNSSearchBarView.RNSSearchBarInputTypes.TEXT
+            "phone" -> RNSSearchBarView.RNSSearchBarInputTypes.PHONE
+            "number" -> RNSSearchBarView.RNSSearchBarInputTypes.NUMBER
+            "email" -> RNSSearchBarView.RNSSearchBarInputTypes.EMAIL
+            else -> throw JSApplicationIllegalArgumentException(
+                "Forbidden input type value"
+            )
+        }
+        view.didPropsChange()
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
@@ -30,18 +53,6 @@ class RNSSearchBarManager : ReactViewManager() {
             .put("onExpand", MapBuilder.of("registrationName", "onExpand"))
             .put("onCollapse", MapBuilder.of("registrationName", "onCollapse"))
             .build()
-    }
-
-    override fun getExportedViewConstants(): Map<String, Any?>? {
-        return MapBuilder.of<String, Any?>(
-            "AutoCapitalize",
-            MapBuilder.of(
-                "none", InputType.TYPE_CLASS_TEXT,
-                "words", InputType.TYPE_TEXT_FLAG_CAP_WORDS,
-                "sentences", InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
-                "allCharacters", InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-            )
-        )
     }
 
     companion object {

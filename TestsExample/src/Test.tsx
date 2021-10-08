@@ -12,7 +12,8 @@ const Stack = createNativeStackNavigator();
 const searchBar: SearchBarProps = {
   onChangeText: (e) => console.log(e.nativeEvent.text),
   onTextSubmit: (e) => console.log(e.nativeEvent.text),
-  // autoCapitalize: 'characters'
+  autoCapitalize: 'words',
+  inputType: 'number'
 };
 
 export default function App() {
