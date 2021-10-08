@@ -198,7 +198,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             // which would impact the position of custom header views rendered at the center.
             toolbar.contentInsetStartWithNavigation = 0
         }
-        toolbar.title="Teest"
         val menu = toolbar.menu
         if (menu != null) {
             val item = menu.add(0, 0, 0, "")

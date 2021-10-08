@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, View} from 'react-native';
+import {Button, Text, View} from 'react-native';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -9,24 +9,11 @@ import {SearchBarProps} from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
 
-const searchBar: SearchBarProps = {
-  onChangeText: (e) => console.log(e.nativeEvent.text),
-  onTextSubmit: (e) => console.log(e.nativeEvent.text),
-  autoCapitalize: 'words',
-  inputType: 'number'
-};
-
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
-          name="First"
-          component={First}
-          options={{
-            searchBar,
-          }}
-        />
+        <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>
     </NavigationContainer>
@@ -39,14 +26,27 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   const [isSearchBarVisible, setIsSearchBarVisible] = React.useState(true);
-  const toggleSearchBarButtonTitle = `${
-    isSearchBarVisible ? 'Hide' : 'Show'
-  } search bar`;
+  const [inputType, setInputType] = React.useState<'number' | 'text'>('number');
+  const [text, setText] = React.useState('');
   React.useEffect(() => {
+    const searchBar: SearchBarProps = {
+      onChangeText: (e) => setText(e.nativeEvent.text),
+      onTextSubmit: () => navigation.navigate('Second'),
+      inputType,
+      autoCapitalize: 'none'
+    };
     navigation.setOptions({
       searchBar: isSearchBarVisible ? searchBar : undefined,
     });
-  }, [isSearchBarVisible]);
+  }, [isSearchBarVisible, inputType]);
+
+  const toggleSearchBarButtonTitle = `${
+    isSearchBarVisible ? 'Hide' : 'Show'
+  } search bar`;
+
+  const toggleInputTypeButtonTitle = `Change input type to ${
+    inputType === 'number' ? 'text' : 'number'
+  }`;
   return (
     <View style={{flex: 1, backgroundColor: 'red'}}>
       <Button
@@ -54,9 +54,14 @@ function First({
         onPress={() => setIsSearchBarVisible((prev) => !prev)}
       />
       <Button
+        title={toggleInputTypeButtonTitle}
+        onPress={() => setInputType((prev) => prev === 'number' ? 'text' : 'number')}
+      />
+      <Button
         title="Tap me for second screen"
         onPress={() => navigation.navigate('Second')}
       />
+      <Text>{text}</Text>
     </View>
   );
 }
