@@ -24,10 +24,9 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     private val screenStackFragment: ScreenStackFragment?
         get() {
-            val screenStackFragment =
-                (parent?.parent?.parent?.parent?.parent as ScreenStack?)?.topScreen?.fragment
-            if (screenStackFragment is ScreenStackFragment) {
-                return screenStackFragment
+            val currentParent = parent
+            if(currentParent is ScreenStackHeaderSubview){
+                return currentParent.config?.screenFragment
             }
             return null
         }

@@ -10,6 +10,16 @@ class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context)
     private var mReactWidth = 0
     private var mReactHeight = 0
     var type = Type.RIGHT
+
+    val config: ScreenStackHeaderConfig?
+        get() {
+            val currentParent = parent
+            if (currentParent is CustomToolbar) {
+                return currentParent.config
+            }
+            return null
+        }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY &&
             MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
