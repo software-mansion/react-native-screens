@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
@@ -23,7 +22,7 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: Toolbar
-    var mTitle: String? = null
+    private var mTitle: String? = null
     private var mTitleColor = 0
     private var mTitleFontFamily: String? = null
     private var mDirection: String? = null
@@ -197,13 +196,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             // views. When it is set to default it'd take up additional distance from the back button
             // which would impact the position of custom header views rendered at the center.
             toolbar.contentInsetStartWithNavigation = 0
-        }
-        val menu = toolbar.menu
-        if (menu != null) {
-            val item = menu.add(0, 0, 0, "")
-            val searchView = SearchView(context)
-            item.actionView = searchView
-            item.setShowAsAction(2)
         }
         val titleTextView = titleTextView
         if (mTitleColor != 0) {
