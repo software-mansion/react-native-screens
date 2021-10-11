@@ -21,7 +21,7 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
-    val toolbar: Toolbar
+    val toolbar: CustomToolbar
     private var mTitle: String? = null
     private var mTitleColor = 0
     private var mTitleFontFamily: String? = null
@@ -99,7 +99,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             return null
         }
-    private val screenFragment: ScreenStackFragment?
+    val screenFragment: ScreenStackFragment?
         get() {
             val screen = parent
             if (screen is Screen) {
@@ -369,7 +369,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         mDirection = direction
     }
 
-    private class DebugMenuToolbar(context: Context) : Toolbar(context) {
+    private class DebugMenuToolbar(context: Context, config: ScreenStackHeaderConfig) : CustomToolbar(context, config) {
         override fun showOverflowMenu(): Boolean {
             (context.applicationContext as ReactApplication)
                 .reactNativeHost
@@ -381,7 +381,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     init {
         visibility = GONE
-        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context) else Toolbar(context)
+        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
         mDefaultStartInset = toolbar.contentInsetStart
         mDefaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 
