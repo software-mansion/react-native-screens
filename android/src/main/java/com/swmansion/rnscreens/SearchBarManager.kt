@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.graphics.Color
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -19,6 +20,22 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
 
     override fun onAfterUpdateTransaction(view: SearchBarView) {
         super.onAfterUpdateTransaction(view)
+        view.didPropsChange()
+    }
+
+    @ReactProp(name = "textColor")
+    fun setTextColor(view: SearchBarView, color: String?) {
+        if (color != null) {
+            view.textColor = Color.parseColor(color)
+        } else {
+            view.textColor = null
+        }
+        view.didPropsChange()
+    }
+
+    @ReactProp(name = "placeholder")
+    fun setPlaceholder(view: SearchBarView, placeholder: String?) {
+        view.placeholder = placeholder
         view.didPropsChange()
     }
 

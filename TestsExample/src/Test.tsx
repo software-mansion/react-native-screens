@@ -32,11 +32,13 @@ function First({
   React.useEffect(() => {
     const searchBar: SearchBarProps = {
       onChangeText: (e) => setText(e.nativeEvent.text),
-      onTextSubmit: () => navigation.navigate('Second'),
+      onSearchButtonPress: () => navigation.navigate('Second'),
       onFocus: () => setBackgroundColor('green'),
       onBlur: () => setBackgroundColor('red'),
       inputType,
-      autoCapitalize: 'none'
+      autoCapitalize: 'none',
+      textColor: '#FF00FF',
+      placeholder: "Test..."
     };
     navigation.setOptions({
       searchBar: isSearchBarVisible ? searchBar : undefined,

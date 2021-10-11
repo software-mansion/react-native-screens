@@ -378,16 +378,16 @@ export interface SearchBarProps {
    */
   barTintColor?: string;
   /**
-   * The text to be used instead of default `Cancel` button text
+   * The text to be used instead of default `Cancel` button text (iOS only)
    */
   cancelButtonText?: string;
 
   /**
-   * Indicates whether to hide the navigation bar
+   * Indicates whether to hide the navigation bar (iOS only)
    */
   hideNavigationBar?: boolean;
   /**
-   * Indicates whether to hide the search bar when scrolling
+   * Indicates whether to hide the search bar when scrolling (iOS only)
    */
   hideWhenScrolling?: boolean;
 
@@ -400,7 +400,7 @@ export interface SearchBarProps {
    */
   onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when the cancel button is pressed
+   * A callback that gets called when the cancel button is pressed (iOS only)
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 

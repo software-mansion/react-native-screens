@@ -1,13 +1,18 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.text.InputType
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.facebook.react.views.view.ReactViewGroup
+import android.widget.EditText
+
 
 @SuppressLint("ViewConstructor")
 class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) {
@@ -21,6 +26,9 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     var inputType: SearchBarInputTypes = SearchBarInputTypes.TEXT
     var autoCapitalize: SearchBarAutoCapitalize = SearchBarAutoCapitalize.NONE
+    var defaultTextColor: Int? = null
+    var textColor: Int? = null
+    var placeholder: String? = null
 
     private val screenStackFragment: ScreenStackFragment?
         get() {
@@ -56,6 +64,17 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
                 handleFocusChange(hasFocus)
             }
             searchView.inputType = getSearchViewInputType()
+            searchView.queryHint = placeholder
+            val searchEditText =
+                searchView.findViewById<View>(androidx.appcompat.R.id.search_src_text) as EditText
+            if(textColor != null){
+                if(defaultTextColor == null){
+                    defaultTextColor = searchEditText.textColors.defaultColor
+                }
+                searchEditText.setTextColor(textColor!!)
+            } else if(defaultTextColor!=null) {
+                searchEditText.setTextColor(defaultTextColor!!)
+            }
         }
     }
 
