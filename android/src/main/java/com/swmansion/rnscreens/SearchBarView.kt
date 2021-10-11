@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.text.InputType
-import android.view.View
 import androidx.appcompat.widget.SearchView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
@@ -26,7 +25,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     private val screenStackFragment: ScreenStackFragment?
         get() {
             val currentParent = parent
-            if(currentParent is ScreenStackHeaderSubview){
+            if (currentParent is ScreenStackHeaderSubview) {
                 return currentParent.config?.screenFragment
             }
             return null
@@ -77,7 +76,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     }
 
     private fun handleFocusChange(hasFocus: Boolean) {
-        when(hasFocus){
+        when (hasFocus) {
             true -> sendEvent("onFocus", null)
             false -> sendEvent("onBlur", null)
         }
