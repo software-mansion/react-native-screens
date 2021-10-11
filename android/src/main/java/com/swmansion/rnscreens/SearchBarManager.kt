@@ -54,8 +54,8 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         return MapBuilder.builder<String, Any>()
             .put("onChangeText", MapBuilder.of("registrationName", "onChangeText"))
             .put("onTextSubmit", MapBuilder.of("registrationName", "onTextSubmit"))
-            .put("onExpand", MapBuilder.of("registrationName", "onExpand"))
-            .put("onCollapse", MapBuilder.of("registrationName", "onCollapse"))
+            .put("onFocus", MapBuilder.of("registrationName", "onFocus"))
+            .put("onBlur", MapBuilder.of("registrationName", "onBlur"))
             .build()
     }
 

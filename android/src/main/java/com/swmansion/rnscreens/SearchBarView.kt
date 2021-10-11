@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.text.InputType
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
@@ -52,6 +53,9 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
                     return true
                 }
             })
+            searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+                handleFocusChange(hasFocus)
+            }
             searchView.inputType = getSearchViewInputType()
         }
     }
@@ -70,6 +74,13 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         val event = Arguments.createMap()
         event.putString("text", newText)
         sendEvent("onChangeText", event)
+    }
+
+    private fun handleFocusChange(hasFocus: Boolean) {
+        when(hasFocus){
+            true -> sendEvent("onFocus", null)
+            false -> sendEvent("onBlur", null)
+        }
     }
 
     private fun handleTextSubmit(newText: String?) {

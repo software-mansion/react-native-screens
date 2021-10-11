@@ -26,12 +26,15 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   const [isSearchBarVisible, setIsSearchBarVisible] = React.useState(true);
+  const [backgroundColor, setBackgroundColor] = React.useState('red');
   const [inputType, setInputType] = React.useState<'number' | 'text'>('number');
   const [text, setText] = React.useState('');
   React.useEffect(() => {
     const searchBar: SearchBarProps = {
       onChangeText: (e) => setText(e.nativeEvent.text),
       onTextSubmit: () => navigation.navigate('Second'),
+      onFocus: () => setBackgroundColor('green'),
+      onBlur: () => setBackgroundColor('red'),
       inputType,
       autoCapitalize: 'none'
     };
@@ -48,7 +51,7 @@ function First({
     inputType === 'number' ? 'text' : 'number'
   }`;
   return (
-    <View style={{flex: 1, backgroundColor: 'red'}}>
+    <View style={{flex: 1, backgroundColor}}>
       <Button
         title={toggleSearchBarButtonTitle}
         onPress={() => setIsSearchBarVisible((prev) => !prev)}
