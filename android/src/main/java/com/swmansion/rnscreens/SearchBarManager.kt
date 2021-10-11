@@ -4,27 +4,31 @@ import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.views.view.ReactViewGroup
-import com.facebook.react.views.view.ReactViewManager
 
-@ReactModule(name = RNSSearchBarManager.REACT_CLASS)
-class RNSSearchBarManager : ReactViewManager() {
+@ReactModule(name = SearchBarManager.REACT_CLASS)
+class SearchBarManager : ViewGroupManager<SearchBarView>() {
     override fun getName(): String {
         return REACT_CLASS
     }
 
-    override fun createViewInstance(context: ThemedReactContext): ReactViewGroup {
-        return RNSSearchBarView(context)
+    override fun createViewInstance(context: ThemedReactContext): SearchBarView {
+        return SearchBarView(context)
+    }
+
+    override fun onAfterUpdateTransaction(view: SearchBarView) {
+        super.onAfterUpdateTransaction(view)
+        view.didPropsChange()
     }
 
     @ReactProp(name = "autoCapitalize")
-    fun setAutoCapitalize(view: RNSSearchBarView, autoCapitalize: String?) {
+    fun setAutoCapitalize(view: SearchBarView, autoCapitalize: String?) {
         view.autoCapitalize = when (autoCapitalize) {
-            null, "none" -> RNSSearchBarView.RNSSearchBarAutoCapitalize.NONE
-            "words" -> RNSSearchBarView.RNSSearchBarAutoCapitalize.WORDS
-            "sentences" -> RNSSearchBarView.RNSSearchBarAutoCapitalize.SENTENCES
-            "characters" -> RNSSearchBarView.RNSSearchBarAutoCapitalize.CHARACTERS
+            null, "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
+            "words" -> SearchBarView.SearchBarAutoCapitalize.WORDS
+            "sentences" -> SearchBarView.SearchBarAutoCapitalize.SENTENCES
+            "characters" -> SearchBarView.SearchBarAutoCapitalize.CHARACTERS
             else -> throw JSApplicationIllegalArgumentException(
                 "Forbidden auto capitalize value passed"
             )
@@ -33,12 +37,12 @@ class RNSSearchBarManager : ReactViewManager() {
     }
 
     @ReactProp(name = "inputType")
-    fun setInputType(view: RNSSearchBarView, inputType: String?) {
+    fun setInputType(view: SearchBarView, inputType: String?) {
         view.inputType = when (inputType) {
-            null, "text" -> RNSSearchBarView.RNSSearchBarInputTypes.TEXT
-            "phone" -> RNSSearchBarView.RNSSearchBarInputTypes.PHONE
-            "number" -> RNSSearchBarView.RNSSearchBarInputTypes.NUMBER
-            "email" -> RNSSearchBarView.RNSSearchBarInputTypes.EMAIL
+            null, "text" -> SearchBarView.SearchBarInputTypes.TEXT
+            "phone" -> SearchBarView.SearchBarInputTypes.PHONE
+            "number" -> SearchBarView.SearchBarInputTypes.NUMBER
+            "email" -> SearchBarView.SearchBarInputTypes.EMAIL
             else -> throw JSApplicationIllegalArgumentException(
                 "Forbidden input type value"
             )

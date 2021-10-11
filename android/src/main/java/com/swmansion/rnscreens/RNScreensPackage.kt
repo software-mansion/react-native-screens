@@ -16,6 +16,6 @@ class RNScreensPackage : ReactPackage {
             ScreenStackViewManager(),
             ScreenStackHeaderConfigViewManager(),
             ScreenStackHeaderSubviewManager(),
-            RNSSearchBarManager()
+            SearchBarManager()
         )
 }
