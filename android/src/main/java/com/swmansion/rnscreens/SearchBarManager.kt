@@ -53,7 +53,7 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         return MapBuilder.builder<String, Any>()
             .put("onChangeText", MapBuilder.of("registrationName", "onChangeText"))
-            .put("onTextSubmit", MapBuilder.of("registrationName", "onTextSubmit"))
+            .put("onSearchButtonPress", MapBuilder.of("registrationName", "onSearchButtonPress"))
             .put("onFocus", MapBuilder.of("registrationName", "onFocus"))
             .put("onBlur", MapBuilder.of("registrationName", "onBlur"))
             .build()

@@ -85,7 +85,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     private fun handleTextSubmit(newText: String?) {
         val event = Arguments.createMap()
         event.putString("text", newText)
-        sendEvent("onTextSubmit", event)
+        sendEvent("onSearchButtonPress", event)
     }
 
     private fun getSearchViewInputType(): Int {
