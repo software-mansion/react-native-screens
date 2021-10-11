@@ -29,6 +29,7 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from './types';
+import { isSearchBarAvailable } from './native-stack/utils/searchBarPlatforms';
 
 // web implementation is taken from `index.tsx`
 const isPlatformSupported =
@@ -346,6 +347,11 @@ module.exports = {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
   get SearchBar() {
+    if (!isSearchBarAvailable(Platform.OS)) {
+      console.warn('Importing SearchBar is only valid on iOS devices.');
+      return View;
+    }
+
     return ScreensNativeModules.NativeSearchBar;
   },
   get FullWindowOverlay() {
