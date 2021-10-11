@@ -71,7 +71,8 @@ class ScreenStackFragment : ScreenFragment {
     fun setToolbarTranslucent(translucent: Boolean) {
         if (mIsTranslucent != translucent) {
             val params = screen.layoutParams
-            (params as CoordinatorLayout.LayoutParams).behavior = if (translucent) null else ScrollingViewBehavior()
+            (params as CoordinatorLayout.LayoutParams).behavior =
+                if (translucent) null else ScrollingViewBehavior()
             mIsTranslucent = translucent
         }
     }
@@ -127,7 +128,8 @@ class ScreenStackFragment : ScreenFragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: NotifyingCoordinatorLayout? = context?.let { NotifyingCoordinatorLayout(it, this) }
+        val view: NotifyingCoordinatorLayout? =
+            context?.let { NotifyingCoordinatorLayout(it, this) }
         val params = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         )
@@ -182,7 +184,7 @@ class ScreenStackFragment : ScreenFragment {
         if (shouldShowSearchBar()) {
             val item = menu.add("")
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            if(searchView==null){
+            if (searchView == null) {
                 searchView = SearchView(context)
                 onSearchViewCreate?.invoke()
             }
@@ -213,18 +215,22 @@ class ScreenStackFragment : ScreenFragment {
         container.dismiss(this)
     }
 
-    private class NotifyingCoordinatorLayout(context: Context, private val mFragment: ScreenFragment) : CoordinatorLayout(context) {
-        private val mAnimationListener: Animation.AnimationListener = object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                mFragment.onViewAnimationStart()
-            }
+    private class NotifyingCoordinatorLayout(
+        context: Context,
+        private val mFragment: ScreenFragment
+    ) : CoordinatorLayout(context) {
+        private val mAnimationListener: Animation.AnimationListener =
+            object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation) {
+                    mFragment.onViewAnimationStart()
+                }
 
-            override fun onAnimationEnd(animation: Animation) {
-                mFragment.onViewAnimationEnd()
-            }
+                override fun onAnimationEnd(animation: Animation) {
+                    mFragment.onViewAnimationEnd()
+                }
 
-            override fun onAnimationRepeat(animation: Animation) {}
-        }
+                override fun onAnimationRepeat(animation: Animation) {}
+            }
 
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for
