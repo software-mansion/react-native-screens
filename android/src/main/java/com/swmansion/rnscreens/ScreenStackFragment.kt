@@ -170,7 +170,7 @@ class ScreenStackFragment : ScreenFragment {
         val numberOfSubViews = config?.configSubviewsCount ?: 0
         if (config != null && numberOfSubViews > 0) {
             for (i in 0 until numberOfSubViews) {
-                val subView = config.getConfigSubview((i))
+                val subView = config.getConfigSubview(i)
                 if (subView.type == ScreenStackHeaderSubview.Type.SEARCH_BAR) {
                     return true
                 }

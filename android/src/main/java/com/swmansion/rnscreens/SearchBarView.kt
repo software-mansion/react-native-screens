@@ -27,6 +27,8 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     var textColor: Int? = null
     var placeholder: String? = null
 
+    var mAreListenersSet: Boolean = false
+
     private val screenStackFragment: ScreenStackFragment?
         get() {
             val currentParent = parent
@@ -46,20 +48,10 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     private fun setSearchViewProps() {
         val searchView = screenStackFragment?.searchView
         if (searchView != null) {
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    handleTextChange(newText)
-                    return true
-                }
-
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    handleTextSubmit(query)
-                    return true
-                }
-            })
-            searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-                handleFocusChange(hasFocus)
+            if (!mAreListenersSet) {
+                setSearchViewListeners(searchView)
             }
+
             searchView.inputType = getSearchViewInputType()
             searchView.queryHint = placeholder
             val searchEditText =
@@ -75,13 +67,29 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         }
     }
 
+    private fun setSearchViewListeners(searchView: SearchView) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                handleTextChange(newText)
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                handleTextSubmit(query)
+                return true
+            }
+        })
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            handleFocusChange(hasFocus)
+        }
+    }
+
     fun didPropsChange() {
         setSearchViewProps()
     }
 
     private fun sendEvent(eventName: String, eventContent: WritableMap?) {
-        val reactContext = context as ReactContext
-        reactContext.getJSModule(RCTEventEmitter::class.java)
+        (context as ReactContext).getJSModule(RCTEventEmitter::class.java)
             ?.receiveEvent(id, eventName, eventContent)
     }
 
@@ -115,6 +123,4 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             }
         }
     }
-
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {}
 }
