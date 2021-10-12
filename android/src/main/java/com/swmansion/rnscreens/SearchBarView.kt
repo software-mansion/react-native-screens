@@ -100,7 +100,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     }
 
     private fun handleFocusChange(hasFocus: Boolean) {
-        if (hasFocus)sendEvent("onFocus", null)
+        if (hasFocus) sendEvent("onFocus", null)
         else sendEvent("onBlur", null)
     }
 
