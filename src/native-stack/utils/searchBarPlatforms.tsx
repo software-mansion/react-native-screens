@@ -1,16 +1,5 @@
-import { SearchBarProps } from 'react-native-screens';
+import { Platform } from 'react-native';
 
-export function isSearchBarAvailable(os: string) {
-  return ['ios', 'android'].includes(os);
-}
-
-export function shouldShowSearchBar(
-  os: string,
-  searchBarProps: SearchBarProps | undefined
-): searchBarProps is SearchBarProps {
-  if (isSearchBarAvailable(os)) {
-    const platforms: string[] = searchBarProps?.platforms ?? ['ios'];
-    return platforms.includes(os);
-  }
-  return true;
+export function isSearchBarAvailable() {
+  return ['ios', 'android'].includes(Platform.OS);
 }

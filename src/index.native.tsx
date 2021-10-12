@@ -347,8 +347,10 @@ module.exports = {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
   get SearchBar() {
-    if (!isSearchBarAvailable(Platform.OS)) {
-      console.warn('Importing SearchBar is only valid on iOS devices.');
+    if (!isSearchBarAvailable()) {
+      console.warn(
+        'Importing SearchBar is only valid on iOS and android devices.'
+      );
       return View;
     }
 

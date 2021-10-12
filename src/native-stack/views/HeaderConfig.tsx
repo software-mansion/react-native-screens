@@ -1,6 +1,5 @@
 import { Route, useTheme } from '@react-navigation/native';
 import * as React from 'react';
-import { Platform } from 'react-native';
 import {
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
@@ -11,7 +10,7 @@ import {
   SearchBar,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
-import { shouldShowSearchBar } from '../utils/searchBarPlatforms';
+import { isSearchBarAvailable } from '../utils/searchBarPlatforms';
 import { processFonts } from './FontProcessor';
 
 type Props = NativeStackNavigationOptions & {
@@ -122,7 +121,7 @@ export default function HeaderConfig({
           {headerCenter({ tintColor })}
         </ScreenStackHeaderCenterView>
       ) : null}
-      {shouldShowSearchBar(Platform.OS, searchBar) ? (
+      {isSearchBarAvailable() ? (
         <ScreenStackHeaderSearchBarView>
           <SearchBar {...searchBar} />
         </ScreenStackHeaderSearchBarView>

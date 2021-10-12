@@ -366,8 +366,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   translucent?: boolean;
 }
 
-export type SearchBarAvailablePlatforms = 'android' | 'ios';
-
 export interface SearchBarProps {
   /**
    * The auto-capitalization behavior
@@ -427,8 +425,4 @@ export interface SearchBarProps {
    * The search field text color
    */
   textColor?: string;
-  /**
-   * Platforms on which search bar should be shown. When undefined search bar is shown on ios
-   */
-  platforms?: SearchBarAvailablePlatforms[];
 }
