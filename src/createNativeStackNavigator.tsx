@@ -263,7 +263,7 @@ function renderHeaderConfig(
     );
   }
 
-  if (isSearchBarAvailable()) {
+  if (isSearchBarAvailable() && options.searchBar !== undefined) {
     children.push(
       <ScreenStackHeaderSearchBarView>
         <SearchBar {...options.searchBar} />
