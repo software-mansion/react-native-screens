@@ -1,5 +1,3 @@
 import { Platform } from 'react-native';
 
-export function isSearchBarAvailable() {
-  return ['ios', 'android'].includes(Platform.OS);
-}
+export const IS_SEARCH_BAR_AVAILABLE = ['ios', 'android'].includes(Platform.OS);
