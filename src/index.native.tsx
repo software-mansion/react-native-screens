@@ -29,7 +29,7 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from './types';
-import { IS_SEARCH_BAR_AVAILABLE } from './native-stack/utils/searchBarPlatforms';
+import { isSearchBarAvailableForCurrentPlatform } from './native-stack/utils/searchBarPlatforms';
 
 // web implementation is taken from `index.tsx`
 const isPlatformSupported =
@@ -347,7 +347,7 @@ module.exports = {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
   get SearchBar() {
-    if (!IS_SEARCH_BAR_AVAILABLE) {
+    if (!isSearchBarAvailableForCurrentPlatform) {
       console.warn(
         'Importing SearchBar is only valid on iOS and android devices.'
       );

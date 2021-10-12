@@ -44,7 +44,7 @@ import {
   StackNavigationProp,
   Layout,
 } from 'react-navigation-stack/src/vendor/types';
-import { IS_SEARCH_BAR_AVAILABLE } from './native-stack/utils/searchBarPlatforms';
+import { isSearchBarAvailableForCurrentPlatform } from './native-stack/utils/searchBarPlatforms';
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
@@ -263,7 +263,10 @@ function renderHeaderConfig(
     );
   }
 
-  if (IS_SEARCH_BAR_AVAILABLE && options.searchBar !== undefined) {
+  if (
+    isSearchBarAvailableForCurrentPlatform &&
+    options.searchBar !== undefined
+  ) {
     children.push(
       <ScreenStackHeaderSearchBarView>
         <SearchBar {...options.searchBar} />

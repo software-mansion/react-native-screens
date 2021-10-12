@@ -10,7 +10,7 @@ import {
   SearchBar,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
-import { IS_SEARCH_BAR_AVAILABLE } from '../utils/searchBarPlatforms';
+import { isSearchBarAvailableForCurrentPlatform } from '../utils/searchBarPlatforms';
 import { processFonts } from './FontProcessor';
 
 type Props = NativeStackNavigationOptions & {
@@ -121,7 +121,7 @@ export default function HeaderConfig({
           {headerCenter({ tintColor })}
         </ScreenStackHeaderCenterView>
       ) : null}
-      {IS_SEARCH_BAR_AVAILABLE && searchBar !== undefined ? (
+      {isSearchBarAvailableForCurrentPlatform && searchBar !== undefined ? (
         <ScreenStackHeaderSearchBarView>
           <SearchBar {...searchBar} />
         </ScreenStackHeaderSearchBarView>
