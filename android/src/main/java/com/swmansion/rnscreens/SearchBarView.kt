@@ -1,18 +1,15 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.text.InputType
 import android.view.View
+import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.facebook.react.views.view.ReactViewGroup
-import android.widget.EditText
-
 
 @SuppressLint("ViewConstructor")
 class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) {
@@ -67,12 +64,12 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             searchView.queryHint = placeholder
             val searchEditText =
                 searchView.findViewById<View>(androidx.appcompat.R.id.search_src_text) as EditText
-            if(textColor != null){
-                if(defaultTextColor == null){
+            if (textColor != null) {
+                if (defaultTextColor == null) {
                     defaultTextColor = searchEditText.textColors.defaultColor
                 }
                 searchEditText.setTextColor(textColor!!)
-            } else if(defaultTextColor!=null) {
+            } else if (defaultTextColor != null) {
                 searchEditText.setTextColor(defaultTextColor!!)
             }
         }
@@ -95,10 +92,8 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     }
 
     private fun handleFocusChange(hasFocus: Boolean) {
-        when (hasFocus) {
-            true -> sendEvent("onFocus", null)
-            false -> sendEvent("onBlur", null)
-        }
+        if (hasFocus)sendEvent("onFocus", null)
+        else sendEvent("onBlur", null)
     }
 
     private fun handleTextSubmit(newText: String?) {
