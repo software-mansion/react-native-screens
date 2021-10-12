@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
@@ -23,11 +24,13 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     var inputType: SearchBarInputTypes = SearchBarInputTypes.TEXT
     var autoCapitalize: SearchBarAutoCapitalize = SearchBarAutoCapitalize.NONE
-    var defaultTextColor: Int? = null
     var textColor: Int? = null
+    var tintColor: Int? = null
     var placeholder: String? = null
 
-    var mAreListenersSet: Boolean = false
+    private var mAreListenersSet: Boolean = false
+    private var mDefaultTextColor: Int? = null
+    private var mDefaultTintBackground: Drawable? = null
 
     private val screenStackFragment: ScreenStackFragment?
         get() {
@@ -56,13 +59,35 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             searchView.queryHint = placeholder
             val searchEditText =
                 searchView.findViewById<View>(androidx.appcompat.R.id.search_src_text) as EditText
-            if (textColor != null) {
-                if (defaultTextColor == null) {
-                    defaultTextColor = searchEditText.textColors.defaultColor
-                }
-                searchEditText.setTextColor(textColor!!)
-            } else if (defaultTextColor != null) {
-                searchEditText.setTextColor(defaultTextColor!!)
+            val searchTextPlate =
+                searchView.findViewById<View>(androidx.appcompat.R.id.search_plate)
+            setTextColor(searchEditText)
+            setTintColor(searchTextPlate)
+        }
+    }
+
+    private fun setTextColor(searchEditText: EditText) {
+        val currentTextColor = textColor
+        if (currentTextColor != null) {
+            if (mDefaultTextColor == null) {
+                mDefaultTextColor = searchEditText.textColors.defaultColor
+            }
+            searchEditText.setTextColor(currentTextColor)
+        } else if (mDefaultTextColor != null) {
+            searchEditText.setTextColor(mDefaultTextColor!!)
+        }
+    }
+
+    private fun setTintColor(searchTextPlate: View) {
+        val currentTintColor = tintColor
+        if (currentTintColor != null) {
+            if (mDefaultTintBackground == null) {
+                mDefaultTintBackground = searchTextPlate.background
+            }
+            searchTextPlate.setBackgroundColor(currentTintColor)
+        } else {
+            if (mDefaultTintBackground != null) {
+                searchTextPlate.background = mDefaultTintBackground!!
             }
         }
     }
@@ -82,9 +107,13 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             handleFocusChange(hasFocus)
         }
+        searchView.setOnCloseListener { // do what you want  searchview is not expanded
+            handleClose()
+            false
+        }
     }
 
-    fun didPropsChange() {
+    fun propsDidChange() {
         setSearchViewProps()
     }
 
@@ -102,6 +131,10 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     private fun handleFocusChange(hasFocus: Boolean) {
         if (hasFocus) sendEvent("onFocus", null)
         else sendEvent("onBlur", null)
+    }
+
+    private fun handleClose() {
+        sendEvent("onClose", null)
     }
 
     private fun handleTextSubmit(newText: String?) {

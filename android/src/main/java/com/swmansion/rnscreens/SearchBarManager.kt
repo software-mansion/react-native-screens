@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.graphics.Color
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -20,23 +19,30 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
 
     override fun onAfterUpdateTransaction(view: SearchBarView) {
         super.onAfterUpdateTransaction(view)
-        view.didPropsChange()
+        view.propsDidChange()
     }
 
-    @ReactProp(name = "textColor")
-    fun setTextColor(view: SearchBarView, color: String?) {
+    @ReactProp(name = "textColor", customType = "Color")
+    fun setTextColor(view: SearchBarView, color: Int?) {
         if (color != null) {
-            view.textColor = Color.parseColor(color)
+            view.textColor = color
         } else {
             view.textColor = null
         }
-        view.didPropsChange()
+    }
+
+    @ReactProp(name = "tintColor", customType = "Color")
+    fun setTintColor(view: SearchBarView, color: Int?) {
+        if (color != null) {
+            view.tintColor = color
+        } else {
+            view.tintColor = null
+        }
     }
 
     @ReactProp(name = "placeholder")
     fun setPlaceholder(view: SearchBarView, placeholder: String?) {
         view.placeholder = placeholder
-        view.didPropsChange()
     }
 
     @ReactProp(name = "autoCapitalize")
@@ -50,7 +56,6 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
                 "Forbidden auto capitalize value passed"
             )
         }
-        view.didPropsChange()
     }
 
     @ReactProp(name = "inputType")
@@ -64,7 +69,6 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
                 "Forbidden input type value"
             )
         }
-        view.didPropsChange()
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
@@ -73,6 +77,7 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
             .put("onSearchButtonPress", MapBuilder.of("registrationName", "onSearchButtonPress"))
             .put("onFocus", MapBuilder.of("registrationName", "onFocus"))
             .put("onBlur", MapBuilder.of("registrationName", "onBlur"))
+            .put("onClose", MapBuilder.of("registrationName", "onClose"))
             .build()
     }
 
