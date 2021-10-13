@@ -18,6 +18,7 @@ interface MainScreenProps {
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
     <Button
+      testID="simple-native-stack-go-to-detail"
       title="Go to detail"
       onPress={() => navigation.navigate('Detail')}
     />
@@ -31,7 +32,11 @@ interface DetailScreenProps {
 
 const DetailScreen = ({ navigation }: DetailScreenProps): JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
-    <Button title="Go back" onPress={() => navigation.goBack()} />
+    <Button
+      title="Go back"
+      onPress={() => navigation.goBack()}
+      testID="simple-native-stack-detail-go-back"
+    />
   </View>
 );
 

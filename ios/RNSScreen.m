@@ -20,8 +20,6 @@
   CGRect _reactFrame;
 }
 
-@synthesize controller = _controller;
-
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
@@ -45,10 +43,10 @@
 {
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[UINavigationController class]]) {
+  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
     [super reactSetFrame:frame];
   }
-  // when screen is mounted under UINavigationController it's size is controller
+  // when screen is mounted under RNScreensNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
   // the controller. In that case we ignore react layout system from managing
   // the screen dimensions and we wait for the screen VC to update and then we
@@ -276,6 +274,13 @@
   }
 }
 
+- (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
+{
+  if (self.onNativeDismissCancelled) {
+    self.onNativeDismissCancelled(@{@"dismissCount" : @(dismissCount)});
+  }
+}
+
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
   if (self.onTransitionProgress) {
@@ -344,6 +349,10 @@
 
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
+  if (_preventNativeDismiss) {
+    [self notifyDismissCancelledWithDismissCount:1];
+    return NO;
+  }
   return _gestureEnabled;
 }
 
@@ -503,11 +512,12 @@
   [super viewDidLayoutSubviews];
 
   // The below code makes the screen view adapt dimensions provided by the system. We take these
-  // into account only when the view is mounted under UINavigationController in which case system
+  // into account only when the view is mounted under RNScreensNavigationController in which case system
   // provides additional padding to account for possible header, and in the case when screen is
   // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
   // screen size
-  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
+  BOOL isDisplayedWithinUINavController =
+      [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
   if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
       !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
@@ -557,6 +567,8 @@
     _shouldNotify = NO;
   }
 
+  [self hideHeaderIfNecessary];
+
   // as per documentation of these methods
   _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
 
@@ -566,6 +578,35 @@
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
+}
+
+- (void)hideHeaderIfNecessary
+{
+#if !TARGET_OS_TV
+  // On iOS >=13, there is a bug when user transitions from screen with active search bar to screen without header
+  // In that case default iOS header will be shown. To fix this we hide header when the screens that appears has header
+  // hidden and search bar was active on previous screen. We need to do it asynchronously, because default header is
+  // added after viewWillAppear.
+  if (@available(iOS 13.0, *)) {
+    NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
+
+    if (currentIndex > 0 && [self.view.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      UINavigationItem *prevNavigationItem =
+          [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
+      RNSScreenStackHeaderConfig *config = ((RNSScreenStackHeaderConfig *)self.view.reactSubviews[0]);
+
+      BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
+      BOOL shouldHideHeader = config.hide;
+
+      if (wasSearchBarActive && shouldHideHeader) {
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+          [self.navigationController setNavigationBarHidden:YES animated:NO];
+        });
+      }
+    }
+  }
+#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -625,8 +666,15 @@
   [super viewDidDisappear:animated];
 
   if (self.parentViewController == nil && self.presentingViewController == nil) {
-    // screen dismissed, send event
-    [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
+    if (((RNSScreenView *)self.view).preventNativeDismiss) {
+      // if we want to prevent the native dismiss, we do not send dismissal event,
+      // but instead call `updateContainer`, which restores the JS navigation stack
+      [((RNSScreenView *)self.view).reactSuperview updateContainer];
+      [((RNSScreenView *)self.view) notifyDismissCancelledWithDismissCount:_dismissCount];
+    } else {
+      // screen dismissed, send event
+      [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
+    }
   }
 
   // same flow as in viewDidAppear
@@ -777,24 +825,28 @@ RCT_EXPORT_MODULE()
 
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(sharedElements, NSArray<NSDictionary *>)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
-RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
+
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
-RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 #endif
 
 - (UIView *)view

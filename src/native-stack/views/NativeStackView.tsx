@@ -150,8 +150,10 @@ const RouteView = ({
   const { options, render: renderScene } = descriptors[route.key];
   const {
     customAnimationOnSwipe,
+    fullScreenSwipeEnabled,
     gestureEnabled,
     headerShown,
+    nativeBackButtonDismissalEnabled = false,
     replaceAnimation = 'pop',
     screenOrientation,
     sharedElements,
@@ -189,10 +191,12 @@ const RouteView = ({
     <Screen
       key={route.key}
       enabled
-      style={StyleSheet.absoluteFill}
       isNativeStack
+      style={StyleSheet.absoluteFill}
       customAnimationOnSwipe={customAnimationOnSwipe}
+      fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       gestureEnabled={isAndroid ? false : gestureEnabled}
+      nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}
       sharedElements={sharedElements}
@@ -203,6 +207,13 @@ const RouteView = ({
       statusBarHidden={statusBarHidden}
       statusBarStyle={statusBarStyle}
       statusBarTranslucent={statusBarTranslucent}
+      onHeaderBackButtonClicked={() => {
+        navigation.dispatch({
+          ...StackActions.pop(),
+          source: route.key,
+          target: stateKey,
+        });
+      }}
       onWillAppear={() => {
         navigation.emit({
           type: 'transitionStart',
