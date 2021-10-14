@@ -365,6 +365,7 @@
 
 - (void)invalidate
 {
+  [_controller stopObserving]; // check if it is attached and move to viewDidDisappear
   _controller = nil;
 }
 
@@ -381,6 +382,7 @@
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
+  BOOL _isKeyboardActive;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -389,6 +391,9 @@
     self.view = view;
     _shouldNotify = YES;
     _fakeView = [UIView new];
+    _isKeyboardActive = NO;
+
+    [self startObserving];
   }
   return self;
 }
@@ -597,8 +602,6 @@
     [((RNSScreenView *)self.view) notifyWillDisappear];
     if (self.transitionCoordinator.isInteractive) {
       _isSwiping = YES;
-      // keyboard should hide on swipe
-      [self.view endEditing:YES];
     }
   } else {
     _shouldNotify = NO;
@@ -684,6 +687,120 @@
   _previousFirstResponder = nil;
   // the correct Screen for appearance is set after the transition, same for orientation.
   [RNSScreenWindowTraits updateWindowTraits];
+}
+
+#pragma mark - screen keyboard avoiding related methods
+
++ (NSDictionary *)rectDictionaryValue:(CGRect)rect
+{
+  return @{
+    @"screenX" : @(rect.origin.x),
+    @"screenY" : @(rect.origin.y),
+    @"width" : @(rect.size.width),
+    @"height" : @(rect.size.height),
+  };
+}
+
++ (NSDictionary *)parseKeyboardNotification:(NSNotification *)notification
+{
+  NSDictionary *userInfo = notification.userInfo;
+  //  NSLog(@"%@", notification);
+  CGRect beginFrame = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+  CGRect endFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+  NSTimeInterval duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+  //  UIViewAnimationCurve curve =
+  //      static_cast<UIViewAnimationCurve>([userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]);
+  //  NSInteger isLocalUserInfoKey = [userInfo[UIKeyboardIsLocalUserInfoKey] integerValue];
+
+  //  NSLog(@"%@", [RNSScreen rectDictionaryValue:beginFrame]);
+
+  return @{
+    @"startCoordinates" : [RNSScreen rectDictionaryValue:beginFrame],
+    @"endCoordinates" : [RNSScreen rectDictionaryValue:endFrame],
+    @"duration" : @(duration * 1000.0), // ms
+    //    @"easing" : RCTAnimationNameForCurve(curve),
+  };
+}
+
+- (void)startObserving
+{
+  NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+
+  [nc addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+  [nc addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+  [nc addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+  [nc addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
+  [nc addObserver:self
+         selector:@selector(keyboardWillChangeFrame:)
+             name:UIKeyboardWillChangeFrameNotification
+           object:nil];
+  [nc addObserver:self
+         selector:@selector(keyboardDidChangeFrame:)
+             name:UIKeyboardDidChangeFrameNotification
+           object:nil];
+}
+
+- (void)stopObserving
+{
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+  NSLog(@"keyboardWillShow: %@", self);
+
+  BOOL isTopVC = self.navigationController.topViewController == self;
+
+  if (!_isSwiping && !_isKeyboardActive && isTopVC) {
+    _isKeyboardActive = YES;
+
+    NSDictionary *values = [RNSScreen parseKeyboardNotification:notification];
+
+    NSLog(@"%@", NSStringFromCGRect(self.view.frame));
+    CGRect currentFrame = self.view.frame;
+    NSLog(@"%@", NSStringFromCGRect(currentFrame));
+
+    currentFrame.size.height -=
+        ([values[@"startCoordinates"][@"screenY"] intValue] - [values[@"endCoordinates"][@"screenY"] intValue]);
+
+    [self.view setFrame:currentFrame];
+  }
+}
+
+- (void)keyboardDidShow:(NSNotification *)notification
+{
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+  NSLog(@"keyboardWillHide: %@", self);
+
+  BOOL isTopVC = self.navigationController.topViewController == self;
+
+  NSLog(@"isTopVC: %d", isTopVC);
+
+  if (!_isSwiping && _isKeyboardActive && isTopVC) {
+    _isKeyboardActive = NO;
+    NSDictionary *values = [RNSScreen parseKeyboardNotification:notification];
+
+    if (self.transitionCoordinator == nil) {
+      CGRect currentFrame = self.view.frame;
+      currentFrame.size.height += [values[@"endCoordinates"][@"height"] intValue];
+      self.view.frame = currentFrame;
+    }
+  }
+}
+
+- (void)keyboardDidHide:(NSNotification *)notification
+{
+}
+
+- (void)keyboardWillChangeFrame:(NSNotification *)notification
+{
+}
+
+- (void)keyboardDidChangeFrame:(NSNotification *)notification
+{
 }
 
 #pragma mark - transition progress related methods

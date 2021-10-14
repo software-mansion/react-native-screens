@@ -66,6 +66,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
+- (void)stopObserving;
 
 @end
 

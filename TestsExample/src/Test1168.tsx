@@ -21,7 +21,7 @@ function HomeScreen({
 }) {
   return (
     <View style={styles.container}>
-      <Text>Keyboard should hide on swipe</Text>
+      <Text>Keyboard shouldn&apos;t hide on swipe</Text>
       <Button
         title="Navigate to second screen"
         onPress={() => navigation.navigate('Details')}
@@ -32,14 +32,15 @@ function HomeScreen({
 
 function DetailsScreen() {
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <View
+      // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
       <TextInput
         placeholder="Focus here, show keyboard and swipe"
         style={styles.textInput}
       />
-    </KeyboardAvoidingView>
+      <Text>Use Return to close keyboard</Text>
+    </View>
   );
 }
 
