@@ -12,6 +12,12 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
+import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+  interpolateColor,
+} from 'react-native-reanimated';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
@@ -53,19 +59,40 @@ function Element({viewNativeID, imageNativeID, textNativeID, navigation}: Native
   const width = 200;
   const height = 120;
 
+  const reaProgress = useReanimatedTransitionProgress();
+  // const sv = useDerivedValue(
+  //   () =>
+  //     (reaProgress.progress.value < 0.5
+  //       ? reaProgress.progress.value * 50
+  //       : (1 - reaProgress.progress.value) * 50) + 50,
+  // );
+  const reaStyle = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      reaProgress.progress.value,
+      [0, 0.5, 1],
+      ['red', 'blue', 'red']
+    );
+
+    return {
+      width: '100%',
+      height: reaProgress.goingForward.value === 1 ? (120 + reaProgress.progress.value * 170) : (290 - reaProgress.progress.value * 170),
+      backgroundColor,
+    };
+  });
+
   return (
-    <TouchableOpacity 
-      onPress={() => navigation.navigate('Second')} 
-      style={{flexDirection: 'row', backgroundColor: 'yellow', width: '100%', height: 120}} 
-      nativeID={viewNativeID}>
-      <Image
+    <Animated.View
+      style={reaStyle} 
+      nativeID={viewNativeID}
+       >
+      {/* <Image
         resizeMethod="scale"
         source={{uri: picURI}}
         style={{width, height}} 
         nativeID={imageNativeID}
          />
-      <Text nativeID={textNativeID} style={{fontSize: 20, color: 'red'}}>Text</Text>
-    </TouchableOpacity>
+      <Text nativeID={textNativeID} style={{fontSize: 20, color: 'red'}}>Text</Text> */}
+    </Animated.View>
   )
 }
 
@@ -78,6 +105,7 @@ function First({
   return (
     <ScrollView style={{flex: 1}}>
       <Element viewNativeID={sharedElements[0].fromID} imageNativeID={sharedElements[1].fromID} textNativeID={sharedElements[2].fromID} navigation={navigation} />
+      <Button  onPress={() => navigation.navigate('Second')}  title="Click"/>
     </ScrollView>
   );
 }
@@ -87,19 +115,39 @@ function Second({
 }: {
   navigation: NativeStackNavigationProp<SimpleStackParams, 'Second'>;
 }) {
-
   React.useEffect(() => {
     navigation.setOptions({
       sharedElements,
     });
   }, [navigation]);
 
+  const reaProgress = useReanimatedTransitionProgress();
+  // const sv = useDerivedValue(
+  //   () =>
+  //     (reaProgress.progress.value < 0.5
+  //       ? reaProgress.progress.value * 50
+  //       : (1 - reaProgress.progress.value) * 50) + 50,
+  // );
+  const reaStyle = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      reaProgress.progress.value,
+      [0, 0.5, 1],
+      ['red', 'blue', 'red']
+    );
+
+    return {
+      width: '100%',
+      height: reaProgress.goingForward.value === 1 ? (120 + reaProgress.progress.value * 170) : (290 - reaProgress.progress.value * 170),
+      backgroundColor,
+    };
+  });
+
   return (
     <View style={{flex: 1}}>
-      <View style={{width: '100%', height: 290, backgroundColor: 'blue'}} nativeID={sharedElements[0].toID}>
-        <Image source={{uri: picURI}}  style={{width, height}} nativeID={sharedElements[1].toID}/>
-        <Text style={{fontSize: 20, color: 'red'}} nativeID={sharedElements[2].toID}>Text</Text>
-      </View>
+      <Animated.View style={reaStyle} nativeID={sharedElements[0].toID}>
+        {/* <Image source={{uri: picURI}}  style={{width, height}} nativeID={sharedElements[1].toID}/>
+        <Text style={{fontSize: 20, color: 'red'}} nativeID={sharedElements[2].toID}>Text</Text> */}
+      </Animated.View>
       <Button
         title="Tap me for first screen"
         onPress={() => navigation.navigate('First')}
@@ -116,7 +164,7 @@ export default function App(): JSX.Element {
           stackAnimation: 'default',
         }}>
         <Stack.Screen name="First" component={NestedFirst} options={{sharedElements}}/>
-        <Stack.Screen name="Second" component={Second} options={{headerShown: false, sharedElements}}/>
+        <Stack.Screen name="Second" component={Second} options={{headerShown: true, sharedElements}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

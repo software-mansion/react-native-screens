@@ -793,7 +793,7 @@
     NSDictionary *originalValues = sharedElement[3];
     double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
     UIView *startingView = sharedElement[0];
-    startingView.hidden = NO;
+    startingView.alpha = 1.0;
     UIView *endingView = sharedElement[1];
     endingView.alpha = endAlpha;
     UIView *snapshotView = sharedElement[2];
