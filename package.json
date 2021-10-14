@@ -35,7 +35,8 @@
     "windows/",
     "RNScreens.podspec",
     "README.md",
-    "!**/__tests__"
+    "!**/__tests__",
+    "!android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.kt"
   ],
   "repository": {
     "type": "git",
