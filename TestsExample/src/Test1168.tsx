@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   KeyboardAvoidingView,
-  Platform,
   Button,
   StyleSheet,
 } from 'react-native';
@@ -65,7 +64,13 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen
+          name="Details"
+          component={DetailsScreen}
+          options={{
+            keyboardAvoidingEnabled: true,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -25,6 +25,7 @@
   if (self = [super init]) {
     _bridge = bridge;
     _controller = [[RNSScreen alloc] initWithView:self];
+    _keyboardAvoidingEnabled = NO;
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
     _gestureEnabled = YES;
@@ -75,6 +76,11 @@
     _activityState = activityState;
     [_reactSuperview markChildUpdated];
   }
+}
+
+- (void)setKeyboardAvoidingEnabled:(BOOL)keyboardAvoidingEnabled
+{
+  _keyboardAvoidingEnabled = keyboardAvoidingEnabled;
 }
 
 - (void)setPointerEvents:(RCTPointerEvents)pointerEvents
@@ -365,7 +371,10 @@
 
 - (void)invalidate
 {
-  [_controller stopObserving]; // check if it is attached and move to viewDidDisappear
+  if (_keyboardAvoidingEnabled) {
+    // TODO: check if it is attached and move to viewDidDisappear
+    [_controller stopObservingKeyboardNotifications];
+  }
   _controller = nil;
 }
 
@@ -393,7 +402,7 @@
     _fakeView = [UIView new];
     _isKeyboardActive = NO;
 
-    [self startObserving];
+    [self startObservingKeyboardNotifications];
   }
   return self;
 }
@@ -704,15 +713,12 @@
 + (NSDictionary *)parseKeyboardNotification:(NSNotification *)notification
 {
   NSDictionary *userInfo = notification.userInfo;
-  //  NSLog(@"%@", notification);
   CGRect beginFrame = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
   CGRect endFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
   NSTimeInterval duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
   //  UIViewAnimationCurve curve =
   //      static_cast<UIViewAnimationCurve>([userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]);
   //  NSInteger isLocalUserInfoKey = [userInfo[UIKeyboardIsLocalUserInfoKey] integerValue];
-
-  //  NSLog(@"%@", [RNSScreen rectDictionaryValue:beginFrame]);
 
   return @{
     @"startCoordinates" : [RNSScreen rectDictionaryValue:beginFrame],
@@ -722,7 +728,7 @@
   };
 }
 
-- (void)startObserving
+- (void)startObservingKeyboardNotifications
 {
   NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 
@@ -740,7 +746,7 @@
            object:nil];
 }
 
-- (void)stopObserving
+- (void)stopObservingKeyboardNotifications
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -749,21 +755,20 @@
 {
   NSLog(@"keyboardWillShow: %@", self);
 
-  BOOL isTopVC = self.navigationController.topViewController == self;
-
-  if (!_isSwiping && !_isKeyboardActive && isTopVC) {
+  if (!_isSwiping && !_isKeyboardActive && ((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
     _isKeyboardActive = YES;
 
     NSDictionary *values = [RNSScreen parseKeyboardNotification:notification];
 
-    NSLog(@"%@", NSStringFromCGRect(self.view.frame));
     CGRect currentFrame = self.view.frame;
-    NSLog(@"%@", NSStringFromCGRect(currentFrame));
-
     currentFrame.size.height -=
-        ([values[@"startCoordinates"][@"screenY"] intValue] - [values[@"endCoordinates"][@"screenY"] intValue]);
+        [values[@"startCoordinates"][@"screenY"] intValue] - [values[@"endCoordinates"][@"screenY"] intValue];
 
-    [self.view setFrame:currentFrame];
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                       //        self.view.alpha = 0.0;
+                       self.view.frame = currentFrame;
+                     }];
   }
 }
 
@@ -775,18 +780,18 @@
 {
   NSLog(@"keyboardWillHide: %@", self);
 
-  BOOL isTopVC = self.navigationController.topViewController == self;
-
-  NSLog(@"isTopVC: %d", isTopVC);
-
-  if (!_isSwiping && _isKeyboardActive && isTopVC) {
+  if (!_isSwiping && _isKeyboardActive && ((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
     _isKeyboardActive = NO;
     NSDictionary *values = [RNSScreen parseKeyboardNotification:notification];
 
     if (self.transitionCoordinator == nil) {
       CGRect currentFrame = self.view.frame;
       currentFrame.size.height += [values[@"endCoordinates"][@"height"] intValue];
-      self.view.frame = currentFrame;
+      [UIView animateWithDuration:0.2
+                       animations:^{
+                         //        self.view.alpha = 0.0;
+                         self.view.frame = currentFrame;
+                       }];
     }
   }
 }
@@ -848,6 +853,7 @@ RCT_EXPORT_MODULE()
 
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(keyboardAvoidingEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)

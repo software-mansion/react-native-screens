@@ -69,6 +69,11 @@ export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
+   * TODO
+   * Mimics behavior of wrapping the screen with KeyboardAvoidingView.
+   */
+  keyboardAvoidingEnabled?: boolean;
+  /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
    */

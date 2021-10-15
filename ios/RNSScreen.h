@@ -66,7 +66,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
-- (void)stopObserving;
+- (void)stopObservingKeyboardNotifications;
 
 @end
 
@@ -88,6 +88,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) int activityState;
+@property (nonatomic) BOOL keyboardAvoidingEnabled;
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;

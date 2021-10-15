@@ -74,6 +74,11 @@ export interface ScreenProps extends ViewProps {
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
   /**
+   * TODO
+   * Mimics behavior of wrapping the screen with KeyboardAvoidingView.
+   */
+  keyboardAvoidingEnabled?: boolean;
+  /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
    *
    * @platform ios

@@ -149,6 +149,7 @@ const RouteView = ({
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
+    keyboardAvoidingEnabled,
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureEnabled,
@@ -192,6 +193,7 @@ const RouteView = ({
       enabled
       isNativeStack
       style={StyleSheet.absoluteFill}
+      keyboardAvoidingEnabled={keyboardAvoidingEnabled}
       customAnimationOnSwipe={customAnimationOnSwipe}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       gestureEnabled={isAndroid ? false : gestureEnabled}
