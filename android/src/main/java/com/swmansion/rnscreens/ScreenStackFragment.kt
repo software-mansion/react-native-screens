@@ -185,7 +185,7 @@ class ScreenStackFragment : ScreenFragment {
             val item = menu.add("")
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             if (searchView == null) {
-                searchView = SearchView(context)
+                searchView = CustomSearchView(context, this)
                 onSearchViewCreate?.invoke()
             }
             item.actionView = searchView

@@ -418,6 +418,10 @@ export interface SearchBarProps {
     e: NativeSyntheticEvent<TextInputFocusEventData>
   ) => void;
   /**
+   * A callback that gets called when search bar is closed (Android only)
+   */
+  onClose?: () => void;
+  /**
    * Text displayed when search field is empty
    */
   placeholder?: string;
