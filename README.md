@@ -52,7 +52,7 @@ buildscript {
 }
 ```
 
-`react-native-screens' requires Kotlin v1.3.50 or higher.
+`react-native-screens` requires Kotlin v1.3.50 or higher.
 </details>
 
 ### Windows
