@@ -10,7 +10,7 @@ class CustomSearchView(context: Context?, private val fragment: Fragment) : Sear
     private var mCustomOnSearchClickedListener: OnClickListener? = null
     private var mIsBackCallbackAdded: Boolean = false
 
-    var overrideBackAction: Boolean = true
+    public var overrideBackAction: Boolean = true
 
     private var mOnBackPressedCallback: OnBackPressedCallback =
         object : OnBackPressedCallback(true) {

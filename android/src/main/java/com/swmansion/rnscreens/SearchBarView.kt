@@ -27,6 +27,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     var textColor: Int? = null
     var tintColor: Int? = null
     var placeholder: String? = null
+    var shouldOverrideBackButton: Boolean = true
 
     private var mAreListenersSet: Boolean = false
     private var mDefaultTextColor: Int? = null
@@ -63,6 +64,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
                 searchView.findViewById<View>(androidx.appcompat.R.id.search_plate)
             setTextColor(searchEditText)
             setTintColor(searchTextPlate)
+            searchView.overrideBackAction = shouldOverrideBackButton
         }
     }
 

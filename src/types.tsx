@@ -429,4 +429,8 @@ export interface SearchBarProps {
    * The search field text color
    */
   textColor?: string;
+  /**
+   * Specifies wether back button should close text input or not. (Android only)
+   */
+  overrideBackButton?: boolean;
 }

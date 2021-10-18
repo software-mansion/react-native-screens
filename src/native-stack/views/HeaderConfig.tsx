@@ -76,7 +76,8 @@ export default function HeaderConfig({
   React.useEffect(() => clearSubscription, [searchBar]);
 
   const processedSearchBarOptions = React.useMemo(() => {
-    if (Platform.OS === 'android' && searchBar) {
+    const overrideBackButton = searchBar?.overrideBackButton ?? true;
+    if (Platform.OS === 'android' && searchBar && overrideBackButton) {
       const onFocus: SearchBarProps['onFocus'] = (...x) => {
         createSubscription();
         searchBar.onFocus?.(...x);
@@ -86,7 +87,7 @@ export default function HeaderConfig({
         searchBar.onClose?.(...x);
       };
 
-      return { ...searchBar, onFocus, onClose };
+      return { ...searchBar, onFocus, onClose, overrideBackButton };
     }
     return searchBar;
   }, [searchBar]);

@@ -28,7 +28,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mShadowHidden = false
     private var mIsTranslucent = false
 
-    var searchView: SearchView? = null
+    var searchView: CustomSearchView? = null
     var onSearchViewCreate: (() -> Unit)? = null
 
     @SuppressLint("ValidFragment")

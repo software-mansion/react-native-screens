@@ -71,6 +71,11 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         }
     }
 
+    @ReactProp(name = "overrideBackButton")
+    fun setOverrideBackButton(view: SearchBarView, overrideBackButton: Boolean) {
+        view.shouldOverrideBackButton=overrideBackButton
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         return MapBuilder.builder<String, Any>()
             .put("onChangeText", MapBuilder.of("registrationName", "onChangeText"))
