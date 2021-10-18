@@ -74,11 +74,6 @@ export interface ScreenProps extends ViewProps {
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   children?: React.ReactNode;
   /**
-   * TODO
-   * Mimics behavior of wrapping the screen with KeyboardAvoidingView.
-   */
-  keyboardAvoidingEnabled?: boolean;
-  /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
    *
    * @platform ios
@@ -106,6 +101,14 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   gestureEnabled?: boolean;
+  /**
+   * Boolean indicating whether it should shrink the screen height when keyboard is active.
+   * Mimics the behavior of wrapping the screen with KeyboardAvoidingView.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  keyboardAvoidingEnabled?: boolean;
   /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
    * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.

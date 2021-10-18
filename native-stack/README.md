@@ -182,6 +182,11 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
+### keyboardAvoidingEnabled (iOS only)
+
+Boolean indicating whether it should shrink the screen height when keyboard is active. Mimics the behavior of wrapping the screen with KeyboardAvoidingView.
+Defaults to `false`.
+
 #### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
