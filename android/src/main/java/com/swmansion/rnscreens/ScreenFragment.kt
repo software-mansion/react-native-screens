@@ -13,6 +13,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.Event
+import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -177,6 +178,13 @@ open class ScreenFragment : Fragment {
                 }
             }
         }
+    }
+
+    fun dispatchHeaderBackButtonClickedEvent() {
+        (screen.context as ReactContext)
+            .getNativeModule(UIManagerModule::class.java)
+            ?.eventDispatcher
+            ?.dispatchEvent(HeaderBackButtonClickedEvent(screen.id))
     }
 
     fun dispatchTransitionProgress(alpha: Float, closing: Boolean) {

@@ -58,6 +58,7 @@ function screensEnabled(): boolean {
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
 let NativeScreenValue: React.ComponentType<ScreenProps>;
 let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
+let NativeScreenNavigationContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenStack: React.ComponentType<ScreenStackProps>;
 let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
 let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
@@ -65,6 +66,7 @@ let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
 >>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 let NativeSearchBar: React.ComponentType<SearchBarProps>;
+let NativeFullWindowOverlay: React.ComponentType<View>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -78,6 +80,15 @@ const ScreensNativeModules = {
       NativeScreenContainerValue ||
       requireNativeComponent('RNSScreenContainer');
     return NativeScreenContainerValue;
+  },
+
+  get NativeScreenNavigationContainer() {
+    NativeScreenNavigationContainerValue =
+      NativeScreenNavigationContainerValue ||
+      (Platform.OS === 'ios'
+        ? requireNativeComponent('RNSScreenNavigationContainer')
+        : this.NativeScreenContainer);
+    return NativeScreenNavigationContainerValue;
   },
 
   get NativeScreenStack() {
@@ -103,6 +114,12 @@ const ScreensNativeModules = {
   get NativeSearchBar() {
     NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
     return NativeSearchBar;
+  },
+
+  get NativeFullWindowOverlay() {
+    NativeFullWindowOverlay =
+      NativeFullWindowOverlay || requireNativeComponent('RNSFullWindowOverlay');
+    return NativeFullWindowOverlay;
   },
 };
 
@@ -212,9 +229,12 @@ class Screen extends React.Component<ScreenProps> {
 }
 
 function ScreenContainer(props: ScreenContainerProps) {
-  const { enabled = ENABLE_SCREENS, ...rest } = props;
+  const { enabled = ENABLE_SCREENS, hasTwoStates, ...rest } = props;
 
   if (enabled && isPlatformSupported) {
+    if (hasTwoStates) {
+      return <ScreensNativeModules.NativeScreenNavigationContainer {...rest} />;
+    }
     return <ScreensNativeModules.NativeScreenContainer {...rest} />;
   }
   return <View {...rest} />;
@@ -312,6 +332,10 @@ module.exports = {
     return ScreensNativeModules.NativeScreenContainer;
   },
 
+  get NativeScreenNavigationContainer() {
+    return ScreensNativeModules.NativeScreenNavigationContainer;
+  },
+
   get ScreenStack() {
     return ScreensNativeModules.NativeScreenStack;
   },
@@ -328,6 +352,14 @@ module.exports = {
     }
 
     return ScreensNativeModules.NativeSearchBar;
+  },
+  get FullWindowOverlay() {
+    if (Platform.OS !== 'ios') {
+      console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
+      return View;
+    }
+
+    return ScreensNativeModules.NativeFullWindowOverlay;
   },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them

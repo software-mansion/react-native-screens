@@ -48,6 +48,13 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
 
+### `nativeBackButtonDismissalEnabled` (Android only)
+
+Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+
+Defaults to `false`.
+
 ### `onAppear`
 
 A callback that gets called when the current screen appears.
@@ -59,6 +66,10 @@ A callback that gets called when the current screen disappears.
 ### `onDismissed`
 
 A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down). The callback takes no arguments.
+
+### `onHeaderBackButtonClicked` (Android only)
+
+A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`.
 
 ### `onWillAppear`
 
@@ -242,6 +253,7 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 
 - `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences`.
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
+- `cancelButtonText` - The text to be used instead of default `Cancel` button text.
 - `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`.
 - `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`.
 - `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`.
@@ -400,3 +412,7 @@ Check [LifecycleAwareView.java](https://github.com/kmagiera/react-native-screens
 In addition to that, you will need to register for receiving these updates. This can be done using [`LifecycleHelper.register`](https://github.com/kmagiera/react-native-screens/blob/master/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L50).
 Remember to call [`LifecycleHelper.unregister`](https://github.com/kmagiera/react-native-screens/blob/master/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L59) before the view is dropped.
 Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/kmagiera/react-native-screens/blob/master/Example/android/app/src/main/java/com/swmansion/rnscreens/example/SampleLifecycleAwareViewManager.java) from our example app to see what are the best ways of using the above methods.
+
+## Android hardware back button
+
+In order to properly handle the hardware back button on Android, you should implement the navigation logic concerning it. You can see an example of how it is done in `react-navigation` here: https://github.com/react-navigation/react-navigation/blob/6cba517b74f5fd092db21d5574b558ef2d80897b/packages/native/src/useBackButton.tsx.

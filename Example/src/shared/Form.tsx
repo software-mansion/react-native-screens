@@ -2,14 +2,22 @@ import React from 'react';
 import { View, StyleSheet, Text, TextInput } from 'react-native';
 
 export const Form = (): JSX.Element => (
-  <View style={styles.wrapper}>
-    <Text style={styles.heading}>Example form</Text>
-    <Text style={styles.label}>First Name *</Text>
-    <TextInput style={styles.input} />
-    <Text style={styles.label}>Last Name *</Text>
-    <TextInput style={styles.input} />
-    <Text style={styles.label}>Email *</Text>
-    <TextInput style={styles.input} />
+  <View testID="form" style={styles.wrapper}>
+    <Text testID="form-header" style={styles.heading}>
+      Example form
+    </Text>
+    <Text testID="form-first-name-label" style={styles.label}>
+      First Name *
+    </Text>
+    <TextInput testID="form-first-name-input" style={styles.input} />
+    <Text testID="form-last-name-label" style={styles.label}>
+      Last Name *
+    </Text>
+    <TextInput testID="form-last-name-input" style={styles.input} />
+    <Text testID="form-email-label" style={styles.label}>
+      Email *
+    </Text>
+    <TextInput testID="form-email-input" style={styles.input} />
   </View>
 );
 

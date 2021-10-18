@@ -102,6 +102,14 @@ export interface ScreenProps extends ViewProps {
    */
   gestureEnabled?: boolean;
   /**
+   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
+  nativeBackButtonDismissalEnabled?: boolean;
+  /**
    * A callback that gets called when the current screen appears.
    */
   onAppear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
@@ -115,6 +123,12 @@ export interface ScreenProps extends ViewProps {
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
+   * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
+   *
+   * @platform android
+   */
+  onHeaderBackButtonClicked?: () => void;
   /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
@@ -208,6 +222,10 @@ export interface ScreenContainerProps extends ViewProps {
    * A prop that gives users an option to switch between using Screens for the navigator (container). All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;
+  /**
+   * A prop to be used in navigators always showing only one screen (providing only `0` or `2` `activityState` values) for better implementation of `ScreenContainer` on iOS.
+   */
+  hasTwoStates?: boolean;
 }
 
 export interface ScreenStackProps extends ViewProps {
@@ -350,9 +368,18 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
 
 export interface SearchBarProps {
   /**
-   * Indicates whether to to obscure the underlying content
+   * The auto-capitalization behavior
    */
-  obscureBackground?: boolean;
+  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  /**
+   * The search field background color
+   */
+  barTintColor?: string;
+  /**
+   * The text to be used instead of default `Cancel` button text
+   */
+  cancelButtonText?: string;
+
   /**
    * Indicates whether to hide the navigation bar
    */
@@ -361,26 +388,29 @@ export interface SearchBarProps {
    * Indicates whether to hide the search bar when scrolling
    */
   hideWhenScrolling?: boolean;
+
   /**
-   * The auto-capitalization behavior
+   * Indicates whether to to obscure the underlying content
    */
-  autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
+  obscureBackground?: boolean;
   /**
-   * Text displayed when search field is empty
+   * A callback that gets called when search bar has lost focus
    */
-  placeholder?: string;
-  /**
-   * The search field background color
-   */
-  barTintColor?: string;
-  /**
-   * A callback that gets called when the text changes. It receives the current text value of the search bar.
-   */
-  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the cancel button is pressed
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+
+  /**
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
+   */
+  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+
+  /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
@@ -388,13 +418,9 @@ export interface SearchBarProps {
     e: NativeSyntheticEvent<TextInputFocusEventData>
   ) => void;
   /**
-   * A callback that gets called when search bar has received focus
+   * Text displayed when search field is empty
    */
-  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * A callback that gets called when search bar has lost focus
-   */
-  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  placeholder?: string;
   /**
    * The search field text color
    */

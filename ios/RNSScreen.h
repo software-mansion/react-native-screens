@@ -4,8 +4,6 @@
 
 #import "RNSScreenContainer.h"
 
-@class RNSScreenContainerView;
-
 typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
   RNSScreenStackPresentationPush,
   RNSScreenStackPresentationModal,
@@ -67,6 +65,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)notifyFinishTransitioning;
+- (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 
 @end
 
@@ -81,7 +80,9 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
 @property (nonatomic, copy) RCTDirectEventBlock onWillAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
+@property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
+
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
@@ -90,6 +91,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+@property (nonatomic) BOOL preventNativeDismiss;
 @property (nonatomic) BOOL hasOrientationSet;
 @property (nonatomic) BOOL hasStatusBarStyleSet;
 @property (nonatomic) BOOL hasStatusBarAnimationSet;

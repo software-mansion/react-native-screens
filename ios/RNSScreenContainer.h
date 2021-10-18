@@ -3,6 +3,7 @@
 @protocol RNSScreenContainerDelegate
 
 - (void)markChildUpdated;
+- (void)updateContainer;
 
 @end
 
@@ -12,8 +13,19 @@
 
 @interface RNScreensViewController : UIViewController <RNScreensViewControllerDelegate>
 
+- (UIViewController *)findActiveChildVC;
+
 @end
 
-@interface RNSScreenContainerView : UIView <RNSScreenContainerDelegate>
+@interface RNSScreenContainerManager : RCTViewManager
+
+@end
+
+@interface RNSScreenContainerView : UIView <RNSScreenContainerDelegate, RCTInvalidating>
+
+@property (nonatomic, retain) UIViewController *controller;
+@property (nonatomic, retain) NSMutableArray *reactSubviews;
+
+- (void)maybeDismissVC;
 
 @end

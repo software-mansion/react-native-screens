@@ -3,6 +3,14 @@
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
+## Supported platforms
+
+- [x] iOS
+- [x] Android
+- [x] tvOS
+- [x] Windows
+- [x] Web
+
 ## Installation
 
 ### iOS

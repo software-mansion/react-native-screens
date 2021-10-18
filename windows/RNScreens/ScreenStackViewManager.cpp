@@ -1,9 +1,9 @@
+#include "pch.h"
 #include "ScreenStackViewManager.h"
 #include "JSValueXaml.h"
 #include "NativeModules.h"
 #include "Screen.h"
 #include "ScreenStack.h"
-#include "pch.h"
 
 namespace winrt {
 using namespace Microsoft::ReactNative;

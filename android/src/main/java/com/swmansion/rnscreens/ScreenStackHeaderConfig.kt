@@ -46,10 +46,18 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             if (stack != null && stack.rootScreen == it.screen) {
                 val parentFragment = it.parentFragment
                 if (parentFragment is ScreenStackFragment) {
-                    parentFragment.dismiss()
+                    if (parentFragment.screen.nativeBackButtonDismissalEnabled) {
+                        parentFragment.dismiss()
+                    } else {
+                        parentFragment.dispatchHeaderBackButtonClickedEvent()
+                    }
                 }
             } else {
-                it.dismiss()
+                if (it.screen.nativeBackButtonDismissalEnabled) {
+                    it.dismiss()
+                } else {
+                    it.dispatchHeaderBackButtonClickedEvent()
+                }
             }
         }
     }
@@ -361,7 +369,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         mDirection = direction
     }
 
-    private class DebugMenuToolbar(context: Context?) : Toolbar(context) {
+    private class DebugMenuToolbar(context: Context) : Toolbar(context) {
         override fun showOverflowMenu(): Boolean {
             (context.applicationContext as ReactApplication)
                 .reactNativeHost

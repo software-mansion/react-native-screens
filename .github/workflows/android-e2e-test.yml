@@ -1,0 +1,46 @@
+name: Test Android e2e
+on:
+  pull_request:
+    paths:
+        - 'Example/**'
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    env:
+      WORKING_DIRECTORY: Example
+    concurrency:
+      group: android-e2e-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: 'yarn'
+      - name: Install root node dependencies
+        run: yarn
+      - name: Install node dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn
+      - name: Build app
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn build-e2e-android
+      - name: Run emulator and tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+          api-level: 29
+          avd-name: e2e_emulator
+          script: yarn test-e2e-android 
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: android-fail-screen-shoots
+          path: ${{ env.WORKING_DIRECTORY }}/artifacts

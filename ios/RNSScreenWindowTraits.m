@@ -1,5 +1,7 @@
 #import "RNSScreenWindowTraits.h"
 #import "RNSScreen.h"
+#import "RNSScreenContainer.h"
+#import "RNSScreenStack.h"
 
 @implementation RNSScreenWindowTraits
 
@@ -189,5 +191,32 @@
   }
 }
 #endif
+
+// method to be used in Expo for checking if RNScreens have trait set
++ (BOOL)shouldAskScreensForTrait:(RNSWindowTrait)trait
+                 includingModals:(BOOL)includingModals
+                inViewController:(UIViewController *)vc
+{
+  UIViewController *lastViewController = [[vc childViewControllers] lastObject];
+  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+    UIViewController *vc = nil;
+    if ([lastViewController isKindOfClass:[RNScreensViewController class]]) {
+      vc = [(RNScreensViewController *)lastViewController findActiveChildVC];
+    } else if ([lastViewController isKindOfClass:[RNScreensNavigationController class]]) {
+      vc = [(RNScreensNavigationController *)lastViewController topViewController];
+    }
+    return [vc isKindOfClass:[RNSScreen class]] &&
+        [(RNSScreen *)vc findChildVCForConfigAndTrait:trait includingModals:includingModals] != nil;
+  }
+  return NO;
+}
+
+// same method as above, but directly for orientation
++ (BOOL)shouldAskScreensForScreenOrientationInViewController:(UIViewController *)vc
+{
+  return [RNSScreenWindowTraits shouldAskScreensForTrait:RNSWindowTraitOrientation
+                                         includingModals:YES
+                                        inViewController:vc];
+}
 
 @end
