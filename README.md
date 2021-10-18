@@ -50,8 +50,8 @@ buildscript {
         kotlinVersion = "1.4.10"
     }
 }
-
 ```
+
 `react-native-screens' requires Kotlin v1.3.50 or higher.
 </details>
 
