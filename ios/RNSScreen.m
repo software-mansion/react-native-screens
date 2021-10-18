@@ -371,10 +371,10 @@
 
 - (void)invalidate
 {
-  if (_keyboardAvoidingEnabled) {
-    // TODO: check if it is attached and move to viewDidDisappear
-    [_controller stopObservingKeyboardNotifications];
-  }
+#if !TARGET_OS_TV
+  // TODO: check if it is attached and move to viewDidDisappear
+  [_controller stopObservingKeyboardNotifications];
+#endif
   _controller = nil;
 }
 
@@ -401,8 +401,9 @@
     _shouldNotify = YES;
     _fakeView = [UIView new];
     _isKeyboardActive = NO;
-
+#if !TARGET_OS_TV
     [self startObservingKeyboardNotifications];
+#endif
   }
   return self;
 }
@@ -700,6 +701,8 @@
 
 #pragma mark - screen keyboard avoiding related methods
 
+#if !TARGET_OS_TV
+
 + (NSDictionary *)rectDictionaryValue:(CGRect)rect
 {
   return @{
@@ -807,6 +810,8 @@
 - (void)keyboardDidChangeFrame:(NSNotification *)notification
 {
 }
+
+#endif
 
 #pragma mark - transition progress related methods
 
