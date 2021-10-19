@@ -21,6 +21,7 @@ type Props = NativeStackNavigationOptions & {
 };
 
 function handleBackPress() {
+  // This function invokes the native back press event
   BackHandler.exitApp();
   return true;
 }
