@@ -61,7 +61,10 @@ export default function HeaderConfig({
     handleDetached,
     clearSubscription,
     createSubscription,
-  } = useBackPressSubscription({ onBackPress: handleBackPress });
+  } = useBackPressSubscription({
+    onBackPress: handleBackPress,
+    disabled: !searchBar || !!searchBar.disableBackButtonOverride,
+  });
 
   const [
     backTitleFontFamily,
@@ -76,8 +79,11 @@ export default function HeaderConfig({
   React.useEffect(() => clearSubscription, [searchBar]);
 
   const processedSearchBarOptions = React.useMemo(() => {
-    const overrideBackButton = searchBar?.overrideBackButton ?? true;
-    if (Platform.OS === 'android' && searchBar && overrideBackButton) {
+    if (
+      Platform.OS === 'android' &&
+      searchBar &&
+      searchBar.disableBackButtonOverride
+    ) {
       const onFocus: SearchBarProps['onFocus'] = (...x) => {
         createSubscription();
         searchBar.onFocus?.(...x);
@@ -87,7 +93,7 @@ export default function HeaderConfig({
         searchBar.onClose?.(...x);
       };
 
-      return { ...searchBar, onFocus, onClose, overrideBackButton };
+      return { ...searchBar, onFocus, onClose };
     }
     return searchBar;
   }, [searchBar]);

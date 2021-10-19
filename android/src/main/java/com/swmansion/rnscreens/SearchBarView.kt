@@ -28,6 +28,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     var tintColor: Int? = null
     var placeholder: String? = null
     var shouldOverrideBackButton: Boolean = true
+    var autoFocus: Boolean = false
 
     private var mAreListenersSet: Boolean = false
     private var mDefaultTextColor: Int? = null
@@ -46,7 +47,21 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         super.onAttachedToWindow()
 
         setSearchViewProps()
-        screenStackFragment?.onSearchViewCreate = { setSearchViewProps() }
+        screenStackFragment?.onSearchViewCreate = {
+            setSearchViewProps()
+            if (autoFocus) {
+                focusSearchView()
+            }
+        }
+    }
+
+    private fun focusSearchView() {
+        val searchView = screenStackFragment?.searchView
+        if (searchView != null) {
+            searchView.isIconified = false
+            searchView.requestFocusFromTouch()
+
+        }
     }
 
     private fun setSearchViewProps() {
@@ -113,6 +128,9 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             handleClose()
             false
         }
+        searchView.setOnSearchClickListener{
+            handleOpen()
+        }
     }
 
     fun propsDidChange() {
@@ -137,6 +155,10 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     private fun handleClose() {
         sendEvent("onClose", null)
+    }
+
+    private fun handleOpen() {
+        sendEvent("onOpen", null)
     }
 
     private fun handleTextSubmit(newText: String?) {

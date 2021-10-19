@@ -432,5 +432,9 @@ export interface SearchBarProps {
   /**
    * Specifies wether back button should close text input or not. (Android only)
    */
-  overrideBackButton?: boolean;
+  disableBackButtonOverride?: boolean;
+  /**
+   * Automatically focuses search bar on mount (Android only)
+   */
+  autoFocus?: boolean;
 }

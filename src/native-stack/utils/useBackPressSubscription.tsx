@@ -3,6 +3,7 @@ import { BackHandler, NativeEventSubscription } from 'react-native';
 
 interface Args {
   onBackPress: () => boolean;
+  disabled: boolean;
 }
 
 interface UseBackPressSubscription {
@@ -37,18 +38,24 @@ export function useBackPressSubscription(args: Args): UseBackPressSubscription {
   }, [subscription.current]);
 
   const handleAttached = React.useCallback(() => {
-    console.log('Attached');
-    if (isActive) {
+    if (isActive && !args.disabled) {
+      console.log('Attached');
       createSubscription();
     }
-  }, [createSubscription, isActive]);
+  }, [createSubscription, isActive, args.disabled]);
 
   const handleDetached = React.useCallback(() => {
-    console.log('Detached');
-    clearSubscription(false);
-  }, [createSubscription, isActive]);
+    if (!args.disabled) {
+      console.log('Detached');
+      clearSubscription(false);
+    }
+  }, [createSubscription, isActive, args.disabled]);
 
-  //   React.useEffect(() => clearSubscription, [clearSubscription]);
+  React.useEffect(() => {
+    if (args.disabled && isActive) {
+      clearSubscription();
+    }
+  }, [args.disabled]);
 
   return {
     handleAttached,

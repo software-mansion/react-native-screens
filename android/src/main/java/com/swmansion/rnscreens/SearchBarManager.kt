@@ -71,9 +71,14 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         }
     }
 
-    @ReactProp(name = "overrideBackButton")
-    fun setOverrideBackButton(view: SearchBarView, overrideBackButton: Boolean) {
-        view.shouldOverrideBackButton=overrideBackButton
+    @ReactProp(name = "disableBackButtonOverride")
+    fun setDisableBackButtonOverride(view: SearchBarView, disableBackButtonOverride: Boolean?) {
+        view.shouldOverrideBackButton = disableBackButtonOverride != true
+    }
+
+    @ReactProp(name = "autoFocus")
+    fun setAutoFocus(view: SearchBarView, autoFocus: Boolean?) {
+        view.autoFocus = autoFocus ?: false
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
@@ -83,6 +88,7 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
             .put("onFocus", MapBuilder.of("registrationName", "onFocus"))
             .put("onBlur", MapBuilder.of("registrationName", "onBlur"))
             .put("onClose", MapBuilder.of("registrationName", "onClose"))
+            .put("onOpen", MapBuilder.of("registrationName", "onOpen"))
             .build()
     }
 
