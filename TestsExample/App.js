@@ -63,11 +63,13 @@ import Test1096 from './src/Test1096';
 import Test from './src/Test';
 import AndroidDifferentScreenSearch from './src/AndroidDifferentScreenSearch';
 import AndroidSearchBarCustomization from './src/AndroidSearchBarCustomization';
+import AndroidSearchTypes from './src/AndroidSearchTypes';
+import AndroidSearchBarEvents from './src/AndroidSearchBarEvents';
 
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <AndroidSearchBarCustomization />
+      <AndroidSearchBarEvents />
     </ReanimatedScreenProvider>
   );
 }

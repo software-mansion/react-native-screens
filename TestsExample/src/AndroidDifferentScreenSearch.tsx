@@ -46,20 +46,24 @@ function Second({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
+  const [text, setText] = React.useState('');
+
   React.useEffect(() => {
     navigation.setOptions({
       title:'',
       searchBar: {
         autoFocus: true,
         onClose: () => navigation.navigate('First'),
+        onChangeText: (e) => setText(e.nativeEvent.text),
       },
       stackAnimation: 'none'
     });
   }, []);
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF'}}>
-      <Text>Search Results</Text>
+    <View style={{flex: 1, backgroundColor: '#FFF', padding: 12}}>
+      <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 12}}>Search Results</Text>
+      <Text>{text}</Text>
     </View>
   );
 }
