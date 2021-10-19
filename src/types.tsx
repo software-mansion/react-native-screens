@@ -376,16 +376,22 @@ export interface SearchBarProps {
    */
   barTintColor?: string;
   /**
-   * The text to be used instead of default `Cancel` button text (iOS only)
+   * The text to be used instead of default `Cancel` button text
+   *
+   * @platform iOS
    */
   cancelButtonText?: string;
 
   /**
-   * Indicates whether to hide the navigation bar (iOS only)
+   * Indicates whether to hide the navigation bar
+   *
+   * @platform iOS
    */
   hideNavigationBar?: boolean;
   /**
-   * Indicates whether to hide the search bar when scrolling (iOS only)
+   * Indicates whether to hide the search bar when scrolling
+   *
+   * @platform iOS
    */
   hideWhenScrolling?: boolean;
 
@@ -398,7 +404,9 @@ export interface SearchBarProps {
    */
   onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when the cancel button is pressed (iOS only)
+   * A callback that gets called when the cancel button is pressed
+   *
+   * @platform iOS
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 
@@ -418,9 +426,17 @@ export interface SearchBarProps {
     e: NativeSyntheticEvent<TextInputFocusEventData>
   ) => void;
   /**
-   * A callback that gets called when search bar is closed (Android only)
+   * A callback that gets called when search bar is closed
+   *
+   * @platform android
    */
   onClose?: () => void;
+  /**
+   * A callback that gets called when search bar is opened
+   *
+   * @platform android
+   */
+  onOpen?: () => void;
   /**
    * Text displayed when search field is empty
    */
@@ -430,11 +446,15 @@ export interface SearchBarProps {
    */
   textColor?: string;
   /**
-   * Specifies wether back button should close text input or not. (Android only)
+   * Specifies wether back button should close text input or not.
+   *
+   * @platform android
    */
   disableBackButtonOverride?: boolean;
   /**
-   * Automatically focuses search bar on mount (Android only)
+   * Automatically focuses search bar on mount
+   *
+   * @platform android
    */
   autoFocus?: boolean;
 }
