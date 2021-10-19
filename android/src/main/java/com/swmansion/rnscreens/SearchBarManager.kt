@@ -31,7 +31,7 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         }
     }
 
-    @ReactProp(name = "tintColor", customType = "Color")
+    @ReactProp(name = "barTintColor", customType = "Color")
     fun setTintColor(view: SearchBarView, color: Int?) {
         if (color != null) {
             view.tintColor = color
