@@ -3,8 +3,6 @@
 - (void)reanimatedMockTransitionWithConverterView:(UIView *)converter
                                            fromID:(NSNumber *)fromID
                                              toID:(NSNumber *)toID
-                                      viewToApply:(UIView *)view
-                                         progress:(float)progress
                                           rootTag:(NSNumber *)rootTag;
 
 @end
@@ -22,7 +20,5 @@
 + (void)reanimatedMockTransitionWithConverterView:(UIView *)converter
                                            fromID:(NSNumber *)fromID
                                              toID:(NSNumber *)toID
-                                      viewToApply:(UIView *)view
-                                         progress:(float)progress
                                           rootTag:(NSNumber *)rootTag;
 @end

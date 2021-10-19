@@ -378,8 +378,8 @@
   CGFloat _currentAlpha;
   BOOL _closing;
   NSMutableArray<NSArray *> *_sharedElements;
-  UIView *_containerView;
-  UIView *_toView;
+  //  UIView *_containerView;
+  //  UIView *_toView;
   BOOL _goingForward;
   int _dismissCount;
   BOOL _isSwiping;
@@ -765,27 +765,26 @@
         [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     [toViewController.view setNeedsLayout];
     [toViewController.view layoutIfNeeded];
-    self->_containerView = [transitionContext containerView];
+    //    self->_containerView = [transitionContext containerView];
 
     for (NSArray *sharedElement in self->_sharedElements) {
-      UIView *endingView = sharedElement[1];
-      self->_toView = endingView.reactViewController.view;
-      UIView *snapshotView = sharedElement[2];
-      UIView *startView = sharedElement[0];
+      //      UIView *snapshotView = sharedElement[2];
 
-      [[transitionContext containerView] addSubview:startView];
       //      [RNSSharedElementAnimator copyValuesFromView:endingView toSnapshot:snapshotView];
 
       //      NSDictionary *originalValues = sharedElement[3];
       //      double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
       //      snapshotView.alpha = endAlpha;
+      UIView *startingView = sharedElement[0];
+      [[transitionContext containerView] addSubview:startingView];
+      RNSScreenView *startingScreenView = (RNSScreenView *)startingView.reactViewController.view;
+      UIView *endingView = sharedElement[1];
+      //      self->_toView = endingView.reactViewController.view;
+      [RNSSharedElementAnimator reanimatedMockTransitionWithConverterView:[transitionContext containerView]
+                                                                   fromID:startingView.reactTag
+                                                                     toID:endingView.reactTag
+                                                                  rootTag:[startingScreenView rootTag]];
     }
-    [RNSSharedElementAnimator reanimatedMockTransitionWithConverterView:nil
-                                                                 fromID:nil
-                                                                   toID:nil
-                                                            viewToApply:nil
-                                                               progress:1.0f
-                                                                rootTag:nil];
   }
 }
 
@@ -812,16 +811,16 @@
   [self->_animationTimer setPaused:YES];
   [self->_animationTimer invalidate];
   [_fakeView removeFromSuperview];
-  self->_containerView = nil;
-  self->_toView = nil;
+  //  self->_containerView = nil;
+  //  self->_toView = nil;
 }
 
 - (void)updateSharedElements:(double)progress
 {
-  [RNSSharedElementAnimator calculateFramesOfSharedElementsWithProgress:progress
-                                                              container:_containerView
-                                                         sharedElements:_sharedElements
-                                                                 toView:_toView];
+  //  [RNSSharedElementAnimator calculateFramesOfSharedElementsWithProgress:progress
+  //                                                              container:_containerView
+  //                                                         sharedElements:_sharedElements
+  //                                                                 toView:_toView];
 }
 
 @end

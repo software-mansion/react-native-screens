@@ -104,45 +104,34 @@ static NSObject<RNSSEA> *_delegate;
                                      sharedElements:(NSMutableArray<NSArray *> *)sharedElements
                                              toView:(UIView *)toView
 {
-  for (NSArray *sharedElement in sharedElements) {
-    UIView *startingView = sharedElement[0];
-    RNSScreenView *startingScreenView = (RNSScreenView *)startingView.reactViewController.view;
-    UIView *endingView = sharedElement[1];
-    //    UIView *endingScreenView = endingView.reactViewController.view;
-    UIView *snapshotView = sharedElement[2];
-    [RNSSharedElementAnimator reanimatedMockTransitionWithConverterView:container
-                                                                 fromID:startingView.reactTag
-                                                                   toID:endingView.reactTag
-                                                            viewToApply:snapshotView
-                                                               progress:progress
-                                                                rootTag:[startingScreenView rootTag]];
-    //    NSDictionary *originalValues = sharedElement[3];
-    //    CGRect startFrame = [[originalValues objectForKey:@"convertedStartFrame"] CGRectValue];
-    //    CGRect toFrame = [container convertRect:endingView.frame fromView:endingScreenView];
-    //    snapshotView.frame = toFrame;
-    //    snapshotView.backgroundColor = endingView.backgroundColor;
-    //    snapshotView.frame = CGRectMake(
-    //        [RNSSharedElementAnimator interpolateWithFrom:startFrame.origin.x to:toFrame.origin.x progress:progress],
-    //        [RNSSharedElementAnimator interpolateWithFrom:startFrame.origin.y to:toFrame.origin.y progress:progress],
-    //        [RNSSharedElementAnimator interpolateWithFrom:startFrame.size.width to:toFrame.size.width
-    //        progress:progress], [RNSSharedElementAnimator interpolateWithFrom:startFrame.size.height
-    //        to:toFrame.size.height progress:progress]);
-  }
+  //  for (NSArray *sharedElement in sharedElements) {
+  //    UIView *startingView = sharedElement[0];
+  //    RNSScreenView *startingScreenView = (RNSScreenView *)startingView.reactViewController.view;
+  //    UIView *endingView = sharedElement[1];
+  //    //    UIView *endingScreenView = endingView.reactViewController.view;
+  //    UIView *snapshotView = sharedElement[2];
+  //    //    NSDictionary *originalValues = sharedElement[3];
+  //    //    CGRect startFrame = [[originalValues objectForKey:@"convertedStartFrame"] CGRectValue];
+  //    //    CGRect toFrame = [container convertRect:endingView.frame fromView:endingScreenView];
+  //    //    snapshotView.frame = toFrame;
+  //    //    snapshotView.backgroundColor = endingView.backgroundColor;
+  //    //    snapshotView.frame = CGRectMake(
+  //    //        [RNSSharedElementAnimator interpolateWithFrom:startFrame.origin.x to:toFrame.origin.x
+  //    progress:progress],
+  //    //        [RNSSharedElementAnimator interpolateWithFrom:startFrame.origin.y to:toFrame.origin.y
+  //    progress:progress],
+  //    //        [RNSSharedElementAnimator interpolateWithFrom:startFrame.size.width to:toFrame.size.width
+  //    //        progress:progress], [RNSSharedElementAnimator interpolateWithFrom:startFrame.size.height
+  //    //        to:toFrame.size.height progress:progress]);
+  //  }
 }
 
 + (void)reanimatedMockTransitionWithConverterView:(UIView *)converter
                                            fromID:(NSNumber *)fromID
                                              toID:(NSNumber *)toID
-                                      viewToApply:(UIView *)view
-                                         progress:(float)progress
                                           rootTag:(NSNumber *)rootTag
 {
-  [_delegate reanimatedMockTransitionWithConverterView:converter
-                                                fromID:fromID
-                                                  toID:toID
-                                           viewToApply:view
-                                              progress:progress
-                                               rootTag:rootTag];
+  [_delegate reanimatedMockTransitionWithConverterView:converter fromID:fromID toID:toID rootTag:rootTag];
   // UIView *fromView = [uiManager viewForNativeID:fromID withRootTag:rootTag];
   // UIView *fromScreenView = fromView.reactViewController.view;
   // UIView *toID = [uiManager viewForNativeID:toID withRootTag:rootTag];
