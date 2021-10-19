@@ -5,23 +5,22 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 
-class CustomSearchView(context: Context?, private val fragment: Fragment) : SearchView(context) {
+class CustomSearchView(context: Context?, fragment: Fragment) : SearchView(context) {
     private var mCustomOnCloseListener: OnCloseListener? = null
     private var mCustomOnSearchClickedListener: OnClickListener? = null
-    private var mIsBackCallbackAdded: Boolean = false
-
-    var overrideBackAction: Boolean = true
 
     private var mOnBackPressedCallback: OnBackPressedCallback =
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                handleBackPress()
+                isIconified = true
             }
         }
-
-    fun handleBackPress() {
-        isIconified = true
-    }
+    private val backPressOverrider = FragmentBackPressOverrider(fragment, mOnBackPressedCallback)
+    var overrideBackAction: Boolean
+        set(value) {
+            backPressOverrider.overrideBackAction = value
+        }
+        get() = backPressOverrider.overrideBackAction
 
     override fun setOnCloseListener(listener: OnCloseListener?) {
         mCustomOnCloseListener = listener
@@ -31,44 +30,27 @@ class CustomSearchView(context: Context?, private val fragment: Fragment) : Sear
         mCustomOnSearchClickedListener = listener
     }
 
-    private fun maybeAddBackCallback() {
-        if (!mIsBackCallbackAdded && overrideBackAction) {
-            fragment.activity?.onBackPressedDispatcher?.addCallback(
-                fragment,
-                mOnBackPressedCallback
-            )
-            mIsBackCallbackAdded = true
-        }
-    }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (!isIconified) {
-            maybeAddBackCallback()
+            backPressOverrider.maybeAddBackCallback()
         }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        removeBackCallbackIfAdded()
-    }
-
-    private fun removeBackCallbackIfAdded() {
-        if (mIsBackCallbackAdded) {
-            mOnBackPressedCallback.remove()
-            mIsBackCallbackAdded = false
-        }
+        backPressOverrider.removeBackCallbackIfAdded()
     }
 
     init {
         super.setOnSearchClickListener { v ->
             mCustomOnSearchClickedListener?.onClick(v)
-            maybeAddBackCallback()
+            backPressOverrider.maybeAddBackCallback()
         }
 
         super.setOnCloseListener {
             val result = mCustomOnCloseListener?.onClose() ?: false
-            removeBackCallbackIfAdded()
+            backPressOverrider.removeBackCallbackIfAdded()
             result
         }
 
