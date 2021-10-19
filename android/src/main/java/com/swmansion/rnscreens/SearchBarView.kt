@@ -60,7 +60,6 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         if (searchView != null) {
             searchView.isIconified = false
             searchView.requestFocusFromTouch()
-
         }
     }
 

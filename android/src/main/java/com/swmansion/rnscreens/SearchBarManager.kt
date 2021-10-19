@@ -24,12 +24,12 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
 
     @ReactProp(name = "textColor", customType = "Color")
     fun setTextColor(view: SearchBarView, color: Int?) {
-        view.textColor=color
+        view.textColor = color
     }
 
     @ReactProp(name = "barTintColor", customType = "Color")
     fun setTintColor(view: SearchBarView, color: Int?) {
-       view.tintColor = color
+        view.tintColor = color
     }
 
     @ReactProp(name = "placeholder")

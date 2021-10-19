@@ -14,7 +14,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.Transformation
 import android.widget.LinearLayout
-import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.bridge.UiThreadUtil
