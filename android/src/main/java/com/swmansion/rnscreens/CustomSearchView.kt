@@ -71,5 +71,7 @@ class CustomSearchView(context: Context?, private val fragment: Fragment) : Sear
             removeBackCallbackIfAdded()
             result
         }
+
+        maxWidth = Integer.MAX_VALUE
     }
 }
