@@ -3,7 +3,7 @@ import { BackHandler, NativeEventSubscription } from 'react-native';
 
 interface Args {
   onBackPress: () => boolean;
-  disabled: boolean;
+  isDisabled: boolean;
 }
 
 interface UseBackPressSubscription {
@@ -13,13 +13,15 @@ interface UseBackPressSubscription {
   clearSubscription: () => void;
 }
 
-export function useBackPressSubscription(args: Args): UseBackPressSubscription {
+export function useBackPressSubscription({
+  onBackPress,
+  isDisabled,
+}: Args): UseBackPressSubscription {
   const [isActive, setIsActive] = React.useState(false);
   const subscription = React.useRef<NativeEventSubscription | undefined>();
 
   const clearSubscription = React.useCallback(
     (shouldSetActive = true) => {
-      console.log('Clear subscription');
       subscription.current?.remove();
       subscription.current = undefined;
       if (shouldSetActive) setIsActive(false);
@@ -28,34 +30,31 @@ export function useBackPressSubscription(args: Args): UseBackPressSubscription {
   );
 
   const createSubscription = React.useCallback(() => {
-    console.log('Create subscription');
     subscription.current?.remove();
     subscription.current = BackHandler.addEventListener(
       'hardwareBackPress',
-      args.onBackPress
+      onBackPress
     );
     setIsActive(true);
   }, [subscription.current]);
 
   const handleAttached = React.useCallback(() => {
-    if (isActive && !args.disabled) {
-      console.log('Attached');
+    if (isActive && !isDisabled) {
       createSubscription();
     }
-  }, [createSubscription, isActive, args.disabled]);
+  }, [createSubscription, isActive, isDisabled]);
 
   const handleDetached = React.useCallback(() => {
-    if (!args.disabled) {
-      console.log('Detached');
+    if (!isDisabled) {
       clearSubscription(false);
     }
-  }, [createSubscription, isActive, args.disabled]);
+  }, [createSubscription, isActive, isDisabled]);
 
   React.useEffect(() => {
-    if (args.disabled && isActive) {
+    if (isDisabled && isActive) {
       clearSubscription();
     }
-  }, [args.disabled]);
+  }, [isDisabled]);
 
   return {
     handleAttached,

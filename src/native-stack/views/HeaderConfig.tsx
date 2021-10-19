@@ -63,7 +63,7 @@ export default function HeaderConfig({
     createSubscription,
   } = useBackPressSubscription({
     onBackPress: handleBackPress,
-    disabled: !searchBar || !!searchBar.disableBackButtonOverride,
+    isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
   });
 
   const [
