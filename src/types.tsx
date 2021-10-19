@@ -457,4 +457,10 @@ export interface SearchBarProps {
    * @platform android
    */
   autoFocus?: boolean;
+  /**
+   * Sets type of the input, so that correct keyboard is displayed
+   *
+   * @platform android
+   */
+  inputType?: 'text' | 'phone' | 'number' | 'email';
 }
