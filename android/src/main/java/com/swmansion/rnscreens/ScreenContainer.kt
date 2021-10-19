@@ -287,7 +287,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     fun performUpdates() {
-        if (!mNeedUpdate || !mIsAttached || mFragmentManager == null) {
+        if (!mNeedUpdate || !mIsAttached || mFragmentManager == null || mFragmentManager?.isDestroyed == true) {
             return
         }
         mNeedUpdate = false
