@@ -772,7 +772,7 @@
       [[transitionContext containerView] addSubview:startingView];
       RNSScreenView *startingScreenView = (RNSScreenView *)startingView.reactViewController.view;
       UIView *endingView = sharedElement[1];
-      NSObject<RNSSEA> *reaDelegate = [RNSSharedElementAnimator getDelegate];
+      NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
       [reaDelegate reanimatedMockTransitionWithConverterView:[transitionContext containerView]
                                                       fromID:startingView.reactTag
                                                         toID:endingView.reactTag

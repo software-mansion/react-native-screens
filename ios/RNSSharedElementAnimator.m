@@ -1,27 +1,18 @@
 #import "RNSSharedElementAnimator.h"
-#import <React/RCTEventDispatcher.h>
-#import <React/RCTImageView.h>
-#import <React/RCTShadowView.h>
-#import <React/RCTTextView.h>
-#import <React/RCTTouchHandler.h>
-#import <React/RCTUIManager.h>
 #import "RNSScreen.h"
 
-// same hack as in header
-@interface RCTImageView (Private)
-- (UIImage *)image;
-@end
+#import <React/RCTUIManager.h>
 
 @implementation RNSSharedElementAnimator
 
-static NSObject<RNSSEA> *_delegate;
+static NSObject<RNSSharedElementTransitionsDelegate> *_delegate;
 
-+ (void)setDelegate:(NSObject<RNSSEA> *)delegate
++ (void)setDelegate:(NSObject<RNSSharedElementTransitionsDelegate> *)delegate
 {
   _delegate = delegate;
 }
 
-+ (NSObject<RNSSEA> *)getDelegate
++ (NSObject<RNSSharedElementTransitionsDelegate> *)getDelegate
 {
   return _delegate;
 }
