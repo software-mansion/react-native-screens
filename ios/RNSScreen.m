@@ -377,7 +377,7 @@
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
   BOOL _closing;
-  NSMutableArray<NSArray *> *_sharedElements;
+  //  NSMutableArray<NSArray *> *_sharedElements;
   //  UIView *_containerView;
   //  UIView *_toView;
   BOOL _goingForward;
@@ -724,18 +724,19 @@
 {
   if (self.transitionCoordinator != nil) {
     _fakeView.alpha = 0.0;
-    _sharedElements = [RNSSharedElementAnimator prepareSharedElementsArrayForVC:self closing:_closing];
+    NSMutableArray<NSArray *> *sharedElements = [RNSSharedElementAnimator prepareSharedElementsArrayForVC:self
+                                                                                                  closing:_closing];
 
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-          [self asignEndingValuesWithTransitionContext:context];
+          [self asignEndingValuesWithTransitionContext:context sharedElements:sharedElements];
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
           [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self resetSharedViewsAndFakeView];
+          [self cleanupAfterTransitionWithSharedElements:sharedElements];
         }];
   }
 }
@@ -747,7 +748,6 @@
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
-      //      [self updateSharedElements:_currentAlpha];
     }
   }
 }
@@ -758,69 +758,53 @@
 }
 
 - (void)asignEndingValuesWithTransitionContext:
-    (id<UIViewControllerTransitionCoordinatorContext> _Nonnull)transitionContext
+            (id<UIViewControllerTransitionCoordinatorContext> _Nonnull)transitionContext
+                                sharedElements:(NSMutableArray<NSArray *> *)sharedElements
 {
   if (self->_closing) {
     UIViewController *toViewController =
         [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     [toViewController.view setNeedsLayout];
     [toViewController.view layoutIfNeeded];
-    //    self->_containerView = [transitionContext containerView];
 
-    for (NSArray *sharedElement in self->_sharedElements) {
-      //      UIView *snapshotView = sharedElement[2];
-
-      //      [RNSSharedElementAnimator copyValuesFromView:endingView toSnapshot:snapshotView];
-
-      //      NSDictionary *originalValues = sharedElement[3];
-      //      double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
-      //      snapshotView.alpha = endAlpha;
+    for (NSArray *sharedElement in sharedElements) {
       UIView *startingView = sharedElement[0];
       [[transitionContext containerView] addSubview:startingView];
       RNSScreenView *startingScreenView = (RNSScreenView *)startingView.reactViewController.view;
       UIView *endingView = sharedElement[1];
-      //      self->_toView = endingView.reactViewController.view;
-      [RNSSharedElementAnimator reanimatedMockTransitionWithConverterView:[transitionContext containerView]
-                                                                   fromID:startingView.reactTag
-                                                                     toID:endingView.reactTag
-                                                                  rootTag:[startingScreenView rootTag]];
+      NSObject<RNSSEA> *reaDelegate = [RNSSharedElementAnimator getDelegate];
+      [reaDelegate reanimatedMockTransitionWithConverterView:[transitionContext containerView]
+                                                      fromID:startingView.reactTag
+                                                        toID:endingView.reactTag
+                                                     rootTag:[startingScreenView rootTag]];
+      // UIView *fromView = [uiManager viewForNativeID:fromID withRootTag:rootTag];
+      // UIView *fromScreenView = fromView.reactViewController.view;
+      // UIView *toID = [uiManager viewForNativeID:toID withRootTag:rootTag];
+      // UIView *toScreenView = endingView.reactViewController.view;
+      // get all important values from both views
+      // CGRect fromFrame = [converter convertRect:fromView.frame fromView:fromScreenView]; // converting starting frame
+      // to proper container CGRect toFrame = [converter convertRect:toView.frame fromView:toScreenView]; // converting
+      // ending frame to proper container apply all transformations between the views into the `viewToApply` with taking
+      // into account the progress
     }
   }
 }
 
-- (void)resetSharedViewsAndFakeView
+- (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<NSArray *> *)sharedElements
 {
-  for (NSArray *sharedElement in self->_sharedElements) {
-    NSDictionary *originalValues = sharedElement[3];
-    double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
+  for (NSArray *sharedElement in sharedElements) {
     UIView *startingView = sharedElement[0];
-    //    startingView.alpha = 1.0;
     [startingView removeFromSuperview];
-    UIView *startContainer = sharedElement[4];
-    int index = [sharedElement[5] intValue];
-    //    [startContainer insertReactSubview:startingView atIndex:index];
+    UIView *startContainer = sharedElement[2];
+    int index = [sharedElement[3] intValue];
     [startContainer insertSubview:startingView atIndex:index];
     UIView *endingView = sharedElement[1];
-    endingView.alpha = endAlpha;
-    //    UIView *snapshotView = sharedElement[2];
-    //    [snapshotView removeFromSuperview];
-    //    snapshotView = nil;
+    endingView.hidden = NO;
   }
-  self->_sharedElements = nil;
 
   [self->_animationTimer setPaused:YES];
   [self->_animationTimer invalidate];
   [_fakeView removeFromSuperview];
-  //  self->_containerView = nil;
-  //  self->_toView = nil;
-}
-
-- (void)updateSharedElements:(double)progress
-{
-  //  [RNSSharedElementAnimator calculateFramesOfSharedElementsWithProgress:progress
-  //                                                              container:_containerView
-  //                                                         sharedElements:_sharedElements
-  //                                                                 toView:_toView];
 }
 
 @end
