@@ -60,7 +60,6 @@ import Test1084 from './src/Test1084';
 import Test1091 from './src/Test1091';
 import Test1096 from './src/Test1096';
 
-import Test from './src/Test';
 import AndroidDifferentScreenSearch from './src/AndroidDifferentScreenSearch';
 import AndroidSearchBarCustomization from './src/AndroidSearchBarCustomization';
 import AndroidSearchTypes from './src/AndroidSearchTypes';
