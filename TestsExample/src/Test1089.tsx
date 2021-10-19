@@ -17,6 +17,8 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   interpolateColor,
+  LayoutAnimation,
+  LinearTransition,
 } from 'react-native-reanimated';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -38,7 +40,7 @@ const sharedElements = [
 function NestedFirst() {
   return (
     <NestedStack.Navigator>
-      <NestedStack.Screen name="NestedFirst" component={First}/>
+      <NestedStack.Screen name="NestedFirst" component={First} options={{headerShown: false}}/>
     </NestedStack.Navigator>
   )
 }
@@ -82,8 +84,9 @@ function Element({viewNativeID, imageNativeID, textNativeID, navigation}: Native
 
   return (
     <Animated.View
-      style={reaStyle} 
+      style={{width: '100%', height: 100, backgroundColor: 'red'}}//reaStyle} 
       nativeID={viewNativeID}
+      sharedElementTransition={LinearTransition}
        >
       {/* <Image
         resizeMethod="scale"
@@ -144,7 +147,8 @@ function Second({
 
   return (
     <View style={{flex: 1}}>
-      <Animated.View style={reaStyle} nativeID={sharedElements[0].toID}>
+      <Animated.View style={{width: '100%', height: 200, backgroundColor: 'red'}} //reaStyle} 
+        nativeID={sharedElements[0].toID}>
         {/* <Image source={{uri: picURI}}  style={{width, height}} nativeID={sharedElements[1].toID}/>
         <Text style={{fontSize: 20, color: 'red'}} nativeID={sharedElements[2].toID}>Text</Text> */}
       </Animated.View>
@@ -163,8 +167,8 @@ export default function App(): JSX.Element {
         screenOptions={{
           stackAnimation: 'default',
         }}>
-        <Stack.Screen name="First" component={NestedFirst} options={{sharedElements}}/>
-        <Stack.Screen name="Second" component={Second} options={{headerShown: true, sharedElements}}/>
+        <Stack.Screen name="First" component={NestedFirst} options={{sharedElements, headerShown: false}}/>
+        <Stack.Screen name="Second" component={Second} options={{headerShown: false, sharedElements}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

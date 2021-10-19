@@ -14,9 +14,16 @@
 
 @implementation RNSSharedElementAnimator
 
+static NSObject<RNSSEA> *_delegate;
+
 + (float)interpolateWithFrom:(double)from to:(double)to progress:(double)progress
 {
   return from + progress * (to - from);
+}
+
++ (void)setDelegate:(NSObject<RNSSEA> *)delegate
+{
+  _delegate = delegate;
 }
 
 + (NSMutableArray<NSArray *> *)prepareSharedElementsArrayForVC:(UIViewController *)vc closing:(BOOL)closing
@@ -73,10 +80,14 @@
       };
 
       // we hide those views for during the transition, hidden on ending view does not work for some reason
-      start.alpha = 0;
+      //      start.alpha = 0;
+      UIView *startContainer = start.reactSuperview;
+      int index = (int)[[startContainer reactSubviews] indexOfObject:start];
+      [start removeFromSuperview];
+
       end.alpha = 0;
       if (start != nil && end != nil && snapshot != nil) {
-        [sharedElementsArray addObject:@[ start, end, snapshot, originalValues ]];
+        [sharedElementsArray addObject:@[ start, end, snapshot, originalValues, startContainer, @(index) ]];
       }
     }
   }
@@ -126,6 +137,12 @@
                                          progress:(float)progress
                                           rootTag:(NSNumber *)rootTag
 {
+  [_delegate reanimatedMockTransitionWithConverterView:converter
+                                                fromID:fromID
+                                                  toID:toID
+                                           viewToApply:view
+                                              progress:progress
+                                               rootTag:rootTag];
   // UIView *fromView = [uiManager viewForNativeID:fromID withRootTag:rootTag];
   // UIView *fromScreenView = fromView.reactViewController.view;
   // UIView *toID = [uiManager viewForNativeID:toID withRootTag:rootTag];

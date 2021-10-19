@@ -747,7 +747,7 @@
     if (_currentAlpha != fakeViewAlpha) {
       _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
       [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
-      [self updateSharedElements:_currentAlpha];
+      //      [self updateSharedElements:_currentAlpha];
     }
   }
 }
@@ -767,23 +767,25 @@
     [toViewController.view layoutIfNeeded];
     self->_containerView = [transitionContext containerView];
 
-    UIViewController *lowestVC = toViewController;
-    // containerView operates on current VCs, and we might transition from a screen in a nested stack
-    // so we need to get to the lowest ScreenView for correct frames
-    while ([[lowestVC childViewControllers] count] > 0) {
-      lowestVC = lowestVC.childViewControllers[lowestVC.childViewControllers.count - 1];
-    }
-    self->_toView = lowestVC.view;
     for (NSArray *sharedElement in self->_sharedElements) {
       UIView *endingView = sharedElement[1];
+      self->_toView = endingView.reactViewController.view;
       UIView *snapshotView = sharedElement[2];
-      [[transitionContext containerView] addSubview:snapshotView];
-      [RNSSharedElementAnimator copyValuesFromView:endingView toSnapshot:snapshotView];
+      UIView *startView = sharedElement[0];
 
-      NSDictionary *originalValues = sharedElement[3];
-      double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
-      snapshotView.alpha = endAlpha;
+      [[transitionContext containerView] addSubview:startView];
+      //      [RNSSharedElementAnimator copyValuesFromView:endingView toSnapshot:snapshotView];
+
+      //      NSDictionary *originalValues = sharedElement[3];
+      //      double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
+      //      snapshotView.alpha = endAlpha;
     }
+    [RNSSharedElementAnimator reanimatedMockTransitionWithConverterView:nil
+                                                                 fromID:nil
+                                                                   toID:nil
+                                                            viewToApply:nil
+                                                               progress:1.0f
+                                                                rootTag:nil];
   }
 }
 
@@ -793,12 +795,17 @@
     NSDictionary *originalValues = sharedElement[3];
     double endAlpha = [[originalValues objectForKey:@"endAlpha"] doubleValue];
     UIView *startingView = sharedElement[0];
-    startingView.alpha = 1.0;
+    //    startingView.alpha = 1.0;
+    [startingView removeFromSuperview];
+    UIView *startContainer = sharedElement[4];
+    int index = [sharedElement[5] intValue];
+    //    [startContainer insertReactSubview:startingView atIndex:index];
+    [startContainer insertSubview:startingView atIndex:index];
     UIView *endingView = sharedElement[1];
     endingView.alpha = endAlpha;
-    UIView *snapshotView = sharedElement[2];
-    [snapshotView removeFromSuperview];
-    snapshotView = nil;
+    //    UIView *snapshotView = sharedElement[2];
+    //    [snapshotView removeFromSuperview];
+    //    snapshotView = nil;
   }
   self->_sharedElements = nil;
 
