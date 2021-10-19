@@ -11,6 +11,6 @@
 
 + (void)setDelegate:(NSObject<RNSSharedElementTransitionsDelegate> *)delegate;
 + (NSObject<RNSSharedElementTransitionsDelegate> *)getDelegate;
-+ (NSMutableArray<NSArray *> *)prepareSharedElementsArrayForVC:(UIViewController *)vc closing:(BOOL)closing;
++ (NSMutableArray<NSArray *> *)prepareSharedElementsArrayForVC:(UIViewController *)vc;
 
 @end

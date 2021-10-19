@@ -724,14 +724,18 @@
 {
   if (self.transitionCoordinator != nil) {
     _fakeView.alpha = 0.0;
-    NSMutableArray<NSArray *> *sharedElements = [RNSSharedElementAnimator prepareSharedElementsArrayForVC:self
-                                                                                                  closing:_closing];
+    NSMutableArray<NSArray *> *sharedElements = nil;
+    if (_closing) {
+      sharedElements = [RNSSharedElementAnimator prepareSharedElementsArrayForVC:self];
+    }
 
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-          [self asignEndingValuesWithTransitionContext:context sharedElements:sharedElements];
+          if (self->_closing) {
+            [RNSScreen asignEndingValuesWithTransitionContext:context sharedElements:sharedElements];
+          }
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
           [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
@@ -757,36 +761,33 @@
   [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
 
-- (void)asignEndingValuesWithTransitionContext:
++ (void)asignEndingValuesWithTransitionContext:
             (id<UIViewControllerTransitionCoordinatorContext> _Nonnull)transitionContext
                                 sharedElements:(NSMutableArray<NSArray *> *)sharedElements
 {
-  if (self->_closing) {
-    UIViewController *toViewController =
-        [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    [toViewController.view setNeedsLayout];
-    [toViewController.view layoutIfNeeded];
+  UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+  [toViewController.view setNeedsLayout];
+  [toViewController.view layoutIfNeeded];
 
-    for (NSArray *sharedElement in sharedElements) {
-      UIView *startingView = sharedElement[0];
-      [[transitionContext containerView] addSubview:startingView];
-      RNSScreenView *startingScreenView = (RNSScreenView *)startingView.reactViewController.view;
-      UIView *endingView = sharedElement[1];
-      NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
-      [reaDelegate reanimatedMockTransitionWithConverterView:[transitionContext containerView]
-                                                      fromID:startingView.reactTag
-                                                        toID:endingView.reactTag
-                                                     rootTag:[startingScreenView rootTag]];
-      // UIView *fromView = [uiManager viewForNativeID:fromID withRootTag:rootTag];
-      // UIView *fromScreenView = fromView.reactViewController.view;
-      // UIView *toID = [uiManager viewForNativeID:toID withRootTag:rootTag];
-      // UIView *toScreenView = endingView.reactViewController.view;
-      // get all important values from both views
-      // CGRect fromFrame = [converter convertRect:fromView.frame fromView:fromScreenView]; // converting starting frame
-      // to proper container CGRect toFrame = [converter convertRect:toView.frame fromView:toScreenView]; // converting
-      // ending frame to proper container apply all transformations between the views into the `viewToApply` with taking
-      // into account the progress
-    }
+  for (NSArray *sharedElement in sharedElements) {
+    UIView *startingView = sharedElement[0];
+    [[transitionContext containerView] addSubview:startingView];
+    RNSScreenView *startingScreenView = (RNSScreenView *)startingView.reactViewController.view;
+    UIView *endingView = sharedElement[1];
+    NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
+    [reaDelegate reanimatedMockTransitionWithConverterView:[transitionContext containerView]
+                                                    fromID:startingView.reactTag
+                                                      toID:endingView.reactTag
+                                                   rootTag:[startingScreenView rootTag]];
+    // UIView *fromView = [uiManager viewForNativeID:fromID withRootTag:rootTag];
+    // UIView *fromScreenView = fromView.reactViewController.view;
+    // UIView *toID = [uiManager viewForNativeID:toID withRootTag:rootTag];
+    // UIView *toScreenView = endingView.reactViewController.view;
+    // get all important values from both views
+    // CGRect fromFrame = [converter convertRect:fromView.frame fromView:fromScreenView]; // converting starting frame
+    // to proper container CGRect toFrame = [converter convertRect:toView.frame fromView:toScreenView]; // converting
+    // ending frame to proper container apply all transformations between the views into the `viewToApply` with taking
+    // into account the progress
   }
 }
 
