@@ -22,6 +22,11 @@ class CustomSearchView(context: Context?, fragment: Fragment) : SearchView(conte
         }
         get() = backPressOverrider.overrideBackAction
 
+    fun focus() {
+        isIconified = false
+        requestFocusFromTouch()
+    }
+
     override fun setOnCloseListener(listener: OnCloseListener?) {
         mCustomOnCloseListener = listener
     }

@@ -28,7 +28,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mIsTranslucent = false
 
     var searchView: CustomSearchView? = null
-    var onSearchViewCreate: (() -> Unit)? = null
+    var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -184,8 +184,9 @@ class ScreenStackFragment : ScreenFragment {
             val item = menu.add("")
             item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             if (searchView == null) {
-                searchView = CustomSearchView(context, this)
-                onSearchViewCreate?.invoke()
+                val newSearchView = CustomSearchView(context, this)
+                searchView = newSearchView
+                onSearchViewCreate?.invoke(newSearchView)
             }
             item.actionView = searchView
         }

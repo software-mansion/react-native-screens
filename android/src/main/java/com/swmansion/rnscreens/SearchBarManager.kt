@@ -19,22 +19,7 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
 
     override fun onAfterUpdateTransaction(view: SearchBarView) {
         super.onAfterUpdateTransaction(view)
-        view.propsDidChange()
-    }
-
-    @ReactProp(name = "textColor", customType = "Color")
-    fun setTextColor(view: SearchBarView, color: Int?) {
-        view.textColor = color
-    }
-
-    @ReactProp(name = "barTintColor", customType = "Color")
-    fun setTintColor(view: SearchBarView, color: Int?) {
-        view.tintColor = color
-    }
-
-    @ReactProp(name = "placeholder")
-    fun setPlaceholder(view: SearchBarView, placeholder: String?) {
-        view.placeholder = placeholder
+        view.onUpdate()
     }
 
     @ReactProp(name = "autoCapitalize")
@@ -50,6 +35,21 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         }
     }
 
+    @ReactProp(name = "autoFocus")
+    fun setAutoFocus(view: SearchBarView, autoFocus: Boolean?) {
+        view.autoFocus = autoFocus ?: false
+    }
+
+    @ReactProp(name = "barTintColor", customType = "Color")
+    fun setTintColor(view: SearchBarView, color: Int?) {
+        view.tintColor = color
+    }
+
+    @ReactProp(name = "disableBackButtonOverride")
+    fun setDisableBackButtonOverride(view: SearchBarView, disableBackButtonOverride: Boolean?) {
+        view.shouldOverrideBackButton = disableBackButtonOverride != true
+    }
+
     @ReactProp(name = "inputType")
     fun setInputType(view: SearchBarView, inputType: String?) {
         view.inputType = when (inputType) {
@@ -63,14 +63,14 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         }
     }
 
-    @ReactProp(name = "disableBackButtonOverride")
-    fun setDisableBackButtonOverride(view: SearchBarView, disableBackButtonOverride: Boolean?) {
-        view.shouldOverrideBackButton = disableBackButtonOverride != true
+    @ReactProp(name = "placeholder")
+    fun setPlaceholder(view: SearchBarView, placeholder: String?) {
+        view.placeholder = placeholder
     }
 
-    @ReactProp(name = "autoFocus")
-    fun setAutoFocus(view: SearchBarView, autoFocus: Boolean?) {
-        view.autoFocus = autoFocus ?: false
+    @ReactProp(name = "textColor", customType = "Color")
+    fun setTextColor(view: SearchBarView, color: Int?) {
+        view.textColor = color
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
