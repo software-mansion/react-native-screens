@@ -13,11 +13,7 @@ class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context)
 
     val config: ScreenStackHeaderConfig?
         get() {
-            val currentParent = parent
-            if (currentParent is CustomToolbar) {
-                return currentParent.config
-            }
-            return null
+            return (parent as? CustomToolbar)?.config
         }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

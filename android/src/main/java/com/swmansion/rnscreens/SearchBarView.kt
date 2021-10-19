@@ -85,27 +85,27 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     private fun setTextColor(searchEditText: EditText) {
         val currentTextColor = textColor
+        val currentDefaultTextColor = mDefaultTextColor
         if (currentTextColor != null) {
             if (mDefaultTextColor == null) {
                 mDefaultTextColor = searchEditText.textColors.defaultColor
             }
             searchEditText.setTextColor(currentTextColor)
-        } else if (mDefaultTextColor != null) {
-            searchEditText.setTextColor(mDefaultTextColor!!)
+        } else if (currentDefaultTextColor != null) {
+            searchEditText.setTextColor(currentDefaultTextColor)
         }
     }
 
     private fun setTintColor(searchTextPlate: View) {
         val currentTintColor = tintColor
+        val currentDefaultTintColor = mDefaultTintBackground
         if (currentTintColor != null) {
             if (mDefaultTintBackground == null) {
                 mDefaultTintBackground = searchTextPlate.background
             }
             searchTextPlate.setBackgroundColor(currentTintColor)
-        } else {
-            if (mDefaultTintBackground != null) {
-                searchTextPlate.background = mDefaultTintBackground!!
-            }
+        } else if (currentDefaultTintColor != null) {
+            searchTextPlate.background = currentDefaultTintColor
         }
     }
 
@@ -128,7 +128,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             handleClose()
             false
         }
-        searchView.setOnSearchClickListener{
+        searchView.setOnSearchClickListener {
             handleOpen()
         }
     }
@@ -149,8 +149,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     }
 
     private fun handleFocusChange(hasFocus: Boolean) {
-        if (hasFocus) sendEvent("onFocus", null)
-        else sendEvent("onBlur", null)
+        sendEvent(if (hasFocus) "onFocus" else "onBlur", null)
     }
 
     private fun handleClose() {
