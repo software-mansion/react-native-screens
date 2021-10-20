@@ -1,6 +1,5 @@
 <img src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png" width="100%" alt="React Native Screens by Software Mansion" >
 
-
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
 ## Supported platforms
@@ -84,9 +83,10 @@ You can also disable the usage of native screens per navigator with [`detachInac
 ### Using `createNativeStackNavigator` with React Navigation
 
 To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer:
+
 - for React Navigation >= v6 to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator)
-- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) 
-- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator) 
+- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack)
+- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator)
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
@@ -104,17 +104,22 @@ To do that, `react-native-screens` provides you with the components documented [
 ## Common problems
 
 ### Problems with header on iOS
+
 - [Focused search bar causes new screens to have incorrect header](https://github.com/software-mansion/react-native-screens/issues/996)
 - [Scrollable content gets cut off by the header with a search bar](https://github.com/software-mansion/react-native-screens/issues/1120)
 - [RefreshControl does not work properly with NativeStackNavigator and largeTitle](https://github.com/software-mansion/react-native-screens/issues/395)
 
 #### Solution
+
 Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a main container of the screen and set `headerTranslucent: true` in screen options.
 
 ### Other problems
-- [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)
-- [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843)
-- [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649) - [fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) 
+
+| Problem                                                                                                                                      | Solution                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                         |                                                                                                             |
+| [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843) | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
+| [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)     | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
 
 ## Contributing
 
