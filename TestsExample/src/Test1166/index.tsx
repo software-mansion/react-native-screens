@@ -5,10 +5,10 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import AndroidDifferentScreenSearch from './AndroidSearchbar/AndroidDifferentScreenSearch';
-import AndroidSearchBarCustomization from './AndroidSearchbar/AndroidSearchBarCustomization';
-import AndroidSearchTypes from './AndroidSearchbar/AndroidSearchTypes';
-import AndroidSearchBarEvents from './AndroidSearchbar/AndroidSearchBarEvents';
+import AndroidDifferentScreenSearch from './AndroidDifferentScreenSearch';
+import AndroidSearchBarCustomization from './AndroidSearchBarCustomization';
+import AndroidSearchTypes from './AndroidSearchTypes';
+import AndroidSearchBarEvents from './AndroidSearchBarEvents';
 
 const Stack = createNativeStackNavigator();
 
