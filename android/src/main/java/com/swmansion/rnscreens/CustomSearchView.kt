@@ -6,6 +6,13 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 
 class CustomSearchView(context: Context?, fragment: Fragment) : SearchView(context) {
+    /*
+        CustomSearchView uses some variables from SearchView. They are listed below with links to documentation
+        isIconified - https://developer.android.com/reference/android/widget/SearchView#setIconified(boolean)
+        maxWidth - https://developer.android.com/reference/android/widget/SearchView#setMaxWidth(int)
+        setOnSearchClickListener - https://developer.android.com/reference/android/widget/SearchView#setOnSearchClickListener(android.view.View.OnClickListener)
+        setOnCloseListener - https://developer.android.com/reference/android/widget/SearchView#setOnCloseListener(android.widget.SearchView.OnCloseListener)
+    */
     private var mCustomOnCloseListener: OnCloseListener? = null
     private var mCustomOnSearchClickedListener: OnClickListener? = null
 
