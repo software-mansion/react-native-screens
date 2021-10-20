@@ -6,9 +6,12 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
+#import <React/RCTLayoutAnimation.h>
+#import <React/RCTLayoutAnimationGroup.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
 #import <React/RCTUIManager.h>
+#import <React/RCTUIManagerUtils.h>
 
 @interface RNSScreenView () <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 @end
@@ -62,6 +65,24 @@
 
 - (void)updateBounds
 {
+  // values for layout animation taken from KeyboardAvoidingView
+  NSDictionary *update = @{
+    @"type" : @(RCTAnimationTypeKeyboard),
+    @"duration" : @250,
+  };
+  NSDictionary *config = @{
+    @"duration" : @250,
+    @"update" : update,
+  };
+  RCTLayoutAnimationGroup *layoutAnimationGroup = [[RCTLayoutAnimationGroup alloc] initWithConfig:config callback:nil];
+
+  dispatch_async(RCTGetUIManagerQueue(), ^{
+    [self->_bridge.uiManager
+        addUIBlock:^(RCTUIManager *uiManager, __unused NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+          [uiManager setNextLayoutAnimationGroup:layoutAnimationGroup];
+        }];
+  });
+
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 }
 
