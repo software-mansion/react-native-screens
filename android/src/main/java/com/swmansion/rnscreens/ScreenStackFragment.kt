@@ -181,13 +181,13 @@ class ScreenStackFragment : ScreenFragment {
     private fun updateToolbarMenu(menu: Menu) {
         menu.clear()
         if (shouldShowSearchBar()) {
-            val item = menu.add("")
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             if (searchView == null) {
                 val newSearchView = CustomSearchView(context, this)
                 searchView = newSearchView
                 onSearchViewCreate?.invoke(newSearchView)
             }
+            val item = menu.add("")
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             item.actionView = searchView
         }
     }

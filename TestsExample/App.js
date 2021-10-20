@@ -68,7 +68,7 @@ import AndroidSearchBarEvents from './src/AndroidSearchBarEvents';
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <AndroidSearchBarEvents />
+      <AndroidDifferentScreenSearch />
     </ReanimatedScreenProvider>
   );
 }

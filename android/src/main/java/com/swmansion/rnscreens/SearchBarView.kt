@@ -53,8 +53,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-
-        setSearchViewProps()
+        
         screenStackFragment?.onSearchViewCreate = { newSearchView ->
             if (mSearchViewFormatter == null) mSearchViewFormatter =
                 SearchViewFormatter(newSearchView)

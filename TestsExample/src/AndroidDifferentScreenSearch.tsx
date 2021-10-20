@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, Text, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -13,13 +13,17 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{stackAnimation: 'none'}}>
         <Stack.Screen name="First" component={First} />
-        <Stack.Screen
-          name="Search"
-          component={Second}
-          options={{title: ''}}
-        />
+        <Stack.Screen name="Search" component={Second} options={{title: ''}} />
       </Stack.Navigator>
     </NavigationContainer>
+  );
+}
+
+function SearchIconButton(props: {onPress: () => void}) {
+  return (
+    <TouchableOpacity onPress={props.onPress}>
+      <Image source={require('../assets/search_black.png')} />
+    </TouchableOpacity>
   );
 }
 
@@ -30,12 +34,12 @@ function First({
 }) {
   React.useEffect(() => {
     function HeaderSearchButton() {
-      return <Button title="S" onPress={() => navigation.navigate('Search')} />;
+      return <SearchIconButton onPress={() => navigation.navigate('Search')} />;
     }
     navigation.setOptions({
       title: 'Home',
       headerRight: HeaderSearchButton,
-      stackAnimation: 'none'
+      stackAnimation: 'none',
     });
   }, [navigation]);
   return <View style={{flex: 1, backgroundColor: '#FFF'}}></View>;
@@ -50,19 +54,21 @@ function Second({
 
   React.useEffect(() => {
     navigation.setOptions({
-      title:'',
+      title: '',
       searchBar: {
         autoFocus: true,
         onClose: () => navigation.navigate('First'),
         onChangeText: (e) => setText(e.nativeEvent.text),
       },
-      stackAnimation: 'none'
+      stackAnimation: 'none',
     });
   }, []);
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFF', padding: 12}}>
-      <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 12}}>Search Results</Text>
+      <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 12}}>
+        Search Results
+      </Text>
       <Text>{text}</Text>
     </View>
   );
