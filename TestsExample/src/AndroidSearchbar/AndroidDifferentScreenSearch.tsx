@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -10,19 +10,17 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{stackAnimation: 'none'}}>
-        <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Search" component={Second} options={{title: ''}} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator screenOptions={{stackAnimation: 'none'}}>
+      <Stack.Screen name="First" component={First} />
+      <Stack.Screen name="Search" component={Second} options={{title: ''}} />
+    </Stack.Navigator>
   );
 }
 
 function SearchIconButton(props: {onPress: () => void}) {
   return (
     <TouchableOpacity onPress={props.onPress}>
-      <Image source={require('../assets/search_black.png')} />
+      <Image source={require('../../assets/search_black.png')} />
     </TouchableOpacity>
   );
 }

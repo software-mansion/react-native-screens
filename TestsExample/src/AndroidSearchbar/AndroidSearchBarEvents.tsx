@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Text, View} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -11,11 +11,9 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="First" component={First} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen name="First" component={First} />
+    </Stack.Navigator>
   );
 }
 
