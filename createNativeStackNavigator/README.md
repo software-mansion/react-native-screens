@@ -360,11 +360,9 @@ Defaults to `auto`.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
-### Search bar (iOS only)
+### Search bar
 
 The search bar is just a `searchBar` property that can be specified in the navigator's `defaultNavigationOptions` prop or an individual screen's `navigationOptions`. Search bars are rarely static so normally it is controlled by passing an object to `searchBar` navigation option in the component's body.
-
-Search bar is only supported on iOS.
 
 Example: 
 
@@ -390,7 +388,7 @@ Possible values:
 - `sentences`
 - `characters`
 
-Defaults to `sentences`.
+Defaults to `sentences` on iOS and `'none'` on Android.
 
 #### `barTintColor`
 
@@ -398,23 +396,23 @@ The search field background color.
 
 By default bar tint color is translucent.
 
-#### `cancelButtonText`
+#### `cancelButtonText` (iOS only)
 
 The text to be used instead of default `Cancel` button text.
 
-#### `hideNavigationBar`
+#### `hideNavigationBar` (iOS only)
 
 Boolean indicating whether to hide the navigation bar during searching.
 
 Defaults to `true`.
 
-#### `hideWhenScrolling`
+#### `hideWhenScrolling` (iOS only)
 
 Boolean indicating whether to hide the search bar when scrolling.
 
 Defaults to `true`.
 
-####  `obscureBackground`
+####  `obscureBackground` (iOS only)
 
 Boolean indicating whether to obscure the underlying content with semi-transparent overlay.
 
@@ -424,7 +422,7 @@ Defaults to `true`.
 
 A callback that gets called when search bar has lost focus.
 
-#### `onCancelButtonPress`
+#### `onCancelButtonPress` (iOS only)
 
 A callback that gets called when the cancel button is pressed.
 
@@ -454,6 +452,14 @@ A callback that gets called when search bar has received focus.
 
 A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 
+#### `onOpen` (Android only)
+
+A callback that gets called when search bar is expanding
+
+#### `onClose` (Android only)
+
+A callback that gets called when search bar is closing
+
 #### `placeholder`
 
 Text displayed when search field is empty.
@@ -463,6 +469,24 @@ Defaults to an empty string.
 #### `textColor`
 
 The search field text color.
+
+#### `disableBackButtonOverride` (Android only)
+
+Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true` 
+
+#### `autoFocus` (Android only)
+
+When set to `true` focuses search bar automatically when screen is appearing. Default value is `false`.
+
+#### `inputType` (Android only)
+
+This prop is used to change type of the input and keyboard. Default value is `'text'`.
+
+All values:
+- `'text'` - normal text input
+- `'number'` - number input
+- `'email'` - email input
+- `'phone'` - phone input
 
 ### Helpers
 
