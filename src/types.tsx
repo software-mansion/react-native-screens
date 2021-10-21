@@ -378,20 +378,20 @@ export interface SearchBarProps {
   /**
    * The text to be used instead of default `Cancel` button text
    *
-   * @platform iOS
+   * @platform ios
    */
   cancelButtonText?: string;
 
   /**
    * Indicates whether to hide the navigation bar
    *
-   * @platform iOS
+   * @platform ios
    */
   hideNavigationBar?: boolean;
   /**
    * Indicates whether to hide the search bar when scrolling
    *
-   * @platform iOS
+   * @platform ios
    */
   hideWhenScrolling?: boolean;
 
@@ -406,7 +406,7 @@ export interface SearchBarProps {
   /**
    * A callback that gets called when the cancel button is pressed
    *
-   * @platform iOS
+   * @platform ios
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 
@@ -446,7 +446,7 @@ export interface SearchBarProps {
    */
   textColor?: string;
   /**
-   * Specifies wether back button should close text input or not.
+   * Specifies whether the back button should close text input or not.
    *
    * @platform android
    */
@@ -458,7 +458,7 @@ export interface SearchBarProps {
    */
   autoFocus?: boolean;
   /**
-   * Sets type of the input, so that correct keyboard is displayed
+   * Sets type of the input. Defaults to `text`.
    *
    * @platform android
    */
