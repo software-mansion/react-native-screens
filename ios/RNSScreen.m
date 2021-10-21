@@ -65,25 +65,18 @@
 
 - (void)updateBounds
 {
-  // values for layout animation taken from KeyboardAvoidingView
-  NSDictionary *update = @{
-    @"type" : @(RCTAnimationTypeKeyboard),
-    @"duration" : @250,
-  };
-  NSDictionary *config = @{
-    @"duration" : @250,
-    @"update" : update,
-  };
-  RCTLayoutAnimationGroup *layoutAnimationGroup = [[RCTLayoutAnimationGroup alloc] initWithConfig:config callback:nil];
+  [_bridge.uiManager setSize:self.bounds.size forView:self];
+}
 
+// this method only works when invoken before updateBounds() method
+- (void)performLayoutAnimation:(RCTLayoutAnimationGroup *)layoutAnimationGroup
+{
   dispatch_async(RCTGetUIManagerQueue(), ^{
     [self->_bridge.uiManager
         addUIBlock:^(RCTUIManager *uiManager, __unused NSDictionary<NSNumber *, UIView *> *viewRegistry) {
           [uiManager setNextLayoutAnimationGroup:layoutAnimationGroup];
         }];
   });
-
-  [_bridge.uiManager setSize:self.bounds.size forView:self];
 }
 
 // Nil will be provided when activityState is set as an animated value and we change
@@ -413,6 +406,7 @@
   BOOL _isSwiping;
   BOOL _shouldNotify;
   BOOL _isKeyboardActive;
+  RCTLayoutAnimationGroup *_nextLayoutAnimation;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -422,6 +416,8 @@
     _shouldNotify = YES;
     _fakeView = [UIView new];
     _isKeyboardActive = NO;
+    _nextLayoutAnimation = nil;
+
 #if !TARGET_OS_TV
     [self startObservingKeyboardNotifications];
 #endif
@@ -554,6 +550,10 @@
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
   if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
       !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+    if (_nextLayoutAnimation != nil) {
+      [((RNSScreenView *)self.viewIfLoaded) performLayoutAnimation:_nextLayoutAnimation];
+    }
+
     _lastViewFrame = self.view.frame;
     [((RNSScreenView *)self.viewIfLoaded) updateBounds];
   }
@@ -777,8 +777,6 @@
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-  NSLog(@"keyboardWillShow: %@", self);
-
   if (!_isSwiping && !_isKeyboardActive && ((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
     _isKeyboardActive = YES;
 
@@ -802,8 +800,6 @@
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-  NSLog(@"keyboardWillHide: %@", self);
-
   if (!_isSwiping && _isKeyboardActive && ((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
     _isKeyboardActive = NO;
     NSDictionary *values = [RNSScreen parseKeyboardNotification:notification];
@@ -826,10 +822,27 @@
 
 - (void)keyboardWillChangeFrame:(NSNotification *)notification
 {
+  // values for layout animation taken from KeyboardAvoidingView
+  NSDictionary *update = @{
+    @"type" : @(RCTAnimationTypeKeyboard),
+    @"duration" : @250,
+  };
+  NSDictionary *config = @{
+    @"duration" : @250,
+    @"update" : update,
+  };
+
+  if (((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
+    // setup keyboard layout animation
+    _nextLayoutAnimation = [[RCTLayoutAnimationGroup alloc] initWithConfig:config callback:nil];
+  }
 }
 
 - (void)keyboardDidChangeFrame:(NSNotification *)notification
 {
+  if (((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
+    _nextLayoutAnimation = nil;
+  }
 }
 
 #endif
