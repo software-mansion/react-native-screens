@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.facebook.react.ReactRootView
+import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.swmansion.rnscreens.Screen.ActivityState
@@ -276,6 +277,14 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // The exception to this rule is `updateImmediately` which is triggered by actions
         // not connected to React view hierarchy changes, but rather internal events
         mNeedUpdate = true
+        (context as? ReactContext)?.runOnUiQueueThread {
+            // We schedule the update here because LayoutAnimations of `react-native-reanimated`
+            // sometimes attach/detach screens after the layout block of `ScreensShadowNode` has
+            // already run, and we want to update the container then too. In the other cases,
+            // this code will do nothing since it will run after the UIBlock when `mNeedUpdate`
+            // will already be false.
+            performUpdates()
+        }
     }
 
     protected fun performUpdatesNow() {
