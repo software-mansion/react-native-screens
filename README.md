@@ -117,7 +117,7 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 
 | Problem                                                                                                                                      | Solution                                                                                                    |
 | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                         | [fix](https://github.com/software-mansion/react-native-screens/issues/773#issuecomment-783469792)           |
+| [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                         | [related PRs](https://github.com/software-mansion/react-native-screens/issues/773#issuecomment-783469792)           |
 | [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843) | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
 | [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)     | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
 
