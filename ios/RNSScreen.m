@@ -405,7 +405,6 @@
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
-  BOOL _isKeyboardActive;
   RCTLayoutAnimationGroup *_nextLayoutAnimation;
 }
 
@@ -415,7 +414,6 @@
     self.view = view;
     _shouldNotify = YES;
     _fakeView = [UIView new];
-    _isKeyboardActive = NO;
     _nextLayoutAnimation = nil;
 
 #if !TARGET_OS_TV
@@ -740,15 +738,11 @@
   CGRect beginFrame = [userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
   CGRect endFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
   NSTimeInterval duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-  //  UIViewAnimationCurve curve =
-  //      static_cast<UIViewAnimationCurve>([userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]);
-  //  NSInteger isLocalUserInfoKey = [userInfo[UIKeyboardIsLocalUserInfoKey] integerValue];
 
   return @{
     @"startCoordinates" : [RNSScreen rectDictionaryValue:beginFrame],
     @"endCoordinates" : [RNSScreen rectDictionaryValue:endFrame],
     @"duration" : @(duration * 1000.0), // ms
-    //    @"easing" : RCTAnimationNameForCurve(curve),
   };
 }
 
@@ -777,9 +771,7 @@
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-  if (!_isSwiping && !_isKeyboardActive && ((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
-    _isKeyboardActive = YES;
-
+  if (!_isSwiping && ((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
     NSDictionary *values = [RNSScreen parseKeyboardNotification:notification];
 
     CGRect currentFrame = self.view.frame;
@@ -788,7 +780,6 @@
 
     [UIView animateWithDuration:0.5
                      animations:^{
-                       //        self.view.alpha = 0.0;
                        self.view.frame = currentFrame;
                      }];
   }
@@ -800,8 +791,7 @@
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-  if (!_isSwiping && _isKeyboardActive && ((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
-    _isKeyboardActive = NO;
+  if (!_isSwiping && ((RNSScreenView *)self.view).keyboardAvoidingEnabled) {
     NSDictionary *values = [RNSScreen parseKeyboardNotification:notification];
 
     if (self.transitionCoordinator == nil) {
@@ -809,7 +799,6 @@
       currentFrame.size.height += [values[@"endCoordinates"][@"height"] intValue];
       [UIView animateWithDuration:0.2
                        animations:^{
-                         //        self.view.alpha = 0.0;
                          self.view.frame = currentFrame;
                        }];
     }
