@@ -121,8 +121,10 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 // before, probably replace or reset was called, so we play the "close animation".
                 // Otherwise it's open animation
                 val containsTopScreen = mTopScreen?.let { mScreenFragments.contains(it) } == true
-                shouldUseOpenAnimation = containsTopScreen || newTop.screen.replaceAnimation !== Screen.ReplaceAnimation.POP
-                stackAnimation = newTop.screen.stackAnimation
+                val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
+                shouldUseOpenAnimation = containsTopScreen || isPushReplace
+                // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
+                stackAnimation = if (isPushReplace) newTop.screen.stackAnimation else mTopScreen?.screen?.stackAnimation
             } else if (mTopScreen == null && newTop != null) {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering, but we want to send the

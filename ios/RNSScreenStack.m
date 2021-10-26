@@ -425,8 +425,6 @@
   // controller is still there
   BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreen class]];
 
-  BOOL shouldAnimate = !firstTimePush && ((RNSScreenView *)lastTop.view).stackAnimation != RNSScreenStackAnimationNone;
-
   if (firstTimePush) {
     // nothing pushed yet
     [_controller setViewControllers:controllers animated:NO];
@@ -437,11 +435,13 @@
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
-        [_controller setViewControllers:controllers animated:YES];
+        BOOL shouldAnimate = [RNSScreenStackView shouldScreenAnimate:top];
+        [_controller setViewControllers:controllers animated:shouldAnimate];
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
         // added the last top element to it and perform (animated) pop
+        BOOL shouldAnimate = [RNSScreenStackView shouldScreenAnimate:lastTop];
         NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
         [newControllers addObject:lastTop];
         [_controller setViewControllers:newControllers animated:NO];
@@ -451,6 +451,7 @@
       // new top controller is not on the stack
       // in such case we update the stack except from the last element with
       // no animation and do animated push of the last item
+      BOOL shouldAnimate = [RNSScreenStackView shouldScreenAnimate:top];
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
@@ -458,7 +459,7 @@
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
-      [_controller setViewControllers:controllers animated:shouldAnimate];
+      [_controller setViewControllers:controllers animated:NO];
     }
   } else {
     // change wasn't on the top of the stack. We don't need animation.
@@ -487,6 +488,11 @@
 
   [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
+}
+
++ (BOOL)shouldScreenAnimate:(UIViewController *)screen
+{
+  return ((RNSScreenView *)screen.view).stackAnimation != RNSScreenStackAnimationNone;
 }
 
 // By default, the header buttons that are not inside the native hit area
