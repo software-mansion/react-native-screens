@@ -83,7 +83,7 @@ export default function HeaderConfig({
     if (
       Platform.OS === 'android' &&
       searchBar &&
-      searchBar.disableBackButtonOverride
+      !searchBar.disableBackButtonOverride
     ) {
       const onFocus: SearchBarProps['onFocus'] = (...x) => {
         createSubscription();
@@ -97,7 +97,7 @@ export default function HeaderConfig({
       return { ...searchBar, onFocus, onClose };
     }
     return searchBar;
-  }, [searchBar]);
+  }, [searchBar, createSubscription, clearSubscription]);
 
   return (
     <ScreenStackHeaderConfig

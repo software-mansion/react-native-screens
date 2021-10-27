@@ -30,28 +30,28 @@ export function useBackPressSubscription({
   );
 
   const createSubscription = React.useCallback(() => {
-    subscription.current?.remove();
-    subscription.current = BackHandler.addEventListener(
-      'hardwareBackPress',
-      onBackPress
-    );
-    setIsActive(true);
-  }, [subscription.current]);
+    if (!isDisabled) {
+      subscription.current?.remove();
+      subscription.current = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress
+      );
+      setIsActive(true);
+    }
+  }, [subscription.current, isDisabled]);
 
   const handleAttached = React.useCallback(() => {
-    if (isActive && !isDisabled) {
+    if (isActive) {
       createSubscription();
     }
-  }, [createSubscription, isActive, isDisabled]);
+  }, [createSubscription, isActive]);
 
   const handleDetached = React.useCallback(() => {
-    if (!isDisabled) {
-      clearSubscription(false);
-    }
-  }, [createSubscription, isActive, isDisabled]);
+    clearSubscription(false);
+  }, [createSubscription, isActive]);
 
   React.useEffect(() => {
-    if (isDisabled && isActive) {
+    if (isDisabled) {
       clearSubscription();
     }
   }, [isDisabled]);
