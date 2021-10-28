@@ -22,6 +22,10 @@ function Home({
         title="Go to RNScreens modal"
         onPress={() => navigation.navigate('Modal')}
       />
+      <Button
+        title="Go to RNScreens fullScreenModal"
+        onPress={() => navigation.navigate('FullScreenModal')}
+      />
       <Modal
         animationType="slide"
         visible={isShowModal}
@@ -65,6 +69,11 @@ export default function App() {
           name="Modal"
           component={ModalScreen}
           options={{ stackPresentation: 'modal' }}
+        />
+        <NativeStack.Screen
+          name="FullScreenModal"
+          component={ModalScreen}
+          options={{ stackPresentation: 'fullScreenModal' }}
         />
       </NativeStack.Navigator>
     </NavigationContainer>
