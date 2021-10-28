@@ -429,33 +429,32 @@
     // nothing pushed yet
     [_controller setViewControllers:controllers animated:NO];
   } else if (top != lastTop) {
+    // we always provide `animated:YES` since, if the user does not want the animation, he will provide
+    // `stackAnimation: 'none'`, which will resolve in no animation anyways.
     if (![controllers containsObject:lastTop]) {
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
-        BOOL shouldAnimate = [RNSScreenStackView shouldScreenAnimate:top];
-        [_controller setViewControllers:controllers animated:shouldAnimate];
+        [_controller setViewControllers:controllers animated:YES];
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
         // added the last top element to it and perform (animated) pop
-        BOOL shouldAnimate = [RNSScreenStackView shouldScreenAnimate:lastTop];
         NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
         [newControllers addObject:lastTop];
         [_controller setViewControllers:newControllers animated:NO];
-        [_controller popViewControllerAnimated:shouldAnimate];
+        [_controller popViewControllerAnimated:YES];
       }
     } else if (![_controller.viewControllers containsObject:top]) {
       // new top controller is not on the stack
       // in such case we update the stack except from the last element with
       // no animation and do animated push of the last item
-      BOOL shouldAnimate = [RNSScreenStackView shouldScreenAnimate:top];
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
-      [_controller pushViewController:top animated:shouldAnimate];
+      [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
