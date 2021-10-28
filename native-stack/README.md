@@ -362,7 +362,7 @@ Search bar is only supported on iOS.
 Example: 
 
 ```js
-React.useEffect(() => {
+React.useLayoutEffect(() => {
   navigation.setOptions({
     searchBar: {
       // search bar options
@@ -370,6 +370,8 @@ React.useEffect(() => {
   });
 }, [navigation]);
 ```
+
+We advise using `useLayoutEffect` hook instead of `useEffect` when managing `searchBar` props to avoid unexpected layout issues.
 
 Supported properties are described below.
 
@@ -430,7 +432,7 @@ Example:
 ```js
 const [search, setSearch] = React.useState('');
 
-React.useEffect(() => {
+React.useLayoutEffect(() => {
   navigation.setOptions({
     searchBar: {
       onChangeText: (event) => setSearch(event.nativeEvent.text),
