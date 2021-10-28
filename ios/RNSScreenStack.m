@@ -489,11 +489,6 @@
   [self setModalViewControllers:modalControllers];
 }
 
-+ (BOOL)shouldScreenAnimate:(UIViewController *)screen
-{
-  return ((RNSScreenView *)screen.view).stackAnimation != RNSScreenStackAnimationNone;
-}
-
 // By default, the header buttons that are not inside the native hit area
 // cannot be clicked, so we check it by ourselves
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
