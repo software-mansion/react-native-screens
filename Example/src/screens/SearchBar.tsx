@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { I18nManager, Platform, Button, ScrollView, Text } from 'react-native';
 import { SearchBarProps } from 'react-native-screens';
 import {
@@ -156,7 +156,7 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
     '🎡 Ferris Wheel',
   ];
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       searchBar: {
         placeholder: 'Interesting places...',
