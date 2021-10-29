@@ -592,7 +592,7 @@
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
         if (subview.subviews == nil || [subview.subviews count] == 0) {
           RCTLogWarn(
-              @"Failed to attach SearchBar to ScreenStackHeader. We recommend using `useLayoutEffect` when managing "
+              @"Failed to attach search bar to the header. We recommend using `useLayoutEffect` when managing "
                "searchBar properties dynamically. \n\nSee: github.com/software-mansion/react-native-screens/issues/1188");
           break;
         }
