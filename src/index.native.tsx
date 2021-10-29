@@ -10,7 +10,7 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-// import { Freeze } from 'react-freeze';
+import { Freeze } from 'react-freeze';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/default
 import processColor from 'react-native/Libraries/StyleSheet/processColor';
@@ -142,6 +142,22 @@ function MaybeFreeze({
   } else {
     return <>{children}</>;
   }
+}
+
+function ScreenStack(props: ScreenStackProps) {
+  if (ENABLE_FREEZE) {
+    const { children, ...rest } = props;
+    const count = React.Children.count(children);
+    const childrenWithProps = React.Children.map(children, (child, index) => {
+      return <Freeze freeze={count - index > 2}>{child}</Freeze>;
+    });
+    return (
+      <ScreensNativeModules.NativeScreenStack {...rest}>
+        {childrenWithProps}
+      </ScreensNativeModules.NativeScreenStack>
+    );
+  }
+  return <ScreensNativeModules.NativeScreenStack {...props} />;
 }
 
 class Screen extends React.Component<ScreenProps> {
@@ -346,6 +362,7 @@ module.exports = {
   Screen,
   ScreenContainer,
   ScreenContext,
+  ScreenStack,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
@@ -359,9 +376,6 @@ module.exports = {
     return ScreensNativeModules.NativeScreenNavigationContainer;
   },
 
-  get ScreenStack() {
-    return ScreensNativeModules.NativeScreenStack;
-  },
   get ScreenStackHeaderConfig() {
     return ScreensNativeModules.NativeScreenStackHeaderConfig;
   },
