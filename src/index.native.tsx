@@ -10,6 +10,7 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+// import { Freeze } from 'react-freeze';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/default
 import processColor from 'react-native/Libraries/StyleSheet/processColor';
@@ -45,6 +46,12 @@ function enableScreens(shouldEnableScreens = true): void {
       `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
     );
   }
+}
+
+let ENABLE_FREEZE = false;
+
+function enableFreeze(shouldEnableReactFreeze = true): void {
+  ENABLE_FREEZE = shouldEnableReactFreeze;
 }
 
 // const that tells if the library should use new implementation, will be undefined for older versions
@@ -123,6 +130,20 @@ const ScreensNativeModules = {
   },
 };
 
+function MaybeFreeze({
+  freeze,
+  children,
+}: {
+  freeze: boolean;
+  children: React.ReactNode;
+}) {
+  if (ENABLE_FREEZE) {
+    return <Freeze freeze={freeze}>{children}</Freeze>;
+  } else {
+    return <>{children}</>;
+  }
+}
+
 class Screen extends React.Component<ScreenProps> {
   private ref: React.ElementRef<typeof View> | null = null;
   private closing = new Animated.Value(0);
@@ -189,18 +210,20 @@ class Screen extends React.Component<ScreenProps> {
                   { useNativeDriver: true }
                 )
           }>
-          {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
-            children
-          ) : (
-            <TransitionProgressContext.Provider
-              value={{
-                progress: this.progress,
-                closing: this.closing,
-                goingForward: this.goingForward,
-              }}>
-              {children}
-            </TransitionProgressContext.Provider>
-          )}
+          <MaybeFreeze freeze={activityState === 0}>
+            {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
+              children
+            ) : (
+              <TransitionProgressContext.Provider
+                value={{
+                  progress: this.progress,
+                  closing: this.closing,
+                  goingForward: this.goingForward,
+                }}>
+                {children}
+              </TransitionProgressContext.Provider>
+            )}
+          </MaybeFreeze>
         </AnimatedNativeScreen>
       );
     } else {
@@ -370,6 +393,7 @@ module.exports = {
   ScreenStackHeaderSearchBarView,
 
   enableScreens,
+  enableFreeze,
   screensEnabled,
   shouldUseActivityState,
   useTransitionProgress,
