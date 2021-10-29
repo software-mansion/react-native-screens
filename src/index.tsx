@@ -22,6 +22,12 @@ export function screensEnabled(): boolean {
   return ENABLE_SCREENS;
 }
 
+// @ts-ignore function stub, freezing logic is located in index.native.tsx
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function enableFreeze(shouldEnableReactFreeze = true): void {
+  // noop
+}
+
 export class NativeScreen extends React.Component<ScreenProps> {
   render(): JSX.Element {
     let {
