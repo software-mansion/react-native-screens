@@ -39,9 +39,10 @@ For people that must handle cases like this, there is [a more detailed discussio
 <details>
 <summary>Need to use a custom Kotlin version?</summary>
 <br>
+
 Since `v3.6.0` `react-native-screens` has been rewritten with Kotlin. Kotlin version used in this library defaults to `1.4.10`.
 
-If you need to use a different Kotlin version set `kotlinVersion` ext propery in `android/build.gradle` and the library will use this version accordingly:
+If you need to use a different Kotlin version, set `kotlinVersion` ext property in your project's `android/build.gradle` and the library will use this version accordingly:
 
 ```
 buildscript {
@@ -52,7 +53,7 @@ buildscript {
 }
 ```
 
-`react-native-screens` requires Kotlin v1.3.50 or higher.
+**Disclaimer**: `react-native-screens` requires Kotlin `1.3.50` or higher.
 </details>
 
 ### Windows
