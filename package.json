@@ -53,6 +53,7 @@
   },
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
   "dependencies": {
+    "react-freeze": "^1.0.0",
     "warn-once": "^0.1.0"
   },
   "peerDependencies": {
