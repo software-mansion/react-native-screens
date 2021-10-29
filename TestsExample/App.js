@@ -63,6 +63,7 @@ import Test1153 from './src/Test1153';
 import Test1157 from './src/Test1157';
 import Test1162 from './src/Test1162';
 import Test1188 from './src/Test1188';
+import TestFreeze from './src/TestFreeze';
 
 export default function App() {
   return (
