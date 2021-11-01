@@ -390,6 +390,10 @@ Possible values:
 
 Defaults to `sentences` on iOS and `'none'` on Android.
 
+#### `autoFocus` (Android only)
+
+When set to `true` focuses search bar automatically when screen is appearing. Default value is `false`.
+
 #### `barTintColor`
 
 The search field background color.
@@ -399,6 +403,10 @@ By default bar tint color is translucent.
 #### `cancelButtonText` (iOS only)
 
 The text to be used instead of default `Cancel` button text.
+
+#### `disableBackButtonOverride` (Android only)
+
+Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true` 
 
 #### `hideNavigationBar` (iOS only)
 
@@ -411,6 +419,16 @@ Defaults to `true`.
 Boolean indicating whether to hide the search bar when scrolling.
 
 Defaults to `true`.
+
+#### `inputType` (Android only)
+
+This prop is used to change type of the input and keyboard. Default value is `'text'`.
+
+All values:
+- `'text'` - normal text input
+- `'number'` - number input
+- `'email'` - email input
+- `'phone'` - phone input
 
 ####  `obscureBackground` (iOS only)
 
@@ -469,24 +487,6 @@ Defaults to an empty string.
 #### `textColor`
 
 The search field text color.
-
-#### `disableBackButtonOverride` (Android only)
-
-Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true` 
-
-#### `autoFocus` (Android only)
-
-When set to `true` focuses search bar automatically when screen is appearing. Default value is `false`.
-
-#### `inputType` (Android only)
-
-This prop is used to change type of the input and keyboard. Default value is `'text'`.
-
-All values:
-- `'text'` - normal text input
-- `'number'` - number input
-- `'email'` - email input
-- `'phone'` - phone input
 
 ### Helpers
 

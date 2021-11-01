@@ -252,10 +252,13 @@ Along with this component's properties that can be used to customize header beha
 To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
 
 - `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences` on iOS and `'none'` on Android.
+- `autoFocus` - If `true` automatically focuses search bar when screen is appearing. (Android only)
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
 - `cancelButtonText` - The text to be used instead of default `Cancel` button text. (iOS only)
+- `disableBackButtonOverride` - Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true`. (Android only)
 - `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`. (iOS only)
 - `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`. (iOS only)
+- `inputType` - Specifies type of input and keyboard for search bar. Can be one of `'text'`, `'phone'`, `'number'`, `'email'`. Defaults to `'text'`. (Android only)
 - `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`. (iOS only)
 - `onBlur` - A callback that gets called when search bar has lost focus.
 - `onChangeText` - A callback that gets called when the text changes. It receives the current text value of the search bar.
@@ -266,9 +269,6 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `onClose` - A callback that gets called when search bar is closing. (Android only)
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
 - `textColor` - The search field text color.
-- `autoFocus` - If `true` automatically focuses search bar when screen is appearing. (Android only)
-- `inputType` - Specifies type of input and keyboard for search bar. Can be one of `'text'`, `'phone'`, `'number'`, `'email'`. Defaults to `'text'` (Android only)
-- `disableBackButtonOverride` - Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true`. (Android only)
 
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:

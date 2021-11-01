@@ -349,7 +349,7 @@ module.exports = {
   get SearchBar() {
     if (!isSearchBarAvailableForCurrentPlatform) {
       console.warn(
-        'Importing SearchBar is only valid on iOS and android devices.'
+        'Importing SearchBar is only valid on iOS and Android devices.'
       );
       return View;
     }

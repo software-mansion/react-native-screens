@@ -372,6 +372,12 @@ export interface SearchBarProps {
    */
   autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
   /**
+   * Automatically focuses search bar on mount
+   *
+   * @platform android
+   */
+  autoFocus?: boolean;
+  /**
    * The search field background color
    */
   barTintColor?: string;
@@ -381,7 +387,12 @@ export interface SearchBarProps {
    * @platform ios
    */
   cancelButtonText?: string;
-
+  /**
+   * Specifies whether the back button should close text input or not.
+   *
+   * @platform android
+   */
+  disableBackButtonOverride?: boolean;
   /**
    * Indicates whether to hide the navigation bar
    *
@@ -395,6 +406,12 @@ export interface SearchBarProps {
    */
   hideWhenScrolling?: boolean;
 
+  /**
+   * Sets type of the input. Defaults to `text`.
+   *
+   * @platform android
+   */
+  inputType?: 'text' | 'phone' | 'number' | 'email';
   /**
    * Indicates whether to to obscure the underlying content
    */
@@ -445,22 +462,4 @@ export interface SearchBarProps {
    * The search field text color
    */
   textColor?: string;
-  /**
-   * Specifies whether the back button should close text input or not.
-   *
-   * @platform android
-   */
-  disableBackButtonOverride?: boolean;
-  /**
-   * Automatically focuses search bar on mount
-   *
-   * @platform android
-   */
-  autoFocus?: boolean;
-  /**
-   * Sets type of the input. Defaults to `text`.
-   *
-   * @platform android
-   */
-  inputType?: 'text' | 'phone' | 'number' | 'email';
 }
