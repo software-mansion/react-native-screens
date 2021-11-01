@@ -41,6 +41,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         if (searchView != null) {
             if (!mAreListenersSet) {
                 setSearchViewListeners(searchView)
+                mAreListenersSet = true
             }
 
             searchView.inputType = inputType.toAndroidInputType(autoCapitalize)
