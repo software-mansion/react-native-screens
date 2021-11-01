@@ -57,6 +57,9 @@ export default function HeaderConfig({
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
 
+  // We need to use back press subscription here to override back button behavior on JS side.
+  // Because screens are usually used with react-navigation and this library overrides back button
+  // we need to handle it first in case when search bar is open
   const {
     handleAttached,
     handleDetached,
@@ -85,13 +88,13 @@ export default function HeaderConfig({
       searchBar &&
       !searchBar.disableBackButtonOverride
     ) {
-      const onFocus: SearchBarProps['onFocus'] = (...x) => {
+      const onFocus: SearchBarProps['onFocus'] = (...args) => {
         createSubscription();
-        searchBar.onFocus?.(...x);
+        searchBar.onFocus?.(...args);
       };
-      const onClose: SearchBarProps['onClose'] = (...x) => {
+      const onClose: SearchBarProps['onClose'] = (...args) => {
         clearSubscription();
-        searchBar.onClose?.(...x);
+        searchBar.onClose?.(...args);
       };
 
       return { ...searchBar, onFocus, onClose };

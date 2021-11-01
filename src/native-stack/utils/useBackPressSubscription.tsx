@@ -13,6 +13,10 @@ interface UseBackPressSubscription {
   clearSubscription: () => void;
 }
 
+/**
+ * This hook is an abstraction for keeping back press subscription
+ * logic in one place.
+ */
 export function useBackPressSubscription({
   onBackPress,
   isDisabled,
