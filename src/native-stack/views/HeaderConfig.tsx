@@ -12,7 +12,7 @@ import {
   SearchBarProps,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
-import { isSearchBarAvailableForCurrentPlatform } from '../utils/searchBarPlatforms';
+import { isSearchBarAvailableForCurrentPlatform } from '../../searchBarPlatforms';
 import { useBackPressSubscription } from '../utils/useBackPressSubscription';
 import { processFonts } from './FontProcessor';
 

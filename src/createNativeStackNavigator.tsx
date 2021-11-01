@@ -44,7 +44,7 @@ import {
   StackNavigationProp,
   Layout,
 } from 'react-navigation-stack/src/vendor/types';
-import { isSearchBarAvailableForCurrentPlatform } from './native-stack/utils/searchBarPlatforms';
+import { isSearchBarAvailableForCurrentPlatform } from './searchBarPlatforms';
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 

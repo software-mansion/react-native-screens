@@ -29,7 +29,7 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from './types';
-import { isSearchBarAvailableForCurrentPlatform } from './native-stack/utils/searchBarPlatforms';
+import { isSearchBarAvailableForCurrentPlatform } from './searchBarPlatforms';
 
 // web implementation is taken from `index.tsx`
 const isPlatformSupported =
