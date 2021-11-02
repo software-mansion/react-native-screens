@@ -437,12 +437,6 @@ export interface SearchBarProps {
    */
   onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
-   */
-  onSearchButtonPress?: (
-    e: NativeSyntheticEvent<TextInputFocusEventData>
-  ) => void;
-  /**
    * A callback that gets called when search bar is closed
    *
    * @platform android
@@ -454,6 +448,12 @@ export interface SearchBarProps {
    * @platform android
    */
   onOpen?: () => void;
+  /**
+   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+   */
+  onSearchButtonPress?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>
+  ) => void;
   /**
    * Text displayed when search field is empty
    */

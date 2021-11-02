@@ -461,17 +461,17 @@ React.useEffect(() => {
 
 A callback that gets called when search bar has received focus.
 
-#### `onSearchButtonPress`
+#### `onClose` (Android only)
 
-A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+A callback that gets called when search bar is closing
 
 #### `onOpen` (Android only)
 
 A callback that gets called when search bar is expanding
 
-#### `onClose` (Android only)
+#### `onSearchButtonPress`
 
-A callback that gets called when search bar is closing
+A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 
 #### `placeholder`
 

@@ -264,9 +264,9 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `onChangeText` - A callback that gets called when the text changes. It receives the current text value of the search bar.
 - `onCancelButtonPress` - A callback that gets called when the cancel button is pressed.
 - `onFocus` - A callback that gets called when search bar has received focus.
-- `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
-- `onOpen` - A callback that gets called when search bar is expanding. (Android only)
 - `onClose` - A callback that gets called when search bar is closing. (Android only)
+- `onOpen` - A callback that gets called when search bar is expanding. (Android only)
+- `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
 - `textColor` - The search field text color.
 
