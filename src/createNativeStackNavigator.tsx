@@ -6,6 +6,7 @@ import {
   StyleProp,
   TextStyle,
   ViewStyle,
+  BackHandler,
 } from 'react-native';
 import {
   ScreenContext,
@@ -20,6 +21,7 @@ import {
   SearchBar,
   StackPresentationTypes,
   isSearchBarAvailableForCurrentPlatform,
+  SearchBarProps,
 } from 'react-native-screens';
 import {
   createNavigator,
@@ -45,6 +47,7 @@ import {
   StackNavigationProp,
   Layout,
 } from 'react-navigation-stack/src/vendor/types';
+import { useBackPressSubscription } from './native-stack/utils/useBackPressSubscription';
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
@@ -203,6 +206,7 @@ function renderHeaderConfig(
     largeTitleHideShadow,
     title,
     translucent,
+    searchBar,
   } = options;
 
   const scene = {
@@ -241,6 +245,42 @@ function renderHeaderConfig(
     translucent: headerTranslucent || translucent || false,
   };
 
+  // We need to use back press subscription here to override back button behavior on JS side.
+  // Because screens are usually used with react-navigation and this library overrides back button
+  // we need to handle it first in case when search bar is open
+  const {
+    handleAttached,
+    handleDetached,
+    clearSubscription,
+    createSubscription,
+  } = useBackPressSubscription({
+    onBackPress: handleBackPress,
+    isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
+  });
+
+  // We want to clear clearSubscription only when components unmounts or search bar changes
+  React.useEffect(() => clearSubscription, [searchBar]);
+
+  const processedSearchBarOptions = React.useMemo(() => {
+    if (
+      Platform.OS === 'android' &&
+      searchBar &&
+      !searchBar.disableBackButtonOverride
+    ) {
+      const onFocus: SearchBarProps['onFocus'] = (...args) => {
+        createSubscription();
+        searchBar.onFocus?.(...args);
+      };
+      const onClose: SearchBarProps['onClose'] = (...args) => {
+        clearSubscription();
+        searchBar.onClose?.(...args);
+      };
+
+      return { ...searchBar, onFocus, onClose };
+    }
+    return searchBar;
+  }, [searchBar, createSubscription, clearSubscription]);
+
   const hasHeader =
     headerShown !== false && headerMode !== 'none' && options.header !== null;
   if (!hasHeader) {
@@ -265,11 +305,11 @@ function renderHeaderConfig(
 
   if (
     isSearchBarAvailableForCurrentPlatform &&
-    options.searchBar !== undefined
+    processedSearchBarOptions !== undefined
   ) {
     children.push(
       <ScreenStackHeaderSearchBarView>
-        <SearchBar {...options.searchBar} />
+        <SearchBar {...processedSearchBarOptions} />
       </ScreenStackHeaderSearchBarView>
     );
   }
@@ -336,7 +376,19 @@ function renderHeaderConfig(
     headerOptions.children = children;
   }
 
-  return <ScreenStackHeaderConfig {...headerOptions} />;
+  return (
+    <ScreenStackHeaderConfig
+      {...headerOptions}
+      onAttached={handleAttached}
+      onDetached={handleDetached}
+    />
+  );
+}
+
+function handleBackPress() {
+  // This function invokes the native back press event
+  BackHandler.exitApp();
+  return true;
 }
 
 const MaybeNestedStack = ({
