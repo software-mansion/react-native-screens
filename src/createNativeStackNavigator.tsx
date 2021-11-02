@@ -6,7 +6,6 @@ import {
   StyleProp,
   TextStyle,
   ViewStyle,
-  BackHandler,
 } from 'react-native';
 import {
   ScreenContext,
@@ -22,6 +21,7 @@ import {
   StackPresentationTypes,
   isSearchBarAvailableForCurrentPlatform,
   SearchBarProps,
+  executeNativeBackPress,
 } from 'react-native-screens';
 import {
   createNavigator,
@@ -254,7 +254,7 @@ function renderHeaderConfig(
     clearSubscription,
     createSubscription,
   } = useBackPressSubscription({
-    onBackPress: handleBackPress,
+    onBackPress: executeNativeBackPress,
     isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
   });
 
@@ -383,12 +383,6 @@ function renderHeaderConfig(
       onDetached={handleDetached}
     />
   );
-}
-
-function handleBackPress() {
-  // This function invokes the native back press event
-  BackHandler.exitApp();
-  return true;
 }
 
 const MaybeNestedStack = ({

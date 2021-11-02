@@ -29,11 +29,10 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from './types';
-
-export const isSearchBarAvailableForCurrentPlatform = [
-  'ios',
-  'android',
-].includes(Platform.OS);
+import {
+  isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
+} from './utils';
 
 // web implementation is taken from `index.tsx`
 const isPlatformSupported =
@@ -380,4 +379,7 @@ module.exports = {
   screensEnabled,
   shouldUseActivityState,
   useTransitionProgress,
+
+  isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
 };

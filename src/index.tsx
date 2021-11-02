@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Animated,
-  View,
-  ViewProps,
-  ImageProps,
-  Image,
-  Platform,
-} from 'react-native';
+import { Animated, View, ViewProps, ImageProps, Image } from 'react-native';
 import {
   ScreenProps,
   ScreenContainerProps,
@@ -18,11 +11,10 @@ import {
 
 export * from './types';
 export { default as useTransitionProgress } from './useTransitionProgress';
-
-export const isSearchBarAvailableForCurrentPlatform = [
-  'ios',
-  'android',
-].includes(Platform.OS);
+export {
+  isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
+} from './utils';
 
 let ENABLE_SCREENS = true;
 

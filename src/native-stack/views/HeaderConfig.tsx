@@ -1,6 +1,6 @@
 import { Route, useTheme } from '@react-navigation/native';
 import * as React from 'react';
-import { BackHandler, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import {
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderCenterView,
@@ -11,6 +11,7 @@ import {
   SearchBar,
   SearchBarProps,
   isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
 import { useBackPressSubscription } from '../utils/useBackPressSubscription';
@@ -19,12 +20,6 @@ import { processFonts } from './FontProcessor';
 type Props = NativeStackNavigationOptions & {
   route: Route<string>;
 };
-
-function handleBackPress() {
-  // This function invokes the native back press event
-  BackHandler.exitApp();
-  return true;
-}
 
 export default function HeaderConfig({
   backButtonImage,
@@ -66,7 +61,7 @@ export default function HeaderConfig({
     clearSubscription,
     createSubscription,
   } = useBackPressSubscription({
-    onBackPress: handleBackPress,
+    onBackPress: executeNativeBackPress,
     isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
   });
 
