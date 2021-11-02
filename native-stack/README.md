@@ -456,14 +456,14 @@ React.useEffect(() => {
   });
 }, [navigation]);
 ```
+#### `onClose` (Android only)
+
+A callback that gets called when search bar is closing
+
 
 #### `onFocus`
 
 A callback that gets called when search bar has received focus.
-
-#### `onClose` (Android only)
-
-A callback that gets called when search bar is closing
 
 #### `onOpen` (Android only)
 

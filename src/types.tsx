@@ -435,15 +435,15 @@ export interface SearchBarProps {
   /**
    * A callback that gets called when search bar has received focus
    */
-  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * A callback that gets called when search bar is closed
-   *
-   * @platform android
-   */
   onClose?: () => void;
   /**
    * A callback that gets called when search bar is opened
+   *
+   * @platform android
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when search bar is closed
    *
    * @platform android
    */

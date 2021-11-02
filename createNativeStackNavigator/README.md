@@ -462,13 +462,13 @@ static navigationOptions = ({navigation}) => {
 };
 ```
 
-#### `onFocus`
-
-A callback that gets called when search bar has received focus.
-
 #### `onClose` (Android only)
 
 A callback that gets called when search bar is closing
+
+#### `onFocus`
+
+A callback that gets called when search bar has received focus.
 
 #### `onOpen` (Android only)
 
