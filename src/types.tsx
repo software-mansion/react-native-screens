@@ -388,7 +388,7 @@ export interface SearchBarProps {
    */
   cancelButtonText?: string;
   /**
-   * Specifies whether the back button should close text input or not.
+   * Specifies whether the back button should close search bar's text input or not.
    *
    * @platform android
    */
