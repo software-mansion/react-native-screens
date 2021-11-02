@@ -47,6 +47,7 @@ Screens are already integrated with the React Native's most popular navigation l
 
 | version | react-native version |
 | ------- | -------------------- |
+| 3.9.0+  | 0.64.0+              |
 | 3.0.0+  | 0.62.0+              |
 | 2.0.0+  | 0.60.0+              |
 
