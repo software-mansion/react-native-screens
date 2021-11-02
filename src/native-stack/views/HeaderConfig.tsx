@@ -10,9 +10,9 @@ import {
   ScreenStackHeaderSearchBarView,
   SearchBar,
   SearchBarProps,
+  isSearchBarAvailableForCurrentPlatform,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
-import { isSearchBarAvailableForCurrentPlatform } from '../../searchBarPlatforms';
 import { useBackPressSubscription } from '../utils/useBackPressSubscription';
 import { processFonts } from './FontProcessor';
 

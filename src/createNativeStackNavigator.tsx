@@ -19,6 +19,7 @@ import {
   ScreenStackHeaderSearchBarView,
   SearchBar,
   StackPresentationTypes,
+  isSearchBarAvailableForCurrentPlatform,
 } from 'react-native-screens';
 import {
   createNavigator,
@@ -44,7 +45,6 @@ import {
   StackNavigationProp,
   Layout,
 } from 'react-navigation-stack/src/vendor/types';
-import { isSearchBarAvailableForCurrentPlatform } from './searchBarPlatforms';
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 

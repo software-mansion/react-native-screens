@@ -29,7 +29,11 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from './types';
-import { isSearchBarAvailableForCurrentPlatform } from './searchBarPlatforms';
+
+export const isSearchBarAvailableForCurrentPlatform = [
+  'ios',
+  'android',
+].includes(Platform.OS);
 
 // web implementation is taken from `index.tsx`
 const isPlatformSupported =
