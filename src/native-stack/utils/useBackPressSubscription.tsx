@@ -24,14 +24,11 @@ export function useBackPressSubscription({
   const [isActive, setIsActive] = React.useState(false);
   const subscription = React.useRef<NativeEventSubscription | undefined>();
 
-  const clearSubscription = React.useCallback(
-    (shouldSetActive = true) => {
-      subscription.current?.remove();
-      subscription.current = undefined;
-      if (shouldSetActive) setIsActive(false);
-    },
-    [subscription.current]
-  );
+  const clearSubscription = React.useCallback((shouldSetActive = true) => {
+    subscription.current?.remove();
+    subscription.current = undefined;
+    if (shouldSetActive) setIsActive(false);
+  }, []);
 
   const createSubscription = React.useCallback(() => {
     if (!isDisabled) {
@@ -42,7 +39,7 @@ export function useBackPressSubscription({
       );
       setIsActive(true);
     }
-  }, [subscription.current, isDisabled]);
+  }, [isDisabled, onBackPress]);
 
   const handleAttached = React.useCallback(() => {
     if (isActive) {
@@ -52,13 +49,13 @@ export function useBackPressSubscription({
 
   const handleDetached = React.useCallback(() => {
     clearSubscription(false);
-  }, [createSubscription, isActive]);
+  }, [clearSubscription]);
 
   React.useEffect(() => {
     if (isDisabled) {
       clearSubscription();
     }
-  }, [isDisabled]);
+  }, [isDisabled, clearSubscription]);
 
   return {
     handleAttached,

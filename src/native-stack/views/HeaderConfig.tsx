@@ -80,6 +80,7 @@ export default function HeaderConfig({
     headerTitleStyle.fontFamily,
   ]);
 
+  // We want to clear clearSubscription only when components unmounts or search bar changes
   React.useEffect(() => clearSubscription, [searchBar]);
 
   const processedSearchBarOptions = React.useMemo(() => {
