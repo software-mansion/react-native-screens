@@ -26,6 +26,10 @@ import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
 
+import { enableFreeze } from 'react-native-screens';
+
+enableFreeze();
+
 if (Platform.OS === 'android') {
   StatusBar.setTranslucent(true);
 }
