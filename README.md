@@ -47,7 +47,6 @@ Screens are already integrated with the React Native's most popular navigation l
 
 | version | react-native version |
 | ------- | -------------------- |
-| 3.9.0+  | 0.64.0+              |
 | 3.0.0+  | 0.62.0+              |
 | 2.0.0+  | 0.60.0+              |
 
@@ -68,6 +67,24 @@ expo install react-native-screens
 Just make sure that the version of [react-navigation](https://github.com/react-navigation/react-navigation) you are using is 2.14.0 or higher.
 
 You are all set 🎉 – when screens are enabled in your application code react-navigation will automatically use them instead of relying on plain React Native Views.
+
+### Experimental support for `react-freeze`
+
+> You have to use React Native 0.64 or higher, react-navigation 5.x or 6.x and react-native-screens 3.9.0 or higher
+
+Since `v3.9.0` `react-native-screens` comes with experimental support for `react-freeze`. It uses the React Suspense mechanism to prevent parts of the react component tree from rendering while keeping its state untouched.
+
+To benefit from this feature enable it in your entry file (e.g. `App.js`) with this snippet:
+
+```js
+import { enableFreeze } from 'react-native-screens';
+
+enableFreeze(true);
+```
+
+Want to know more? Check out [react-freeze README](https://github.com/software-mansion-labs/react-freeze#readme)
+
+Found a bug? File an issue [here](https://github.com/software-mansion/react-native-screens/issues) or directly in [react-freeze repository](https://github.com/software-mansion-labs/react-freeze/issues).
 
 ### Disabling `react-native-screens`
 
