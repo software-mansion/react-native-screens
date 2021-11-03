@@ -332,6 +332,14 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   largeTitleHideShadow?: boolean;
   /**
+   * Callback which is executed when screen header is attached
+   */
+  onAttached?: () => void;
+  /**
+   * Callback which is executed when screen header is detached
+   */
+  onDetached?: () => void;
+  /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;

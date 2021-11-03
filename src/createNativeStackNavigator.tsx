@@ -216,6 +216,19 @@ function renderHeaderConfig(
     descriptor,
   };
 
+  // We need to use back press subscription here to override back button behavior on JS side.
+  // Because screens are usually used with react-navigation and this library overrides back button
+  // we need to handle it first in case when search bar is open
+  const {
+    handleAttached,
+    handleDetached,
+    clearSubscription,
+    createSubscription,
+  } = useBackPressSubscription({
+    onBackPress: executeNativeBackPress,
+    isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
+  });
+
   const headerOptions: ScreenStackHeaderConfigProps = {
     backButtonInCustomView,
     backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
@@ -243,20 +256,9 @@ function renderHeaderConfig(
     titleFontSize: headerTitleStyle?.fontSize,
     titleFontWeight: headerTitleStyle?.fontWeight,
     translucent: headerTranslucent || translucent || false,
+    onAttached: handleAttached,
+    onDetached: handleDetached,
   };
-
-  // We need to use back press subscription here to override back button behavior on JS side.
-  // Because screens are usually used with react-navigation and this library overrides back button
-  // we need to handle it first in case when search bar is open
-  const {
-    handleAttached,
-    handleDetached,
-    clearSubscription,
-    createSubscription,
-  } = useBackPressSubscription({
-    onBackPress: executeNativeBackPress,
-    isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
-  });
 
   // We want to clear clearSubscription only when components unmounts or search bar changes
   React.useEffect(() => clearSubscription, [searchBar]);
@@ -376,13 +378,7 @@ function renderHeaderConfig(
     headerOptions.children = children;
   }
 
-  return (
-    <ScreenStackHeaderConfig
-      {...headerOptions}
-      onAttached={handleAttached}
-      onDetached={handleDetached}
-    />
-  );
+  return <ScreenStackHeaderConfig {...headerOptions} />;
 }
 
 const MaybeNestedStack = ({
