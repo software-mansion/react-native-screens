@@ -70,11 +70,11 @@ You are all set 🎉 – when screens are enabled in your application code react
 
 ### Experimental support for `react-freeze`
 
-> You have to use React Native 0.64 or higher, react-navigation 5.x or 6.x and react-native-screens 3.9.0 or higher
+> You have to use React Native 0.64 or higher, react-navigation 5.x or 6.x and react-native-screens >= v3.9.0
 
-Since `v3.9.0` `react-native-screens` comes with experimental support for `react-freeze`. It uses the React Suspense mechanism to prevent parts of the react component tree from rendering while keeping its state untouched.
+Since `v3.9.0`, `react-native-screens` comes with experimental support for [`react-freeze`](https://github.com/software-mansion-labs/react-freeze). It uses the React `Suspense` mechanism to prevent parts of the React component tree from rendering, while keeping its state untouched.
 
-To benefit from this feature enable it in your entry file (e.g. `App.js`) with this snippet:
+To benefit from this feature, enable it in your entry file (e.g. `App.js`) with this snippet:
 
 ```js
 import { enableFreeze } from 'react-native-screens';
