@@ -49,17 +49,13 @@ function enableScreens(shouldEnableScreens = true): void {
   }
 }
 
-// react-freeze requires react-native 0.64 or higher
-const minReactFreezeReactNativeVersion = 64;
 let ENABLE_FREEZE = false;
 
 function enableFreeze(shouldEnableReactFreeze = true): void {
-  const currentReactNativeVersion = parseInt(version.split('.')[1]); // eg. takes 66 from '0.66.0'
+  const minor = parseInt(version.split('.')[1]); // eg. takes 66 from '0.66.0'
 
-  if (
-    currentReactNativeVersion < minReactFreezeReactNativeVersion &&
-    shouldEnableReactFreeze
-  ) {
+  // react-freeze requires react-native >=0.64, react-native from main is 0.0.0
+  if (!(minor === 0 || minor >= 64) && shouldEnableReactFreeze) {
     console.warn(
       'react-freeze library requires at least react-native 0.64. Please upgrade your react-native version in order to use this feature.'
     );
