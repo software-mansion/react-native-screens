@@ -19,9 +19,6 @@ import {
   ScreenStackHeaderSearchBarView,
   SearchBar,
   StackPresentationTypes,
-  isSearchBarAvailableForCurrentPlatform,
-  SearchBarProps,
-  executeNativeBackPress,
 } from 'react-native-screens';
 import {
   createNavigator,
@@ -47,7 +44,6 @@ import {
   StackNavigationProp,
   Layout,
 } from 'react-navigation-stack/src/vendor/types';
-import { useBackPressSubscription } from './native-stack/utils/useBackPressSubscription';
 
 const REMOVE_ACTION = 'NativeStackNavigator/REMOVE';
 
@@ -206,7 +202,6 @@ function renderHeaderConfig(
     largeTitleHideShadow,
     title,
     translucent,
-    searchBar,
   } = options;
 
   const scene = {
@@ -215,19 +210,6 @@ function renderHeaderConfig(
     route,
     descriptor,
   };
-
-  // We need to use back press subscription here to override back button behavior on JS side.
-  // Because screens are usually used with react-navigation and this library overrides back button
-  // we need to handle it first in case when search bar is open
-  const {
-    handleAttached,
-    handleDetached,
-    clearSubscription,
-    createSubscription,
-  } = useBackPressSubscription({
-    onBackPress: executeNativeBackPress,
-    isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
-  });
 
   const headerOptions: ScreenStackHeaderConfigProps = {
     backButtonInCustomView,
@@ -256,32 +238,7 @@ function renderHeaderConfig(
     titleFontSize: headerTitleStyle?.fontSize,
     titleFontWeight: headerTitleStyle?.fontWeight,
     translucent: headerTranslucent || translucent || false,
-    onAttached: handleAttached,
-    onDetached: handleDetached,
   };
-
-  // We want to clear clearSubscription only when components unmounts or search bar changes
-  React.useEffect(() => clearSubscription, [searchBar]);
-
-  const processedSearchBarOptions = React.useMemo(() => {
-    if (
-      Platform.OS === 'android' &&
-      searchBar &&
-      !searchBar.disableBackButtonOverride
-    ) {
-      const onFocus: SearchBarProps['onFocus'] = (...args) => {
-        createSubscription();
-        searchBar.onFocus?.(...args);
-      };
-      const onClose: SearchBarProps['onClose'] = (...args) => {
-        clearSubscription();
-        searchBar.onClose?.(...args);
-      };
-
-      return { ...searchBar, onFocus, onClose };
-    }
-    return searchBar;
-  }, [searchBar, createSubscription, clearSubscription]);
 
   const hasHeader =
     headerShown !== false && headerMode !== 'none' && options.header !== null;
@@ -305,13 +262,10 @@ function renderHeaderConfig(
     );
   }
 
-  if (
-    isSearchBarAvailableForCurrentPlatform &&
-    processedSearchBarOptions !== undefined
-  ) {
+  if (Platform.OS === 'ios' && options.searchBar) {
     children.push(
       <ScreenStackHeaderSearchBarView>
-        <SearchBar {...processedSearchBarOptions} />
+        <SearchBar {...options.searchBar} />
       </ScreenStackHeaderSearchBarView>
     );
   }
