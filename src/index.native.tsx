@@ -14,6 +14,7 @@ import { Freeze } from 'react-freeze';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/default
 import processColor from 'react-native/Libraries/StyleSheet/processColor';
+import { version } from 'react-native/package.json';
 
 import TransitionProgressContext from './TransitionProgressContext';
 import useTransitionProgress from './useTransitionProgress';
@@ -48,9 +49,22 @@ function enableScreens(shouldEnableScreens = true): void {
   }
 }
 
+// react-freeze requires react-native 0.64 or higher
+const minReactFreezeReactNativeVersion = 64;
 let ENABLE_FREEZE = false;
 
 function enableFreeze(shouldEnableReactFreeze = true): void {
+  const currentReactNativeVersion = parseInt(version.split('.')[1]); // eg. takes 66 from '0.66.0'
+
+  if (
+    currentReactNativeVersion < minReactFreezeReactNativeVersion &&
+    shouldEnableReactFreeze
+  ) {
+    console.warn(
+      'react-freeze library requires at least react-native 0.64. Please upgrade your react-native version in order to use this feature.'
+    );
+  }
+
   ENABLE_FREEZE = shouldEnableReactFreeze;
 }
 
