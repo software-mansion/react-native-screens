@@ -10,16 +10,12 @@ const AnimatedScreen = Animated.createAnimatedComponent(
 
 const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
   (props, ref) => {
-    const { children, ...rest } = props;
-
     return (
       <AnimatedScreen
         // @ts-ignore some problems with ref and onTransitionProgressReanimated being "fake" prop for parsing of `useEvent` return value
         ref={ref}
-        onTransitionProgressReanimated={undefined}
-        {...rest}>
-        {children}
-      </AnimatedScreen>
+        {...props}
+      />
     );
   }
 );
