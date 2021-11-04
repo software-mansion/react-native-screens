@@ -1,9 +1,10 @@
 @protocol RNSSharedElementTransitionsDelegate <NSObject>
 
 - (void)reanimatedMockTransitionWithConverterView:(UIView *)converter
-                                           fromID:(NSNumber *)fromID
-                                             toID:(NSNumber *)toID
-                                          rootTag:(NSNumber *)rootTag;
+                                         fromView:(UIView *)fromView
+                                fromViewConverter:(UIView *)startingViewConverter
+                                           toView:(UIView *)toView
+                                  toViewConverter:(UIView *)toViewConverter;
 
 @end
 

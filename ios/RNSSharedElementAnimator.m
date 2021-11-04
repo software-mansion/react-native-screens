@@ -49,11 +49,12 @@ static NSObject<RNSSharedElementTransitionsDelegate> *_delegate;
     // we reparent starting view and animate it, then reparent it back after the transition
     UIView *startContainer = start.reactSuperview;
     int startIndex = (int)[[startContainer reactSubviews] indexOfObject:start];
+    CGRect startFrame = start.frame;
     [start removeFromSuperview];
 
     end.hidden = YES;
     if (start != nil && end != nil) {
-      [sharedElementsArray addObject:@[ start, end, startContainer, @(startIndex) ]];
+      [sharedElementsArray addObject:@[ start, end, startContainer, @(startIndex), @(startFrame) ]];
     }
   }
 
