@@ -64,11 +64,12 @@ import Test1157 from './src/Test1157';
 import Test1162 from './src/Test1162';
 import Test1188 from './src/Test1188';
 import TestFreeze from './src/TestFreeze';
+import Test1204 from './src/Test1204';
 
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <Test42 />
+      <Test1204 />
     </ReanimatedScreenProvider>
   );
 }
