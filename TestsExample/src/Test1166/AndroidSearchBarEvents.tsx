@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View} from 'react-native';
+import {Button, Text, View} from 'react-native';
 import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -23,7 +23,7 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   const [events, setEvents] = React.useState<string[]>([]);
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     const searchBar: SearchBarProps = {
       onSearchButtonPress: () => setEvents((prev) => [...prev, 'Search']),
       onBlur: () => setEvents((prev) => [...prev, 'Blur']),
@@ -38,6 +38,7 @@ function First({
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFF', padding: 12}}>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
       {events.map((event, i) => (
         <Text key={i}>{event}</Text>
       ))}

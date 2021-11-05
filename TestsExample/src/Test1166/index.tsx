@@ -38,7 +38,13 @@ function Home({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF', justifyContent: 'center', padding: 12}}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#FFF',
+        justifyContent: 'center',
+        padding: 12,
+      }}>
       <View style={{marginBottom: 12}}>
         <Button
           title="Search bar customization"

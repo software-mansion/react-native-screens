@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Button, Image, Text, TouchableOpacity, View} from 'react-native';
 import {ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -30,7 +30,7 @@ function First({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     function HeaderSearchButton() {
       return <SearchIconButton onPress={() => navigation.navigate('Search')} />;
     }
@@ -40,7 +40,11 @@ function First({
       stackAnimation: 'none',
     });
   }, [navigation]);
-  return <View style={{flex: 1, backgroundColor: '#FFF'}}></View>;
+  return (
+    <View style={{flex: 1, backgroundColor: '#FFF'}}>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
 }
 
 function Second({
@@ -50,17 +54,19 @@ function Second({
 }) {
   const [text, setText] = React.useState('');
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     navigation.setOptions({
       title: '',
       searchBar: {
+        autoCapitalize: 'none',
         autoFocus: true,
         onClose: () => navigation.navigate('First'),
         onChangeText: (e) => setText(e.nativeEvent.text),
+        barTintColor: text,
       },
       stackAnimation: 'none',
     });
-  }, [navigation]);
+  }, [navigation, text]);
 
   return (
     <View style={{flex: 1, backgroundColor: '#FFF', padding: 12}}>

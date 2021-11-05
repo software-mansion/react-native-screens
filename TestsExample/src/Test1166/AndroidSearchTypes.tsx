@@ -36,7 +36,7 @@ function First({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     function HeaderSearchButtons() {
       return (
         <View style={{flexDirection: 'row'}}>
@@ -57,6 +57,7 @@ function First({
       <Button title="Number" onPress={() => navigation.navigate('number')} />
       <Button title="Email" onPress={() => navigation.navigate('email')} />
       <Button title="Phone" onPress={() => navigation.navigate('phone')} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
 }
@@ -68,7 +69,7 @@ function Second({
 }) {
   return (
     <View style={{flex: 1, backgroundColor: '#FFF', padding: 12}}>
-      <Button title="Go back" onPress={() => navigation.pop()} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
 }
