@@ -88,6 +88,24 @@ Just make sure that the version of [react-navigation](https://github.com/react-n
 
 You are all set 🎉 – when screens are enabled in your application code react-navigation will automatically use them instead of relying on plain React Native Views.
 
+### Experimental support for `react-freeze`
+
+> You have to use React Native 0.64 or higher, react-navigation 5.x or 6.x and react-native-screens >= v3.9.0
+
+Since `v3.9.0`, `react-native-screens` comes with experimental support for [`react-freeze`](https://github.com/software-mansion-labs/react-freeze). It uses the React `Suspense` mechanism to prevent parts of the React component tree from rendering, while keeping its state untouched.
+
+To benefit from this feature, enable it in your entry file (e.g. `App.js`) with this snippet:
+
+```js
+import { enableFreeze } from 'react-native-screens';
+
+enableFreeze(true);
+```
+
+Want to know more? Check out [react-freeze README](https://github.com/software-mansion-labs/react-freeze#readme)
+
+Found a bug? File an issue [here](https://github.com/software-mansion/react-native-screens/issues) or directly in [react-freeze repository](https://github.com/software-mansion-labs/react-freeze/issues).
+
 ### Disabling `react-native-screens`
 
 If, for whatever reason, you'd like to disable native screens support and use plain React Native Views add the following code in your entry file (e.g. `App.js`):
