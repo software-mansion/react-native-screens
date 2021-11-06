@@ -259,6 +259,11 @@ export type NativeStackNavigationOptions = {
    */
   replaceAnimation?: ScreenProps['replaceAnimation'];
   /**
+   * Boolean that resets the insets of header subviews on Android in order to be able to place responsive content there.
+   * @platform android
+   */
+  resetHeaderInsets?: boolean;
+  /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
    * - "default" - resolves to "all" without "portrait_down" on iOS. On Android, this lets the system decide the best orientation.

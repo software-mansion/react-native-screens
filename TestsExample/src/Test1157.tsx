@@ -9,7 +9,7 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{flex: 1, backgroundColor: 'red'}}>
+    <View style={{flex: 1, backgroundColor: 'green'}}>
       <Button
         title="Tap me for second screen"
         onPress={() => navigation.navigate('Second')}
@@ -44,9 +44,10 @@ export default function App() {
       <Stack.Navigator screenOptions={{stackPresentation: 'modal'}}>
         <Stack.Screen name="First" component={First} 
           options={{headerShown: true,
-            // headerLeft: () => <TouchableOpacity onPress={() => console.log("hello")} style={{width: 30, height: 30, backgroundColor: 'red', marginLeft: -15}}/>,
-            headerLeft: () => <ButtonWithBiggerChild />,
-            headerRight: () => <TouchableOpacity onPress={() => console.log("there")} style={{width: 30, height: 30, backgroundColor: 'red', marginRight: -15}}/>,
+            resetHeaderInsets: true,
+            headerLeft: () => <TouchableOpacity onPress={() => console.log("hello")} style={{width: 30, height: 30, backgroundColor: 'red', marginLeft: -0}}/>,
+            // headerLeft: () => <ButtonWithBiggerChild />,
+            headerRight: () => <TouchableOpacity onPress={() => console.log("there")} style={{width: 30, height: 30, backgroundColor: 'red', marginRight: -0}}/>,
             }}
         />
         <Stack.Screen

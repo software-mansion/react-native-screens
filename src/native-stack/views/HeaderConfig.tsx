@@ -41,6 +41,7 @@ export default function HeaderConfig({
   headerTitleStyle = {},
   headerTopInsetEnabled = true,
   headerTranslucent,
+  resetHeaderInsets,
   route,
   searchBar,
   title,
@@ -81,6 +82,7 @@ export default function HeaderConfig({
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       largeTitleFontWeight={headerLargeTitleStyle.fontWeight}
       largeTitleHideShadow={headerLargeTitleHideShadow}
+      resetHeaderInsets={resetHeaderInsets}
       title={
         headerTitle !== undefined
           ? headerTitle

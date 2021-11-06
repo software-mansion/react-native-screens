@@ -38,6 +38,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private var mIsTranslucent = false
     private var mTintColor = 0
     private var mIsAttachedToWindow = false
+    private var mResetHeaderInsets = false
     private val mDefaultStartInset: Int
     private val mDefaultStartInsetWithNavigation: Int
     private val mBackClickListener = OnClickListener {
@@ -171,7 +172,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
         toolbar.contentInsetStartWithNavigation = mDefaultStartInsetWithNavigation
-        toolbar.setContentInsetsRelative(mDefaultStartInset, mDefaultStartInset)
+        val contentInsets = if (mResetHeaderInsets) 0 else mDefaultStartInset
+        toolbar.setContentInsetsRelative(contentInsets, contentInsets)
 
         // hide back button
         actionBar.setDisplayHomeAsUpEnabled(
@@ -367,6 +369,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     fun setDirection(direction: String?) {
         mDirection = direction
+    }
+
+    fun setResetHeaderInsets(resetHeaderInsets: Boolean) {
+        mResetHeaderInsets = resetHeaderInsets
     }
 
     private class DebugMenuToolbar(context: Context) : Toolbar(context) {

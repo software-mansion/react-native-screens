@@ -129,6 +129,11 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
         config.setDirection(direction)
     }
 
+    @ReactProp(name = "resetHeaderInsets")
+    fun setResetHeaderInsets(config: ScreenStackHeaderConfig, resetHeaderInsets: Boolean) {
+        config.setResetHeaderInsets(resetHeaderInsets)
+    }
+
     companion object {
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"
     }
