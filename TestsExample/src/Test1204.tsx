@@ -41,6 +41,7 @@ function Main({
 }) {
   return (
     <View style={{flex: 1, justifyContent: 'center'}}>
+      <Text>Example text that could be read out by TalkBack</Text>
       <Button
         title="Open transparent modal"
         onPress={() => navigation.navigate('TransparentModal')}
@@ -63,6 +64,7 @@ function Details({
       style={{
         flex: 1,
         justifyContent: 'center',
+        backgroundColor: '#0005',
       }}>
       <View
         style={{
