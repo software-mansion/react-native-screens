@@ -69,7 +69,7 @@ import Test1204 from './src/Test1204';
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <Test1204 />
+      <Test42 />
     </ReanimatedScreenProvider>
   );
 }
