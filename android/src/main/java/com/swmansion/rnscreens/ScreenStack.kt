@@ -251,11 +251,13 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
                 if (isTransparent(screen)) {
                     screenBeneath.screen.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                    screenBeneath.screen.headerConfig?.toolbar?.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
                     break
                 }
             }
         } else {
             topScreen?.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
+            topScreen?.headerConfig?.toolbar?.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
         }
     }
 
