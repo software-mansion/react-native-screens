@@ -245,10 +245,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     private fun turnOffA11yUnderTransparentScreen() {
         if (mScreenFragments.size > 1) {
-            val belowTop = mScreenFragments[mScreenFragments.lastIndex - 1].screen
-
             mTopScreen?.let {
                 if (isTransparent(it)) {
+                    val belowTop = mScreenFragments[mScreenFragments.lastIndex - 1].screen
                     belowTop.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
                 }
             }
