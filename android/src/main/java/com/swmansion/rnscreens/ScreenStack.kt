@@ -249,14 +249,12 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
             mTopScreen?.let {
                 if (isTransparent(it)) {
-                    belowTop.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
-                    belowTop.headerConfig?.toolbar?.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                    belowTop.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
                 }
             }
-        } else {
-            topScreen?.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
-            topScreen?.headerConfig?.toolbar?.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
         }
+
+        topScreen?.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_AUTO)
     }
 
     override fun notifyContainerUpdate() {
