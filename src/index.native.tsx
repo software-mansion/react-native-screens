@@ -157,13 +157,14 @@ function MaybeFreeze({
 function ScreenStack(props: ScreenStackProps) {
   if (ENABLE_FREEZE) {
     const { children, ...rest } = props;
-    const count = React.Children.count(children);
-    const childrenWithProps = React.Children.map(children, (child, index) => (
-      <Freeze freeze={count - index > 1}>{child}</Freeze>
+    const size = React.Children.count(children);
+    // freezes all screens except the top one
+    const childrenWithFreeze = React.Children.map(children, (child, index) => (
+      <Freeze freeze={size - index > 1}>{child}</Freeze>
     ));
     return (
       <ScreensNativeModules.NativeScreenStack {...rest}>
-        {childrenWithProps}
+        {childrenWithFreeze}
       </ScreensNativeModules.NativeScreenStack>
     );
   }
@@ -232,6 +233,8 @@ class Screen extends React.Component<ScreenProps> {
             {...props}
             statusBarColor={processedColor}
             activityState={activityState}
+            // This prevents showing blank screen when navigating between multiple screens with freezing
+            // https://github.com/software-mansion/react-native-screens/pull/1208
             ref={(ref: ViewConfig) => {
               if (ref?.viewConfig?.validAttributes?.style) {
                 ref.viewConfig.validAttributes.style = {
