@@ -31,6 +31,10 @@ import {
   ScreenStackHeaderConfigProps,
   SearchBarProps,
 } from './types';
+import {
+  isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
+} from './utils';
 
 // web implementation is taken from `index.tsx`
 const isPlatformSupported =
@@ -393,8 +397,10 @@ module.exports = {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
   get SearchBar() {
-    if (Platform.OS !== 'ios') {
-      console.warn('Importing SearchBar is only valid on iOS devices.');
+    if (!isSearchBarAvailableForCurrentPlatform) {
+      console.warn(
+        'Importing SearchBar is only valid on iOS and Android devices.'
+      );
       return View;
     }
 
@@ -421,4 +427,7 @@ module.exports = {
   screensEnabled,
   shouldUseActivityState,
   useTransitionProgress,
+
+  isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
 };
