@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 
+import {enableFreeze} from 'react-native-screens';
 import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
 
 import Test42 from './src/Test42';
@@ -65,6 +66,8 @@ import Test1162 from './src/Test1162';
 import Test1166 from './src/Test1166';
 import Test1188 from './src/Test1188';
 import TestFreeze from './src/TestFreeze';
+
+enableFreeze(true);
 
 export default function App() {
   return (

@@ -161,17 +161,30 @@ function MaybeFreeze({
 function ScreenStack(props: ScreenStackProps) {
   if (ENABLE_FREEZE) {
     const { children, ...rest } = props;
-    const count = React.Children.count(children);
-    const childrenWithProps = React.Children.map(children, (child, index) => {
-      return <Freeze freeze={count - index > 2}>{child}</Freeze>;
-    });
+    const size = React.Children.count(children);
+    // freezes all screens except the top one
+    const childrenWithFreeze = React.Children.map(children, (child, index) => (
+      <Freeze freeze={size - index > 1}>{child}</Freeze>
+    ));
     return (
       <ScreensNativeModules.NativeScreenStack {...rest}>
-        {childrenWithProps}
+        {childrenWithFreeze}
       </ScreensNativeModules.NativeScreenStack>
     );
   }
   return <ScreensNativeModules.NativeScreenStack {...props} />;
+}
+
+// Incomplete type, all accessible properties available at:
+// react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
+interface ViewConfig extends View {
+  viewConfig: {
+    validAttributes: {
+      style: {
+        display: boolean;
+      };
+    };
+  };
 }
 
 class Screen extends React.Component<ScreenProps> {
@@ -219,28 +232,38 @@ class Screen extends React.Component<ScreenProps> {
       const processedColor = processColor(statusBarColor);
 
       return (
-        <AnimatedNativeScreen
-          {...props}
-          statusBarColor={processedColor}
-          activityState={activityState}
-          ref={this.setRef}
-          onTransitionProgress={
-            !isNativeStack
-              ? undefined
-              : Animated.event(
-                  [
-                    {
-                      nativeEvent: {
-                        progress: this.progress,
-                        closing: this.closing,
-                        goingForward: this.goingForward,
+        <MaybeFreeze freeze={activityState === 0}>
+          <AnimatedNativeScreen
+            {...props}
+            statusBarColor={processedColor}
+            activityState={activityState}
+            // This prevents showing blank screen when navigating between multiple screens with freezing
+            // https://github.com/software-mansion/react-native-screens/pull/1208
+            ref={(ref: ViewConfig) => {
+              if (ref?.viewConfig?.validAttributes?.style) {
+                ref.viewConfig.validAttributes.style = {
+                  ...ref.viewConfig.validAttributes.style,
+                  display: false,
+                };
+              }
+              this.setRef(ref);
+            }}
+            onTransitionProgress={
+              !isNativeStack
+                ? undefined
+                : Animated.event(
+                    [
+                      {
+                        nativeEvent: {
+                          progress: this.progress,
+                          closing: this.closing,
+                          goingForward: this.goingForward,
+                        },
                       },
-                    },
-                  ],
-                  { useNativeDriver: true }
-                )
-          }>
-          <MaybeFreeze freeze={activityState === 0}>
+                    ],
+                    { useNativeDriver: true }
+                  )
+            }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (
@@ -253,8 +276,8 @@ class Screen extends React.Component<ScreenProps> {
                 {children}
               </TransitionProgressContext.Provider>
             )}
-          </MaybeFreeze>
-        </AnimatedNativeScreen>
+          </AnimatedNativeScreen>
+        </MaybeFreeze>
       );
     } else {
       // same reason as above
