@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
-import android.os.Build
 import android.os.Parcelable
 import android.util.SparseArray
 import android.view.View
@@ -12,10 +11,10 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.webkit.WebView
-import android.widget.TextView
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.views.textinput.ReactEditText
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : ViewGroup(context) {
@@ -87,28 +86,6 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
         }
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        // This method implements a workaround for RN's autoFocus functionality. Because of the way
-        // autoFocus is implemented it sometimes gets triggered before native text view is mounted. As
-        // a result Android ignores calls for opening soft keyboard and here we trigger it manually
-        // again after the screen is attached.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            var view = focusedChild
-            if (view != null) {
-                while (view is ViewGroup) {
-                    view = view.focusedChild
-                }
-                if (view is TextView) {
-                    val textView = view
-                    if (textView.showSoftInputOnFocus) {
-                        textView.addOnAttachStateChangeListener(sShowSoftKeyboardOnAttach)
-                    }
-                }
-            }
-        }
-    }
-
     val headerConfig: ScreenStackHeaderConfig?
         get() {
             val child = getChildAt(0)
@@ -144,6 +121,23 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
                 return true
             } else if (child is ViewGroup) {
                 if (hasWebView(child)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    fun tryShowSoftInputOnAutoFocusView(viewGroup: ViewGroup): Boolean {
+        for (i in 0 until viewGroup.childCount) {
+            val child = viewGroup.getChildAt(i)
+            if (child is ReactEditText && child.showSoftInputOnFocus) {
+                val inputMethodManager =
+                    child.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.showSoftInput(child, 0)
+                return true
+            } else if (child is ViewGroup) {
+                if (tryShowSoftInputOnAutoFocusView(child)) {
                     return true
                 }
             }

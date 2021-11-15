@@ -125,6 +125,7 @@ open class ScreenFragment : Fragment {
 
     fun dispatchOnWillAppear() {
         dispatchEvent(ScreenLifecycleEvent.WillAppear, this)
+        screen.tryShowSoftInputOnAutoFocusView(screen)
 
         dispatchTransitionProgress(0.0f, false)
     }
