@@ -247,8 +247,10 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         if (mScreenFragments.size > 1) {
             mTopScreen?.let {
                 if (isTransparent(it)) {
-                    val belowTop = mScreenFragments[mScreenFragments.lastIndex - 1].screen
-                    belowTop.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
+                    val screenFragmentsBeneathTop = mScreenFragments.slice(0 until mScreenFragments.size - 1)
+                    for (screenFragment in screenFragmentsBeneathTop) {
+                        screenFragment.screen.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
+                    }
                 }
             }
         }
