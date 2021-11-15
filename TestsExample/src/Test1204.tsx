@@ -13,6 +13,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Main" component={Main} />
+        <Stack.Screen name="Second" component={NoA11yOnAndroid} />
         <Stack.Screen
           name="TransparentModal"
           component={Details}
@@ -79,6 +80,29 @@ function Details({
           Buttons beneath the modal shouldn&apos;t be picked up by Android
           TalkBack
         </Text>
+        <Button
+          title="Go to second"
+          onPress={() => navigation.navigate('Second')}
+        />
+        <Button title="Go back" onPress={() => navigation.goBack()} />
+      </View>
+    </View>
+  );
+}
+
+function NoA11yOnAndroid({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+      }}>
+      <View importantForAccessibility="no-hide-descendants">
+        <Text>This text shouldn&apos;t be accessible</Text>
         <Button title="Go back" onPress={() => navigation.goBack()} />
       </View>
     </View>
