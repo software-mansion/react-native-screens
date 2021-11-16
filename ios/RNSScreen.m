@@ -683,14 +683,12 @@
   _isSwiping = NO;
   _shouldNotify = YES;
 
-  if ([NSThread isMainThread]) {
-    [self traverseForScrollView:self.view];
-  }
+  [self traverseForScrollView:self.view];
 }
 
 - (void)traverseForScrollView:(UIView *)view
 {
-  if ([view isKindOfClass:[UIScrollView class]] &&
+  if ([NSThread isMainThread] && [view isKindOfClass:[UIScrollView class]] &&
       ([[(UIScrollView *)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)])) {
     [[(UIScrollView *)view delegate] scrollViewDidEndDecelerating:(id)view];
   }
