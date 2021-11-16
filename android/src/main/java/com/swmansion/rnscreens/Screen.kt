@@ -183,6 +183,13 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
         fragment?.let { ScreenWindowTraits.setOrientation(this, it.tryGetActivity()) }
     }
 
+    // Accepts one of 4 accessibility flags
+    // developer.android.com/reference/android/view/View#attr_android:importantForAccessibility
+    fun changeAccessibilityMode(mode: Int) {
+        this.importantForAccessibility = mode
+        this.headerConfig?.toolbar?.importantForAccessibility = mode
+    }
+
     var statusBarStyle: String?
         get() = mStatusBarStyle
         set(statusBarStyle) {
