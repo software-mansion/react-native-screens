@@ -683,7 +683,9 @@
   _isSwiping = NO;
   _shouldNotify = YES;
 
-  [self traverseForScrollView:self.view];
+  if ([NSThread isMainThread]) {
+    [self traverseForScrollView:self.view];
+  }
 }
 
 - (void)traverseForScrollView:(UIView *)view
