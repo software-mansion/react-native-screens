@@ -248,13 +248,13 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         if (mScreenFragments.size > 1 && visibleBottom != null) {
             mTopScreen?.let {
                 if (isTransparent(it)) {
-                    val screenFragmentsBeneathTop = mScreenFragments.slice(0 until mScreenFragments.size - 1)
+                    val screenFragmentsBeneathTop = mScreenFragments.slice(0 until mScreenFragments.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
-                    for (i in screenFragmentsBeneathTop.indices.reversed()) {
-                        mScreenFragments[i].screen.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
+                    for (screenFragment in screenFragmentsBeneathTop) {
+                        screenFragment.screen.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
 
                         // don't change a11y below non-transparent screens
-                        if (mScreenFragments[i] == visibleBottom) {
+                        if (screenFragment == visibleBottom) {
                             break
                         }
                     }
