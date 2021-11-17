@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, Button, ScrollView} from 'react-native';
-import {enableFreeze} from 'react-native-screens';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 // import {createStackNavigator} from '@react-navigation/stack';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -8,8 +7,6 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-
-enableFreeze(true);
 
 const store = new Set<Dispatch>();
 
@@ -52,7 +49,7 @@ function DetailsScreen({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   const value = useValue();
-  // should only 2 renders appear at the time
+  // only 1 'render' should appear at the time
   console.log('render', value);
   return (
     <ScrollView>

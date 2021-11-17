@@ -11,6 +11,10 @@ import {
 
 export * from './types';
 export { default as useTransitionProgress } from './useTransitionProgress';
+export {
+  isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
+} from './utils';
 
 let ENABLE_SCREENS = true;
 

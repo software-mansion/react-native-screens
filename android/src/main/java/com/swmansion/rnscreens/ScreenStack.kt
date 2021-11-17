@@ -236,8 +236,33 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             mTopScreen = newTop
             mStack.clear()
             mStack.addAll(mScreenFragments)
+
+            turnOffA11yUnderTransparentScreen(visibleBottom)
+
             it.commitNowAllowingStateLoss()
         }
+    }
+
+    // only top visible screen should be accessible
+    private fun turnOffA11yUnderTransparentScreen(visibleBottom: ScreenStackFragment?) {
+        if (mScreenFragments.size > 1 && visibleBottom != null) {
+            mTopScreen?.let {
+                if (isTransparent(it)) {
+                    val screenFragmentsBeneathTop = mScreenFragments.slice(0 until mScreenFragments.size - 1).asReversed()
+                    // go from the top of the stack excluding the top screen
+                    for (screenFragment in screenFragmentsBeneathTop) {
+                        screenFragment.screen.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
+
+                        // don't change a11y below non-transparent screens
+                        if (screenFragment == visibleBottom) {
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+        topScreen?.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_AUTO)
     }
 
     override fun notifyContainerUpdate() {
