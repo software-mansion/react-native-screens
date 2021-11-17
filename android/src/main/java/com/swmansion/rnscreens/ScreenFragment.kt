@@ -123,25 +123,25 @@ open class ScreenFragment : Fragment {
     val childScreenContainers: List<ScreenContainer<*>>
         get() = mChildScreenContainers
 
-    fun dispatchOnWillAppear() {
+    private fun dispatchOnWillAppear() {
         dispatchEvent(ScreenLifecycleEvent.WillAppear, this)
 
         dispatchTransitionProgress(0.0f, false)
     }
 
-    fun dispatchOnAppear() {
+    private fun dispatchOnAppear() {
         dispatchEvent(ScreenLifecycleEvent.Appear, this)
 
         dispatchTransitionProgress(1.0f, false)
     }
 
-    protected fun dispatchOnWillDisappear() {
+    private fun dispatchOnWillDisappear() {
         dispatchEvent(ScreenLifecycleEvent.WillDisappear, this)
 
         dispatchTransitionProgress(0.0f, true)
     }
 
-    protected fun dispatchOnDisappear() {
+    private fun dispatchOnDisappear() {
         dispatchEvent(ScreenLifecycleEvent.Disappear, this)
 
         dispatchTransitionProgress(1.0f, true)
@@ -221,7 +221,7 @@ open class ScreenFragment : Fragment {
 
     fun onViewAnimationStart() {
         // onViewAnimationStart is triggered from View#onAnimationStart method of the fragment's root
-        // view. We override Screen#onAnimationStart and an appropriate method of the StackFragment's
+        // view. We override an appropriate method of the StackFragment's
         // root view in order to achieve this.
         if (isResumed) {
             // Android dispatches the animation start event for the fragment that is being added first
@@ -238,7 +238,7 @@ open class ScreenFragment : Fragment {
 
     open fun onViewAnimationEnd() {
         // onViewAnimationEnd is triggered from View#onAnimationEnd method of the fragment's root view.
-        // We override Screen#onAnimationEnd and an appropriate method of the StackFragment's root view
+        // We override an appropriate method of the StackFragment's root view
         // in order to achieve this.
         if (isResumed) {
             // See the comment in onViewAnimationStart for why this event is delayed.
