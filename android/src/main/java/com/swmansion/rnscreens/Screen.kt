@@ -1,20 +1,16 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
-import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.webkit.WebView
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
-import com.facebook.react.views.textinput.ReactEditText
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : ViewGroup(context) {
@@ -85,6 +81,18 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
                 })
         }
     }
+    /**
+     * This method implements a workaround for RN's autoFocus functionality. Because of the way
+     * autoFocus is implemented it dismisses soft keyboard in fragment transition
+     * due to change of visibility of the view at the start of the transition. Here we override the
+     * call to `clearFocus` when the visibility of view is `INVISIBLE` since `clearFocus` triggers the
+     * hiding of the keyboard in `ReactEditText.java`.
+     */
+    override fun clearFocus() {
+        if (fragment?.view?.visibility != INVISIBLE) {
+            super.clearFocus()
+        }
+    }
 
     val headerConfig: ScreenStackHeaderConfig?
         get() {
@@ -121,23 +129,6 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
                 return true
             } else if (child is ViewGroup) {
                 if (hasWebView(child)) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    fun tryShowSoftInputOnAutoFocusView(viewGroup: ViewGroup): Boolean {
-        for (i in 0 until viewGroup.childCount) {
-            val child = viewGroup.getChildAt(i)
-            if (child is ReactEditText && child.showSoftInputOnFocus) {
-                val inputMethodManager =
-                    child.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.showSoftInput(child, 0)
-                return true
-            } else if (child is ViewGroup) {
-                if (tryShowSoftInputOnAutoFocusView(child)) {
                     return true
                 }
             }
@@ -247,19 +238,5 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED
-    }
-
-    companion object {
-        private val sShowSoftKeyboardOnAttach: OnAttachStateChangeListener =
-            object : OnAttachStateChangeListener {
-                override fun onViewAttachedToWindow(view: View) {
-                    val inputMethodManager =
-                        view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputMethodManager.showSoftInput(view, 0)
-                    view.removeOnAttachStateChangeListener(this)
-                }
-
-                override fun onViewDetachedFromWindow(view: View) {}
-            }
     }
 }
