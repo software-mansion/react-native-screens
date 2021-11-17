@@ -39,7 +39,7 @@ function Deeper({ navigation }: Props) {
   }, [navigation]);
 
   return (
-    <NestedStack.Navigator screenOptions={{ headerShown: true, stackAnimation: 'slide_from_bottom' }}>
+    <NestedStack.Navigator screenOptions={{ headerShown: true, stackAnimation: 'default', nativeBackButtonDismissalEnabled: true }}>
       <NestedStack.Screen name="Privacy" component={Privacy} />
       <NestedStack.Screen name="Another" component={Another} />
     </NestedStack.Navigator>
@@ -49,7 +49,7 @@ function Deeper({ navigation }: Props) {
 export default function NativeNavigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{stackAnimation: 'slide_from_bottom'}}>
+      <Stack.Navigator screenOptions={{stackAnimation: 'none',  nativeBackButtonDismissalEnabled: true}}>
         <Stack.Screen name="Status" component={Status} />
         <Stack.Screen name="Deeper" component={Deeper} />
       </Stack.Navigator>
@@ -156,7 +156,7 @@ function Another({ navigation }: Props) {
   }, [navigation]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'rgba(255,0,0,0.2)' }}>
+    <View style={{ flex: 1, backgroundColor: 'green' }}>
       <Button title="Click" onPress={() => navigation.navigate('Another')} />
     </View>
   );
