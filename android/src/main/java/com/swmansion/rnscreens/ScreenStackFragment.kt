@@ -127,8 +127,8 @@ class ScreenStackFragment : ScreenFragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: NotifyingCoordinatorLayout? =
-            context?.let { NotifyingCoordinatorLayout(it, this) }
+        val view: ScreensCoordinatorLayout? =
+            context?.let { ScreensCoordinatorLayout(it, this) }
         val params = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         )
@@ -215,7 +215,7 @@ class ScreenStackFragment : ScreenFragment {
         container.dismiss(this)
     }
 
-    private class NotifyingCoordinatorLayout(
+    private class ScreensCoordinatorLayout(
         context: Context,
         private val mFragment: ScreenFragment
     ) : CoordinatorLayout(context) {
