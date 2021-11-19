@@ -81,18 +81,6 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
                 })
         }
     }
-    /**
-     * This method implements a workaround for RN's autoFocus functionality. Because of the way
-     * autoFocus is implemented it dismisses soft keyboard in fragment transition
-     * due to change of visibility of the view at the start of the transition. Here we override the
-     * call to `clearFocus` when the visibility of view is `INVISIBLE` since `clearFocus` triggers the
-     * hiding of the keyboard in `ReactEditText.java`.
-     */
-    override fun clearFocus() {
-        if (fragment?.view?.visibility != INVISIBLE) {
-            super.clearFocus()
-        }
-    }
 
     val headerConfig: ScreenStackHeaderConfig?
         get() {
