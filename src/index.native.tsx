@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Animated,
   Image,
@@ -144,15 +144,28 @@ const ScreensNativeModules = {
   },
 };
 
-function MaybeFreeze({
-  freeze,
-  children,
-}: {
+interface FreezeWrapperProps {
   freeze: boolean;
   children: React.ReactNode;
-}) {
+}
+
+// This component allows one more render before freezing the screen.
+// Allows activityState to reach the native side and useIsFocused to work correctly.
+function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
+  const [freezeState, setFreezeState] = useState(false);
+
+  if (freeze !== freezeState) {
+    setImmediate(() => {
+      setFreezeState(freeze);
+    });
+  }
+
+  return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
+}
+
+function MaybeFreeze({ freeze, children }: FreezeWrapperProps) {
   if (ENABLE_FREEZE) {
-    return <Freeze freeze={freeze}>{children}</Freeze>;
+    return <DelayedFreeze freeze={freeze}>{children}</DelayedFreeze>;
   } else {
     return <>{children}</>;
   }
