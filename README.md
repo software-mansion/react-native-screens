@@ -35,6 +35,26 @@ protected void onCreate(Bundle savedInstanceState) {
 
 For people that must handle cases like this, there is [a more detailed discussion of the difficulties in a series of related comments](https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704633).
 
+<details>
+<summary>Need to use a custom Kotlin version?</summary>
+<br>
+
+Since `v3.6.0` `react-native-screens` has been rewritten with Kotlin. Kotlin version used in this library defaults to `1.4.10`.
+
+If you need to use a different Kotlin version, set `kotlinVersion` ext property in your project's `android/build.gradle` and the library will use this version accordingly:
+
+```
+buildscript {
+    ext {
+        ...
+        kotlinVersion = "1.4.10"
+    }
+}
+```
+
+**Disclaimer**: `react-native-screens` requires Kotlin `1.3.50` or higher.
+</details>
+
 ### Windows
 
 Installation on Windows should be completely handled with auto-linking when using React Native Windows 0.63+. For earlier versions, you must [manually link](https://microsoft.github.io/react-native-windows/docs/native-modules-using) the native module.
@@ -67,6 +87,24 @@ expo install react-native-screens
 Just make sure that the version of [react-navigation](https://github.com/react-navigation/react-navigation) you are using is 2.14.0 or higher.
 
 You are all set 🎉 – when screens are enabled in your application code react-navigation will automatically use them instead of relying on plain React Native Views.
+
+### Experimental support for `react-freeze`
+
+> You have to use React Native 0.64 or higher, react-navigation 5.x or 6.x and react-native-screens >= v3.9.0
+
+Since `v3.9.0`, `react-native-screens` comes with experimental support for [`react-freeze`](https://github.com/software-mansion-labs/react-freeze). It uses the React `Suspense` mechanism to prevent parts of the React component tree from rendering, while keeping its state untouched.
+
+To benefit from this feature, enable it in your entry file (e.g. `App.js`) with this snippet:
+
+```js
+import { enableFreeze } from 'react-native-screens';
+
+enableFreeze(true);
+```
+
+Want to know more? Check out [react-freeze README](https://github.com/software-mansion-labs/react-freeze#readme)
+
+Found a bug? File an issue [here](https://github.com/software-mansion/react-native-screens/issues) or directly in [react-freeze repository](https://github.com/software-mansion-labs/react-freeze/issues).
 
 ### Disabling `react-native-screens`
 

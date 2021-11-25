@@ -17,11 +17,13 @@ import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.facebook.react.views.text.ReactTypefaceUtils
 
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
-    val toolbar: Toolbar
+    val toolbar: CustomToolbar
     private var mTitle: String? = null
     private var mTitleColor = 0
     private var mTitleFontFamily: String? = null
@@ -62,6 +64,11 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
     }
 
+    private fun sendEvent(eventName: String, eventContent: WritableMap?) {
+        (context as ReactContext).getJSModule(RCTEventEmitter::class.java)
+            ?.receiveEvent(id, eventName, eventContent)
+    }
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         // no-op
     }
@@ -73,12 +80,14 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         mIsAttachedToWindow = true
+        sendEvent("onAttached", null)
         onUpdate()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         mIsAttachedToWindow = false
+        sendEvent("onDetached", null)
     }
 
     private val screen: Screen?
@@ -99,7 +108,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             return null
         }
-    private val screenFragment: ScreenStackFragment?
+    val screenFragment: ScreenStackFragment?
         get() {
             val screen = parent
             if (screen is Screen) {
@@ -369,7 +378,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         mDirection = direction
     }
 
-    private class DebugMenuToolbar(context: Context) : Toolbar(context) {
+    private class DebugMenuToolbar(context: Context, config: ScreenStackHeaderConfig) : CustomToolbar(context, config) {
         override fun showOverflowMenu(): Boolean {
             (context.applicationContext as ReactApplication)
                 .reactNativeHost
@@ -381,7 +390,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     init {
         visibility = GONE
-        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context) else Toolbar(context)
+        toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
         mDefaultStartInset = toolbar.contentInsetStart
         mDefaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 

@@ -273,8 +273,6 @@ export type NativeStackNavigationOptions = {
   screenOrientation?: ScreenProps['screenOrientation'];
   /**
    * Object in which you should pass props in order to render native iOS searchBar.
-   *
-   * @platform ios
    */
   searchBar?: SearchBarProps;
   /**
