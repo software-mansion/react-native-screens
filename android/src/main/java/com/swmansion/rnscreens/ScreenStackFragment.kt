@@ -127,8 +127,8 @@ class ScreenStackFragment : ScreenFragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: NotifyingCoordinatorLayout? =
-            context?.let { NotifyingCoordinatorLayout(it, this) }
+        val view: ScreensCoordinatorLayout? =
+            context?.let { ScreensCoordinatorLayout(it, this) }
         val params = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         )
@@ -215,7 +215,7 @@ class ScreenStackFragment : ScreenFragment {
         container.dismiss(this)
     }
 
-    private class NotifyingCoordinatorLayout(
+    private class ScreensCoordinatorLayout(
         context: Context,
         private val mFragment: ScreenFragment
     ) : CoordinatorLayout(context) {
@@ -254,6 +254,19 @@ class ScreenStackFragment : ScreenFragment {
                 set.addAnimation(fakeAnimation)
                 set.setAnimationListener(mAnimationListener)
                 super.startAnimation(set)
+            }
+        }
+
+        /**
+         * This method implements a workaround for RN's autoFocus functionality. Because of the way
+         * autoFocus is implemented it dismisses soft keyboard in fragment transition
+         * due to change of visibility of the view at the start of the transition. Here we override the
+         * call to `clearFocus` when the visibility of view is `INVISIBLE` since `clearFocus` triggers the
+         * hiding of the keyboard in `ReactEditText.java`.
+         */
+        override fun clearFocus() {
+            if (visibility != INVISIBLE) {
+                super.clearFocus()
             }
         }
     }
