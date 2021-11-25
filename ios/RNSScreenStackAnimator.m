@@ -32,6 +32,9 @@
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
     return 0;
   }
+  if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationCustom) {
+    return [screen.animationDuration doubleValue] > 0.0f ? [screen.animationDuration doubleValue] : 0;
+  }
   return _transitionDuration;
 }
 
@@ -254,6 +257,35 @@
   }
 }
 
+- (void)animateCustomWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                      toVC:(UIViewController *)toViewController
+                                    fromVC:(UIViewController *)fromViewController
+{
+  toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
+
+  if (_operation == UINavigationControllerOperationPush) {
+    [[transitionContext containerView] addSubview:toViewController.view];
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+        }
+        completion:^(BOOL finished) {
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  } else if (_operation == UINavigationControllerOperationPop) {
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+        }
+        completion:^(BOOL finished) {
+          if (transitionContext.transitionWasCancelled) {
+            toViewController.view.transform = CGAffineTransformIdentity;
+          }
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  }
+}
+
 + (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
 {
   return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
@@ -275,6 +307,9 @@
     return;
   } else if (animation == RNSScreenStackAnimationFadeFromBottom) {
     [self animateFadeFromBottomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+    return;
+  } else if (animation == RNSScreenStackAnimationCustom) {
+    [self animateCustomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
     return;
   }
   // simple_push is the default custom animation

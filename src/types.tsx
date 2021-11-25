@@ -24,7 +24,8 @@ export type StackAnimationTypes =
   | 'simple_push'
   | 'slide_from_bottom'
   | 'slide_from_right'
-  | 'slide_from_left';
+  | 'slide_from_left'
+  | 'custom';
 export type BlurEffectTypes =
   | 'extraLight'
   | 'light'
@@ -176,6 +177,7 @@ export interface ScreenProps extends ViewProps {
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
+   * - "custom" – option for usage with `layout animations` from `react-native-reanimated`
    */
   stackAnimation?: StackAnimationTypes;
   /**

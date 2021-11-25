@@ -43,6 +43,8 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : 'topTransitionProgress',
         ]
       )}
+      // entering={SlideInRight}
+      // exiting={SlideOutRight}
       {...rest}>
       <ReanimatedTransitionProgressContext.Provider
         value={{

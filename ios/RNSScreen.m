@@ -154,6 +154,7 @@
     case RNSScreenStackAnimationSimplePush:
     case RNSScreenStackAnimationSlideFromBottom:
     case RNSScreenStackAnimationFadeFromBottom:
+    case RNSScreenStackAnimationCustom:
       // Default
       break;
   }
@@ -760,6 +761,7 @@ RCT_EXPORT_MODULE()
 
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(animationDuration, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
@@ -818,6 +820,7 @@ RCT_ENUM_CONVERTER(
       @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
       @"slide_from_right" : @(RNSScreenStackAnimationDefault),
       @"slide_from_left" : @(RNSScreenStackAnimationDefault),
+      @"custom" : @(RNSScreenStackAnimationCustom),
     }),
     RNSScreenStackAnimationDefault,
     integerValue)

@@ -191,6 +191,8 @@ const RouteView = ({
       key={route.key}
       enabled
       isNativeStack
+      // @ts-ignore new prop
+      animationDuration={0.3}
       style={StyleSheet.absoluteFill}
       customAnimationOnSwipe={customAnimationOnSwipe}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}

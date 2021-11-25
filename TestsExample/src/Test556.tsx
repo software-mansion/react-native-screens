@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button} from 'react-native';
+import {Button, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 
@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{stackAnimation: 'custom'}}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen
           name="Second"
@@ -21,13 +21,16 @@ export default function App() {
 
 function First({navigation}) {
   return (
-    <Button title="Tap me for second screen" onPress={() => navigation.navigate('Second')} />
-
+    <View style={{flex: 1, backgroundColor: 'red'}}>
+      <Button title="Tap me for second screen" onPress={() => navigation.replace('Second')} />
+    </View>
   );
 }
 
 function Second({navigation}) {
   return (
-    <Button title="Tap me for second screen" onPress={() => navigation.navigate('First')} />
+    <View style={{flex: 1, backgroundColor: 'blue'}}>
+      <Button title="Tap me for second screen" onPress={() => navigation.replace('First')} />
+    </View>
   );
 }
