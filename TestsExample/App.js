@@ -68,6 +68,7 @@ import Test1188 from './src/Test1188';
 import Test1190 from './src/Test1190';
 import TestFreeze from './src/TestFreeze';
 import Test1204 from './src/Test1204';
+import Test1214 from './src/Test1214';
 
 enableFreeze(true);
 
