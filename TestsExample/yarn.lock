@@ -6947,9 +6947,9 @@ react-native-paper@^4.3.1:
     color "^3.1.2"
     react-native-safe-area-view "^0.14.9"
 
-"react-native-reanimated@github:software-mansion/react-native-reanimated#5a1407cf3374578b5c16ed491a59f83487b1bf52":
+"react-native-reanimated@github:software-mansion/react-native-reanimated#6b1d6dc31694f7711565b31d5ec2ce7e4d953c58":
   version "2.3.0-beta.3"
-  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/5a1407cf3374578b5c16ed491a59f83487b1bf52"
+  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/6b1d6dc31694f7711565b31d5ec2ce7e4d953c58"
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.10.4"
     "@types/invariant" "^2.2.35"

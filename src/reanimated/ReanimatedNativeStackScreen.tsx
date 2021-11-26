@@ -7,7 +7,21 @@ import {
 } from 'react-native-screens';
 
 // @ts-ignore file to be used only if `react-native-reanimated` available in the project
-import Animated, { useEvent, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  // @ts-ignore not exported
+  useEvent,
+  useSharedValue,
+  // @ts-ignore not exported
+  SlideOutRight,
+  // @ts-ignore not exported
+  // SlideInRight,
+  // @ts-ignore not exported
+  FadeIn,
+  // @ts-ignore not exported
+  FadeOut,
+  // @ts-ignore not exported
+  FlipInXUp,
+} from 'react-native-reanimated';
 import ReanimatedTransitionProgressContext from './ReanimatedTransitionProgressContext';
 
 const AnimatedScreen = Animated.createAnimatedComponent(
@@ -43,8 +57,10 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : 'topTransitionProgress',
         ]
       )}
-      // entering={SlideInRight}
-      // exiting={SlideOutRight}
+      entering={FlipInXUp}
+      reappearing={FadeIn}
+      hiding={FadeOut}
+      exiting={SlideOutRight}
       {...rest}>
       <ReanimatedTransitionProgressContext.Provider
         value={{

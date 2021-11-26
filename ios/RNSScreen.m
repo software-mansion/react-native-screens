@@ -735,16 +735,20 @@
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-          for (NSArray *sharedElement in sharedElements) {
-            UIView *startingView = sharedElement[0];
-            // we add all views immediately, otherwise it won't work correctly
-            [[context containerView] addSubview:startingView];
+
+          // shared element transitions and reanimated screen transitions logic
+          if (self->_closing) {
+            for (NSArray *sharedElement in sharedElements) {
+              UIView *startingView = sharedElement[0];
+              // we add all views immediately, otherwise it won't work correctly
+              [[context containerView] addSubview:startingView];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+              // we dispatch it async so that the native animation is not fired since it would mess with reanimated
+              // trying to set frames etc
+              [self asignEndingValuesWithTransitionContext:context sharedElements:sharedElements];
+            });
           }
-          dispatch_async(dispatch_get_main_queue(), ^{
-            // we dispatch it async so that the native animation is not fired since it would mess with reanimated trying
-            // to set frames etc
-            [RNSScreen asignEndingValuesWithTransitionContext:context sharedElements:sharedElements];
-          });
 
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
           [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
@@ -771,7 +775,7 @@
   [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
 
-+ (void)asignEndingValuesWithTransitionContext:(id<UIViewControllerTransitionCoordinatorContext> _Nonnull)context
+- (void)asignEndingValuesWithTransitionContext:(id<UIViewControllerTransitionCoordinatorContext> _Nonnull)context
                                 sharedElements:(NSMutableArray<NSArray *> *)sharedElements
 {
   UIViewController *toViewController = [context viewControllerForKey:UITransitionContextToViewControllerKey];
@@ -779,27 +783,44 @@
   [toViewController.view layoutIfNeeded];
   UIViewController *fromViewController = [context viewControllerForKey:UITransitionContextFromViewControllerKey];
 
+  // we find the lowest VCs since they are the ones from which the center should be converted
+  // to transition's container
+  UIViewController *lowestFromVC = fromViewController;
+  while ([[lowestFromVC childViewControllers] count] > 0) {
+    lowestFromVC = lowestFromVC.childViewControllers[lowestFromVC.childViewControllers.count - 1];
+  }
+  UIViewController *lowestToVC = toViewController;
+  while ([[lowestToVC childViewControllers] count] > 0) {
+    lowestToVC = lowestToVC.childViewControllers[lowestToVC.childViewControllers.count - 1];
+  }
+
+  NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
+
   for (NSArray *sharedElement in sharedElements) {
     UIView *startingView = sharedElement[0];
     UIView *endingView = sharedElement[1];
-    NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
 
-    // we find the lowest VCs since they are the ones from which the center should be converted
-    // to transition's container
-    UIViewController *lowestFromVC = fromViewController;
-    while ([[lowestFromVC childViewControllers] count] > 0) {
-      lowestFromVC = lowestFromVC.childViewControllers[lowestFromVC.childViewControllers.count - 1];
-    }
-    UIViewController *lowestToVC = toViewController;
-    while ([[lowestToVC childViewControllers] count] > 0) {
-      lowestToVC = lowestToVC.childViewControllers[lowestToVC.childViewControllers.count - 1];
-    }
     [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
                                                   fromView:startingView
                                          fromViewConverter:lowestFromVC.view
                                                     toView:endingView
-                                           toViewConverter:lowestToVC.view];
+                                           toViewConverter:lowestToVC.view
+                                            transitionType:@"sharedElementTransition"];
   }
+
+  [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+                                                fromView:lowestFromVC.view
+                                       fromViewConverter:lowestFromVC.view
+                                                  toView:nil
+                                         toViewConverter:nil
+                                          transitionType:_goingForward ? @"hiding" : @"exiting"];
+
+  [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+                                                fromView:lowestToVC.view
+                                       fromViewConverter:lowestToVC.view
+                                                  toView:nil
+                                         toViewConverter:nil
+                                          transitionType:_goingForward ? @"entering" : @"reappearing"];
 }
 
 - (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<NSArray *> *)sharedElements
