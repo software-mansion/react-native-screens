@@ -275,6 +275,7 @@ export type NativeStackNavigationOptions = {
    * Object in which you should pass props in order to render native iOS searchBar.
    */
   searchBar?: SearchBarProps;
+  sharedElements?: { fromID: string; toID: string }[];
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

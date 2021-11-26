@@ -156,6 +156,7 @@ const RouteView = ({
     nativeBackButtonDismissalEnabled = false,
     replaceAnimation = 'pop',
     screenOrientation,
+    sharedElements,
     stackAnimation,
     statusBarAnimation,
     statusBarColor,
@@ -200,6 +201,7 @@ const RouteView = ({
       nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}
+      sharedElements={sharedElements}
       stackAnimation={stackAnimation}
       stackPresentation={stackPresentation}
       statusBarAnimation={statusBarAnimation}

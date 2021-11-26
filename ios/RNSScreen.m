@@ -5,6 +5,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSSharedElementAnimator.h"
 
 #import <React/RCTShadowView.h>
 #import <React/RCTTouchHandler.h>
@@ -14,7 +15,6 @@
 @end
 
 @implementation RNSScreenView {
-  __weak RCTBridge *_bridge;
   RNSScreen *_controller;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
@@ -720,23 +720,37 @@
   [RNSScreenWindowTraits updateWindowTraits];
 }
 
-#pragma mark - transition progress related methods
+#pragma mark - transition progress and shared element animations related methods
 
 - (void)setupProgressNotification
 {
   if (self.transitionCoordinator != nil) {
     _fakeView.alpha = 0.0;
+    NSMutableArray<NSArray *> *sharedElements = nil;
+    if (_closing) {
+      sharedElements = [RNSSharedElementAnimator prepareSharedElementsArrayForVC:self];
+    }
+
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
+          for (NSArray *sharedElement in sharedElements) {
+            UIView *startingView = sharedElement[0];
+            // we add all views immediately, otherwise it won't work correctly
+            [[context containerView] addSubview:startingView];
+          }
+          dispatch_async(dispatch_get_main_queue(), ^{
+            // we dispatch it async so that the native animation is not fired since it would mess with reanimated trying
+            // to set frames etc
+            [RNSScreen asignEndingValuesWithTransitionContext:context sharedElements:sharedElements];
+          });
+
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
           [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         }
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self->_animationTimer setPaused:YES];
-          [self->_animationTimer invalidate];
-          [self->_fakeView removeFromSuperview];
+          [self cleanupAfterTransitionWithSharedElements:sharedElements];
         }];
   }
 }
@@ -757,6 +771,55 @@
   [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
 
++ (void)asignEndingValuesWithTransitionContext:(id<UIViewControllerTransitionCoordinatorContext> _Nonnull)context
+                                sharedElements:(NSMutableArray<NSArray *> *)sharedElements
+{
+  UIViewController *toViewController = [context viewControllerForKey:UITransitionContextToViewControllerKey];
+  [toViewController.view setNeedsLayout];
+  [toViewController.view layoutIfNeeded];
+  UIViewController *fromViewController = [context viewControllerForKey:UITransitionContextFromViewControllerKey];
+
+  for (NSArray *sharedElement in sharedElements) {
+    UIView *startingView = sharedElement[0];
+    UIView *endingView = sharedElement[1];
+    NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
+
+    // we find the lowest VCs since they are the ones from which the center should be converted
+    // to transition's container
+    UIViewController *lowestFromVC = fromViewController;
+    while ([[lowestFromVC childViewControllers] count] > 0) {
+      lowestFromVC = lowestFromVC.childViewControllers[lowestFromVC.childViewControllers.count - 1];
+    }
+    UIViewController *lowestToVC = toViewController;
+    while ([[lowestToVC childViewControllers] count] > 0) {
+      lowestToVC = lowestToVC.childViewControllers[lowestToVC.childViewControllers.count - 1];
+    }
+    [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+                                                  fromView:startingView
+                                         fromViewConverter:lowestFromVC.view
+                                                    toView:endingView
+                                           toViewConverter:lowestToVC.view];
+  }
+}
+
+- (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<NSArray *> *)sharedElements
+{
+  for (NSArray *sharedElement in sharedElements) {
+    UIView *startingView = sharedElement[0];
+    [startingView removeFromSuperview];
+    UIView *startContainer = sharedElement[2];
+    int index = [sharedElement[3] intValue];
+    [startContainer insertSubview:startingView atIndex:index];
+    startingView.frame = [sharedElement[4] CGRectValue];
+    UIView *endingView = sharedElement[1];
+    endingView.hidden = NO;
+  }
+
+  [self->_animationTimer setPaused:YES];
+  [self->_animationTimer invalidate];
+  [_fakeView removeFromSuperview];
+}
+
 @end
 
 @implementation RNSScreenManager
@@ -771,6 +834,7 @@ RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
+RCT_EXPORT_VIEW_PROPERTY(sharedElements, NSArray<NSDictionary *>)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 

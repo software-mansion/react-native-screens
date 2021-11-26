@@ -152,6 +152,7 @@ export interface ScreenProps extends ViewProps {
    * - "pop" – the new screen will perform pop animation.
    */
   replaceAnimation?: ScreenReplaceTypes;
+  sharedElements?: { fromID: string; toID: string }[];
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
