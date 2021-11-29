@@ -148,30 +148,31 @@ interface ShouldFreezeProps {
   freeze: boolean;
   freezeState: React.MutableRefObject<boolean>;
 }
-
-class ShouldFreeze extends React.Component<ShouldFreezeProps> {
-  render() {
-    if (this.props.freeze !== this.props.freezeState.current) {
-      this.props.freezeState.current = this.props.freeze;
-    }
-    return null;
-  }
-}
-
 interface FreezeWrapperProps {
   freeze: boolean;
   children: React.ReactNode;
 }
 
+// Dummy component used for determining whether children of DelayedFreeze rendered
+// at least once. After that components are frozen.
+class ShouldFreeze extends React.Component<ShouldFreezeProps> {
+  render() {
+    if (this.props.freeze !== this.props.freezeState.current) {
+      this.props.freezeState.current = this.props.freeze;
+    }
+    return this.props.children;
+  }
+}
+
 // This component allows one more render before freezing the screen.
 // Allows activityState to reach the native side and useIsFocused to work correctly.
 function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
+  // flag used for determining whether freeze should be disabled - value changes in ShouldFreeze
   const freezeState = React.useRef(false);
   return (
-    <>
+    <ShouldFreeze freeze={freeze} freezeState={freezeState}>
       <Freeze freeze={freeze ? freezeState.current : false}>{children}</Freeze>
-      <ShouldFreeze freeze={freeze} freezeState={freezeState} />
-    </>
+    </ShouldFreeze>
   );
 }
 
@@ -189,7 +190,7 @@ function ScreenStack(props: ScreenStackProps) {
     const size = React.Children.count(children);
     // freezes all screens except the top one
     const childrenWithFreeze = React.Children.map(children, (child, index) => (
-      <Freeze freeze={size - index > 1}>{child}</Freeze>
+      <DelayedFreeze freeze={size - index > 1}>{child}</DelayedFreeze>
     ));
     return (
       <ScreensNativeModules.NativeScreenStack {...rest}>
