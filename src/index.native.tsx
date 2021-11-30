@@ -144,36 +144,26 @@ const ScreensNativeModules = {
   },
 };
 
-interface ShouldFreezeProps {
-  freeze: boolean;
-  freezeState: React.MutableRefObject<boolean>;
-}
 interface FreezeWrapperProps {
   freeze: boolean;
   children: React.ReactNode;
 }
 
-// Dummy component used for determining whether children of DelayedFreeze rendered
-// at least once. After that components are frozen.
-class ShouldFreeze extends React.Component<ShouldFreezeProps> {
-  render() {
-    if (this.props.freeze !== this.props.freezeState.current) {
-      this.props.freezeState.current = this.props.freeze;
-    }
-    return this.props.children;
-  }
-}
-
 // This component allows one more render before freezing the screen.
 // Allows activityState to reach the native side and useIsFocused to work correctly.
 function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
-  // flag used for determining whether freeze should be disabled - value changes in ShouldFreeze
-  const freezeState = React.useRef(false);
-  return (
-    <ShouldFreeze freeze={freeze} freezeState={freezeState}>
-      <Freeze freeze={freeze ? freezeState.current : false}>{children}</Freeze>
-    </ShouldFreeze>
-  );
+  // flag used for determining whether freeze should be enabled
+  const [freezeState, setFreezeState] = React.useState(false);
+
+  if (freeze !== freezeState) {
+    // setImmediate is executed at the end of the JS execution block.
+    // Used here for changing the state right after the render.
+    setImmediate(() => {
+      setFreezeState(freeze);
+    });
+  }
+
+  return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
 }
 
 function MaybeFreeze({ freeze, children }: FreezeWrapperProps) {
