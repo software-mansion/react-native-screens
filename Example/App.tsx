@@ -25,6 +25,7 @@ import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
+import Events from './src/screens/Events';
 
 import { enableFreeze } from 'react-native-screens';
 
@@ -91,6 +92,11 @@ const SCREENS: Record<
   SearchBar: {
     title: 'Search bar (iOS)',
     component: SearchBar,
+    type: 'playground',
+  },
+  Events: {
+    title: 'Events',
+    component: Events,
     type: 'playground',
   },
 };
