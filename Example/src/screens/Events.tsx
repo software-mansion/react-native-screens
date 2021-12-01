@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { View, StyleSheet, I18nManager } from 'react-native';
 import {
   createNativeStackNavigator,
+  NativeStackNavigationOptions,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import { Button, ToastProvider, useToast } from '../shared';
+import { Button, SettingsPicker, ToastProvider, useToast } from '../shared';
 
 type StackParamList = {
   Main: undefined;
@@ -13,11 +14,22 @@ type StackParamList = {
   Options: undefined;
 };
 
+type StackAnimation = Exclude<
+  NativeStackNavigationOptions['stackAnimation'],
+  undefined
+>;
+
 interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+  stackAnimation: StackAnimation;
+  setStackAnimation: (value: StackAnimation) => void;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
+const MainScreen = ({
+  navigation,
+  stackAnimation,
+  setStackAnimation,
+}: MainScreenProps): JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -49,8 +61,30 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     return unsubscribe;
   }, [navigation]);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      stackAnimation,
+    });
+  }, [navigation, stackAnimation]);
+
   return (
     <View style={{ ...styles.container, backgroundColor: 'aliceblue' }}>
+      <SettingsPicker<StackAnimation>
+        label="Stack animation"
+        value={stackAnimation}
+        onValueChange={setStackAnimation}
+        items={[
+          'default',
+          'fade',
+          'fade_from_bottom',
+          'flip',
+          'simple_push',
+          'slide_from_bottom',
+          'slide_from_right',
+          'slide_from_left',
+          'none',
+        ]}
+      />
       <Button
         testID="simple-native-stack-go-to-detail"
         title="Go to chats"
@@ -63,9 +97,13 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
 
 interface ChatsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+  stackAnimation: StackAnimation;
 }
 
-const ChatsScreen = ({ navigation }: ChatsScreenProps): JSX.Element => {
+const ChatsScreen = ({
+  navigation,
+  stackAnimation,
+}: ChatsScreenProps): JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -96,6 +134,13 @@ const ChatsScreen = ({ navigation }: ChatsScreenProps): JSX.Element => {
 
     return unsubscribe;
   }, [navigation]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      stackAnimation,
+    });
+  }, [navigation, stackAnimation]);
+
   return (
     <NestedStack.Navigator
       screenOptions={{
@@ -103,7 +148,6 @@ const ChatsScreen = ({ navigation }: ChatsScreenProps): JSX.Element => {
         nativeBackButtonDismissalEnabled: true,
         headerTopInsetEnabled: false,
         headerHideBackButton: true,
-        // stackAnimation: 'default',
       }}>
       <NestedStack.Screen name="Privacy" component={PrivacyScreen} />
       <NestedStack.Screen name="Options" component={OptionsScreen} />
@@ -111,7 +155,11 @@ const ChatsScreen = ({ navigation }: ChatsScreenProps): JSX.Element => {
   );
 };
 
-const PrivacyScreen = ({ navigation }: MainScreenProps): JSX.Element => {
+interface PrivacyScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+}
+
+const PrivacyScreen = ({ navigation }: PrivacyScreenProps): JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -154,7 +202,11 @@ const PrivacyScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   );
 };
 
-const OptionsScreen = ({ navigation }: MainScreenProps): JSX.Element => {
+interface OptionsScreenProps {
+  navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+}
+
+const OptionsScreen = ({ navigation }: OptionsScreenProps): JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -196,22 +248,41 @@ const OptionsScreen = ({ navigation }: MainScreenProps): JSX.Element => {
 const Stack = createNativeStackNavigator<StackParamList>();
 const NestedStack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
-  <ToastProvider>
-    <Stack.Navigator
-      screenOptions={{
-        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-        // stackAnimation: 'default',
-      }}>
-      <Stack.Screen
-        name="Main"
-        component={MainScreen}
-        options={{ title: 'Events', headerHideBackButton: true }}
-      />
-      <Stack.Screen name="Chats" component={ChatsScreen} />
-    </Stack.Navigator>
-  </ToastProvider>
-);
+const App = (): JSX.Element => {
+  const [stackAnimation, setStackAnimation] = useState<StackAnimation>(
+    'default'
+  );
+
+  return (
+    <ToastProvider>
+      <Stack.Navigator
+        screenOptions={{
+          direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+          nativeBackButtonDismissalEnabled: true,
+        }}>
+        <Stack.Screen
+          name="Main"
+          options={{ title: 'Events', headerHideBackButton: true }}>
+          {({ navigation }) => (
+            <MainScreen
+              navigation={navigation}
+              stackAnimation={stackAnimation}
+              setStackAnimation={setStackAnimation}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="Chats">
+          {({ navigation }) => (
+            <ChatsScreen
+              navigation={navigation}
+              stackAnimation={stackAnimation}
+            />
+          )}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </ToastProvider>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
