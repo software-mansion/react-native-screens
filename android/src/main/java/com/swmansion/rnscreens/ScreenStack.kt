@@ -141,7 +141,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 if (shouldUseOpenAnimation) {
                     when (stackAnimation) {
                         StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
-                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_0, R.anim.rns_no_animation_0)
+                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
                         StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
                         StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
@@ -153,7 +153,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 } else {
                     when (stackAnimation) {
                         StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
-                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_0, R.anim.rns_no_animation_0)
+                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
                         StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
                         StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)

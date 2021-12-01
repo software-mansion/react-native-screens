@@ -187,12 +187,7 @@ open class ScreenFragment : Fragment {
         for (sc in mChildScreenContainers) {
             if (sc.screenCount > 0) {
                 sc.topScreen?.let {
-                    if (it.stackAnimation !== Screen.StackAnimation.NONE || isRemoving) {
-                        // we do not dispatch events in child when it has `none` animation
-                        // and we are going forward since then they will be dispatched in child via
-                        // `onCreateAnimation` of ScreenStackFragment
-                        sc.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
-                    }
+                    sc.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
                 }
             }
         }
