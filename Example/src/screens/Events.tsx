@@ -70,6 +70,7 @@ const MainScreen = ({
   return (
     <View style={{ ...styles.container, backgroundColor: 'aliceblue' }}>
       <SettingsPicker<StackAnimation>
+        testID="events-stack-animation-picker"
         label="Stack animation"
         value={stackAnimation}
         onValueChange={setStackAnimation}
@@ -86,7 +87,7 @@ const MainScreen = ({
         ]}
       />
       <Button
-        testID="simple-native-stack-go-to-detail"
+        testID="events-go-to-chats"
         title="Go to chats"
         onPress={() => navigation.navigate('Chats')}
       />
