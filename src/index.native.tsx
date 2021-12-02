@@ -144,15 +144,31 @@ const ScreensNativeModules = {
   },
 };
 
-function MaybeFreeze({
-  freeze,
-  children,
-}: {
+interface FreezeWrapperProps {
   freeze: boolean;
   children: React.ReactNode;
-}) {
+}
+
+// This component allows one more render before freezing the screen.
+// Allows activityState to reach the native side and useIsFocused to work correctly.
+function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
+  // flag used for determining whether freeze should be enabled
+  const [freezeState, setFreezeState] = React.useState(false);
+
+  if (freeze !== freezeState) {
+    // setImmediate is executed at the end of the JS execution block.
+    // Used here for changing the state right after the render.
+    setImmediate(() => {
+      setFreezeState(freeze);
+    });
+  }
+
+  return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
+}
+
+function MaybeFreeze({ freeze, children }: FreezeWrapperProps) {
   if (ENABLE_FREEZE) {
-    return <Freeze freeze={freeze}>{children}</Freeze>;
+    return <DelayedFreeze freeze={freeze}>{children}</DelayedFreeze>;
   } else {
     return <>{children}</>;
   }
@@ -164,7 +180,7 @@ function ScreenStack(props: ScreenStackProps) {
     const size = React.Children.count(children);
     // freezes all screens except the top one
     const childrenWithFreeze = React.Children.map(children, (child, index) => (
-      <Freeze freeze={size - index > 1}>{child}</Freeze>
+      <DelayedFreeze freeze={size - index > 1}>{child}</DelayedFreeze>
     ));
     return (
       <ScreensNativeModules.NativeScreenStack {...rest}>
