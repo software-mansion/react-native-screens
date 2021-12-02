@@ -1,34 +1,37 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { I18nManager, Platform, Button, ScrollView, Text } from 'react-native';
+import { I18nManager, ScrollView, Text, StyleSheet } from 'react-native';
 import { SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {
+  Button,
   ListItem,
   SettingsInput,
   SettingsPicker,
   SettingsSwitch,
-  Snack,
-  Spacer,
+  ToastProvider,
+  useToast,
 } from '../shared';
 
 type StackParamList = {
   Main: undefined;
-  Snack: { backgroundColor: string; message: string };
   Search: undefined;
 };
 
 type BarTintColor = 'lightcoral' | 'orange' | 'white' | 'darkslategray';
 
 type AutoCapitalize = Exclude<SearchBarProps['autoCapitalize'], undefined>;
+type InputType = Exclude<SearchBarProps['inputType'], undefined>;
 
 interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
+  const toast = useToast();
+
   const [search, setSearch] = useState('');
   const [placeholder, setPlaceholder] = useState('Search for something...');
   const [barTintColor, setBarTintColor] = useState<BarTintColor>('white');
@@ -38,6 +41,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [autoCapitalize, setAutoCapitalize] = useState<AutoCapitalize>(
     'sentences'
   );
+  const [inputType, setInputType] = useState<InputType>('text');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -50,21 +54,35 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         placeholder,
         onChangeText: (event) => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
-          navigation.navigate('Snack', {
-            message: 'Cancel button pressed',
+          toast.push({
+            message: '[iOS] Cancel button pressed',
             backgroundColor: 'orange',
           }),
+        onClose: () =>
+          toast.push({
+            message: '[Android] Closing',
+            backgroundColor: 'orange',
+          }),
+        onOpen: () =>
+          toast.push({
+            message: '[Android] Opening',
+            backgroundColor: 'tomato',
+          }),
         onSearchButtonPress: () =>
-          navigation.navigate('Snack', {
+          toast.push({
             message: search,
             backgroundColor: 'forestgreen',
           }),
         onFocus: () =>
-          navigation.navigate('Snack', {
+          toast.push({
             message: 'Search bar pressed',
             backgroundColor: 'dodgerblue',
           }),
-        onBlur: () => console.log('Lost focus on search bar'),
+        onBlur: () =>
+          toast.push({
+            message: 'Lost focus on search bar',
+            backgroundColor: 'purple',
+          }),
       },
     });
   }, [
@@ -76,56 +94,59 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     obscureBackground,
     hideNavigationBar,
     autoCapitalize,
+    inputType,
   ]);
 
   return (
     <ScrollView
+      style={styles.container}
       contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag">
-      {Platform.OS === 'ios' ? (
-        <>
-          <SettingsInput
-            label="Placeholder"
-            value={placeholder}
-            onValueChange={setPlaceholder}
-          />
-          <SettingsPicker<BarTintColor>
-            label="Bar Tint Color"
-            value={barTintColor}
-            onValueChange={setBarTintColor}
-            items={['lightcoral', 'orange', 'darkslategray', 'white']}
-          />
-          <SettingsSwitch
-            label="Hide when scrolling"
-            value={hideWhenScrolling}
-            onValueChange={setHideWhenScrolling}
-          />
-          <SettingsSwitch
-            label="Obscure background"
-            value={obscureBackground}
-            onValueChange={setObscureBackground}
-          />
-          <SettingsSwitch
-            label="Hide navigation bar"
-            value={hideNavigationBar}
-            onValueChange={setHideNavigationBar}
-          />
-          <SettingsPicker<AutoCapitalize>
-            label="Auto capitalize"
-            value={autoCapitalize}
-            onValueChange={setAutoCapitalize}
-            items={['none', 'words', 'sentences', 'characters']}
-          />
-          <Button
-            onPress={() => navigation.navigate('Search')}
-            title="Other Searchbar example"
-          />
-        </>
-      ) : Platform.OS === 'android' ? (
-        <Spacer>
-          <Text>SearchBar options have no effect on Android.</Text>
-        </Spacer>
-      ) : null}
+      <SettingsInput
+        label="Placeholder"
+        value={placeholder}
+        onValueChange={setPlaceholder}
+      />
+      <SettingsPicker<BarTintColor>
+        label="Bar Tint Color"
+        value={barTintColor}
+        onValueChange={setBarTintColor}
+        items={['lightcoral', 'orange', 'darkslategray', 'white']}
+      />
+      <SettingsPicker<AutoCapitalize>
+        label="Auto capitalize"
+        value={autoCapitalize}
+        onValueChange={setAutoCapitalize}
+        items={['none', 'words', 'sentences', 'characters']}
+      />
+      <Text style={styles.heading}>iOS only</Text>
+      <SettingsSwitch
+        label="Hide navigation bar"
+        value={hideNavigationBar}
+        onValueChange={setHideNavigationBar}
+      />
+      <SettingsSwitch
+        label="Obscure background"
+        value={obscureBackground}
+        onValueChange={setObscureBackground}
+      />
+      <SettingsSwitch
+        label="Hide when scrolling"
+        value={hideWhenScrolling}
+        onValueChange={setHideWhenScrolling}
+      />
+      <Text style={styles.heading}>Android only</Text>
+      <SettingsPicker<InputType>
+        label="Input type"
+        value={inputType}
+        onValueChange={setInputType}
+        items={['text', 'number', 'email', 'phone']}
+      />
+      <Text style={styles.heading}>Other</Text>
+      <Button
+        onPress={() => navigation.navigate('Search')}
+        title="Other Searchbar example"
+      />
       <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
     </ScrollView>
   );
@@ -190,35 +211,40 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
 const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
-  <Stack.Navigator
-    screenOptions={{
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-    }}>
-    <Stack.Screen
-      name="Main"
-      component={MainScreen}
-      options={{
-        title: 'Search bar',
-      }}
-    />
-    <Stack.Screen
-      name="Snack"
-      component={Snack}
-      options={{
-        stackPresentation: 'transparentModal',
-        headerShown: false,
-        stackAnimation: 'slide_from_bottom',
-      }}
-    />
-    <Stack.Screen
-      name="Search"
-      component={SearchScreen}
-      options={{
-        headerLargeTitle: true,
-      }}
-    />
-  </Stack.Navigator>
+  <ToastProvider>
+    <Stack.Navigator
+      screenOptions={{
+        headerHideBackButton: true,
+        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      }}>
+      <Stack.Screen
+        name="Main"
+        component={MainScreen}
+        options={{
+          title: 'Search bar',
+        }}
+      />
+      <Stack.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{
+          headerLargeTitle: true,
+        }}
+      />
+    </Stack.Navigator>
+  </ToastProvider>
 );
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 100,
+  },
+  heading: {
+    marginLeft: 10,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});
 
 export default App;
