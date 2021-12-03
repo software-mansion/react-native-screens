@@ -360,9 +360,11 @@ Defaults to `auto`.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
-### Search bar
+### Search bar (iOS only)
 
 The search bar is just a `searchBar` property that can be specified in the navigator's `defaultNavigationOptions` prop or an individual screen's `navigationOptions`. Search bars are rarely static so normally it is controlled by passing an object to `searchBar` navigation option in the component's body.
+
+Search bar is only supported on iOS.
 
 Example: 
 
@@ -388,11 +390,7 @@ Possible values:
 - `sentences`
 - `characters`
 
-Defaults to `sentences` on iOS and `'none'` on Android.
-
-#### `autoFocus` (Android only)
-
-When set to `true` focuses search bar automatically when screen is appearing. Default value is `false`.
+Defaults to `sentences`.
 
 #### `barTintColor`
 
@@ -400,37 +398,23 @@ The search field background color.
 
 By default bar tint color is translucent.
 
-#### `cancelButtonText` (iOS only)
+#### `cancelButtonText`
 
 The text to be used instead of default `Cancel` button text.
 
-#### `disableBackButtonOverride` (Android only)
-
-Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true` 
-
-#### `hideNavigationBar` (iOS only)
+#### `hideNavigationBar`
 
 Boolean indicating whether to hide the navigation bar during searching.
 
 Defaults to `true`.
 
-#### `hideWhenScrolling` (iOS only)
+#### `hideWhenScrolling`
 
 Boolean indicating whether to hide the search bar when scrolling.
 
 Defaults to `true`.
 
-#### `inputType` (Android only)
-
-This prop is used to change type of the input and keyboard. Default value is `'text'`.
-
-All values:
-- `'text'` - normal text input
-- `'number'` - number input
-- `'email'` - email input
-- `'phone'` - phone input
-
-####  `obscureBackground` (iOS only)
+####  `obscureBackground`
 
 Boolean indicating whether to obscure the underlying content with semi-transparent overlay.
 
@@ -440,7 +424,7 @@ Defaults to `true`.
 
 A callback that gets called when search bar has lost focus.
 
-#### `onCancelButtonPress` (iOS only)
+#### `onCancelButtonPress`
 
 A callback that gets called when the cancel button is pressed.
 
@@ -462,17 +446,9 @@ static navigationOptions = ({navigation}) => {
 };
 ```
 
-#### `onClose` (Android only)
-
-A callback that gets called when search bar is closing
-
 #### `onFocus`
 
 A callback that gets called when search bar has received focus.
-
-#### `onOpen` (Android only)
-
-A callback that gets called when search bar is expanding
 
 #### `onSearchButtonPress`
 

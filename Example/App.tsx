@@ -89,7 +89,7 @@ const SCREENS: Record<
     type: 'playground',
   },
   SearchBar: {
-    title: 'Search bar (iOS)',
+    title: 'Search bar',
     component: SearchBar,
     type: 'playground',
   },
