@@ -52,6 +52,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         hideNavigationBar,
         autoCapitalize,
         placeholder,
+        inputType,
         onChangeText: (event) => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
           toast.push({
