@@ -2,10 +2,10 @@ name: Test Android e2e
 on:
   pull_request:
     paths:
-        - 'Example/**'
+      - 'Example/**'
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 jobs:
   test:
@@ -38,7 +38,7 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: 29
           avd-name: e2e_emulator
-          script: yarn test-e2e-android 
+          script: yarn test-e2e-android
       - uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:
