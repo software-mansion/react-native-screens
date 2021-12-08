@@ -132,12 +132,12 @@ React-native-navigation library already uses native containers for rendering nav
 
 ## Interop with other libraries
 
-This library should work out of the box with all existing react-native libraries. If you experience problems with interoperability please [report an issue](https://github.com/kmagiera/react-native-screens/issues).
+This library should work out of the box with all existing react-native libraries. If you experience problems with interoperability please [report an issue](https://github.com/software-mansion/react-native-screens/issues).
 
 ## Guide for navigation library authors
 
 If you are building a navigation library you may want to use `react-native-screens` to have control over which parts of the React component tree are attached to the native view hierarchy.
-To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
+To do that, `react-native-screens` provides you with the components documented [here](https://github.com/software-mansion/react-native-screens/tree/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
 
 ## Common problems
 
@@ -161,7 +161,7 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 
 ## Contributing
 
-There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/kmagiera/react-native-screens/tree/main/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
+There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/software-mansion/react-native-screens/tree/main/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
 
 ## License
 
