@@ -123,8 +123,8 @@ You can also disable the usage of native screens per navigator with [`detachInac
 To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer:
 
 - for React Navigation >= v6 to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator)
-- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack)
-- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator)
+- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/main/native-stack)
+- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/main/createNativeStackNavigator)
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
@@ -137,7 +137,7 @@ This library should work out of the box with all existing react-native libraries
 ## Guide for navigation library authors
 
 If you are building a navigation library you may want to use `react-native-screens` to have control over which parts of the React component tree are attached to the native view hierarchy.
-To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/master/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
+To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
 
 ## Common problems
 
@@ -161,7 +161,7 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 
 ## Contributing
 
-There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/kmagiera/react-native-screens/tree/master/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
+There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/kmagiera/react-native-screens/tree/main/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
 
 ## License
 
