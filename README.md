@@ -168,7 +168,6 @@ There are many ways to contribute to this project. See [CONTRIBUTING](https://gi
 React native screens library is licensed under [The MIT License](LICENSE).
 
 ## Credits
-## Credits
 
 This project has been build and is maintained thanks to the support from [Shopify](https://shopify.com), [Expo.io](https://expo.io) and [Software Mansion](https://swmansion.com)
 
