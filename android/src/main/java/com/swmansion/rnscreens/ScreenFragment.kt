@@ -38,6 +38,13 @@ open class ScreenFragment : Fragment {
     // due to progress value being already 0.0f
     private var mProgress = -1f
 
+    // those 2 vars are needed since sometimes the events would be dispatched twice in child containers
+    // and we don't need too complicated logic. We just check if, after the event was dispatched, its
+    // "counter-event" has been also dispatched before sending the same event again. We do it for
+    // 'willAppear' -> 'willDisappear' and 'appear' -> 'disappear'
+    var canDispatchWillAppear = true
+    var canDispatchAppear = true
+
     constructor() {
         throw IllegalStateException(
             "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
@@ -141,6 +148,24 @@ open class ScreenFragment : Fragment {
     val childScreenContainers: List<ScreenContainer<*>>
         get() = mChildScreenContainers
 
+    private fun canDispatchEvent(event: ScreenLifecycleEvent): Boolean {
+        return when (event) {
+            ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
+            ScreenLifecycleEvent.Appear -> canDispatchAppear
+            ScreenLifecycleEvent.WillDisappear -> !canDispatchWillAppear
+            ScreenLifecycleEvent.Disappear -> !canDispatchAppear
+        }
+    }
+
+    private fun setLastEventDispatched(event: ScreenLifecycleEvent) {
+        when (event) {
+            ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear = false
+            ScreenLifecycleEvent.Appear -> canDispatchAppear = false
+            ScreenLifecycleEvent.WillDisappear -> canDispatchWillAppear = true
+            ScreenLifecycleEvent.Disappear -> canDispatchAppear = true
+        }
+    }
+
     private fun dispatchOnWillAppear() {
         dispatchEvent(ScreenLifecycleEvent.WillAppear, this)
 
@@ -166,8 +191,9 @@ open class ScreenFragment : Fragment {
     }
 
     private fun dispatchEvent(event: ScreenLifecycleEvent, fragment: ScreenFragment) {
-        if (fragment is ScreenStackFragment) {
+        if (fragment is ScreenStackFragment && fragment.canDispatchEvent(event)) {
             fragment.screen.let {
+                fragment.setLastEventDispatched(event)
                 val lifecycleEvent: Event<*> = when (event) {
                     ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
                     ScreenLifecycleEvent.Appear -> ScreenAppearEvent(it.id)
