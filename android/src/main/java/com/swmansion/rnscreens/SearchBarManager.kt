@@ -73,6 +73,21 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         view.textColor = color
     }
 
+    @ReactProp(name = "headerIconColor", customType = "Color")
+    fun setHeaderIconColor(view: SearchBarView, color: Int?) {
+        view.headerIconColor = color
+    }
+
+    @ReactProp(name = "textHintColor", customType = "Color")
+    fun setTextHintColor(view: SearchBarView, color: Int?) {
+        view.textHintColor = color
+    }
+
+    @ReactProp(name = "hintSearchIcon")
+    fun setHintSearchIcon(view: SearchBarView, hintSearchIcon: Boolean?) {
+        view.hintSearchIcon = hintSearchIcon ?: true
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         return MapBuilder.builder<String, Any>()
             .put("onChangeText", MapBuilder.of("registrationName", "onChangeText"))

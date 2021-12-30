@@ -15,9 +15,12 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     var autoCapitalize: SearchBarAutoCapitalize = SearchBarAutoCapitalize.NONE
     var textColor: Int? = null
     var tintColor: Int? = null
-    var placeholder: String? = null
+    var headerIconColor: Int? = null
+    var textHintColor: Int? = null
+    var placeholder: String? = ""
     var shouldOverrideBackButton: Boolean = true
     var autoFocus: Boolean = false
+    var hintSearchIcon: Boolean = true
 
     private var mSearchViewFormatter: SearchViewFormatter? = null
 
@@ -45,9 +48,11 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             }
 
             searchView.inputType = inputType.toAndroidInputType(autoCapitalize)
-            searchView.queryHint = placeholder
             mSearchViewFormatter?.setTextColor(textColor)
             mSearchViewFormatter?.setTintColor(tintColor)
+            mSearchViewFormatter?.setHeaderIconColor(headerIconColor)
+            mSearchViewFormatter?.setTextHintColor(textHintColor)
+            mSearchViewFormatter?.setHintSearchIcon(hintSearchIcon, placeholder)
             searchView.overrideBackAction = shouldOverrideBackButton
         }
     }
