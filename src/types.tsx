@@ -472,21 +472,21 @@ export interface SearchBarProps {
   textColor?: string;
   /**
    * The search hint text color
-   * 
+   *
    * @plaform android
    */
   textHintColor?: string;
   /**
    * The search and close icon color shown in the header
-   * 
+   *
    * @plaform android
    */
   headerIconColor?: string;
   /**
    * Show the search hint icon when search bar is focused
-   * 
+   *
    * @plaform android
    * @default true
    */
-  showHintSearchIcon?: boolean;
+  hintSearchIcon?: boolean;
 }
