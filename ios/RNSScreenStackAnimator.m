@@ -32,7 +32,7 @@
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
     return 0;
   }
-  return _transitionDuration;
+  return screen.transitionDuration >= 0 ? [screen.transitionDuration floatValue] : _transitionDuration;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext

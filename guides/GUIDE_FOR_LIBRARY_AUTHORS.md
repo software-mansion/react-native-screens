@@ -168,6 +168,12 @@ Defaults to `auto`.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
+#### `transitionDuration` (iOS only)
+
+Changes the duration of `slide_from_bottom`, `fade` and `simple_push` transitions on iOS. The `default` transition duration cannot be changed since it is not customizable, and the other ones have the duration values hardcoded to mimic the `Android` transition specs. 
+
+Defaults to `0.35`.
+
 #### `useTransitionProgress`
 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:

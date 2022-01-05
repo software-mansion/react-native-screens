@@ -234,6 +234,12 @@ Using `containedModal` and `containedTransparentModal` with other types of modal
 
 A string that can be used as a fallback for `headerTitle`.
 
+#### `transitionDuration` (iOS only)
+
+Changes the duration of `slide_from_bottom`, `fade` and `simple_push` transitions on iOS. The `default` transition duration cannot be changed since it is not customizable, and the other ones have the duration values hardcoded to mimic the `Android` transition specs. 
+
+Defaults to `0.35`.
+
 #### `useTransitionProgress`
 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
