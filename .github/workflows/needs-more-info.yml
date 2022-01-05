@@ -38,6 +38,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           needs-more-info-label: needs-more-info
           required-sections: 'Description;Steps To Reproduce;Reproduction;Platform'
-          needs-more-info-response: "Hey! 👋 \n\n Thank you for submitting an issue. It looks like you've omitted a few important sections from the issue template. Could you provide more information about the problem? We need all the information we can get in order to help you."
-          # This action also appends something like: "It seems like sections X, Y and Z are missing." to the response.
+          needs-more-info-response: "Hey! 👋 \n\nIt looks like you've omitted a few important sections from the issue template."
+          # This action also appends something like: "Please complete X, Y and Z sections." to the response.
           # Code responsible for this can be found here: https://github.com/software-mansion-labs/swmansion-bot/blob/main/needs-more-info/MissingSectionsFormatter.js
