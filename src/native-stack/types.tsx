@@ -326,6 +326,14 @@ export type NativeStackNavigationOptions = {
    */
   statusBarTranslucent?: boolean;
   /**
+   * Sets the direction in which you should swipe to dismiss the screen.
+   * The following values are supported:
+   * - `vertical` – dismiss screen vertically
+   * - `horizontal` – dismiss screen horizontally (default)
+   * @platform ios
+   */
+  swipeDirection?: ScreenProps['swipeDirection'];
+  /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;

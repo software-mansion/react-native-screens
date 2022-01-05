@@ -162,6 +162,7 @@ const RouteView = ({
     statusBarHidden,
     statusBarStyle,
     statusBarTranslucent,
+    swipeDirection = 'horizontal',
   } = options;
 
   let { stackPresentation = 'push' } = options;
@@ -205,6 +206,7 @@ const RouteView = ({
       statusBarHidden={statusBarHidden}
       statusBarStyle={statusBarStyle}
       statusBarTranslucent={statusBarTranslucent}
+      swipeDirection={swipeDirection}
       onHeaderBackButtonClicked={() => {
         navigation.dispatch({
           ...StackActions.pop(),

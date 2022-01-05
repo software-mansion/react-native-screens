@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{transitionDuration: 2.0, stackAnimation: 'simple_push'}}>
+      <Stack.Navigator screenOptions={{fullScreenSwipeEnabled: true, swipeDirection: 'vertical', customAnimationOnSwipe: true, stackAnimation: 'slide_from_bottom'}}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen
           name="Second"
