@@ -17,7 +17,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     var tintColor: Int? = null
     var headerIconColor: Int? = null
     var textHintColor: Int? = null
-    var placeholder: String? = ""
+    var placeholder: String = ""
     var shouldOverrideBackButton: Boolean = true
     var autoFocus: Boolean = false
     var shouldShowHintSearchIcon: Boolean = true

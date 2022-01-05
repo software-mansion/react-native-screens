@@ -65,7 +65,9 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
 
     @ReactProp(name = "placeholder")
     fun setPlaceholder(view: SearchBarView, placeholder: String?) {
-        view.placeholder = placeholder
+        if (placeholder != null) {
+            view.placeholder = placeholder
+        }
     }
 
     @ReactProp(name = "textColor", customType = "Color")
