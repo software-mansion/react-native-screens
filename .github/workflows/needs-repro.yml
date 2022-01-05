@@ -39,6 +39,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           needs-repro-label: 🧰needs-repro
-          needs-repro-response: "Hey! 👋 \n\n Thank you for submitting an issue. The issue doesn't seem to contain a [minimal reproduction](https://stackoverflow.com/help/minimal-reproducible-example).\n\nCould you provide a snippet of code, a [snack](https://snack.expo.dev/) or a link to a GitHub repository that reproduces the problem? This would incredibly help us with resolving the issue."
+          needs-repro-response: "Hey! 👋 \n\nThe issue doesn't seem to contain a [minimal reproduction](https://stackoverflow.com/help/minimal-reproducible-example).\n\nCould you provide a snippet of code, a [snack](https://snack.expo.dev/) or a link to a GitHub repository that reproduces the problem?"
           repro-provided-label: repro-provided
           check-issues-only-created-after: 2022-01-01
