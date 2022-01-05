@@ -269,7 +269,9 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
 - `textColor` - The search field text color.
-
+- `hintTextColor` - The search hint text color. (Android only)
+- `headerIconColor` - The search and close icon color shown in the header. (Android only)
+- `shouldShowHintSearchIcon` - Show the search hint icon when search bar is focused. (Android only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
 

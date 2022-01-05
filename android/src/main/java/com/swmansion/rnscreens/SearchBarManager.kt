@@ -65,12 +65,29 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
 
     @ReactProp(name = "placeholder")
     fun setPlaceholder(view: SearchBarView, placeholder: String?) {
-        view.placeholder = placeholder
+        if (placeholder != null) {
+            view.placeholder = placeholder
+        }
     }
 
     @ReactProp(name = "textColor", customType = "Color")
     fun setTextColor(view: SearchBarView, color: Int?) {
         view.textColor = color
+    }
+
+    @ReactProp(name = "headerIconColor", customType = "Color")
+    fun setHeaderIconColor(view: SearchBarView, color: Int?) {
+        view.headerIconColor = color
+    }
+
+    @ReactProp(name = "hintTextColor", customType = "Color")
+    fun setHintTextColor(view: SearchBarView, color: Int?) {
+        view.hintTextColor = color
+    }
+
+    @ReactProp(name = "shouldShowHintSearchIcon")
+    fun setShouldShowHintSearchIcon(view: SearchBarView, shouldShowHintSearchIcon: Boolean?) {
+        view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {

@@ -35,6 +35,13 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [search, setSearch] = useState('');
   const [placeholder, setPlaceholder] = useState('Search for something...');
   const [barTintColor, setBarTintColor] = useState<BarTintColor>('white');
+  const [hintTextColor, setHintTextColor] = useState<BarTintColor>('orange');
+  const [headerIconColor, setHeaderIconColor] = useState<BarTintColor>(
+    'orange'
+  );
+  const [shouldShowHintSearchIcon, setShouldShowHintSearchIcon] = useState(
+    true
+  );
   const [hideWhenScrolling, setHideWhenScrolling] = useState(false);
   const [obscureBackground, setObscureBackground] = useState(false);
   const [hideNavigationBar, setHideNavigationBar] = useState(false);
@@ -47,6 +54,9 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     navigation.setOptions({
       searchBar: {
         barTintColor,
+        hintTextColor,
+        headerIconColor,
+        shouldShowHintSearchIcon,
         hideWhenScrolling,
         obscureBackground,
         hideNavigationBar,
@@ -91,6 +101,9 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     search,
     placeholder,
     barTintColor,
+    hintTextColor,
+    headerIconColor,
+    shouldShowHintSearchIcon,
     hideWhenScrolling,
     obscureBackground,
     hideNavigationBar,
@@ -142,6 +155,23 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         value={inputType}
         onValueChange={setInputType}
         items={['text', 'number', 'email', 'phone']}
+      />
+      <SettingsPicker<BarTintColor>
+        label="Text hint color"
+        value={hintTextColor}
+        onValueChange={setHintTextColor}
+        items={['lightcoral', 'orange', 'darkslategray', 'white']}
+      />
+      <SettingsPicker<BarTintColor>
+        label="Header icon color"
+        value={headerIconColor}
+        onValueChange={setHeaderIconColor}
+        items={['lightcoral', 'orange', 'darkslategray', 'white']}
+      />
+      <SettingsSwitch
+        label="Show search hint icon"
+        value={shouldShowHintSearchIcon}
+        onValueChange={setShouldShowHintSearchIcon}
       />
       <Text style={styles.heading}>Other</Text>
       <Button
