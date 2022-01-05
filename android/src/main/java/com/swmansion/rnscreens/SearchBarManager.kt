@@ -80,9 +80,9 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         view.headerIconColor = color
     }
 
-    @ReactProp(name = "textHintColor", customType = "Color")
-    fun setTextHintColor(view: SearchBarView, color: Int?) {
-        view.textHintColor = color
+    @ReactProp(name = "hintTextColor", customType = "Color")
+    fun setHintTextColor(view: SearchBarView, color: Int?) {
+        view.hintTextColor = color
     }
 
     @ReactProp(name = "shouldShowHintSearchIcon")

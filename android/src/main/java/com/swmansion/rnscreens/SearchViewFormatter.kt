@@ -51,8 +51,8 @@ class SearchViewFormatter(var searchView: SearchView) {
         }
     }
 
-    fun setTextHintColor(textHintColor: Int?) {
-        textHintColor?.let {
+    fun setHintTextColor(hintTextColor: Int?) {
+        hintTextColor?.let {
             searchEditText?.setHintTextColor(it)
         }
     }

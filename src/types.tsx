@@ -475,7 +475,7 @@ export interface SearchBarProps {
    *
    * @plaform android
    */
-  textHintColor?: string;
+  hintTextColor?: string;
   /**
    * The search and close icon color shown in the header
    *

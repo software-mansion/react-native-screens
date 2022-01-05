@@ -35,7 +35,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [search, setSearch] = useState('');
   const [placeholder, setPlaceholder] = useState('Search for something...');
   const [barTintColor, setBarTintColor] = useState<BarTintColor>('white');
-  const [textHintColor, setTextHintColor] = useState<BarTintColor>('orange');
+  const [hintTextColor, setHintTextColor] = useState<BarTintColor>('orange');
   const [headerIconColor, setHeaderIconColor] = useState<BarTintColor>(
     'orange'
   );
@@ -54,7 +54,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     navigation.setOptions({
       searchBar: {
         barTintColor,
-        textHintColor,
+        hintTextColor,
         headerIconColor,
         shouldShowHintSearchIcon,
         hideWhenScrolling,
@@ -101,7 +101,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     search,
     placeholder,
     barTintColor,
-    textHintColor,
+    hintTextColor,
     headerIconColor,
     shouldShowHintSearchIcon,
     hideWhenScrolling,
@@ -158,8 +158,8 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
       />
       <SettingsPicker<BarTintColor>
         label="Text hint color"
-        value={textHintColor}
-        onValueChange={setTextHintColor}
+        value={hintTextColor}
+        onValueChange={setHintTextColor}
         items={['lightcoral', 'orange', 'darkslategray', 'white']}
       />
       <SettingsPicker<BarTintColor>

@@ -464,7 +464,7 @@ Defaults to an empty string.
 
 The search field text color.
 
-#### `textHintColor`
+#### `hintTextColor`
 
 The search hint text color. (Android only)
 
