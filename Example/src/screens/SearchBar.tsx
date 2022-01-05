@@ -40,7 +40,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     'orange'
   );
   const [shouldShowHintSearchIcon, setShouldShowHintSearchIcon] = useState(
-    false
+    true
   );
   const [hideWhenScrolling, setHideWhenScrolling] = useState(false);
   const [obscureBackground, setObscureBackground] = useState(false);
