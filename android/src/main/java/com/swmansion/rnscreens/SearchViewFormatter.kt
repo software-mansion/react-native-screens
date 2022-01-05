@@ -19,8 +19,6 @@ class SearchViewFormatter(var searchView: SearchView) {
         get() = searchView.findViewById<ImageView>(R.id.search_button)
     private val searchCloseIcon
         get() = searchView.findViewById<ImageView>(R.id.search_close_btn)
-    private val searchHintIcon
-        get() = searchView.findViewById<ImageView>(R.id.search_mag_icon)
 
     fun setTextColor(textColor: Int?) {
         val currentDefaultTextColor = mDefaultTextColor
@@ -59,13 +57,11 @@ class SearchViewFormatter(var searchView: SearchView) {
         }
     }
 
-    fun setHintSearchIcon(hintSearchIcon: Boolean?, placeholder: String?) {
-        hintSearchIcon?.let {
-            if (hintSearchIcon) {
-                searchView.queryHint = placeholder
-            } else {
-                searchEditText?.hint = placeholder
-            }
+    fun setPlaceholder(placeholder: String, shouldShowHintSearchIcon: Boolean) {
+        if (shouldShowHintSearchIcon) {
+            searchView.queryHint = placeholder
+        } else {
+            searchEditText?.hint = placeholder
         }
     }
 }

@@ -83,9 +83,9 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         view.textHintColor = color
     }
 
-    @ReactProp(name = "hintSearchIcon")
-    fun setHintSearchIcon(view: SearchBarView, hintSearchIcon: Boolean?) {
-        view.hintSearchIcon = hintSearchIcon ?: true
+    @ReactProp(name = "shouldShowHintSearchIcon")
+    fun setShouldShowHintSearchIcon(view: SearchBarView, shouldShowHintSearchIcon: Boolean?) {
+        view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {

@@ -39,7 +39,9 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [headerIconColor, setHeaderIconColor] = useState<BarTintColor>(
     'orange'
   );
-  const [hintSearchIcon, setHintSearchIcon] = useState(false);
+  const [shouldShowHintSearchIcon, setShouldShowHintSearchIcon] = useState(
+    false
+  );
   const [hideWhenScrolling, setHideWhenScrolling] = useState(false);
   const [obscureBackground, setObscureBackground] = useState(false);
   const [hideNavigationBar, setHideNavigationBar] = useState(false);
@@ -54,7 +56,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         barTintColor,
         textHintColor,
         headerIconColor,
-        hintSearchIcon,
+        shouldShowHintSearchIcon,
         hideWhenScrolling,
         obscureBackground,
         hideNavigationBar,
@@ -101,7 +103,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     barTintColor,
     textHintColor,
     headerIconColor,
-    hintSearchIcon,
+    shouldShowHintSearchIcon,
     hideWhenScrolling,
     obscureBackground,
     hideNavigationBar,
@@ -168,8 +170,8 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
       />
       <SettingsSwitch
         label="Show search hint icon"
-        value={hintSearchIcon}
-        onValueChange={setHintSearchIcon}
+        value={shouldShowHintSearchIcon}
+        onValueChange={setShouldShowHintSearchIcon}
       />
       <Text style={styles.heading}>Other</Text>
       <Button

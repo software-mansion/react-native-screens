@@ -488,5 +488,5 @@ export interface SearchBarProps {
    * @plaform android
    * @default true
    */
-  hintSearchIcon?: boolean;
+  shouldShowHintSearchIcon?: boolean;
 }

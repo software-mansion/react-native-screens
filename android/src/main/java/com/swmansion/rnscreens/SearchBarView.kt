@@ -20,7 +20,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     var placeholder: String? = ""
     var shouldOverrideBackButton: Boolean = true
     var autoFocus: Boolean = false
-    var hintSearchIcon: Boolean = true
+    var shouldShowHintSearchIcon: Boolean = true
 
     private var mSearchViewFormatter: SearchViewFormatter? = null
 
@@ -52,7 +52,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             mSearchViewFormatter?.setTintColor(tintColor)
             mSearchViewFormatter?.setHeaderIconColor(headerIconColor)
             mSearchViewFormatter?.setTextHintColor(textHintColor)
-            mSearchViewFormatter?.setHintSearchIcon(hintSearchIcon, placeholder)
+            mSearchViewFormatter?.setPlaceholder(placeholder, shouldShowHintSearchIcon)
             searchView.overrideBackAction = shouldOverrideBackButton
         }
     }

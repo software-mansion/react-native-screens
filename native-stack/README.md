@@ -493,7 +493,7 @@ The search hint text color. (Android only)
 
 The search and close icon color shown in the header. (Android only)
 
-#### `hintSearchIcon`
+#### `shouldShowHintSearchIcon`
 
 Show the search hint icon when search bar is focused. (Android only)
 
