@@ -39,11 +39,15 @@ open class ScreenFragment : Fragment {
     private var mProgress = -1f
 
     // those 2 vars are needed since sometimes the events would be dispatched twice in child containers
-    // and we don't need too complicated logic. We just check if, after the event was dispatched, its
-    // "counter-event" has been also dispatched before sending the same event again. We do it for
-    // 'willAppear' -> 'willDisappear' and 'appear' -> 'disappear'
+    // (should only happen if parent has `NONE` animation) and we don't need too complicated logic.
+    // We just check if, after the event was dispatched, its "counter-event" has been also dispatched before sending the same event again.
+    // We do it for 'willAppear' -> 'willDisappear' and 'appear' -> 'disappear'
     var canDispatchWillAppear = true
     var canDispatchAppear = true
+
+    // we want to know if we are currently transitioning in order not to fire lifecycle events
+    // in nested fragments. See more explanation in dispatchViewAnimationEvent
+    var isTransitioning = false
 
     constructor() {
         throw IllegalStateException(
@@ -259,31 +263,37 @@ open class ScreenFragment : Fragment {
     }
 
     fun onViewAnimationStart() {
-        // onViewAnimationStart is triggered from View#onAnimationStart method of the fragment's root
-        // view. We override an appropriate method of the StackFragment's
-        // root view in order to achieve this.
-        if (isResumed) {
-            // Android dispatches the animation start event for the fragment that is being added first
-            // however we want the one being dismissed first to match iOS. It also makes more sense from
-            // a navigation point of view to have the disappear event first.
-            // Since there are no explicit relationships between the fragment being added / removed the
-            // practical way to fix this is delaying dispatching the appear events at the end of the
-            // frame.
-            UiThreadUtil.runOnUiThread { dispatchOnWillAppear() }
-        } else {
-            dispatchOnWillDisappear()
-        }
+        dispatchViewAnimationEvent(false)
     }
 
     open fun onViewAnimationEnd() {
-        // onViewAnimationEnd is triggered from View#onAnimationEnd method of the fragment's root view.
-        // We override an appropriate method of the StackFragment's root view
-        // in order to achieve this.
-        if (isResumed) {
-            // See the comment in onViewAnimationStart for why this event is delayed.
-            UiThreadUtil.runOnUiThread { dispatchOnAppear() }
-        } else {
-            dispatchOnDisappear()
+        dispatchViewAnimationEvent(true)
+    }
+
+    private fun dispatchViewAnimationEvent(animationEnd: Boolean) {
+        isTransitioning = !animationEnd
+        // if parent fragment is transitioning, we do not want the events dispatched from the child,
+        // since we subscribe to parent's animation start/end and dispatch events in child from there
+        // check for `isTransitioning` should be enough since the child's animation should take only
+        // 20ms due to always being `StackAnimation.NONE` when nested stack being pushed
+        val parent = parentFragment
+        if (parent == null || (parent is ScreenFragment && !parent.isTransitioning)) {
+            // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
+            // view. We override an appropriate method of the StackFragment's
+            // root view in order to achieve this.
+            if (isResumed) {
+                // Android dispatches the animation start event for the fragment that is being added first
+                // however we want the one being dismissed first to match iOS. It also makes more sense from
+                // a navigation point of view to have the disappear event first.
+                // Since there are no explicit relationships between the fragment being added / removed the
+                // practical way to fix this is delaying dispatching the appear events at the end of the
+                // frame.
+                UiThreadUtil.runOnUiThread {
+                    if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
+                }
+            } else {
+                if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
+            }
         }
     }
 

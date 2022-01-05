@@ -18,6 +18,7 @@
     "@react-navigation/material-top-tabs": "^5.3.9",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
+    "nanoid": "^3.1.30",
     "patch-package": "^6.2.2",
     "postinstall-postinstall": "^2.1.0",
     "react": "17.0.2",
