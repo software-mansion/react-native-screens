@@ -46,14 +46,14 @@ class SearchViewFormatter(var searchView: SearchView) {
 
     fun setHeaderIconColor(headerIconColor: Int?) {
         headerIconColor?.let {
-            searchIcon.setColorFilter(headerIconColor)
-            searchCloseIcon.setColorFilter(headerIconColor)
+            searchIcon.setColorFilter(it)
+            searchCloseIcon.setColorFilter(it)
         }
     }
 
     fun setTextHintColor(textHintColor: Int?) {
         textHintColor?.let {
-            searchEditText?.setHintTextColor(textHintColor)
+            searchEditText?.setHintTextColor(it)
         }
     }
 
