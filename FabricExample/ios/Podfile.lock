@@ -693,6 +693,13 @@ PODS:
     - React-jsi (= 0.0.0-20220102-2009-e22b760e5)
     - React-logger (= 0.0.0-20220102-2009-e22b760e5)
     - React-perflogger (= 0.0.0-20220102-2009-e22b760e5)
+  - RNScreens (3.10.1):
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-Codegen
+    - React-RCTFabric
+    - ReactCommon/turbomodule/core
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -761,6 +768,7 @@ DEPENDENCIES:
   - React-rncore (from `../node_modules/react-native/ReactCommon`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNScreens (from `../..`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -852,6 +860,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/runtimeexecutor"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNScreens:
+    :path: "../.."
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -905,6 +915,7 @@ SPEC CHECKSUMS:
   React-rncore: c159ef7555b3eb7e4535d32d69003e74cace794e
   React-runtimeexecutor: fe404a5a4567dca9a23f18dd4cc6998b36f85fa7
   ReactCommon: a58b9a9c421681c09194078cc79ab2fdcd66f5a7
+  RNScreens: c507545e74659c29962255f2906415f30b0c343b
   Yoga: 6922ae29e26f297640cf615802b30b1b6aa41590
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

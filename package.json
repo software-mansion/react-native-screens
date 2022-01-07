@@ -126,5 +126,14 @@
   "eslintIgnore": [
     "node_modules/",
     "lib/"
-  ]
+  ],
+  "codegenConfig": {
+    "libraries": [
+      {
+        "name": "ScreensSpec",
+        "type": "components",
+        "jsSrcsDir": "./src/fabric"
+      }
+    ]
+  }
 }
