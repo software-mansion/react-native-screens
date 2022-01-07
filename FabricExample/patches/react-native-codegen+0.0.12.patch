@@ -1,0 +1,30 @@
+diff --git a/node_modules/react-native-codegen/lib/generators/components/GenerateThirdPartyFabricComponentsProviderH.js b/node_modules/react-native-codegen/lib/generators/components/GenerateThirdPartyFabricComponentsProviderH.js
+index 5e2b9d8..1d15b24 100644
+--- a/node_modules/react-native-codegen/lib/generators/components/GenerateThirdPartyFabricComponentsProviderH.js
++++ b/node_modules/react-native-codegen/lib/generators/components/GenerateThirdPartyFabricComponentsProviderH.js
+@@ -77,10 +77,6 @@ module.exports = {
+               .map(componentName => {
+                 const component = components[componentName];
+ 
+-                if (component.interfaceOnly === true) {
+-                  return;
+-                }
+-
+                 return LookupFuncTemplate({
+                   className: componentName,
+                   libraryName,
+diff --git a/node_modules/react-native-codegen/lib/generators/components/GenerateThirdPartyFabricComponentsProviderObjCpp.js b/node_modules/react-native-codegen/lib/generators/components/GenerateThirdPartyFabricComponentsProviderObjCpp.js
+index 4e55629..3bc5b5c 100644
+--- a/node_modules/react-native-codegen/lib/generators/components/GenerateThirdPartyFabricComponentsProviderObjCpp.js
++++ b/node_modules/react-native-codegen/lib/generators/components/GenerateThirdPartyFabricComponentsProviderObjCpp.js
+@@ -73,10 +73,6 @@ module.exports = {
+                 );
+               })
+               .map(componentName => {
+-                if (components[componentName].interfaceOnly === true) {
+-                  return;
+-                }
+-
+                 const replacedTemplate = LookupMapTemplate({
+                   className: componentName,
+                   libraryName,
