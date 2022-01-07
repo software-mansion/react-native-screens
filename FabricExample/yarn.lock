@@ -5290,7 +5290,7 @@ react-native-gradle-plugin@^0.0.3:
   dependencies:
     react-native-codegen "*"
 
-"react-native-screens@link:../":
+"react-native-screens@link:..":
   version "0.0.0"
   uid ""
 
