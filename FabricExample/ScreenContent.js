@@ -19,7 +19,7 @@ function ScreenContent({pushScreen, popScreen, index}: any) {
       onWillAppear={() => {
         console.log('Appear');
       }}>
-      <ScreenStackHeaderConfig show={show} translucent={translucent}>
+      <ScreenStackHeaderConfig hidden={!show} translucent={translucent}>
         <ScreenStackHeaderSubview type="left">
           <Button
             title="Left"
@@ -45,16 +45,16 @@ function ScreenContent({pushScreen, popScreen, index}: any) {
         <View style={{flex: 1, backgroundColor: '#0F0'}}>
           <Button
             title={`Turn translucent ${translucent ? 'off' : 'on'}`}
-            onCustomPress={() => setTranslucent(prev => !prev)}
+            onPress={() => setTranslucent(prev => !prev)}
           />
           <Button
             title={`${show ? 'Hide' : 'Show'} header`}
-            onCustomPress={() => setShow(prev => !prev)}
+            onPress={() => setShow(prev => !prev)}
           />
         </View>
         <View style={{flex: 1, backgroundColor: '#00F'}}>
-          <Button title="Push" onCustomPress={pushScreen} />
-          <Button title="Pop" onCustomPress={popScreen} />
+          <Button title="Push" onPress={pushScreen} />
+          <Button title="Pop" onPress={popScreen} />
         </View>
       </View>
     </Screen>

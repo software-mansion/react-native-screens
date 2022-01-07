@@ -10,7 +10,7 @@ import type {HostComponent} from 'react-native/Libraries/Renderer/shims/ReactNat
 
 export type NativeProps = $ReadOnly<{|
   ...ViewProps,
-  show: boolean,
+  hidden: boolean,
   translucent: boolean,
 |}>;
 

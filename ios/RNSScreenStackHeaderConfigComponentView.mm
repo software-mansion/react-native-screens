@@ -204,8 +204,8 @@ using namespace facebook::react;
 
   BOOL needsNavigationControlerLayout = !_initialPropsSet;
 
-  if (newScreenProps.show != _show) {
-    _show = newScreenProps.show;
+  if (newScreenProps.hidden != !_show) {
+    _show = !newScreenProps.hidden;
     needsNavigationControlerLayout=YES;
   }
 
