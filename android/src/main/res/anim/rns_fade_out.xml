@@ -5,4 +5,3 @@
     android:toAlpha="0.0"
     android:duration="150"
     />  <!--Remember to change duration in the corresponding xml when modifying it-->
-
