@@ -2,7 +2,7 @@
 name: "\U0001F41E Bug report"
 about: Report an issue with Screens.
 title: ''
-labels: "\U0001F41E Bug"
+labels: "needs-review"
 assignees: ''
 ---
 

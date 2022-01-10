@@ -123,8 +123,8 @@ You can also disable the usage of native screens per navigator with [`detachInac
 To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer:
 
 - for React Navigation >= v6 to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator)
-- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack)
-- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator)
+- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/main/native-stack)
+- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/main/createNativeStackNavigator)
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
@@ -132,12 +132,12 @@ React-native-navigation library already uses native containers for rendering nav
 
 ## Interop with other libraries
 
-This library should work out of the box with all existing react-native libraries. If you experience problems with interoperability please [report an issue](https://github.com/kmagiera/react-native-screens/issues).
+This library should work out of the box with all existing react-native libraries. If you experience problems with interoperability please [report an issue](https://github.com/software-mansion/react-native-screens/issues).
 
 ## Guide for navigation library authors
 
 If you are building a navigation library you may want to use `react-native-screens` to have control over which parts of the React component tree are attached to the native view hierarchy.
-To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/master/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
+To do that, `react-native-screens` provides you with the components documented [here](https://github.com/software-mansion/react-native-screens/tree/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
 
 ## Common problems
 
@@ -161,7 +161,7 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 
 ## Contributing
 
-There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/kmagiera/react-native-screens/tree/master/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
+There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/software-mansion/react-native-screens/tree/main/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
 
 ## License
 
@@ -169,7 +169,8 @@ React native screens library is licensed under [The MIT License](LICENSE).
 
 ## Credits
 
-This project is supported by amazing people from [Expo.io](https://expo.io) and [Software Mansion](https://swmansion.com)
+This project has been build and is maintained thanks to the support from [Shopify](https://shopify.com), [Expo.io](https://expo.io) and [Software Mansion](https://swmansion.com)
 
+[![shopify](https://avatars1.githubusercontent.com/u/8085?v=3&s=100 'Shopify.com')](https://shopify.com)
 [![expo](https://avatars2.githubusercontent.com/u/12504344?v=3&s=100 'Expo.io')](https://expo.io)
-[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=react-native-screens-github 'Software Mansion')](https://swmansion.com)
+[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=react-native-reanimated-github 'Software Mansion')](https://swmansion.com)

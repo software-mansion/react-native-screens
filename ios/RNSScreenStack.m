@@ -572,7 +572,8 @@
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
-  if (!topScreen.gestureEnabled || _controller.viewControllers.count < 2) {
+  if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
+      _controller.viewControllers.count < 2) {
     return NO;
   }
 

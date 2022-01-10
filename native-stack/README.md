@@ -485,6 +485,18 @@ Defaults to an empty string.
 
 The search field text color.
 
+#### `hintTextColor`
+
+The search hint text color. (Android only)
+
+#### `headerIconColor`
+
+The search and close icon color shown in the header. (Android only)
+
+#### `shouldShowHintSearchIcon`
+
+Show the search hint icon when search bar is focused. (Android only)
+
 ### Events
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:

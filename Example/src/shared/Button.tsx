@@ -4,12 +4,23 @@ import { Spacer } from './Spacer';
 
 interface Props {
   title: string;
+  accessibilityLabel?: string;
   onPress: () => void;
   testID?: string;
 }
 
-export const Button = ({ title, onPress, testID }: Props): JSX.Element => (
+export const Button = ({
+  title,
+  accessibilityLabel,
+  onPress,
+  testID,
+}: Props): JSX.Element => (
   <Spacer>
-    <RNButton title={title} onPress={onPress} testID={testID} />
+    <RNButton
+      accessibilityLabel={accessibilityLabel}
+      title={title}
+      onPress={onPress}
+      testID={testID}
+    />
   </Spacer>
 );

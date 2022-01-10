@@ -2,12 +2,12 @@ name: Test Android build
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - 'android/**'
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 jobs:
   build:

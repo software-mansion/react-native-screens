@@ -269,7 +269,9 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
 - `textColor` - The search field text color.
-
+- `hintTextColor` - The search hint text color. (Android only)
+- `headerIconColor` - The search and close icon color shown in the header. (Android only)
+- `shouldShowHintSearchIcon` - Show the search hint icon when search bar is focused. (Android only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
 
@@ -407,16 +409,16 @@ In order for your native view on iOS to be notified when its parent navigation c
 }
 ```
 
-You can check our example app for a fully functional demo see [RNSSampleLifecycleAwareView.m](https://github.com/kmagiera/react-native-screens/blob/master/Example/ios/ScreensExample/RNSSampleLifecycleAwareView.m) for more details.
+You can check our example app for a fully functional demo see [RNSSampleLifecycleAwareView.m](https://github.com/software-mansion/react-native-screens/blob/main/Example/ios/ScreensExample/RNSSampleLifecycleAwareView.m) for more details.
 
 ## Navigation lifecycle on Android
 
 On Android, you can use [LifecycleObserver](https://developer.android.com/reference/android/arch/lifecycle/LifecycleObserver) interface which is a part of Android compat library to make your view handle lifecycle events.
-Check [LifecycleAwareView.java](https://github.com/kmagiera/react-native-screens/blob/master/Example/android/app/src/main/java/com/swmansion/rnscreens/example/LifecycleAwareView.java) from our example app for more details on that.
+Check [LifecycleAwareView.java](https://github.com/software-mansion/react-native-screens/blob/main/Example/android/app/src/main/java/com/swmansion/rnscreens/example/LifecycleAwareView.java) from our example app for more details on that.
 
-In addition to that, you will need to register for receiving these updates. This can be done using [`LifecycleHelper.register`](https://github.com/kmagiera/react-native-screens/blob/master/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L50).
-Remember to call [`LifecycleHelper.unregister`](https://github.com/kmagiera/react-native-screens/blob/master/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L59) before the view is dropped.
-Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/kmagiera/react-native-screens/blob/master/Example/android/app/src/main/java/com/swmansion/rnscreens/example/SampleLifecycleAwareViewManager.java) from our example app to see what are the best ways of using the above methods.
+In addition to that, you will need to register for receiving these updates. This can be done using [`LifecycleHelper.register`](https://github.com/software-mansion/react-native-screens/blob/main/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L50).
+Remember to call [`LifecycleHelper.unregister`](https://github.com/software-mansion/react-native-screens/blob/main/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L59) before the view is dropped.
+Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/software-mansion/react-native-screens/blob/main/Example/android/app/src/main/java/com/swmansion/rnscreens/example/SampleLifecycleAwareViewManager.java) from our example app to see what are the best ways of using the above methods.
 
 ## Android hardware back button
 

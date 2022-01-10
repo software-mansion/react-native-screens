@@ -44,7 +44,7 @@ const SCREENS: Record<
     type: 'playground',
   },
   SearchBar: {
-    title: 'Search bar (iOS)',
+    title: 'Search bar',
     type: 'playground',
   },
 };
