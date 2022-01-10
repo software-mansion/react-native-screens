@@ -6,11 +6,20 @@ import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerInterface
 import javax.annotation.Nonnull
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
-class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderConfig>() {
+class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderConfig>(), RNSScreenStackHeaderConfigManagerInterface<ScreenStackHeaderConfig> {
+    private val mDelegate: ViewManagerDelegate<ScreenStackHeaderConfig>
+
+    init {
+        mDelegate = RNSScreenStackHeaderConfigManagerDelegate<ScreenStackHeaderConfig, ScreenStackHeaderConfigViewManager>(this)
+    }
+
     override fun getName(): String {
         return REACT_CLASS
     }
@@ -108,12 +117,12 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     @ReactProp(name = "hidden")
-    fun setHidden(config: ScreenStackHeaderConfig, hidden: Boolean) {
+    override fun setHidden(config: ScreenStackHeaderConfig, hidden: Boolean) {
         config.setHidden(hidden)
     }
 
     @ReactProp(name = "translucent")
-    fun setTranslucent(config: ScreenStackHeaderConfig, translucent: Boolean) {
+    override fun setTranslucent(config: ScreenStackHeaderConfig, translucent: Boolean) {
         config.setTranslucent(translucent)
     }
 
@@ -135,6 +144,10 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
             .put("onAttached", MapBuilder.of("registrationName", "onAttached"))
             .put("onDetached", MapBuilder.of("registrationName", "onDetached"))
             .build()
+    }
+
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> {
+        return mDelegate
     }
 
     companion object {

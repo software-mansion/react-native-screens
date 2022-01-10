@@ -27,7 +27,6 @@ RNScreensComponentRegistry::sharedProviderRegistry() {
   auto providerRegistry = CoreComponentsRegistry::sharedProviderRegistry();
 
   // Screens
-  providerRegistry->add(concreteComponentDescriptorProvider<RNSCustomButtonComponentDescriptor>());
   providerRegistry->add(concreteComponentDescriptorProvider<RNSScreenComponentDescriptor>());
   providerRegistry->add(concreteComponentDescriptorProvider<RNSScreenStackComponentDescriptor>());
   providerRegistry->add(concreteComponentDescriptorProvider<RNSScreenStackHeaderConfigComponentDescriptor>());

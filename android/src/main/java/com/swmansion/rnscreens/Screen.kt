@@ -8,12 +8,18 @@ import android.util.SparseArray
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
-import com.facebook.react.bridge.GuardedRunnable
+import androidx.annotation.UiThread
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.bridge.WritableNativeMap
+import com.facebook.react.uimanager.FabricViewStateManager
+import com.facebook.react.uimanager.PixelUtil
 
 @SuppressLint("ViewConstructor")
-class Screen constructor(context: ReactContext?) : ViewGroup(context) {
+class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricViewStateManager.HasFabricViewStateManager {
+    private val mFabricViewStateManager: FabricViewStateManager = FabricViewStateManager()
+
     var fragment: ScreenFragment? = null
     var container: ScreenContainer<*>? = null
     var activityState: ActivityState? = null
@@ -70,16 +76,41 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
         if (changed) {
             val width = r - l
             val height = b - t
-            val reactContext = context as ReactContext
-            reactContext.runOnNativeModulesQueueThread(
-                object : GuardedRunnable(reactContext) {
-                    override fun runGuarded() {
-                        reactContext
-                            .getNativeModule(UIManagerModule::class.java)
-                            ?.updateNodeSize(id, width, height)
-                    }
-                })
+            updateState(width, height)
         }
+    }
+
+    @UiThread
+    fun updateState(width: Int, height: Int) {
+        val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
+        val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
+
+        // Check incoming state values. If they're already the correct value, return early to prevent
+        // infinite UpdateState/SetState loop.
+        val currentState: ReadableMap? = getFabricViewStateManager().getStateData()
+        if (currentState != null) {
+            val delta = 0.9.toFloat()
+            val stateFrameHeight: Float = if (currentState.hasKey("frameHeight")) currentState.getDouble("frameHeight").toFloat() else 0f
+            val stateFrameWidth: Float = if (currentState.hasKey("frameWidth")) currentState.getDouble("frameWidth").toFloat() else 0f
+            if (Math.abs(stateFrameWidth - realWidth) < delta &&
+                Math.abs(stateFrameHeight - realHeight) < delta
+            ) {
+                return
+            }
+        }
+        mFabricViewStateManager.setState(
+            object : FabricViewStateManager.StateUpdateCallback {
+                override fun getStateUpdate(): WritableMap {
+                    val map: WritableMap = WritableNativeMap()
+                    map.putDouble("frameWidth", realWidth.toDouble())
+                    map.putDouble("frameHeight", realHeight.toDouble())
+                    return map
+                }
+            })
+    }
+
+    override fun getFabricViewStateManager(): FabricViewStateManager {
+        return mFabricViewStateManager
     }
 
     val headerConfig: ScreenStackHeaderConfig?
