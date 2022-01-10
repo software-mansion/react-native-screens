@@ -42,12 +42,12 @@ open class ScreenFragment : Fragment {
     // (should only happen if parent has `NONE` animation) and we don't need too complicated logic.
     // We just check if, after the event was dispatched, its "counter-event" has been also dispatched before sending the same event again.
     // We do it for 'willAppear' -> 'willDisappear' and 'appear' -> 'disappear'
-    var canDispatchWillAppear = true
-    var canDispatchAppear = true
+    private var canDispatchWillAppear = true
+    private var canDispatchAppear = true
 
     // we want to know if we are currently transitioning in order not to fire lifecycle events
     // in nested fragments. See more explanation in dispatchViewAnimationEvent
-    var isTransitioning = false
+    private var isTransitioning = false
 
     constructor() {
         throw IllegalStateException(
