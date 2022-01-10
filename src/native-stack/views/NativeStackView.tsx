@@ -154,6 +154,8 @@ const RouteView = ({
     gestureEnabled,
     headerShown,
     nativeBackButtonDismissalEnabled = false,
+    navigationBarColor,
+    navigationBarHidden,
     replaceAnimation = 'pop',
     screenOrientation,
     stackAnimation,
@@ -196,6 +198,8 @@ const RouteView = ({
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       gestureEnabled={isAndroid ? false : gestureEnabled}
       nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
+      navigationBarColor={navigationBarColor}
+      navigationBarHidden={navigationBarHidden}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}
       stackAnimation={stackAnimation}

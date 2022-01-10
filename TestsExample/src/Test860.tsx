@@ -24,6 +24,8 @@ export default function NativeNavigation() {
             statusBarStyle: 'dark',
             statusBarTranslucent: true,
             statusBarHidden: false,
+            navigationBarColor: 'green',
+            navigationBarHidden: true,
           }}
         />
         <Stack.Screen
@@ -35,6 +37,8 @@ export default function NativeNavigation() {
             statusBarStyle: 'dark',
             statusBarTranslucent: true,
             statusBarHidden: false,
+            navigationBarColor: 'blue',
+            navigationBarHidden: false,
           }}
         />
       </Stack.Navigator>
@@ -70,6 +74,7 @@ const Inner = () => (
       statusBarAnimation: 'none',
       statusBarStyle: 'auto',
       headerTopInsetEnabled: false,
+      navigationBarColor: 'pink',
       // headerShown: false,
     }}>
     <InnerStack.Screen name="DeeperHome" component={Home} />
@@ -82,6 +87,8 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
   const [statusBarHidden, setStatusBarHidden] = React.useState(false);
   const [statusBarTranslucent, setStatusBarTranslucent] = React.useState(true);
   const [statusBarAnimation, setStatusBarAnimation] = React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
+  const [navigationBarColor, setNavigationBarColor] = React.useState('green');
+  const [navigationBarHidden, setNavigationBarHidden] = React.useState(false);
 
   return (
     <ScrollView
@@ -158,6 +165,24 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
             statusBarAnimation,
           });
           setStatusBarAnimation(statusBarAnimation === 'none' ? 'slide' : 'none');
+        }}
+      />
+      <Button
+        title="Change navigation bar color"
+        onPress={() => {
+          navigation.setOptions({
+            navigationBarColor,
+          });
+          setNavigationBarColor(navigationBarColor === 'green' ? 'powderblue' : 'green');
+        }}
+      />
+      <Button
+        title="Change navigation bar hidden"
+        onPress={() => {
+          navigation.setOptions({
+            navigationBarHidden,
+          });
+          setNavigationBarHidden(!navigationBarHidden);
         }}
       />
       <Text>Go to `TabNavigator` and then go to second tab there. Spot the difference between dismissing modal with a swipe and with a `Pop to top` button. </Text> 
