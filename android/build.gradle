@@ -19,6 +19,7 @@ if (project == rootProject) {
     apply from: 'spotless.gradle'
 }
 
+apply plugin: "com.facebook.react"
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
@@ -61,4 +62,12 @@ dependencies {
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.google.android.material:material:1.1.0'
+}
+
+react {
+    reactRoot = rootProject.file("../node_modules/react-native/")
+    jsRootDir = file("../src/fabric/")
+    codegenDir = rootProject.file("../node_modules/react-native-codegen/")
+    libraryName = "rnscreens"
+    codegenJavaPackageName = "com.swmansion.rnscreens"
 }
