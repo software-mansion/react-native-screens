@@ -217,22 +217,10 @@ describe('Events', () => {
     await device.pressBack();
 
     await expect(
-      element(by.text('9. Chats | transitionStart | closing'))
+      element(by.text('9. Main | transitionStart | opening'))
     ).toExist();
     await expect(
-      element(by.text('10. Privacy | transitionStart | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('11. Main | transitionStart | opening'))
-    ).toExist();
-    await expect(
-      element(by.text('12. Chats | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('13. Privacy | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('14. Main | transitionEnd | opening'))
+      element(by.text('10. Main | transitionEnd | opening'))
     ).toExist();
   });
 
@@ -250,22 +238,10 @@ describe('Events', () => {
     await device.pressBack();
 
     await expect(
-      element(by.text('9. Chats | transitionStart | closing'))
+      element(by.text('9. Main | transitionStart | opening'))
     ).toExist();
     await expect(
-      element(by.text('10. Privacy | transitionStart | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('11. Main | transitionStart | opening'))
-    ).toExist();
-    await expect(
-      element(by.text('12. Chats | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('13. Privacy | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('14. Main | transitionEnd | opening'))
+      element(by.text('10. Main | transitionEnd | opening'))
     ).toExist();
   });
 
@@ -283,22 +259,10 @@ describe('Events', () => {
     await device.pressBack();
 
     await expect(
-      element(by.text('9. Chats | transitionStart | closing'))
+      element(by.text('9. Main | transitionStart | opening'))
     ).toExist();
     await expect(
-      element(by.text('10. Privacy | transitionStart | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('11. Main | transitionStart | opening'))
-    ).toExist();
-    await expect(
-      element(by.text('12. Chats | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('13. Privacy | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('14. Main | transitionEnd | opening'))
+      element(by.text('10. Main | transitionEnd | opening'))
     ).toExist();
   });
 });
