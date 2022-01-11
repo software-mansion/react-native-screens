@@ -114,7 +114,7 @@ interface MainScreenProps {
 }
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
-  <ScrollView>
+  <ScrollView testID="root-screen-examples-scrollview">
     <SafeAreaView>
       <SettingsSwitch
         style={styles.switch}

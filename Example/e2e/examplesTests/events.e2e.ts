@@ -3,6 +3,11 @@ import { device, expect, element, by } from 'detox';
 describe('Events', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
+
+    await waitFor(element(by.id('root-screen-playground-Events')))
+      .toBeVisible()
+      .whileElement(by.id('root-screen-examples-scrollview'))
+      .scroll(200, 'down');
   });
 
   it('should Events playground exist', async () => {
