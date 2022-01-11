@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ScreenNativeComponent from './ScreenNativeComponent';
-import StyleSheet from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const Screen = function (props) {
   return (

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import ScreenContent from './ScreenContent';
-import {ScreenStack} from './fabric';
+import {ScreenStack} from 'react-native-screens/fabric';
 
 function App() {
   const [screens, setScreens] = useState([Date.now()]);

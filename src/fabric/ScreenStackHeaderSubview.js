@@ -1,6 +1,6 @@
 import React from 'react';
 import NativeScreenStackHeaderSubview from './ScreenStackHeaderSubviewNativeComponent';
-import StyleSheet from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   headerSubview: {
