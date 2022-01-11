@@ -8,7 +8,7 @@ import {
   Screen,
   ScreenStackHeaderConfig,
   ScreenStackHeaderSubview,
-} from './fabric';
+} from 'react-native-screens/fabric';
 
 function ScreenContent({pushScreen, popScreen, index}: any) {
   const [translucent, setTranslucent] = useState(false);
