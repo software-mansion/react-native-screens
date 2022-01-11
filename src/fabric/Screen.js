@@ -1,17 +1,8 @@
-/**
- * @flow strict-local
- * @format
- */
-
 import * as React from 'react';
-
 import ScreenNativeComponent from './ScreenNativeComponent';
-import type {NativeProps} from './ScreenNativeComponent';
-import StyleSheet from 'react-native/Libraries/StyleSheet/StyleSheet';
+import StyleSheet from 'react-native';
 
-const CustomButton: React.AbstractComponent<NativeProps> = function (
-  props: NativeProps,
-) {
+const Screen = function (props) {
   return (
     <ScreenNativeComponent
       {...props}
@@ -20,4 +11,4 @@ const CustomButton: React.AbstractComponent<NativeProps> = function (
   );
 };
 
-export default CustomButton;
+export default Screen;

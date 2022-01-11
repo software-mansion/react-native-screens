@@ -2,6 +2,7 @@
  * @flow strict-local
  * @format
  */
+/* eslint-disable */
 import * as React from 'react';
 
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';

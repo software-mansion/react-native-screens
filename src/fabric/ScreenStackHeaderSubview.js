@@ -1,6 +1,6 @@
 import React from 'react';
 import NativeScreenStackHeaderSubview from './ScreenStackHeaderSubviewNativeComponent';
-import StyleSheet from 'react-native/Libraries/StyleSheet/StyleSheet';
+import StyleSheet from 'react-native';
 
 const styles = StyleSheet.create({
   headerSubview: {
@@ -13,9 +13,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function ScreenStackHeaderSubview(props){
-    return <NativeScreenStackHeaderSubview
-    {...props}
-    style={styles.headerSubview}
-  />;
-};
+export default function ScreenStackHeaderSubview(props) {
+  return (
+    <NativeScreenStackHeaderSubview {...props} style={styles.headerSubview} />
+  );
+}
