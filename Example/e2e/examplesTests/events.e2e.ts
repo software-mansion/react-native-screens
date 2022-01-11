@@ -83,7 +83,7 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('should use `none` animation, go to Chats and run opening & closing events in correct order ', async () => {
+  it('should use "none" animation, go to Chats and run opening & closing events in correct order ', async () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
     await element(by.id('events-stack-animation-picker')).tap();
@@ -111,7 +111,7 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('should use `none` animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
+  it('should use "none" animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
     await element(by.id('events-stack-animation-picker')).tap();
@@ -147,7 +147,7 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('should use `slide_from_bottom` animation, go to Chats and run opening & closing events in correct order ', async () => {
+  it('should use "slide_from_bottom" animation, go to Chats and run opening & closing events in correct order ', async () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
     await element(by.id('events-stack-animation-picker')).tap();
@@ -175,7 +175,7 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('should use `slide_from_bottom` animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
+  it('should use "slide_from_bottom" animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
     await element(by.id('events-stack-animation-picker')).tap();
@@ -229,7 +229,7 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('[Android] should use `none` animation, go back from Chats using native way and run opening & closing events in correct order ', async () => {
+  it('[Android] should use "none" animation, go back from Chats using native way and run opening & closing events in correct order ', async () => {
     // swipe to go back doesn't seem to work on iOS
     if (device.getPlatform() !== 'android') return;
 
@@ -250,7 +250,7 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('[Android] should use `slide_from_bottom` animation, go back from Chats using native way and run opening & closing events in correct order ', async () => {
+  it('[Android] should use "slide_from_bottom" animation, go back from Chats using native way and run opening & closing events in correct order ', async () => {
     // swipe to go back doesn't seem to work on iOS
     if (device.getPlatform() !== 'android') return;
 
