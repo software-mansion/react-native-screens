@@ -2,10 +2,11 @@
  * @flow strict-local
  * @format
  */
+/* eslint-disable */
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type {ViewProps} from 'react-native/Libraries/Components/View/ViewPropTypes';
-import type {HostComponent} from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
-import type {BubblingEventHandler} from 'react-native/Libraries/Types/CodegenTypes';
+import type { ViewProps } from 'react-native/Libraries/Components/View/ViewPropTypes';
+import type { HostComponent } from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
+import type { BubblingEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
 
 type ScreenEvent = $ReadOnly<{||}>;
 
