@@ -81,23 +81,21 @@ object ScreenWindowTraits {
     }
 
     internal fun setStyle(screen: Screen, activity: Activity?, context: ReactContext?) {
-        if (activity == null || context == null) {
+        if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return
         }
         val screenForStyle = findScreenForTrait(screen, WindowTraits.STYLE)
         val style = screenForStyle?.statusBarStyle ?: "light"
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            UiThreadUtil.runOnUiThread {
-                val decorView = activity.window.decorView
-                var systemUiVisibilityFlags = decorView.systemUiVisibility
-                systemUiVisibilityFlags = if ("dark" == style) {
-                    systemUiVisibilityFlags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                } else {
-                    systemUiVisibilityFlags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-                }
-                decorView.systemUiVisibility = systemUiVisibilityFlags
+        UiThreadUtil.runOnUiThread {
+            val decorView = activity.window.decorView
+            var systemUiVisibilityFlags = decorView.systemUiVisibility
+            systemUiVisibilityFlags = if ("dark" == style) {
+                systemUiVisibilityFlags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else {
+                systemUiVisibilityFlags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
             }
+            decorView.systemUiVisibility = systemUiVisibilityFlags
         }
     }
 
@@ -184,10 +182,14 @@ object ScreenWindowTraits {
         if (hidden) {
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
                 controller.hide(WindowInsetsCompat.Type.navigationBars())
-                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         } else {
-            WindowInsetsControllerCompat(window, window.decorView).show(WindowInsetsCompat.Type.navigationBars())
+            WindowInsetsControllerCompat(
+                window,
+                window.decorView
+            ).show(WindowInsetsCompat.Type.navigationBars())
         }
     }
 

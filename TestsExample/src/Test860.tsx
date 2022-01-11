@@ -19,13 +19,13 @@ export default function NativeNavigation() {
           name="Home"
           component={Home}
           options={{
-            statusBarColor: 'blue',
+            statusBarColor: 'rgba(0,0,255,0.25)',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
             statusBarTranslucent: true,
             statusBarHidden: false,
             navigationBarColor: 'green',
-            navigationBarHidden: true,
+            navigationBarHidden: false,
           }}
         />
         <Stack.Screen
@@ -35,10 +35,11 @@ export default function NativeNavigation() {
             statusBarColor: 'red',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
+            statusBarHidden: true,
             statusBarTranslucent: true,
-            statusBarHidden: false,
+            headerTopInsetEnabled: false,
             navigationBarColor: 'blue',
-            navigationBarHidden: false,
+            navigationBarHidden: true,
           }}
         />
       </Stack.Navigator>
@@ -89,6 +90,7 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
   const [statusBarAnimation, setStatusBarAnimation] = React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
   const [navigationBarColor, setNavigationBarColor] = React.useState('green');
   const [navigationBarHidden, setNavigationBarHidden] = React.useState(false);
+  const [headerTopInsetEnabled, setHeaderTopInsetEnabled] = React.useState(false);
 
   return (
     <ScrollView
@@ -119,7 +121,7 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           navigation.setOptions({
             statusBarColor,
           });
-          setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen');
+          setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'rgba(255,128,128,0.5)' : 'mediumseagreen');
         }}
       />
       <Button
@@ -147,6 +149,15 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
             statusBarHidden,
           });
           setStatusBarHidden(!statusBarHidden);
+        }}
+      />
+      <Button
+        title="Change status bar top inset"
+        onPress={() => {
+          navigation.setOptions({
+            headerTopInsetEnabled,
+          });
+          setHeaderTopInsetEnabled(!headerTopInsetEnabled);
         }}
       />
             <Button
