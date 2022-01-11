@@ -3,9 +3,9 @@
 
 #import <React/RCTConversions.h>
 
-#import <react/renderer/components/ScreensSpec/EventEmitters.h>
-#import <react/renderer/components/ScreensSpec/Props.h>
-#import <react/renderer/components/ScreensSpec/RCTComponentViewHelpers.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "../common/cpp/rnscreens/RNSScreenComponentDescriptor.h"
 
 #import "RCTFabricComponentsPlugins.h"

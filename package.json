@@ -131,7 +131,7 @@
   "codegenConfig": {
     "libraries": [
       {
-        "name": "ScreensSpec",
+        "name": "rnscreens",
         "type": "components",
         "jsSrcsDir": "./src/fabric"
       }

@@ -11,7 +11,7 @@
 
 @property (nonatomic) BOOL show;
 @property (nonatomic) BOOL translucent;
-@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubviewComponentView *> * reactSubviews;
+@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubviewComponentView *> *reactSubviews;
 
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated

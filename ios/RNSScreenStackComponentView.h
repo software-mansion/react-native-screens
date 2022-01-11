@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface RNSScreenStackView : UIView
-- (instancetype)initWithComponentView:(RNSScreenStackComponentView*)component;
+- (instancetype)initWithComponentView:(RNSScreenStackComponentView *)component;
 @end
 
 NS_ASSUME_NONNULL_END
