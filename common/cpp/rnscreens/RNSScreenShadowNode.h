@@ -10,9 +10,6 @@ namespace react {
 
 extern const char RNSScreenComponentName[];
 
-/*
- * `ShadowNode` for <Slider> component.
- */
 class RNSScreenShadowNode final : public ConcreteViewShadowNode<
                                           RNSScreenComponentName,
                                           RNSScreenProps,

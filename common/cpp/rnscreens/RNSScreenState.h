@@ -13,9 +13,6 @@
 namespace facebook {
 namespace react {
 
-/*
- * State for <BottomSheetView> component.
- */
 class RNSScreenState final {
  public:
   using Shared = std::shared_ptr<const RNSScreenState>;
