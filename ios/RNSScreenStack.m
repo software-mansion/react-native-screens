@@ -45,6 +45,11 @@
 {
   return [self topViewController].supportedInterfaceOrientations;
 }
+
+- (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
+{
+  return [self topViewController];
+}
 #endif
 
 @end
