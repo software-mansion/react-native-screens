@@ -96,7 +96,8 @@ using namespace facebook::react;
 - (void)prepareForRecycle
 {
     [super prepareForRecycle];
-    _controller=nil;
+    // TODO: Make sure that there is no edge case when this should be uncommented
+    // _controller=nil;
     _state.reset();
 }
 
