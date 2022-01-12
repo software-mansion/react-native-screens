@@ -8,7 +8,9 @@ Before running application you need to install all dependencies. To do that:
 
 ### Android
 
-To run this application on android simply run `yarn android` or run application from Android Studio.
+To run this application on android you need to have Java 11 active on your computer. You can check what version you are using by running `javac --version`. You can change it by changing `JAVA_HOME` environment variable or in Android Studio settings.
+
+Then you can run this application by `yarn android` or from Android Studio.
 
 ### iOS
 
