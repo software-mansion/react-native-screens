@@ -224,14 +224,6 @@ using namespace facebook::react;
   _props = std::static_pointer_cast<RNSScreenStackHeaderConfigProps const>(props);
 }
 
-
-#pragma mark - Native Commands
-
-- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
-{
-//  RCTSwitchHandleCommand(self, commandName, args);
-}
-
 @end
 
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)

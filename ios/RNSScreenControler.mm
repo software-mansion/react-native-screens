@@ -12,6 +12,7 @@
   return self;
 }
 
+// TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];

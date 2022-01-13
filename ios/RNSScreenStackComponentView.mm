@@ -180,27 +180,6 @@ using namespace facebook::react;
   if (self.window == nil) {
     return;
   }
-  // when transition is ongoing, any updates made to the controller will not be reflected until the
-  // transition is complete. In particular, when we push/pop view controllers we expect viewControllers
-  // property to be updated immediately. Based on that property we then calculate future updates.
-  // When the transition is ongoing the property won't be updated immediatly. We therefore avoid
-  // making any updated when transition is ongoing and schedule updates for when the transition
-  // is complete.
-//  if (_controller.transitionCoordinator != nil) {
-//    if (!_updateScheduled) {
-//      _updateScheduled = YES;
-//      __weak RNSScreenStackView *weakSelf = self;
-//      [_controller.transitionCoordinator
-//          animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-//            // do nothing here, we only want to be notified when transition is complete
-//          }
-//          completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-//            self->_updateScheduled = NO;
-//            [weakSelf updateContainer];
-//          }];
-//    }
-//    return;
-//  }
 
   UIViewController *top = controllers.lastObject;
   UIViewController *lastTop = _controller.viewControllers.lastObject;
@@ -211,7 +190,7 @@ using namespace facebook::react;
   // controller is still there
   BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreenController class]];
 
-    BOOL shouldAnimate = YES;
+  BOOL shouldAnimate = YES;
 
   if (firstTimePush) {
     // nothing pushed yet
@@ -260,9 +239,7 @@ using namespace facebook::react;
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
       } else {
-//        if (screen.stackPresentation == RNSScreenStackPresentationPush) {
-          [pushControllers addObject:screen.controller];
-//        }
+        [pushControllers addObject:screen.controller];
       }
     }
   }
@@ -303,24 +280,11 @@ using namespace facebook::react;
 {
     [super prepareForRecycle];
     _reactSubviews = [NSMutableArray new];
-    _controller=nil;
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
   return concreteComponentDescriptorProvider<RNSScreenStackComponentDescriptor>();
-}
-
-#pragma mark - Native Commands
-
-- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
-{
-//  RCTSwitchHandleCommand(self, commandName, args);
-}
-
-- (void)setValue:(BOOL)value
-{
-  
 }
 
 @end
