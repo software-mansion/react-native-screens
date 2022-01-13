@@ -35,6 +35,10 @@
 {
   [super viewDidDisappear:animated];
     [((RNSScreenComponentView *)self.view) notifyDisappear];
+    if (self.parentViewController == nil && self.presentingViewController == nil) {
+          // screen dismissed, send event
+          [((RNSScreenComponentView *)self.view) notifyDismissedWithCount:1];
+      }
 }
 
 - (void)viewDidLayoutSubviews

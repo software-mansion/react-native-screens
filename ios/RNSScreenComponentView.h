@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyAppear;
 - (void)notifyDisappear;
 - (void)updateBounds;
+- (void)notifyDismissedWithCount:(int)dismissCount;
 @end
 
 NS_ASSUME_NONNULL_END

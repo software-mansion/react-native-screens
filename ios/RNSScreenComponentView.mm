@@ -95,6 +95,16 @@ using namespace facebook::react;
     }
 }
 
+- (void)notifyDismissedWithCount:(int)dismissCount
+{
+    if(_eventEmitter!=nullptr){
+        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+            ->onDismissed(RNSScreenEventEmitter::OnDismissed{
+                dismissCount: dismissCount
+            });
+    }
+}
+
 - (void)notifyDisappear
 {
     // If screen is already unmounted then there will be no event emitter
