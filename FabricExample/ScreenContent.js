@@ -17,7 +17,16 @@ function ScreenContent({pushScreen, popScreen, index}: any) {
     <Screen
       style={StyleSheet.absoluteFill}
       onWillAppear={() => {
+        console.log('Will appear');
+      }}
+      onAppear={() => {
         console.log('Appear');
+      }}
+      onWillDisappear={() => {
+        console.log('Will disappear');
+      }}
+      onDisappear={() => {
+        console.log('Disappear');
       }}>
       <ScreenStackHeaderConfig hidden={!show} translucent={translucent}>
         <ScreenStackHeaderSubview type="left">

@@ -65,29 +65,44 @@ using namespace facebook::react;
   return _reactSuperview;
 }
 
-// TODO: Find out why this errors occur (when code is uncomented)
 - (void)notifyWillAppear
 {
-//    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-//        ->onWillAppear(RNSScreenEventEmitter::OnWillAppear{});
+    // If screen is already unmounted then there will be no event emitter
+    // it will be cleaned in prepareForRecycle
+    if(_eventEmitter!=nullptr){
+        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+            ->onWillAppear(RNSScreenEventEmitter::OnWillAppear{});
+    }
 }
 
 - (void)notifyWillDisappear
 {
-//    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-//        ->onWillDisappear(RNSScreenEventEmitter::OnWillDisappear{});
+    // If screen is already unmounted then there will be no event emitter
+    // it will be cleaned in prepareForRecycle
+    if(_eventEmitter!=nullptr){
+        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+            ->onWillDisappear(RNSScreenEventEmitter::OnWillDisappear{});
+    }
 }
 
 - (void)notifyAppear
 {
-//    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-//        ->onAppear(RNSScreenEventEmitter::OnAppear{});
+    // If screen is already unmounted then there will be no event emitter
+    // it will be cleaned in prepareForRecycle
+    if(_eventEmitter!=nullptr){
+        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+            ->onAppear(RNSScreenEventEmitter::OnAppear{});
+    }
 }
 
 - (void)notifyDisappear
 {
-//    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-//        ->onDisappear(RNSScreenEventEmitter::OnDisappear{});
+    // If screen is already unmounted then there will be no event emitter
+    // it will be cleaned in prepareForRecycle
+    if(_eventEmitter!=nullptr){
+        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+            ->onDisappear(RNSScreenEventEmitter::OnDisappear{});
+    }
 }
 
 
