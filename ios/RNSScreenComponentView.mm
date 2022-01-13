@@ -135,18 +135,6 @@ using namespace facebook::react;
     _state = std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(state);
 }
 
-#pragma mark - Native Commands
-
-- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
-{
-//  RCTSwitchHandleCommand(self, commandName, args);
-}
-
-- (void)setValue:(BOOL)value
-{
-  
-}
-
 @end
 
 Class<RCTComponentViewProtocol> RNSScreenCls(void)
