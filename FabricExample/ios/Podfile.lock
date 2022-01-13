@@ -604,6 +604,8 @@ PODS:
   - React-jsinspector (0.0.0-20220102-2009-e22b760e5)
   - React-logger (0.0.0-20220102-2009-e22b760e5):
     - glog
+  - react-native-safe-area-context (3.3.2):
+    - React-Core
   - React-perflogger (0.0.0-20220102-2009-e22b760e5)
   - React-RCTActionSheet (0.0.0-20220102-2009-e22b760e5):
     - React-Core/RCTActionSheetHeaders (= 0.0.0-20220102-2009-e22b760e5)
@@ -743,6 +745,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -818,6 +821,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -885,6 +890,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: c2abd9cc868bdd2416726bd64fb62a6d3948d885
   React-jsinspector: 89c8d275f124f2ffa25f6d2c958cc2a6abdbc9c0
   React-logger: 7a651cd636d2be850c5af87a941ed02f005c76c8
+  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   React-perflogger: 313b5ce7ac32164f97429cd6bbee120374031348
   React-RCTActionSheet: 20fdbc8b81e9a5ee437b5c24221279780c0ef47e
   React-RCTAnimation: 164fae0272a04f337fe3d9a93f1319bd1e5b8e6a

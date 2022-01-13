@@ -1,0 +1,100 @@
+diff --git a/node_modules/@react-navigation/native-stack/src/views/HeaderConfig.tsx b/node_modules/@react-navigation/native-stack/src/views/HeaderConfig.tsx
+index 9338442..52aea87 100644
+--- a/node_modules/@react-navigation/native-stack/src/views/HeaderConfig.tsx
++++ b/node_modules/@react-navigation/native-stack/src/views/HeaderConfig.tsx
+@@ -54,7 +54,7 @@ export default function HeaderConfig({
+   title,
+   canGoBack,
+ }: Props): JSX.Element {
+-  const insets = useSafeAreaInsets();
++  // const insets = useSafeAreaInsets();
+   const { colors } = useTheme();
+   const tintColor =
+     headerTintColor ?? (Platform.OS === 'ios' ? colors.primary : colors.text);
+@@ -153,7 +153,7 @@ export default function HeaderConfig({
+       titleFontFamily={titleFontFamily}
+       titleFontSize={titleFontSize}
+       titleFontWeight={titleFontWeight}
+-      topInsetEnabled={insets.top !== 0}
++      topInsetEnabled={false}
+       translucent={
+         // This defaults to `true`, so we can't pass `undefined`
+         headerTransparent === true
+diff --git a/node_modules/@react-navigation/native-stack/src/views/NativeStackView.native.tsx b/node_modules/@react-navigation/native-stack/src/views/NativeStackView.native.tsx
+index 9c7455f..227a6c9 100644
+--- a/node_modules/@react-navigation/native-stack/src/views/NativeStackView.native.tsx
++++ b/node_modules/@react-navigation/native-stack/src/views/NativeStackView.native.tsx
+@@ -83,22 +83,18 @@ const MaybeNestedStack = ({
+     </DebugContainer>
+   );
+ 
+-  const insets = useSafeAreaInsets();
+-  const dimensions = useSafeAreaFrame();
++  // const insets = useSafeAreaInsets();
++  // const dimensions = useSafeAreaFrame();
+   // landscape is meaningful only for iPhone
+-  const isLandscape =
+-    dimensions.width > dimensions.height &&
+-    !(Platform as PlatformIOSStatic).isPad &&
+-    !(Platform as PlatformIOSStatic).isTVOS;
++  const isLandscape = false;
++    // dimensions.width > dimensions.height &&
++    // !(Platform as PlatformIOSStatic).isPad &&
++    // !(Platform as PlatformIOSStatic).isTVOS;
+   // `modal` and `formSheet` presentations do not take whole screen, so should not take the inset.
+   const isFullScreenModal =
+     presentation !== 'modal' && presentation !== 'formSheet';
+-  const topInset = isFullScreenModal && !isLandscape ? insets.top : 0;
+-  const headerHeight = getDefaultHeaderHeight(
+-    dimensions,
+-    !isFullScreenModal,
+-    topInset
+-  );
++  const topInset = 0;
++  const headerHeight =  0;
+ 
+   if (isHeaderInModal) {
+     return (
+@@ -162,15 +158,15 @@ const SceneView = ({
+     ? headerShown
+     : presentation === 'card' && headerShown !== false;
+ 
+-  const insets = useSafeAreaInsets();
++  // const insets = useSafeAreaInsets();
+ 
+   const isParentHeaderShown = React.useContext(HeaderShownContext);
+   const parentHeaderHeight = React.useContext(HeaderHeightContext);
+-  const headerHeight = getDefaultHeaderHeight(
+-    useSafeAreaFrame(),
+-    false,
+-    insets.top
+-  );
++  // const headerHeight = getDefaultHeaderHeight(
++  //   useSafeAreaFrame(),
++  //   false,
++  //   insets.top
++  // );
+ 
+   return (
+     <Screen
+@@ -201,7 +197,7 @@ const SceneView = ({
+       >
+         <HeaderHeightContext.Provider
+           value={
+-            isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
++            0
+           }
+         >
+           {header !== undefined && headerShown !== false ? (
+@@ -319,9 +315,9 @@ function NativeStackViewInner({ state, navigation, descriptors }: Props) {
+ 
+ export default function NativeStackView(props: Props) {
+   return (
+-    <SafeAreaProviderCompat>
++    // <SafeAreaProviderCompat>
+       <NativeStackViewInner {...props} />
+-    </SafeAreaProviderCompat>
++    // </SafeAreaProviderCompat>
+   );
+ }
+ 

@@ -16,6 +16,14 @@ import { Freeze } from 'react-freeze';
 import processColor from 'react-native/Libraries/StyleSheet/processColor';
 import { version } from 'react-native/package.json';
 
+import {
+  Screen as FabricScreen,
+  ScreenStackHeaderSubview as FabricScreenStackHeaderSubview,
+  ScreenStackHeaderConfig as FabricScreenStackHeaderConfig,
+  ScreenStack as FabricScreenStack,
+  // @ts-ignore No types for fabric yet
+} from './fabric';
+
 import TransitionProgressContext from './TransitionProgressContext';
 import useTransitionProgress from './useTransitionProgress';
 import {
@@ -91,8 +99,7 @@ let NativeFullWindowOverlay: React.ComponentType<View>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
-    NativeScreenValue =
-      NativeScreenValue || requireNativeComponent('RNSScreen');
+    NativeScreenValue = NativeScreenValue || FabricScreen;
     return NativeScreenValue;
   },
 
@@ -113,22 +120,19 @@ const ScreensNativeModules = {
   },
 
   get NativeScreenStack() {
-    NativeScreenStack =
-      NativeScreenStack || requireNativeComponent('RNSScreenStack');
+    NativeScreenStack = NativeScreenStack || FabricScreenStack;
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
     NativeScreenStackHeaderConfig =
-      NativeScreenStackHeaderConfig ||
-      requireNativeComponent('RNSScreenStackHeaderConfig');
+      NativeScreenStackHeaderConfig || FabricScreenStackHeaderConfig;
     return NativeScreenStackHeaderConfig;
   },
 
   get NativeScreenStackHeaderSubview() {
     NativeScreenStackHeaderSubview =
-      NativeScreenStackHeaderSubview ||
-      requireNativeComponent('RNSScreenStackHeaderSubview');
+      NativeScreenStackHeaderSubview || FabricScreenStackHeaderSubview;
     return NativeScreenStackHeaderSubview;
   },
 
@@ -193,6 +197,7 @@ function ScreenStack(props: ScreenStackProps) {
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
+// @ts-expect-error ViewConfig is not used yet
 interface ViewConfig extends View {
   viewConfig: {
     validAttributes: {
@@ -223,8 +228,7 @@ class Screen extends React.Component<ScreenProps> {
 
     if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
-        AnimatedNativeScreen ||
-        Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
+        AnimatedNativeScreen || ScreensNativeModules.NativeScreen;
 
       let {
         // Filter out active prop in this case because it is unused and
@@ -255,15 +259,15 @@ class Screen extends React.Component<ScreenProps> {
             activityState={activityState}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
-            ref={(ref: ViewConfig) => {
-              if (ref?.viewConfig?.validAttributes?.style) {
-                ref.viewConfig.validAttributes.style = {
-                  ...ref.viewConfig.validAttributes.style,
-                  display: false,
-                };
-              }
-              this.setRef(ref);
-            }}
+            // ref={(ref: ViewConfig) => {
+            //   if (ref?.viewConfig?.validAttributes?.style) {
+            //     ref.viewConfig.validAttributes.style = {
+            //       ...ref.viewConfig.validAttributes.style,
+            //       display: false,
+            //     };
+            //   }
+            //   this.setRef(ref);
+            // }}
             onTransitionProgress={
               !isNativeStack
                 ? undefined
