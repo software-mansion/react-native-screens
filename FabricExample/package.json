@@ -18,7 +18,7 @@
     "react-native": "0.0.0-20220102-2009-e22b760e5",
     "react-native-codegen": "^0.0.12",
     "react-native-safe-area-context": "^3.3.2",
-    "react-native-screens": "link:../"
+    "react-native-screens": "../react-native-screens-0.0.0-2022140101-fabric.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
