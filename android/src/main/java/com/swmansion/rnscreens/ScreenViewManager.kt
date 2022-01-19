@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -118,6 +119,14 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
         nativeBackButtonDismissalEnabled: Boolean
     ) {
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
+    }
+
+    @ReactProp(name = "sharedElements")
+    fun setSharedElements(
+        view: Screen,
+        sharedElements: ReadableArray
+    ) {
+        view.sharedElements = sharedElements
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {

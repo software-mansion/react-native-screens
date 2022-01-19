@@ -23,6 +23,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
+    var parentViews: MutableList<ViewGroup> = mutableListOf()
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -168,14 +169,33 @@ class ScreenStackFragment : ScreenFragment {
         container.dismiss(this)
     }
 
-    private class NotifyingCoordinatorLayout(context: Context, private val mFragment: ScreenFragment) : CoordinatorLayout(context) {
+    private class NotifyingCoordinatorLayout(context: Context, private val mFragment: ScreenStackFragment) : CoordinatorLayout(context) {
         private val mAnimationListener: Animation.AnimationListener = object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 mFragment.onViewAnimationStart()
+                if (mFragment.isAdded) {
+                    mFragment.screen.sharedElementViews?.forEach { pair ->
+                        pair.second.visibility = View.INVISIBLE
+                        val parent = pair.first.parent as ViewGroup
+                        parent.removeView(pair.first)
+                        mFragment.parentViews.add(parent)
+                        mFragment.screen.container?.addView(pair.first)
+                        SharedElementAnimatorClass.getDelegate()
+                            ?.runTransition(pair.first, pair.second)
+                    }
+                }
             }
 
             override fun onAnimationEnd(animation: Animation) {
                 mFragment.onViewAnimationEnd()
+                if (mFragment.isAdded) {
+                    mFragment.screen.sharedElementViews?.forEach { pair ->
+                        pair.second.visibility = View.VISIBLE
+                        mFragment.screen.container?.removeView(pair.first)
+                        mFragment.parentViews[0].addView(pair.first)
+                        mFragment.parentViews.removeAt(0)
+                    }
+                }
             }
 
             override fun onAnimationRepeat(animation: Animation) {}

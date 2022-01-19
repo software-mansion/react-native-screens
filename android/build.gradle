@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 buildscript {
     ext.safeExtGet = {prop, fallback ->
         rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
@@ -22,6 +24,21 @@ if (project == rootProject) {
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+// Check whether Reanimated 2.x(#TODO merge neccessary changes in reanimated and release them to have a version with it)
+// or higher is installed alongside RNScreens
+def shouldUseCommonInterfaceFromReanimated() {
+    def reanimated = rootProject.subprojects.find { it.name == 'react-native-reanimated' };
+    if (reanimated != null) {
+        def inputFile = new File(reanimated.projectDir, '../package.json')
+        def json = new JsonSlurper().parseText(inputFile.text)
+        def reanimatedVersion = json.version as String
+        def (major, minor, patch) = reanimatedVersion.tokenize('.')
+        return Integer.parseInt(major) == 2 && Integer.parseInt(minor) >= 3
+    } else {
+        return false
+    }
+}
+
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
 
@@ -37,6 +54,14 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        // Include "common/" only when it's not provided by Reanimated to mitigate
+        // multiple definitions of the same class preventing build
+        if (!shouldUseCommonInterfaceFromReanimated()) {
+            main.java.srcDirs += 'common/src/main/java'
+        }
     }
 }
 
@@ -54,6 +79,11 @@ repositories {
 }
 
 dependencies {
+    //noinspection GradleDynamicVersion
+    if (shouldUseCommonInterfaceFromReanimated()) {
+        // Include Reanimated as dependency to load the common interface
+        implementation project(':react-native-reanimated')
+    }
     implementation 'com.facebook.react:react-native:+'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.fragment:fragment:1.2.1'
