@@ -5,7 +5,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSScreenStackComponentView : RCTViewComponentView
-
+- (void)screenWillGoOut;
 @end
 
 @interface RNSScreenStackView : UIView

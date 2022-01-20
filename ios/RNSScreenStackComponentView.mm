@@ -78,26 +78,26 @@ using namespace facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenComponentView* screenChildComponent = (RNSScreenComponentView*)childComponentView;
-  RCTAssert(
-    screenChildComponent.reactSuperview == self,
-    @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
-    self,
-    screenChildComponent,
-    @(index));
-  RCTAssert(
-    (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
-    @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
-    self,
-    screenChildComponent,
-    @(index),
-    @([_reactSubviews indexOfObject:screenChildComponent]),
-    @([[_reactSubviews objectAtIndex:index] tag]));
-  screenChildComponent.reactSuperview = nil;
-  [_reactSubviews removeObject:screenChildComponent];
-  [screenChildComponent removeFromSuperview];
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self maybeAddToParentAndUpdateContainer];
-  });
+//  RCTAssert(
+//    screenChildComponent.reactSuperview == self,
+//    @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+//    self,
+//    screenChildComponent,
+//    @(index));
+//  RCTAssert(
+//    (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
+//    @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
+//    self,
+//    screenChildComponent,
+//    @(index),
+//    @([_reactSubviews indexOfObject:screenChildComponent]),
+//    @([[_reactSubviews objectAtIndex:index] tag]));
+  // screenChildComponent.reactSuperview = nil;
+//  [_reactSubviews removeObject:screenChildComponent];
+  // [screenChildComponent removeFromSuperview];
+//  dispatch_async(dispatch_get_main_queue(), ^{
+//    [self maybeAddToParentAndUpdateContainer];
+//  });
 }
 
 - (NSArray<UIView *> *)reactSubviews
@@ -167,6 +167,14 @@ using namespace facebook::react;
   }
 }
 
+- (void)screenWillGoOut
+{
+  RNSScreenComponentView *screen = [_reactSubviews lastObject];
+  [screen.controller setViewToSnapshot];
+  screen.reactSuperview = nil;
+  [_reactSubviews removeLastObject];
+  [self updateContainer];
+}
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
@@ -218,6 +226,8 @@ using namespace facebook::react;
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
+      auto screenController = (RNSScreenController*)top;
+      [screenController resetViewToScreen];
       [_controller pushViewController:top animated:shouldAnimate];
     } else {
       // don't really know what this case could be, but may need to handle it

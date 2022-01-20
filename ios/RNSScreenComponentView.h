@@ -7,6 +7,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RNSScreenController : UIViewController
 
 - (instancetype)initWithView:(UIView *)view;
+- (void)setViewToSnapshot;
+- (void)resetViewToScreen;
 
 @end
 
