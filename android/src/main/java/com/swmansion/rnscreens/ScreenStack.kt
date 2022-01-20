@@ -1,21 +1,9 @@
 package com.swmansion.rnscreens
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
-import androidx.core.app.SharedElementCallback
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentTransaction
-import androidx.transition.*
-import androidx.transition.Fade.IN
-import androidx.transition.Fade.OUT
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.util.ReactFindViewUtil
@@ -156,41 +144,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             stackAnimation = mTopScreen?.screen?.stackAnimation
         }
 
-        class Blah: TransitionSet() {
-            init {
-                duration = 2000
-                ordering = ORDERING_TOGETHER;
-//                addTransition(ChangeBounds())
-//                addTransition( Fade(OUT))
-//                addTransition( ChangeImageTransform())
-            }
-//            override fun createAnimator(
-//                sceneRoot: ViewGroup,
-//                startValues: TransitionValues?,
-//                endValues: TransitionValues?
-//            ): Animator {
-//                return ObjectAnimator.ofFloat(sceneRoot, View.ALPHA, 1f, 1f)
-//            }
-        }
-
-
-        class DetailsTransition: TransitionSet() {
-            init {
-                duration = 2000
-                ordering = ORDERING_TOGETHER;
-                addTransition(ChangeBounds())
-                addTransition( ChangeTransform())
-                addTransition( ChangeImageTransform())
-            }
-        }
-
-
         createTransaction().let {
             // animation logic start
-
-            val fragmentTransition = Blah()
-
-
             if (mTopScreen != null) {
                 // we want shared element transitions only after first appearance of stack
                 val sharedElementViews = mutableListOf<Pair<View, View>>()
@@ -204,22 +159,19 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                     val viewToNativeTag = newTop?.screen?.sharedElements?.getMap(i)?.getString("toID")
                     var viewTo = ReactFindViewUtil.findView(newTop?.screen, viewToNativeTag)
                     if (viewTo == null && mTopScreen?.screen != null) {
-                        viewTo =  ReactFindViewUtil.findView(mTopScreen?.screen, viewToNativeTag)
+                        viewTo = ReactFindViewUtil.findView(mTopScreen?.screen, viewToNativeTag)
                     }
-                    view?.let{view1 -> viewTo?.let { view2 -> sharedElementViews.add(Pair(view1, view2)) }}
-
+                    view?.let { view1 -> viewTo?.let { view2 -> sharedElementViews.add(Pair(view1, view2)) } }
                 }
                 mTopScreen?.screen?.sharedElementViews = sharedElementViews
                 newTop?.screen?.sharedElementViews = sharedElementViews
             }
-
 
             if (stackAnimation != null) {
                 if (shouldUseOpenAnimation) {
                     transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN
                     when (stackAnimation) {
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
-                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_350)
                         StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
                         StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
                             R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
@@ -232,7 +184,6 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                     transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE
                     when (stackAnimation) {
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
-                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_350, R.anim.rns_no_animation_20)
                         StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
                         StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
                             R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
@@ -244,40 +195,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 }
             }
 
-            val mSharedElementCallback: SharedElementCallback = object : SharedElementCallback() {
-                override fun onSharedElementStart(
-                    sharedElementNames: MutableList<String>?,
-                    sharedElements: MutableList<View>?,
-                    sharedElementSnapshots: MutableList<View>?
-                ) {
-                    Log.e("fsd", "START")
-                    super.onSharedElementStart(sharedElementNames, sharedElements, sharedElementSnapshots)
-                }
-
-                override fun onSharedElementEnd(
-                    sharedElementNames: MutableList<String>?,
-                    sharedElements: MutableList<View>?,
-                    sharedElementSnapshots: MutableList<View>?
-                ) {
-                    Log.e("fsd", "END")
-                    super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots)
-                }
+            if (stackAnimation === StackAnimation.NONE) {
+                transition = FragmentTransaction.TRANSIT_NONE
             }
-
-
-//            newTop?.sharedElementEnterTransition = fragmentTransition
-//            newTop?.setEnterSharedElementCallback(mSharedElementCallback)
-//            newTop?.enterTransition = Slide()
-//            mTopScreen?.exitTransition = Slide()
-//        newTop?.sharedElementReturnTransition = fragmentTransition
-
-//        mTopScreen?.sharedElementEnterTransition = fragmentTransition
-//        mTopScreen?.sharedElementReturnTransition = fragmentTransition
-
-
-//            if (stackAnimation === StackAnimation.NONE) {
-//                transition = FragmentTransaction.TRANSIT_NONE
-//            }
             if (stackAnimation === StackAnimation.FADE) {
                 transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE
             }
@@ -336,6 +256,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             } else if (newTop != null && !newTop.isAdded) {
                 it.add(id, newTop)
             }
+
             mTopScreen = newTop
             mStack.clear()
             mStack.addAll(mScreenFragments)

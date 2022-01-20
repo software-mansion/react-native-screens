@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,10 @@ import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import android.os.Looper
+
+
+
 
 class ScreenStackFragment : ScreenFragment {
     private var mAppBarLayout: AppBarLayout? = null
@@ -24,6 +29,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mShadowHidden = false
     private var mIsTranslucent = false
     var parentViews: MutableList<ViewGroup> = mutableListOf()
+    val transitionContainer: CoordinatorLayout = CoordinatorLayout(screen.context)
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -173,13 +179,20 @@ class ScreenStackFragment : ScreenFragment {
         private val mAnimationListener: Animation.AnimationListener = object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 mFragment.onViewAnimationStart()
-                if (mFragment.isAdded) {
+                val activity = mFragment.tryGetActivity()
+                if (mFragment.isAdded && activity != null && mFragment.transitionContainer.parent == null) {
+                    (mFragment.tryGetActivity()?.window?.decorView?.rootView as ViewGroup).addView(mFragment.transitionContainer)
+//                    mFragment.screen.container?.addView(mFragment.transitionContainer)
                     mFragment.screen.sharedElementViews?.forEach { pair ->
                         pair.second.visibility = View.INVISIBLE
                         val parent = pair.first.parent as ViewGroup
                         parent.removeView(pair.first)
                         mFragment.parentViews.add(parent)
-                        mFragment.screen.container?.addView(pair.first)
+                        val params = LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                        pair.first.layoutParams = params
+                        mFragment.transitionContainer.addView(pair.first)
                         SharedElementAnimatorClass.getDelegate()
                             ?.runTransition(pair.first, pair.second)
                     }
@@ -188,12 +201,22 @@ class ScreenStackFragment : ScreenFragment {
 
             override fun onAnimationEnd(animation: Animation) {
                 mFragment.onViewAnimationEnd()
-                if (mFragment.isAdded) {
+                if (mFragment.isAdded && mFragment.transitionContainer.parent != null) {
                     mFragment.screen.sharedElementViews?.forEach { pair ->
                         pair.second.visibility = View.VISIBLE
-                        mFragment.screen.container?.removeView(pair.first)
+                        mFragment.transitionContainer.removeView(pair.first)
                         mFragment.parentViews[0].addView(pair.first)
                         mFragment.parentViews.removeAt(0)
+                    }
+                    // removal of view has to be postponed on after the end of animation.
+                    // More information and used code here:
+                    // https://stackoverflow.com/questions/33242776/android-viewgroup-crash-attempt-to-read-from-field-int-android-view-view-mview
+                    Handler(Looper.getMainLooper()).post {
+                        val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView
+                        if (mFragment.transitionContainer.parent == rootView) {
+                            (rootView as ViewGroup).removeView(
+                                mFragment.transitionContainer)
+                        }
                     }
                 }
             }
@@ -212,6 +235,7 @@ class ScreenStackFragment : ScreenFragment {
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
             val fakeAnimation = ScreensAnimation(mFragment)
+            animation.duration = 2000
             fakeAnimation.duration = animation.duration
             if (animation is AnimationSet && !mFragment.isRemoving) {
                 animation.addAnimation(fakeAnimation)
