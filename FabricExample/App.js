@@ -2,6 +2,7 @@ import * as React from 'react';
 import {View, Text, Button} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import ScreenStateContext from '../src/fabric/ScreenStateContext';
 
 function HomeScreen({navigation}) {
   return (
@@ -18,12 +19,15 @@ function HomeScreen({navigation}) {
 function DetailsScreen({navigation}) {
   const [translucent, setTranslucent] = React.useState(false);
   const [show, setShow] = React.useState(true);
+  const screenStateContext = React.useContext(ScreenStateContext);
+  function goBack() {
+    screenStateContext?.onWillScreenUnmount();
+    navigation.goBack();
+  }
   React.useEffect(() => {
     navigation.setOptions({
       headerTitle: () => <Text>This are details</Text>,
-      headerLeft: () => (
-        <Button title="< back" onPress={() => navigation.goBack()} />
-      ),
+      headerLeft: () => <Button title="< back" onPress={goBack} />,
       headerRight: () => (
         <View>
           <Text>Right</Text>
@@ -46,7 +50,7 @@ function DetailsScreen({navigation}) {
         />
       </View>
       <View style={{flex: 1, backgroundColor: '#00F'}}>
-        <Button title="Go back" onPress={() => navigation.goBack()} />
+        <Button title="Go back" onPress={goBack} />
       </View>
     </View>
   );

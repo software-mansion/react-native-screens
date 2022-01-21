@@ -16,7 +16,8 @@ using namespace facebook::react;
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate>
+    UIViewControllerTransitioningDelegate,
+    RCTRNSScreenStackViewProtocol>
 
 @end
 
@@ -78,26 +79,26 @@ using namespace facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenComponentView* screenChildComponent = (RNSScreenComponentView*)childComponentView;
-//  RCTAssert(
-//    screenChildComponent.reactSuperview == self,
-//    @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
-//    self,
-//    screenChildComponent,
-//    @(index));
-//  RCTAssert(
-//    (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
-//    @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
-//    self,
-//    screenChildComponent,
-//    @(index),
-//    @([_reactSubviews indexOfObject:screenChildComponent]),
-//    @([[_reactSubviews objectAtIndex:index] tag]));
-  // screenChildComponent.reactSuperview = nil;
-//  [_reactSubviews removeObject:screenChildComponent];
-  // [screenChildComponent removeFromSuperview];
-//  dispatch_async(dispatch_get_main_queue(), ^{
-//    [self maybeAddToParentAndUpdateContainer];
-//  });
+  RCTAssert(
+    screenChildComponent.reactSuperview == self,
+    @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+    self,
+    screenChildComponent,
+    @(index));
+  RCTAssert(
+    (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
+    @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
+    self,
+    screenChildComponent,
+    @(index),
+    @([_reactSubviews indexOfObject:screenChildComponent]),
+    @([[_reactSubviews objectAtIndex:index] tag]));
+  screenChildComponent.reactSuperview = nil;
+  [_reactSubviews removeObject:screenChildComponent];
+  [screenChildComponent removeFromSuperview];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self maybeAddToParentAndUpdateContainer];
+  });
 }
 
 - (NSArray<UIView *> *)reactSubviews
@@ -171,9 +172,6 @@ using namespace facebook::react;
 {
   RNSScreenComponentView *screen = [_reactSubviews lastObject];
   [screen.controller setViewToSnapshot];
-  screen.reactSuperview = nil;
-  [_reactSubviews removeLastObject];
-  [self updateContainer];
 }
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
@@ -208,6 +206,8 @@ using namespace facebook::react;
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top]) {
+          auto screenController = (RNSScreenController*)top;
+          [screenController resetViewToScreen];
         // setting new controllers with animation does `push` animation by default
         [_controller setViewControllers:controllers animated:YES];
       } else {
@@ -297,6 +297,17 @@ using namespace facebook::react;
   return concreteComponentDescriptorProvider<RNSScreenStackComponentDescriptor>();
 }
 
+#pragma mark - Native Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSScreenStackHandleCommand(self, commandName, args);
+}
+
+- (void)callScreenWillGoOut
+{
+    [self screenWillGoOut];
+}
 @end
 
 Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
