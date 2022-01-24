@@ -4,7 +4,8 @@
                                          fromView:(UIView *)fromView
                                 fromViewConverter:(UIView *)startingViewConverter
                                            toView:(UIView *)toView
-                                  toViewConverter:(UIView *)toViewConverter;
+                                  toViewConverter:(UIView *)toViewConverter
+                                   transitionType:(NSString *)transitionType;
 
 @end
 

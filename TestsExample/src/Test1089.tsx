@@ -10,6 +10,7 @@ import {
 } from 'react-native-screens/native-stack';
 import Animated, {
   LinearTransition,
+  JumpingTransition,
 } from 'react-native-reanimated';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -48,7 +49,7 @@ function First({
 }) {
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: 'blue', paddingTop: 100}}>
       <Animated.View
         style={{width: '100%', height: 100, backgroundColor: 'red'}}
         nativeID={sharedElements[0].fromID}
@@ -71,7 +72,7 @@ function Second({
   }, [navigation]);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: 'purple', paddingTop: 100}}>
       <Animated.View style={{width: '100%', height: 200, backgroundColor: 'green'}}
         nativeID={sharedElements[0].toID}
         sharedElementTransition={LinearTransition}
@@ -89,10 +90,15 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackAnimation: 'default',
+          stackAnimation: 'reanimated',
         }}>
-        <Stack.Screen name="First" component={NestedFirst} options={{sharedElements, headerShown: false}}/>
-        <Stack.Screen name="Second" component={Second} options={{headerShown: true, sharedElements}}/>
+        <Stack.Screen name="First" component={First} options={{sharedElements, headerShown: false, 
+           hiding: LinearTransition,   reappearing: LinearTransition, exiting: LinearTransition
+      }}/>
+        <Stack.Screen name="Second" component={Second} options={{headerShown: true, sharedElements,
+             hiding: LinearTransition,   reappearing: LinearTransition, exiting: LinearTransition
+
+        }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -163,6 +163,10 @@ const RouteView = ({
     statusBarHidden,
     statusBarStyle,
     statusBarTranslucent,
+    entering,
+    hiding,
+    reappearing,
+    exiting,
   } = options;
 
   let { stackPresentation = 'push' } = options;
@@ -191,6 +195,10 @@ const RouteView = ({
     <Screen
       key={route.key}
       enabled
+      entering={entering}
+      hiding={hiding}
+      reappearing={reappearing}
+      exiting={exiting}
       isNativeStack
       style={StyleSheet.absoluteFill}
       customAnimationOnSwipe={customAnimationOnSwipe}

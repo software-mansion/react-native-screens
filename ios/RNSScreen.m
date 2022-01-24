@@ -738,7 +738,9 @@
           dispatch_async(dispatch_get_main_queue(), ^{
             // we dispatch it async so that the native animation is not fired since it would mess with reanimated trying
             // to set frames etc
-            [RNSScreen asignEndingValuesWithTransitionContext:context sharedElements:sharedElements];
+            [RNSScreen asignEndingValuesWithTransitionContext:context
+                                               sharedElements:sharedElements
+                                                      closing:self->_closing];
           });
 
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
@@ -768,32 +770,49 @@
 
 + (void)asignEndingValuesWithTransitionContext:(id<UIViewControllerTransitionCoordinatorContext> _Nonnull)context
                                 sharedElements:(NSMutableArray<NSArray *> *)sharedElements
+                                       closing:(BOOL)closing
 {
   UIViewController *toViewController = [context viewControllerForKey:UITransitionContextToViewControllerKey];
   [toViewController.view setNeedsLayout];
   [toViewController.view layoutIfNeeded];
   UIViewController *fromViewController = [context viewControllerForKey:UITransitionContextFromViewControllerKey];
 
+  NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
+  // we find the lowest VCs since they are the ones from which the center should be converted
+  // to transition's container
+  UIViewController *lowestFromVC = fromViewController;
+  while ([[lowestFromVC childViewControllers] count] > 0) {
+    lowestFromVC = lowestFromVC.childViewControllers[lowestFromVC.childViewControllers.count - 1];
+  }
+  UIViewController *lowestToVC = toViewController;
+  while ([[lowestToVC childViewControllers] count] > 0) {
+    lowestToVC = lowestToVC.childViewControllers[lowestToVC.childViewControllers.count - 1];
+  }
   for (NSArray *sharedElement in sharedElements) {
     UIView *startingView = sharedElement[0];
     UIView *endingView = sharedElement[1];
-    NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
 
-    // we find the lowest VCs since they are the ones from which the center should be converted
-    // to transition's container
-    UIViewController *lowestFromVC = fromViewController;
-    while ([[lowestFromVC childViewControllers] count] > 0) {
-      lowestFromVC = lowestFromVC.childViewControllers[lowestFromVC.childViewControllers.count - 1];
-    }
-    UIViewController *lowestToVC = toViewController;
-    while ([[lowestToVC childViewControllers] count] > 0) {
-      lowestToVC = lowestToVC.childViewControllers[lowestToVC.childViewControllers.count - 1];
-    }
     [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
                                                   fromView:startingView
                                          fromViewConverter:lowestFromVC.view
                                                     toView:endingView
-                                           toViewConverter:lowestToVC.view];
+                                           toViewConverter:lowestToVC.view
+                                            transitionType:@"sharedElementTransition"];
+  }
+  if (closing) {
+    // we want to fire it only once for transition
+    [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+                                                  fromView:fromViewController.view
+                                         fromViewConverter:fromViewController.view
+                                                    toView:nil
+                                           toViewConverter:nil
+                                            transitionType:@"hiding"];
+    [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+                                                  fromView:toViewController.view
+                                         fromViewConverter:toViewController.view
+                                                    toView:nil
+                                           toViewConverter:nil
+                                            transitionType:@"reappearing"];
   }
 }
 
@@ -882,6 +901,7 @@ RCT_ENUM_CONVERTER(
       @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
       @"slide_from_right" : @(RNSScreenStackAnimationDefault),
       @"slide_from_left" : @(RNSScreenStackAnimationDefault),
+      @"reanimated" : @(RNSScreenStackAnimationReanimated),
     }),
     RNSScreenStackAnimationDefault,
     integerValue)
