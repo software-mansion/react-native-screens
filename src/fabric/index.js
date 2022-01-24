@@ -1,7 +1,7 @@
 import Screen from './Screen';
 import ScreenStackHeaderSubview from './ScreenStackHeaderSubview';
 import ScreenStackHeaderConfig from './ScreenStackHeaderConfigNativeComponent';
-import ScreenStack from './ScreenStackNativeComponent';
+import ScreenStack from './ScreenStack';
 
 export {
   Screen,

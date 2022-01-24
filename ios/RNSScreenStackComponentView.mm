@@ -201,6 +201,8 @@ using namespace facebook::react;
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top]) {
         // setting new controllers with animation does `push` animation by default
+        auto screenController = (RNSScreenController*)top;
+        [screenController resetViewToScreen];
         [_controller setViewControllers:controllers animated:YES];
       } else {
         // last top controller is no longer on stack
@@ -218,6 +220,8 @@ using namespace facebook::react;
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
+      auto screenController = (RNSScreenController*)top;
+      [screenController resetViewToScreen];
       [_controller pushViewController:top animated:shouldAnimate];
     } else {
       // don't really know what this case could be, but may need to handle it
@@ -245,6 +249,12 @@ using namespace facebook::react;
   }
 
   [self setPushViewControllers:pushControllers];
+}
+
+- (void)screenWillGoOut
+{
+  RNSScreenComponentView *screen = [_reactSubviews lastObject];
+  [screen.controller setViewToSnapshot];
 }
 
 - (void)layoutSubviews
@@ -275,6 +285,32 @@ using namespace facebook::react;
 }
 
 #pragma mark - RCTComponentViewProtocol
+
+bool shouldAnimateScreenChange(std::vector<std::string> lastKeys, std::vector<std::string> newKeys){
+    if(lastKeys.empty())return false;
+    if(newKeys.empty())return lastKeys.size()==1;
+    if(lastKeys.back()!=newKeys.back()){
+        if(lastKeys.size()>=2){
+            auto secondLastLastKey = lastKeys[lastKeys.size()-2];
+            return secondLastLastKey == newKeys.back();
+        }
+    }
+    return false;
+}
+
+- (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
+{
+  const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenStackProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenStackProps>(props);
+
+  if(shouldAnimateScreenChange(oldScreenProps.screensKeys, newScreenProps.screensKeys)){
+    [self screenWillGoOut];
+  }
+    
+[super updateProps:props oldProps:oldProps];
+  
+  _props = std::static_pointer_cast<RNSScreenStackHeaderConfigProps const>(props);
+}
 
 - (void)prepareForRecycle
 {

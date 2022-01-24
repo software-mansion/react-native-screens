@@ -9,6 +9,7 @@ import type { HostComponent } from 'react-native/Libraries/Renderer/shims/ReactN
 
 type NativeProps = $ReadOnly<{|
   ...ViewProps,
+  screensKeys: $ReadOnlyArray<string>,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
