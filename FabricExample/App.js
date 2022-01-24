@@ -21,7 +21,7 @@ function DetailsScreen({navigation}) {
   const [show, setShow] = React.useState(true);
   const screenStateContext = React.useContext(ScreenStateContext);
   function goBack() {
-    screenStateContext?.onWillScreenUnmount();
+    // screenStateContext?.onWillScreenUnmount();
     navigation.goBack();
   }
   React.useEffect(() => {

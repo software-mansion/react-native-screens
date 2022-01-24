@@ -8,7 +8,7 @@ class Screen extends React.Component {
 
   componentWillUnmount() {
     console.log('Unmount');
-    // this.context?.onWillScreenUnmount();
+    this.context?.onWillScreenUnmount();
   }
 
   render() {
