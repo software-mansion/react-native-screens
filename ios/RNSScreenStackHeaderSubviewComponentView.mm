@@ -25,22 +25,23 @@ using namespace facebook::react;
   return self;
 }
 
-- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics {
-    CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
-    // CALayer will crash if we pass NaN or Inf values.
-    // It's unclear how to detect this case on cross-platform manner holistically, so we have to do it on the mounting
-    // layer as well. NaN/Inf is a kinda valid result of some math operations. Even if we can (and should) detect (and
-    // report early) incorrect (NaN and Inf) values which come from JavaScript side, we sometimes cannot backtrace the
-    // sources of a calculation that produced an incorrect/useless result.
-    if (!std::isfinite(frame.size.width) ||
-        !std::isfinite(frame.size.height)) {
-        RCTLogWarn(
-            @"-[UIView(ComponentViewProtocol) updateLayoutMetrics:oldLayoutMetrics:]: Received invalid layout metrics (%@) for a view (%@).",
-            NSStringFromCGRect(frame),
-            self);
-    } else {
-        self.bounds = CGRect{CGPointZero, frame.size};
-    }
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
+  // CALayer will crash if we pass NaN or Inf values.
+  // It's unclear how to detect this case on cross-platform manner holistically, so we have to do it on the mounting
+  // layer as well. NaN/Inf is a kinda valid result of some math operations. Even if we can (and should) detect (and
+  // report early) incorrect (NaN and Inf) values which come from JavaScript side, we sometimes cannot backtrace the
+  // sources of a calculation that produced an incorrect/useless result.
+  if (!std::isfinite(frame.size.width) || !std::isfinite(frame.size.height)) {
+    RCTLogWarn(
+        @"-[UIView(ComponentViewProtocol) updateLayoutMetrics:oldLayoutMetrics:]: Received invalid layout metrics (%@) for a view (%@).",
+        NSStringFromCGRect(frame),
+        self);
+  } else {
+    self.bounds = CGRect{CGPointZero, frame.size};
+  }
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -53,15 +54,15 @@ using namespace facebook::react;
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
-    const auto &newHeaderSubviewProps = *std::static_pointer_cast<const RNSScreenStackHeaderSubviewProps>(props);
-    
-    // `type`
-    if (_type != newHeaderSubviewProps.type) {
-      _type = newHeaderSubviewProps.type;
-      _isInitialValueSet = YES;
-    }
+  const auto &newHeaderSubviewProps = *std::static_pointer_cast<const RNSScreenStackHeaderSubviewProps>(props);
 
-    [super updateProps:props oldProps:oldProps];
+  // `type`
+  if (_type != newHeaderSubviewProps.type) {
+    _type = newHeaderSubviewProps.type;
+    _isInitialValueSet = YES;
+  }
+
+  [super updateProps:props oldProps:oldProps];
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
@@ -75,4 +76,3 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubviewComponentView.class;
 }
-

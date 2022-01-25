@@ -8,7 +8,7 @@
     "test:unit": "jest --passWithNoTests",
     "format-js": "prettier --write --list-different './{src,Example}/**/*.{js,ts,tsx}'",
     "format-android": "node ./scripts/format-android.js",
-    "format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
+    "format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp -o -iname *.mm | xargs clang-format -i",
     "format": "yarn format-js && yarn format-android && yarn format-ios",
     "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
     "lint-android": "./android/gradlew -p android spotlessCheck -q",

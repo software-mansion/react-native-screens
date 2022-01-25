@@ -16,8 +16,8 @@ using namespace facebook::react;
 @end
 
 @implementation RNSScreenComponentView {
-    RNSScreenController *_controller;
-    RNSScreenShadowNode::ConcreteState::Shared _state;
+  RNSScreenController *_controller;
+  RNSScreenShadowNode::ConcreteState::Shared _state;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -40,24 +40,23 @@ using namespace facebook::react;
   }
 }
 
-
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfigComponentView class]]) {
-      _config = nil;
+    _config = nil;
   }
   [super unmountChildComponentView:childComponentView index:index];
 }
 
 - (void)updateBounds
 {
-    if (_state != nullptr) {
-        auto boundsSize = self.bounds.size;
-        auto newState = RNSScreenState{RCTSizeFromCGSize(boundsSize)};
-        _state->updateState(std::move(newState));
-        UINavigationController *navctr = _controller.navigationController;
-        [navctr.view setNeedsLayout];
-    }
+  if (_state != nullptr) {
+    auto boundsSize = self.bounds.size;
+    auto newState = RNSScreenState{RCTSizeFromCGSize(boundsSize)};
+    _state->updateState(std::move(newState));
+    UINavigationController *navctr = _controller.navigationController;
+    [navctr.view setNeedsLayout];
+  }
 }
 
 - (UIView *)reactSuperview
@@ -67,63 +66,59 @@ using namespace facebook::react;
 
 - (void)notifyWillAppear
 {
-    // If screen is already unmounted then there will be no event emitter
-    // it will be cleaned in prepareForRecycle
-    if(_eventEmitter!=nullptr){
-        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-            ->onWillAppear(RNSScreenEventEmitter::OnWillAppear{});
-    }
+  // If screen is already unmounted then there will be no event emitter
+  // it will be cleaned in prepareForRecycle
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+        ->onWillAppear(RNSScreenEventEmitter::OnWillAppear{});
+  }
 }
 
 - (void)notifyWillDisappear
 {
-    // If screen is already unmounted then there will be no event emitter
-    // it will be cleaned in prepareForRecycle
-    if(_eventEmitter!=nullptr){
-        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-            ->onWillDisappear(RNSScreenEventEmitter::OnWillDisappear{});
-    }
+  // If screen is already unmounted then there will be no event emitter
+  // it will be cleaned in prepareForRecycle
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+        ->onWillDisappear(RNSScreenEventEmitter::OnWillDisappear{});
+  }
 }
 
 - (void)notifyAppear
 {
-    // If screen is already unmounted then there will be no event emitter
-    // it will be cleaned in prepareForRecycle
-    if(_eventEmitter!=nullptr){
-        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-            ->onAppear(RNSScreenEventEmitter::OnAppear{});
-    }
+  // If screen is already unmounted then there will be no event emitter
+  // it will be cleaned in prepareForRecycle
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)->onAppear(RNSScreenEventEmitter::OnAppear{});
+  }
 }
 
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
-    if(_eventEmitter!=nullptr){
-        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-            ->onDismissed(RNSScreenEventEmitter::OnDismissed{
-                dismissCount: dismissCount
-            });
-    }
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+        ->onDismissed(RNSScreenEventEmitter::OnDismissed{dismissCount : dismissCount});
+  }
 }
 
 - (void)notifyDisappear
 {
-    // If screen is already unmounted then there will be no event emitter
-    // it will be cleaned in prepareForRecycle
-    if(_eventEmitter!=nullptr){
-        std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-            ->onDisappear(RNSScreenEventEmitter::OnDisappear{});
-    }
+  // If screen is already unmounted then there will be no event emitter
+  // it will be cleaned in prepareForRecycle
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
+        ->onDisappear(RNSScreenEventEmitter::OnDisappear{});
+  }
 }
-
 
 #pragma mark - RCTComponentViewProtocol
 
 - (void)prepareForRecycle
 {
-    [super prepareForRecycle];
-    // TODO: Make sure that there is no edge case when this should be uncommented
-    // _controller=nil;
-    _state.reset();
+  [super prepareForRecycle];
+  // TODO: Make sure that there is no edge case when this should be uncommented
+  // _controller=nil;
+  _state.reset();
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
@@ -133,16 +128,16 @@ using namespace facebook::react;
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
-    const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenProps>(_props);
-    const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenProps>(props);
 
-    [super updateProps:props oldProps:oldProps];
+  [super updateProps:props oldProps:oldProps];
 }
 
 - (void)updateState:(facebook::react::State::Shared const &)state
            oldState:(facebook::react::State::Shared const &)oldState
 {
-    _state = std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(state);
+  _state = std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(state);
 }
 
 @end
@@ -151,4 +146,3 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return RNSScreenComponentView.class;
 }
-
