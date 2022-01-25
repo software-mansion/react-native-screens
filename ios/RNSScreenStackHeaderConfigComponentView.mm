@@ -54,9 +54,11 @@ using namespace facebook::react;
     // problem when config gets updated while the transition is ongoing.
     nextVC = nav.topViewController;
   }
-  
+
   if (vc != nil && (nextVC == vc)) {
-    [RNSScreenStackHeaderConfigComponentView updateViewController:self.screenView.controller withConfig:self animated:YES];
+    [RNSScreenStackHeaderConfigComponentView updateViewController:self.screenView.controller
+                                                       withConfig:self
+                                                         animated:YES];
   }
 }
 
@@ -77,11 +79,12 @@ using namespace facebook::react;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 + (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc
-                                    withConfig:(RNSScreenStackHeaderConfigComponentView *)config API_AVAILABLE(ios(13.0))
+                                    withConfig:(RNSScreenStackHeaderConfigComponentView *)config
+    API_AVAILABLE(ios(13.0))
 {
   UINavigationBarAppearance *appearance = [UINavigationBarAppearance new];
 
-    [appearance configureWithOpaqueBackground];
+  [appearance configureWithOpaqueBackground];
 
   return appearance;
 }
@@ -119,7 +122,7 @@ using namespace facebook::react;
     navitem.compactAppearance = appearance;
 
     UINavigationBarAppearance *scrollEdgeAppearance =
-    [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
+        [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     navitem.scrollEdgeAppearance = scrollEdgeAppearance;
   }
   navitem.leftBarButtonItem = nil;
@@ -128,57 +131,56 @@ using namespace facebook::react;
   [RNSScreenStackHeaderConfigComponentView addSubviewsToNavItem:navitem withConfig:config];
 }
 
-+ (void)addSubviewsToNavItem:(UINavigationItem*)navitem withConfig:(RNSScreenStackHeaderConfigComponentView*)config
++ (void)addSubviewsToNavItem:(UINavigationItem *)navitem withConfig:(RNSScreenStackHeaderConfigComponentView *)config
 {
-    for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
-        switch (subview.type) {
-          case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
-              UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-              navitem.leftBarButtonItem = buttonItem;
-            break;
-          }
-          case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
-              UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-              navitem.rightBarButtonItem = buttonItem;
-            break;
-          }
-          case facebook::react::RNSScreenStackHeaderSubviewType::Center: {
-            navitem.titleView = subview;
-            break;
-          }
-          case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
-              RCTLogWarn(
-                  @"SearchBar is not yet supported in ScreensFabric");
-              break;
-          }
-          case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
-            break;
-          }
-        }
+  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
+    switch (subview.type) {
+      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.leftBarButtonItem = buttonItem;
+        break;
       }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.rightBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Center: {
+        navitem.titleView = subview;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
+        RCTLogWarn(@"SearchBar is not yet supported in ScreensFabric");
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
+        break;
+      }
+    }
+  }
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-    if (![childComponentView isKindOfClass:[RNSScreenStackHeaderSubviewComponentView class]]) {
-      RCTLogError(@"ScreenStackHeader only accepts children of type ScreenStackHeaderSubview");
-      return;
-    }
-    
-    RCTAssert(
-        childComponentView.superview == nil,
-        @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-        self,
-        childComponentView,
-        @(index),
-        @([childComponentView.superview tag]));
-    
-    [_reactSubviews insertObject:(RNSScreenStackHeaderSubviewComponentView*)childComponentView atIndex:index];
+  if (![childComponentView isKindOfClass:[RNSScreenStackHeaderSubviewComponentView class]]) {
+    RCTLogError(@"ScreenStackHeader only accepts children of type ScreenStackHeaderSubview");
+    return;
+  }
+
+  RCTAssert(
+      childComponentView.superview == nil,
+      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+      self,
+      childComponentView,
+      @(index),
+      @([childComponentView.superview tag]));
+
+  [_reactSubviews insertObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_reactSubviews removeObject:(RNSScreenStackHeaderSubviewComponentView*)childComponentView];
+  [_reactSubviews removeObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView];
   [childComponentView removeFromSuperview];
 }
 
@@ -206,17 +208,17 @@ using namespace facebook::react;
 
   if (newScreenProps.hidden != !_show) {
     _show = !newScreenProps.hidden;
-    needsNavigationControlerLayout=YES;
+    needsNavigationControlerLayout = YES;
   }
 
   if (newScreenProps.translucent != _translucent) {
     _translucent = newScreenProps.translucent;
-    needsNavigationControlerLayout=YES;
+    needsNavigationControlerLayout = YES;
   }
 
   [self updateViewControllerIfNeeded];
 
-  if(needsNavigationControlerLayout){
+  if (needsNavigationControlerLayout) {
     [self layoutNavigationControllerView];
   }
 
