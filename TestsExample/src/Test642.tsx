@@ -23,6 +23,7 @@ export default function App(): JSX.Element {
           component={Home}
           options={{
             statusBarStyle: 'dark',
+            homeIndicatorHidden: true,
           }}
         />
         <Stack.Screen
@@ -38,6 +39,7 @@ export default function App(): JSX.Element {
           options={{
             statusBarStyle: 'light',
             stackPresentation: "fullScreenModal",
+            homeIndicatorHidden: true,
           }}
         />
       </Stack.Navigator>
@@ -61,6 +63,7 @@ const Inner = () => (
   <InnerStack.Navigator
     screenOptions={{
       statusBarStyle: 'dark',
+      homeIndicatorHidden: true,
     }}>
     <InnerStack.Screen name="DeeperHome" component={Home} />
   </InnerStack.Navigator>
