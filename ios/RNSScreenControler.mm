@@ -1,15 +1,20 @@
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSScreenComponentView.h"
 
 @implementation RNSScreenController {
-    CGRect _lastViewFrame;
-    UIView* _initialView;
+  CGRect _lastViewFrame;
+  RNSScreenComponentView *_initialView;
 }
 
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
     self.view = view;
-    _initialView = view;
+    if ([view isKindOfClass:[RNSScreenComponentView class]]) {
+      _initialView = (RNSScreenComponentView *)view;
+    } else {
+      RCTLogError(@"ScreenController can only be initialized with ScreenComponentView");
+    }
   }
   return self;
 }
@@ -30,52 +35,39 @@
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
-  if([self.view isKindOfClass:[RNSScreenComponentView class]]){
-    [super viewWillAppear:animated];
-    [((RNSScreenComponentView *)self.view) notifyWillAppear];
-  }
+  [super viewWillAppear:animated];
+  [_initialView notifyWillAppear];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-  if([self.view isKindOfClass:[RNSScreenComponentView class]]){
-    [super viewWillDisappear:animated];
-    [((RNSScreenComponentView *)self.view) notifyWillDisappear];
-  }
+  [super viewWillDisappear:animated];
+  [_initialView notifyWillDisappear];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-  if([self.view isKindOfClass:[RNSScreenComponentView class]]){
-    [super viewDidAppear:animated];
-    [((RNSScreenComponentView *)self.view) notifyAppear];
-  }
+  [super viewDidAppear:animated];
+  [_initialView notifyAppear];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-  if([self.view isKindOfClass:[RNSScreenComponentView class]]){
-    [super viewDidDisappear:animated];
-    [((RNSScreenComponentView *)self.view) notifyDisappear];
-    if (self.parentViewController == nil && self.presentingViewController == nil) {
-      // screen dismissed, send event
-      [((RNSScreenComponentView *)self.view) notifyDismissedWithCount:1];
-    }
+  [super viewDidDisappear:animated];
+  [((RNSScreenComponentView *)self.view) notifyDisappear];
+  if (self.parentViewController == nil && self.presentingViewController == nil) {
+    // screen dismissed, send event
+    [_initialView notifyDismissedWithCount:1];
   }
 }
 
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
-  if([self.view isKindOfClass:[RNSScreenComponentView class]]){
-    BOOL isDisplayedWithinUINavController =
-        [self.parentViewController isKindOfClass:[UINavigationController class]];
-    if ((isDisplayedWithinUINavController) &&
-        !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
-          _lastViewFrame = self.view.frame;
-          auto viewIfLoaded = (RNSScreenComponentView*)self.viewIfLoaded;
-          [viewIfLoaded updateBounds];
-    }
+  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
+  if ((isDisplayedWithinUINavController) && !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+    _lastViewFrame = self.view.frame;
+    [_initialView updateBounds];
   }
 }
 
