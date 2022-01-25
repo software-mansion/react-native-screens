@@ -21,7 +21,7 @@
 
 - (void)setViewToSnapshot
 {
-  UIView* snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+  UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
   [self.view removeFromSuperview];
   self.view = snapshot;
 }
@@ -29,7 +29,7 @@
 - (void)resetViewToScreen
 {
   [self.view removeFromSuperview];
-  self.view=_initialView;
+  self.view = _initialView;
 }
 
 // TODO: Find out why this is executed when screen is going out

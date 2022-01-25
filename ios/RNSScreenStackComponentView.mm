@@ -2,11 +2,11 @@
 #import "RNSScreenComponentView.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 
-#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
-#import <react/renderer/components/rnscreens/EventEmitters.h>
-#import <react/renderer/components/rnscreens/Props.h>
-#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <React/UIView+React.h>
+#import <react/renderer/components/ScreensSpec/ComponentDescriptors.h>
+#import <react/renderer/components/ScreensSpec/EventEmitters.h>
+#import <react/renderer/components/ScreensSpec/Props.h>
+#import <react/renderer/components/ScreensSpec/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 
@@ -28,19 +28,18 @@ using namespace facebook::react;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    if (self = [super initWithFrame:frame]) {
-        static const auto defaultProps = std::make_shared<const RNSScreenStackProps>();
-        _props = defaultProps;
-        _reactSubviews = [NSMutableArray new];
-        _controller = [[UINavigationController alloc] init];
-        _controller.delegate = self;
-        [_controller setViewControllers:@[ [UIViewController new] ]];
-        _invalidated=NO;
-    }
+  if (self = [super initWithFrame:frame]) {
+    static const auto defaultProps = std::make_shared<const RNSScreenStackProps>();
+    _props = defaultProps;
+    _reactSubviews = [NSMutableArray new];
+    _controller = [[UINavigationController alloc] init];
+    _controller.delegate = self;
+    [_controller setViewControllers:@[ [UIViewController new] ]];
+    _invalidated = NO;
+  }
 
-    return self;
+  return self;
 }
-
 
 - (void)markChildUpdated
 {
@@ -54,44 +53,43 @@ using namespace facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-    if (![childComponentView isKindOfClass:[RNSScreenComponentView class]]) {
-      RCTLogError(@"ScreenStack only accepts children of type Screen");
-      return;
-    }
-    
-    RCTAssert(
-        childComponentView.reactSuperview == nil,
-        @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
-        self,
-        childComponentView,
-        @(index),
-        @([childComponentView.superview tag]));
-    
-    
-    [_reactSubviews insertObject:(RNSScreenComponentView*)childComponentView atIndex:index];
-    ((RNSScreenComponentView*)childComponentView).reactSuperview = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [self maybeAddToParentAndUpdateContainer];
-    });
+  if (![childComponentView isKindOfClass:[RNSScreenComponentView class]]) {
+    RCTLogError(@"ScreenStack only accepts children of type Screen");
+    return;
+  }
+
+  RCTAssert(
+      childComponentView.reactSuperview == nil,
+      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+      self,
+      childComponentView,
+      @(index),
+      @([childComponentView.superview tag]));
+
+  [_reactSubviews insertObject:(RNSScreenComponentView *)childComponentView atIndex:index];
+  ((RNSScreenComponentView *)childComponentView).reactSuperview = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self maybeAddToParentAndUpdateContainer];
+  });
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RNSScreenComponentView* screenChildComponent = (RNSScreenComponentView*)childComponentView;
+  RNSScreenComponentView *screenChildComponent = (RNSScreenComponentView *)childComponentView;
   RCTAssert(
-    screenChildComponent.reactSuperview == self,
-    @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
-    self,
-    screenChildComponent,
-    @(index));
+      screenChildComponent.reactSuperview == self,
+      @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+      self,
+      screenChildComponent,
+      @(index));
   RCTAssert(
-    (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
-    @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
-    self,
-    screenChildComponent,
-    @(index),
-    @([_reactSubviews indexOfObject:screenChildComponent]),
-    @([[_reactSubviews objectAtIndex:index] tag]));
+      (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
+      @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
+      self,
+      screenChildComponent,
+      @(index),
+      @([_reactSubviews indexOfObject:screenChildComponent]),
+      @([[_reactSubviews objectAtIndex:index] tag]));
   screenChildComponent.reactSuperview = nil;
   [_reactSubviews removeObject:screenChildComponent];
   [screenChildComponent removeFromSuperview];
@@ -118,10 +116,11 @@ using namespace facebook::react;
                     animated:(BOOL)animated
 {
   UIView *view = viewController.view;
-    if([view isKindOfClass:RNSScreenComponentView.class]){
-        RNSScreenStackHeaderConfigComponentView* config =(RNSScreenStackHeaderConfigComponentView*)((RNSScreenComponentView*)view).config;
-        [RNSScreenStackHeaderConfigComponentView willShowViewController:viewController animated:animated withConfig:config];
-    }
+  if ([view isKindOfClass:RNSScreenComponentView.class]) {
+    RNSScreenStackHeaderConfigComponentView *config =
+        (RNSScreenStackHeaderConfigComponentView *)((RNSScreenComponentView *)view).config;
+    [RNSScreenStackHeaderConfigComponentView willShowViewController:viewController animated:animated withConfig:config];
+  }
 }
 
 - (void)maybeAddToParentAndUpdateContainer
@@ -151,22 +150,20 @@ using namespace facebook::react;
 {
   if (!controller.parentViewController) {
     UIView *parentView = (UIView *)self.reactSuperview;
-      while (parentView) {
+    while (parentView) {
       if ([parentView reactViewController]) {
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
 #if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
-    [self navigationController:_controller willShowViewController:_controller.topViewController animated:NO];
-
+        [self navigationController:_controller willShowViewController:_controller.topViewController animated:NO];
       }
       parentView = (UIView *)parentView.reactSuperview;
     }
     return;
   }
 }
-
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
@@ -201,7 +198,7 @@ using namespace facebook::react;
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top]) {
         // setting new controllers with animation does `push` animation by default
-        auto screenController = (RNSScreenController*)top;
+        auto screenController = (RNSScreenController *)top;
         [screenController resetViewToScreen];
         [_controller setViewControllers:controllers animated:YES];
       } else {
@@ -220,7 +217,7 @@ using namespace facebook::react;
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
-      auto screenController = (RNSScreenController*)top;
+      auto screenController = (RNSScreenController *)top;
       [screenController resetViewToScreen];
       [_controller pushViewController:top animated:shouldAnimate];
     } else {
@@ -281,21 +278,24 @@ using namespace facebook::react;
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    return YES;
+  return YES;
 }
 
 #pragma mark - RCTComponentViewProtocol
 
-bool shouldAnimateScreenChange(std::vector<std::string> lastKeys, std::vector<std::string> newKeys){
-    if(lastKeys.empty())return false;
-    if(newKeys.empty())return lastKeys.size()==1;
-    if(lastKeys.back()!=newKeys.back()){
-        if(lastKeys.size()>=2){
-            auto secondLastLastKey = lastKeys[lastKeys.size()-2];
-            return secondLastLastKey == newKeys.back();
-        }
-    }
+bool shouldAnimateScreenChange(std::vector<std::string> lastKeys, std::vector<std::string> newKeys)
+{
+  if (lastKeys.empty())
     return false;
+  if (newKeys.empty())
+    return lastKeys.size() == 1;
+  if (lastKeys.back() != newKeys.back()) {
+    if (lastKeys.size() >= 2) {
+      auto secondLastLastKey = lastKeys[lastKeys.size() - 2];
+      return secondLastLastKey == newKeys.back();
+    }
+  }
+  return false;
 }
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
@@ -303,19 +303,19 @@ bool shouldAnimateScreenChange(std::vector<std::string> lastKeys, std::vector<st
   const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenStackProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenStackProps>(props);
 
-  if(shouldAnimateScreenChange(oldScreenProps.screensKeys, newScreenProps.screensKeys)){
+  if (shouldAnimateScreenChange(oldScreenProps.screensKeys, newScreenProps.screensKeys)) {
     [self screenWillGoOut];
   }
-    
-[super updateProps:props oldProps:oldProps];
-  
+
+  [super updateProps:props oldProps:oldProps];
+
   _props = std::static_pointer_cast<RNSScreenStackHeaderConfigProps const>(props);
 }
 
 - (void)prepareForRecycle
 {
-    [super prepareForRecycle];
-    _reactSubviews = [NSMutableArray new];
+  [super prepareForRecycle];
+  _reactSubviews = [NSMutableArray new];
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
@@ -329,4 +329,3 @@ Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 {
   return RNSScreenStackComponentView.class;
 }
-
