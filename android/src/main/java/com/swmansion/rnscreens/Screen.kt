@@ -46,16 +46,6 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context) {
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
     }
 
-    override fun onAnimationStart() {
-        super.onAnimationStart()
-        fragment?.onViewAnimationStart()
-    }
-
-    override fun onAnimationEnd() {
-        super.onAnimationEnd()
-        fragment?.onViewAnimationEnd()
-    }
-
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
         // do nothing, react native will keep the view hierarchy so no need to serialize/deserialize
         // view's states. The side effect of restoring is that TextInput components would trigger

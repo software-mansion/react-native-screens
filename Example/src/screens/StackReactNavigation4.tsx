@@ -90,7 +90,7 @@ const AppNavigator = createCompatNavigatorFactory(createNativeStackNavigator)(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 100,
+    paddingTop: 10,
   },
   text: {
     textAlign: 'center',
