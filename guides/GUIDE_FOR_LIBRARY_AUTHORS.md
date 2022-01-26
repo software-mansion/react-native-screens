@@ -174,6 +174,8 @@ Sets the direction in which you should swipe to dismiss the screen. The followin
 - `vertical` – dismiss screen vertically
 - `horizontal` – dismiss screen horizontally (default)
 
+When using `vertical` option, `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` will be set by default.
+
 #### `useTransitionProgress`
 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:

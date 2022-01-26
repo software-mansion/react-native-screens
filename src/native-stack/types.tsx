@@ -327,6 +327,7 @@ export type NativeStackNavigationOptions = {
   statusBarTranslucent?: boolean;
   /**
    * Sets the direction in which you should swipe to dismiss the screen.
+   * When using `vertical` option, `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` will be set by default.
    * The following values are supported:
    * - `vertical` – dismiss screen vertically
    * - `horizontal` – dismiss screen horizontally (default)
