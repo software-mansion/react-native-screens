@@ -26,31 +26,6 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('should go to Chats and run opening & closing events in correct order ', async () => {
-    await element(by.id('root-screen-playground-Events')).tap();
-
-    await element(by.id('events-go-to-chats')).tap();
-
-    await expect(
-      element(by.text('3. Main | transitionStart | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('4. Chats | transitionStart | opening'))
-    ).toExist();
-    await expect(
-      element(by.text('5. Privacy | transitionStart | opening'))
-    ).toExist();
-    await expect(
-      element(by.text('6. Main | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('7. Chats | transitionEnd | opening'))
-    ).toExist();
-    await expect(
-      element(by.text('8. Privacy | transitionEnd | opening'))
-    ).toExist();
-  });
-
   it('should go back from Chats using header button and run opening & closing events in correct order ', async () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
@@ -108,42 +83,6 @@ describe('Events', () => {
     ).toExist();
     await expect(
       element(by.text('8. Privacy | transitionEnd | opening'))
-    ).toExist();
-  });
-
-  it('should use "none" animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
-    await element(by.id('root-screen-playground-Events')).tap();
-
-    await element(by.id('events-stack-animation-picker')).tap();
-    await element(by.id('stack-animation-none')).tap();
-
-    await element(by.id('events-go-to-chats')).tap();
-
-    if (device.getPlatform() === 'ios') {
-      await element(by.type('_UIButtonBarButton')).tap();
-    } else {
-      await element(
-        by.type('androidx.appcompat.widget.AppCompatImageButton')
-      ).tap();
-    }
-
-    await expect(
-      element(by.text('9. Chats | transitionStart | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('10. Privacy | transitionStart | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('11. Main | transitionStart | opening'))
-    ).toExist();
-    await expect(
-      element(by.text('12. Chats | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('13. Privacy | transitionEnd | closing'))
-    ).toExist();
-    await expect(
-      element(by.text('14. Main | transitionEnd | opening'))
     ).toExist();
   });
 
