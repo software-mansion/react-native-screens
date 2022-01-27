@@ -13,8 +13,8 @@
   "dependencies": {
     "patch-package": "^6.4.7",
     "react": "17.0.2",
-    "react-native": "0.0.0-20220102-2009-e22b760e5",
-    "react-native-codegen": "^0.0.12",
+    "react-native": "0.0.0-20220126-2009-86fa2a510",
+    "react-native-codegen": "0.0.13",
     "react-native-screens": "link:../"
   },
   "devDependencies": {
