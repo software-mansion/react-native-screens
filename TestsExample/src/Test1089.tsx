@@ -9,8 +9,13 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import Animated, {
+  SlideInLeft,
+  SlideOutRight,
+  SlideInUp,
+  SlideOutDown,
+  SlideInRight,
   LinearTransition,
-  JumpingTransition,
+  SlideOutUp,
 } from 'react-native-reanimated';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -32,7 +37,7 @@ const sharedElements = [
 function NestedFirst() {
   return (
     <NestedStack.Navigator>
-      <NestedStack.Screen name="NestedFirst" component={First} options={{headerShown: false}}/>
+      <NestedStack.Screen name="NestedFirst" component={First} options={{headerShown: true}}/>
     </NestedStack.Navigator>
   )
 }
@@ -92,11 +97,21 @@ export default function App(): JSX.Element {
         screenOptions={{
           stackAnimation: 'reanimated',
         }}>
-        <Stack.Screen name="First" component={First} options={{sharedElements, headerShown: false, 
-           hiding: LinearTransition,   reappearing: LinearTransition, exiting: LinearTransition
-      }}/>
-        <Stack.Screen name="Second" component={Second} options={{headerShown: true, sharedElements,
-             hiding: LinearTransition,   reappearing: LinearTransition, exiting: LinearTransition
+        <Stack.Screen name="First" component={NestedFirst} options={{sharedElements, 
+        headerShown: false, 
+        entering: SlideInLeft,
+        hiding: SlideOutDown,
+        reappearing: SlideInLeft,
+         exiting: SlideOutDown
+              }}/>
+        <Stack.Screen name="Second" component={Second} options={{
+          headerShown: false, 
+          // headerTranslucent: true,
+          sharedElements,
+          entering: SlideInRight,
+          hiding: SlideOutRight,  
+          reappearing: SlideInLeft, 
+          exiting: SlideOutRight
 
         }}/>
       </Stack.Navigator>

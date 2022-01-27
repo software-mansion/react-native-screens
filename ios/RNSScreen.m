@@ -730,18 +730,16 @@
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-          for (NSArray *sharedElement in sharedElements) {
-            UIView *startingView = sharedElement[0];
-            // we add all views immediately, otherwise it won't work correctly
-            [[context containerView] addSubview:startingView];
-          }
-          dispatch_async(dispatch_get_main_queue(), ^{
-            // we dispatch it async so that the native animation is not fired since it would mess with reanimated trying
-            // to set frames etc
+          if (self->_closing) {
+            for (NSArray *sharedElement in sharedElements) {
+              UIView *startingView = sharedElement[0];
+              // we add all views immediately, otherwise it won't work correctly
+              [[context containerView] addSubview:startingView];
+            }
             [RNSScreen asignEndingValuesWithTransitionContext:context
                                                sharedElements:sharedElements
-                                                      closing:self->_closing];
-          });
+                                                 goingForward:self->_goingForward];
+          }
 
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
           [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
@@ -770,7 +768,7 @@
 
 + (void)asignEndingValuesWithTransitionContext:(id<UIViewControllerTransitionCoordinatorContext> _Nonnull)context
                                 sharedElements:(NSMutableArray<NSArray *> *)sharedElements
-                                       closing:(BOOL)closing
+                                  goingForward:(BOOL)goingForward
 {
   UIViewController *toViewController = [context viewControllerForKey:UITransitionContextToViewControllerKey];
   [toViewController.view setNeedsLayout];
@@ -790,30 +788,28 @@
   }
   for (NSArray *sharedElement in sharedElements) {
     UIView *startingView = sharedElement[0];
+    UIView *startingViewParent = sharedElement[2];
     UIView *endingView = sharedElement[1];
 
     [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
                                                   fromView:startingView
-                                         fromViewConverter:lowestFromVC.view
+                                         fromViewConverter:startingViewParent
                                                     toView:endingView
-                                           toViewConverter:lowestToVC.view
+                                           toViewConverter:endingView.superview
                                             transitionType:@"sharedElementTransition"];
   }
-  if (closing) {
-    // we want to fire it only once for transition
-    [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
-                                                  fromView:fromViewController.view
-                                         fromViewConverter:fromViewController.view
-                                                    toView:nil
-                                           toViewConverter:nil
-                                            transitionType:@"hiding"];
-    [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
-                                                  fromView:toViewController.view
-                                         fromViewConverter:toViewController.view
-                                                    toView:nil
-                                           toViewConverter:nil
-                                            transitionType:@"reappearing"];
-  }
+  [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+                                                fromView:fromViewController.view
+                                       fromViewConverter:fromViewController.view
+                                                  toView:nil
+                                         toViewConverter:nil
+                                          transitionType:goingForward ? @"hiding" : @"exiting"];
+  [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+                                                fromView:toViewController.view
+                                       fromViewConverter:toViewController.view
+                                                  toView:nil
+                                         toViewConverter:nil
+                                          transitionType:goingForward ? @"entering" : @"reappearing"];
 }
 
 - (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<NSArray *> *)sharedElements
