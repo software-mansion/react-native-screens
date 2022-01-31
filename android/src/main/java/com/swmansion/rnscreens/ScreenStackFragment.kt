@@ -6,6 +6,9 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -14,7 +17,6 @@ import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
@@ -28,6 +30,9 @@ class ScreenStackFragment : ScreenFragment {
     val parentViews: MutableList<ViewGroup> = mutableListOf()
     val transitionContainer: CoordinatorLayout = CoordinatorLayout(screen.context)
     var shouldPerformSET = false
+
+    var searchView: CustomSearchView? = null
+    var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -69,7 +74,8 @@ class ScreenStackFragment : ScreenFragment {
     fun setToolbarTranslucent(translucent: Boolean) {
         if (mIsTranslucent != translucent) {
             val params = screen.layoutParams
-            (params as CoordinatorLayout.LayoutParams).behavior = if (translucent) null else ScrollingViewBehavior()
+            (params as CoordinatorLayout.LayoutParams).behavior =
+                if (translucent) null else ScrollingViewBehavior()
             mIsTranslucent = translucent
         }
     }
@@ -84,35 +90,6 @@ class ScreenStackFragment : ScreenFragment {
         notifyViewAppearTransitionEnd()
     }
 
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        // this means that the fragment will appear with a custom transition, in the case
-        // of animation: 'none', onViewAnimationStart and onViewAnimationEnd
-        // won't be called and we need to notify stack directly from here.
-        // When using the Toolbar back button this is called an extra time with transit = 0 but in
-        // this case we don't want to notify. The way I found to detect is case is check isHidden.
-        if (transit == 0 && !isHidden &&
-            screen.stackAnimation === Screen.StackAnimation.NONE
-        ) {
-            if (enter) {
-                // Android dispatches the animation start event for the fragment that is being added first
-                // however we want the one being dismissed first to match iOS. It also makes more sense
-                // from  a navigation point of view to have the disappear event first.
-                // Since there are no explicit relationships between the fragment being added / removed
-                // the practical way to fix this is delaying dispatching the appear events at the end of
-                // the frame.
-                UiThreadUtil.runOnUiThread {
-                    dispatchOnWillAppear()
-                    dispatchOnAppear()
-                }
-            } else {
-                dispatchOnWillDisappear()
-                dispatchOnDisappear()
-                notifyViewAppearTransitionEnd()
-            }
-        }
-        return null
-    }
-
     private fun notifyViewAppearTransitionEnd() {
         val screenStack = view?.parent
         if (screenStack is ScreenStack) {
@@ -125,7 +102,8 @@ class ScreenStackFragment : ScreenFragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: NotifyingCoordinatorLayout? = context?.let { NotifyingCoordinatorLayout(it, this) }
+        val view: ScreensCoordinatorLayout? =
+            context?.let { ScreensCoordinatorLayout(it, this) }
         val params = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         )
@@ -147,7 +125,47 @@ class ScreenStackFragment : ScreenFragment {
             mAppBarLayout?.targetElevation = 0f
         }
         mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
+        setHasOptionsMenu(true)
         return view
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        updateToolbarMenu(menu)
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        updateToolbarMenu(menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun shouldShowSearchBar(): Boolean {
+        val config = screen.headerConfig
+        val numberOfSubViews = config?.configSubviewsCount ?: 0
+        if (config != null && numberOfSubViews > 0) {
+            for (i in 0 until numberOfSubViews) {
+                val subView = config.getConfigSubview(i)
+                if (subView.type == ScreenStackHeaderSubview.Type.SEARCH_BAR) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun updateToolbarMenu(menu: Menu) {
+        menu.clear()
+        if (shouldShowSearchBar()) {
+            val currentContext = context
+            if (searchView == null && currentContext != null) {
+                val newSearchView = CustomSearchView(currentContext, this)
+                searchView = newSearchView
+                onSearchViewCreate?.invoke(newSearchView)
+            }
+            val item = menu.add("")
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            item.actionView = searchView
+        }
     }
 
     fun canNavigateBack(): Boolean {
@@ -173,7 +191,7 @@ class ScreenStackFragment : ScreenFragment {
         container.dismiss(this)
     }
 
-    private class NotifyingCoordinatorLayout(context: Context, private val mFragment: ScreenStackFragment) : CoordinatorLayout(context) {
+    private class ScreensCoordinatorLayout(context: Context, private val mFragment: ScreenStackFragment) : CoordinatorLayout(context) {
         private val mAnimationListener: Animation.AnimationListener = object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 mFragment.onViewAnimationStart()
@@ -221,8 +239,8 @@ class ScreenStackFragment : ScreenFragment {
                 }
             }
 
-            override fun onAnimationRepeat(animation: Animation) {}
-        }
+                override fun onAnimationRepeat(animation: Animation) {}
+            }
 
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for
@@ -247,6 +265,19 @@ class ScreenStackFragment : ScreenFragment {
                 set.addAnimation(fakeAnimation)
                 set.setAnimationListener(mAnimationListener)
                 super.startAnimation(set)
+            }
+        }
+
+        /**
+         * This method implements a workaround for RN's autoFocus functionality. Because of the way
+         * autoFocus is implemented it dismisses soft keyboard in fragment transition
+         * due to change of visibility of the view at the start of the transition. Here we override the
+         * call to `clearFocus` when the visibility of view is `INVISIBLE` since `clearFocus` triggers the
+         * hiding of the keyboard in `ReactEditText.java`.
+         */
+        override fun clearFocus() {
+            if (visibility != INVISIBLE) {
+                super.clearFocus()
             }
         }
     }

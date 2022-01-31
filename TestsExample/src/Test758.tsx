@@ -29,7 +29,7 @@ export default function App(): JSX.Element {
 }
 
 function First({navigation}: NativeStackScreenProps<ParamListBase>) {
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     navigation.setOptions({
       searchBar: searchBarOptions,
     });

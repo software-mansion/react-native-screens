@@ -152,9 +152,12 @@
     nextVC = nav.topViewController;
   }
 
+  // we want updates sent to the VC below modal too since it is also visible
+  BOOL isPresentingVC = vc.presentedViewController == nextVC;
+
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
-  if (vc != nil && (nextVC == vc || isInFullScreenModal)) {
+  if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC)) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:YES];
   }
 }
@@ -590,6 +593,13 @@
         break;
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
+        if (subview.subviews == nil || [subview.subviews count] == 0) {
+          RCTLogWarn(
+              @"Failed to attach search bar to the header. We recommend using `useLayoutEffect` when managing "
+               "searchBar properties dynamically. \n\nSee: github.com/software-mansion/react-native-screens/issues/1188");
+          break;
+        }
+
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
 #if !TARGET_OS_TV
           if (@available(iOS 11.0, *)) {

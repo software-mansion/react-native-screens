@@ -1,6 +1,5 @@
 <img src="https://user-images.githubusercontent.com/16062886/117443651-c13d9500-af38-11eb-888d-b6a0b580760c.png" width="100%" alt="React Native Screens by Software Mansion" >
 
-
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
 ## Supported platforms
@@ -36,6 +35,26 @@ protected void onCreate(Bundle savedInstanceState) {
 
 For people that must handle cases like this, there is [a more detailed discussion of the difficulties in a series of related comments](https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704633).
 
+<details>
+<summary>Need to use a custom Kotlin version?</summary>
+<br>
+
+Since `v3.6.0` `react-native-screens` has been rewritten with Kotlin. Kotlin version used in this library defaults to `1.4.10`.
+
+If you need to use a different Kotlin version, set `kotlinVersion` ext property in your project's `android/build.gradle` and the library will use this version accordingly:
+
+```
+buildscript {
+    ext {
+        ...
+        kotlinVersion = "1.4.10"
+    }
+}
+```
+
+**Disclaimer**: `react-native-screens` requires Kotlin `1.3.50` or higher.
+</details>
+
 ### Windows
 
 Installation on Windows should be completely handled with auto-linking when using React Native Windows 0.63+. For earlier versions, you must [manually link](https://microsoft.github.io/react-native-windows/docs/native-modules-using) the native module.
@@ -69,6 +88,24 @@ Just make sure that the version of [react-navigation](https://github.com/react-n
 
 You are all set 🎉 – when screens are enabled in your application code react-navigation will automatically use them instead of relying on plain React Native Views.
 
+### Experimental support for `react-freeze`
+
+> You have to use React Native 0.64 or higher, react-navigation 5.x or 6.x and react-native-screens >= v3.9.0
+
+Since `v3.9.0`, `react-native-screens` comes with experimental support for [`react-freeze`](https://github.com/software-mansion-labs/react-freeze). It uses the React `Suspense` mechanism to prevent parts of the React component tree from rendering, while keeping its state untouched.
+
+To benefit from this feature, enable it in your entry file (e.g. `App.js`) with this snippet:
+
+```js
+import { enableFreeze } from 'react-native-screens';
+
+enableFreeze(true);
+```
+
+Want to know more? Check out [react-freeze README](https://github.com/software-mansion-labs/react-freeze#readme)
+
+Found a bug? File an issue [here](https://github.com/software-mansion/react-native-screens/issues) or directly in [react-freeze repository](https://github.com/software-mansion-labs/react-freeze/issues).
+
 ### Disabling `react-native-screens`
 
 If, for whatever reason, you'd like to disable native screens support and use plain React Native Views add the following code in your entry file (e.g. `App.js`):
@@ -84,9 +121,10 @@ You can also disable the usage of native screens per navigator with [`detachInac
 ### Using `createNativeStackNavigator` with React Navigation
 
 To take advantage of the native stack navigator primitive for React Navigation that leverages `UINavigationController` on iOS and `Fragment` on Android, please refer:
+
 - for React Navigation >= v6 to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator)
-- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/master/native-stack) 
-- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/master/createNativeStackNavigator) 
+- for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/main/native-stack)
+- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/main/createNativeStackNavigator)
 
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
@@ -94,16 +132,36 @@ React-native-navigation library already uses native containers for rendering nav
 
 ## Interop with other libraries
 
-This library should work out of the box with all existing react-native libraries. If you experience problems with interoperability please [report an issue](https://github.com/kmagiera/react-native-screens/issues).
+This library should work out of the box with all existing react-native libraries. If you experience problems with interoperability please [report an issue](https://github.com/software-mansion/react-native-screens/issues).
 
 ## Guide for navigation library authors
 
 If you are building a navigation library you may want to use `react-native-screens` to have control over which parts of the React component tree are attached to the native view hierarchy.
-To do that, `react-native-screens` provides you with the components documented [here](https://github.com/kmagiera/react-native-screens/tree/master/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
+To do that, `react-native-screens` provides you with the components documented [here](https://github.com/software-mansion/react-native-screens/tree/main/guides/GUIDE_FOR_LIBRARY_AUTHORS.md).
+
+## Common problems
+
+### Problems with header on iOS
+
+- [Focused search bar causes new screens to have incorrect header](https://github.com/software-mansion/react-native-screens/issues/996)
+- [Scrollable content gets cut off by the header with a search bar](https://github.com/software-mansion/react-native-screens/issues/1120)
+- [RefreshControl does not work properly with NativeStackNavigator and largeTitle](https://github.com/software-mansion/react-native-screens/issues/395)
+
+#### Solution
+
+Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a main container of the screen and set `headerTranslucent: true` in screen options.
+
+### Other problems
+
+| Problem                                                                                                                                      | Solution                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                         | [related PRs](https://github.com/software-mansion/react-native-screens/issues/773#issuecomment-783469792)           |
+| [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843) | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
+| [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)     | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
 
 ## Contributing
 
-There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/kmagiera/react-native-screens/tree/master/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
+There are many ways to contribute to this project. See [CONTRIBUTING](https://github.com/software-mansion/react-native-screens/tree/main/guides/CONTRIBUTING.md) guide for more information. Thank you for your interest in contributing!
 
 ## License
 
@@ -111,7 +169,8 @@ React native screens library is licensed under [The MIT License](LICENSE).
 
 ## Credits
 
-This project is supported by amazing people from [Expo.io](https://expo.io) and [Software Mansion](https://swmansion.com)
+This project has been build and is maintained thanks to the support from [Shopify](https://shopify.com), [Expo.io](https://expo.io) and [Software Mansion](https://swmansion.com)
 
+[![shopify](https://avatars1.githubusercontent.com/u/8085?v=3&s=100 'Shopify.com')](https://shopify.com)
 [![expo](https://avatars2.githubusercontent.com/u/12504344?v=3&s=100 'Expo.io')](https://expo.io)
-[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=react-native-screens-github 'Software Mansion')](https://swmansion.com)
+[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=react-native-reanimated-github 'Software Mansion')](https://swmansion.com)

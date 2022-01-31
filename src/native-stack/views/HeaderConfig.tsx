@@ -9,8 +9,12 @@ import {
   ScreenStackHeaderRightView,
   ScreenStackHeaderSearchBarView,
   SearchBar,
+  SearchBarProps,
+  isSearchBarAvailableForCurrentPlatform,
+  executeNativeBackPress,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
+import { useBackPressSubscription } from '../utils/useBackPressSubscription';
 import { processFonts } from './FontProcessor';
 
 type Props = NativeStackNavigationOptions & {
@@ -48,6 +52,19 @@ export default function HeaderConfig({
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
 
+  // We need to use back press subscription here to override back button behavior on JS side.
+  // Because screens are usually used with react-navigation and this library overrides back button
+  // we need to handle it first in case when search bar is open
+  const {
+    handleAttached,
+    handleDetached,
+    clearSubscription,
+    createSubscription,
+  } = useBackPressSubscription({
+    onBackPress: executeNativeBackPress,
+    isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
+  });
+
   const [
     backTitleFontFamily,
     largeTitleFontFamily,
@@ -57,6 +74,29 @@ export default function HeaderConfig({
     headerLargeTitleStyle.fontFamily,
     headerTitleStyle.fontFamily,
   ]);
+
+  // We want to clear clearSubscription only when components unmounts or search bar changes
+  React.useEffect(() => clearSubscription, [searchBar]);
+
+  const processedSearchBarOptions = React.useMemo(() => {
+    if (
+      Platform.OS === 'android' &&
+      searchBar &&
+      !searchBar.disableBackButtonOverride
+    ) {
+      const onFocus: SearchBarProps['onFocus'] = (...args) => {
+        createSubscription();
+        searchBar.onFocus?.(...args);
+      };
+      const onClose: SearchBarProps['onClose'] = (...args) => {
+        clearSubscription();
+        searchBar.onClose?.(...args);
+      };
+
+      return { ...searchBar, onFocus, onClose };
+    }
+    return searchBar;
+  }, [searchBar, createSubscription, clearSubscription]);
 
   return (
     <ScreenStackHeaderConfig
@@ -99,7 +139,9 @@ export default function HeaderConfig({
       titleFontSize={headerTitleStyle.fontSize}
       titleFontWeight={headerTitleStyle.fontWeight}
       topInsetEnabled={headerTopInsetEnabled}
-      translucent={headerTranslucent === true}>
+      translucent={headerTranslucent === true}
+      onAttached={handleAttached}
+      onDetached={handleDetached}>
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>
           {headerRight({ tintColor })}
@@ -121,9 +163,10 @@ export default function HeaderConfig({
           {headerCenter({ tintColor })}
         </ScreenStackHeaderCenterView>
       ) : null}
-      {Platform.OS === 'ios' && searchBar !== undefined ? (
+      {isSearchBarAvailableForCurrentPlatform &&
+      processedSearchBarOptions !== undefined ? (
         <ScreenStackHeaderSearchBarView>
-          <SearchBar {...searchBar} />
+          <SearchBar {...processedSearchBarOptions} />
         </ScreenStackHeaderSearchBarView>
       ) : null}
     </ScreenStackHeaderConfig>

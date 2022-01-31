@@ -9,14 +9,19 @@ module.exports = {
     'prettier/standard',
   ],
 
-  plugins: ['react-native'],
+  plugins: ['react-native', 'react-hooks'],
 
   env: {
     'react-native/react-native': true,
   },
 
   settings: {
-    'import/core-modules': ['react-native-screens', 'react-native-screens/native-stack', 'react-native-screens/createNativeStackNavigator', 'react-native-screens/reanimated'],
+    'import/core-modules': [
+      'react-native-screens',
+      'react-native-screens/native-stack',
+      'react-native-screens/createNativeStackNavigator',
+      'react-native-screens/reanimated',
+    ],
     'import/ignore': ['node_modules/react-native/index\\.js$'],
     'import/resolver': {
       node: {
@@ -31,6 +36,8 @@ module.exports = {
 
   rules: {
     'react/prop-types': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
   },
 
   overrides: [

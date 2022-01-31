@@ -48,6 +48,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
   RNSWindowTraitAnimation,
   RNSWindowTraitHidden,
   RNSWindowTraitOrientation,
+  RNSWindowTraitHomeIndicatorHidden,
 };
 
 @interface RCTConvert (RNSScreen)
@@ -99,6 +100,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic) BOOL hasStatusBarAnimationSet;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;
 @property (nonatomic, copy) NSArray<NSDictionary *> *sharedElements;
+@property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 
@@ -107,6 +109,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic) UIStatusBarAnimation statusBarAnimation;
 @property (nonatomic) BOOL statusBarHidden;
 @property (nonatomic) UIInterfaceOrientationMask screenOrientation;
+@property (nonatomic) BOOL homeIndicatorHidden;
 #endif
 
 - (void)notifyFinishTransitioning;

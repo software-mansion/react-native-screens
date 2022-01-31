@@ -3,5 +3,4 @@
     android:fromAlpha="1.0"
     android:toAlpha="1.0"
     android:duration="20"
-    />  <!--Remember to change duration in the corresponding xml when modifying it-->
-
+    />  <!-- non-zero duration ensures transition events are triggered correctly -->

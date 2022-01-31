@@ -25,6 +25,11 @@ import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
+import Events from './src/screens/Events';
+
+import { enableFreeze } from 'react-native-screens';
+
+enableFreeze();
 
 if (Platform.OS === 'android') {
   StatusBar.setTranslucent(true);
@@ -85,8 +90,13 @@ const SCREENS: Record<
     type: 'playground',
   },
   SearchBar: {
-    title: 'Search bar (iOS)',
+    title: 'Search bar',
     component: SearchBar,
+    type: 'playground',
+  },
+  Events: {
+    title: 'Events',
+    component: Events,
     type: 'playground',
   },
 };
@@ -104,7 +114,7 @@ interface MainScreenProps {
 }
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
-  <ScrollView>
+  <ScrollView testID="root-screen-examples-scrollview">
     <SafeAreaView>
       <SettingsSwitch
         style={styles.switch}
@@ -134,6 +144,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
         .map((name) => (
           <ListItem
             key={name}
+            testID={`root-screen-playground-${name}`}
             title={SCREENS[name].title}
             onPress={() => navigation.navigate(name)}
           />

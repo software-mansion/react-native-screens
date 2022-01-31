@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.view.View
-import androidx.fragment.app.FragmentTransaction
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.util.ReactFindViewUtil
@@ -111,7 +110,6 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             }
         }
         var shouldUseOpenAnimation = true
-        var transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN
         var stackAnimation: StackAnimation? = null
         if (!mStack.contains(newTop)) {
             // if new top screen wasn't on stack we do "open animation" so long it is not the very first
@@ -122,21 +120,15 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 // before, probably replace or reset was called, so we play the "close animation".
                 // Otherwise it's open animation
                 val containsTopScreen = mTopScreen?.let { mScreenFragments.contains(it) } == true
-                shouldUseOpenAnimation = containsTopScreen || newTop.screen.replaceAnimation !== Screen.ReplaceAnimation.POP
-                stackAnimation = newTop.screen.stackAnimation
+                val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
+                shouldUseOpenAnimation = containsTopScreen || isPushReplace
+                // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
+                stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else mTopScreen?.screen?.stackAnimation
             } else if (mTopScreen == null && newTop != null) {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
-                // and we don't want the animation when it is entering, but we want to send the
-                // willAppear and Appear events to the user, which won't be sent by default if Screen's
-                // stack animation is not NONE (see check for stackAnimation in onCreateAnimation in
-                // ScreenStackFragment).
-                // We don't do it if the stack is nested since the parent will trigger these events in child
+                // and we don't want the animation when it is entering
                 stackAnimation = StackAnimation.NONE
-                if (newTop.screen.stackAnimation !== StackAnimation.NONE && !isNested) {
-                    goingForward = true
-                    newTop.dispatchOnWillAppear()
-                    newTop.dispatchOnAppear()
-                }
+                goingForward = true
             }
         } else if (mTopScreen != null && mTopScreen != newTop) {
             // otherwise if we are performing top screen change we do "close animation"
@@ -172,40 +164,30 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
             if (stackAnimation != null) {
                 if (shouldUseOpenAnimation) {
-                    transition = FragmentTransaction.TRANSIT_FRAGMENT_OPEN
                     when (stackAnimation) {
+                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
+                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
+                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
                         StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
                         StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
                             R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
                         )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
-                        else -> {
-                        }
                     }
                 } else {
-                    transition = FragmentTransaction.TRANSIT_FRAGMENT_CLOSE
                     when (stackAnimation) {
+                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
+                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
+                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
                         StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
                         StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
                             R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
                         )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
-                        else -> {
-                        }
                     }
                 }
-            }
-
-            if (stackAnimation === StackAnimation.NONE) {
-                transition = FragmentTransaction.TRANSIT_NONE
-            }
-            if (stackAnimation === StackAnimation.FADE) {
-                transition = FragmentTransaction.TRANSIT_FRAGMENT_FADE
-            }
-            if (stackAnimation != null && isSystemAnimation(stackAnimation)) {
-                it.setTransition(transition)
             }
             // animation logic end
             goingForward = shouldUseOpenAnimation
@@ -263,8 +245,33 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             mTopScreen = newTop
             mStack.clear()
             mStack.addAll(mScreenFragments)
+
+            turnOffA11yUnderTransparentScreen(visibleBottom)
+
             it.commitNowAllowingStateLoss()
         }
+    }
+
+    // only top visible screen should be accessible
+    private fun turnOffA11yUnderTransparentScreen(visibleBottom: ScreenStackFragment?) {
+        if (mScreenFragments.size > 1 && visibleBottom != null) {
+            mTopScreen?.let {
+                if (isTransparent(it)) {
+                    val screenFragmentsBeneathTop = mScreenFragments.slice(0 until mScreenFragments.size - 1).asReversed()
+                    // go from the top of the stack excluding the top screen
+                    for (screenFragment in screenFragmentsBeneathTop) {
+                        screenFragment.screen.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
+
+                        // don't change a11y below non-transparent screens
+                        if (screenFragment == visibleBottom) {
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+        topScreen?.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_AUTO)
     }
 
     override fun notifyContainerUpdate() {
@@ -348,10 +355,6 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     companion object {
-        private fun isSystemAnimation(stackAnimation: StackAnimation): Boolean {
-            return stackAnimation === StackAnimation.DEFAULT || stackAnimation === StackAnimation.FADE || stackAnimation === StackAnimation.NONE
-        }
-
         private fun isTransparent(fragment: ScreenStackFragment): Boolean {
             return (
                 fragment.screen.stackPresentation

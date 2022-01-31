@@ -2,15 +2,15 @@ name: Lint
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
   workflow_dispatch:
 jobs:
   install-and-lint:
     runs-on: ubuntu-latest
-    concurrency: 
+    concurrency:
       group: install-and-lint-${{ github.ref }}
       cancel-in-progress: true
     steps:
@@ -32,4 +32,3 @@ jobs:
       - name: Check types
         run: |
           yarn check-types
-

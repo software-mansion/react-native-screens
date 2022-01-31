@@ -48,6 +48,10 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
 
+### `homeIndicatorHidden` (iOS only)
+
+Whether the home indicator should be hidden on this screen. Defaults to `false`.
+
 ### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
@@ -247,24 +251,31 @@ Along with this component's properties that can be used to customize header beha
 - `ScreenStackHeaderCenterView` – the children will render in the center of the native navigation bar.
 - `ScreenStackHeaderRightView` – the children will render on the right-hand side of the navigation bar (or on the left-hand side in case LTR locales are set on the user's device).
 - `ScreenStackHeaderLeftView` – the children will render on the left-hand side of the navigation bar (or on the right-hand side in case LTR locales are set on the user's device).
-- `ScreenStackHeaderSearchBarView` - used exclusively for rendering iOS `<SearchBar>` component in the bottom of the native navigation bar.
+- `ScreenStackHeaderSearchBarView` - used for rendering  `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
 
 To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
 
-- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences`.
+- `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences` on iOS and `'none'` on Android.
+- `autoFocus` - If `true` automatically focuses search bar when screen is appearing. (Android only)
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
-- `cancelButtonText` - The text to be used instead of default `Cancel` button text.
-- `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`.
-- `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`.
-- `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`.
+- `cancelButtonText` - The text to be used instead of default `Cancel` button text. (iOS only)
+- `disableBackButtonOverride` - Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true`. (Android only)
+- `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`. (iOS only)
+- `hideWhenScrolling` - Boolean indicating whether to hide the search bar when scrolling. Defaults to `true`. (iOS only)
+- `inputType` - Specifies type of input and keyboard for search bar. Can be one of `'text'`, `'phone'`, `'number'`, `'email'`. Defaults to `'text'`. (Android only)
+- `obscureBackground` - Boolean indicating whether to obscure the underlying content with semi-transparent overlay. Defaults to `true`. (iOS only)
 - `onBlur` - A callback that gets called when search bar has lost focus.
 - `onChangeText` - A callback that gets called when the text changes. It receives the current text value of the search bar.
 - `onCancelButtonPress` - A callback that gets called when the cancel button is pressed.
+- `onClose` - A callback that gets called when search bar is closing. (Android only)
 - `onFocus` - A callback that gets called when search bar has received focus.
+- `onOpen` - A callback that gets called when search bar is expanding. (Android only)
 - `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
 - `textColor` - The search field text color.
-
+- `hintTextColor` - The search hint text color. (Android only)
+- `headerIconColor` - The search and close icon color shown in the header. (Android only)
+- `shouldShowHintSearchIcon` - Show the search hint icon when search bar is focused. (Android only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
 
@@ -402,16 +413,16 @@ In order for your native view on iOS to be notified when its parent navigation c
 }
 ```
 
-You can check our example app for a fully functional demo see [RNSSampleLifecycleAwareView.m](https://github.com/kmagiera/react-native-screens/blob/master/Example/ios/ScreensExample/RNSSampleLifecycleAwareView.m) for more details.
+You can check our example app for a fully functional demo see [RNSSampleLifecycleAwareView.m](https://github.com/software-mansion/react-native-screens/blob/main/Example/ios/ScreensExample/RNSSampleLifecycleAwareView.m) for more details.
 
 ## Navigation lifecycle on Android
 
 On Android, you can use [LifecycleObserver](https://developer.android.com/reference/android/arch/lifecycle/LifecycleObserver) interface which is a part of Android compat library to make your view handle lifecycle events.
-Check [LifecycleAwareView.java](https://github.com/kmagiera/react-native-screens/blob/master/Example/android/app/src/main/java/com/swmansion/rnscreens/example/LifecycleAwareView.java) from our example app for more details on that.
+Check [LifecycleAwareView.java](https://github.com/software-mansion/react-native-screens/blob/main/Example/android/app/src/main/java/com/swmansion/rnscreens/example/LifecycleAwareView.java) from our example app for more details on that.
 
-In addition to that, you will need to register for receiving these updates. This can be done using [`LifecycleHelper.register`](https://github.com/kmagiera/react-native-screens/blob/master/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L50).
-Remember to call [`LifecycleHelper.unregister`](https://github.com/kmagiera/react-native-screens/blob/master/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L59) before the view is dropped.
-Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/kmagiera/react-native-screens/blob/master/Example/android/app/src/main/java/com/swmansion/rnscreens/example/SampleLifecycleAwareViewManager.java) from our example app to see what are the best ways of using the above methods.
+In addition to that, you will need to register for receiving these updates. This can be done using [`LifecycleHelper.register`](https://github.com/software-mansion/react-native-screens/blob/main/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L50).
+Remember to call [`LifecycleHelper.unregister`](https://github.com/software-mansion/react-native-screens/blob/main/android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.java#L59) before the view is dropped.
+Please refer to [SampleLifecycleAwareViewManager.java](https://github.com/software-mansion/react-native-screens/blob/main/Example/android/app/src/main/java/com/swmansion/rnscreens/example/SampleLifecycleAwareViewManager.java) from our example app to see what are the best ways of using the above methods.
 
 ## Android hardware back button
 
