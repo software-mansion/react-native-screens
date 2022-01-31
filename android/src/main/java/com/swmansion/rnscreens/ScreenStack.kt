@@ -180,7 +180,6 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                             R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
                         )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
-                        StackAnimation.REANIMATED -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
                         else -> {
                         }
                     }
