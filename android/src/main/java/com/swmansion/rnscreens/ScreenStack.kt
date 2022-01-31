@@ -150,21 +150,24 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 // we want shared element transitions only after first appearance of stack
                 val sharedElementViews = mutableListOf<Pair<View, View>>()
                 for (i in 0 until (newTop?.screen?.sharedElements?.size() ?: 0)) {
+                    // we want the `from` view to always be the one in mTopScreen since we will
+                    // transition from its frame to the frame of the view in the newTop screen
                     val viewFromNativeTag = newTop?.screen?.sharedElements?.getMap(i)?.getString("fromID")
-                    var view = ReactFindViewUtil.findView(mTopScreen?.screen, viewFromNativeTag)
-                    if (view == null && newTop?.screen != null) {
-                        view = ReactFindViewUtil.findView(newTop.screen, viewFromNativeTag)
+                    val viewToNativeTag = newTop?.screen?.sharedElements?.getMap(i)?.getString("toID")
+
+                    var viewFrom = ReactFindViewUtil.findView(mTopScreen?.screen, viewFromNativeTag)
+                    if (viewFrom == null) {
+                        viewFrom = ReactFindViewUtil.findView(mTopScreen?.screen, viewToNativeTag)
                     }
 
-                    val viewToNativeTag = newTop?.screen?.sharedElements?.getMap(i)?.getString("toID")
-                    var viewTo = ReactFindViewUtil.findView(newTop?.screen, viewToNativeTag)
-                    if (viewTo == null && mTopScreen?.screen != null) {
-                        viewTo = ReactFindViewUtil.findView(mTopScreen?.screen, viewToNativeTag)
+                    var viewTo = ReactFindViewUtil.findView(newTop?.screen, viewFromNativeTag)
+                    if (viewTo == null) {
+                        viewTo = ReactFindViewUtil.findView(newTop?.screen, viewToNativeTag)
                     }
-                    view?.let { view1 -> viewTo?.let { view2 -> sharedElementViews.add(Pair(view1, view2)) } }
+                    viewFrom?.let { view1 -> viewTo?.let { view2 -> sharedElementViews.add(Pair(view1, view2)) } }
+                    newTop?.screen?.sharedElementViews = sharedElementViews
+                    newTop?.shouldPerformSET = true
                 }
-                mTopScreen?.screen?.sharedElementViews = sharedElementViews
-                newTop?.screen?.sharedElementViews = sharedElementViews
             }
 
             if (stackAnimation != null) {
@@ -177,6 +180,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                             R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
                         )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
+                        StackAnimation.REANIMATED -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
                         else -> {
                         }
                     }

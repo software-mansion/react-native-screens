@@ -20,16 +20,14 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import android.os.Looper
 
-
-
-
 class ScreenStackFragment : ScreenFragment {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
-    var parentViews: MutableList<ViewGroup> = mutableListOf()
+    val parentViews: MutableList<ViewGroup> = mutableListOf()
     val transitionContainer: CoordinatorLayout = CoordinatorLayout(screen.context)
+    var shouldPerformSET = false
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -180,32 +178,33 @@ class ScreenStackFragment : ScreenFragment {
             override fun onAnimationStart(animation: Animation) {
                 mFragment.onViewAnimationStart()
                 val activity = mFragment.tryGetActivity()
-                if (mFragment.isAdded && activity != null && mFragment.transitionContainer.parent == null) {
+                if (mFragment.shouldPerformSET && activity != null && mFragment.transitionContainer.parent == null) {
                     (mFragment.tryGetActivity()?.window?.decorView?.rootView as ViewGroup).addView(mFragment.transitionContainer)
 //                    mFragment.screen.container?.addView(mFragment.transitionContainer)
                     mFragment.screen.sharedElementViews?.forEach { pair ->
-                        pair.second.visibility = View.INVISIBLE
-                        val parent = pair.first.parent as ViewGroup
-                        parent.removeView(pair.first)
+                        val view1 = pair.first
+                        val view2 = pair.second
+
+                        view1.visibility = View.INVISIBLE
+                        val parent = view2.parent as ViewGroup
+                        parent.removeView(view2)
                         mFragment.parentViews.add(parent)
-                        val params = LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                        pair.first.layoutParams = params
-                        mFragment.transitionContainer.addView(pair.first)
+                        mFragment.transitionContainer.addView(view2)
                         SharedElementAnimatorClass.getDelegate()
-                            ?.runTransition(pair.first, pair.second)
+                            ?.runTransition(view1, view2)
                     }
                 }
             }
 
             override fun onAnimationEnd(animation: Animation) {
                 mFragment.onViewAnimationEnd()
-                if (mFragment.isAdded && mFragment.transitionContainer.parent != null) {
-                    mFragment.screen.sharedElementViews?.forEach { pair ->
-                        pair.second.visibility = View.VISIBLE
-                        mFragment.transitionContainer.removeView(pair.first)
-                        mFragment.parentViews[0].addView(pair.first)
+                if (mFragment.shouldPerformSET && mFragment.transitionContainer.parent != null) {
+                        mFragment.screen.sharedElementViews?.forEachIndexed { index, pair ->
+                            val view1 = pair.first
+                            val view2 = pair.second
+                        view1.visibility = View.VISIBLE
+                        mFragment.transitionContainer.removeView(view2)
+                        mFragment.parentViews[0].addView(view2)
                         mFragment.parentViews.removeAt(0)
                     }
                     // removal of view has to be postponed on after the end of animation.
@@ -218,6 +217,7 @@ class ScreenStackFragment : ScreenFragment {
                                 mFragment.transitionContainer)
                         }
                     }
+                    mFragment.shouldPerformSET = false
                 }
             }
 
