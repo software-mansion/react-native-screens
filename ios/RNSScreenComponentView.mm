@@ -2,6 +2,7 @@
 #import "RNSScreenStackHeaderConfigComponentView.h"
 
 #import <React/RCTConversions.h>
+#import <React/RCTMountingTransactionObserving.h>
 
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -12,7 +13,7 @@
 
 using namespace facebook::react;
 
-@interface RNSScreenComponentView () <RCTRNSScreenViewProtocol>
+@interface RNSScreenComponentView () <RCTRNSScreenViewProtocol, RCTMountingTransactionObserving>
 @end
 
 @implementation RNSScreenComponentView {
@@ -42,6 +43,7 @@ using namespace facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  [self.controller setViewToSnapshot];
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfigComponentView class]]) {
     _config = nil;
   }
@@ -109,6 +111,13 @@ using namespace facebook::react;
     std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
         ->onDisappear(RNSScreenEventEmitter::OnDisappear{});
   }
+}
+
+#pragma mark - RCTMountingTransactionObserving
+
+- (void)mountingTransactionWillMountWithMetadata:(MountingTransactionMetadata const &)metadata
+{
+  [self.controller takeSnapshot];
 }
 
 #pragma mark - RCTComponentViewProtocol

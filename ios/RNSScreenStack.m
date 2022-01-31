@@ -713,7 +713,6 @@
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(screensKeys, NSArray);
 
 - (UIView *)view
 {
