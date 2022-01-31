@@ -4,6 +4,7 @@
 @implementation RNSScreenController {
   CGRect _lastViewFrame;
   RNSScreenComponentView *_initialView;
+  UIView *_snapshot;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -19,11 +20,15 @@
   return self;
 }
 
+- (void)takeSnapshot
+{
+  _snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+}
+
 - (void)setViewToSnapshot
 {
-  UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
   [self.view removeFromSuperview];
-  self.view = snapshot;
+  self.view = _snapshot;
 }
 
 - (void)resetViewToScreen
@@ -54,7 +59,7 @@
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-  [((RNSScreenComponentView *)self.view) notifyDisappear];
+  [_initialView notifyDisappear];
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
     [_initialView notifyDismissedWithCount:1];

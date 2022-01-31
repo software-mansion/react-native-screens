@@ -3,20 +3,17 @@ package com.swmansion.rnscreens
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenStackManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackManagerInterface
 
 @ReactModule(name = ScreenStackViewManager.REACT_CLASS)
 class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackManagerInterface<ScreenStack> {
     private val mDelegate: ViewManagerDelegate<ScreenStack>
-    private var screensKeys: List<String> = listOf()
 
     init {
         mDelegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
@@ -61,29 +58,6 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
                 }
                 i++
             }
-        }
-    }
-
-    private fun shouldAnimateScreenChange(lastKeys: List<String>, newKeys: List<String>): Boolean {
-        if (lastKeys.isEmpty()) return false
-        if (newKeys.isEmpty()) return lastKeys.size == 1
-        if (lastKeys.last() != newKeys.last()) {
-            if (lastKeys.size >= 2) {
-                val secondLastLastKey = lastKeys[lastKeys.size - 2]
-                return secondLastLastKey == newKeys.last()
-            }
-        }
-        return false
-    }
-
-    @ReactProp(name = "screensKeys")
-    override fun setScreensKeys(view: ScreenStack, newKeys: ReadableArray?) {
-        if (newKeys != null) {
-            val newKeysArray = newKeys.toArrayList().toList() as List<String>
-            if (shouldAnimateScreenChange(screensKeys, newKeysArray)) {
-                prepareOutTransition(view.topScreen)
-            }
-            screensKeys = newKeysArray
         }
     }
 

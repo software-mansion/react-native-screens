@@ -248,12 +248,6 @@ using namespace facebook::react;
   [self setPushViewControllers:pushControllers];
 }
 
-- (void)screenWillGoOut
-{
-  RNSScreenComponentView *screen = [_reactSubviews lastObject];
-  [screen.controller setViewToSnapshot];
-}
-
 - (void)layoutSubviews
 {
   [super layoutSubviews];
@@ -282,35 +276,6 @@ using namespace facebook::react;
 }
 
 #pragma mark - RCTComponentViewProtocol
-
-bool shouldAnimateScreenChange(std::vector<std::string> lastKeys, std::vector<std::string> newKeys)
-{
-  if (lastKeys.empty())
-    return false;
-  if (newKeys.empty())
-    return lastKeys.size() == 1;
-  if (lastKeys.back() != newKeys.back()) {
-    if (lastKeys.size() >= 2) {
-      auto secondLastLastKey = lastKeys[lastKeys.size() - 2];
-      return secondLastLastKey == newKeys.back();
-    }
-  }
-  return false;
-}
-
-- (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
-{
-  const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenStackProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenStackProps>(props);
-
-  if (shouldAnimateScreenChange(oldScreenProps.screensKeys, newScreenProps.screensKeys)) {
-    [self screenWillGoOut];
-  }
-
-  [super updateProps:props oldProps:oldProps];
-
-  _props = std::static_pointer_cast<RNSScreenStackHeaderConfigProps const>(props);
-}
 
 - (void)prepareForRecycle
 {
