@@ -101,6 +101,7 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   gestureEnabled?: boolean;
+  gestureResponseDistance?: any;
   /**
    * Whether the home indicator should be hidden on this screen. Defaults to `false`.
    *

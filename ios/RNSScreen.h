@@ -100,6 +100,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
+@property (nonatomic, copy) NSDictionary *gestureResponseDistance;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;

@@ -111,6 +111,7 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   gestureEnabled?: boolean;
+  gestureResponseDistance?: any;
   /**
    * Title to display in the back button.
    * Only supported on iOS.

@@ -663,6 +663,23 @@
 
   switch (gestureRecognizer.state) {
     case UIGestureRecognizerStateBegan: {
+      if ([gestureRecognizer.view.reactSubviews.lastObject isKindOfClass:[RNSScreenView class]]) {
+        RNSScreenView *topScreen = (RNSScreenView *)gestureRecognizer.view.reactSubviews.lastObject;
+        NSDictionary *gestureResponceDistanceValues = topScreen.gestureResponseDistance;
+        CGPoint location = [gestureRecognizer locationInView:gestureRecognizer.view];
+        NSLog(@"location: %@", NSStringFromCGPoint(location));
+        if ((gestureResponceDistanceValues[@"minX"] &&
+             location.x < [gestureResponceDistanceValues[@"minX"] floatValue]) ||
+            (gestureResponceDistanceValues[@"maxX"] &&
+             location.x > [gestureResponceDistanceValues[@"maxX"] floatValue]) ||
+            (gestureResponceDistanceValues[@"minY"] &&
+             location.y < [gestureResponceDistanceValues[@"minY"] floatValue]) ||
+            (gestureResponceDistanceValues[@"maxY"] &&
+             location.y > [gestureResponceDistanceValues[@"maxY"] floatValue])) {
+          break;
+        }
+      }
+
       _interactionController = [UIPercentDrivenInteractiveTransition new];
       [_controller popViewControllerAnimated:YES];
       break;

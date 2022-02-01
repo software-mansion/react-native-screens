@@ -74,13 +74,14 @@ import Test1213 from './src/Test1213';
 import Test1214 from './src/Test1214';
 import Test1227 from './src/Test1227';
 import Test1228 from './src/Test1228';
+import Test from './src/Test';
 
 enableFreeze(true);
 
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <Test42 />
+      <Test />
     </ReanimatedScreenProvider>
   );
 }

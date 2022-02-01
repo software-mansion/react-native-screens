@@ -152,6 +152,7 @@ const RouteView = ({
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureEnabled,
+    gestureResponseDistance,
     headerShown,
     homeIndicatorHidden,
     nativeBackButtonDismissalEnabled = false,
@@ -197,6 +198,7 @@ const RouteView = ({
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       homeIndicatorHidden={homeIndicatorHidden}
       gestureEnabled={isAndroid ? false : gestureEnabled}
+      gestureResponseDistance={gestureResponseDistance}
       nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}
