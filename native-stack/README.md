@@ -357,11 +357,9 @@ Defaults to `auto`.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
-### Search bar (iOS only)
+### Search bar
 
 The search bar is just a `searchBar` property that can be specified in the navigator's `screenOptions` or an individual screen's `options`. Search bars are rarely static so normally it is controlled by passing an object to `searchBar` navigation option in the component's body.
-
-Search bar is only supported on iOS.
 
 Example: 
 
