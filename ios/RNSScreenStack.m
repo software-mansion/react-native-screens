@@ -56,16 +56,10 @@
 @implementation RNSScreenEdgeGestureRecognizer
 @end
 
-@interface RNSPanGestureRecognizerVertical : UIPanGestureRecognizer
+@interface RNSPanGestureRecognizer : UIPanGestureRecognizer
 @end
 
-@interface RNSPanGestureRecognizerHorizontal : UIPanGestureRecognizer
-@end
-
-@implementation RNSPanGestureRecognizerVertical
-@end
-
-@implementation RNSPanGestureRecognizerHorizontal
+@implementation RNSPanGestureRecognizer
 @end
 #endif
 
@@ -590,10 +584,7 @@
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
     // `fullScreenSwipeEnabled` is set
-    if (([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerHorizontal class]] &&
-         topScreen.swipeDirection == RNSScreenSwipeDirectionHorizontal) ||
-        ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerVertical class]] &&
-         topScreen.swipeDirection == RNSScreenSwipeDirectionVertical)) {
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
@@ -619,9 +610,7 @@
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // it should only recognize with `customAnimationOnSwipe` set
       return NO;
-    } else if (
-        [gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerHorizontal class]] ||
-        [gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerVertical class]]) {
+    } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
       // it should only recognize with `fullScreenSwipeEnabled` set
       return NO;
     }
@@ -647,70 +636,33 @@
   rightEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:rightEdgeSwipeGestureRecognizer];
 
-  // gesture recognizers for full width swipe gesture
-  RNSPanGestureRecognizerHorizontal *panRecognizerHorizontal =
-      [[RNSPanGestureRecognizerHorizontal alloc] initWithTarget:self action:@selector(handleSwipe:)];
-  RNSPanGestureRecognizerVertical *panRecognizerVertical =
-      [[RNSPanGestureRecognizerVertical alloc] initWithTarget:self action:@selector(handleSwipeVertical:)];
-
-  panRecognizerHorizontal.delegate = self;
-  [self addGestureRecognizer:panRecognizerHorizontal];
-  panRecognizerVertical.delegate = self;
-  [self addGestureRecognizer:panRecognizerVertical];
+  // gesture recognizer for full width swipe gesture
+  RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(handleSwipe:)];
+  panRecognizer.delegate = self;
+  [self addGestureRecognizer:panRecognizer];
 }
 
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
-  float translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
-  float velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].x;
-  float distance = gestureRecognizer.view.bounds.size.width;
-  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
-  if (isRTL) {
-    translation = -translation;
-    velocity = -velocity;
-  }
-
-  float transitionProgress = (translation / distance);
-
-  switch (gestureRecognizer.state) {
-    case UIGestureRecognizerStateBegan: {
-      _interactionController = [UIPercentDrivenInteractiveTransition new];
-      [_controller popViewControllerAnimated:YES];
-      break;
-    }
-
-    case UIGestureRecognizerStateChanged: {
-      [_interactionController updateInteractiveTransition:transitionProgress];
-      break;
-    }
-
-    case UIGestureRecognizerStateCancelled: {
-      [_interactionController cancelInteractiveTransition];
-      break;
-    }
-
-    case UIGestureRecognizerStateEnded: {
-      // values taken from
-      // https://github.com/react-navigation/react-navigation/blob/54739828598d7072c1bf7b369659e3682db3edc5/packages/stack/src/views/Stack/Card.tsx#L316
-      BOOL shouldFinishTransition = (translation + velocity * 0.3) > (distance / 2);
-      if (shouldFinishTransition) {
-        [_interactionController finishInteractiveTransition];
-      } else {
-        [_interactionController cancelInteractiveTransition];
-      }
-      _interactionController = nil;
-    }
-    default: {
-      break;
+  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+  float translation;
+  float velocity;
+  float distance;
+  if (topScreen.swipeDirection == RNSScreenSwipeDirectionVertical) {
+    translation = [gestureRecognizer translationInView:gestureRecognizer.view].y;
+    velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].y;
+    distance = gestureRecognizer.view.bounds.size.height;
+  } else {
+    translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
+    velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].x;
+    distance = gestureRecognizer.view.bounds.size.width;
+    BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+    if (isRTL) {
+      translation = -translation;
+      velocity = -velocity;
     }
   }
-}
-
-- (void)handleSwipeVertical:(UIPanGestureRecognizer *)gestureRecognizer
-{
-  float translation = [gestureRecognizer translationInView:gestureRecognizer.view].y;
-  float velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].y;
-  float distance = gestureRecognizer.view.bounds.size.height;
 
   float transitionProgress = (translation / distance);
 
