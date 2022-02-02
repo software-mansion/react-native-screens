@@ -48,6 +48,10 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
 
+#### `gestureResponseDistance` (iOS only)
+
+Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+
 ### `homeIndicatorHidden` (iOS only)
 
 Whether the home indicator should be hidden on this screen. Defaults to `false`.

@@ -557,6 +557,23 @@
   return nil;
 }
 
+- (BOOL)isInGestureResponseDistance:(UIGestureRecognizer *)gestureRecognizer topScreen:(RNSScreenView *)topScreen
+{
+  NSDictionary *gestureResponceDistanceValues = topScreen.gestureResponseDistance;
+  float x = [gestureRecognizer locationInView:gestureRecognizer.view].x;
+  float y = [gestureRecognizer locationInView:gestureRecognizer.view].y;
+  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+  if (isRTL) {
+    x = _controller.view.frame.size.width - x;
+  }
+  // we check if any of the contstraints are violated and return NO if so
+  return !(
+      (gestureResponceDistanceValues[@"minX"] && x < [gestureResponceDistanceValues[@"minX"] floatValue]) ||
+      (gestureResponceDistanceValues[@"maxX"] && x > [gestureResponceDistanceValues[@"maxX"] floatValue]) ||
+      (gestureResponceDistanceValues[@"minY"] && y < [gestureResponceDistanceValues[@"minY"] floatValue]) ||
+      (gestureResponceDistanceValues[@"maxY"] && y > [gestureResponceDistanceValues[@"maxY"] floatValue]));
+}
+
 - (void)cancelTouchesInParent
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
@@ -588,8 +605,9 @@
 #else
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
-    // `fullScreenSwipeEnabled` is set
-    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    // `fullScreenSwipeEnabled` is set, and we are in the bounds set by user
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
+        [self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
@@ -663,23 +681,6 @@
 
   switch (gestureRecognizer.state) {
     case UIGestureRecognizerStateBegan: {
-      if ([gestureRecognizer.view.reactSubviews.lastObject isKindOfClass:[RNSScreenView class]]) {
-        RNSScreenView *topScreen = (RNSScreenView *)gestureRecognizer.view.reactSubviews.lastObject;
-        NSDictionary *gestureResponceDistanceValues = topScreen.gestureResponseDistance;
-        CGPoint location = [gestureRecognizer locationInView:gestureRecognizer.view];
-        NSLog(@"location: %@", NSStringFromCGPoint(location));
-        if ((gestureResponceDistanceValues[@"minX"] &&
-             location.x < [gestureResponceDistanceValues[@"minX"] floatValue]) ||
-            (gestureResponceDistanceValues[@"maxX"] &&
-             location.x > [gestureResponceDistanceValues[@"maxX"] floatValue]) ||
-            (gestureResponceDistanceValues[@"minY"] &&
-             location.y < [gestureResponceDistanceValues[@"minY"] floatValue]) ||
-            (gestureResponceDistanceValues[@"maxY"] &&
-             location.y > [gestureResponceDistanceValues[@"maxY"] floatValue])) {
-          break;
-        }
-      }
-
       _interactionController = [UIPercentDrivenInteractiveTransition new];
       [_controller popViewControllerAnimated:YES];
       break;

@@ -111,7 +111,12 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   gestureEnabled?: boolean;
-  gestureResponseDistance?: any;
+  /**
+   * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+   *
+   * @platform ios
+   */
+  gestureResponseDistance?: ScreenProps['gestureResponseDistance'];
   /**
    * Title to display in the back button.
    * Only supported on iOS.

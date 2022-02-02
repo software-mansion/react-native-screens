@@ -47,11 +47,10 @@ export default function App() {
           screenOptions={{
             fullScreenSwipeEnabled: true,
             customAnimationOnSwipe: true,
+            direction: 'rtl',
             gestureResponseDistance: {
-              minX: 100,
-              maxX: undefined,
-              minY: undefined,
-              maxY: 300,
+              minX: 200,
+              maxY: 400,
             }
           }}>
           <Stack.Screen name="First" component={First} />
