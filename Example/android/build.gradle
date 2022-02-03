@@ -2,10 +2,10 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "30.0.2"
+        buildToolsVersion = "31.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 30
-        targetSdkVersion = 30
+        compileSdkVersion = 31
+        targetSdkVersion = 31
         ndkVersion = "21.4.7075529"
         kotlinVersion = "1.4.10"
     }
@@ -14,14 +14,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:4.2.2')
+        classpath("com.android.tools.build:gradle:7.0.4")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("de.undercouch:gradle-download-task:4.1.2")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
 allprojects {
     repositories {
-        mavenLocal()
         google()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -31,7 +32,13 @@ allprojects {
             // All of Detox' artifacts are provided via the npm module
             url "$rootDir/../node_modules/detox/Detox-android"
         }
-        mavenCentral()
+         mavenCentral {
+            // We don't want to fetch react-native from Maven Central as there are
+            // older versions over there.
+            content {
+                excludeGroup "com.facebook.react"
+            }
+        }
         maven { url 'https://www.jitpack.io' }
     }
 }

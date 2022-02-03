@@ -23,8 +23,7 @@
     "@react-navigation/stack": "^5.14.2",
     "nanoid": "^3.2.0",
     "react": "17.0.2",
-    "react-native": "^0.66.0",
-    "react-native-appearance": "^0.3.4",
+    "react-native": "0.68.0-rc.0",
     "react-native-gesture-handler": "^1.10.1",
     "react-native-reanimated": "^1.13.2",
     "react-native-redash": "^16.0.8",
@@ -48,16 +47,20 @@
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-preset-expo": "^8.3.0",
     "detox": "^18.23.1",
-    "eslint": "^7.20.0",
+    "eslint": "^7.32.0",
     "glob-to-regexp": "^0.4.1",
     "jest": "^27.1.0",
-    "metro-react-native-babel-preset": "^0.66.2",
-    "react-native-codegen": "^0.0.7",
+    "metro-react-native-babel-preset": "^0.67.0",
+    "react-native-codegen": "^0.0.13",
+    "react-native-gradle-plugin": "^0.0.4",
     "react-test-renderer": "17.0.2",
     "ts-jest": "^27.0.5",
     "typescript": "^4.2.3"
   },
   "jest": {
     "preset": "react-native"
+  },
+  "codegenConfig": {
+    "libraries": []
   }
 }
