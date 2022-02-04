@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ViewStyle,
 } from 'react-native';
+import {WHITE} from '../colors';
 
 type Props = {
   label: string;
@@ -22,7 +23,7 @@ export const SettingsSwitch = ({
 }: Props): JSX.Element => {
   return (
     <TouchableOpacity onPress={() => onValueChange(!value)}>
-      <View style={{ ...styles.container, ...style }}>
+      <View style={{...styles.container, ...style}}>
         <Text style={styles.label}>{`${label}: ${value}`}</Text>
       </View>
     </TouchableOpacity>
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#039be5',
-    backgroundColor: 'white',
+    backgroundColor: WHITE,
   },
   label: {
     fontSize: 15,

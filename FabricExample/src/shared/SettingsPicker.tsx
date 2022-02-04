@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { WHITE } from '../colors';
 
 type Props<T = string> = {
   label: string;
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#039be5',
-    backgroundColor: 'white',
+    backgroundColor: WHITE,
   },
   label: {
     fontSize: 15,

@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  KeyboardTypeOptions,
 } from 'react-native';
+import {WHITE} from '../colors';
 
 type Props = {
   label: string;
-  value: string;
+  value?: string;
   onValueChange: (value: string) => void;
+  keyboardType?: KeyboardTypeOptions;
+  placeholder?: string;
 };
 
 export const SettingsInput = ({
   label,
   value,
   onValueChange,
+  keyboardType,
+  placeholder,
 }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
       <View style={styles.container}>
-        <Text style={styles.label}>{`${label}: ${value}`}</Text>
+        <Text style={styles.label}>{`${label}: ${
+          value ?? placeholder ?? ''
+        }`}</Text>
         {isOpen ? (
           <TextInput
             style={styles.input}
@@ -30,6 +38,8 @@ export const SettingsInput = ({
             onChangeText={onValueChange}
             autoCapitalize="none"
             autoCorrect={false}
+            keyboardType={keyboardType}
+            placeholder={placeholder}
           />
         ) : null}
       </View>
@@ -46,7 +56,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#039be5',
-    backgroundColor: 'white',
+    backgroundColor: WHITE,
   },
   label: {
     fontSize: 15,
