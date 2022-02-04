@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.JSApplicationCausedNativeException
 import com.facebook.react.common.MapBuilder
@@ -67,42 +68,44 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     @ReactProp(name = "title")
-    fun setTitle(config: ScreenStackHeaderConfig, title: String?) {
+    override fun setTitle(config: ScreenStackHeaderConfig, title: String?) {
         config.setTitle(title)
     }
 
     @ReactProp(name = "titleFontFamily")
-    fun setTitleFontFamily(config: ScreenStackHeaderConfig, titleFontFamily: String?) {
+    override fun setTitleFontFamily(config: ScreenStackHeaderConfig, titleFontFamily: String?) {
         config.setTitleFontFamily(titleFontFamily)
     }
 
     @ReactProp(name = "titleFontSize")
-    fun setTitleFontSize(config: ScreenStackHeaderConfig, titleFontSize: Float) {
-        config.setTitleFontSize(titleFontSize)
+    override fun setTitleFontSize(config: ScreenStackHeaderConfig, titleFontSize: Int) {
+        config.setTitleFontSize(titleFontSize.toFloat())
     }
 
     @ReactProp(name = "titleFontWeight")
-    fun setTitleFontWeight(config: ScreenStackHeaderConfig, titleFontWeight: String?) {
+    override fun setTitleFontWeight(config: ScreenStackHeaderConfig, titleFontWeight: String?) {
         config.setTitleFontWeight(titleFontWeight)
     }
 
     @ReactProp(name = "titleColor", customType = "Color")
-    fun setTitleColor(config: ScreenStackHeaderConfig, titleColor: Int) {
-        config.setTitleColor(titleColor)
+    override fun setTitleColor(config: ScreenStackHeaderConfig, titleColor: Int?) {
+        if (titleColor != null) {
+            config.setTitleColor(titleColor)
+        }
     }
 
     @ReactProp(name = "backgroundColor", customType = "Color")
-    fun setBackgroundColor(config: ScreenStackHeaderConfig, backgroundColor: Int?) {
+    override fun setBackgroundColor(config: ScreenStackHeaderConfig, backgroundColor: Int?) {
         config.setBackgroundColor(backgroundColor)
     }
 
     @ReactProp(name = "hideShadow")
-    fun setHideShadow(config: ScreenStackHeaderConfig, hideShadow: Boolean) {
+    override fun setHideShadow(config: ScreenStackHeaderConfig, hideShadow: Boolean) {
         config.setHideShadow(hideShadow)
     }
 
     @ReactProp(name = "hideBackButton")
-    fun setHideBackButton(config: ScreenStackHeaderConfig, hideBackButton: Boolean) {
+    override fun setHideBackButton(config: ScreenStackHeaderConfig, hideBackButton: Boolean) {
         config.setHideBackButton(hideBackButton)
     }
 
@@ -112,8 +115,8 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     @ReactProp(name = "color", customType = "Color")
-    fun setColor(config: ScreenStackHeaderConfig, color: Int) {
-        config.setTintColor(color)
+    override fun setColor(config: ScreenStackHeaderConfig, color: Int?) {
+        config.setTintColor(color ?: 0)
     }
 
     @ReactProp(name = "hidden")
@@ -135,7 +138,7 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     @ReactProp(name = "direction")
-    fun setDirection(config: ScreenStackHeaderConfig, direction: String?) {
+    override fun setDirection(config: ScreenStackHeaderConfig, direction: String?) {
         config.setDirection(direction)
     }
 
@@ -152,5 +155,53 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
 
     companion object {
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"
+    }
+
+    private fun logNotAvailable(propName: String) {
+        Log.w("RN SCREENS", "$propName prop is not available on Android")
+    }
+
+    override fun setBackTitle(view: ScreenStackHeaderConfig?, value: String?) {
+        logNotAvailable("backTitle")
+    }
+
+    override fun setBackTitleFontFamily(view: ScreenStackHeaderConfig?, value: String?) {
+        logNotAvailable("backTitleFontFamily")
+    }
+
+    override fun setBackTitleFontSize(view: ScreenStackHeaderConfig?, value: Int) {
+        logNotAvailable("backTitleFontSize")
+    }
+
+    override fun setLargeTitle(view: ScreenStackHeaderConfig?, value: Boolean) {
+        logNotAvailable("largeTitle")
+    }
+
+    override fun setLargeTitleFontFamily(view: ScreenStackHeaderConfig?, value: String?) {
+        logNotAvailable("largeTitleFontFamily")
+    }
+
+    override fun setLargeTitleFontSize(view: ScreenStackHeaderConfig?, value: Int) {
+        logNotAvailable("largeTitleFontSize")
+    }
+
+    override fun setLargeTitleFontWeight(view: ScreenStackHeaderConfig?, value: String?) {
+        logNotAvailable("largeTitleFontWeight")
+    }
+
+    override fun setLargeTitleBackgroundColor(view: ScreenStackHeaderConfig?, value: Int?) {
+        logNotAvailable("largeTitleBackgroundColor")
+    }
+
+    override fun setLargeTitleHideShadow(view: ScreenStackHeaderConfig?, value: Boolean) {
+        logNotAvailable("largeTitleHideShadow")
+    }
+
+    override fun setLargeTitleColor(view: ScreenStackHeaderConfig?, value: Int?) {
+        logNotAvailable("largeTitleColor")
+    }
+
+    override fun setDisableBackButtonMenu(view: ScreenStackHeaderConfig?, value: Boolean) {
+        logNotAvailable("disableBackButtonMenu")
     }
 }
