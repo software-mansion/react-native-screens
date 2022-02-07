@@ -59,6 +59,14 @@ Unfortunately the same behavior is not available on iOS since the behavior of na
 
 Defaults to `false`.
 
+### `navigationBarColor` (Android only)
+
+Sets the navigation bar color. Defaults to initial status bar color.
+
+### `navigationBarHidden` (Android only)
+
+Sets the visibility of the navigation bar. Defaults to `false`.
+
 ### `onAppear`
 
 A callback that gets called when the current screen appears.
@@ -89,7 +97,7 @@ Allows for the customization of the type of animation to use when this screen re
 - `push` – performs push animation
 - `pop` – performs pop animation (default)
 
-#### `screenOrientation`
+### `screenOrientation`
 
 Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
 
@@ -146,33 +154,33 @@ For Android:
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
-#### `statusBarAnimation`
+### `statusBarAnimation`
 
 Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Possible values: `fade`, `none`, `slide`. On Android, this prop considers the transition of changing status bar color (see https://reactnative.dev/docs/statusbar#animated). There will be no animation if `none` provided.
 
 Defaults to `fade` on iOS and `none` on Android.
 
-#### `statusBarColor` (Android only)
+### `statusBarColor` (Android only)
 
 Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
-#### `statusBarHidden`
+### `statusBarHidden`
 
 When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
 
 Defaults to `false`.
 
-#### `statusBarStyle`
+### `statusBarStyle`
 
 Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
 
 Defaults to `auto`.
 
-#### `statusBarTranslucent` (Android only)
+### `statusBarTranslucent` (Android only)
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
-#### `useTransitionProgress`
+### `useTransitionProgress`
 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
@@ -198,7 +206,7 @@ function Home() {
 }
 ```
 
-#### `useReanimatedTransitionProgress`
+### `useReanimatedTransitionProgress`
 
 A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
@@ -312,7 +320,7 @@ Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenSt
 
 Controls whether the stack should be in `rtl` or `ltr` form.
 
-#### `disableBackButtonMenu` (iOS only)
+### `disableBackButtonMenu` (iOS only)
 
 Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 
