@@ -1,6 +1,6 @@
 import { device, expect, element, by } from 'detox';
 
-describe('Simple Native Stack', () => {
+describe('Simple Stack Presentation', () => {
   beforeAll(async () => {
     await device.reloadReactNative();
   });

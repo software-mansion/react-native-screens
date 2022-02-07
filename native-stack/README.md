@@ -182,12 +182,24 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
+#### `homeIndicatorHidden` (iOS only)
+
+Whether the home indicator should be hidden on this screen. Defaults to `false`.
+
 #### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
 Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
 
 Defaults to `false`.
+
+#### `navigationBarColor` (Android only)
+
+Sets the navigation bar color. Defaults to initial status bar color.
+
+#### `navigationBarHidden` (Android only)
+
+Sets the visibility of the navigation bar. Defaults to `false`.
 
 #### `replaceAnimation`
 
@@ -241,6 +253,12 @@ When using `vertical` option, `fullScreenSwipeEnabled: true`, `customAnimationOn
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.
+
+#### `transitionDuration` (iOS only)
+
+Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+
+The duration of `default` and `flip` transitions isn't customizable.
 
 #### `useTransitionProgress`
 
@@ -361,11 +379,9 @@ Defaults to `auto`.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
-### Search bar (iOS only)
+### Search bar
 
 The search bar is just a `searchBar` property that can be specified in the navigator's `screenOptions` or an individual screen's `options`. Search bars are rarely static so normally it is controlled by passing an object to `searchBar` navigation option in the component's body.
-
-Search bar is only supported on iOS.
 
 Example: 
 

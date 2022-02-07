@@ -151,7 +151,10 @@ const RouteView = ({
   const {
     gestureEnabled,
     headerShown,
+    homeIndicatorHidden,
     nativeBackButtonDismissalEnabled = false,
+    navigationBarColor,
+    navigationBarHidden,
     replaceAnimation = 'pop',
     screenOrientation,
     statusBarAnimation,
@@ -167,6 +170,7 @@ const RouteView = ({
     fullScreenSwipeEnabled,
     stackAnimation,
     stackPresentation = 'push',
+    transitionDuration,
   } = options;
 
   if (swipeDirection === 'vertical') {
@@ -214,8 +218,11 @@ const RouteView = ({
       style={StyleSheet.absoluteFill}
       customAnimationOnSwipe={customAnimationOnSwipe}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
+      homeIndicatorHidden={homeIndicatorHidden}
       gestureEnabled={isAndroid ? false : gestureEnabled}
       nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
+      navigationBarColor={navigationBarColor}
+      navigationBarHidden={navigationBarHidden}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}
       stackAnimation={stackAnimation}
@@ -226,6 +233,7 @@ const RouteView = ({
       statusBarStyle={statusBarStyle}
       statusBarTranslucent={statusBarTranslucent}
       swipeDirection={swipeDirection}
+      transitionDuration={transitionDuration}
       onHeaderBackButtonClicked={() => {
         navigation.dispatch({
           ...StackActions.pop(),
