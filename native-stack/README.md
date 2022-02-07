@@ -248,9 +248,9 @@ A string that can be used as a fallback for `headerTitle`.
 
 #### `transitionDuration` (iOS only)
 
-Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. The duration of `default` and `flip` transitions isn't customizable. 
+Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
 
-Defaults to `350`.
+The duration of `default` and `flip` transitions isn't customizable.
 
 #### `useTransitionProgress`
 
