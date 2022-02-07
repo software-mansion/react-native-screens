@@ -2,6 +2,10 @@
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
+## Fabric
+
+To read about how to use this library with fabric go to [FABRIC README](README-Farbic.md). If you want to run Fabric Example app go to [FabricExample README](FabricExample/README.md).
+
 ## Supported platforms
 
 - [x] iOS
