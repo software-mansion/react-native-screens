@@ -232,6 +232,13 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   statusBarTranslucent?: boolean;
+  /**
+   * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+   * The duration of `default` and `flip` transitions isn't customizable.
+   *
+   * @platform ios
+   */
+  transitionDuration?: number;
 }
 
 export interface ScreenContainerProps extends ViewProps {
@@ -460,7 +467,7 @@ export interface SearchBarProps {
 
   /**
    * A callback that gets called when search bar is closed
-   * 
+   *
    * @platform android
    */
   onClose?: () => void;

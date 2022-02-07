@@ -165,6 +165,7 @@ const RouteView = ({
     statusBarHidden,
     statusBarStyle,
     statusBarTranslucent,
+    transitionDuration,
   } = options;
 
   let { stackPresentation = 'push' } = options;
@@ -211,6 +212,7 @@ const RouteView = ({
       statusBarHidden={statusBarHidden}
       statusBarStyle={statusBarStyle}
       statusBarTranslucent={statusBarTranslucent}
+      transitionDuration={transitionDuration}
       onHeaderBackButtonClicked={() => {
         navigation.dispatch({
           ...StackActions.pop(),

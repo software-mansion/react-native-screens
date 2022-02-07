@@ -11,7 +11,7 @@
 {
   if (self = [super init]) {
     _operation = operation;
-    _transitionDuration = 0.35; // default duration
+    _transitionDuration = 0.35; // default duration in seconds
   }
   return self;
 }
@@ -32,6 +32,12 @@
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
     return 0;
   }
+
+  if (screen != nil && screen.transitionDuration != nil && [screen.transitionDuration floatValue] >= 0) {
+    float durationInSeconds = [screen.transitionDuration floatValue] / 1000.0;
+    return durationInSeconds;
+  }
+
   return _transitionDuration;
 }
 
@@ -202,14 +208,30 @@
   CGAffineTransform topBottomTransform =
       CGAffineTransformMakeTranslation(0, 0.08 * transitionContext.containerView.bounds.size.height);
 
+  // proportions to default transition duration
+  NSDictionary *proportionToDefaultTransitionDuration = @{
+    @"slideOpen" : @1,
+    @"fadeOpen" : @(0.2 / 0.35),
+    @"slideClose" : @(0.25 / 0.35),
+    @"fadeClose" : @(0.15 / 0.35),
+    @"fadeCloseDelay" : @(0.1 / 0.35),
+  };
+
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = topBottomTransform;
     toViewController.view.alpha = 0.0;
     [[transitionContext containerView] addSubview:toViewController.view];
 
+    // defaults to 0.35 s
+    float slideOpenTransitionDuration =
+        [self transitionDuration:transitionContext] * [proportionToDefaultTransitionDuration[@"slideOpen"] floatValue];
+    // defaults to 0.2 s
+    float fadeOpenTransitionDuration =
+        [self transitionDuration:transitionContext] * [proportionToDefaultTransitionDuration[@"fadeOpen"] floatValue];
+
     // Android Nougat open animation
     // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_open_enter.xml
-    [UIView animateWithDuration:0.35
+    [UIView animateWithDuration:slideOpenTransitionDuration
         delay:0
         options:UIViewAnimationOptionCurveEaseOut
         animations:^{
@@ -220,7 +242,7 @@
           fromViewController.view.transform = CGAffineTransformIdentity;
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
-    [UIView animateWithDuration:0.2
+    [UIView animateWithDuration:fadeOpenTransitionDuration
                           delay:0
                         options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
@@ -232,9 +254,19 @@
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
 
+    // defaults to 0.25 s
+    float slideCloseTransitionDuration =
+        [self transitionDuration:transitionContext] * [proportionToDefaultTransitionDuration[@"slideClose"] floatValue];
+    // defaults to 0.15 s
+    float fadeCloseTransitionDuration =
+        [self transitionDuration:transitionContext] * [proportionToDefaultTransitionDuration[@"fadeClose"] floatValue];
+    // defaults to 0.1 s
+    float fadeCloseDelayDuration = [self transitionDuration:transitionContext] *
+        [proportionToDefaultTransitionDuration[@"fadeCloseDelay"] floatValue];
+
     // Android Nougat exit animation
     // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
-    [UIView animateWithDuration:0.25
+    [UIView animateWithDuration:slideCloseTransitionDuration
         delay:0
         options:UIViewAnimationOptionCurveEaseIn
         animations:^{
@@ -244,8 +276,8 @@
         completion:^(BOOL finished) {
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
-    [UIView animateWithDuration:0.15
-                          delay:0.1
+    [UIView animateWithDuration:fadeCloseTransitionDuration
+                          delay:fadeCloseDelayDuration
                         options:UIViewAnimationOptionCurveLinear
                      animations:^{
                        fromViewController.view.alpha = 0.0;
