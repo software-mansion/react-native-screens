@@ -248,7 +248,7 @@ Sets the direction in which you should swipe to dismiss the screen. The followin
 - `vertical` – dismiss screen vertically
 - `horizontal` – dismiss screen horizontally (default)
 
-When using `vertical` option, `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` will be set by default.
+When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
 
 #### `title`
 
