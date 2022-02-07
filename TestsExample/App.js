@@ -70,6 +70,7 @@ import TestFreeze from './src/TestFreeze';
 import Test1198 from './src/Test1198';
 import Test1204 from './src/Test1204';
 import Test1209 from './src/Test1209';
+import Test1213 from './src/Test1213';
 import Test1214 from './src/Test1214';
 import Test1227 from './src/Test1227';
 import Test1228 from './src/Test1228';

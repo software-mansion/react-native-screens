@@ -48,6 +48,10 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
 
+### `homeIndicatorHidden` (iOS only)
+
+Whether the home indicator should be hidden on this screen. Defaults to `false`.
+
 ### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.

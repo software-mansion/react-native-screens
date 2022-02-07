@@ -102,6 +102,12 @@ export interface ScreenProps extends ViewProps {
    */
   gestureEnabled?: boolean;
   /**
+   * Whether the home indicator should be hidden on this screen. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  homeIndicatorHidden?: boolean;
+  /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
    * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
    * Defaults to `false`.
@@ -448,17 +454,17 @@ export interface SearchBarProps {
   onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 
   /**
-   * A callback that gets called when search bar has received focus
-   */
-  onClose?: () => void;
-  /**
-   * A callback that gets called when search bar is opened
+   * A callback that gets called when search bar is closed
    *
    * @platform android
    */
+  onClose?: () => void;
+  /**
+   * A callback that gets called when search bar has received focus
+   */
   onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when search bar is closed
+   * A callback that gets called when search bar is opened
    *
    * @platform android
    */
