@@ -212,9 +212,9 @@
   NSDictionary *proportionToDefaultTransitionDuration = @{
     @"slideOpen" : @1, // 0.35 s
     @"fadeOpen" : @0.571, // 0.2 s
-    @"slideClose" : @0.714, // 0.25
-    @"fadeClose" : @0.428, // 0.15
-    @"fadeCloseDelay" : @0.286, // 0.1
+    @"slideClose" : @0.714, // 0.25 s
+    @"fadeClose" : @0.428, // 0.15 s
+    @"fadeCloseDelay" : @0.286, // 0.1 s
   };
 
   if (_operation == UINavigationControllerOperationPush) {
