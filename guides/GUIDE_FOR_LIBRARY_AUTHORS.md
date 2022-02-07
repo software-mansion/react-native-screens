@@ -170,9 +170,9 @@ Sets the translucency of the status bar (similar to the `StatusBar` component). 
 
 #### `transitionDuration` (iOS only)
 
-Changes the duration of `slide_from_bottom`, `fade` and `simple_push` transitions on iOS. The `default` transition duration cannot be changed since it is not customizable, and the other ones have the duration values hardcoded to mimic the `Android` transition specs. 
+Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. The duration of `default` and `flip` transitions isn't customizable. 
 
-Defaults to `0.35`.
+Defaults to `350`.
 
 #### `useTransitionProgress`
 

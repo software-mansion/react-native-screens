@@ -215,8 +215,8 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarTranslucent?: boolean;
   /**
-   * Changes the duration of `slide_from_bottom`, `fade` and `simple_push` transitions on iOS. The `default` transition duration cannot be changed since it is not customizable, and the other ones have the duration values hardcoded to mimic the `Android` transition specs.
-   * Defaults to `0.35`.
+   * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS.
+   * The duration of `default` and `flip` transitions isn't customizable. Defaults to `350`.
    *
    * @platform ios
    */
