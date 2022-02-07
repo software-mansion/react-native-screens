@@ -163,6 +163,7 @@ const RouteView = ({
     statusBarStyle,
     statusBarTranslucent,
     swipeDirection = 'horizontal',
+    transitionDuration,
   } = options;
 
   let {
@@ -170,7 +171,6 @@ const RouteView = ({
     fullScreenSwipeEnabled,
     stackAnimation,
     stackPresentation = 'push',
-    transitionDuration,
   } = options;
 
   if (swipeDirection === 'vertical') {
