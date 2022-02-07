@@ -678,7 +678,7 @@ PODS:
     - React-jsi (= 0.0.0-20220126-2009-86fa2a510)
     - React-logger (= 0.0.0-20220126-2009-86fa2a510)
     - React-perflogger (= 0.0.0-20220126-2009-86fa2a510)
-  - RNScreens (3.10.1):
+  - RNScreens (0.0.0-20220207-fabric):
     - RCT-Folly (= 2021.06.28.00-v2)
     - RCTRequired
     - RCTTypeSafety
@@ -686,8 +686,8 @@ PODS:
     - React-Codegen
     - React-RCTFabric
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 3.10.1)
-  - RNScreens/common (3.10.1):
+    - RNScreens/common (= 0.0.0-20220207-fabric)
+  - RNScreens/common (0.0.0-20220207-fabric):
     - RCT-Folly (= 2021.06.28.00-v2)
     - RCTRequired
     - RCTTypeSafety
@@ -908,7 +908,7 @@ SPEC CHECKSUMS:
   React-rncore: 6f2ec3754095fc5b4d68f36d597d41a8121ae4ef
   React-runtimeexecutor: 8c74ce88314e63204109942a39fd3c750597757b
   ReactCommon: 16be13a065304bc9c9c2d495cd881980ee9008b6
-  RNScreens: b5e52470e5b7dae5d84c341e32d3d9c6eeae7999
+  RNScreens: 61ac5e9030445e6f11ec022277b2e69bed757e85
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 4b6747a93362432c0c22623c7b3b45fd63eafb4e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
