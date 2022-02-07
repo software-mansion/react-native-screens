@@ -210,11 +210,11 @@
 
   // proportions to default transition duration
   NSDictionary *proportionToDefaultTransitionDuration = @{
-    @"slideOpen" : @1, // 0.35 s
-    @"fadeOpen" : @0.571, // 0.2 s
-    @"slideClose" : @0.714, // 0.25 s
-    @"fadeClose" : @0.428, // 0.15 s
-    @"fadeCloseDelay" : @0.286, // 0.1 s
+    @"slideOpen" : @1,
+    @"fadeOpen" : @(0.2 / 0.35),
+    @"slideClose" : @(0.25 / 0.35),
+    @"fadeClose" : @(0.15 / 0.35),
+    @"fadeCloseDelay" : @(0.1 / 0.35),
   };
 
   if (_operation == UINavigationControllerOperationPush) {
