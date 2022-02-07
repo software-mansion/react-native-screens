@@ -1,5 +1,5 @@
 import React, {useState, useLayoutEffect} from 'react';
-import {ScrollView, StyleSheet, Text} from 'react-native';
+import {Platform, ScrollView, StyleSheet, Text} from 'react-native';
 import {BLACK, PRIMARY, SECONDARY, WHITE} from './colors';
 import {
   SettingsInput,
@@ -141,7 +141,7 @@ export default function HeaderDemo({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
+    paddingTop: Platform.OS === 'ios' ? 30 : 100,
     backgroundColor: WHITE,
   },
   heading: {
