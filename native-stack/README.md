@@ -242,6 +242,14 @@ Defaults to `push`.
 
 Using `containedModal` and `containedTransparentModal` with other types of modals in one native stack navigator is not recommended and can result in a freeze or a crash of the application.
 
+#### `swipeDirection` (iOS only)
+
+Sets the direction in which you should swipe to dismiss the screen. The following values are supported:
+- `vertical` – dismiss screen vertically
+- `horizontal` – dismiss screen horizontally (default)
+
+When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.

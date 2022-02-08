@@ -180,6 +180,14 @@ Defaults to `auto`.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
+### `swipeDirection` (iOS only)
+
+Sets the direction in which you should swipe to dismiss the screen. The following values are supported:
+- `vertical` – dismiss screen vertically
+- `horizontal` – dismiss screen horizontally (default)
+
+When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+
 ### `transitionDuration` (iOS only)
 
 Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.

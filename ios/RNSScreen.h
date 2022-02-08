@@ -29,6 +29,11 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
   RNSScreenReplaceAnimationPush,
 };
 
+typedef NS_ENUM(NSInteger, RNSScreenSwipeDirection) {
+  RNSScreenSwipeDirectionVertical,
+  RNSScreenSwipeDirectionHorizontal,
+};
+
 typedef NS_ENUM(NSInteger, RNSActivityState) {
   RNSActivityStateInactive = 0,
   RNSActivityStateTransitioningOrBelowTop = 1,
@@ -92,6 +97,7 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+@property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) BOOL preventNativeDismiss;
 @property (nonatomic) BOOL hasOrientationSet;
 @property (nonatomic) BOOL hasStatusBarStyleSet;

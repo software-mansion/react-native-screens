@@ -75,6 +75,7 @@ import Test1214 from './src/Test1214';
 import Test1227 from './src/Test1227';
 import Test1228 from './src/Test1228';
 import Test1259 from './src/Test1259';
+import Test1260 from './src/Test1260';
 
 enableFreeze(true);
 

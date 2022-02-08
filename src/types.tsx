@@ -47,6 +47,7 @@ export type BlurEffectTypes =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 export type ScreenReplaceTypes = 'push' | 'pop';
+export type SwipeDirectionTypes = 'vertical' | 'horizontal';
 export type ScreenOrientationTypes =
   | 'default'
   | 'all'
@@ -232,6 +233,16 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   statusBarTranslucent?: boolean;
+  /**
+   * Sets the direction in which you should swipe to dismiss the screen.
+   * When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+   * The following values are supported:
+   * - `vertical` – dismiss screen vertically
+   * - `horizontal` – dismiss screen horizontally (default)
+   *
+   * @platform ios
+   */
+  swipeDirection?: SwipeDirectionTypes;
   /**
    * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
    * The duration of `default` and `flip` transitions isn't customizable.

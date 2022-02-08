@@ -190,14 +190,30 @@
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
-    [UIView animateWithDuration:[self transitionDuration:transitionContext]
-        animations:^{
-          toViewController.view.transform = CGAffineTransformIdentity;
-          fromViewController.view.transform = topBottomTransform;
-        }
-        completion:^(BOOL finished) {
-          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
+
+    void (^animationBlock)(void) = ^{
+      toViewController.view.transform = CGAffineTransformIdentity;
+      fromViewController.view.transform = topBottomTransform;
+    };
+    void (^completionBlock)(BOOL) = ^(BOOL finished) {
+      if (transitionContext.transitionWasCancelled) {
+        toViewController.view.transform = CGAffineTransformIdentity;
+      }
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    };
+
+    if (!transitionContext.isInteractive) {
+      [UIView animateWithDuration:[self transitionDuration:transitionContext]
+                       animations:animationBlock
+                       completion:completionBlock];
+    } else {
+      // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
+      [UIView animateWithDuration:[self transitionDuration:transitionContext]
+                            delay:0.0
+                          options:UIViewAnimationOptionCurveLinear
+                       animations:animationBlock
+                       completion:completionBlock];
+    }
   }
 }
 

@@ -149,8 +149,6 @@ const RouteView = ({
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
-    customAnimationOnSwipe,
-    fullScreenSwipeEnabled,
     gestureEnabled,
     headerShown,
     homeIndicatorHidden,
@@ -159,16 +157,38 @@ const RouteView = ({
     navigationBarHidden,
     replaceAnimation = 'pop',
     screenOrientation,
-    stackAnimation,
     statusBarAnimation,
     statusBarColor,
     statusBarHidden,
     statusBarStyle,
     statusBarTranslucent,
+    swipeDirection = 'horizontal',
     transitionDuration,
   } = options;
 
-  let { stackPresentation = 'push' } = options;
+  let {
+    customAnimationOnSwipe,
+    fullScreenSwipeEnabled,
+    stackAnimation,
+    stackPresentation = 'push',
+  } = options;
+
+  if (swipeDirection === 'vertical') {
+    // for `vertical` direction to work, we need to set `fullScreenSwipeEnabled` to `true`
+    // so the screen can be dismissed from any point on screen.
+    // `customAnimationOnSwipe` needs to be set to `true` so the `stackAnimation` set by user can be used,
+    // otherwise `simple_push` will be used.
+    // Also, the default animation for this direction seems to be `slide_from_bottom`.
+    if (fullScreenSwipeEnabled === undefined) {
+      fullScreenSwipeEnabled = true;
+    }
+    if (customAnimationOnSwipe === undefined) {
+      customAnimationOnSwipe = true;
+    }
+    if (stackAnimation === undefined) {
+      stackAnimation = 'slide_from_bottom';
+    }
+  }
 
   if (index === 0) {
     // first screen should always be treated as `push`, it resolves problems with no header animation
@@ -212,6 +232,7 @@ const RouteView = ({
       statusBarHidden={statusBarHidden}
       statusBarStyle={statusBarStyle}
       statusBarTranslucent={statusBarTranslucent}
+      swipeDirection={swipeDirection}
       transitionDuration={transitionDuration}
       onHeaderBackButtonClicked={() => {
         navigation.dispatch({
