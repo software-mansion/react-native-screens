@@ -2,6 +2,13 @@
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 
+// proportions to default transition duration
+static const float RNSSlideOpenTransitionDurationProportion = 1;
+static const float RNSFadeOpenTransitionDurationProportion = 0.2 / 0.35;
+static const float RNSSlideCloseTransitionDurationProportion = 0.25 / 0.35;
+static const float RNSFadeCloseTransitionDurationProportion = 0.15 / 0.35;
+static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
+
 @implementation RNSScreenStackAnimator {
   UINavigationControllerOperation _operation;
   NSTimeInterval _transitionDuration;
@@ -224,30 +231,16 @@
   CGAffineTransform topBottomTransform =
       CGAffineTransformMakeTranslation(0, 0.08 * transitionContext.containerView.bounds.size.height);
 
-  // proportions to default transition duration
-  NSDictionary *proportionToDefaultTransitionDuration = @{
-    @"slideOpen" : @1,
-    @"fadeOpen" : @(0.2 / 0.35),
-    @"slideClose" : @(0.25 / 0.35),
-    @"fadeClose" : @(0.15 / 0.35),
-    @"fadeCloseDelay" : @(0.1 / 0.35),
-  };
+  const float transitionDuration = [self transitionDuration:transitionContext];
 
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = topBottomTransform;
     toViewController.view.alpha = 0.0;
     [[transitionContext containerView] addSubview:toViewController.view];
 
-    // defaults to 0.35 s
-    float slideOpenTransitionDuration =
-        [self transitionDuration:transitionContext] * [proportionToDefaultTransitionDuration[@"slideOpen"] floatValue];
-    // defaults to 0.2 s
-    float fadeOpenTransitionDuration =
-        [self transitionDuration:transitionContext] * [proportionToDefaultTransitionDuration[@"fadeOpen"] floatValue];
-
     // Android Nougat open animation
     // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_open_enter.xml
-    [UIView animateWithDuration:slideOpenTransitionDuration
+    [UIView animateWithDuration:transitionDuration * RNSSlideOpenTransitionDurationProportion // defaults to 0.35 s
         delay:0
         options:UIViewAnimationOptionCurveEaseOut
         animations:^{
@@ -258,7 +251,7 @@
           fromViewController.view.transform = CGAffineTransformIdentity;
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
-    [UIView animateWithDuration:fadeOpenTransitionDuration
+    [UIView animateWithDuration:transitionDuration * RNSFadeOpenTransitionDurationProportion // defaults to 0.2 s
                           delay:0
                         options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
@@ -270,19 +263,9 @@
     toViewController.view.transform = CGAffineTransformIdentity;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
 
-    // defaults to 0.25 s
-    float slideCloseTransitionDuration =
-        [self transitionDuration:transitionContext] * [proportionToDefaultTransitionDuration[@"slideClose"] floatValue];
-    // defaults to 0.15 s
-    float fadeCloseTransitionDuration =
-        [self transitionDuration:transitionContext] * [proportionToDefaultTransitionDuration[@"fadeClose"] floatValue];
-    // defaults to 0.1 s
-    float fadeCloseDelayDuration = [self transitionDuration:transitionContext] *
-        [proportionToDefaultTransitionDuration[@"fadeCloseDelay"] floatValue];
-
     // Android Nougat exit animation
     // http://aosp.opersys.com/xref/android-7.1.2_r37/xref/frameworks/base/core/res/res/anim/activity_close_exit.xml
-    [UIView animateWithDuration:slideCloseTransitionDuration
+    [UIView animateWithDuration:transitionDuration * RNSSlideCloseTransitionDurationProportion // defaults to 0.25 s
         delay:0
         options:UIViewAnimationOptionCurveEaseIn
         animations:^{
@@ -292,8 +275,8 @@
         completion:^(BOOL finished) {
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
-    [UIView animateWithDuration:fadeCloseTransitionDuration
-                          delay:fadeCloseDelayDuration
+    [UIView animateWithDuration:transitionDuration * RNSFadeCloseTransitionDurationProportion // defaults to 0.15 s
+                          delay:transitionDuration * RNSFadeCloseDelayTransitionDurationProportion // defaults to 0.1 s
                         options:UIViewAnimationOptionCurveLinear
                      animations:^{
                        fromViewController.view.alpha = 0.0;
