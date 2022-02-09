@@ -351,7 +351,7 @@ PODS:
     - React-Core
   - RNReanimated (1.13.2):
     - React-Core
-  - RNScreens (0.0.0-20220207-fabric):
+  - RNScreens (3.9.0):
     - React-Core
     - React-RCTImage
   - RNVectorIcons (8.0.0):
@@ -420,7 +420,7 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
-  - RNScreens (from `../node_modules/react-native-screens`)
+  - RNScreens (from `../../`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -515,7 +515,7 @@ EXTERNAL SOURCES:
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
-    :path: "../node_modules/react-native-screens"
+    :path: "../../"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -571,11 +571,11 @@ SPEC CHECKSUMS:
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNGestureHandler: 5e58135436aacc1c5d29b75547d3d2b9430d052c
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
-  RNScreens: 060ed112f182099fd2cf42d2932059037bd1afb5
+  RNScreens: 4d79118be80f79fa1f4aa131909a1d6e86280af3
   RNVectorIcons: f67a1abce2ec73e62fe4606e8110e95a832bc859
   Yoga: c11abbf5809216c91fcd62f5571078b83d9b6720
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 36c2ec46b106931dc00b6e67be9849be334de1ec
+PODFILE CHECKSUM: 459089ec5d136d365c5a2280990b9d638cbda105
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.10.2
