@@ -38,6 +38,17 @@ open class ScreenFragment : Fragment {
     // due to progress value being already 0.0f
     private var mProgress = -1f
 
+    // those 2 vars are needed since sometimes the events would be dispatched twice in child containers
+    // (should only happen if parent has `NONE` animation) and we don't need too complicated logic.
+    // We just check if, after the event was dispatched, its "counter-event" has been also dispatched before sending the same event again.
+    // We do it for 'willAppear' -> 'willDisappear' and 'appear' -> 'disappear'
+    private var canDispatchWillAppear = true
+    private var canDispatchAppear = true
+
+    // we want to know if we are currently transitioning in order not to fire lifecycle events
+    // in nested fragments. See more explanation in dispatchViewAnimationEvent
+    private var isTransitioning = false
+
     constructor() {
         throw IllegalStateException(
             "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
@@ -141,33 +152,52 @@ open class ScreenFragment : Fragment {
     val childScreenContainers: List<ScreenContainer<*>>
         get() = mChildScreenContainers
 
-    fun dispatchOnWillAppear() {
+    private fun canDispatchEvent(event: ScreenLifecycleEvent): Boolean {
+        return when (event) {
+            ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
+            ScreenLifecycleEvent.Appear -> canDispatchAppear
+            ScreenLifecycleEvent.WillDisappear -> !canDispatchWillAppear
+            ScreenLifecycleEvent.Disappear -> !canDispatchAppear
+        }
+    }
+
+    private fun setLastEventDispatched(event: ScreenLifecycleEvent) {
+        when (event) {
+            ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear = false
+            ScreenLifecycleEvent.Appear -> canDispatchAppear = false
+            ScreenLifecycleEvent.WillDisappear -> canDispatchWillAppear = true
+            ScreenLifecycleEvent.Disappear -> canDispatchAppear = true
+        }
+    }
+
+    private fun dispatchOnWillAppear() {
         dispatchEvent(ScreenLifecycleEvent.WillAppear, this)
 
         dispatchTransitionProgress(0.0f, false)
     }
 
-    fun dispatchOnAppear() {
+    private fun dispatchOnAppear() {
         dispatchEvent(ScreenLifecycleEvent.Appear, this)
 
         dispatchTransitionProgress(1.0f, false)
     }
 
-    protected fun dispatchOnWillDisappear() {
+    private fun dispatchOnWillDisappear() {
         dispatchEvent(ScreenLifecycleEvent.WillDisappear, this)
 
         dispatchTransitionProgress(0.0f, true)
     }
 
-    protected fun dispatchOnDisappear() {
+    private fun dispatchOnDisappear() {
         dispatchEvent(ScreenLifecycleEvent.Disappear, this)
 
         dispatchTransitionProgress(1.0f, true)
     }
 
     private fun dispatchEvent(event: ScreenLifecycleEvent, fragment: ScreenFragment) {
-        if (fragment is ScreenStackFragment) {
+        if (fragment is ScreenStackFragment && fragment.canDispatchEvent(event)) {
             fragment.screen.let {
+                fragment.setLastEventDispatched(event)
                 val lifecycleEvent: Event<*> = when (event) {
                     ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
                     ScreenLifecycleEvent.Appear -> ScreenAppearEvent(it.id)
@@ -187,12 +217,7 @@ open class ScreenFragment : Fragment {
         for (sc in mChildScreenContainers) {
             if (sc.screenCount > 0) {
                 sc.topScreen?.let {
-                    if (it.stackAnimation !== Screen.StackAnimation.NONE || isRemoving) {
-                        // we do not dispatch events in child when it has `none` animation
-                        // and we are going forward since then they will be dispatched in child via
-                        // `onCreateAnimation` of ScreenStackFragment
-                        sc.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
-                    }
+                    sc.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
                 }
             }
         }
@@ -238,31 +263,37 @@ open class ScreenFragment : Fragment {
     }
 
     fun onViewAnimationStart() {
-        // onViewAnimationStart is triggered from View#onAnimationStart method of the fragment's root
-        // view. We override Screen#onAnimationStart and an appropriate method of the StackFragment's
-        // root view in order to achieve this.
-        if (isResumed) {
-            // Android dispatches the animation start event for the fragment that is being added first
-            // however we want the one being dismissed first to match iOS. It also makes more sense from
-            // a navigation point of view to have the disappear event first.
-            // Since there are no explicit relationships between the fragment being added / removed the
-            // practical way to fix this is delaying dispatching the appear events at the end of the
-            // frame.
-            UiThreadUtil.runOnUiThread { dispatchOnWillAppear() }
-        } else {
-            dispatchOnWillDisappear()
-        }
+        dispatchViewAnimationEvent(false)
     }
 
     open fun onViewAnimationEnd() {
-        // onViewAnimationEnd is triggered from View#onAnimationEnd method of the fragment's root view.
-        // We override Screen#onAnimationEnd and an appropriate method of the StackFragment's root view
-        // in order to achieve this.
-        if (isResumed) {
-            // See the comment in onViewAnimationStart for why this event is delayed.
-            UiThreadUtil.runOnUiThread { dispatchOnAppear() }
-        } else {
-            dispatchOnDisappear()
+        dispatchViewAnimationEvent(true)
+    }
+
+    private fun dispatchViewAnimationEvent(animationEnd: Boolean) {
+        isTransitioning = !animationEnd
+        // if parent fragment is transitioning, we do not want the events dispatched from the child,
+        // since we subscribe to parent's animation start/end and dispatch events in child from there
+        // check for `isTransitioning` should be enough since the child's animation should take only
+        // 20ms due to always being `StackAnimation.NONE` when nested stack being pushed
+        val parent = parentFragment
+        if (parent == null || (parent is ScreenFragment && !parent.isTransitioning)) {
+            // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
+            // view. We override an appropriate method of the StackFragment's
+            // root view in order to achieve this.
+            if (isResumed) {
+                // Android dispatches the animation start event for the fragment that is being added first
+                // however we want the one being dismissed first to match iOS. It also makes more sense from
+                // a navigation point of view to have the disappear event first.
+                // Since there are no explicit relationships between the fragment being added / removed the
+                // practical way to fix this is delaying dispatching the appear events at the end of the
+                // frame.
+                UiThreadUtil.runOnUiThread {
+                    if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
+                }
+            } else {
+                if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
+            }
         }
     }
 

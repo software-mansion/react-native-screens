@@ -21,7 +21,7 @@
     "@react-navigation/drawer": "^5.12.3",
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
-    "nanoid": "^3.1.30",
+    "nanoid": "^3.2.0",
     "react": "17.0.2",
     "react-native": "^0.66.0",
     "react-native-appearance": "^0.3.4",
