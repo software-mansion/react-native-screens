@@ -24,6 +24,7 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
+    private var headerTopInset: Int? = null
     private var mTitle: String? = null
     private var mTitleColor = 0
     private var mTitleFontFamily: String? = null
@@ -81,6 +82,15 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         super.onAttachedToWindow()
         mIsAttachedToWindow = true
         sendEvent("onAttached", null)
+        // we want to save the top inset before the status bar can be hidden, which would resolve in
+        // inset being 0
+        if (headerTopInset == null) {
+            headerTopInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                rootWindowInsets.systemWindowInsetTop
+            else
+            // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
+                (25 * resources.displayMetrics.density).toInt()
+        }
         onUpdate()
     }
 
@@ -159,11 +169,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             screenFragment?.setToolbar(toolbar)
         }
         if (mIsTopInsetEnabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                toolbar.setPadding(0, rootWindowInsets.systemWindowInsetTop, 0, 0)
-            } else {
-                // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
-                toolbar.setPadding(0, (25 * resources.displayMetrics.density).toInt(), 0, 0)
+            headerTopInset.let {
+                toolbar.setPadding(0, it ?: 0, 0, 0)
             }
         } else {
             if (toolbar.paddingTop > 0) {

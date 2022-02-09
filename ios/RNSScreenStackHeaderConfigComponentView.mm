@@ -617,12 +617,12 @@ using namespace facebook::react;
   }
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
 
-    if(newScreenProps.backTitle.size() == 0){
-        _backTitle = nil;
-    } else {
-        _backTitle = [[NSString alloc] initWithUTF8String:newScreenProps.backTitle.c_str()];
-    }
-  
+  if (newScreenProps.backTitle.size() == 0) {
+    _backTitle = nil;
+  } else {
+    _backTitle = [[NSString alloc] initWithUTF8String:newScreenProps.backTitle.c_str()];
+  }
+
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
     _backTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.backTitleFontFamily];
   }

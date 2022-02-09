@@ -37,6 +37,8 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricVie
     private var mStatusBarHidden: Boolean? = null
     private var mStatusBarTranslucent: Boolean? = null
     private var mStatusBarColor: Int? = null
+    private var mNavigationBarColor: Int? = null
+    private var mNavigationBarHidden: Boolean? = null
     var isStatusBarAnimated: Boolean? = null
     private var mNativeBackButtonDismissalEnabled = true
 
@@ -52,16 +54,6 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricVie
         // Setting params this way is not the most elegant way to solve this problem but workarounds it
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
-    }
-
-    override fun onAnimationStart() {
-        super.onAnimationStart()
-        fragment?.onViewAnimationStart()
-    }
-
-    override fun onAnimationEnd() {
-        super.onAnimationEnd()
-        fragment?.onViewAnimationEnd()
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -262,6 +254,31 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricVie
             fragment?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
+    var navigationBarColor: Int?
+        get() = mNavigationBarColor
+        set(navigationBarColor) {
+            if (navigationBarColor != null) {
+                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
+            }
+            mNavigationBarColor = navigationBarColor
+            fragment?.let { ScreenWindowTraits.setNavigationBarColor(this, it.tryGetActivity()) }
+        }
+
+    var isNavigationBarHidden: Boolean?
+        get() = mNavigationBarHidden
+        set(navigationBarHidden) {
+            if (navigationBarHidden != null) {
+                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
+            }
+            mNavigationBarHidden = navigationBarHidden
+            fragment?.let {
+                ScreenWindowTraits.setNavigationBarHidden(
+                    this,
+                    it.tryGetActivity(),
+                )
+            }
+        }
+
     var nativeBackButtonDismissalEnabled: Boolean
         get() = mNativeBackButtonDismissalEnabled
         set(enableNativeBackButtonDismissal) {
@@ -285,6 +302,6 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricVie
     }
 
     enum class WindowTraits {
-        ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED
+        ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
     }
 }
