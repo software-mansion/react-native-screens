@@ -7,5 +7,5 @@
   "reporters": ["detox/runners/jest/streamlineReporter"],
   "verbose": true,
   "preset": "ts-jest",
-  "setupTestFrameworkScriptFile": "./init.ts"
+  "setupFilesAfterEnv": ["./jest.setup.ts"]
 }
