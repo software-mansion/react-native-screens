@@ -125,6 +125,16 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.isStatusBarHidden = statusBarHidden
     }
 
+    @ReactProp(name = "navigationBarColor", customType = "Color")
+    fun setNavigationBarColor(view: Screen, navigationBarColor: Int) {
+        view.navigationBarColor = navigationBarColor
+    }
+
+    @ReactProp(name = "navigationBarHidden")
+    fun setNavigationBarHidden(view: Screen, navigationBarHidden: Boolean?) {
+        view.isNavigationBarHidden = navigationBarHidden
+    }
+
     @ReactProp(name = "nativeBackButtonDismissalEnabled")
     fun setNativeBackButtonDismissalEnabled(
         view: Screen,

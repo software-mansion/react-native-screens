@@ -166,7 +166,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         while (context !is FragmentActivity && context is ContextWrapper) {
             context = context.baseContext
         }
-        check(context is FragmentActivity) { "In order to use RNScreens components your app's activity need to extend ReactFragmentActivity or ReactCompatActivity" }
+        check(context is FragmentActivity) { "In order to use RNScreens components your app's activity need to extend ReactActivity" }
         setFragmentManager(context.supportFragmentManager)
     }
 

@@ -244,6 +244,12 @@ export type NativeStackNavigationOptions = {
    */
   headerTranslucent?: boolean;
   /**
+   * Whether the home indicator should be hidden on this screen. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  homeIndicatorHidden?: boolean;
+  /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
    * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
    * Defaults to `false`.
@@ -251,6 +257,18 @@ export type NativeStackNavigationOptions = {
    * @platform android
    */
   nativeBackButtonDismissalEnabled?: boolean;
+  /**
+   * Sets the navigation bar color. Defaults to initial status bar color.
+   *
+   * @platform android
+   */
+  navigationBarColor?: string;
+  /**
+   * Sets the visibility of the navigation bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  navigationBarHidden?: boolean;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
@@ -326,9 +344,25 @@ export type NativeStackNavigationOptions = {
    */
   statusBarTranslucent?: boolean;
   /**
+   * Sets the direction in which you should swipe to dismiss the screen.
+   * When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+   * The following values are supported:
+   * - `vertical` – dismiss screen vertically
+   * - `horizontal` – dismiss screen horizontally (default)
+   * @platform ios
+   */
+  swipeDirection?: ScreenProps['swipeDirection'];
+  /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;
+  /**
+   * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+   * The duration of `default` and `flip` transitions isn't customizable.
+   *
+   * @platform ios
+   */
+  transitionDuration?: number;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<
