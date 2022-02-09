@@ -90,7 +90,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
           <Toast
             index={i}
             key={toast.id}
-            style={{ marginBottom: i * 45 }}
+            style={{ marginBottom: i * 25 }}
             {...toast}
             remove={remove}
           />
@@ -107,19 +107,19 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'absolute',
     alignSelf: 'center',
-    bottom: 20,
+    bottom: 5,
   },
   alert: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    height: 22,
     position: 'relative',
     width: Dimensions.get('screen').width - 40,
-    borderRadius: 10,
+    borderRadius: 5,
   },
   text: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 12,
     color: 'white',
   },
 });
