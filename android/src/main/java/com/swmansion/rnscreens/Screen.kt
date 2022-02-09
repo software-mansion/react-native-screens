@@ -18,6 +18,7 @@ import com.facebook.react.uimanager.FabricViewStateManager
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerModule
 
+// It is necessary to complie on react-native 0.64
 interface StateForPaper {
     fun getStateData(): ReadableMap?
 }
@@ -105,6 +106,7 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricVie
 
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
+        // Casting is necessary to complie on react-native 0.64
         val currentState: ReadableMap? = (getFabricViewStateManager() as StateForPaper).getStateData()
         if (currentState != null) {
             val delta = 0.9.toFloat()
