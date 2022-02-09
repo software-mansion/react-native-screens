@@ -150,7 +150,7 @@ const ScreensNativeModules = {
     const nativeComponent = () =>
       ENABLE_FABRIC
         ? FabricScreenStackHeaderSubview
-        : requireNativeComponent('RNSScreenStackHeaderConfigSubview');
+        : requireNativeComponent('RNSScreenStackHeaderSubview');
     NativeScreenStackHeaderSubview =
       NativeScreenStackHeaderSubview || nativeComponent();
     return NativeScreenStackHeaderSubview;
