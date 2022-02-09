@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 type Props<T = string> = {
+  testID?: string;
   label: string;
   value: T;
   onValueChange: (value: T) => void;
@@ -10,6 +11,7 @@ type Props<T = string> = {
 };
 
 export function SettingsPicker<T extends string>({
+  testID,
   label,
   value,
   onValueChange,
@@ -21,11 +23,12 @@ export function SettingsPicker<T extends string>({
     <TouchableOpacity
       style={{ ...styles.container, ...style }}
       onPress={() => setIsOpen(!isOpen)}>
-      <Text style={styles.label}>{`${label}: ${value}`}</Text>
+      <Text testID={testID} style={styles.label}>{`${label}: ${value}`}</Text>
       {isOpen
         ? items.map((item) => (
             <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
               <Text
+                testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
                 style={
                   item === value
                     ? { ...styles.item, fontWeight: 'bold' }

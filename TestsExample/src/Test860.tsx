@@ -19,11 +19,13 @@ export default function NativeNavigation() {
           name="Home"
           component={Home}
           options={{
-            statusBarColor: 'blue',
+            statusBarColor: 'rgba(0,0,255,0.25)',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
             statusBarTranslucent: true,
             statusBarHidden: false,
+            navigationBarColor: 'green',
+            navigationBarHidden: false,
           }}
         />
         <Stack.Screen
@@ -33,8 +35,11 @@ export default function NativeNavigation() {
             statusBarColor: 'red',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
+            statusBarHidden: true,
             statusBarTranslucent: true,
-            statusBarHidden: false,
+            headerTopInsetEnabled: false,
+            navigationBarColor: 'blue',
+            navigationBarHidden: true,
           }}
         />
       </Stack.Navigator>
@@ -70,6 +75,7 @@ const Inner = () => (
       statusBarAnimation: 'none',
       statusBarStyle: 'auto',
       headerTopInsetEnabled: false,
+      navigationBarColor: 'pink',
       // headerShown: false,
     }}>
     <InnerStack.Screen name="DeeperHome" component={Home} />
@@ -82,6 +88,9 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
   const [statusBarHidden, setStatusBarHidden] = React.useState(false);
   const [statusBarTranslucent, setStatusBarTranslucent] = React.useState(true);
   const [statusBarAnimation, setStatusBarAnimation] = React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
+  const [navigationBarColor, setNavigationBarColor] = React.useState('green');
+  const [navigationBarHidden, setNavigationBarHidden] = React.useState(false);
+  const [headerTopInsetEnabled, setHeaderTopInsetEnabled] = React.useState(false);
 
   return (
     <ScrollView
@@ -112,7 +121,7 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           navigation.setOptions({
             statusBarColor,
           });
-          setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen');
+          setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'rgba(255,128,128,0.5)' : 'mediumseagreen');
         }}
       />
       <Button
@@ -142,6 +151,15 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           setStatusBarHidden(!statusBarHidden);
         }}
       />
+      <Button
+        title="Change status bar top inset"
+        onPress={() => {
+          navigation.setOptions({
+            headerTopInsetEnabled,
+          });
+          setHeaderTopInsetEnabled(!headerTopInsetEnabled);
+        }}
+      />
             <Button
         title="Change status bar translucent"
         onPress={() => {
@@ -158,6 +176,24 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
             statusBarAnimation,
           });
           setStatusBarAnimation(statusBarAnimation === 'none' ? 'slide' : 'none');
+        }}
+      />
+      <Button
+        title="Change navigation bar color"
+        onPress={() => {
+          navigation.setOptions({
+            navigationBarColor,
+          });
+          setNavigationBarColor(navigationBarColor === 'green' ? 'powderblue' : 'green');
+        }}
+      />
+      <Button
+        title="Change navigation bar hidden"
+        onPress={() => {
+          navigation.setOptions({
+            navigationBarHidden,
+          });
+          setNavigationBarHidden(!navigationBarHidden);
         }}
       />
       <Text>Go to `TabNavigator` and then go to second tab there. Spot the difference between dismissing modal with a swipe and with a `Pop to top` button. </Text> 
