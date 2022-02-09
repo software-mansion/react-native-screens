@@ -105,10 +105,9 @@ let NativeFullWindowOverlay: React.ComponentType<View>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
-    const nativeComponent = ENABLE_FABRIC
-      ? FabricScreen
-      : requireNativeComponent('RNSScreen');
-    NativeScreenValue = NativeScreenValue || nativeComponent;
+    const nativeComponent = () =>
+      ENABLE_FABRIC ? FabricScreen : requireNativeComponent('RNSScreen');
+    NativeScreenValue = NativeScreenValue || nativeComponent();
     return NativeScreenValue;
   },
 
@@ -129,28 +128,31 @@ const ScreensNativeModules = {
   },
 
   get NativeScreenStack() {
-    const nativeComponent = ENABLE_FABRIC
-      ? FabricScreenStack
-      : requireNativeComponent('RNSScreenStack');
-    NativeScreenStack = NativeScreenStack || nativeComponent;
+    const nativeComponent = () =>
+      ENABLE_FABRIC
+        ? FabricScreenStack
+        : requireNativeComponent('RNSScreenStack');
+    NativeScreenStack = NativeScreenStack || nativeComponent();
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
-    const nativeComponent = ENABLE_FABRIC
-      ? FabricScreenStackHeaderConfig
-      : requireNativeComponent('RNSScreenStackHeaderConfig');
+    const nativeComponent = () =>
+      ENABLE_FABRIC
+        ? FabricScreenStackHeaderConfig
+        : requireNativeComponent('RNSScreenStackHeaderConfig');
     NativeScreenStackHeaderConfig =
-      NativeScreenStackHeaderConfig || nativeComponent;
+      NativeScreenStackHeaderConfig || nativeComponent();
     return NativeScreenStackHeaderConfig;
   },
 
   get NativeScreenStackHeaderSubview() {
-    const nativeComponent = ENABLE_FABRIC
-      ? FabricScreenStackHeaderSubview
-      : requireNativeComponent('RNSScreenStackHeaderConfigSubview');
+    const nativeComponent = () =>
+      ENABLE_FABRIC
+        ? FabricScreenStackHeaderSubview
+        : requireNativeComponent('RNSScreenStackHeaderConfigSubview');
     NativeScreenStackHeaderSubview =
-      NativeScreenStackHeaderSubview || nativeComponent;
+      NativeScreenStackHeaderSubview || nativeComponent();
     return NativeScreenStackHeaderSubview;
   },
 
@@ -215,7 +217,6 @@ function ScreenStack(props: ScreenStackProps) {
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
-// @ts-expect-error ViewConfig is not used yet
 interface ViewConfig extends View {
   viewConfig: {
     validAttributes: {
@@ -245,8 +246,15 @@ class Screen extends React.Component<ScreenProps> {
     const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
     if (enabled && isPlatformSupported) {
-      AnimatedNativeScreen =
-        AnimatedNativeScreen || ScreensNativeModules.NativeScreen;
+      if (!AnimatedNativeScreen) {
+        if (ENABLE_FABRIC) {
+          AnimatedNativeScreen = ScreensNativeModules.NativeScreen;
+        } else {
+          AnimatedNativeScreen = Animated.createAnimatedComponent(
+            ScreensNativeModules.NativeScreen
+          ) as React.ComponentType<ScreenProps>;
+        }
+      }
 
       let {
         // Filter out active prop in this case because it is unused and
@@ -269,6 +277,18 @@ class Screen extends React.Component<ScreenProps> {
 
       const processedColor = processColor(statusBarColor);
 
+      const handleRef = (ref: ViewConfig) => {
+        if (!ENABLE_FABRIC) {
+          if (ref?.viewConfig?.validAttributes?.style) {
+            ref.viewConfig.validAttributes.style = {
+              ...ref.viewConfig.validAttributes.style,
+              display: false,
+            };
+          }
+          this.setRef(ref);
+        }
+      };
+
       return (
         <MaybeFreeze freeze={activityState === 0}>
           <AnimatedNativeScreen
@@ -277,15 +297,7 @@ class Screen extends React.Component<ScreenProps> {
             activityState={activityState}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
-            // ref={(ref: ViewConfig) => {
-            //   if (ref?.viewConfig?.validAttributes?.style) {
-            //     ref.viewConfig.validAttributes.style = {
-            //       ...ref.viewConfig.validAttributes.style,
-            //       display: false,
-            //     };
-            //   }
-            //   this.setRef(ref);
-            // }}
+            ref={handleRef}
             onTransitionProgress={
               !isNativeStack
                 ? undefined
