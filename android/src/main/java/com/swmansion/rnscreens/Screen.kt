@@ -9,12 +9,14 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
 import androidx.annotation.UiThread
+import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
 import com.facebook.react.uimanager.FabricViewStateManager
 import com.facebook.react.uimanager.PixelUtil
+import com.facebook.react.uimanager.UIManagerModule
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricViewStateManager.HasFabricViewStateManager {
@@ -76,8 +78,28 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricVie
         if (changed) {
             val width = r - l
             val height = b - t
-            updateState(width, height)
+            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+                updateScreenSizeFabric(width, height)
+            } else {
+                updateScreenSizePaper(width, height)
+            }
         }
+    }
+
+    private fun updateScreenSizePaper(width: Int, height: Int) {
+        val reactContext = context as ReactContext
+        reactContext.runOnNativeModulesQueueThread(
+            object : GuardedRunnable(reactContext) {
+                override fun runGuarded() {
+                    reactContext
+                        .getNativeModule(UIManagerModule::class.java)
+                        ?.updateNodeSize(id, width, height)
+                }
+            })
+    }
+
+    private fun updateScreenSizeFabric(width: Int, height: Int) {
+        updateState(width, height)
     }
 
     @UiThread

@@ -52,6 +52,12 @@ const isPlatformSupported =
 
 let ENABLE_SCREENS = isPlatformSupported;
 
+let ENABLE_FABRIC = false;
+
+function enableFabric(shouldEnableFabric = true): void {
+  ENABLE_FABRIC = shouldEnableFabric;
+}
+
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
@@ -99,7 +105,10 @@ let NativeFullWindowOverlay: React.ComponentType<View>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
-    NativeScreenValue = NativeScreenValue || FabricScreen;
+    const nativeComponent = ENABLE_FABRIC
+      ? FabricScreen
+      : requireNativeComponent('RNSScreen');
+    NativeScreenValue = NativeScreenValue || nativeComponent;
     return NativeScreenValue;
   },
 
@@ -120,19 +129,28 @@ const ScreensNativeModules = {
   },
 
   get NativeScreenStack() {
-    NativeScreenStack = NativeScreenStack || FabricScreenStack;
+    const nativeComponent = ENABLE_FABRIC
+      ? FabricScreenStack
+      : requireNativeComponent('RNSScreenStack');
+    NativeScreenStack = NativeScreenStack || nativeComponent;
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
+    const nativeComponent = ENABLE_FABRIC
+      ? FabricScreenStackHeaderConfig
+      : requireNativeComponent('RNSScreenStackHeaderConfig');
     NativeScreenStackHeaderConfig =
-      NativeScreenStackHeaderConfig || FabricScreenStackHeaderConfig;
+      NativeScreenStackHeaderConfig || nativeComponent;
     return NativeScreenStackHeaderConfig;
   },
 
   get NativeScreenStackHeaderSubview() {
+    const nativeComponent = ENABLE_FABRIC
+      ? FabricScreenStackHeaderSubview
+      : requireNativeComponent('RNSScreenStackHeaderConfigSubview');
     NativeScreenStackHeaderSubview =
-      NativeScreenStackHeaderSubview || FabricScreenStackHeaderSubview;
+      NativeScreenStackHeaderSubview || nativeComponent;
     return NativeScreenStackHeaderSubview;
   },
 
@@ -467,6 +485,7 @@ module.exports = {
 
   enableScreens,
   enableFreeze,
+  enableFabric,
   screensEnabled,
   shouldUseActivityState,
   useTransitionProgress,
