@@ -45,7 +45,7 @@ def renameGeneratedFilesForPaper(){
 
 afterEvaluate { project ->
     if(isNewArchitectureEnabled()){
-        renameGeneratedFilesForPaper()
+        renameGeneratedFilesForFabric()
     }else {
         renameGeneratedFilesForPaper()
     }
