@@ -1,6 +1,10 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { StyleSheet, SafeAreaView, I18nManager } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import {
+  StyleSheet,
+  SafeAreaView,
+  I18nManager,
+  ScrollView,
+} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,

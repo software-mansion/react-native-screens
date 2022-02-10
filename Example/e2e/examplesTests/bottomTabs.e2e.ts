@@ -9,7 +9,7 @@ describe('Bottom tabs and native stack', () => {
     await expect(
       element(by.id('root-screen-example-BottomTabsAndStack'))
     ).toBeVisible();
-    element(by.id('root-screen-example-BottomTabsAndStack')).tap();
+    await element(by.id('root-screen-example-BottomTabsAndStack')).tap();
 
     await expect(
       element(by.id('bottom-tabs-more-details-button'))
