@@ -206,12 +206,6 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            storeFile file("rns-example-keystore.jks")
-            storePassword "12345678"
-            keyAlias "react-native-screens-example"
-            keyPassword "12345678"
-        }
     }
     buildTypes {
         debug {
@@ -220,12 +214,9 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-
-            // Detox-specific additions to pro-guard
-            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
         }
     }
 
@@ -243,11 +234,6 @@ android {
             }
 
         }
-    }
-
-    packagingOptions {
-        pickFirst '**/libhermes.so'
-        pickFirst '**/libjsc.so'
     }
 }
 
@@ -284,12 +270,6 @@ dependencies {
         releaseImplementation files(hermesPath + "hermes-release.aar")
     } else {
         implementation jscFlavor
-    }
-
-    androidTestImplementation('com.wix:detox:+'){
-        // Both rn-screens and detox are using this class
-        // https://github.com/wix/Detox/issues/2848 
-        exclude group: 'com.google.android.material'
     }
 }
 
