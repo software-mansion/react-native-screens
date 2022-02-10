@@ -26,6 +26,31 @@ if (project == rootProject) {
     apply from: 'spotless.gradle'
 }
 
+def renameFilesInGeneratedDirectory(from, to) {
+    String dir = 'src/main/java/com/facebook/react/viewmanagers/'
+    file(dir).listFiles({file -> file.isFile() && file.name.contains(from) } as FileFilter).each { File file ->
+        String sourceDir = dir + file.name
+        String targetDir = dir + file.name.replace(from, to)
+        ant.move(file: sourceDir, tofile: targetDir)
+    }
+}
+
+def renameGeneratedFilesForFabric(){
+    renameFilesInGeneratedDirectory('.java', '.java.paper')
+}
+
+def renameGeneratedFilesForPaper(){
+    renameFilesInGeneratedDirectory('.java.paper', '.java')
+}
+
+afterEvaluate { project ->
+    if(isNewArchitectureEnabled()){
+        renameGeneratedFilesForPaper()
+    }else {
+        renameGeneratedFilesForPaper()
+    }
+}
+
 if(isNewArchitectureEnabled()){
     apply plugin: "com.facebook.react"
 }
