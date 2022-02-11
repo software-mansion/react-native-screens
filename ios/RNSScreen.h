@@ -30,8 +30,8 @@ typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {
 };
 
 typedef NS_ENUM(NSInteger, RNSScreenSwipeDirection) {
-  RNSScreenSwipeDirectionVertical,
   RNSScreenSwipeDirectionHorizontal,
+  RNSScreenSwipeDirectionVertical,
 };
 
 typedef NS_ENUM(NSInteger, RNSActivityState) {
