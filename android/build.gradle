@@ -26,28 +26,56 @@ if (project == rootProject) {
     apply from: 'spotless.gradle'
 }
 
-def renameFilesInGeneratedDirectory(from, to) {
-    String dir = 'src/main/java/com/facebook/react/viewmanagers/'
-    file(dir).listFiles({file -> file.isFile() && file.name.contains(from) } as FileFilter).each { File file ->
+def renameFiles(dir, from, to) {
+    file(dir).listFiles({file -> file.isFile() && file.name.endsWith(from) } as FileFilter).each { File file ->
         String sourceDir = dir + file.name
         String targetDir = dir + file.name.replace(from, to)
         ant.move(file: sourceDir, tofile: targetDir)
     }
 }
 
-def renameGeneratedFilesForFabric(){
-    renameFilesInGeneratedDirectory('.java', '.java.paper')
+def renameGeneratedFiles(from, to) {
+    renameFiles('src/main/java/com/facebook/react/viewmanagers/', from, to)
 }
 
-def renameGeneratedFilesForPaper(){
-    renameFilesInGeneratedDirectory('.java.paper', '.java')
+def renameGeneratedFilesForFabric() {
+    renameGeneratedFiles('.java', '.java.paper')
+}
+
+def renameGeneratedFilesForPaper() {
+    renameGeneratedFiles('.java.paper', '.java')
+}
+
+def copySourceFile(oldName, newName) {
+    String dir = 'src/main/java/com/swmansion/rnscreens/'
+    ant.copy(file: dir + oldName, tofile: dir + newName)
+}
+
+def renameSourceFilesForFabric() {
+    copySourceFile('Screen.kt.fabric', 'Screen.kt')
+}
+
+def renameSourceFilesForPaper() {
+    copySourceFile('Screen.kt.paper', 'Screen.kt')
+}
+
+def adjustFilesForFabric() {
+    println "RNScreens - adjusting files for fabric"
+    renameGeneratedFilesForFabric()
+    renameSourceFilesForFabric()
+}
+
+def adjustFilesForPaper(){
+    println "RNScreens - adjusting files for paper"
+    renameGeneratedFilesForPaper()
+    renameSourceFilesForPaper()
 }
 
 afterEvaluate { project ->
     if(isNewArchitectureEnabled()){
-        renameGeneratedFilesForFabric()
+        adjustFilesForFabric()
     }else {
-        renameGeneratedFilesForPaper()
+        adjustFilesForPaper()
     }
 }
 
