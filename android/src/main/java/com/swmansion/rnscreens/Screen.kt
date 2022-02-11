@@ -18,11 +18,6 @@ import com.facebook.react.uimanager.FabricViewStateManager
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerModule
 
-// It is necessary to complie on react-native 0.64
-interface StateForPaper {
-    fun getStateData(): ReadableMap?
-}
-
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricViewStateManager.HasFabricViewStateManager {
     private val mFabricViewStateManager: FabricViewStateManager = FabricViewStateManager()
@@ -106,8 +101,7 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricVie
 
         // Check incoming state values. If they're already the correct value, return early to prevent
         // infinite UpdateState/SetState loop.
-        // Casting is necessary to complie on react-native 0.64
-        val currentState: ReadableMap? = (getFabricViewStateManager() as StateForPaper).getStateData()
+        val currentState: ReadableMap? = StateWrapper.getStateData(getFabricViewStateManager())
         if (currentState != null) {
             val delta = 0.9.toFloat()
             val stateFrameHeight: Float = if (currentState.hasKey("frameHeight")) currentState.getDouble("frameHeight").toFloat() else 0f
