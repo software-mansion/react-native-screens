@@ -1,17 +1,9 @@
 #import <UIKit/UIKit.h>
 
 #import <React/RCTViewComponentView.h>
+#import "RNSScreenController.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@interface RNSScreenController : UIViewController
-
-- (instancetype)initWithView:(UIView *)view;
-- (void)takeSnapshot;
-- (void)setViewToSnapshot;
-- (void)resetViewToScreen;
-
-@end
 
 @interface RNSScreenComponentView : RCTViewComponentView
 
@@ -25,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyDisappear;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
+
 @end
 
 NS_ASSUME_NONNULL_END

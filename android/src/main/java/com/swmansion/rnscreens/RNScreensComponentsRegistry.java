@@ -6,9 +6,8 @@ import com.facebook.react.fabric.ComponentFactory;
 import com.facebook.soloader.SoLoader;
 
 @DoNotStrip
-public class RNScreensComponentRegistry {
+public class RNScreensComponentsRegistry {
   static {
-    SoLoader.loadLibrary("fabricjni");
     SoLoader.loadLibrary("rnscreens_modules");
   }
 
@@ -18,12 +17,12 @@ public class RNScreensComponentRegistry {
   private native HybridData initHybrid(ComponentFactory componentFactory);
 
   @DoNotStrip
-  private RNScreensComponentRegistry(ComponentFactory componentFactory) {
+  private RNScreensComponentsRegistry(ComponentFactory componentFactory) {
     mHybridData = initHybrid(componentFactory);
   }
 
   @DoNotStrip
-  public static RNScreensComponentRegistry register(ComponentFactory componentFactory) {
-    return new RNScreensComponentRegistry(componentFactory);
+  public static RNScreensComponentsRegistry register(ComponentFactory componentFactory) {
+    return new RNScreensComponentsRegistry(componentFactory);
   }
 }

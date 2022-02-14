@@ -15,6 +15,7 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
 import com.facebook.react.uimanager.FabricViewStateManager
 import com.facebook.react.uimanager.PixelUtil
+import kotlin.math.abs
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricViewStateManager.HasFabricViewStateManager {
@@ -81,24 +82,21 @@ class Screen constructor(context: ReactContext?) : ViewGroup(context), FabricVie
         // infinite UpdateState/SetState loop.
         val currentState: ReadableMap? = getFabricViewStateManager().getStateData()
         if (currentState != null) {
-            val delta = 0.9.toFloat()
+            val delta = 0.9f
             val stateFrameHeight: Float = if (currentState.hasKey("frameHeight")) currentState.getDouble("frameHeight").toFloat() else 0f
             val stateFrameWidth: Float = if (currentState.hasKey("frameWidth")) currentState.getDouble("frameWidth").toFloat() else 0f
-            if (Math.abs(stateFrameWidth - realWidth) < delta &&
-                Math.abs(stateFrameHeight - realHeight) < delta
+            if (abs(stateFrameWidth - realWidth) < delta &&
+                abs(stateFrameHeight - realHeight) < delta
             ) {
                 return
             }
         }
-        mFabricViewStateManager.setState(
-            object : FabricViewStateManager.StateUpdateCallback {
-                override fun getStateUpdate(): WritableMap {
-                    val map: WritableMap = WritableNativeMap()
-                    map.putDouble("frameWidth", realWidth.toDouble())
-                    map.putDouble("frameHeight", realHeight.toDouble())
-                    return map
-                }
-            })
+        mFabricViewStateManager.setState {
+            val map: WritableMap = WritableNativeMap()
+            map.putDouble("frameWidth", realWidth.toDouble())
+            map.putDouble("frameHeight", realHeight.toDouble())
+            map
+        }
     }
 
     override fun getFabricViewStateManager(): FabricViewStateManager {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./RNSScreenState.h"
+#include "RNSScreenState.h"
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
