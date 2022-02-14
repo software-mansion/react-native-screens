@@ -8,15 +8,15 @@
 namespace facebook {
 namespace react {
 
-class RNScreensComponentRegistry
-    : public facebook::jni::HybridClass<RNScreensComponentRegistry> {
+class RNScreensComponentsRegistry
+    : public facebook::jni::HybridClass<RNScreensComponentsRegistry> {
  public:
   constexpr static auto kJavaDescriptor =
-      "Lcom/swmansion/rnscreens/RNScreensComponentRegistry;";
+      "Lcom/swmansion/rnscreens/RNScreensComponentsRegistry;";
 
   static void registerNatives();
 
-  RNScreensComponentRegistry(ComponentFactory *delegate);
+  RNScreensComponentsRegistry(ComponentFactory *delegate);
 
  private:
   friend HybridBase;

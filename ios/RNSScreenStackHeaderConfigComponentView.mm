@@ -517,7 +517,7 @@ using namespace facebook::react;
         break;
       }
       case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
-        RCTLogWarn(@"SearchBar is not yet supported in ScreensFabric");
+        RCTLogWarn(@"SearchBar is not yet supported in react-native-screens with Fabric enabled");
         break;
       }
       case facebook::react::RNSScreenStackHeaderSubviewType::Back: {

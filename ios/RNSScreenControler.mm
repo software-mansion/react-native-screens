@@ -70,7 +70,7 @@
 {
   [super viewDidLayoutSubviews];
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
-  if ((isDisplayedWithinUINavController) && !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+  if (isDisplayedWithinUINavController && !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
     [_initialView updateBounds];
   }
