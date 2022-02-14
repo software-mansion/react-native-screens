@@ -17,7 +17,6 @@ using namespace facebook::react;
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
     UIViewControllerTransitioningDelegate>
-
 @end
 
 @implementation RNSScreenStackComponentView {

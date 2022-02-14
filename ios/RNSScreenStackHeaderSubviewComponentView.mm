@@ -56,7 +56,6 @@ using namespace facebook::react;
 {
   const auto &newHeaderSubviewProps = *std::static_pointer_cast<const RNSScreenStackHeaderSubviewProps>(props);
 
-  // `type`
   if (_type != newHeaderSubviewProps.type) {
     _type = newHeaderSubviewProps.type;
     _isInitialValueSet = YES;
