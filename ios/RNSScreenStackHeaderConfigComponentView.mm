@@ -605,16 +605,16 @@ using namespace facebook::react;
   const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(props);
 
-  BOOL needsNavigationControlerLayout = !_initialPropsSet;
+  BOOL needsNavigationControllerLayout = !_initialPropsSet;
 
   if (newScreenProps.hidden != !_show) {
     _show = !newScreenProps.hidden;
-    needsNavigationControlerLayout = YES;
+    needsNavigationControllerLayout = YES;
   }
 
   if (newScreenProps.translucent != _translucent) {
     _translucent = newScreenProps.translucent;
-    needsNavigationControlerLayout = YES;
+    needsNavigationControllerLayout = YES;
   }
 
   _title = [self stringToPropValue:newScreenProps.title];
@@ -659,7 +659,7 @@ using namespace facebook::react;
 
   [self updateViewControllerIfNeeded];
 
-  if (needsNavigationControlerLayout) {
+  if (needsNavigationControllerLayout) {
     [self layoutNavigationControllerView];
   }
 
