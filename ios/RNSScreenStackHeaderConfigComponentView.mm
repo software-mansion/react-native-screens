@@ -574,6 +574,30 @@ using namespace facebook::react;
   }
 }
 
+- (NSString *)stringToPropValue:(std::string)value
+{
+  if (value.empty())
+    return nil;
+  return [[NSString alloc] initWithUTF8String:value.c_str()];
+}
+
+- (NSNumber *)getFontSizePropValue:(int)value
+{
+  if (value > 0)
+    return [NSNumber numberWithInt:value];
+  return nil;
+}
+
+- (UISemanticContentAttribute)getDirectionPropValue:(RNSScreenStackHeaderConfigDirection)direction
+{
+  switch (direction) {
+    case RNSScreenStackHeaderConfigDirection::Rtl:
+      return UISemanticContentAttributeForceRightToLeft;
+    case RNSScreenStackHeaderConfigDirection::Ltr:
+      return UISemanticContentAttributeForceLeftToRight;
+  }
+}
+
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
   [super updateProps:props oldProps:oldProps];
@@ -593,73 +617,45 @@ using namespace facebook::react;
     needsNavigationControlerLayout = YES;
   }
 
-  _title = [[NSString alloc] initWithUTF8String:newScreenProps.title.c_str()];
+  _title = [self stringToPropValue:newScreenProps.title];
   if (newScreenProps.titleFontFamily != oldScreenProps.titleFontFamily) {
     _titleFontFamily = [self getFontFamilyPropValue:newScreenProps.titleFontFamily];
   }
-  _titleFontWeight = [[NSString alloc] initWithUTF8String:newScreenProps.titleFontWeight.c_str()];
-  if (newScreenProps.titleFontSize > 0) {
-    _titleFontSize = [NSNumber numberWithInt:newScreenProps.titleFontSize];
-  } else {
-    _titleFontSize = nil;
-  }
+  _titleFontWeight = [self stringToPropValue:newScreenProps.titleFontWeight];
+  _titleFontSize = [self getFontSizePropValue:newScreenProps.titleFontSize];
   _hideShadow = newScreenProps.hideShadow;
 
   _largeTitle = newScreenProps.largeTitle;
   if (newScreenProps.largeTitleFontFamily != oldScreenProps.largeTitleFontFamily) {
     _largeTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.largeTitleFontFamily];
   }
-  _largeTitleFontWeight = [[NSString alloc] initWithUTF8String:newScreenProps.largeTitleFontWeight.c_str()];
-  if (newScreenProps.largeTitleFontSize > 0) {
-    _largeTitleFontSize = [NSNumber numberWithInt:newScreenProps.largeTitleFontSize];
-  } else {
-    _largeTitleFontSize = nil;
-  }
+  _largeTitleFontWeight = [self stringToPropValue:newScreenProps.largeTitleFontWeight];
+  _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
 
-  if (newScreenProps.backTitle.size() == 0) {
-    _backTitle = nil;
-  } else {
-    _backTitle = [[NSString alloc] initWithUTF8String:newScreenProps.backTitle.c_str()];
-  }
-
+  _backTitle = [self stringToPropValue:newScreenProps.backTitle];
+  ;
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
     _backTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.backTitleFontFamily];
   }
-  if (newScreenProps.backTitleFontSize > 0) {
-    _backTitleFontSize = [NSNumber numberWithInt:newScreenProps.backTitleFontSize];
-  } else {
-    _backTitleFontSize = nil;
-  }
+  _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
   _hideBackButton = newScreenProps.hideBackButton;
   _disableBackButtonMenu = newScreenProps.disableBackButtonMenu;
 
   if (newScreenProps.direction != oldScreenProps.direction) {
-    auto newDirection = newScreenProps.direction;
-    switch (newDirection) {
-      case RNSScreenStackHeaderConfigDirection::Rtl:
-        _direction = UISemanticContentAttributeForceRightToLeft;
-        break;
-      case RNSScreenStackHeaderConfigDirection::Ltr:
-        _direction = UISemanticContentAttributeForceLeftToRight;
-        break;
-    }
+    _direction = [self getDirectionPropValue:newScreenProps.direction];
   }
 
-  // This condition does not work beacuse of SharedColor being shared
-  //    if (oldScreenProps.titleColor != newScreenProps.titleColor) {
+  // We cannot compare SharedColor because it is shared value.
+  // We could compare color value, but it is more performant to just assign new value
   _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
-  //    }
-  //    if (oldScreenProps.largeTitleColor != newScreenProps.largeTitleColor) {
   _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
-  //    }
+  _color = RCTUIColorFromSharedColor(newScreenProps.color);
+
   if (_backgroundSharedColor != newScreenProps.backgroundColor) {
     _backgroundSharedColor = newScreenProps.backgroundColor;
     _backgroundColor = RCTUIColorFromSharedColor(_backgroundSharedColor);
   }
-  //    if (oldScreenProps.color != newScreenProps.color) {
-  _color = RCTUIColorFromSharedColor(newScreenProps.color);
-  //    }
 
   [self updateViewControllerIfNeeded];
 
