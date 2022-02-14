@@ -1,6 +1,6 @@
 {
   "name": "react-native-screens",
-  "version": "0.0.0-20220207-fabric",
+  "version": "3.11.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
     "check-types": "tsc --noEmit",
