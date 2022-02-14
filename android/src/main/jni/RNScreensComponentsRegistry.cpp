@@ -1,4 +1,4 @@
-#include "RNScreensComponentRegistry.h"
+#include "RNScreensComponentsRegistry.h"
 
 #include <CoreComponentsRegistry.h>
 #include <fbjni/fbjni.h>
@@ -11,12 +11,12 @@
 namespace facebook {
 namespace react {
 
-RNScreensComponentRegistry::RNScreensComponentRegistry(
+RNScreensComponentsRegistry::RNScreensComponentsRegistry(
     ComponentFactory *delegate)
     : delegate_(delegate) {}
 
 std::shared_ptr<ComponentDescriptorProviderRegistry const>
-RNScreensComponentRegistry::sharedProviderRegistry() {
+RNScreensComponentsRegistry::sharedProviderRegistry() {
   auto providerRegistry = CoreComponentsRegistry::sharedProviderRegistry();
 
   // Screens
@@ -28,8 +28,8 @@ RNScreensComponentRegistry::sharedProviderRegistry() {
   return providerRegistry;
 }
 
-jni::local_ref<RNScreensComponentRegistry::jhybriddata>
-RNScreensComponentRegistry::initHybrid(
+jni::local_ref<RNScreensComponentsRegistry::jhybriddata>
+RNScreensComponentsRegistry::initHybrid(
     jni::alias_ref<jclass>,
     ComponentFactory *delegate) {
   auto instance = makeCxxInstance(delegate);
@@ -38,7 +38,7 @@ RNScreensComponentRegistry::initHybrid(
       [](EventDispatcher::Weak const &eventDispatcher,
          ContextContainer::Shared const &contextContainer)
       -> ComponentDescriptorRegistry::Shared {
-    auto registry = RNScreensComponentRegistry::sharedProviderRegistry()
+    auto registry = RNScreensComponentsRegistry::sharedProviderRegistry()
                         ->createComponentDescriptorRegistry(
                             {eventDispatcher, contextContainer});
 
@@ -49,9 +49,9 @@ RNScreensComponentRegistry::initHybrid(
   return instance;
 }
 
-void RNScreensComponentRegistry::registerNatives() {
+void RNScreensComponentsRegistry::registerNatives() {
   registerHybrid({
-      makeNativeMethod("initHybrid", RNScreensComponentRegistry::initHybrid),
+      makeNativeMethod("initHybrid", RNScreensComponentsRegistry::initHybrid),
   });
 }
 
