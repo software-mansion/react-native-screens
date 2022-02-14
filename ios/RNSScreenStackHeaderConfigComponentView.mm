@@ -434,34 +434,23 @@ using namespace facebook::react;
         navitem.rightBarButtonItem = buttonItem;
         break;
       }
-        //    case RNSScreenStackHeaderSubviewTypeTitle:
       case RNSScreenStackHeaderSubviewType::Center: {
         navitem.titleView = subview;
         break;
       }
-        //      case RNSScreenStackHeaderSubviewTypeSearchBar: {
-        //        if (subview.subviews == nil || [subview.subviews count] == 0) {
-        //          RCTLogWarn(
-        //              @"Failed to attach search bar to the header. We recommend using `useLayoutEffect` when managing
-        //              "
-        //               "searchBar properties dynamically. \n\nSee:
-        //               github.com/software-mansion/react-native-screens/issues/1188");
-        //          break;
-        //        }
-        //
-        //        if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
-        //#if !TARGET_OS_TV
-        //          if (@available(iOS 11.0, *)) {
-        //            RNSSearchBar *searchBar = subview.subviews[0];
-        //            navitem.searchController = searchBar.controller;
-        //            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
-        //          }
-        //#endif
-        //        }
-        //      }
-        //      case RNSScreenStackHeaderSubviewTypeBackButton: {
-        //        break;
-        //      }
+      case RNSScreenStackHeaderSubviewTypeTitle: {
+        RCTLogWarn(@"Title subview is not yet Fabric compatible in react-native-screens");
+        break;
+      }
+      case RNSScreenStackHeaderSubviewTypeSearchBar: {
+        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
+        break;
+      }
+      case RNSScreenStackHeaderSubviewTypeBackButton: {
+        RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
+        break;
+        ;
+      }
     }
   }
 
