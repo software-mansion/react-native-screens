@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 
 #import <React/RCTViewComponentView.h>
-#import <react/renderer/components/ScreensSpec/Props.h>
+#import <react/renderer/components/rnscreens/Props.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

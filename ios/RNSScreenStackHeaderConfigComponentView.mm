@@ -3,10 +3,10 @@
 
 #import <React/RCTConversions.h>
 
-#import <react/renderer/components/ScreensSpec/ComponentDescriptors.h>
-#import <react/renderer/components/ScreensSpec/EventEmitters.h>
-#import <react/renderer/components/ScreensSpec/Props.h>
-#import <react/renderer/components/ScreensSpec/RCTComponentViewHelpers.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 
@@ -114,8 +114,6 @@ using namespace facebook::react;
     return;
   }
 
-  navitem.title = @"test title";
-
   if (@available(iOS 13.0, tvOS 13.0, *)) {
     UINavigationBarAppearance *appearance = [self buildAppearance:vc withConfig:config];
     navitem.standardAppearance = appearance;
@@ -150,7 +148,7 @@ using namespace facebook::react;
         break;
       }
       case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
-        RCTLogWarn(@"SearchBar is not yet supported in ScreensFabric");
+        RCTLogWarn(@"SearchBar is not yet supported in react-native-screens with Fabric enabled");
         break;
       }
       case facebook::react::RNSScreenStackHeaderSubviewType::Back: {

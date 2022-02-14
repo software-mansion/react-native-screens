@@ -2,9 +2,9 @@
 
 #import <React/RCTConversions.h>
 
-#import <react/renderer/components/ScreensSpec/ComponentDescriptors.h>
-#import <react/renderer/components/ScreensSpec/EventEmitters.h>
-#import <react/renderer/components/ScreensSpec/RCTComponentViewHelpers.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 

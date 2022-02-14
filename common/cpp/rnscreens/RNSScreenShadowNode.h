@@ -1,8 +1,8 @@
 #pragma once
 
-#include "./RNSScreenState.h"
-#include <react/renderer/components/ScreensSpec/EventEmitters.h>
-#include <react/renderer/components/ScreensSpec/Props.h>
+#include "RNSScreenState.h"
+#include <react/renderer/components/rnscreens/EventEmitters.h>
+#include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 
 namespace facebook {

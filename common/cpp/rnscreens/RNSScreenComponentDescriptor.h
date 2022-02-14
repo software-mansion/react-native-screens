@@ -1,16 +1,11 @@
 #pragma once
 
-// #include <glog/logging.h>
 #include <react/debug/react_native_assert.h>
-#include "./RNSScreenShadowNode.h"
+#include "RNSScreenShadowNode.h"
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 
 namespace facebook {
 namespace react {
-
-/*
- * Descriptor for <BottomSheet> component.
- */
 
 class RNSScreenComponentDescriptor final
     : public ConcreteComponentDescriptor<RNSScreenShadowNode> {
@@ -33,7 +28,6 @@ class RNSScreenComponentDescriptor final
             shadowNode->getState());
     auto stateData = state->getData();
 
-    // TODO: Test if this work on iOS
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       layoutableShadowNode->setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
