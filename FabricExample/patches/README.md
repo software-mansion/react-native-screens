@@ -1,1 +1,0 @@
-The patch for react-native is currently only used, so that running on M1 is easier.
