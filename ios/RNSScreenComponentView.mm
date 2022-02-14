@@ -6,7 +6,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import "../common/cpp/rnscreens/RNSScreenComponentDescriptor.h"
+#import <rnscreens/RNSScreenComponentDescriptor.h>
 
 #import "RCTFabricComponentsPlugins.h"
 
@@ -95,6 +95,8 @@ using namespace facebook::react;
 
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
+  // If screen is already unmounted then there will be no event emitter
+  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
         ->onDismissed(RNSScreenEventEmitter::OnDismissed{dismissCount : dismissCount});
