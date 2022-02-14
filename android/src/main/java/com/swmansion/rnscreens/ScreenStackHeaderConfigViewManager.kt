@@ -157,6 +157,7 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"
     }
 
+    // TODO: Find better way to handle platform specific props
     private fun logNotAvailable(propName: String) {
         Log.w("RN SCREENS", "$propName prop is not available on Android")
     }
