@@ -7,20 +7,30 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "patch-package"
   },
   "dependencies": {
+    "@react-navigation/native": "^6.0.6",
+    "@react-navigation/native-stack": "^6.2.5",
+    "patch-package": "^6.4.7",
     "react": "17.0.2",
-    "react-native": "0.0.0-20220102-2009-e22b760e5"
+    "react-native": "0.0.0-20220213-2008-7cece3423",
+    "react-native-codegen": "^0.0.13",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-screens": "link:../"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
     "babel-jest": "^26.6.3",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "babel-preset-expo": "^9.0.2",
     "eslint": "^7.32.0",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.2",
+    "prettier": "^2.5.1",
     "react-native-gradle-plugin": "^0.0.3",
     "react-test-renderer": "17.0.2"
   },

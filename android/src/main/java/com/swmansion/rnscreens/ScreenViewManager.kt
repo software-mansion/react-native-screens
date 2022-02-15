@@ -1,11 +1,18 @@
 package com.swmansion.rnscreens
 
+import androidx.annotation.NonNull
+import androidx.annotation.Nullable
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenManagerInterface
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
@@ -16,7 +23,13 @@ import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
-class ScreenViewManager : ViewGroupManager<Screen>() {
+class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
+    private val mDelegate: ViewManagerDelegate<Screen>
+
+    init {
+        mDelegate = RNSScreenManagerDelegate<Screen, ScreenViewManager>(this)
+    }
+
     override fun getName(): String {
         return REACT_CLASS
     }
@@ -150,6 +163,16 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
         // there is no `MapBuilder.of` with more than 7 items
         map[HeaderBackButtonClickedEvent.EVENT_NAME] = MapBuilder.of("registrationName", "onHeaderBackButtonClicked")
         return map
+    }
+
+    @Nullable
+    fun updateState(@NonNull view: Screen, props: ReactStylesDiffMap, @Nullable stateWrapper: StateWrapper): Any? {
+        view.getFabricViewStateManager().setStateWrapper(stateWrapper)
+        return null
+    }
+
+    protected override fun getDelegate(): ViewManagerDelegate<Screen> {
+        return mDelegate
     }
 
     companion object {

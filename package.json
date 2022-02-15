@@ -8,7 +8,7 @@
     "test:unit": "jest --passWithNoTests",
     "format-js": "prettier --write --list-different './{src,Example}/**/*.{js,ts,tsx}'",
     "format-android": "node ./scripts/format-android.js",
-    "format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp | xargs clang-format -i",
+    "format-ios": "find ios/ -iname *.h -o -iname *.m -o -iname *.cpp -o -iname *.mm | xargs clang-format -i",
     "format": "yarn format-js && yarn format-android && yarn format-ios",
     "lint-js": "eslint --ext '.js,.ts,.tsx' --fix src",
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
@@ -23,13 +23,17 @@
   "types": "lib/typescript/index",
   "files": [
     "src/",
+    "common/",
     "lib/",
     "native-stack/",
     "createNativeStackNavigator/",
     "reanimated/",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
+    "android/src/main/jni/",
     "android/src/main/res",
+    "android/src/fabric/",
+    "android/src/paper/",
     "android/build.gradle",
     "ios/",
     "windows/",
@@ -54,6 +58,7 @@
   "homepage": "https://github.com/software-mansion/react-native-screens#readme",
   "dependencies": {
     "react-freeze": "^1.0.0",
+    "react-native-gradle-plugin": "^0.0.3",
     "warn-once": "^0.1.0"
   },
   "peerDependencies": {
@@ -126,5 +131,14 @@
   "eslintIgnore": [
     "node_modules/",
     "lib/"
-  ]
+  ],
+  "codegenConfig": {
+    "libraries": [
+      {
+        "name": "rnscreens",
+        "type": "components",
+        "jsSrcsDir": "./src/fabric"
+      }
+    ]
+  }
 }
