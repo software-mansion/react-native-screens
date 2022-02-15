@@ -1,4 +1,4 @@
-name: Test Android build
+name: Test Android build on Fabric
 on:
   pull_request:
     branches:

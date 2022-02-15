@@ -1,4 +1,4 @@
-name: Test iOS build
+name: Test iOS build on Fabric
 on:
   pull_request:
     branches:
