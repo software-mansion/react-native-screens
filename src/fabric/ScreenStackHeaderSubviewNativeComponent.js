@@ -14,6 +14,7 @@ export type HeaderSubviewTypes =
   | 'back'
   | 'right'
   | 'left'
+  | 'title'
   | 'center'
   | 'searchBar';
 

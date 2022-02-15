@@ -434,19 +434,16 @@ using namespace facebook::react;
         navitem.rightBarButtonItem = buttonItem;
         break;
       }
-      case RNSScreenStackHeaderSubviewType::Center: {
+      case RNSScreenStackHeaderSubviewType::Center:
+      case RNSScreenStackHeaderSubviewType::Title: {
         navitem.titleView = subview;
         break;
       }
-      case RNSScreenStackHeaderSubviewTypeTitle: {
-        RCTLogWarn(@"Title subview is not yet Fabric compatible in react-native-screens");
-        break;
-      }
-      case RNSScreenStackHeaderSubviewTypeSearchBar: {
+      case RNSScreenStackHeaderSubviewType::SearchBar: {
         RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
         break;
       }
-      case RNSScreenStackHeaderSubviewTypeBackButton: {
+      case RNSScreenStackHeaderSubviewType::Back: {
         RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
         break;
         ;
@@ -501,7 +498,8 @@ using namespace facebook::react;
         navitem.rightBarButtonItem = buttonItem;
         break;
       }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Center: {
+      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
+      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
         navitem.titleView = subview;
         break;
       }
