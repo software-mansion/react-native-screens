@@ -7,7 +7,7 @@ import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNati
 import type { ViewProps } from 'react-native/Libraries/Components/View/ViewPropTypes';
 import type { HostComponent } from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
 import type {
-  BubblingEventHandler,
+  DirectEventHandler,
   Int32,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
@@ -19,11 +19,11 @@ type ScreenDismissedEvent = $ReadOnly<{|
 
 export type NativeProps = $ReadOnly<{|
   ...ViewProps,
-  onAppear?: ?BubblingEventHandler<ScreenEvent>,
-  onDisappear?: ?BubblingEventHandler<ScreenEvent>,
-  onDismissed?: ?BubblingEventHandler<ScreenDismissedEvent>,
-  onWillAppear?: ?BubblingEventHandler<ScreenEvent>,
-  onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
+  onAppear?: ?DirectEventHandler<ScreenEvent>,
+  onDisappear?: ?DirectEventHandler<ScreenEvent>,
+  onDismissed?: ?DirectEventHandler<ScreenDismissedEvent>,
+  onWillAppear?: ?DirectEventHandler<ScreenEvent>,
+  onWillDisappear?: ?DirectEventHandler<ScreenEvent>,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
