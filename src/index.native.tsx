@@ -52,11 +52,8 @@ const isPlatformSupported =
 
 let ENABLE_SCREENS = isPlatformSupported;
 
-let ENABLE_FABRIC = false;
-
-function enableFabric(shouldEnableFabric = true): void {
-  ENABLE_FABRIC = shouldEnableFabric;
-}
+// @ts-expect-error nativeFabricUIManager is not ts yet
+const ENABLE_FABRIC = !!global?.nativeFabricUIManager;
 
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
@@ -497,7 +494,6 @@ module.exports = {
 
   enableScreens,
   enableFreeze,
-  enableFabric,
   screensEnabled,
   shouldUseActivityState,
   useTransitionProgress,

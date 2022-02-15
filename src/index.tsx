@@ -32,12 +32,6 @@ export function enableFreeze(shouldEnableReactFreeze = true): void {
   // noop
 }
 
-// @ts-ignore function stub, fabric logic is located in index.native.tsx
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function enableFabric(shouldEnableFabric = true): void {
-  // noop
-}
-
 export class NativeScreen extends React.Component<ScreenProps> {
   render(): JSX.Element {
     let {
