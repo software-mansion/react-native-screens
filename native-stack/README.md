@@ -206,6 +206,14 @@ Unfortunately the same behavior is not available on iOS since the behavior of na
 
 Defaults to `false`.
 
+#### `navigationBarColor` (Android only)
+
+Sets the navigation bar color. Defaults to initial status bar color.
+
+#### `navigationBarHidden` (Android only)
+
+Sets the visibility of the navigation bar. Defaults to `false`.
+
 #### `replaceAnimation`
 
 How should the screen replacing another screen animate.
@@ -247,9 +255,23 @@ Defaults to `push`.
 
 Using `containedModal` and `containedTransparentModal` with other types of modals in one native stack navigator is not recommended and can result in a freeze or a crash of the application.
 
+#### `swipeDirection` (iOS only)
+
+Sets the direction in which you should swipe to dismiss the screen. The following values are supported:
+- `vertical` – dismiss screen vertically
+- `horizontal` – dismiss screen horizontally (default)
+
+When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.
+
+#### `transitionDuration` (iOS only)
+
+Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+
+The duration of `default` and `flip` transitions isn't customizable.
 
 #### `useTransitionProgress`
 

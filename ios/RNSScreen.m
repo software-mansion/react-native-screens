@@ -789,11 +789,13 @@ RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
-RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
+RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
+RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
@@ -857,6 +859,15 @@ RCT_ENUM_CONVERTER(
       @"pop" : @(RNSScreenReplaceAnimationPop),
     }),
     RNSScreenReplaceAnimationPop,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSScreenSwipeDirection,
+    (@{
+      @"vertical" : @(RNSScreenSwipeDirectionVertical),
+      @"horizontal" : @(RNSScreenSwipeDirectionHorizontal),
+    }),
+    RNSScreenSwipeDirectionHorizontal,
     integerValue)
 
 #if !TARGET_OS_TV
