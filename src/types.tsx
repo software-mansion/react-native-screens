@@ -70,10 +70,10 @@ export type TransitionProgressEventType = {
 };
 
 export type GestureResponseDistanceType = {
-  minX?: number;
-  maxX?: number;
-  minY?: number;
-  maxY?: number;
+  start?: number;
+  end?: number;
+  top?: number;
+  bottom?: number;
 };
 
 export interface ScreenProps extends ViewProps {

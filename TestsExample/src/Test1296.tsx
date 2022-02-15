@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
+  useHeaderHeight,
 } from 'react-native-screens/native-stack';
 import {
   GestureHandlerRootView,
@@ -28,13 +29,29 @@ function First({
   );
 }
 
-function Second() {
+function Second({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
+  const headerHeight = useHeaderHeight();
+  useLayoutEffect(() => {
+    navigation.setOptions({
+    gestureResponseDistance: {
+      start: 200,
+      end: 250,
+      top: headerHeight,
+      bottom: headerHeight + 50,
+    }
+  });
+  });
   return (
     <ScrollView>
       <Text style={styles.subTitle}>
         Use swipe back gesture to go back (iOS only)
       </Text>
       <Post />
+    <View style={{position: 'absolute', backgroundColor: 'red', width: 50, height: 50, left: 200, top: 0}}/>
     </ScrollView>
   );
 }
@@ -47,11 +64,7 @@ export default function App() {
           screenOptions={{
             fullScreenSwipeEnabled: true,
             customAnimationOnSwipe: true,
-            direction: 'rtl',
-            gestureResponseDistance: {
-              minX: 200,
-              maxY: 400,
-            }
+            direction: 'ltr',
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />

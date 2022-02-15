@@ -89,7 +89,16 @@ Whether you can use gestures to dismiss this screen. Defaults to `true`.
 
 #### `gestureResponseDistance` (iOS only)
 
-Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage: 
+
+```tsx
+gestureResponseDistance: {
+  start: 200,
+  end: 250,
+  top: 100,
+  bottom: 150,
+}
+```
 
 #### `headerBackTitle`
 
