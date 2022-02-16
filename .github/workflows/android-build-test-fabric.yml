@@ -5,6 +5,11 @@ on:
       - main
     paths:
       - 'android/**'
+      - 'common/**'
+      - 'src/fabric/**'
+      - 'FabricExample/**'
+      - 'package.json'
+      - 'RNScreens.podspec'
   push:
     branches:
       - main
