@@ -74,7 +74,7 @@ android {
         }
     }
     packagingOptions {
-        // For some reason gradle only complains about the duplicated versionf of libreact_render libraries
+        // For some reason gradle only complains about the duplicated version of libreact_render libraries
         // while there are more libraries copied in intermediates folder of the lib build directory, we exlude
         // only the ones that make the build fail (ideally we should only include librnscreens_modules but we
         // are only allowed to specify exlude patterns)
