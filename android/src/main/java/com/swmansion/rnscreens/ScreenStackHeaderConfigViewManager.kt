@@ -110,7 +110,7 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     @ReactProp(name = "topInsetEnabled")
-    fun setTopInsetEnabled(config: ScreenStackHeaderConfig, topInsetEnabled: Boolean) {
+    override fun setTopInsetEnabled(config: ScreenStackHeaderConfig, topInsetEnabled: Boolean) {
         config.setTopInsetEnabled(topInsetEnabled)
     }
 
@@ -130,7 +130,7 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     @ReactProp(name = "backButtonInCustomView")
-    fun setBackButtonInCustomView(
+    override fun setBackButtonInCustomView(
         config: ScreenStackHeaderConfig,
         backButtonInCustomView: Boolean
     ) {

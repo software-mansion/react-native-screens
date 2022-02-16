@@ -10,7 +10,21 @@
 package com.facebook.react.viewmanagers;
 
 import android.view.View;
+import androidx.annotation.Nullable;
 
 public interface RNSScreenManagerInterface<T extends View> {
-  // No props
+  void setStackPresentation(T view, @Nullable String value);
+  void setStackAnimation(T view, @Nullable String value);
+  void setGestureEnabled(T view, boolean value);
+  void setReplaceAnimation(T view, @Nullable String value);
+  void setScreenOrientation(T view, @Nullable String value);
+  void setStatusBarAnimation(T view, @Nullable String value);
+  void setStatusBarColor(T view, @Nullable Integer value);
+  void setStatusBarStyle(T view, @Nullable String value);
+  void setStatusBarTranslucent(T view, boolean value);
+  void setStatusBarHidden(T view, boolean value);
+  void setNavigationBarColor(T view, @Nullable Integer value);
+  void setNavigationBarHidden(T view, boolean value);
+  void setNativeBackButtonDismissalEnabled(T view, boolean value);
+  void setActivityState(T view, int value);
 }

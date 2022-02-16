@@ -11,6 +11,7 @@ package com.facebook.react.viewmanagers;
 
 import android.view.View;
 import androidx.annotation.Nullable;
+import com.facebook.react.bridge.ColorPropConverter;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.BaseViewManagerInterface;
 
@@ -20,6 +21,51 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
   }
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
-    super.setProperty(view, propName, value);
+    switch (propName) {
+      case "stackPresentation":
+        mViewManager.setStackPresentation(view, (String) value);
+        break;
+      case "stackAnimation":
+        mViewManager.setStackAnimation(view, (String) value);
+        break;
+      case "gestureEnabled":
+        mViewManager.setGestureEnabled(view, value == null ? true : (boolean) value);
+        break;
+      case "replaceAnimation":
+        mViewManager.setReplaceAnimation(view, (String) value);
+        break;
+      case "screenOrientation":
+        mViewManager.setScreenOrientation(view, value == null ? null : (String) value);
+        break;
+      case "statusBarAnimation":
+        mViewManager.setStatusBarAnimation(view, value == null ? null : (String) value);
+        break;
+      case "statusBarColor":
+        mViewManager.setStatusBarColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
+      case "statusBarStyle":
+        mViewManager.setStatusBarStyle(view, value == null ? null : (String) value);
+        break;
+      case "statusBarTranslucent":
+        mViewManager.setStatusBarTranslucent(view, value == null ? false : (boolean) value);
+        break;
+      case "statusBarHidden":
+        mViewManager.setStatusBarHidden(view, value == null ? false : (boolean) value);
+        break;
+      case "navigationBarColor":
+        mViewManager.setNavigationBarColor(view, ColorPropConverter.getColor(value, view.getContext()));
+        break;
+      case "navigationBarHidden":
+        mViewManager.setNavigationBarHidden(view, value == null ? false : (boolean) value);
+        break;
+      case "nativeBackButtonDismissalEnabled":
+        mViewManager.setNativeBackButtonDismissalEnabled(view, value == null ? false : (boolean) value);
+        break;
+      case "activityState":
+        mViewManager.setActivityState(view, value == null ? -1 : ((Double) value).intValue());
+        break;
+      default:
+        super.setProperty(view, propName, value);
+    }
   }
 }
