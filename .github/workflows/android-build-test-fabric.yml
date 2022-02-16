@@ -9,7 +9,6 @@ on:
       - 'src/fabric/**'
       - 'FabricExample/**'
       - 'package.json'
-      - 'RNScreens.podspec'
   push:
     branches:
       - main
