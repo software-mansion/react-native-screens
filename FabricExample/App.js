@@ -6,11 +6,8 @@ import Chapter from './src/Chapter';
 import chapters from './src/chapters';
 import HeaderDemo from './src/HeaderDemo';
 import {WHITE} from './src/colors';
-import {enableFabric} from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
-
-enableFabric();
 
 const App = () => (
   <NavigationContainer>
