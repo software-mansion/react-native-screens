@@ -82,7 +82,7 @@ android {
     }
     sourceSets.main {
         java {
-            if(isNewArchitectureEnabled()){
+            if (isNewArchitectureEnabled()) {
                 srcDirs += [
                     "src/fabric/java",
                 ]
