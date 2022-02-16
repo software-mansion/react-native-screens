@@ -31,12 +31,12 @@ export default function HeaderDemo({navigation}) {
 
   useLayoutEffect(() => {
     const options = {
-      headerTitle,
+      title: headerTitle,
       headerLargeTitle, // iOS
       headerBackTitle, // iOS
       headerShown,
       headerRight: headerItem === 'right' ? square : undefined,
-      headerCenter: headerItem === 'center' ? square : undefined,
+      headerTitle: headerItem === 'center' ? square : undefined,
       headerLeft: headerItem === 'left' ? square : undefined,
       headerHideShadow,
       headerTransparent: headerTranslucent,
