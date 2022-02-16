@@ -52,7 +52,7 @@ const isPlatformSupported =
 
 let ENABLE_SCREENS = isPlatformSupported;
 
-// @ts-expect-error nativeFabricUIManager is not ts yet
+// @ts-expect-error nativeFabricUIManager is not yet included in the RN types
 const ENABLE_FABRIC = !!global?.nativeFabricUIManager;
 
 function enableScreens(shouldEnableScreens = true): void {
