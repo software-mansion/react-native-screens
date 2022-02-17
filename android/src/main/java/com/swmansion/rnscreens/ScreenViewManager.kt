@@ -165,12 +165,6 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         return map
     }
 
-    @Nullable
-    fun updateState(@NonNull view: Screen, props: ReactStylesDiffMap, @Nullable stateWrapper: StateWrapper): Any? {
-        view.getFabricViewStateManager().setStateWrapper(stateWrapper)
-        return null
-    }
-
     protected override fun getDelegate(): ViewManagerDelegate<Screen> {
         return mDelegate
     }
