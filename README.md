@@ -4,7 +4,7 @@ This project aims to expose native navigation container components to React Nati
 
 ## Fabric
 
-To read about how to use this library with fabric go to [FABRIC README](README-Farbic.md). If you want to run Fabric Example app go to [FabricExample README](FabricExample/README.md).
+To learn about how to use `react-native-screens` with Fabric architecture, head over to [Fabric README](README-Fabric.md). Instructions on how to run Fabric Example within this repo can be found in the [FabricExample README](FabricExample/README.md).
 
 ## Supported platforms
 
