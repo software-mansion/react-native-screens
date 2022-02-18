@@ -282,7 +282,7 @@ PODS:
   - React-jsinspector (0.68.0-rc.1)
   - React-logger (0.68.0-rc.1):
     - glog
-  - react-native-safe-area-context (4.0.1-rc.4):
+  - react-native-safe-area-context (4.0.1-rc.5):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
@@ -574,7 +574,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b95fc3494e76e7a5832c4386978c3ada3d1e2bed
   React-jsinspector: dc394b84375f124b823720b59e322113d85f23b4
   React-logger: c208f7a035008b696c43c94dde8b4c53b30534af
-  react-native-safe-area-context: 63227c030b7624f2e6692f1a5ef75bbd4d7bce69
+  react-native-safe-area-context: 44537ac9078b2e1e23fef0079cd70fbbf46f1f4c
   React-perflogger: 93144f240a4f95e1698dc054a1ef8b18ca80a64f
   React-RCTActionSheet: e63525d962fdc663ddca3a2b83012a905055e777
   React-RCTAnimation: 3b827fbfad9a873f66ca80542e036ca42f92f578

@@ -276,7 +276,7 @@ PODS:
     - React
   - react-native-restart (0.0.22):
     - React-Core
-  - react-native-safe-area-context (4.0.1-rc.4):
+  - react-native-safe-area-context (4.0.1-rc.5):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
@@ -558,7 +558,7 @@ SPEC CHECKSUMS:
   React-logger: 9a9cd87d4ea681ae929b32ef580638ff1b50fb24
   react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
   react-native-restart: 733a51ad137f15b0f8dc34c4082e55af7da00979
-  react-native-safe-area-context: 63227c030b7624f2e6692f1a5ef75bbd4d7bce69
+  react-native-safe-area-context: 44537ac9078b2e1e23fef0079cd70fbbf46f1f4c
   react-native-webview: 133a6a5149f963259646e710b4545c67ef35d7c9
   React-perflogger: 1f554c2b684e2f484f9edcdfdaeedab039fbaca8
   React-RCTActionSheet: 610d5a5d71ab4808734782c8bca6a12ec3563672
