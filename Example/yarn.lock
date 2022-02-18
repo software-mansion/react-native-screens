@@ -6783,10 +6783,10 @@ react-native-restart@^0.0.22:
   resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.22.tgz"
   integrity sha512-XwCqAMAKsO8yCM3xACPFKvkDQZe41lcavOuO0gUEu803IuTLtciualCq/qs83ryRDCDh1jkXYRqFjsGjLMCN3Q==
 
-react-native-safe-area-context@^3.1.9:
-  version "3.1.9"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.1.9.tgz"
-  integrity sha512-wmcGbdyE/vBSL5IjDPReoJUEqxkZsywZw5gPwsVUV1NBpw5eTIdnL6Y0uNKHE25Z661moxPHQz6kwAkYQyorxA==
+react-native-safe-area-context@^4.0.1-rc.4:
+  version "4.0.1-rc.4"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.0.1-rc.4.tgz#23d068455284c16080b58162f9b3916ca925c702"
+  integrity sha512-dB6n3dUbiFrQhOBijSOBl4or/TyiQs6O6nP8XpRCDg3CF33/kiOZyIlJ6PxxGf0AGxh6+SiCW8Rt/QvTl2NGDw==
 
 react-native-safe-area-view@^0.14.9:
   version "0.14.9"
