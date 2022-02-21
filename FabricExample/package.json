@@ -7,8 +7,7 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint .",
-    "postinstall": "patch-package"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.6",
