@@ -12,6 +12,8 @@
 
 #import "RCTFabricComponentsPlugins.h"
 
+#import <React/RCTTouchHandler.h>
+
 using namespace facebook::react;
 
 @interface RNSScreenStackComponentView () <
@@ -22,11 +24,15 @@ using namespace facebook::react;
     RCTMountingTransactionObserving>
 @end
 
+@interface RNSPanGestureRecognizer : UIPanGestureRecognizer
+@end
+
 @implementation RNSScreenStackComponentView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenComponentView *> *_reactSubviews;
   BOOL _invalidated;
   UIView *_snapshot;
+  BOOL _isFullWidthSwiping;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -262,9 +268,37 @@ using namespace facebook::react;
 
 #pragma mark - methods connected to transitioning
 
+- (void)cancelTouchesInParent
+{
+  // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
+  // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
+  // Without the below code the Touchable will remain active (highlighted) for the duration of back
+  // gesture and onPress may fire when we release the finger.
+  UIView *parent = _controller.view;
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
+    parent = parent.superview;
+
+  if (parent != nil) {
+    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler cancel];
+    [touchHandler reset];
+  }
+}
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-  // you shouldn't be able to use gesture to go back when there is just one screen
+  RNSScreenComponentView *topScreen = (RNSScreenComponentView *)_controller.viewControllers.lastObject.view;
+
+  if (topScreen.fullScreenSwipeEnabled) {
+    // we want only `RNSPanGestureRecognizer` to be able to recognize when
+    // `fullScreenSwipeEnabled` is set
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+      _isFullWidthSwiping = YES;
+      [self cancelTouchesInParent];
+      return YES;
+    }
+    return NO;
+  }
   return _controller.viewControllers.count >= 2;
 }
 
