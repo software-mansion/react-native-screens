@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) UIView *config;
 @property (nonatomic, retain) RNSScreenController *controller;
 
+@property (nonatomic) BOOL fullScreenSwipeEnabled;
+
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;
 - (void)notifyAppear;
