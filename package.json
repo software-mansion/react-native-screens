@@ -100,7 +100,7 @@
     "react-dom": "^16.13.1",
     "react-native": "^0.63.2",
     "react-native-reanimated": "^2.2.0",
-    "react-native-safe-area-context": "^3.1.9",
+    "react-native-safe-area-context": "^4.0.1-rc.5",
     "react-native-windows": "^0.64.8",
     "react-navigation": "^4.4.3",
     "react-navigation-stack": "^2.9.0",

@@ -6331,10 +6331,10 @@ react-native-redash@^15.11.1:
     normalize-svg-path "^1.0.1"
     parse-svg-path "^0.1.2"
 
-react-native-safe-area-context@^3.1.9:
-  version "3.3.0"
-  resolved "https://registry.npmjs.org/react-native-safe-area-context/-/react-native-safe-area-context-3.3.0.tgz#6e0b45baa031589ec9c54f8359ace166a36aa5e5"
-  integrity sha512-IrCNx56LO9RJ75yCf2CSSO1ceLj3mvxTAF+HWnehaeRIfF4pIcIn3WEUlXulFiha641OKS5X0+1XZCbbQ7pITA==
+react-native-safe-area-context@^4.0.1-rc.5:
+  version "4.0.1-rc.5"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.0.1-rc.5.tgz#2e2092eedbff63444c1739ecdc43c25e9a17c859"
+  integrity sha512-x/wRZE7STwJt5FmmVcdnhB60NEP9YCppFiyajiXHPY5KfCp2dsfozxdVVdF94n2rmB+Phd9agE3cHOfdyE7K/A==
 
 react-native-safe-area-view@^0.14.9:
   version "0.14.9"
