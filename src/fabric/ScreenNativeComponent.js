@@ -55,6 +55,7 @@ export type NativeProps = $ReadOnly<{|
   navigationBarHidden?: boolean,
   nativeBackButtonDismissalEnabled?: boolean,
   activityState?: WithDefault<Int32, -1>,
+  fullScreenSwipeEnabled?: boolean,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
