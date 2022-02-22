@@ -132,6 +132,9 @@
   } else if (operation == UINavigationControllerOperationPop) {
     screen = (RNSScreenView *) fromVC.view;
   }
+  if (![screen isKindOfClass:[RNSScreenView class]]) {
+    return nil;
+  }
   if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationFade || screen.stackAnimation == RNSScreenStackAnimationNone)) {
     return  [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
@@ -153,6 +156,10 @@
   }
   
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+
+  if (![topScreen isKindOfClass:[RNSScreenView class]]) {
+    return NO;
+  }
 
   return _controller.viewControllers.count > 1 && topScreen.gestureEnabled;
 }
