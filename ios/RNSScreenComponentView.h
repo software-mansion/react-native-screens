@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) RNSScreenController *controller;
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
-@property (nonatomic) BOOL gestureEnabled;
+@property (nonatomic) BOOL gestureEnabled; // TODO: atm only defaults to true
 
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;
