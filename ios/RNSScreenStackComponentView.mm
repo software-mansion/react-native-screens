@@ -24,11 +24,19 @@ using namespace facebook::react;
     RCTMountingTransactionObserving>
 @end
 
+#if !TARGET_OS_TV
+@interface RNSScreenEdgeGestureRecognizer : UIScreenEdgePanGestureRecognizer
+@end
+
+@implementation RNSScreenEdgeGestureRecognizer
+@end
+
 @interface RNSPanGestureRecognizer : UIPanGestureRecognizer
 @end
 
 @implementation RNSPanGestureRecognizer
 @end
+#endif
 
 @implementation RNSScreenStackComponentView {
   UINavigationController *_controller;
@@ -314,6 +322,31 @@ using namespace facebook::react;
   }
   return _controller.viewControllers.count >= 2;
 }
+
+#if !TARGET_OS_TV
+- (void)setupGestureHandlers
+{
+  // gesture recognizers for custom stack animations
+  RNSScreenEdgeGestureRecognizer *leftEdgeSwipeGestureRecognizer =
+    [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self
+                                                    action:@selector(handleSwipe:)];
+  leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
+  leftEdgeSwipeGestureRecognizer.delegate = self;
+  [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
+  
+  RNSScreenEdgeGestureRecognizer *rightEdgeSwipeGestureRecognizer =
+    [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self
+                                                    action:@selector(handleSwipe:)];
+  rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
+  rightEdgeSwipeGestureRecognizer.delegate = self;
+  
+  // gesture recognizer for full width swipe gesture
+  RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  panRecognizer.delegate = self;
+  [self addGestureRecognizer:panRecognizer];
+}
+
+#endif
 
 #pragma mark - RCTComponentViewProtocol
 
