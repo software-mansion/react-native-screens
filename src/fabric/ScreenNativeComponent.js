@@ -40,6 +40,7 @@ export type NativeProps = $ReadOnly<{|
   onDismissed?: ?BubblingEventHandler<ScreenDismissedEvent>,
   onWillAppear?: ?BubblingEventHandler<ScreenEvent>,
   onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
+  fullScreenSwipeEnabled?: boolean,
   // TODO: implement this props on iOS
   stackPresentation?: WithDefault<StackPresentation, 'push'>,
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
@@ -55,7 +56,6 @@ export type NativeProps = $ReadOnly<{|
   navigationBarHidden?: boolean,
   nativeBackButtonDismissalEnabled?: boolean,
   activityState?: WithDefault<Int32, -1>,
-  fullScreenSwipeEnabled?: boolean,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
