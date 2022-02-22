@@ -328,20 +328,22 @@ using namespace facebook::react;
 {
   // gesture recognizers for custom stack animations
   RNSScreenEdgeGestureRecognizer *leftEdgeSwipeGestureRecognizer =
-    [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self
-                                                    action:@selector(handleSwipe:)];
+      [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self
+                                                      action:@selector(handleSwipe:)];
   leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
   leftEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
   
   RNSScreenEdgeGestureRecognizer *rightEdgeSwipeGestureRecognizer =
-    [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self
-                                                    action:@selector(handleSwipe:)];
+      [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self
+                                                      action:@selector(handleSwipe:)];
   rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
   rightEdgeSwipeGestureRecognizer.delegate = self;
   
   // gesture recognizer for full width swipe gesture
-  RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  RNSPanGestureRecognizer *panRecognizer =
+      [[RNSPanGestureRecognizer alloc] initWithTarget:self
+                                               action:@selector(handleSwipe:)];
   panRecognizer.delegate = self;
   [self addGestureRecognizer:panRecognizer];
 }
