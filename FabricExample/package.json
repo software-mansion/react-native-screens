@@ -7,13 +7,11 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint .",
-    "postinstall": "patch-package"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
-    "patch-package": "^6.4.7",
     "react": "17.0.2",
     "react-native": "0.0.0-20220213-2008-7cece3423",
     "react-native-codegen": "^0.0.13",
