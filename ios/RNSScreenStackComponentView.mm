@@ -292,6 +292,16 @@ using namespace facebook::react;
 {
   RNSScreenComponentView *topScreen = (RNSScreenComponentView *)_controller.viewControllers.lastObject.view;
 
+  if (![topScreen isKindOfClass:[RNSScreenComponentView class]] || !topScreen.gestureEnabled ||
+      _controller.viewControllers.count < 2) {
+    return NO;
+  }
+
+#if TARGET_OS_TV
+  [self cancelTouchesInPartent];
+  return YES;
+#else
+
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
     // `fullScreenSwipeEnabled` is set
@@ -303,6 +313,9 @@ using namespace facebook::react;
     return NO;
   }
   return YES;
+
+  // TODO: add code for customAnimationOnSwipe prop here
+#endif
 }
 
 #pragma mark - RCTComponentViewProtocol
