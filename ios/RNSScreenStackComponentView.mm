@@ -27,6 +27,9 @@ using namespace facebook::react;
 @interface RNSPanGestureRecognizer : UIPanGestureRecognizer
 @end
 
+@implementation RNSPanGestureRecognizer
+@end
+
 @implementation RNSScreenStackComponentView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenComponentView *> *_reactSubviews;
