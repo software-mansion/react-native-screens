@@ -25,16 +25,16 @@ using namespace facebook::react;
 @end
 
 #if !TARGET_OS_TV
-@interface RNSScreenEdgeGestureRecognizer : UIScreenEdgePanGestureRecognizer
+@interface RNSScreenEdgeGestureRecognizerF : UIScreenEdgePanGestureRecognizer
 @end
 
-@implementation RNSScreenEdgeGestureRecognizer
+@implementation RNSScreenEdgeGestureRecognizerF
 @end
 
-@interface RNSPanGestureRecognizer : UIPanGestureRecognizer
+@interface RNSPanGestureRecognizerF : UIPanGestureRecognizer
 @end
 
-@implementation RNSPanGestureRecognizer
+@implementation RNSPanGestureRecognizerF
 @end
 #endif
 
@@ -44,6 +44,7 @@ using namespace facebook::react;
   BOOL _invalidated;
   UIView *_snapshot;
   BOOL _isFullWidthSwiping;
+  UIPercentDrivenInteractiveTransition *_interactionController;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -313,7 +314,7 @@ using namespace facebook::react;
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
     // `fullScreenSwipeEnabled` is set
-    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerF class]]) {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
@@ -327,27 +328,85 @@ using namespace facebook::react;
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
-  RNSScreenEdgeGestureRecognizer *leftEdgeSwipeGestureRecognizer =
-      [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self
+  RNSScreenEdgeGestureRecognizerF *leftEdgeSwipeGestureRecognizer =
+      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self
                                                       action:@selector(handleSwipe:)];
   leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
   leftEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
   
-  RNSScreenEdgeGestureRecognizer *rightEdgeSwipeGestureRecognizer =
-      [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self
+  RNSScreenEdgeGestureRecognizerF *rightEdgeSwipeGestureRecognizer =
+      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self
                                                       action:@selector(handleSwipe:)];
   rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
   rightEdgeSwipeGestureRecognizer.delegate = self;
   
   // gesture recognizer for full width swipe gesture
-  RNSPanGestureRecognizer *panRecognizer =
-      [[RNSPanGestureRecognizer alloc] initWithTarget:self
+  RNSPanGestureRecognizerF *panRecognizer =
+      [[RNSPanGestureRecognizerF alloc] initWithTarget:self
                                                action:@selector(handleSwipe:)];
   panRecognizer.delegate = self;
   [self addGestureRecognizer:panRecognizer];
 }
 
+-(void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
+{
+  RNSScreenComponentView *topScreen = (RNSScreenComponentView *)_controller.viewControllers.lastObject.view;
+  
+  float translation;
+  float velocity;
+  float distance;
+  
+  if (topScreen.swipeDirection == RNSScreenSwipeDirectionVertical) {
+    translation = [gestureRecognizer translationInView:gestureRecognizer.view].y;
+    velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].y;
+    distance = gestureRecognizer.view.bounds.size.height;
+  } else {
+    translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
+    velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].x;
+    distance = gestureRecognizer.view.bounds.size.width;
+    BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+    if (isRTL) {
+      translation = -translation;
+      velocity = -velocity;
+    }
+  }
+
+  float transitionProgress = (translation / distance);
+
+  switch (gestureRecognizer.state) {
+    case UIGestureRecognizerStateBegan: {
+      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      [_controller popViewControllerAnimated:YES];
+      break;
+    }
+
+    case UIGestureRecognizerStateChanged: {
+      [_interactionController updateInteractiveTransition:transitionProgress];
+      break;
+    }
+
+    case UIGestureRecognizerStateCancelled: {
+      [_interactionController cancelInteractiveTransition];
+      break;
+    }
+
+    case UIGestureRecognizerStateEnded: {
+      // values taken from
+      // https://github.com/react-navigation/react-navigation/blob/54739828598d7072c1bf7b369659e3682db3edc5/packages/stack/src/views/Stack/Card.tsx#L316
+      BOOL shouldFinishTransition = (translation + velocity * 0.3) > (distance / 2);
+      if (shouldFinishTransition) {
+        [_interactionController finishInteractiveTransition];
+      } else {
+        [_interactionController cancelInteractiveTransition];
+      }
+      _interactionController = nil;
+    }
+    default: {
+      break;
+    }
+  }
+}
 #endif
 
 #pragma mark - RCTComponentViewProtocol
