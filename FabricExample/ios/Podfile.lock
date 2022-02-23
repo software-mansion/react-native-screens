@@ -623,8 +623,29 @@ PODS:
   - React-jsinspector (0.0.0-20220213-2008-7cece3423)
   - React-logger (0.0.0-20220213-2008-7cece3423):
     - glog
-  - react-native-safe-area-context (3.3.2):
-    - React-Core
+  - react-native-safe-area-context (4.0.1-rc.5):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - react-native-safe-area-context/common (= 4.0.1-rc.5)
+    - react-native-safe-area-context/fabric (= 4.0.1-rc.5)
+    - ReactCommon/turbomodule/core
+  - react-native-safe-area-context/common (4.0.1-rc.5):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - ReactCommon/turbomodule/core
+  - react-native-safe-area-context/fabric (4.0.1-rc.5):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-Codegen
+    - react-native-safe-area-context/common
+    - React-RCTFabric
+    - ReactCommon/turbomodule/core
   - React-perflogger (0.0.0-20220213-2008-7cece3423)
   - React-RCTActionSheet (0.0.0-20220213-2008-7cece3423):
     - React-Core/RCTActionSheetHeaders (= 0.0.0-20220213-2008-7cece3423)
@@ -696,7 +717,7 @@ PODS:
     - React-jsi (= 0.0.0-20220213-2008-7cece3423)
     - React-logger (= 0.0.0-20220213-2008-7cece3423)
     - React-perflogger (= 0.0.0-20220213-2008-7cece3423)
-  - RNScreens (3.11.1):
+  - RNScreens (3.12.0):
     - RCT-Folly (= 2021.06.28.00-v2)
     - RCTRequired
     - RCTTypeSafety
@@ -704,8 +725,8 @@ PODS:
     - React-Codegen
     - React-RCTFabric
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 3.11.1)
-  - RNScreens/common (3.11.1):
+    - RNScreens/common (= 3.12.0)
+  - RNScreens/common (3.12.0):
     - RCT-Folly (= 2021.06.28.00-v2)
     - RCTRequired
     - RCTTypeSafety
@@ -919,7 +940,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 3e9a3ce0e301999f494cb0b88c588db9cda21dc7
   React-jsinspector: a3f48429d9ac8ceaf91e9307aaabcc89fc32cf70
   React-logger: 5c2095559ddbbcacfa6bc58e2b8f0831616fd162
-  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-safe-area-context: 3d2f30128de6b8afe6300d1b7e1ce40e83286c67
   React-perflogger: 022a6fde02bb8c3a5871623fe643c784cbc1da0b
   React-RCTActionSheet: 91454bbdfccbc79430eebc1472f52b0e44983e9d
   React-RCTAnimation: 45f13f27f6780f623888ec16c69a883098501bb7
@@ -934,11 +955,11 @@ SPEC CHECKSUMS:
   React-rncore: f16be923fa7927977764ae31c65996f538b7e3b9
   React-runtimeexecutor: 482f9d03c0764d4ae3fdf4687f6c975556bf71a2
   ReactCommon: e23be08d1b21d8ab0dff24ce1afbe57942e9090f
-  RNScreens: a91068bb33f83a890101f58f4aa4b44fe71290c6
+  RNScreens: c0fe0b1f5f2744fe7999df43d66db91c48bd1623
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: d473a4284ea9eae9e312b38b8a62d9dedc4dd2f0
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: c3cdf00ef6a77e2b533dd01b24a90d646a8d6aec
+PODFILE CHECKSUM: d1692aab6ddf32b03dc03304e2dc04073ec65f35
 
 COCOAPODS: 1.11.2

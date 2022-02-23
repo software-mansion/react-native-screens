@@ -16,14 +16,6 @@ import { Freeze } from 'react-freeze';
 import processColor from 'react-native/Libraries/StyleSheet/processColor';
 import { version } from 'react-native/package.json';
 
-import {
-  Screen as FabricScreen,
-  ScreenStackHeaderSubview as FabricScreenStackHeaderSubview,
-  ScreenStackHeaderConfig as FabricScreenStackHeaderConfig,
-  ScreenStack as FabricScreenStack,
-  // @ts-ignore No types for fabric yet
-} from './fabric';
-
 import TransitionProgressContext from './TransitionProgressContext';
 import useTransitionProgress from './useTransitionProgress';
 import {
@@ -54,6 +46,8 @@ let ENABLE_SCREENS = isPlatformSupported;
 
 // @ts-expect-error nativeFabricUIManager is not yet included in the RN types
 const ENABLE_FABRIC = !!global?.nativeFabricUIManager;
+
+const FabricComponents = ENABLE_FABRIC ? require('./fabric') : {};
 
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
@@ -102,9 +96,10 @@ let NativeFullWindowOverlay: React.ComponentType<View>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
-    const nativeComponent = () =>
-      ENABLE_FABRIC ? FabricScreen : requireNativeComponent('RNSScreen');
-    NativeScreenValue = NativeScreenValue || nativeComponent();
+    NativeScreenValue =
+      NativeScreenValue ||
+      FabricComponents.Screen ||
+      requireNativeComponent('RNSScreen');
     return NativeScreenValue;
   },
 
@@ -125,31 +120,26 @@ const ScreensNativeModules = {
   },
 
   get NativeScreenStack() {
-    const nativeComponent = () =>
-      ENABLE_FABRIC
-        ? FabricScreenStack
-        : requireNativeComponent('RNSScreenStack');
-    NativeScreenStack = NativeScreenStack || nativeComponent();
+    NativeScreenStack =
+      NativeScreenStack ||
+      FabricComponents.ScreenStack ||
+      requireNativeComponent('RNSScreenStack');
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
-    const nativeComponent = () =>
-      ENABLE_FABRIC
-        ? FabricScreenStackHeaderConfig
-        : requireNativeComponent('RNSScreenStackHeaderConfig');
     NativeScreenStackHeaderConfig =
-      NativeScreenStackHeaderConfig || nativeComponent();
+      NativeScreenStackHeaderConfig ||
+      FabricComponents.ScreenStackHeaderConfig ||
+      requireNativeComponent('RNSScreenStackHeaderConfig');
     return NativeScreenStackHeaderConfig;
   },
 
   get NativeScreenStackHeaderSubview() {
-    const nativeComponent = () =>
-      ENABLE_FABRIC
-        ? FabricScreenStackHeaderSubview
-        : requireNativeComponent('RNSScreenStackHeaderSubview');
     NativeScreenStackHeaderSubview =
-      NativeScreenStackHeaderSubview || nativeComponent();
+      NativeScreenStackHeaderSubview ||
+      FabricComponents.ScreenStackHeaderSubview ||
+      requireNativeComponent('RNSScreenStackHeaderSubview');
     return NativeScreenStackHeaderSubview;
   },
 

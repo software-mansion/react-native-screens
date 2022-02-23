@@ -14,6 +14,6 @@ Then you can run this application by `yarn android` or from Android Studio.
 
 ### iOS
 
-To run on iOS first go to `FabricExample/ios` and run `RCT_NEW_ARCH_ENABLED=1 pod install`. This will install pods for Fabric architecture.
+To run on iOS first go to `FabricExample/ios` and run `pod install`. This will install pods for Fabric architecture.
 
 Then in `FabricExample` run `yarn ios` or run application from Xcode.
