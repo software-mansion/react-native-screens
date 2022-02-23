@@ -5,6 +5,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, RNSScreenSwipeDirection) {
+  RNSScreenSwipeDirectionHorizontal,
+  RNSScreenSwipeDirectionVertical,
+};
+
 @interface RNSScreenComponentView : RCTViewComponentView
 
 @property (weak, nonatomic) UIView *reactSuperview;
@@ -13,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL gestureEnabled; // TODO: atm only defaults to true
+@property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;

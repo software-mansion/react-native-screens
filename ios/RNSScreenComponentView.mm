@@ -11,6 +11,9 @@
 
 #import "RCTFabricComponentsPlugins.h"
 
+#import <React/RCTTouchHandler.h>
+#import <React/RCTRootView.h>
+
 using namespace facebook::react;
 
 @interface RNSScreenComponentView () <RCTRNSScreenViewProtocol, RCTMountingTransactionObserving>
@@ -19,6 +22,7 @@ using namespace facebook::react;
 @implementation RNSScreenComponentView {
   RNSScreenController *_controller;
   RNSScreenShadowNode::ConcreteState::Shared _state;
+  RCTTouchHandler *_touchHandler;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -113,6 +117,43 @@ using namespace facebook::react;
     std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
         ->onDisappear(RNSScreenEventEmitter::OnDisappear{});
   }
+}
+
+- (BOOL)isMountedUnderScreenOrReactRoot
+{
+  for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
+    if ([parent isKindOfClass:[RCTRootView class]] || [parent isKindOfClass:[RNSScreenComponentView class]]) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
+- (void)didMoveToWindow
+{
+  if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
+    if (_touchHandler == nil) {
+      _touchHandler = [[RCTTouchHandler alloc] init];
+    }
+    [_touchHandler attachToView:self];
+  } else {
+    [_touchHandler detachFromView:self];
+  }
+}
+
+- (RCTTouchHandler *)touchHandler
+{
+  if (_touchHandler != nil) {
+    return _touchHandler;
+  }
+  UIView *parent = [self superview];
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
+    parent = parent.superview;
+  
+  if (parent != nil) {
+    return [parent performSelector:@selector(touchHandler)];
+  }
+  return nil;
 }
 
 #pragma mark - RCTMountingTransactionObserving
