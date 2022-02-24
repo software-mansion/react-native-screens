@@ -163,8 +163,10 @@ object ScreenWindowTraits {
         val screenForNavBarColor = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_COLOR)
         val color = screenForNavBarColor?.navigationBarColor ?: window.navigationBarColor
 
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars =
-            isColorLight(color)
+        UiThreadUtil.runOnUiThread {
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars =
+                isColorLight(color)
+        }
         window.navigationBarColor = color
     }
 
