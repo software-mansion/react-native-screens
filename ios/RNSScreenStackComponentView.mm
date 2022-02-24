@@ -34,6 +34,7 @@ using namespace facebook::react;
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
+    _invalidated = NO;
   }
 
   return self;
@@ -99,6 +100,14 @@ using namespace facebook::react;
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
+}
+
+- (void)didMoveToWindow
+{
+  [super didMoveToWindow];
+  if (!_invalidated) {
+    [self maybeAddToParentAndUpdateContainer];
+  }
 }
 
 - (void)navigationController:(UINavigationController *)navigationController
@@ -264,6 +273,9 @@ using namespace facebook::react;
   [super prepareForRecycle];
   _reactSubviews = [NSMutableArray new];
   [self dismissOnReload];
+  _invalidated = YES;
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
