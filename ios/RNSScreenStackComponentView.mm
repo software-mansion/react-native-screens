@@ -34,7 +34,6 @@ using namespace facebook::react;
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
-    _invalidated = NO;
   }
 
   return self;
@@ -100,14 +99,6 @@ using namespace facebook::react;
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
-}
-
-- (void)didMoveToWindow
-{
-  [super didMoveToWindow];
-  if (!_invalidated) {
-    [self maybeAddToParentAndUpdateContainer];
-  }
 }
 
 - (void)navigationController:(UINavigationController *)navigationController
@@ -253,18 +244,10 @@ using namespace facebook::react;
   _controller.view.frame = self.bounds;
 }
 
-- (void)invalidate
-{
-  _invalidated = YES;
-  [_controller willMoveToParentViewController:nil];
-  [_controller removeFromParentViewController];
-}
-
 - (void)dismissOnReload
 {
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self invalidate];
-  });
+  auto screenController = (RNSScreenController *)_controller.viewControllers.lastObject;
+  [screenController resetViewToScreen];
 }
 
 #pragma mark methods connected to transitioning
@@ -280,6 +263,7 @@ using namespace facebook::react;
 {
   [super prepareForRecycle];
   _reactSubviews = [NSMutableArray new];
+  [self dismissOnReload];
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
