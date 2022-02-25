@@ -1,6 +1,9 @@
 package com.swmansion.rnscreens
 
+<<<<<<< HEAD
 import android.util.Log
+=======
+>>>>>>> e558fba (Noop for android)
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
