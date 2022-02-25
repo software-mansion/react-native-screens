@@ -10,8 +10,8 @@
 
 #import "RCTFabricComponentsPlugins.h"
 
-#import <React/RCTTouchHandler.h>
-#import <React/RCTRootView.h>
+#import <React/RCTRootComponentView.h>
+#import <React/RCTSurfaceTouchHandler.h>
 
 using namespace facebook::react;
 
@@ -21,7 +21,7 @@ using namespace facebook::react;
 @implementation RNSScreenComponentView {
   RNSScreenController *_controller;
   RNSScreenShadowNode::ConcreteState::Shared _state;
-  RCTTouchHandler *_touchHandler;
+  RCTSurfaceTouchHandler *_touchHandler;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -124,7 +124,7 @@ using namespace facebook::react;
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
-    if ([parent isKindOfClass:[RCTRootView class]] || [parent isKindOfClass:[RNSScreenComponentView class]]) {
+    if ([parent isKindOfClass:[RCTRootComponentView class]] || [parent isKindOfClass:[RNSScreenComponentView class]]) {
       return YES;
     }
   }
@@ -135,7 +135,7 @@ using namespace facebook::react;
 {
   if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
     if (_touchHandler == nil) {
-      _touchHandler = [[RCTTouchHandler alloc] init];
+      _touchHandler = [RCTSurfaceTouchHandler new];
     }
     [_touchHandler attachToView:self];
   } else {
@@ -143,7 +143,7 @@ using namespace facebook::react;
   }
 }
 
-- (RCTTouchHandler *)touchHandler
+- (RCTSurfaceTouchHandler *)touchHandler
 {
   if (_touchHandler != nil) {
     return _touchHandler;
@@ -151,7 +151,7 @@ using namespace facebook::react;
   UIView *parent = [self superview];
   while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
     parent = parent.superview;
-  
+
   if (parent != nil) {
     return [parent performSelector:@selector(touchHandler)];
   }
