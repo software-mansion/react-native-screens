@@ -139,6 +139,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
+    override fun setFullScreenSwipeEnabled(view: Screen?, value: Boolean) = Unit
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map: MutableMap<String, Any> = MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,
