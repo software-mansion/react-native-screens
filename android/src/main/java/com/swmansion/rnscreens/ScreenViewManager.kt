@@ -1,12 +1,8 @@
 package com.swmansion.rnscreens
 
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
-import com.facebook.react.uimanager.ReactStylesDiffMap
-import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -142,6 +138,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     ) {
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
+
+    override fun setFullScreenSwipeEnabled(view: Screen?, value: Boolean) = Unit
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map: MutableMap<String, Any> = MapBuilder.of(
