@@ -335,34 +335,31 @@ using namespace facebook::react;
 {
   // gesture recognizers for custom stack animations
   RNSScreenEdgeGestureRecognizerF *leftEdgeSwipeGestureRecognizer =
-      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self
-                                                      action:@selector(handleSwipe:)];
+      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self action:@selector(handleSwipe:)];
   leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
   leftEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
-  
+
   RNSScreenEdgeGestureRecognizerF *rightEdgeSwipeGestureRecognizer =
-      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self
-                                                      action:@selector(handleSwipe:)];
+      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self action:@selector(handleSwipe:)];
   rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
   rightEdgeSwipeGestureRecognizer.delegate = self;
-  
+
   // gesture recognizer for full width swipe gesture
-  RNSPanGestureRecognizerF *panRecognizer =
-      [[RNSPanGestureRecognizerF alloc] initWithTarget:self
-                                               action:@selector(handleSwipe:)];
+  RNSPanGestureRecognizerF *panRecognizer = [[RNSPanGestureRecognizerF alloc] initWithTarget:self
+                                                                                      action:@selector(handleSwipe:)];
   panRecognizer.delegate = self;
   [self addGestureRecognizer:panRecognizer];
 }
 
--(void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
+- (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
   RNSScreenComponentView *topScreen = (RNSScreenComponentView *)_controller.viewControllers.lastObject.view;
-  
+
   float translation;
   float velocity;
   float distance;
-  
+
   if (topScreen.swipeDirection == RNSScreenSwipeDirectionVertical) {
     translation = [gestureRecognizer translationInView:gestureRecognizer.view].y;
     velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].y;
