@@ -34,6 +34,7 @@ using namespace facebook::react;
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
+    _invalidated = NO;
   }
 
   return self;
@@ -99,6 +100,18 @@ using namespace facebook::react;
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
+}
+
+- (void)didMoveToWindow
+{
+  [super didMoveToWindow];
+  if (!_invalidated) {
+    // We check whether the view has been invalidated before running side-effects in didMoveToWindow
+    // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
+    // to a window despite the fact it has been removed from the React Native view hierarchy.
+    // See https://github.com/software-mansion/react-native-screens/pull/700
+    [self maybeAddToParentAndUpdateContainer];
+  }
 }
 
 - (void)navigationController:(UINavigationController *)navigationController
@@ -264,6 +277,9 @@ using namespace facebook::react;
   [super prepareForRecycle];
   _reactSubviews = [NSMutableArray new];
   [self dismissOnReload];
+  _invalidated = YES;
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
