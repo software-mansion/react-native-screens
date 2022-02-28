@@ -106,6 +106,10 @@ using namespace facebook::react;
 {
   [super didMoveToWindow];
   if (!_invalidated) {
+    // We check whether the view has been invalidated before running side-effects in didMoveToWindow
+    // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
+    // to a window despite the fact it has been removed from the React Native view hierarchy.
+    // See https://github.com/software-mansion/react-native-screens/pull/700
     [self maybeAddToParentAndUpdateContainer];
   }
 }
