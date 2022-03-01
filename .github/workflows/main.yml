@@ -32,3 +32,6 @@ jobs:
       - name: Check types
         run: |
           yarn check-types
+      - name: Run unit tests
+        run: |
+          yarn test:unit
