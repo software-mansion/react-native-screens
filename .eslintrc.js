@@ -9,7 +9,7 @@ module.exports = {
     'prettier/standard',
   ],
 
-  plugins: ['react-native', 'react-hooks'],
+  plugins: ['react-native', 'react-hooks', 'testing-library'],
 
   env: {
     'react-native/react-native': true,

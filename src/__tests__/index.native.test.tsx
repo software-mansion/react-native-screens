@@ -1,3 +1,4 @@
+import '@testing-library/jest-native/extend-expect';
 import React from 'react';
 import { Text } from 'react-native';
 import { render } from '@testing-library/react-native';
@@ -12,6 +13,6 @@ test('screen renders content', () => {
       </Screen>
     </ScreenContainer>
   );
-  const textEl = screen.getByText(text);
-  expect(textEl.props.children).toBe(text);
+  const textEl = screen.queryByText(text);
+  expect(textEl).toHaveTextContent(text);
 });
