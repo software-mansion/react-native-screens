@@ -42,7 +42,7 @@ export type NativeProps = $ReadOnly<{|
   onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
   fullScreenSwipeEnabled?: boolean,
   gestureEnabled?: WithDefault<boolean, true>,
-  // TODO: implement this props on iOS
+  // TODO: implement these props on iOS
   stackPresentation?: WithDefault<StackPresentation, 'push'>,
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
