@@ -197,13 +197,23 @@ using namespace facebook::react;
   [super updateProps:props oldProps:oldProps];
 
   _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
+  
   _gestureEnabled = newScreenProps.gestureEnabled;
+  
+  if (newScreenProps.statusBarColor) {
+    [self logPropNotAvailable:@"statusBarColor"];
+  }
 }
 
 - (void)updateState:(facebook::react::State::Shared const &)state
            oldState:(facebook::react::State::Shared const &)oldState
 {
   _state = std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(state);
+}
+
+- (void)logPropNotAvailable:(NSString *)propName
+{
+  NSLog(@"%@ prop not available on iOS", propName);
 }
 
 @end
