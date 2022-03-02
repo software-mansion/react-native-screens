@@ -13,6 +13,7 @@
 #import "RCTFabricComponentsPlugins.h"
 
 #import <React/RCTTouchHandler.h>
+#import <React/RCTSurfaceTouchHandler.h>
 
 using namespace facebook::react;
 
@@ -56,6 +57,10 @@ using namespace facebook::react;
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
+    _invalidated = NO;
+#if !TARGET_OS_TV
+    [self setupGestureHandlers];
+#endif
   }
 
   return self;
@@ -291,8 +296,9 @@ using namespace facebook::react;
     parent = parent.superview;
 
   if (parent != nil) {
-    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-    [touchHandler cancel];
+    RCTSurfaceTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler setEnabled:NO];
+    [touchHandler setEnabled:YES];
     [touchHandler reset];
   }
 }
@@ -321,7 +327,19 @@ using namespace facebook::react;
     }
     return NO;
   }
+  
+  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizerF class]]) {
+    // it should only recognize with `customAnimationOnSwipe` set
+    return NO;
+  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerF class]]) {
+    // it should only recognize with `fullScreenSwipeEnabled` set
+    return NO;
+  }
+  [self cancelTouchesInParent];
   return _controller.viewControllers.count >= 2;
+
+  // TODO: add code for customAnimationOnSwipe prop here
+#endif
 }
 
 #if !TARGET_OS_TV
