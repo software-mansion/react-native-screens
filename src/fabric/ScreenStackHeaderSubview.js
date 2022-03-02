@@ -13,8 +13,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function ScreenStackHeaderSubview(props) {
+function ScreenStackHeaderSubview(props) {
   return (
     <NativeScreenStackHeaderSubview {...props} style={styles.headerSubview} />
   );
 }
+
+export default ScreenStackHeaderSubview;
