@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, RNSScreenSwipeDirection) {
 @property (nonatomic, retain) RNSScreenController *controller;
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
-@property (nonatomic) BOOL gestureEnabled; // TODO: atm only defaults to true
+@property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 
 - (void)notifyWillAppear;
