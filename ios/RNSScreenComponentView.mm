@@ -119,6 +119,17 @@ using namespace facebook::react;
   }
 }
 
+- (void)setGestureEnabled:(BOOL)gestureEnabled
+{
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13.0, tvOS 13.0, *)) {
+    _controller.modalInPresentation = !gestureEnabled;
+  }
+#endif
+  _gestureEnabled = gestureEnabled;
+}
+
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
@@ -182,9 +193,9 @@ using namespace facebook::react;
 {
   const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenProps>(props);
-  
+
   [super updateProps:props oldProps:oldProps];
-  
+
   _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
   _gestureEnabled = newScreenProps.gestureEnabled;
 }
