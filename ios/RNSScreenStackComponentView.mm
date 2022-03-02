@@ -10,7 +10,6 @@
 
 #import "RCTFabricComponentsPlugins.h"
 
-#import <React/RCTTouchHandler.h>
 #import <React/RCTSurfaceTouchHandler.h>
 
 using namespace facebook::react;
@@ -329,7 +328,7 @@ using namespace facebook::react;
     }
     return NO;
   }
-  
+
   if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizerF class]]) {
     // it should only recognize with `customAnimationOnSwipe` set
     return NO;
