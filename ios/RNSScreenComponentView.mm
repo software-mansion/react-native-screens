@@ -182,8 +182,11 @@ using namespace facebook::react;
 {
   const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenProps>(props);
-
+  
   [super updateProps:props oldProps:oldProps];
+  
+  _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
+  _gestureEnabled = newScreenProps.gestureEnabled;
 }
 
 - (void)updateState:(facebook::react::State::Shared const &)state
