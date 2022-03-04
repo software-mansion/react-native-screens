@@ -43,6 +43,7 @@ export type NativeProps = $ReadOnly<{|
   fullScreenSwipeEnabled?: boolean,
   gestureEnabled?: WithDefault<boolean, true>,
   statusBarColor?: ColorValue,
+  statusBarHidden?: boolean,
   // TODO: implement these props on iOS
   stackPresentation?: WithDefault<StackPresentation, 'push'>,
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
@@ -51,7 +52,6 @@ export type NativeProps = $ReadOnly<{|
   statusBarAnimation?: string,
   statusBarStyle?: string,
   statusBarTranslucent?: boolean,
-  statusBarHidden?: boolean,
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,
   nativeBackButtonDismissalEnabled?: boolean,
