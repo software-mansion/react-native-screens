@@ -2,6 +2,8 @@
 #import "RNSScreenComponentView.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 
+#import <React/RCTMountingTransactionObserving.h>
+
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -16,13 +18,15 @@ using namespace facebook::react;
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate>
+    UIViewControllerTransitioningDelegate,
+    RCTMountingTransactionObserving>
 @end
 
 @implementation RNSScreenStackComponentView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenComponentView *> *_reactSubviews;
   BOOL _invalidated;
+  UIView *_snapshot;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -75,6 +79,8 @@ using namespace facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenComponentView *screenChildComponent = (RNSScreenComponentView *)childComponentView;
+  [screenChildComponent.controller setViewToSnapshot:_snapshot];
+
   RCTAssert(
       screenChildComponent.reactSuperview == self,
       @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
@@ -95,6 +101,16 @@ using namespace facebook::react;
   dispatch_async(dispatch_get_main_queue(), ^{
     [self maybeAddToParentAndUpdateContainer];
   });
+}
+
+- (void)takeSnapshot
+{
+  _snapshot = [_controller.topViewController.view snapshotViewAfterScreenUpdates:NO];
+}
+
+- (void)mountingTransactionWillMountWithMetadata:(MountingTransactionMetadata const &)metadata
+{
+  [self takeSnapshot];
 }
 
 - (NSArray<UIView *> *)reactSubviews

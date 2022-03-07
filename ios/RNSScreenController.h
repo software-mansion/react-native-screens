@@ -3,8 +3,7 @@
 @interface RNSScreenController : UIViewController
 
 - (instancetype)initWithView:(UIView *)view;
-- (void)takeSnapshot;
-- (void)setViewToSnapshot;
+- (void)setViewToSnapshot:(UIView *)snapshot;
 - (void)resetViewToScreen;
 
 @end

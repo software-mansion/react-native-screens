@@ -2,9 +2,7 @@
 #import "RNSScreenComponentView.h"
 
 @implementation RNSScreenController {
-  CGRect _lastViewFrame;
   RNSScreenComponentView *_initialView;
-  UIView *_snapshot;
 }
 
 - (instancetype)initWithView:(UIView *)view
@@ -20,15 +18,10 @@
   return self;
 }
 
-- (void)takeSnapshot
-{
-  _snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
-}
-
-- (void)setViewToSnapshot
+- (void)setViewToSnapshot:(UIView *)snapshot
 {
   [self.view removeFromSuperview];
-  self.view = _snapshot;
+  self.view = snapshot;
 }
 
 - (void)resetViewToScreen
@@ -69,11 +62,7 @@
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
-  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
-  if (isDisplayedWithinUINavController && !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
-    _lastViewFrame = self.view.frame;
-    [_initialView updateBounds];
-  }
+  [_initialView updateBounds];
 }
 
 @end
