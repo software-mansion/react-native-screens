@@ -130,7 +130,7 @@
       return ((RNSScreenComponentView *)self.view).hasStatusBarStyleSet;
     }
     case RNSWindowTraitAnimation: {
-      return ((RNSScreenCompontentView *)self.view).hasStatusBarAnimationSet;
+      return ((RNSScreenComponentView *)self.view).hasStatusBarAnimationSet;
     }
     case RNSWindowTraitHidden: {
       return ((RNSScreenComponentView *)self.view).hasStatusBarHiddenSet;
@@ -167,7 +167,8 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-  return [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:((RNSScreenComponentView *)self.view).statusBarStyle];
+  return
+      [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:((RNSScreenComponentView *)self.view).statusBarStyle];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
