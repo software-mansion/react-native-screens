@@ -202,21 +202,21 @@ using namespace facebook::react;
   }
 
   UIViewController *top = controllers.lastObject;
-  UIViewController *lastTop = _controller.viewControllers.lastObject;
+  UIViewController *previousTop = _controller.topViewController;
 
-  // at the start we set viewControllers to contain a single UIVIewController
+  // At the start we set viewControllers to contain a single UIViewController
   // instance. This is a workaround for header height adjustment bug (see comment
   // in the init function). Here, we need to detect if the initial empty
   // controller is still there
-  BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreenController class]];
+  BOOL firstTimePush = ![previousTop isKindOfClass:[RNSScreenController class]];
 
   BOOL shouldAnimate = YES;
 
   if (firstTimePush) {
     // nothing pushed yet
     [_controller setViewControllers:controllers animated:NO];
-  } else if (top != lastTop) {
-    if (![controllers containsObject:lastTop]) {
+  } else if (top != previousTop) {
+    if (![controllers containsObject:previousTop]) {
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top]) {
@@ -229,7 +229,7 @@ using namespace facebook::react;
         // in this case we set the controllers stack to the new list with
         // added the last top element to it and perform (animated) pop
         NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-        [newControllers addObject:lastTop];
+        [newControllers addObject:previousTop];
         [_controller setViewControllers:newControllers animated:NO];
         [_controller popViewControllerAnimated:shouldAnimate];
       }
