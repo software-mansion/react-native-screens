@@ -268,11 +268,12 @@ using namespace facebook::react;
   [screenController resetViewToScreen];
 }
 
-#pragma mark methods connected to transitioning
+#pragma mark - methods connected to transitioning
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-  return YES;
+  // you shouldn't be able to use gesture to go back when there is just one screen
+  return _controller.viewControllers.count >= 2;
 }
 
 #pragma mark - RCTComponentViewProtocol
