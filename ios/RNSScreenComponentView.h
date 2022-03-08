@@ -1,14 +1,11 @@
 #import <UIKit/UIKit.h>
 
 #import <React/RCTViewComponentView.h>
+
+#import "RNSEnums.h"
 #import "RNSScreenController.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef NS_ENUM(NSInteger, RNSScreenSwipeDirection) {
-  RNSScreenSwipeDirectionHorizontal,
-  RNSScreenSwipeDirectionVertical,
-};
 
 @interface RNSScreenComponentView : RCTViewComponentView
 
@@ -18,7 +15,20 @@ typedef NS_ENUM(NSInteger, RNSScreenSwipeDirection) {
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL gestureEnabled;
+@property (nonatomic) BOOL hasStatusBarHiddenSet;
+@property (nonatomic) BOOL hasStatusBarStyleSet;
+@property (nonatomic) BOOL hasStatusBarAnimationSet;
+@property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
+@property (nonatomic) BOOL hasOrientationSet;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
+
+#if !TARGET_OS_TV
+@property (nonatomic) BOOL statusBarHidden;
+@property (nonatomic) BOOL homeIndicatorHidden;
+@property (nonatomic) RNSStatusBarStyle statusBarStyle;
+@property (nonatomic) UIInterfaceOrientationMask screenOrientation;
+@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
+#endif
 
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;

@@ -1,5 +1,6 @@
 #import "RNSScreenComponentView.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
+#import "RNSScreenWindowTraits.h"
 
 #import <React/RCTConversions.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -31,6 +32,13 @@ using namespace facebook::react;
     static const auto defaultProps = std::make_shared<const RNSScreenProps>();
     _props = defaultProps;
     _controller = [[RNSScreenController alloc] initWithView:self];
+    // TODO: use default props (?)
+    _hasStatusBarHiddenSet = NO;
+    _hasStatusBarStyleSet = NO;
+    _gestureEnabled = YES;
+    _hasStatusBarAnimationSet = NO;
+    _hasOrientationSet = NO;
+    _hasHomeIndicatorHiddenSet = NO;
   }
 
   return self;
@@ -130,6 +138,45 @@ using namespace facebook::react;
   _gestureEnabled = gestureEnabled;
 }
 
+#if !TARGET_OS_TV
+- (void)setStatusBarHidden:(BOOL)statusBarHidden
+{
+  _statusBarHidden = statusBarHidden;
+  _hasStatusBarHiddenSet = YES;
+  [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
+  [RNSScreenWindowTraits updateStatusBarAppearance];
+}
+
+- (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
+{
+  _hasStatusBarStyleSet = YES;
+  _statusBarStyle = statusBarStyle;
+  [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
+  [RNSScreenWindowTraits updateStatusBarAppearance];
+}
+
+- (void)setStatusBarAnimation:(UIStatusBarAnimation)statusBarAnimation
+{
+  _hasStatusBarAnimationSet = YES;
+  _statusBarAnimation = statusBarAnimation;
+  [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
+}
+
+- (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
+{
+  _hasOrientationSet = YES;
+  _screenOrientation = screenOrientation;
+  [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
+}
+
+- (void)setHomeIndicatorHidden:(BOOL)homeIndicatorHidden
+{
+  _hasHomeIndicatorHiddenSet = YES;
+  _homeIndicatorHidden = homeIndicatorHidden;
+  [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
+}
+#endif
+
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
@@ -194,15 +241,29 @@ using namespace facebook::react;
   const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenProps>(props);
 
-  [super updateProps:props oldProps:oldProps];
+  [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
 
-  _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
+  [self setGestureEnabled:newScreenProps.gestureEnabled];
+
+  if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
+    [self setStatusBarHidden:newScreenProps.statusBarHidden];
+  }
   
-  _gestureEnabled = newScreenProps.gestureEnabled;
+  // Use approach similar to RCTConvert category defined in RNSScreen.h (?)
+  // TODO: convert incoming string to RNSStatusBarStyle
+//  [self setStatusBarStyle:newScreenProps.statusBarStyle]
   
+  // TODO: convert incoming string to UIStatusBarAnimation
+//  [self setStatusBarAnimation:newScreenProps.statusBarAnimation]
+  
+  // TODO: convert incoming string to UIInterfaceOrientationMask
+//  [self setScreenOrientation:newScreenProps.screenOrientation]
+
   if (newScreenProps.statusBarColor) {
     [self logPropNotAvailable:@"statusBarColor"];
   }
+
+  [super updateProps:props oldProps:oldProps];
 }
 
 - (void)updateState:(facebook::react::State::Shared const &)state
@@ -210,6 +271,8 @@ using namespace facebook::react;
 {
   _state = std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(state);
 }
+
+#pragma mark - Util
 
 - (void)logPropNotAvailable:(NSString *)propName
 {
