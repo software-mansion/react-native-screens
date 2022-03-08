@@ -78,8 +78,12 @@ using namespace facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  NSLog(@"%ld", index);
   RNSScreenComponentView *screenChildComponent = (RNSScreenComponentView *)childComponentView;
-  [screenChildComponent.controller setViewToSnapshot:_snapshot];
+  // We should only do a snapshot of a screen that is on the top
+  if (screenChildComponent == _controller.topViewController.view) {
+    [screenChildComponent.controller setViewToSnapshot:_snapshot];
+  }
 
   RCTAssert(
       screenChildComponent.reactSuperview == self,
@@ -255,12 +259,7 @@ using namespace facebook::react;
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   for (RNSScreenComponentView *screen in _reactSubviews) {
     if (screen.controller != nil) {
-      if (pushControllers.count == 0) {
-        // first screen on the list needs to be places as "push controller"
-        [pushControllers addObject:screen.controller];
-      } else {
-        [pushControllers addObject:screen.controller];
-      }
+      [pushControllers addObject:screen.controller];
     }
   }
 
@@ -275,7 +274,7 @@ using namespace facebook::react;
 
 - (void)dismissOnReload
 {
-  auto screenController = (RNSScreenController *)_controller.viewControllers.lastObject;
+  auto screenController = (RNSScreenController *)_controller.topViewController;
   [screenController resetViewToScreen];
 }
 
