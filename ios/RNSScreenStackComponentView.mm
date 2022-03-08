@@ -44,16 +44,6 @@ using namespace facebook::react;
   return self;
 }
 
-- (void)markChildUpdated
-{
-  // do nothing
-}
-
-- (void)didUpdateChildren
-{
-  // do nothing
-}
-
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if (![childComponentView isKindOfClass:[RNSScreenComponentView class]]) {
