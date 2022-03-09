@@ -67,7 +67,6 @@ using namespace facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  NSLog(@"%ld", index);
   RNSScreenComponentView *screenChildComponent = (RNSScreenComponentView *)childComponentView;
   // We should only do a snapshot of a screen that is on the top
   if (screenChildComponent == _controller.topViewController.view) {
