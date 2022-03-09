@@ -193,8 +193,6 @@ using namespace facebook::react;
   // controller is still there
   BOOL firstTimePush = ![previousTop isKindOfClass:[RNSScreenController class]];
 
-  BOOL shouldAnimate = YES;
-
   if (firstTimePush) {
     // nothing pushed yet
     [_controller setViewControllers:controllers animated:NO];
@@ -214,7 +212,7 @@ using namespace facebook::react;
         NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
         [newControllers addObject:previousTop];
         [_controller setViewControllers:newControllers animated:NO];
-        [_controller popViewControllerAnimated:shouldAnimate];
+        [_controller popViewControllerAnimated:YES];
       }
     } else if (![_controller.viewControllers containsObject:top]) {
       // new top controller is not on the stack
@@ -225,11 +223,11 @@ using namespace facebook::react;
       [_controller setViewControllers:newControllers animated:NO];
       auto screenController = (RNSScreenController *)top;
       [screenController resetViewToScreen];
-      [_controller pushViewController:top animated:shouldAnimate];
+      [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
-      [_controller setViewControllers:controllers animated:shouldAnimate];
+      [_controller setViewControllers:controllers animated:YES];
     }
   } else {
     // change wasn't on the top of the stack. We don't need animation.
