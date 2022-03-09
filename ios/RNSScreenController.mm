@@ -62,7 +62,10 @@
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
-  [_initialView updateBounds];
+  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
+  if (isDisplayedWithinUINavController) {
+    [_initialView updateBounds];
+  }
 }
 
 @end
