@@ -1,5 +1,4 @@
 #import "RNSScreenComponentView.h"
-#import <UIKit/UIKit.h>
 #import "RNSScreenStackHeaderConfigComponentView.h"
 
 #import <React/RCTConversions.h>
