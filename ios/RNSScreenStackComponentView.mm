@@ -49,7 +49,7 @@ using namespace facebook::react;
     static const auto defaultProps = std::make_shared<const RNSScreenStackProps>();
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
-    _controller = [[UINavigationController alloc] init];
+    _controller = [RNScreensNavigationController new];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
     _invalidated = NO;
