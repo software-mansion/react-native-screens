@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Welcome",
+    "content": "Welcome to our demo application running on Fabric. In this application we will show you all the available features currently working in this PoC."
+  },
+  {
+    "title": "1. Works on Android and iOS",
+    "content": "This demo version of React Native Screens works on both Android and iOS. Unfortunately Windows version still does not work."
+  },
+  {
+    "title": "2. Compatible with basic Native Stack",
+    "content": "Some of the features from native stack also work in this PoC. This means that you can use it with react-navigation. Currently no modals are supported."
+  },
+  {
+    "title": "3. Customizable header",
+    "content": "Most of the header properties available in classic version of screens also works here. You can play with them on the next screen"
+  }
+]

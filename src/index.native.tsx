@@ -44,6 +44,11 @@ const isPlatformSupported =
 
 let ENABLE_SCREENS = isPlatformSupported;
 
+// @ts-expect-error nativeFabricUIManager is not yet included in the RN types
+const ENABLE_FABRIC = !!global?.nativeFabricUIManager;
+
+const FabricComponents = ENABLE_FABRIC ? require('./fabric') : {};
+
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
@@ -92,7 +97,9 @@ let NativeFullWindowOverlay: React.ComponentType<View>;
 const ScreensNativeModules = {
   get NativeScreen() {
     NativeScreenValue =
-      NativeScreenValue || requireNativeComponent('RNSScreen');
+      NativeScreenValue ||
+      FabricComponents.Screen ||
+      requireNativeComponent('RNSScreen');
     return NativeScreenValue;
   },
 
@@ -114,13 +121,16 @@ const ScreensNativeModules = {
 
   get NativeScreenStack() {
     NativeScreenStack =
-      NativeScreenStack || requireNativeComponent('RNSScreenStack');
+      NativeScreenStack ||
+      FabricComponents.ScreenStack ||
+      requireNativeComponent('RNSScreenStack');
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
     NativeScreenStackHeaderConfig =
       NativeScreenStackHeaderConfig ||
+      FabricComponents.ScreenStackHeaderConfig ||
       requireNativeComponent('RNSScreenStackHeaderConfig');
     return NativeScreenStackHeaderConfig;
   },
@@ -128,6 +138,7 @@ const ScreensNativeModules = {
   get NativeScreenStackHeaderSubview() {
     NativeScreenStackHeaderSubview =
       NativeScreenStackHeaderSubview ||
+      FabricComponents.ScreenStackHeaderSubview ||
       requireNativeComponent('RNSScreenStackHeaderSubview');
     return NativeScreenStackHeaderSubview;
   },
@@ -222,9 +233,15 @@ class Screen extends React.Component<ScreenProps> {
     const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
     if (enabled && isPlatformSupported) {
-      AnimatedNativeScreen =
-        AnimatedNativeScreen ||
-        Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
+      if (!AnimatedNativeScreen) {
+        if (ENABLE_FABRIC) {
+          AnimatedNativeScreen = ScreensNativeModules.NativeScreen;
+        } else {
+          AnimatedNativeScreen = Animated.createAnimatedComponent(
+            ScreensNativeModules.NativeScreen
+          ) as React.ComponentType<ScreenProps>;
+        }
+      }
 
       let {
         // Filter out active prop in this case because it is unused and
@@ -247,6 +264,18 @@ class Screen extends React.Component<ScreenProps> {
 
       const processedColor = processColor(statusBarColor);
 
+      const handleRef = (ref: ViewConfig) => {
+        if (!ENABLE_FABRIC) {
+          if (ref?.viewConfig?.validAttributes?.style) {
+            ref.viewConfig.validAttributes.style = {
+              ...ref.viewConfig.validAttributes.style,
+              display: false,
+            };
+          }
+          this.setRef(ref);
+        }
+      };
+
       return (
         <MaybeFreeze freeze={activityState === 0}>
           <AnimatedNativeScreen
@@ -255,15 +284,7 @@ class Screen extends React.Component<ScreenProps> {
             activityState={activityState}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
-            ref={(ref: ViewConfig) => {
-              if (ref?.viewConfig?.validAttributes?.style) {
-                ref.viewConfig.validAttributes.style = {
-                  ...ref.viewConfig.validAttributes.style,
-                  display: false,
-                };
-              }
-              this.setRef(ref);
-            }}
+            ref={handleRef}
             onTransitionProgress={
               !isNativeStack
                 ? undefined

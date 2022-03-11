@@ -1,11 +1,18 @@
 package com.swmansion.rnscreens
 
+import androidx.annotation.NonNull
+import androidx.annotation.Nullable
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenManagerInterface
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
@@ -16,7 +23,13 @@ import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
-class ScreenViewManager : ViewGroupManager<Screen>() {
+class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
+    private val mDelegate: ViewManagerDelegate<Screen>
+
+    init {
+        mDelegate = RNSScreenManagerDelegate<Screen, ScreenViewManager>(this)
+    }
+
     override fun getName(): String {
         return REACT_CLASS
     }
@@ -26,8 +39,8 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
     }
 
     @ReactProp(name = "activityState")
-    fun setActivityState(view: Screen, activityState: Int?) {
-        if (activityState == null) {
+    override fun setActivityState(view: Screen, activityState: Int) {
+        if (activityState == -1) {
             // Null will be provided when activityState is set as an animated value and we change
             // it from JS to be a plain value (non animated).
             // In case when null is received, we want to ignore such value and not make
@@ -42,7 +55,7 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
     }
 
     @ReactProp(name = "stackPresentation")
-    fun setStackPresentation(view: Screen, presentation: String) {
+    override fun setStackPresentation(view: Screen, presentation: String?) {
         view.stackPresentation = when (presentation) {
             "push" -> Screen.StackPresentation.PUSH
             "modal", "containedModal", "fullScreenModal", "formSheet" ->
@@ -54,7 +67,7 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
     }
 
     @ReactProp(name = "stackAnimation")
-    fun setStackAnimation(view: Screen, animation: String?) {
+    override fun setStackAnimation(view: Screen, animation: String?) {
         view.stackAnimation = when (animation) {
             null, "default", "flip", "simple_push" -> Screen.StackAnimation.DEFAULT
             "none" -> Screen.StackAnimation.NONE
@@ -68,12 +81,12 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
     }
 
     @ReactProp(name = "gestureEnabled", defaultBoolean = true)
-    fun setGestureEnabled(view: Screen, gestureEnabled: Boolean) {
+    override fun setGestureEnabled(view: Screen, gestureEnabled: Boolean) {
         view.isGestureEnabled = gestureEnabled
     }
 
     @ReactProp(name = "replaceAnimation")
-    fun setReplaceAnimation(view: Screen, animation: String?) {
+    override fun setReplaceAnimation(view: Screen, animation: String?) {
         view.replaceAnimation = when (animation) {
             null, "pop" -> Screen.ReplaceAnimation.POP
             "push" -> Screen.ReplaceAnimation.PUSH
@@ -82,48 +95,48 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
     }
 
     @ReactProp(name = "screenOrientation")
-    fun setScreenOrientation(view: Screen, screenOrientation: String?) {
+    override fun setScreenOrientation(view: Screen, screenOrientation: String?) {
         view.setScreenOrientation(screenOrientation)
     }
 
     @ReactProp(name = "statusBarAnimation")
-    fun setStatusBarAnimation(view: Screen, statusBarAnimation: String?) {
+    override fun setStatusBarAnimation(view: Screen, statusBarAnimation: String?) {
         val animated = statusBarAnimation != null && "none" != statusBarAnimation
         view.isStatusBarAnimated = animated
     }
 
     @ReactProp(name = "statusBarColor")
-    fun setStatusBarColor(view: Screen, statusBarColor: Int?) {
+    override fun setStatusBarColor(view: Screen, statusBarColor: Int?) {
         view.statusBarColor = statusBarColor
     }
 
     @ReactProp(name = "statusBarStyle")
-    fun setStatusBarStyle(view: Screen, statusBarStyle: String?) {
+    override fun setStatusBarStyle(view: Screen, statusBarStyle: String?) {
         view.statusBarStyle = statusBarStyle
     }
 
     @ReactProp(name = "statusBarTranslucent")
-    fun setStatusBarTranslucent(view: Screen, statusBarTranslucent: Boolean?) {
+    override fun setStatusBarTranslucent(view: Screen, statusBarTranslucent: Boolean) {
         view.isStatusBarTranslucent = statusBarTranslucent
     }
 
     @ReactProp(name = "statusBarHidden")
-    fun setStatusBarHidden(view: Screen, statusBarHidden: Boolean?) {
+    override fun setStatusBarHidden(view: Screen, statusBarHidden: Boolean) {
         view.isStatusBarHidden = statusBarHidden
     }
 
     @ReactProp(name = "navigationBarColor", customType = "Color")
-    fun setNavigationBarColor(view: Screen, navigationBarColor: Int) {
+    override fun setNavigationBarColor(view: Screen, navigationBarColor: Int?) {
         view.navigationBarColor = navigationBarColor
     }
 
     @ReactProp(name = "navigationBarHidden")
-    fun setNavigationBarHidden(view: Screen, navigationBarHidden: Boolean?) {
+    override fun setNavigationBarHidden(view: Screen, navigationBarHidden: Boolean) {
         view.isNavigationBarHidden = navigationBarHidden
     }
 
     @ReactProp(name = "nativeBackButtonDismissalEnabled")
-    fun setNativeBackButtonDismissalEnabled(
+    override fun setNativeBackButtonDismissalEnabled(
         view: Screen,
         nativeBackButtonDismissalEnabled: Boolean
     ) {
@@ -150,6 +163,10 @@ class ScreenViewManager : ViewGroupManager<Screen>() {
         // there is no `MapBuilder.of` with more than 7 items
         map[HeaderBackButtonClickedEvent.EVENT_NAME] = MapBuilder.of("registrationName", "onHeaderBackButtonClicked")
         return map
+    }
+
+    protected override fun getDelegate(): ViewManagerDelegate<Screen> {
+        return mDelegate
     }
 
     companion object {

@@ -142,6 +142,10 @@
     // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenWindowTraits updateWindowTraits];
     [_presentedModals removeObject:presentationController.presentedViewController];
+    // we double check if there are no new controllers pending to be presented since someone could
+    // have tried to push another one during the transition
+    _updatingModals = NO;
+    [self updateContainer];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
       // main queue. We do that because onDismiss event is also enqueued and we want for the transition
@@ -361,6 +365,14 @@
 
         BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
             ((RNSScreenView *)next.view).stackAnimation != RNSScreenStackAnimationNone;
+
+        // if you want to present another modal quick enough after dismissing the previous one,
+        // it will result in wrong changeRootController, see repro in
+        // https://github.com/software-mansion/react-native-screens/issues/1299 We call `updateContainer` again in
+        // `presentationControllerDidDismiss` to cover this case and present new controller
+        if (previous.beingDismissed) {
+          return;
+        }
 
         [previous presentViewController:next
                                animated:shouldAnimate
