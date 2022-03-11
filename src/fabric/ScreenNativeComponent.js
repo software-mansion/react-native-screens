@@ -19,7 +19,15 @@ type ScreenDismissedEvent = $ReadOnly<{|
   dismissCount: Int32,
 |}>;
 
-type StackPresentation = 'push' | 'modal' | 'transparentModal';
+type StackPresentation =
+  | 'push'
+  | 'modal'
+  | 'transparentModal'
+  | 'fullScreenModal'
+  | 'formSheet'
+  | 'containedModal'
+  | 'containedTransparentModal';
+
 type StackAnimation =
   | 'default'
   | 'flip'
