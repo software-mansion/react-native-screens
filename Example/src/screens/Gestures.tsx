@@ -85,7 +85,6 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
     endValue,
     topValue,
     bottomValue,
-    headerHeight,
   ]);
 
   return (
