@@ -150,6 +150,7 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
         <View
           style={{
             ...styles.gestureSurface,
+            // full screen swipe & gesture response distance have no idea of existence of the header
             top: topValue - headerHeight,
             left: startValue,
             width: endValue - startValue,
