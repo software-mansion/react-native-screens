@@ -70,6 +70,13 @@ export type TransitionProgressEventType = {
   goingForward: number;
 };
 
+export type GestureResponseDistanceType = {
+  start?: number;
+  end?: number;
+  top?: number;
+  bottom?: number;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
@@ -102,6 +109,12 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   gestureEnabled?: boolean;
+  /**
+   * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+   *
+   * @platform ios
+   */
+  gestureResponseDistance?: GestureResponseDistanceType;
   /**
    * Whether the home indicator should be hidden on this screen. Defaults to `false`.
    *

@@ -569,6 +569,23 @@
   return nil;
 }
 
+- (BOOL)isInGestureResponseDistance:(UIGestureRecognizer *)gestureRecognizer topScreen:(RNSScreenView *)topScreen
+{
+  NSDictionary *gestureResponseDistanceValues = topScreen.gestureResponseDistance;
+  float x = [gestureRecognizer locationInView:gestureRecognizer.view].x;
+  float y = [gestureRecognizer locationInView:gestureRecognizer.view].y;
+  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+  if (isRTL) {
+    x = _controller.view.frame.size.width - x;
+  }
+  // we check if any of the constraints are violated and return NO if so
+  return !(
+      (gestureResponseDistanceValues[@"start"] && x < [gestureResponseDistanceValues[@"start"] floatValue]) ||
+      (gestureResponseDistanceValues[@"end"] && x > [gestureResponseDistanceValues[@"end"] floatValue]) ||
+      (gestureResponseDistanceValues[@"top"] && y < [gestureResponseDistanceValues[@"top"] floatValue]) ||
+      (gestureResponseDistanceValues[@"bottom"] && y > [gestureResponseDistanceValues[@"bottom"] floatValue]));
+}
+
 - (void)cancelTouchesInParent
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
@@ -600,8 +617,9 @@
 #else
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
-    // `fullScreenSwipeEnabled` is set
-    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    // `fullScreenSwipeEnabled` is set, and we are in the bounds set by user
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
+        [self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
