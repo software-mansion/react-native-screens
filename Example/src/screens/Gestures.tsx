@@ -51,20 +51,18 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
   const [gestureEnabled, setGestureEnabled] = useState(true);
   const [fullScreenSwipeEnabled, setFullScreenSwipeEnabled] = useState(true);
 
+  const { height, width } = Dimensions.get('window');
+
   // stored as strings for easier input handling
   const [start, setStart] = useState('40');
-  const [end, setEnd] = useState(
-    (Dimensions.get('window').width - 40).toString()
-  );
+  const [end, setEnd] = useState((width - 40).toString());
   const [top, setTop] = useState('600');
-  const [bottom, setBottom] = useState(
-    Dimensions.get('window').height.toString()
-  );
+  const [bottom, setBottom] = useState(height.toString());
 
   const startValue = parseInt(start) || 0;
-  const endValue = parseInt(end) || 0;
+  const endValue = parseInt(end) || width;
   const topValue = parseInt(top) || 0;
-  const bottomValue = parseInt(bottom) || 0;
+  const bottomValue = parseInt(bottom) || height;
 
   useLayoutEffect(() => {
     navigation.setOptions({
