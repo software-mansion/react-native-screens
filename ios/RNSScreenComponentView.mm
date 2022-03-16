@@ -245,7 +245,8 @@ using namespace facebook::react;
   }
 
   if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
-    [self setStatusBarStyle:[RCTConvert RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
+    [self setStatusBarStyle:[RCTConvert
+                                RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
   }
 
   if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
@@ -254,9 +255,8 @@ using namespace facebook::react;
   }
 
   if (newScreenProps.screenOrientation != oldScreenProps.screenOrientation) {
-    [self
-        setScreenOrientation:[RCTConvert
-                                 UIInterfaceOrientationMask:[self stringToPropValue:newScreenProps.screenOrientation]]];
+    [self setScreenOrientation:[RCTConvert
+                                  UIInterfaceOrientationMask:[self stringToPropValue:newScreenProps.screenOrientation]]];
   }
 
   if (newScreenProps.statusBarColor) {
