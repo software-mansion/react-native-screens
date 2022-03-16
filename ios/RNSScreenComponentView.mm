@@ -251,15 +251,19 @@ using namespace facebook::react;
 
   // Use approach similar to RCTConvert category defined in RNSScreen.h (?)
   if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
-    [self setStatusBarStyle:[RCTConvert RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
-  }
-  
-  if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
-    [self setStatusBarAnimation:[RCTConvert UIStatusBarAnimation:[self stringToPropValue:newScreenProps.statusBarAnimation]]];
+    [self setStatusBarStyle:[RCTConvert
+                                RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
   }
 
-  // TODO: convert incoming string to UIInterfaceOrientationMask
-  //  [self setScreenOrientation:newScreenProps.screenOrientation]
+  if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
+    [self setStatusBarAnimation:[RCTConvert
+                                    UIStatusBarAnimation:[self stringToPropValue:newScreenProps.statusBarAnimation]]];
+  }
+
+  if (newScreenProps.screenOrientation != oldScreenProps.screenOrientation) {
+    [self setScreenOrientation:[RCTConvert
+                                  UIInterfaceOrientationMask:[self stringToPropValue:newScreenProps.screenOrientation]]];
+  }
 
   if (newScreenProps.statusBarColor) {
     [self logPropNotAvailable:@"statusBarColor"];
@@ -308,14 +312,15 @@ RCT_ENUM_CONVERTER(
     RNSStatusBarStyleAuto,
     integerValue)
 
-RCT_ENUM_CONVERTER(UIStatusBarAnimation,
-                   (@{
-                    @"none" : @(UIStatusBarAnimationNone),
-                    @"fade" : @(UIStatusBarAnimationFade),
-                    @"slide" : @(UIStatusBarAnimationSlide)
-                   }),
-                   UIStatusBarAnimationNone,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    UIStatusBarAnimation,
+    (@{
+      @"none" : @(UIStatusBarAnimationNone),
+      @"fade" : @(UIStatusBarAnimationFade),
+      @"slide" : @(UIStatusBarAnimationSlide)
+    }),
+    UIStatusBarAnimationNone,
+    integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {
