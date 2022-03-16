@@ -250,11 +250,13 @@ using namespace facebook::react;
   }
 
   // Use approach similar to RCTConvert category defined in RNSScreen.h (?)
-  // TODO: convert incoming string to RNSStatusBarStyle
-  //  [self setStatusBarStyle:newScreenProps.statusBarStyle]
-
-  // TODO: convert incoming string to UIStatusBarAnimation
-  //  [self setStatusBarAnimation:newScreenProps.statusBarAnimation]
+  if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
+    [self setStatusBarStyle:[RCTConvert RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
+  }
+  
+  if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
+    [self setStatusBarAnimation:[RCTConvert UIStatusBarAnimation:[self stringToPropValue:newScreenProps.statusBarAnimation]]];
+  }
 
   // TODO: convert incoming string to UIInterfaceOrientationMask
   //  [self setScreenOrientation:newScreenProps.screenOrientation]
@@ -279,9 +281,64 @@ using namespace facebook::react;
   NSLog(@"%@ prop not available on iOS", propName);
 }
 
+- (NSString *)stringToPropValue:(std::string)value
+{
+  if (value.empty())
+    return nil;
+  return [[NSString alloc] initWithUTF8String:value.c_str()];
+}
 @end
 
 Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return RNSScreenComponentView.class;
 }
+
+@implementation RCTConvert (RNSScreenComponentView)
+
+#if !TARGET_OS_TV
+RCT_ENUM_CONVERTER(
+    RNSStatusBarStyle,
+    (@{
+      @"auto" : @(RNSStatusBarStyleAuto),
+      @"inverted" : @(RNSStatusBarStyleInverted),
+      @"light" : @(RNSStatusBarStyleLight),
+      @"dark" : @(RNSStatusBarStyleDark),
+    }),
+    RNSStatusBarStyleAuto,
+    integerValue)
+
+RCT_ENUM_CONVERTER(UIStatusBarAnimation,
+                   (@{
+                    @"none" : @(UIStatusBarAnimationNone),
+                    @"fade" : @(UIStatusBarAnimationFade),
+                    @"slide" : @(UIStatusBarAnimationSlide)
+                   }),
+                   UIStatusBarAnimationNone,
+                   integerValue)
+
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
+{
+  json = [self NSString:json];
+  if ([json isEqualToString:@"default"]) {
+    return UIInterfaceOrientationMaskAllButUpsideDown;
+  } else if ([json isEqualToString:@"all"]) {
+    return UIInterfaceOrientationMaskAll;
+  } else if ([json isEqualToString:@"portrait"]) {
+    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"portrait_up"]) {
+    return UIInterfaceOrientationMaskPortrait;
+  } else if ([json isEqualToString:@"portrait_down"]) {
+    return UIInterfaceOrientationMaskPortraitUpsideDown;
+  } else if ([json isEqualToString:@"landscape"]) {
+    return UIInterfaceOrientationMaskLandscape;
+  } else if ([json isEqualToString:@"landscape_left"]) {
+    return UIInterfaceOrientationMaskLandscapeLeft;
+  } else if ([json isEqualToString:@"landscape_right"]) {
+    return UIInterfaceOrientationMaskLandscapeRight;
+  }
+  return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+#endif
+
+@end

@@ -7,6 +7,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface RCTConvert (RNSScreenComponentView)
+
+//+ (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
+//+ (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
+
+#if !TARGET_OS_TV
++ (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
++ (UIStatusBarAnimation)UIStatusBarAnimation:(id)json;
++ (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
+#endif
+
+@end
+
 @interface RNSScreenComponentView : RCTViewComponentView
 
 @property (weak, nonatomic) UIView *reactSuperview;
