@@ -1,6 +1,7 @@
 #import "RNSScreenStackComponentView.h"
 #import "RNSScreenComponentView.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
+#import "RNSScreenWindowTraits.h"
 
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -19,8 +20,12 @@ using namespace facebook::react;
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
     UIViewControllerTransitioningDelegate>
-@end
 
+@property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
+@property (nonatomic) BOOL updatingModals;
+@property (nonatomic) BOOL scheduleModalsUpdate;
+
+@end
 #if !TARGET_OS_TV
 @interface RNSScreenEdgeGestureRecognizerF : UIScreenEdgePanGestureRecognizer
 @end
@@ -255,21 +260,159 @@ using namespace facebook::react;
   }
 }
 
+- (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
+{
+  // prevent re-entry
+  if (_updatingModals) {
+    _scheduleModalsUpdate = YES;
+    return;
+  }
+
+  // when there is no change we return immediately. This check is important because sometime we may
+  // accidently trigger modal dismiss if we don't verify to run the below code only when an actual
+  // change in the list of presented modal was made.
+  if ([_presentedModals isEqualToArray:controllers]) {
+    return;
+  }
+
+  // if view controller is not yet attached to window we skip updates now and run them when view
+  // is attached
+  if (self.window == nil && _presentedModals.lastObject.view.window == nil) {
+    return;
+  }
+
+  _updatingModals = YES;
+
+  NSMutableArray<UIViewController *> *newControllers = [NSMutableArray arrayWithArray:controllers];
+  [newControllers removeObjectsInArray:_presentedModals];
+
+  // find bottom-most controller that should stay on the stack for the duration of transition
+  NSUInteger changeRootIndex = 0;
+  UIViewController *changeRootController = _controller;
+  for (NSUInteger i = 0; i < MIN(_presentedModals.count, controllers.count); i++) {
+    if (_presentedModals[i] == controllers[i]) {
+      changeRootController = controllers[i];
+      changeRootIndex = i + 1;
+    } else {
+      break;
+    }
+  }
+
+  // we verify that controllers added on top of changeRootIndex are all new. Unfortunately modal
+  // VCs cannot be reshuffled (there are some visual glitches when we try to dismiss then show as
+  // even non-animated dismissal has delay and updates the screen several times)
+  for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
+    if ([_presentedModals containsObject:controllers[i]]) {
+      RCTAssert(false, @"Modally presented controllers are being reshuffled, this is not allowed");
+    }
+  }
+
+  __weak RNSScreenStackComponentView *weakSelf = self;
+
+  void (^afterTransitions)(void) = ^{
+    // TODO: find out how to implement these
+//    if (weakSelf.onFinishTransitioning) {
+//      weakSelf.onFinishTransitioning(nil);
+//    }
+    weakSelf.updatingModals = NO;
+    if (weakSelf.scheduleModalsUpdate) {
+      // if modals update was requested during setModalViewControllers we set scheduleModalsUpdate
+      // flag in order to perform updates at a later point. Here we are done with all modals
+      // transitions and check this flag again. If it was set, we reset the flag and execute updates.
+      weakSelf.scheduleModalsUpdate = NO;
+      [weakSelf updateContainer];
+    }
+    // we trigger the update of orientation here because, when dismissing the modal from JS,
+    // neither `viewWillAppear` nor `presentationControllerDidDismiss` are called, same for status bar.
+    [RNSScreenWindowTraits updateWindowTraits];
+  };
+
+  void (^finish)(void) = ^{
+    NSUInteger oldCount = weakSelf.presentedModals.count;
+    if (changeRootIndex < oldCount) {
+      [weakSelf.presentedModals removeObjectsInRange:NSMakeRange(changeRootIndex, oldCount - changeRootIndex)];
+    }
+    BOOL isAttached =
+        changeRootController.parentViewController != nil || changeRootController.presentingViewController != nil;
+    if (!isAttached || changeRootIndex >= controllers.count) {
+      // if change controller view is not attached, presenting modals will silently fail on iOS.
+      // In such a case we trigger controllers update from didMoveToWindow.
+      // We also don't run any present transitions if changeRootIndex is greater or equal to the size
+      // of new controllers array. This means that no new controllers should be presented.
+      afterTransitions();
+      return;
+    } else {
+      UIViewController *previous = changeRootController;
+      for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
+        UIViewController *next = controllers[i];
+        BOOL lastModal = (i == controllers.count - 1);
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+        if (@available(iOS 13.0, tvOS 13.0, *)) {
+          // Inherit UI style from its parent - solves an issue with incorrect style being applied to some UIKit views
+          // like date picker or segmented control.
+          next.overrideUserInterfaceStyle = self->_controller.overrideUserInterfaceStyle;
+        }
+#endif
+
+        BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreenController class]] &&
+            ((RNSScreenComponentView *)next.view).stackAnimation != RNSScreenStackAnimationNone;
+
+        // if you want to present another modal quick enough after dismissing the previous one,
+        // it will result in wrong changeRootController, see repro in
+        // https://github.com/software-mansion/react-native-screens/issues/1299 We call `updateContainer` again in
+        // `presentationControllerDidDismiss` to cover this case and present new controller
+        if (previous.beingDismissed) {
+          return;
+        }
+
+        [previous presentViewController:next
+                               animated:shouldAnimate
+                             completion:^{
+                               [weakSelf.presentedModals addObject:next];
+                               if (lastModal) {
+                                 afterTransitions();
+                               };
+                             }];
+        previous = next;
+      }
+    }
+  };
+
+  if (changeRootController.presentedViewController != nil &&
+      [_presentedModals containsObject:changeRootController.presentedViewController]) {
+    BOOL shouldAnimate = changeRootIndex == controllers.count &&
+        [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
+        ((RNSScreenView *)changeRootController.presentedViewController.view).stackAnimation !=
+            RNSScreenStackAnimationNone;
+    [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
+  } else {
+    finish();
+  }
+}
+
 - (void)updateContainer
 {
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
+  NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenComponentView *screen in _reactSubviews) {
     if (screen.controller != nil) {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
       } else {
-        [pushControllers addObject:screen.controller];
+        if (screen.stackPresentation == RNSScreenStackPresentationPush) {
+          [pushControllers addObject:screen.controller];
+        } else {
+          [modalControllers addObject:screen.controller];
+        }
       }
     }
   }
 
   [self setPushViewControllers:pushControllers];
+  [self setModalViewControllers:modalControllers];
 }
 
 - (void)layoutSubviews
