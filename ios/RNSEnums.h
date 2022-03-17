@@ -1,10 +1,3 @@
-//
-//  RNSEnums.h
-//  RNScreens
-//
-//  Created by Kacper Kafara on 04/03/2022.
-//
-
 #ifndef RNSEnums_h
 #define RNSEnums_h
 
