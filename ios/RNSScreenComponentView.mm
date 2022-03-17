@@ -14,7 +14,7 @@
 #import <React/RCTRootComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 
-//using namespace facebook::react;
+// using namespace facebook::react;
 
 @interface RNSScreenComponentView () <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
 @end
@@ -32,6 +32,7 @@
     _props = defaultProps;
     _controller = [[RNSScreenController alloc] initWithView:self];
     // TODO: use default props (?)
+    _stackAnimation = RNSScreenStackAnimationDefault;
     _stackPresentation = RNSScreenStackPresentationPush;
     _hasStatusBarHiddenSet = NO;
     _hasStatusBarStyleSet = NO;
@@ -107,7 +108,7 @@
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-      ->onAppear(facebook::react::RNSScreenEventEmitter::OnAppear{});
+        ->onAppear(facebook::react::RNSScreenEventEmitter::OnAppear{});
   }
 }
 
@@ -301,8 +302,7 @@
   }
 
   if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
-    [self setStatusBarStyle:[RCTConvert
-                                RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
+    [self setStatusBarStyle:[RCTConvert RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
   }
 
   if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
@@ -311,8 +311,17 @@
   }
 
   if (newScreenProps.screenOrientation != oldScreenProps.screenOrientation) {
-    [self setScreenOrientation:[RCTConvert
-                                  UIInterfaceOrientationMask:[self stringToPropValue:newScreenProps.screenOrientation]]];
+    [self
+        setScreenOrientation:[RCTConvert
+                                 UIInterfaceOrientationMask:[self stringToPropValue:newScreenProps.screenOrientation]]];
+  }
+  
+  if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
+    [self setStackPresentation:[self RNSScreenStackPresentationFromCppType:newScreenProps.stackPresentation]];
+  }
+  
+  if (newScreenProps.stackAnimation != oldScreenProps.stackAnimation) {
+    [self setStackAnimation:[self RNSScreenStackAnimationFromCppType:newScreenProps.stackAnimation]];
   }
 
   if (newScreenProps.statusBarColor) {
@@ -348,7 +357,36 @@
     return nil;
   return [[NSString alloc] initWithUTF8String:value.c_str()];
 }
+
+- (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppType:(facebook::react::RNSScreenStackPresentation)stackPresentation
+{
+  switch (stackPresentation) {
+    case facebook::react::RNSScreenStackPresentation::Push: return RNSScreenStackPresentationPush;
+    case facebook::react::RNSScreenStackPresentation::Modal: return RNSScreenStackPresentationModal;
+    case facebook::react::RNSScreenStackPresentation::FullScreenModal: return RNSScreenStackPresentationFullScreenModal;
+    case facebook::react::RNSScreenStackPresentation::FormSheet: return RNSScreenStackPresentationFormSheet;
+    case facebook::react::RNSScreenStackPresentation::ContainedModal: return RNSScreenStackPresentationContainedModal;
+    case facebook::react::RNSScreenStackPresentation::TransparentModal: return RNSScreenStackPresentationTransparentModal;
+    case facebook::react::RNSScreenStackPresentation::ContainedTransparentModal: return RNSScreenStackPresentationContainedTransparentModal;
+  }
+}
+
+- (RNSScreenStackAnimation)RNSScreenStackAnimationFromCppType:(facebook::react::RNSScreenStackAnimation)stackAnimation
+{
+  switch (stackAnimation) {
+    case facebook::react::RNSScreenStackAnimation::Slide_from_right:
+    case facebook::react::RNSScreenStackAnimation::Slide_from_left:
+    case facebook::react::RNSScreenStackAnimation::Default: return RNSScreenStackAnimationDefault;
+    case facebook::react::RNSScreenStackAnimation::Flip: return RNSScreenStackAnimationFlip;
+    case facebook::react::RNSScreenStackAnimation::Simple_push: return RNSScreenStackAnimationSimplePush;
+    case facebook::react::RNSScreenStackAnimation::None: return RNSScreenStackAnimationNone;
+    case facebook::react::RNSScreenStackAnimation::Fade: return RNSScreenStackAnimationFade;
+    case facebook::react::RNSScreenStackAnimation::Slide_from_bottom: return RNSScreenStackAnimationSlideFromBottom;
+    case facebook::react::RNSScreenStackAnimation::Fade_from_bottom: return RNSScreenStackAnimationFadeFromBottom;
+  }
+}
 @end
+
 
 Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {

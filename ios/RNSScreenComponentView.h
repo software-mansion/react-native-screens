@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL hasOrientationSet;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
+@property (nonatomic) RNSScreenStackAnimation stackAnimation;
 
 #if !TARGET_OS_TV
 @property (nonatomic) BOOL statusBarHidden;
