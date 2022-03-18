@@ -22,7 +22,9 @@ using namespace facebook::react;
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
     UIViewControllerTransitioningDelegate,
-    RCTMountingTransactionObserving>
+    RCTMountingTransactionObserving> {
+  BOOL _updateScheduled;
+}
 @end
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
@@ -30,6 +32,7 @@ using namespace facebook::react;
 @property (nonatomic) BOOL scheduleModalsUpdate;
 
 @end
+
 #if !TARGET_OS_TV
 @interface RNSScreenEdgeGestureRecognizerF : UIScreenEdgePanGestureRecognizer
 @end
@@ -59,6 +62,7 @@ using namespace facebook::react;
     static const auto defaultProps = std::make_shared<const RNSScreenStackProps>();
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
+    _presentedModals = [NSMutableArray new];
     _controller = [RNScreensNavigationController new];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
@@ -199,6 +203,33 @@ using namespace facebook::react;
   }
 }
 
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+  // We don't directly set presentation delegate but instead rely on the ScreenView's delegate to
+  // forward certain calls to the container (Stack).
+  UIView *screenView = presentationController.presentedViewController.view;
+  if ([screenView isKindOfClass:[RNSScreenComponentView class]]) {
+    // we trigger the update of status bar's appearance here because there is no other lifecycle method
+    // that can handle it when dismissing a modal, the same for orientation
+    [RNSScreenWindowTraits updateWindowTraits];
+    [_presentedModals removeObject:presentationController.presentedViewController];
+    // we double check if there are no new controllers pending to be presented since someone could
+    // have tried to push another one during the transition
+    _updatingModals = NO;
+    [self updateContainer];
+    //    if (self.onFinishTransitioning) {
+    //      // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
+    //      // main queue. We do that because onDismiss event is also enqueued and we want for the transition
+    //      // finish event to arrive later than onDismiss (see RNSScreen#notifyDismiss)
+    //      dispatch_async(dispatch_get_main_queue(), ^{
+    //        if (self.onFinishTransitioning) {
+    //          self.onFinishTransitioning(nil);
+    //        }
+    //      });
+    //    }
+  }
+}
+
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // when there is no change we return immediately
@@ -209,6 +240,28 @@ using namespace facebook::react;
   // if view controller is not yet attached to window we skip updates now and run them when view
   // is attached
   if (self.window == nil) {
+    return;
+  }
+  
+  // when transition is ongoing, any updates made to the controller will not be reflected until the
+  // transition is complete. In particular, when we push/pop view controllers we expect viewControllers
+  // property to be updated immediately. Based on that property we then calculate future updates.
+  // When the transition is ongoing the property won't be updated immediatly. We therefore avoid
+  // making any updated when transition is ongoing and schedule updates for when the transition
+  // is complete.
+  if (_controller.transitionCoordinator != nil) {
+    if (!_updateScheduled) {
+      _updateScheduled = YES;
+      __weak RNSScreenStackComponentView *weakSelf = self;
+      [_controller.transitionCoordinator
+          animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+            // do nothing here, we only want to be notified when transition is complete
+          }
+          completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+            self->_updateScheduled = NO;
+            [weakSelf updateContainer];
+          }];
+    }
     return;
   }
 
@@ -314,9 +367,9 @@ using namespace facebook::react;
 
   void (^afterTransitions)(void) = ^{
     // TODO: find out how to implement these
-//    if (weakSelf.onFinishTransitioning) {
-//      weakSelf.onFinishTransitioning(nil);
-//    }
+    //    if (weakSelf.onFinishTransitioning) {
+    //      weakSelf.onFinishTransitioning(nil);
+    //    }
     weakSelf.updatingModals = NO;
     if (weakSelf.scheduleModalsUpdate) {
       // if modals update was requested during setModalViewControllers we set scheduleModalsUpdate
@@ -577,6 +630,12 @@ using namespace facebook::react;
 {
   [super prepareForRecycle];
   _reactSubviews = [NSMutableArray new];
+  
+  for (UIViewController *controller in _presentedModals) {
+    [controller dismissViewControllerAnimated:NO completion:nil];
+  }
+  
+  [_presentedModals removeAllObjects];
   [self dismissOnReload];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
