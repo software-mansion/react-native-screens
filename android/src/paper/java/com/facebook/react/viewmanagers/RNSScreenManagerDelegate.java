@@ -22,14 +22,17 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
+      case "fullScreenSwipeEnabled":
+        mViewManager.setFullScreenSwipeEnabled(view, value == null ? false : (boolean) value);
+        break;
+      case "gestureEnabled":
+        mViewManager.setGestureEnabled(view, value == null ? true : (boolean) value);
+        break;
       case "stackPresentation":
         mViewManager.setStackPresentation(view, (String) value);
         break;
       case "stackAnimation":
         mViewManager.setStackAnimation(view, (String) value);
-        break;
-      case "gestureEnabled":
-        mViewManager.setGestureEnabled(view, value == null ? true : (boolean) value);
         break;
       case "replaceAnimation":
         mViewManager.setReplaceAnimation(view, (String) value);
