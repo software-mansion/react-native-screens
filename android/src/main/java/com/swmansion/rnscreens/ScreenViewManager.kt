@@ -1,12 +1,8 @@
 package com.swmansion.rnscreens
 
-import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
-import com.facebook.react.uimanager.ReactStylesDiffMap
-import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -105,7 +101,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.isStatusBarAnimated = animated
     }
 
-    @ReactProp(name = "statusBarColor")
+    @ReactProp(name = "statusBarColor", customType = "Color")
     override fun setStatusBarColor(view: Screen, statusBarColor: Int?) {
         view.statusBarColor = statusBarColor
     }
