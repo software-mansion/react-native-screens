@@ -11,9 +11,6 @@ import {
   ViewProps,
 } from 'react-native';
 import { Freeze } from 'react-freeze';
-// @ts-ignore Getting private component
-// eslint-disable-next-line import/default
-import processColor from 'react-native/Libraries/StyleSheet/processColor';
 import { version } from 'react-native/package.json';
 
 import TransitionProgressContext from './TransitionProgressContext';
@@ -251,7 +248,6 @@ class Screen extends React.Component<ScreenProps> {
         activityState,
         children,
         isNativeStack,
-        statusBarColor,
         ...props
       } = rest;
 
@@ -261,8 +257,6 @@ class Screen extends React.Component<ScreenProps> {
         );
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
-
-      const processedColor = processColor(statusBarColor);
 
       const handleRef = (ref: ViewConfig) => {
         if (!ENABLE_FABRIC) {
@@ -280,7 +274,6 @@ class Screen extends React.Component<ScreenProps> {
         <MaybeFreeze freeze={activityState === 0}>
           <AnimatedNativeScreen
             {...props}
-            statusBarColor={processedColor}
             activityState={activityState}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
