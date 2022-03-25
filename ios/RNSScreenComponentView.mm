@@ -253,9 +253,10 @@ using namespace facebook::react;
   if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
     [self setStatusBarStyle:[RCTConvert RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
   }
-  
+
   if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
-    [self setStatusBarAnimation:[RCTConvert UIStatusBarAnimation:[self stringToPropValue:newScreenProps.statusBarAnimation]]];
+    [self setStatusBarAnimation:[RCTConvert
+                                    UIStatusBarAnimation:[self stringToPropValue:newScreenProps.statusBarAnimation]]];
   }
 
   // TODO: convert incoming string to UIInterfaceOrientationMask
@@ -308,14 +309,15 @@ RCT_ENUM_CONVERTER(
     RNSStatusBarStyleAuto,
     integerValue)
 
-RCT_ENUM_CONVERTER(UIStatusBarAnimation,
-                   (@{
-                    @"none" : @(UIStatusBarAnimationNone),
-                    @"fade" : @(UIStatusBarAnimationFade),
-                    @"slide" : @(UIStatusBarAnimationSlide)
-                   }),
-                   UIStatusBarAnimationNone,
-                   integerValue)
+RCT_ENUM_CONVERTER(
+    UIStatusBarAnimation,
+    (@{
+      @"none" : @(UIStatusBarAnimationNone),
+      @"fade" : @(UIStatusBarAnimationFade),
+      @"slide" : @(UIStatusBarAnimationSlide)
+    }),
+    UIStatusBarAnimationNone,
+    integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {

@@ -360,7 +360,7 @@ using namespace facebook::react;
 
   // gesture recognizer for full width swipe gesture
   RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self
-                                                                                      action:@selector(handleSwipe:)];
+                                                                                    action:@selector(handleSwipe:)];
   panRecognizer.delegate = self;
   [self addGestureRecognizer:panRecognizer];
 }
