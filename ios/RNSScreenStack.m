@@ -77,6 +77,7 @@
   UIPercentDrivenInteractiveTransition *_interactionController;
   BOOL _updateScheduled;
   BOOL _isFullWidthSwiping;
+  id<UIGestureRecognizerDelegate> _gestureRecognizerDelegate;
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
@@ -252,7 +253,7 @@
         [parentView.reactViewController addChildViewController:controller];
         [self addSubview:controller.view];
 #if !TARGET_OS_TV
-        _controller.interactivePopGestureRecognizer.delegate = self;
+        _gestureRecognizerDelegate = _controller.interactivePopGestureRecognizer.delegate;
 #endif
         [controller didMoveToParentViewController:parentView.reactViewController];
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
@@ -604,6 +605,11 @@
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
+  if ([_gestureRecognizerDelegate respondsToSelector:@selector(gestureRecognizerShouldBegin:)] &&
+      ![_gestureRecognizerDelegate gestureRecognizerShouldBegin:gestureRecognizer]) {
+    return NO;
+  }
+
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
   if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
@@ -654,29 +660,6 @@
   }
 #endif
 }
-
-- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-{
-  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
-  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
-  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
-  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
-    return NO;
-  }
-  UIScrollView *scrollView = gestureRecognizer.view;
-  return scrollView.panGestureRecognizer == gestureRecognizer;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return [self isScrollViewPanGestureRecognizer: otherGestureRecognizer];
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return [self isScrollViewPanGestureRecognizer: otherGestureRecognizer];
-}
-
 
 #if !TARGET_OS_TV
 - (void)setupGestureHandlers
@@ -771,6 +754,69 @@
 {
   return _interactionController;
 }
+
+#pragma mark - proxing delegate methods to original delegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  if ([_gestureRecognizerDelegate respondsToSelector:@selector(gestureRecognizer:
+                                                         shouldRecognizeSimultaneouslyWithGestureRecognizer:)]) {
+    return [_gestureRecognizerDelegate gestureRecognizer:gestureRecognizer
+        shouldRecognizeSimultaneouslyWithGestureRecognizer:otherGestureRecognizer];
+  }
+  return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  if ([_gestureRecognizerDelegate respondsToSelector:@selector(gestureRecognizer:
+                                                         shouldRequireFailureOfGestureRecognizer:)]) {
+    return [_gestureRecognizerDelegate gestureRecognizer:gestureRecognizer
+                 shouldRequireFailureOfGestureRecognizer:otherGestureRecognizer];
+  }
+  return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  if ([_gestureRecognizerDelegate respondsToSelector:@selector(gestureRecognizer:
+                                                         shouldBeRequiredToFailByGestureRecognizer:)]) {
+    return [_gestureRecognizerDelegate gestureRecognizer:gestureRecognizer
+               shouldBeRequiredToFailByGestureRecognizer:otherGestureRecognizer];
+  }
+  return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+  if ([_gestureRecognizerDelegate respondsToSelector:@selector(gestureRecognizer:shouldReceiveTouch:)]) {
+    return [_gestureRecognizerDelegate gestureRecognizer:gestureRecognizer shouldReceiveTouch:touch];
+  }
+  return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press
+{
+  if ([_gestureRecognizerDelegate respondsToSelector:@selector(gestureRecognizer:shouldReceivePress:)]) {
+    return [_gestureRecognizerDelegate gestureRecognizer:gestureRecognizer shouldReceivePress:press];
+  }
+  return YES;
+}
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_4) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_4
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+       shouldReceiveEvent:(UIEvent *)event API_AVAILABLE(ios(13.4))
+{
+  if ([_gestureRecognizerDelegate respondsToSelector:@selector(gestureRecognizer:shouldReceiveEvent:)]) {
+    return [_gestureRecognizerDelegate gestureRecognizer:gestureRecognizer shouldReceiveEvent:event];
+  }
+  return YES;
+}
+#endif
 
 @end
 
