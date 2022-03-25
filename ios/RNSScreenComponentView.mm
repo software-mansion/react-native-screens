@@ -249,7 +249,6 @@ using namespace facebook::react;
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
   }
 
-  // Use approach similar to RCTConvert category defined in RNSScreen.h (?)
   if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
     [self setStatusBarStyle:[RCTConvert RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
   }
@@ -258,9 +257,6 @@ using namespace facebook::react;
     [self setStatusBarAnimation:[RCTConvert
                                     UIStatusBarAnimation:[self stringToPropValue:newScreenProps.statusBarAnimation]]];
   }
-
-  // TODO: convert incoming string to UIInterfaceOrientationMask
-  //  [self setScreenOrientation:newScreenProps.screenOrientation]
 
   if (newScreenProps.statusBarColor) {
     [self logPropNotAvailable:@"statusBarColor"];
