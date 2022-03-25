@@ -63,6 +63,11 @@ using namespace facebook::react;
   return _reactSuperview;
 }
 
+- (UIViewController *)reactViewController
+{
+  return _controller;
+}
+
 - (void)notifyWillAppear
 {
   // If screen is already unmounted then there will be no event emitter

@@ -164,6 +164,7 @@ using namespace facebook::react;
         _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
         [self navigationController:_controller willShowViewController:_controller.topViewController animated:NO];
+        break;
       }
       parentView = (UIView *)parentView.reactSuperview;
     }
