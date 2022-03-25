@@ -63,31 +63,17 @@
   [window addSubview:_container];
 }
 
-- (void)hide
-{
-  if (!_container) {
-    return;
-  }
-
-  [_container removeFromSuperview];
-}
-
 - (void)didMoveToWindow
 {
-  if (self.window == nil) {
-    [self hide];
-    [_touchHandler detachFromView:_container];
-  } else {
-    if (_touchHandler == nil) {
-      _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
-    }
+  if (self.window != nil && _touchHandler == nil) {
+    _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
     [_touchHandler attachToView:_container];
   }
 }
 
 - (void)invalidate
 {
-  [self hide];
+  [_container removeFromSuperview];
   _container = nil;
 }
 
