@@ -9,20 +9,21 @@
     "test": "jest",
     "lint": "eslint ."
   },
-  "dependencies": {    
+  "dependencies": {
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
     "react": "17.0.2",
     "react-native": "0.68.0-rc.2",
-    "react-native-screens": "link:../",
     "react-native-codegen": "^0.0.13",
-    "react-native-safe-area-context": "^4.0.1-rc.5"
+    "react-native-safe-area-context": "^4.0.1-rc.5",
+    "react-native-screens": "link:../"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
     "babel-jest": "^26.6.3",
+    "babel-plugin-codegen": "^4.1.5",
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-preset-expo": "^9.0.2",
     "eslint": "^7.32.0",

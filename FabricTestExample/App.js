@@ -1,7 +1,9 @@
 import React from 'react';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {View, Button, Text} from 'react-native';
+
+const Stack = createNativeStackNavigator();
 
 function First({navigation}) {
   const nav = navigation;
@@ -24,8 +26,6 @@ function Second() {
   );
 }
 
-const Stack = createNativeStackNavigator();
-
 const App = () => (
   <NavigationContainer>
     <Stack.Navigator
@@ -36,11 +36,11 @@ const App = () => (
         name="First"
         options={{
           title: 'Fabric Example',
-          headerShown: false,
+          headerShown: true,
         }}
         component={First}
       />
-      <Stack.Screen name="HeaderDemo" component={Second} />
+      <Stack.Screen name="Second" component={Second} />
     </Stack.Navigator>
   </NavigationContainer>
 );
