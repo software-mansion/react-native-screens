@@ -254,6 +254,7 @@
         [self addSubview:controller.view];
 #if !TARGET_OS_TV
         _gestureRecognizerDelegate = _controller.interactivePopGestureRecognizer.delegate;
+        _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
         [controller didMoveToParentViewController:parentView.reactViewController];
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
