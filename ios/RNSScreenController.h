@@ -4,7 +4,6 @@
 
 - (instancetype)initWithView:(UIView *)view;
 - (void)setViewToSnapshot:(UIView *)snapshot;
-
 - (void)resetViewToScreen;
 
 @end
