@@ -169,13 +169,6 @@ using namespace facebook::react;
   return nil;
 }
 
-#pragma mark - RCTMountingTransactionObserving
-
-- (void)mountingTransactionWillMountWithMetadata:(MountingTransactionMetadata const &)metadata
-{
-  [self.controller takeSnapshot];
-}
-
 #pragma mark - RCTComponentViewProtocol
 
 - (void)prepareForRecycle

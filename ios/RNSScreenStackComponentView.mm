@@ -56,7 +56,6 @@ using namespace facebook::react;
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
-    _invalidated = NO;
 #if !TARGET_OS_TV
     [self setupGestureHandlers];
 #endif
