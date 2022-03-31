@@ -2,6 +2,8 @@
 #import "RNSScreenComponentView.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 
+#import <React/RCTMountingTransactionObserving.h>
+
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -16,13 +18,15 @@ using namespace facebook::react;
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate>
+    UIViewControllerTransitioningDelegate,
+    RCTMountingTransactionObserving>
 @end
 
 @implementation RNSScreenStackComponentView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenComponentView *> *_reactSubviews;
   BOOL _invalidated;
+  UIView *_snapshot;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -34,20 +38,9 @@ using namespace facebook::react;
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
-    _invalidated = NO;
   }
 
   return self;
-}
-
-- (void)markChildUpdated
-{
-  // do nothing
-}
-
-- (void)didUpdateChildren
-{
-  // do nothing
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -75,6 +68,11 @@ using namespace facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenComponentView *screenChildComponent = (RNSScreenComponentView *)childComponentView;
+  // We should only do a snapshot of a screen that is on the top
+  if (screenChildComponent == _controller.topViewController.view) {
+    [screenChildComponent.controller setViewToSnapshot:_snapshot];
+  }
+
   RCTAssert(
       screenChildComponent.reactSuperview == self,
       @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
@@ -97,6 +95,16 @@ using namespace facebook::react;
   });
 }
 
+- (void)takeSnapshot
+{
+  _snapshot = [_controller.topViewController.view snapshotViewAfterScreenUpdates:NO];
+}
+
+- (void)mountingTransactionWillMountWithMetadata:(MountingTransactionMetadata const &)metadata
+{
+  [self takeSnapshot];
+}
+
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
@@ -105,13 +113,8 @@ using namespace facebook::react;
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-  if (!_invalidated) {
-    // We check whether the view has been invalidated before running side-effects in didMoveToWindow
-    // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
-    // to a window despite the fact it has been removed from the React Native view hierarchy.
-    // See https://github.com/software-mansion/react-native-screens/pull/700
-    [self maybeAddToParentAndUpdateContainer];
-  }
+  // for handling nested stacks
+  [self maybeAddToParentAndUpdateContainer];
 }
 
 - (void)navigationController:(UINavigationController *)navigationController
@@ -161,6 +164,7 @@ using namespace facebook::react;
         _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
         [self navigationController:_controller willShowViewController:_controller.topViewController animated:NO];
+        break;
       }
       parentView = (UIView *)parentView.reactSuperview;
     }
@@ -182,21 +186,19 @@ using namespace facebook::react;
   }
 
   UIViewController *top = controllers.lastObject;
-  UIViewController *lastTop = _controller.viewControllers.lastObject;
+  UIViewController *previousTop = _controller.topViewController;
 
-  // at the start we set viewControllers to contain a single UIVIewController
+  // At the start we set viewControllers to contain a single UIViewController
   // instance. This is a workaround for header height adjustment bug (see comment
   // in the init function). Here, we need to detect if the initial empty
   // controller is still there
-  BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreenController class]];
-
-  BOOL shouldAnimate = YES;
+  BOOL firstTimePush = ![previousTop isKindOfClass:[RNSScreenController class]];
 
   if (firstTimePush) {
     // nothing pushed yet
     [_controller setViewControllers:controllers animated:NO];
-  } else if (top != lastTop) {
-    if (![controllers containsObject:lastTop]) {
+  } else if (top != previousTop) {
+    if (![controllers containsObject:previousTop]) {
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top]) {
@@ -209,9 +211,9 @@ using namespace facebook::react;
         // in this case we set the controllers stack to the new list with
         // added the last top element to it and perform (animated) pop
         NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-        [newControllers addObject:lastTop];
+        [newControllers addObject:previousTop];
         [_controller setViewControllers:newControllers animated:NO];
-        [_controller popViewControllerAnimated:shouldAnimate];
+        [_controller popViewControllerAnimated:YES];
       }
     } else if (![_controller.viewControllers containsObject:top]) {
       // new top controller is not on the stack
@@ -222,11 +224,11 @@ using namespace facebook::react;
       [_controller setViewControllers:newControllers animated:NO];
       auto screenController = (RNSScreenController *)top;
       [screenController resetViewToScreen];
-      [_controller pushViewController:top animated:shouldAnimate];
+      [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
-      [_controller setViewControllers:controllers animated:shouldAnimate];
+      [_controller setViewControllers:controllers animated:YES];
     }
   } else {
     // change wasn't on the top of the stack. We don't need animation.
@@ -239,12 +241,7 @@ using namespace facebook::react;
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   for (RNSScreenComponentView *screen in _reactSubviews) {
     if (screen.controller != nil) {
-      if (pushControllers.count == 0) {
-        // first screen on the list needs to be places as "push controller"
-        [pushControllers addObject:screen.controller];
-      } else {
-        [pushControllers addObject:screen.controller];
-      }
+      [pushControllers addObject:screen.controller];
     }
   }
 
@@ -259,15 +256,16 @@ using namespace facebook::react;
 
 - (void)dismissOnReload
 {
-  auto screenController = (RNSScreenController *)_controller.viewControllers.lastObject;
+  auto screenController = (RNSScreenController *)_controller.topViewController;
   [screenController resetViewToScreen];
 }
 
-#pragma mark methods connected to transitioning
+#pragma mark - methods connected to transitioning
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-  return YES;
+  // you shouldn't be able to use gesture to go back when there is just one screen
+  return _controller.viewControllers.count >= 2;
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -277,9 +275,9 @@ using namespace facebook::react;
   [super prepareForRecycle];
   _reactSubviews = [NSMutableArray new];
   [self dismissOnReload];
-  _invalidated = YES;
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
+  [_controller setViewControllers:@[ [UIViewController new] ]];
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
