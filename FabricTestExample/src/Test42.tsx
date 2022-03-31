@@ -41,9 +41,9 @@ export default function NativeNavigation() {
 const Tab = createBottomTabNavigator();
 
 const NestedNavigator = () => (
-  <Tab.Navigator 
+  <Tab.Navigator
     screenOptions={{
-      // screenOrientation: 'landscape_left',
+        // screenOrientation: 'landscape_left',
     }}
   >
     <Tab.Screen name="Screen1" component={Home} />
