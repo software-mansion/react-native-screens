@@ -267,6 +267,10 @@ using namespace facebook::react;
   if (newScreenProps.statusBarColor) {
     [self logPropNotAvailable:@"statusBarColor"];
   }
+  
+  if (newScreenProps.statusBarTranslucent) {
+    [self logPropNotAvailable:@"statusBarTranslucent"];
+  }
 
   [super updateProps:props oldProps:oldProps];
 }
