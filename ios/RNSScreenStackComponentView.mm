@@ -25,16 +25,16 @@ using namespace facebook::react;
 @end
 
 #if !TARGET_OS_TV
-@interface RNSScreenEdgeGestureRecognizer : UIScreenEdgePanGestureRecognizer
+@interface RNSScreenEdgeGestureRecognizerF : UIScreenEdgePanGestureRecognizer
 @end
 
-@implementation RNSScreenEdgeGestureRecognizer
+@implementation RNSScreenEdgeGestureRecognizerF
 @end
 
-@interface RNSPanGestureRecognizer : UIPanGestureRecognizer
+@interface RNSPanGestureRecognizerF : UIPanGestureRecognizer
 @end
 
-@implementation RNSPanGestureRecognizer
+@implementation RNSPanGestureRecognizerF
 @end
 #endif
 
@@ -318,7 +318,7 @@ using namespace facebook::react;
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
     // `fullScreenSwipeEnabled` is set
-    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerF class]]) {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
@@ -326,10 +326,10 @@ using namespace facebook::react;
     return NO;
   }
 
-  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizerF class]]) {
     // it should only recognize with `customAnimationOnSwipe` set
     return NO;
-  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerF class]]) {
     // it should only recognize with `fullScreenSwipeEnabled` set
     return NO;
   }
@@ -344,19 +344,19 @@ using namespace facebook::react;
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
-  RNSScreenEdgeGestureRecognizer *leftEdgeSwipeGestureRecognizer =
-      [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  RNSScreenEdgeGestureRecognizerF *leftEdgeSwipeGestureRecognizer =
+      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self action:@selector(handleSwipe:)];
   leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
   leftEdgeSwipeGestureRecognizer.delegate = self;
   [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
 
-  RNSScreenEdgeGestureRecognizer *rightEdgeSwipeGestureRecognizer =
-      [[RNSScreenEdgeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  RNSScreenEdgeGestureRecognizerF *rightEdgeSwipeGestureRecognizer =
+      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self action:@selector(handleSwipe:)];
   rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
   rightEdgeSwipeGestureRecognizer.delegate = self;
 
   // gesture recognizer for full width swipe gesture
-  RNSPanGestureRecognizer *panRecognizer = [[RNSPanGestureRecognizer alloc] initWithTarget:self
+  RNSPanGestureRecognizerF *panRecognizer = [[RNSPanGestureRecognizerF alloc] initWithTarget:self
                                                                                       action:@selector(handleSwipe:)];
   panRecognizer.delegate = self;
   [self addGestureRecognizer:panRecognizer];
