@@ -667,16 +667,17 @@
   return scrollView.panGestureRecognizer == gestureRecognizer;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  return [self isScrollViewPanGestureRecognizer: otherGestureRecognizer];
+  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  return [self isScrollViewPanGestureRecognizer: otherGestureRecognizer];
+  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
-
 
 #if !TARGET_OS_TV
 - (void)setupGestureHandlers

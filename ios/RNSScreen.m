@@ -378,6 +378,8 @@
 
 @end
 
+#pragma mark - RNSScreen
+
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;

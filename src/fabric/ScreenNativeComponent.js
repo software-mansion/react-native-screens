@@ -19,7 +19,15 @@ type ScreenDismissedEvent = $ReadOnly<{|
   dismissCount: Int32,
 |}>;
 
-type StackPresentation = 'push' | 'modal' | 'transparentModal';
+type StackPresentation =
+  | 'push'
+  | 'modal'
+  | 'transparentModal'
+  | 'fullScreenModal'
+  | 'formSheet'
+  | 'containedModal'
+  | 'containedTransparentModal';
+
 type StackAnimation =
   | 'default'
   | 'flip'
@@ -42,16 +50,16 @@ export type NativeProps = $ReadOnly<{|
   onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
   fullScreenSwipeEnabled?: boolean,
   gestureEnabled?: WithDefault<boolean, true>,
+  statusBarColor?: ColorValue,
+  statusBarHidden?: boolean,
+  screenOrientation?: string,
+  statusBarAnimation?: string,
+  statusBarStyle?: string,
   // TODO: implement these props on iOS
   stackPresentation?: WithDefault<StackPresentation, 'push'>,
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
-  screenOrientation?: string,
-  statusBarAnimation?: string,
-  statusBarColor?: ColorValue,
-  statusBarStyle?: string,
   statusBarTranslucent?: boolean,
-  statusBarHidden?: boolean,
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,
   nativeBackButtonDismissalEnabled?: boolean,
