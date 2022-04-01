@@ -439,8 +439,8 @@ using namespace facebook::react;
   if (changeRootController.presentedViewController != nil &&
       [_presentedModals containsObject:changeRootController.presentedViewController]) {
     BOOL shouldAnimate = changeRootIndex == controllers.count &&
-        [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
-        ((RNSScreenView *)changeRootController.presentedViewController.view).stackAnimation !=
+        [changeRootController.presentedViewController isKindOfClass:[RNSScreenController class]] &&
+        ((RNSScreenComponentView *)changeRootController.presentedViewController.view).stackAnimation !=
             RNSScreenStackAnimationNone;
     [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
   } else {

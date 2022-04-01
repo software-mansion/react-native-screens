@@ -101,6 +101,7 @@
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillDisappear(facebook::react::RNSScreenEventEmitter::OnWillDisappear{});
   }
+
 }
 
 - (void)notifyAppear
