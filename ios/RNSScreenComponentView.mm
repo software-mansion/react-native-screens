@@ -3,7 +3,6 @@
 #import "RNSScreenWindowTraits.h"
 
 #import <React/RCTConversions.h>
-#import <React/RCTMountingTransactionObserving.h>
 
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -17,7 +16,7 @@
 
 using namespace facebook::react;
 
-@interface RNSScreenComponentView () <RCTRNSScreenViewProtocol, RCTMountingTransactionObserving>
+@interface RNSScreenComponentView () <RCTRNSScreenViewProtocol>
 @end
 
 @implementation RNSScreenComponentView {
@@ -55,7 +54,6 @@ using namespace facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [self.controller setViewToSnapshot];
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfigComponentView class]]) {
     _config = nil;
   }
@@ -65,8 +63,7 @@ using namespace facebook::react;
 - (void)updateBounds
 {
   if (_state != nullptr) {
-    auto boundsSize = self.bounds.size;
-    auto newState = RNSScreenState{RCTSizeFromCGSize(boundsSize)};
+    auto newState = RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
@@ -76,6 +73,11 @@ using namespace facebook::react;
 - (UIView *)reactSuperview
 {
   return _reactSuperview;
+}
+
+- (UIViewController *)reactViewController
+{
+  return _controller;
 }
 
 - (void)notifyWillAppear
@@ -216,9 +218,41 @@ using namespace facebook::react;
 
 #pragma mark - RCTMountingTransactionObserving
 
-- (void)mountingTransactionWillMountWithMetadata:(MountingTransactionMetadata const &)metadata
+- (BOOL)isMountedUnderScreenOrReactRoot
 {
-  [self.controller takeSnapshot];
+  for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
+    if ([parent isKindOfClass:[RCTRootComponentView class]] || [parent isKindOfClass:[RNSScreenComponentView class]]) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
+- (void)didMoveToWindow
+{
+  if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
+    if (_touchHandler == nil) {
+      _touchHandler = [RCTSurfaceTouchHandler new];
+    }
+    [_touchHandler attachToView:self];
+  } else {
+    [_touchHandler detachFromView:self];
+  }
+}
+
+- (RCTSurfaceTouchHandler *)touchHandler
+{
+  if (_touchHandler != nil) {
+    return _touchHandler;
+  }
+  UIView *parent = [self superview];
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
+    parent = parent.superview;
+
+  if (parent != nil) {
+    return [parent performSelector:@selector(touchHandler)];
+  }
+  return nil;
 }
 
 #pragma mark - RCTComponentViewProtocol
@@ -250,8 +284,7 @@ using namespace facebook::react;
   }
 
   if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
-    [self setStatusBarStyle:[RCTConvert
-                                RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
+    [self setStatusBarStyle:[RCTConvert RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
   }
 
   if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
@@ -260,19 +293,23 @@ using namespace facebook::react;
   }
 
   if (newScreenProps.screenOrientation != oldScreenProps.screenOrientation) {
-    [self setScreenOrientation:[RCTConvert
-                                  UIInterfaceOrientationMask:[self stringToPropValue:newScreenProps.screenOrientation]]];
+    [self
+        setScreenOrientation:[RCTConvert
+                                 UIInterfaceOrientationMask:[self stringToPropValue:newScreenProps.screenOrientation]]];
   }
 
   if (newScreenProps.statusBarColor) {
     [self logPropNotAvailable:@"statusBarColor"];
   }
-  
+
   if (newScreenProps.statusBarTranslucent) {
     [self logPropNotAvailable:@"statusBarTranslucent"];
   }
 
   [super updateProps:props oldProps:oldProps];
+
+  _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
+  _gestureEnabled = newScreenProps.gestureEnabled;
 }
 
 - (void)updateState:(facebook::react::State::Shared const &)state

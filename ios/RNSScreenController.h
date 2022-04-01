@@ -4,8 +4,7 @@
 @interface RNSScreenController : UIViewController <RNScreensViewControllerDelegate>
 
 - (instancetype)initWithView:(UIView *)view;
-- (void)takeSnapshot;
-- (void)setViewToSnapshot;
+- (void)setViewToSnapshot:(UIView *)snapshot;
 - (void)resetViewToScreen;
 
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
