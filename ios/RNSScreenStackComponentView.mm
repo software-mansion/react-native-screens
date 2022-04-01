@@ -12,6 +12,8 @@
 
 #import "RCTFabricComponentsPlugins.h"
 
+#import <React/RCTSurfaceTouchHandler.h>
+
 using namespace facebook::react;
 
 @interface RNSScreenStackComponentView () <
@@ -22,11 +24,27 @@ using namespace facebook::react;
     RCTMountingTransactionObserving>
 @end
 
+#if !TARGET_OS_TV
+@interface RNSScreenEdgeGestureRecognizerF : UIScreenEdgePanGestureRecognizer
+@end
+
+@implementation RNSScreenEdgeGestureRecognizerF
+@end
+
+@interface RNSPanGestureRecognizerF : UIPanGestureRecognizer
+@end
+
+@implementation RNSPanGestureRecognizerF
+@end
+#endif
+
 @implementation RNSScreenStackComponentView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenComponentView *> *_reactSubviews;
   BOOL _invalidated;
   UIView *_snapshot;
+  BOOL _isFullWidthSwiping;
+  UIPercentDrivenInteractiveTransition *_interactionController;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -38,6 +56,9 @@ using namespace facebook::react;
     _controller = [[UINavigationController alloc] init];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
+#if !TARGET_OS_TV
+    [self setupGestureHandlers];
+#endif
   }
 
   return self;
@@ -262,11 +283,144 @@ using namespace facebook::react;
 
 #pragma mark - methods connected to transitioning
 
+- (void)cancelTouchesInParent
+{
+  // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
+  // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
+  // Without the below code the Touchable will remain active (highlighted) for the duration of back
+  // gesture and onPress may fire when we release the finger.
+  UIView *parent = _controller.view;
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
+    parent = parent.superview;
+
+  if (parent != nil) {
+    RCTSurfaceTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler setEnabled:NO];
+    [touchHandler setEnabled:YES];
+    [touchHandler reset];
+  }
+}
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-  // you shouldn't be able to use gesture to go back when there is just one screen
+  RNSScreenComponentView *topScreen = (RNSScreenComponentView *)_controller.viewControllers.lastObject.view;
+
+  if (![topScreen isKindOfClass:[RNSScreenComponentView class]] || !topScreen.gestureEnabled ||
+      _controller.viewControllers.count < 2) {
+    return NO;
+  }
+
+#if TARGET_OS_TV
+  [self cancelTouchesInPartent];
+  return YES;
+#else
+
+  if (topScreen.fullScreenSwipeEnabled) {
+    // we want only `RNSPanGestureRecognizer` to be able to recognize when
+    // `fullScreenSwipeEnabled` is set
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerF class]]) {
+      _isFullWidthSwiping = YES;
+      [self cancelTouchesInParent];
+      return YES;
+    }
+    return NO;
+  }
+
+  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizerF class]]) {
+    // it should only recognize with `customAnimationOnSwipe` set
+    return NO;
+  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizerF class]]) {
+    // it should only recognize with `fullScreenSwipeEnabled` set
+    return NO;
+  }
+  [self cancelTouchesInParent];
   return _controller.viewControllers.count >= 2;
+
+  // TODO: add code for customAnimationOnSwipe prop here
+#endif
 }
+
+#if !TARGET_OS_TV
+- (void)setupGestureHandlers
+{
+  // gesture recognizers for custom stack animations
+  RNSScreenEdgeGestureRecognizerF *leftEdgeSwipeGestureRecognizer =
+      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  leftEdgeSwipeGestureRecognizer.edges = UIRectEdgeLeft;
+  leftEdgeSwipeGestureRecognizer.delegate = self;
+  [self addGestureRecognizer:leftEdgeSwipeGestureRecognizer];
+
+  RNSScreenEdgeGestureRecognizerF *rightEdgeSwipeGestureRecognizer =
+      [[RNSScreenEdgeGestureRecognizerF alloc] initWithTarget:self action:@selector(handleSwipe:)];
+  rightEdgeSwipeGestureRecognizer.edges = UIRectEdgeRight;
+  rightEdgeSwipeGestureRecognizer.delegate = self;
+
+  // gesture recognizer for full width swipe gesture
+  RNSPanGestureRecognizerF *panRecognizer = [[RNSPanGestureRecognizerF alloc] initWithTarget:self
+                                                                                      action:@selector(handleSwipe:)];
+  panRecognizer.delegate = self;
+  [self addGestureRecognizer:panRecognizer];
+}
+
+- (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
+{
+  RNSScreenComponentView *topScreen = (RNSScreenComponentView *)_controller.viewControllers.lastObject.view;
+
+  float translation;
+  float velocity;
+  float distance;
+
+  if (topScreen.swipeDirection == RNSScreenSwipeDirectionVertical) {
+    translation = [gestureRecognizer translationInView:gestureRecognizer.view].y;
+    velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].y;
+    distance = gestureRecognizer.view.bounds.size.height;
+  } else {
+    translation = [gestureRecognizer translationInView:gestureRecognizer.view].x;
+    velocity = [gestureRecognizer velocityInView:gestureRecognizer.view].x;
+    distance = gestureRecognizer.view.bounds.size.width;
+    BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+    if (isRTL) {
+      translation = -translation;
+      velocity = -velocity;
+    }
+  }
+
+  float transitionProgress = (translation / distance);
+
+  switch (gestureRecognizer.state) {
+    case UIGestureRecognizerStateBegan: {
+      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      [_controller popViewControllerAnimated:YES];
+      break;
+    }
+
+    case UIGestureRecognizerStateChanged: {
+      [_interactionController updateInteractiveTransition:transitionProgress];
+      break;
+    }
+
+    case UIGestureRecognizerStateCancelled: {
+      [_interactionController cancelInteractiveTransition];
+      break;
+    }
+
+    case UIGestureRecognizerStateEnded: {
+      // values taken from
+      // https://github.com/react-navigation/react-navigation/blob/54739828598d7072c1bf7b369659e3682db3edc5/packages/stack/src/views/Stack/Card.tsx#L316
+      BOOL shouldFinishTransition = (translation + velocity * 0.3) > (distance / 2);
+      if (shouldFinishTransition) {
+        [_interactionController finishInteractiveTransition];
+      } else {
+        [_interactionController cancelInteractiveTransition];
+      }
+      _interactionController = nil;
+    }
+    default: {
+      break;
+    }
+  }
+}
+#endif
 
 #pragma mark - RCTComponentViewProtocol
 

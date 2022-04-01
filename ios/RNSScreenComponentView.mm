@@ -10,6 +10,9 @@
 
 #import "RCTFabricComponentsPlugins.h"
 
+#import <React/RCTRootComponentView.h>
+#import <React/RCTSurfaceTouchHandler.h>
+
 using namespace facebook::react;
 
 @interface RNSScreenComponentView () <RCTRNSScreenViewProtocol>
@@ -18,6 +21,7 @@ using namespace facebook::react;
 @implementation RNSScreenComponentView {
   RNSScreenController *_controller;
   RNSScreenShadowNode::ConcreteState::Shared _state;
+  RCTSurfaceTouchHandler *_touchHandler;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -117,6 +121,54 @@ using namespace facebook::react;
   }
 }
 
+- (void)setGestureEnabled:(BOOL)gestureEnabled
+{
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13.0, tvOS 13.0, *)) {
+    _controller.modalInPresentation = !gestureEnabled;
+  }
+#endif
+  _gestureEnabled = gestureEnabled;
+}
+
+- (BOOL)isMountedUnderScreenOrReactRoot
+{
+  for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
+    if ([parent isKindOfClass:[RCTRootComponentView class]] || [parent isKindOfClass:[RNSScreenComponentView class]]) {
+      return YES;
+    }
+  }
+  return NO;
+}
+
+- (void)didMoveToWindow
+{
+  if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
+    if (_touchHandler == nil) {
+      _touchHandler = [RCTSurfaceTouchHandler new];
+    }
+    [_touchHandler attachToView:self];
+  } else {
+    [_touchHandler detachFromView:self];
+  }
+}
+
+- (RCTSurfaceTouchHandler *)touchHandler
+{
+  if (_touchHandler != nil) {
+    return _touchHandler;
+  }
+  UIView *parent = [self superview];
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
+    parent = parent.superview;
+
+  if (parent != nil) {
+    return [parent performSelector:@selector(touchHandler)];
+  }
+  return nil;
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 - (void)prepareForRecycle
@@ -138,6 +190,9 @@ using namespace facebook::react;
   const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenProps>(props);
 
   [super updateProps:props oldProps:oldProps];
+
+  _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
+  _gestureEnabled = newScreenProps.gestureEnabled;
 }
 
 - (void)updateState:(facebook::react::State::Shared const &)state

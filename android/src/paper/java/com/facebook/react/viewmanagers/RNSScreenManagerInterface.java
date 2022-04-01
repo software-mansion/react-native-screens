@@ -13,9 +13,10 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 public interface RNSScreenManagerInterface<T extends View> {
+  void setFullScreenSwipeEnabled(T view, boolean value);
+  void setGestureEnabled(T view, boolean value);
   void setStackPresentation(T view, @Nullable String value);
   void setStackAnimation(T view, @Nullable String value);
-  void setGestureEnabled(T view, boolean value);
   void setReplaceAnimation(T view, @Nullable String value);
   void setScreenOrientation(T view, @Nullable String value);
   void setStatusBarAnimation(T view, @Nullable String value);
