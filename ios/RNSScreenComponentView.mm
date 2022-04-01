@@ -216,45 +216,6 @@ using namespace facebook::react;
   return nil;
 }
 
-#pragma mark - RCTMountingTransactionObserving
-
-- (BOOL)isMountedUnderScreenOrReactRoot
-{
-  for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
-    if ([parent isKindOfClass:[RCTRootComponentView class]] || [parent isKindOfClass:[RNSScreenComponentView class]]) {
-      return YES;
-    }
-  }
-  return NO;
-}
-
-- (void)didMoveToWindow
-{
-  if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
-    if (_touchHandler == nil) {
-      _touchHandler = [RCTSurfaceTouchHandler new];
-    }
-    [_touchHandler attachToView:self];
-  } else {
-    [_touchHandler detachFromView:self];
-  }
-}
-
-- (RCTSurfaceTouchHandler *)touchHandler
-{
-  if (_touchHandler != nil) {
-    return _touchHandler;
-  }
-  UIView *parent = [self superview];
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
-    parent = parent.superview;
-
-  if (parent != nil) {
-    return [parent performSelector:@selector(touchHandler)];
-  }
-  return nil;
-}
-
 #pragma mark - RCTComponentViewProtocol
 
 - (void)prepareForRecycle
