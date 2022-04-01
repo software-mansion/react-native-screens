@@ -25,7 +25,6 @@ using namespace facebook::react;
     RCTMountingTransactionObserving> {
   BOOL _updateScheduled;
 }
-@end
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -217,6 +216,7 @@ using namespace facebook::react;
     // have tried to push another one during the transition
     _updatingModals = NO;
     [self updateContainer];
+    // TODO: implement onFinishTransitioning
     //    if (self.onFinishTransitioning) {
     //      // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
     //      // main queue. We do that because onDismiss event is also enqueued and we want for the transition
@@ -242,7 +242,7 @@ using namespace facebook::react;
   if (self.window == nil) {
     return;
   }
-  
+
   // when transition is ongoing, any updates made to the controller will not be reflected until the
   // transition is complete. In particular, when we push/pop view controllers we expect viewControllers
   // property to be updated immediately. Based on that property we then calculate future updates.
@@ -630,11 +630,11 @@ using namespace facebook::react;
 {
   [super prepareForRecycle];
   _reactSubviews = [NSMutableArray new];
-  
+
   for (UIViewController *controller in _presentedModals) {
     [controller dismissViewControllerAnimated:NO completion:nil];
   }
-  
+
   [_presentedModals removeAllObjects];
   [self dismissOnReload];
   [_controller willMoveToParentViewController:nil];

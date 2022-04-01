@@ -15,8 +15,6 @@
 #import <React/RCTRootComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 
-// using namespace facebook::react;
-
 @interface RNSScreenComponentView () <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
 @end
 
@@ -101,7 +99,6 @@
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillDisappear(facebook::react::RNSScreenEventEmitter::OnWillDisappear{});
   }
-
 }
 
 - (void)notifyAppear
