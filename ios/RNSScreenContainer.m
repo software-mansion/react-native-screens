@@ -1,5 +1,6 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreen.h"
+#import "RNSScreenController.h"
 
 @implementation RNScreensViewController
 
@@ -33,8 +34,8 @@
 - (UIViewController *)findActiveChildVC
 {
   for (UIViewController *childVC in self.childViewControllers) {
-    if ([childVC isKindOfClass:[RNSScreen class]] &&
-        ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
+    if ([childVC isKindOfClass:[RNSScreenController class]] &&
+        ((RNSScreenView *)((RNSScreenController *)childVC.view)).activityState == RNSActivityStateOnTop) {
       return childVC;
     }
   }

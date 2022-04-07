@@ -1,5 +1,6 @@
 #import "RNSScreenStack.h"
 #import "RNSScreen.h"
+#import "RNSScreenController.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
@@ -363,7 +364,7 @@
         }
 #endif
 
-        BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
+        BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreenController class]] &&
             ((RNSScreenView *)next.view).stackAnimation != RNSScreenStackAnimationNone;
 
         // if you want to present another modal quick enough after dismissing the previous one,
@@ -390,7 +391,7 @@
   if (changeRootController.presentedViewController != nil &&
       [_presentedModals containsObject:changeRootController.presentedViewController]) {
     BOOL shouldAnimate = changeRootIndex == controllers.count &&
-        [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
+        [changeRootController.presentedViewController isKindOfClass:[RNSScreenController class]] &&
         ((RNSScreenView *)changeRootController.presentedViewController.view).stackAnimation !=
             RNSScreenStackAnimationNone;
     [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
@@ -440,7 +441,7 @@
   // instance. This is a workaround for header height adjustment bug (see comment
   // in the init function). Here, we need to detect if the initial empty
   // controller is still there
-  BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreen class]];
+  BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreenController class]];
 
   if (firstTimePush) {
     // nothing pushed yet

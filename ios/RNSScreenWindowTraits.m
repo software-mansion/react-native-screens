@@ -1,5 +1,6 @@
 #import "RNSScreenWindowTraits.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenController.h"
 #import "RNSScreenStack.h"
 
 @implementation RNSScreenWindowTraits
@@ -224,8 +225,8 @@
     } else if ([lastViewController isKindOfClass:[RNScreensNavigationController class]]) {
       vc = [(RNScreensNavigationController *)lastViewController topViewController];
     }
-    return [vc isKindOfClass:[RNSScreen class]] &&
-        [(RNSScreen *)vc findChildVCForConfigAndTrait:trait includingModals:includingModals] != nil;
+    return [vc isKindOfClass:[RNSScreenController class]] &&
+        [(RNSScreenController *)vc findChildVCForConfigAndTrait:trait includingModals:includingModals] != nil;
   }
   return NO;
 }

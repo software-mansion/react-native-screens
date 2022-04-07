@@ -1,14 +1,13 @@
 #if RN_FABRIC_ENABLED
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #else
-#import "RNSScreenStack.h"
 #import "RNSScreen.h"
+#import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 #endif
 
 #import "RNSScreenComponentView.h"
 #import "RNSScreenWindowTraits.h"
-
 
 @implementation RNSScreenController {
 #if RN_FABRIC_ENABLED
@@ -27,7 +26,7 @@
 #endif
 }
 
-#pragma mark -- Common
+#pragma mark-- Common
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
@@ -170,7 +169,7 @@
   _shouldNotify = YES;
 
   [self traverseForScrollView:self.view];
-  
+
 #endif
 }
 
@@ -324,7 +323,6 @@
 }
 #endif
 
-
 #pragma mark - Fabric specific
 #if RN_FABRIC_ENABLED
 
@@ -339,7 +337,6 @@
   [self.view removeFromSuperview];
   self.view = _initialView;
 }
-
 
 #pragma mark - Paper specific
 #else
@@ -438,7 +435,6 @@
     }
   }
 }
-
 
 - (void)hideHeaderIfNecessary
 {
