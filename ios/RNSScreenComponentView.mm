@@ -1,4 +1,5 @@
 #import "RNSScreenComponentView.h"
+#import "RNSConvert.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 #import "RNSScreenWindowTraits.h"
 
@@ -14,24 +15,24 @@
 #import <React/RCTRootComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 
-using namespace facebook::react;
-
-@interface RNSScreenComponentView () <RCTRNSScreenViewProtocol>
+@interface RNSScreenComponentView () <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
 @end
 
 @implementation RNSScreenComponentView {
   RNSScreenController *_controller;
-  RNSScreenShadowNode::ConcreteState::Shared _state;
+  facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
   RCTSurfaceTouchHandler *_touchHandler;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const RNSScreenProps>();
+    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenProps>();
     _props = defaultProps;
     _controller = [[RNSScreenController alloc] initWithView:self];
     // TODO: use default props (?)
+    _stackAnimation = RNSScreenStackAnimationDefault;
+    _stackPresentation = RNSScreenStackPresentationPush;
     _hasStatusBarHiddenSet = NO;
     _hasStatusBarStyleSet = NO;
     _gestureEnabled = YES;
@@ -63,7 +64,7 @@ using namespace facebook::react;
 - (void)updateBounds
 {
   if (_state != nullptr) {
-    auto newState = RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
+    auto newState = facebook::react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
@@ -85,8 +86,8 @@ using namespace facebook::react;
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-        ->onWillAppear(RNSScreenEventEmitter::OnWillAppear{});
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onWillAppear(facebook::react::RNSScreenEventEmitter::OnWillAppear{});
   }
 }
 
@@ -95,8 +96,8 @@ using namespace facebook::react;
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-        ->onWillDisappear(RNSScreenEventEmitter::OnWillDisappear{});
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onWillDisappear(facebook::react::RNSScreenEventEmitter::OnWillDisappear{});
   }
 }
 
@@ -105,7 +106,8 @@ using namespace facebook::react;
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)->onAppear(RNSScreenEventEmitter::OnAppear{});
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onAppear(facebook::react::RNSScreenEventEmitter::OnAppear{});
   }
 }
 
@@ -114,8 +116,8 @@ using namespace facebook::react;
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-        ->onDismissed(RNSScreenEventEmitter::OnDismissed{dismissCount : dismissCount});
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onDismissed(facebook::react::RNSScreenEventEmitter::OnDismissed{dismissCount : dismissCount});
   }
 }
 
@@ -124,8 +126,84 @@ using namespace facebook::react;
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const RNSScreenEventEmitter>(_eventEmitter)
-        ->onDisappear(RNSScreenEventEmitter::OnDisappear{});
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onDisappear(facebook::react::RNSScreenEventEmitter::OnDisappear{});
+  }
+}
+
+- (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
+{
+  switch (stackPresentation) {
+    case RNSScreenStackPresentationModal:
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+      if (@available(iOS 13.0, tvOS 13.0, *)) {
+        _controller.modalPresentationStyle = UIModalPresentationAutomatic;
+      } else {
+        _controller.modalPresentationStyle = UIModalPresentationFullScreen;
+      }
+#else
+      _controller.modalPresentationStyle = UIModalPresentationFullScreen;
+#endif
+      break;
+    case RNSScreenStackPresentationFullScreenModal:
+      _controller.modalPresentationStyle = UIModalPresentationFullScreen;
+      break;
+#if !TARGET_OS_TV
+    case RNSScreenStackPresentationFormSheet:
+      _controller.modalPresentationStyle = UIModalPresentationFormSheet;
+      break;
+#endif
+    case RNSScreenStackPresentationTransparentModal:
+      _controller.modalPresentationStyle = UIModalPresentationOverFullScreen;
+      break;
+    case RNSScreenStackPresentationContainedModal:
+      _controller.modalPresentationStyle = UIModalPresentationCurrentContext;
+      break;
+    case RNSScreenStackPresentationContainedTransparentModal:
+      _controller.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+      break;
+    case RNSScreenStackPresentationPush:
+      // ignored, we only need to keep in mind not to set presentation delegate
+      break;
+  }
+  // There is a bug in UIKit which causes retain loop when presentationController is accessed for a
+  // controller that is not going to be presented modally. We therefore need to avoid setting the
+  // delegate for screens presented using push. This also means that when controller is updated from
+  // modal to push type, this may cause memory leak, we warn about that as well.
+  if (stackPresentation != RNSScreenStackPresentationPush) {
+    // `modalPresentationStyle` must be set before accessing `presentationController`
+    // otherwise a default controller will be created and cannot be changed after.
+    // Documented here:
+    // https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
+    _controller.presentationController.delegate = self;
+  } else if (_stackPresentation != RNSScreenStackPresentationPush) {
+    RCTLogError(
+        @"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
+  }
+  _stackPresentation = stackPresentation;
+}
+
+- (void)setStackAnimation:(RNSScreenStackAnimation)stackAnimation
+{
+  _stackAnimation = stackAnimation;
+
+  switch (stackAnimation) {
+    case RNSScreenStackAnimationFade:
+      _controller.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+      break;
+#if !TARGET_OS_TV
+    case RNSScreenStackAnimationFlip:
+      _controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+      break;
+#endif
+    case RNSScreenStackAnimationNone:
+    case RNSScreenStackAnimationDefault:
+    case RNSScreenStackAnimationSimplePush:
+    case RNSScreenStackAnimationSlideFromBottom:
+    case RNSScreenStackAnimationFadeFromBottom:
+      // Default
+      break;
   }
 }
 
@@ -226,15 +304,58 @@ using namespace facebook::react;
   _state.reset();
 }
 
-+ (ComponentDescriptorProvider)componentDescriptorProvider
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return concreteComponentDescriptorProvider<RNSScreenComponentDescriptor>();
+  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenComponentDescriptor>();
 }
 
-- (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
+- (void)updateProps:(facebook::react::Props::Shared const &)props
+           oldProps:(facebook::react::Props::Shared const &)oldProps
 {
-  const auto &oldScreenProps = *std::static_pointer_cast<const RNSScreenProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const RNSScreenProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenProps>(props);
+
+  [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+
+  [self setGestureEnabled:newScreenProps.gestureEnabled];
+
+  [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
+
+  if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
+    [self setStatusBarHidden:newScreenProps.statusBarHidden];
+  }
+
+  if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
+    [self setStatusBarStyle:[RCTConvert
+                                RNSStatusBarStyle:RCTNSStringFromStringNilIfEmpty(newScreenProps.statusBarStyle)]];
+  }
+
+  if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
+    [self setStatusBarAnimation:[RCTConvert UIStatusBarAnimation:RCTNSStringFromStringNilIfEmpty(
+                                                                     newScreenProps.statusBarAnimation)]];
+  }
+
+  if (newScreenProps.screenOrientation != oldScreenProps.screenOrientation) {
+    [self setScreenOrientation:[RCTConvert UIInterfaceOrientationMask:RCTNSStringFromStringNilIfEmpty(
+                                                                          newScreenProps.screenOrientation)]];
+  }
+
+  if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
+    [self
+        setStackPresentation:[RNSConvert RNSScreenStackPresentationFromCppEquivalent:newScreenProps.stackPresentation]];
+  }
+
+  if (newScreenProps.stackAnimation != oldScreenProps.stackAnimation) {
+    [self setStackAnimation:[RNSConvert RNSScreenStackAnimationFromCppEquivalent:newScreenProps.stackAnimation]];
+  }
+
+  if (newScreenProps.statusBarColor) {
+    [self logPropNotAvailable:@"statusBarColor"];
+  }
+
+  if (newScreenProps.statusBarTranslucent) {
+    [self logPropNotAvailable:@"statusBarTranslucent"];
+  }
 
   [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
 
@@ -276,7 +397,7 @@ using namespace facebook::react;
 - (void)updateState:(facebook::react::State::Shared const &)state
            oldState:(facebook::react::State::Shared const &)oldState
 {
-  _state = std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(state);
+  _state = std::static_pointer_cast<const facebook::react::RNSScreenShadowNode::ConcreteState>(state);
 }
 
 #pragma mark - Util
@@ -301,6 +422,30 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 @implementation RCTConvert (RNSScreenComponentView)
 
+RCT_ENUM_CONVERTER(
+    UIStatusBarAnimation,
+    (@{
+      @"none" : @(UIStatusBarAnimationNone),
+      @"fade" : @(UIStatusBarAnimationFade),
+      @"slide" : @(UIStatusBarAnimationSlide)
+    }),
+    UIStatusBarAnimationNone,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSScreenStackPresentation,
+    (@{
+      @"push" : @(RNSScreenStackPresentationPush),
+      @"modal" : @(RNSScreenStackPresentationModal),
+      @"fullScreenModal" : @(RNSScreenStackPresentationFullScreenModal),
+      @"formSheet" : @(RNSScreenStackPresentationFormSheet),
+      @"containedModal" : @(RNSScreenStackPresentationContainedModal),
+      @"transparentModal" : @(RNSScreenStackPresentationTransparentModal),
+      @"containedTransparentModal" : @(RNSScreenStackPresentationContainedTransparentModal)
+    }),
+    RNSScreenStackPresentationPush,
+    integerValue)
+
 #if !TARGET_OS_TV
 RCT_ENUM_CONVERTER(
     RNSStatusBarStyle,
@@ -311,16 +456,6 @@ RCT_ENUM_CONVERTER(
       @"dark" : @(RNSStatusBarStyleDark),
     }),
     RNSStatusBarStyleAuto,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
-    UIStatusBarAnimation,
-    (@{
-      @"none" : @(UIStatusBarAnimationNone),
-      @"fade" : @(UIStatusBarAnimationFade),
-      @"slide" : @(UIStatusBarAnimationSlide)
-    }),
-    UIStatusBarAnimationNone,
     integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json

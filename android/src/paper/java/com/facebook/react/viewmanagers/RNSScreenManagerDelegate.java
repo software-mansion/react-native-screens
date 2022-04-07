@@ -28,14 +28,11 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "gestureEnabled":
         mViewManager.setGestureEnabled(view, value == null ? true : (boolean) value);
         break;
-      case "stackPresentation":
-        mViewManager.setStackPresentation(view, (String) value);
+      case "statusBarColor":
+        mViewManager.setStatusBarColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
-      case "stackAnimation":
-        mViewManager.setStackAnimation(view, (String) value);
-        break;
-      case "replaceAnimation":
-        mViewManager.setReplaceAnimation(view, (String) value);
+      case "statusBarHidden":
+        mViewManager.setStatusBarHidden(view, value == null ? false : (boolean) value);
         break;
       case "screenOrientation":
         mViewManager.setScreenOrientation(view, value == null ? null : (String) value);
@@ -43,17 +40,23 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "statusBarAnimation":
         mViewManager.setStatusBarAnimation(view, value == null ? null : (String) value);
         break;
-      case "statusBarColor":
-        mViewManager.setStatusBarColor(view, ColorPropConverter.getColor(value, view.getContext()));
-        break;
       case "statusBarStyle":
         mViewManager.setStatusBarStyle(view, value == null ? null : (String) value);
         break;
       case "statusBarTranslucent":
         mViewManager.setStatusBarTranslucent(view, value == null ? false : (boolean) value);
         break;
-      case "statusBarHidden":
-        mViewManager.setStatusBarHidden(view, value == null ? false : (boolean) value);
+      case "stackPresentation":
+        mViewManager.setStackPresentation(view, (String) value);
+        break;
+      case "stackAnimation":
+        mViewManager.setStackAnimation(view, (String) value);
+        break;
+      case "transitionDuration":
+        mViewManager.setTransitionDuration(view, value == null ? 350 : ((Double) value).intValue());
+        break;
+      case "replaceAnimation":
+        mViewManager.setReplaceAnimation(view, (String) value);
         break;
       case "navigationBarColor":
         mViewManager.setNavigationBarColor(view, ColorPropConverter.getColor(value, view.getContext()));

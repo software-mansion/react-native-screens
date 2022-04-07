@@ -9,6 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RCTConvert (RNSScreenComponentView)
 
++ (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
+
 #if !TARGET_OS_TV
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 + (UIStatusBarAnimation)UIStatusBarAnimation:(id)json;
@@ -31,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
 @property (nonatomic) BOOL hasOrientationSet;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
+@property (nonatomic) RNSScreenStackPresentation stackPresentation;
+@property (nonatomic) RNSScreenStackAnimation stackAnimation;
+@property (nonatomic, retain) NSNumber *transitionDuration;
 
 #if !TARGET_OS_TV
 @property (nonatomic) BOOL statusBarHidden;

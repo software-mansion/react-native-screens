@@ -1,6 +1,13 @@
 #import "RNSScreenStackAnimator.h"
-#import "RNSScreen.h"
 #import "RNSScreenStack.h"
+
+#if RN_FABRIC_ENABLED
+#import "RNSScreenComponentView.h"
+#define RNSView RNSScreenComponentView
+#else
+#import "RNSScreen.h"
+#define RNSView RNSScreenView
+#endif
 
 // proportions to default transition duration
 static const float RNSSlideOpenTransitionDurationProportion = 1;
@@ -25,15 +32,15 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext
 {
-  RNSScreenView *screen;
+  RNSView *screen;
   if (_operation == UINavigationControllerOperationPush) {
     UIViewController *toViewController =
         [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    screen = (RNSScreenView *)toViewController.view;
+    screen = (RNSView *)toViewController.view;
   } else if (_operation == UINavigationControllerOperationPop) {
     UIViewController *fromViewController =
         [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    screen = (RNSScreenView *)fromViewController.view;
+    screen = (RNSView *)fromViewController.view;
   }
 
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
@@ -55,11 +62,11 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
       [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
   toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
 
-  RNSScreenView *screen;
+  RNSView *screen;
   if (_operation == UINavigationControllerOperationPush) {
-    screen = (RNSScreenView *)toViewController.view;
+    screen = (RNSView *)toViewController.view;
   } else if (_operation == UINavigationControllerOperationPop) {
-    screen = (RNSScreenView *)fromViewController.view;
+    screen = (RNSView *)fromViewController.view;
   }
 
   if (screen != nil) {
