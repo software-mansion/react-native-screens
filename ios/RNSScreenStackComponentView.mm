@@ -61,10 +61,7 @@ using namespace facebook::react;
     static const auto defaultProps = std::make_shared<const RNSScreenStackProps>();
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
-<<<<<<< HEAD
     _presentedModals = [NSMutableArray new];
-=======
->>>>>>> main
     _controller = [RNScreensNavigationController new];
     _controller.delegate = self;
     [_controller setViewControllers:@[ [UIViewController new] ]];
