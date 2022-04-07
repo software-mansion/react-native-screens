@@ -355,6 +355,37 @@
     [self logPropNotAvailable:@"statusBarTranslucent"];
   }
 
+  [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+
+  [self setGestureEnabled:newScreenProps.gestureEnabled];
+
+  if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
+    [self setStatusBarHidden:newScreenProps.statusBarHidden];
+  }
+
+  if (newScreenProps.statusBarStyle != oldScreenProps.statusBarStyle) {
+    [self setStatusBarStyle:[RCTConvert RNSStatusBarStyle:[self stringToPropValue:newScreenProps.statusBarStyle]]];
+  }
+
+  if (newScreenProps.statusBarAnimation != oldScreenProps.statusBarAnimation) {
+    [self setStatusBarAnimation:[RCTConvert
+                                    UIStatusBarAnimation:[self stringToPropValue:newScreenProps.statusBarAnimation]]];
+  }
+
+  if (newScreenProps.screenOrientation != oldScreenProps.screenOrientation) {
+    [self
+        setScreenOrientation:[RCTConvert
+                                 UIInterfaceOrientationMask:[self stringToPropValue:newScreenProps.screenOrientation]]];
+  }
+
+  if (newScreenProps.statusBarColor) {
+    [self logPropNotAvailable:@"statusBarColor"];
+  }
+
+  if (newScreenProps.statusBarTranslucent) {
+    [self logPropNotAvailable:@"statusBarTranslucent"];
+  }
+
   [super updateProps:props oldProps:oldProps];
 
   _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
@@ -423,6 +454,16 @@ RCT_ENUM_CONVERTER(
       @"dark" : @(RNSStatusBarStyleDark),
     }),
     RNSStatusBarStyleAuto,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    UIStatusBarAnimation,
+    (@{
+      @"none" : @(UIStatusBarAnimationNone),
+      @"fade" : @(UIStatusBarAnimationFade),
+      @"slide" : @(UIStatusBarAnimationSlide)
+    }),
+    UIStatusBarAnimationNone,
     integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
