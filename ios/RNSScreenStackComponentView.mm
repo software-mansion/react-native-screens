@@ -1,8 +1,8 @@
 #import "RNSScreenStackComponentView.h"
 #import "RNSScreenComponentView.h"
+#import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 #import "RNSScreenWindowTraits.h"
-#import "RNSScreenStackAnimator.h"
 
 #import <React/RCTMountingTransactionObserving.h>
 
