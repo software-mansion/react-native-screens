@@ -2,6 +2,7 @@
 #import "RNSScreenComponentView.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSScreenStackAnimator.h"
 
 #import <React/RCTMountingTransactionObserving.h>
 
@@ -484,6 +485,26 @@ using namespace facebook::react;
 }
 
 #pragma mark - methods connected to transitioning
+
+- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                  animationControllerForOperation:(UINavigationControllerOperation)operation
+                                               fromViewController:(UIViewController *)fromVC
+                                                 toViewController:(UIViewController *)toVC
+{
+  RNSScreenView *screen;
+  if (operation == UINavigationControllerOperationPush) {
+    screen = (RNSScreenView *)toVC.view;
+  } else if (operation == UINavigationControllerOperationPop) {
+    screen = (RNSScreenView *)fromVC.view;
+  }
+  if (screen != nil &&
+      // we need to return the animator when full width swiping even if the animation is not custom,
+      // otherwise the screen will be just popped immediately due to no animation
+      (_isFullWidthSwiping || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+    return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
+  }
+  return nil;
+}
 
 - (void)cancelTouchesInParent
 {
