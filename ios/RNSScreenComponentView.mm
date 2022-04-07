@@ -456,16 +456,6 @@ RCT_ENUM_CONVERTER(
     RNSStatusBarStyleAuto,
     integerValue)
 
-RCT_ENUM_CONVERTER(
-    UIStatusBarAnimation,
-    (@{
-      @"none" : @(UIStatusBarAnimationNone),
-      @"fade" : @(UIStatusBarAnimationFade),
-      @"slide" : @(UIStatusBarAnimationSlide)
-    }),
-    UIStatusBarAnimationNone,
-    integerValue)
-
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
 {
   json = [self NSString:json];
