@@ -1,13 +1,6 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStack.h"
 
-// proportions to default transition duration
-static const float RNSSlideOpenTransitionDurationProportion = 1;
-static const float RNSFadeOpenTransitionDurationProportion = 0.2 / 0.35;
-static const float RNSSlideCloseTransitionDurationProportion = 0.25 / 0.35;
-static const float RNSFadeCloseTransitionDurationProportion = 0.15 / 0.35;
-static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
-
 #if RN_FABRIC_ENABLED
 #import "RNSScreenComponentView.h"
 #define RNSView RNSScreenComponentView
@@ -15,6 +8,13 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
 #import "RNSScreen.h"
 #define RNSView RNSScreenView
 #endif
+
+// proportions to default transition duration
+static const float RNSSlideOpenTransitionDurationProportion = 1;
+static const float RNSFadeOpenTransitionDurationProportion = 0.2 / 0.35;
+static const float RNSSlideCloseTransitionDurationProportion = 0.25 / 0.35;
+static const float RNSFadeCloseTransitionDurationProportion = 0.15 / 0.35;
+static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
 
 @implementation RNSScreenStackAnimator {
   UINavigationControllerOperation _operation;
