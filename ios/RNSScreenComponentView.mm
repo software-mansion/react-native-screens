@@ -318,9 +318,9 @@
   [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
 
   [self setGestureEnabled:newScreenProps.gestureEnabled];
-  
-  [self setTransitionDuration:newScreenProps.transitionDuration];
-  
+
+  [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
+
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
   }
