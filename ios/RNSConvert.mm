@@ -27,6 +27,7 @@
     (facebook::react::RNSScreenStackAnimation)stackAnimation
 {
   switch (stackAnimation) {
+    // these three are intentionally grouped
     case facebook::react::RNSScreenStackAnimation::Slide_from_right:
     case facebook::react::RNSScreenStackAnimation::Slide_from_left:
     case facebook::react::RNSScreenStackAnimation::Default:
