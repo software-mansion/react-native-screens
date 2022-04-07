@@ -82,8 +82,14 @@ using namespace facebook::react;
     // problem when config gets updated while the transition is ongoing.
     nextVC = nav.topViewController;
   }
+  
+  // we want updates sent to the VC below modal too since it is also visible
+  BOOL isPresentingVC = vc.presentedViewController == nextVC;
 
-  if (vc != nil && (nextVC == vc)) {
+  BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
+  
+  // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
+  if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC)) {
     [RNSScreenStackHeaderConfigComponentView updateViewController:self.screenView.controller
                                                        withConfig:self
                                                          animated:YES];
