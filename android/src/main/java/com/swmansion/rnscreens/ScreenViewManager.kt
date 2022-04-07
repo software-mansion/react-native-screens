@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -140,13 +139,10 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
-    private fun logNotAvailable(propName: String) {
-        Log.w("RN SCREENS", "$propName prop is not available on Android")
-    }
+    // these props are not available on Android, however we must override their getters
+    override fun setFullScreenSwipeEnabled(view: Screen?, value: Boolean) = Unit
 
-    override fun setFullScreenSwipeEnabled(view: Screen?, value: Boolean) {
-        logNotAvailable("fullScreenSwipeEnabled")
-    }
+    override fun setTransitionDuration(view: Screen?, value: Int) = Unit
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map: MutableMap<String, Any> = MapBuilder.of(
