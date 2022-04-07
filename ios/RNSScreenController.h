@@ -1,14 +1,6 @@
 #import <UIKit/UIKit.h>
 #import "RNSScreenContainer.h"
 
-//@interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
-//
-//- (instancetype)initWithView:(UIView *)view;
-//- (void)notifyFinishTransitioning;
-//- (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
-//
-//@end
-
 @interface RNSScreenController : UIViewController <RNScreensViewControllerDelegate>
 
 - (instancetype)initWithView:(UIView *)view;

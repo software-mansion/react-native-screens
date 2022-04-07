@@ -5,7 +5,7 @@
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
 
-@interface RCTConvert (RNSScreen)
+@interface RCTConvert (RNSScreenController)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
 + (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
@@ -14,14 +14,6 @@
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
 #endif
-
-@end
-
-@interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
-
-- (instancetype)initWithView:(UIView *)view;
-- (void)notifyFinishTransitioning;
-- (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 
 @end
 
@@ -69,6 +61,12 @@
 
 - (void)notifyFinishTransitioning;
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
+- (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
+- (void)notifyDismissedWithCount:(int)dismissCount;
+- (void)notifyDisappear;
+- (void)notifyWillAppear;
+- (void)notifyWillDisappear;
+- (void)notifyAppear;
 
 @end
 
