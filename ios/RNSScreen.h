@@ -1,9 +1,14 @@
 #import <React/RCTComponent.h>
-#import <React/RCTView.h>
 #import <React/RCTViewManager.h>
 
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
+
+#if RN_FABRIC_ENABLED
+#import <React/RCTViewComponentView.h>
+#else
+#import <React/RCTView.h>
+#endif
 
 @interface RCTConvert (RNSScreen)
 
@@ -12,6 +17,7 @@
 
 #if !TARGET_OS_TV
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
++ (UIStatusBarAnimation)UIStatusBarAnimation:(id)json;
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
 #endif
 
@@ -20,8 +26,13 @@
 @interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
 
 - (instancetype)initWithView:(UIView *)view;
-- (void)notifyFinishTransitioning;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
+#ifdef RN_FABRIC_ENABLED
+- (void)setViewToSnapshot:(UIView *)snapshot;
+- (void)resetViewToScreen;
+#else
+- (void)notifyFinishTransitioning;
+#endif
 
 @end
 
@@ -29,8 +40,39 @@
 
 @end
 
-@interface RNSScreenView : RCTView
+#ifdef RN_FABRIC_ENABLED
+#define BASE_VIEW RCTViewComponentView
+#else
+#define BASE_VIEW RCTView
+#endif
 
+@interface RNSScreenView : BASE_VIEW
+
+@property (nonatomic) BOOL fullScreenSwipeEnabled;
+@property (nonatomic) BOOL gestureEnabled;
+@property (nonatomic) BOOL hasStatusBarHiddenSet;
+@property (nonatomic) BOOL hasStatusBarStyleSet;
+@property (nonatomic) BOOL hasStatusBarAnimationSet;
+@property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
+@property (nonatomic) BOOL hasOrientationSet;
+@property (nonatomic) RNSScreenStackAnimation stackAnimation;
+@property (nonatomic) RNSScreenStackPresentation stackPresentation;
+@property (nonatomic) RNSScreenSwipeDirection swipeDirection;
+@property (nonatomic, retain) NSNumber *transitionDuration;
+
+#if !TARGET_OS_TV
+@property (nonatomic) RNSStatusBarStyle statusBarStyle;
+@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
+@property (nonatomic) UIInterfaceOrientationMask screenOrientation;
+@property (nonatomic) BOOL statusBarHidden;
+@property (nonatomic) BOOL homeIndicatorHidden;
+#endif
+
+#ifdef RN_FABRIC_ENABLED
+@property (weak, nonatomic) UIView *config;
+@property (weak, nonatomic) UIView *reactSuperview;
+@property (nonatomic, retain) RNSScreen *controller;
+#else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
@@ -43,35 +85,30 @@
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) int activityState;
-@property (nonatomic) BOOL gestureEnabled;
-@property (nonatomic) RNSScreenStackAnimation stackAnimation;
-@property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
-@property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) BOOL preventNativeDismiss;
-@property (nonatomic) BOOL hasOrientationSet;
-@property (nonatomic) BOOL hasStatusBarStyleSet;
-@property (nonatomic) BOOL hasStatusBarAnimationSet;
-@property (nonatomic) BOOL hasStatusBarHiddenSet;
-@property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
 @property (nonatomic) BOOL customAnimationOnSwipe;
-@property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
-@property (nonatomic, retain) NSNumber *transitionDuration;
-
-#if !TARGET_OS_TV
-@property (nonatomic) RNSStatusBarStyle statusBarStyle;
-@property (nonatomic) UIStatusBarAnimation statusBarAnimation;
-@property (nonatomic) BOOL statusBarHidden;
-@property (nonatomic) UIInterfaceOrientationMask screenOrientation;
-@property (nonatomic) BOOL homeIndicatorHidden;
 #endif
 
+#ifdef RN_FABRIC_ENABLED
+- (void)notifyWillAppear;
+- (void)notifyWillDisappear;
+- (void)notifyAppear;
+- (void)notifyDisappear;
+- (void)updateBounds;
+- (void)notifyDismissedWithCount:(int)dismissCount;
+#else
 - (void)notifyFinishTransitioning;
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
+#endif
 
 @end
 
+#ifdef RN_FABRIC_ENABLED
+
+#else
 @interface UIView (RNSScreen)
 - (UIViewController *)parentViewController;
 @end
+#endif
