@@ -2,12 +2,12 @@
 
 #import <React/RCTViewComponentView.h>
 
-#import "RNSScreenComponentView.h"
+#import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubviewComponentView.h"
 
 @interface RNSScreenStackHeaderConfigComponentView : RCTViewComponentView
 
-@property (nonatomic, weak) RNSScreenComponentView *screenView;
+@property (nonatomic, weak) RNSScreenView *screenView;
 @property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubviewComponentView *> *reactSubviews;
 
 // Properties from props
