@@ -15,7 +15,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private val mStack = ArrayList<ScreenStackFragment>()
     private val mDismissed: MutableSet<ScreenStackFragment> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
-    private val drawingOps: MutableList<DrawingOp> = ArrayList()
+    private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var mTopScreen: ScreenStackFragment? = null
     private var mRemovalTransitionStarted = false
     private var isDetachingCurrentScreen = false
@@ -273,12 +273,12 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun drawAndRelease() {
-        for (i in drawingOps.indices) {
-            val op = drawingOps[i]
+        val drawingOpsCopy = drawingOps
+        drawingOps = mutableListOf()
+        for (op in drawingOpsCopy) {
             op.draw()
             drawingOpPool.add(op)
         }
-        drawingOps.clear()
     }
 
     override fun dispatchDraw(canvas: Canvas) {
