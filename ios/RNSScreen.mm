@@ -50,7 +50,7 @@
 #endif
 }
 
-#if RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
