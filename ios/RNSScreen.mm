@@ -112,24 +112,6 @@
 #endif
 }
 
-// Nil will be provided when activityState is set as an animated value and we change
-// it from JS to be a plain value (non animated).
-// In case when nil is received, we want to ignore such value and not make
-// any updates as the actual non-nil value will follow immediately.
-- (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
-{
-  int activityState = [activityStateOrNil intValue];
-  if (activityStateOrNil != nil && activityState != _activityState) {
-    _activityState = activityState;
-    [_reactSuperview markChildUpdated];
-  }
-}
-
-- (void)setPointerEvents:(RCTPointerEvents)pointerEvents
-{
-  // pointer events settings are managed by the parent screen container, we ignore
-  // any attempt of setting that via React props
-}
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
 {
@@ -574,6 +556,25 @@
 
 #pragma mark - Paper specific
 #else
+
+// Nil will be provided when activityState is set as an animated value and we change
+// it from JS to be a plain value (non animated).
+// In case when nil is received, we want to ignore such value and not make
+// any updates as the actual non-nil value will follow immediately.
+- (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
+{
+  int activityState = [activityStateOrNil intValue];
+  if (activityStateOrNil != nil && activityState != _activityState) {
+    _activityState = activityState;
+    [_reactSuperview markChildUpdated]
+  }
+}
+
+- (void)setPointerEvents:(RCTPointerEvents)pointerEvents
+{
+  // pointer events settings are managed by the parent screen container, we ignore
+  // any attempt of setting that via React props
+}
 
 - (void)reactSetFrame:(CGRect)frame
 {
