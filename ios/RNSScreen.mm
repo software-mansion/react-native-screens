@@ -92,20 +92,6 @@
 }
 #endif
 
-- (void)reactSetFrame:(CGRect)frame
-{
-  _reactFrame = frame;
-  UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
-    [super reactSetFrame:frame];
-  }
-  // when screen is mounted under RNScreensNavigationController it's size is controller
-  // by the navigation controller itself. That is, it is set to fill space of
-  // the controller. In that case we ignore react layout system from managing
-  // the screen dimensions and we wait for the screen VC to update and then we
-  // pass the dimensions to ui view manager to take into account when laying out
-  // subviews
-}
 
 - (UIViewController *)reactViewController
 {
@@ -588,6 +574,22 @@
 
 #pragma mark - Paper specific
 #else
+
+- (void)reactSetFrame:(CGRect)frame
+{
+  _reactFrame = frame;
+  UIViewController *parentVC = self.reactViewController.parentViewController;
+  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
+    [super reactSetFrame:frame];
+  }
+  // when screen is mounted under RNScreensNavigationController it's size is controller
+  // by the navigation controller itself. That is, it is set to fill space of
+  // the controller. In that case we ignore react layout system from managing
+  // the screen dimensions and we wait for the screen VC to update and then we
+  // pass the dimensions to ui view manager to take into account when laying out
+  // subviews
+}
+
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
   // We need to call both "cancel" and "reset" here because RN's gesture recognizer
