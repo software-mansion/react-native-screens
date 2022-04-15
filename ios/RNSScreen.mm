@@ -352,17 +352,6 @@
 #endif
 }
 
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
-{
-  if (self.onTransitionProgress) {
-    self.onTransitionProgress(@{
-      @"progress" : @(progress),
-      @"closing" : @(closing ? 1 : 0),
-      @"goingForward" : @(goingForward ? 1 : 0),
-    });
-  }
-}
-
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
 #ifdef RN_FABRIC_ENABLED
@@ -554,6 +543,17 @@
 {
   if (self.onNativeDismissCancelled) {
     self.onNativeDismissCancelled(@{@"dismissCount" : @(dismissCount)});
+  }
+}
+
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+{
+  if (self.onTransitionProgress) {
+    self.onTransitionProgress(@{
+      @"progress" : @(progress),
+      @"closing" : @(closing ? 1 : 0),
+      @"goingForward" : @(goingForward ? 1 : 0),
+    });
   }
 }
 
