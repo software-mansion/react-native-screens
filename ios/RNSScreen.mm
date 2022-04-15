@@ -479,9 +479,6 @@
   }
 
   [super updateProps:props oldProps:oldProps];
-
-  _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
-  _gestureEnabled = newScreenProps.gestureEnabled;
 }
 
 - (void)updateState:(facebook::react::State::Shared const &)state
