@@ -259,11 +259,6 @@
   }
 }
 
-- (void)notifyFinishTransitioning
-{
-  [_controller notifyFinishTransitioning];
-}
-
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
 #ifdef RN_FABRIC_ENABLED
@@ -556,6 +551,11 @@
 
 #pragma mark - Paper specific
 #else
+
+- (void)notifyFinishTransitioning
+{
+  [_controller notifyFinishTransitioning];
+}
 
 // Nil will be provided when activityState is set as an animated value and we change
 // it from JS to be a plain value (non animated).
