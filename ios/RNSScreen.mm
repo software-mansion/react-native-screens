@@ -480,14 +480,6 @@
     [self setStackAnimation:[RNSConvert RNSScreenStackAnimationFromCppEquivalent:newScreenProps.stackAnimation]];
   }
 
-  if (newScreenProps.statusBarColor) {
-    [self logPropNotAvailable:@"statusBarColor"];
-  }
-
-  if (newScreenProps.statusBarTranslucent) {
-    [self logPropNotAvailable:@"statusBarTranslucent"];
-  }
-
   [super updateProps:props oldProps:oldProps];
 
   _fullScreenSwipeEnabled = newScreenProps.fullScreenSwipeEnabled;
