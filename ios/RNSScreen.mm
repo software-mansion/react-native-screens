@@ -352,13 +352,6 @@
 #endif
 }
 
-- (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
-{
-  if (self.onNativeDismissCancelled) {
-    self.onNativeDismissCancelled(@{@"dismissCount" : @(dismissCount)});
-  }
-}
-
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
   if (self.onTransitionProgress) {
@@ -555,6 +548,13 @@
 - (void)notifyFinishTransitioning
 {
   [_controller notifyFinishTransitioning];
+}
+
+- (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
+{
+  if (self.onNativeDismissCancelled) {
+    self.onNativeDismissCancelled(@{@"dismissCount" : @(dismissCount)});
+  }
 }
 
 // Nil will be provided when activityState is set as an animated value and we change
