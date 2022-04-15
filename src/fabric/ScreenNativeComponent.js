@@ -59,8 +59,8 @@ export type NativeProps = $ReadOnly<{|
   stackPresentation?: WithDefault<StackPresentation, 'push'>,
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
   transitionDuration?: WithDefault<Int32, 350>,
-  // TODO: implement these props on iOS
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
+  // TODO: implement these props on iOS
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,
   nativeBackButtonDismissalEnabled?: boolean,

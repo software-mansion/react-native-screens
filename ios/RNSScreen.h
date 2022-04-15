@@ -58,6 +58,7 @@
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
+@property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 @property (nonatomic, retain) NSNumber *transitionDuration;
 
 #if !TARGET_OS_TV
@@ -85,7 +86,6 @@
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) int activityState;
-@property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 @property (nonatomic) BOOL preventNativeDismiss;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
