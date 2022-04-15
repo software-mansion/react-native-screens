@@ -100,7 +100,7 @@
 
 - (void)updateBounds
 {
-#ifdef RN_FABRIC_ENDABLED
+#ifdef RN_FABRIC_ENABLED
   if (_state != nullptr) {
     auto newState = facebook::react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
     _state->updateState(std::move(newState));
