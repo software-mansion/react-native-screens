@@ -92,7 +92,6 @@
 }
 #endif
 
-
 - (UIViewController *)reactViewController
 {
   return _controller;
@@ -111,7 +110,6 @@
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 #endif
 }
-
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
 {
@@ -1199,8 +1197,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 @end
 
-#endif
+#endif // RN_FABRIC_ENABLED
 
+#ifdef RN_FABRIC_ENABLED
+
+#else
 @implementation RNSScreenManager
 
 RCT_EXPORT_MODULE()
@@ -1240,6 +1241,8 @@ RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 }
 
 @end
+
+#endif // RN_FABRIC_ENABLED
 
 @implementation RCTConvert (RNSScreen)
 

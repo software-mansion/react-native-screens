@@ -36,10 +36,6 @@
 
 @end
 
-@interface RNSScreenManager : RCTViewManager
-
-@end
-
 #ifdef RN_FABRIC_ENABLED
 #define BASE_VIEW RCTViewComponentView
 #else
@@ -110,5 +106,9 @@
 #else
 @interface UIView (RNSScreen)
 - (UIViewController *)parentViewController;
+@end
+
+@interface RNSScreenManager : RCTViewManager
+
 @end
 #endif
