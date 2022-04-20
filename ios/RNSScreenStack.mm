@@ -274,6 +274,7 @@
   }
 }
 
+// done
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller
 {
   if (!controller.parentViewController) {
@@ -301,6 +302,7 @@
   }
 }
 
+// done
 - (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // prevent re-entry
@@ -351,9 +353,12 @@
   __weak RNSScreenStackView *weakSelf = self;
 
   void (^afterTransitions)(void) = ^{
+    // TODO: Implement onFinishTransitioning on Fabric
+#ifndef RN_FABRIC_ENABLED
     if (weakSelf.onFinishTransitioning) {
       weakSelf.onFinishTransitioning(nil);
     }
+#endif
     weakSelf.updatingModals = NO;
     if (weakSelf.scheduleModalsUpdate) {
       // if modals update was requested during setModalViewControllers we set scheduleModalsUpdate
