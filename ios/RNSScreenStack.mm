@@ -1,8 +1,19 @@
-#import "RNSScreenStack.h"
-#import "RNSScreen.h"
-#import "RNSScreenStackAnimator.h"
+#ifdef RN_FABRIC_ENABLED
+#import "RNSScreenStackHeaderConfigComponentView.h"
+
+#import <React/RCTMountingTransactionObserving.h>
+
+#import <React/UIView+React.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+
+#import "RCTFabricComponentsPlugins.h"
+
+#import <React/RCTSurfaceTouchHandler.h>
+#else
 #import "RNSScreenStackHeaderConfig.h"
-#import "RNSScreenWindowTraits.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTRootContentView.h>
@@ -10,12 +21,31 @@
 #import <React/RCTTouchHandler.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#endif // RN_FABRIC_ENABLED
 
-@interface RNSScreenStackView () <
+#import "RNSScreenStack.h"
+#import "RNSScreen.h"
+#import "RNSScreenStackAnimator.h"
+#import "RNSScreenWindowTraits.h"
+
+@interface RNSScreenStackView ()
+#ifdef RN_FABRIC_ENABLED
+<
+    UINavigationControllerDelegate,
+    UIAdaptivePresentationControllerDelegate,
+    UIGestureRecognizerDelegate,
+    UIViewControllerTransitioningDelegate,
+    RCTMountingTransactionObserving> {
+  BOOL _updateScheduled;
+}
+#else
+<
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
     UIViewControllerTransitioningDelegate>
+#endif
+
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -71,12 +101,16 @@
 @implementation RNSScreenStackView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
+  BOOL _invalidated;
+  BOOL _isFullWidthSwiping;
+  UIPercentDrivenInteractiveTransition *_interactionController;
+#ifdef RN_FABRIC_ENABLED
+  UIView *_snapshot;
+#else
   __weak RNSScreenStackManager *_manager;
   BOOL _hasLayout;
-  BOOL _invalidated;
-  UIPercentDrivenInteractiveTransition *_interactionController;
   BOOL _updateScheduled;
-  BOOL _isFullWidthSwiping;
+#endif
 }
 
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
