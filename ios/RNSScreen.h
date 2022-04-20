@@ -10,6 +10,8 @@
 #import <React/RCTView.h>
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
@@ -56,6 +58,7 @@
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 @property (nonatomic, retain) NSNumber *transitionDuration;
+@property (nonatomic, readonly) BOOL dismissed;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
@@ -80,7 +83,6 @@
 
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
-@property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) int activityState;
 @property (nonatomic) BOOL preventNativeDismiss;
 @property (nonatomic) BOOL customAnimationOnSwipe;
@@ -101,9 +103,6 @@
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
-
-#else
 @interface UIView (RNSScreen)
 - (UIViewController *)parentViewController;
 @end
@@ -111,4 +110,5 @@
 @interface RNSScreenManager : RCTViewManager
 
 @end
-#endif
+
+NS_ASSUME_NONNULL_END

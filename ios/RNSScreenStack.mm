@@ -738,7 +738,7 @@
   [self cancelTouchesInParent];
   return _controller.viewControllers.count >= 2;
 #endif
-  
+
 #endif
 }
 
