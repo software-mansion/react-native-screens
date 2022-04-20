@@ -645,6 +645,7 @@
   return nil;
 }
 
+// done
 - (void)cancelTouchesInParent
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
@@ -668,6 +669,7 @@
   }
 }
 
+// done
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
@@ -684,8 +686,13 @@
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
     // `fullScreenSwipeEnabled` is set, and we are in the bounds set by user
+#ifdef RN_FABRIC_ENABLED
+    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]])
+#else
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
-        [self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
+        [self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen])
+#endif
+    {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
