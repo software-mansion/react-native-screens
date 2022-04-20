@@ -743,6 +743,7 @@
 
 
 #if !TARGET_OS_TV
+// done
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
@@ -765,6 +766,7 @@
   [self addGestureRecognizer:panRecognizer];
 }
 
+// done
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
@@ -822,19 +824,6 @@
   }
 }
 #endif
-
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-                         interactionControllerForAnimationController:
-                             (id<UIViewControllerAnimatedTransitioning>)animationController
-{
-  return _interactionController;
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
-    (id<UIViewControllerAnimatedTransitioning>)animator
-{
-  return _interactionController;
-}
 
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
@@ -1024,6 +1013,19 @@
     shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
   return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
+                         interactionControllerForAnimationController:
+                             (id<UIViewControllerAnimatedTransitioning>)animationController
+{
+  return _interactionController;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
+    (id<UIViewControllerAnimatedTransitioning>)animator
+{
+  return _interactionController;
 }
 #endif // RN_FABRIC_ENABLED
 
