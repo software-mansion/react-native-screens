@@ -10,6 +10,8 @@
 #import <React/RCTView.h>
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RCTConvert (RNSScreen)
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
@@ -101,14 +103,14 @@
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
-
-#else
+#ifndef RN_FABRIC_ENABLED
 @interface UIView (RNSScreen)
 - (UIViewController *)parentViewController;
 @end
+#endif
 
 @interface RNSScreenManager : RCTViewManager
 
 @end
-#endif
+
+NS_ASSUME_NONNULL_END
