@@ -24,29 +24,26 @@
 #import <React/RCTUIManagerUtils.h>
 #endif // RN_FABRIC_ENABLED
 
-#import "RNSScreenStack.h"
 #import "RNSScreen.h"
+#import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenWindowTraits.h"
 
 @interface RNSScreenStackView ()
 #ifdef RN_FABRIC_ENABLED
-<
-    UINavigationControllerDelegate,
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate,
-    RCTMountingTransactionObserving> {
+    <UINavigationControllerDelegate,
+     UIAdaptivePresentationControllerDelegate,
+     UIGestureRecognizerDelegate,
+     UIViewControllerTransitioningDelegate,
+     RCTMountingTransactionObserving> {
   BOOL _updateScheduled;
 }
 #else
-<
-    UINavigationControllerDelegate,
-    UIAdaptivePresentationControllerDelegate,
-    UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate>
+    <UINavigationControllerDelegate,
+     UIAdaptivePresentationControllerDelegate,
+     UIGestureRecognizerDelegate,
+     UIViewControllerTransitioningDelegate>
 #endif
-
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -354,7 +351,7 @@
   __weak RNSScreenStackView *weakSelf = self;
 
   void (^afterTransitions)(void) = ^{
-    // TODO: Implement onFinishTransitioning on Fabric
+  // TODO: Implement onFinishTransitioning on Fabric
 #ifndef RN_FABRIC_ENABLED
     if (weakSelf.onFinishTransitioning) {
       weakSelf.onFinishTransitioning(nil);
@@ -738,10 +735,9 @@
   [self cancelTouchesInParent];
   return _controller.viewControllers.count >= 2;
 #endif
-  
+
 #endif
 }
-
 
 #if !TARGET_OS_TV
 // done
