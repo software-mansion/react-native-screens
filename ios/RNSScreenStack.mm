@@ -220,6 +220,7 @@
   return _reactSubviews;
 }
 
+// done
 - (void)didMoveToWindow
 {
 #ifdef RN_FABRIC_ENABLED
@@ -237,6 +238,7 @@
 #endif
 }
 
+// done
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
@@ -283,7 +285,9 @@
 #if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
+#ifndef RN_FABRIC_ENABLED
         [controller didMoveToParentViewController:parentView.reactViewController];
+#endif
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
         // get triggered when the navigation controller is instantiated. As the only thing we do in
         // that delegate method is ask nav header to update to the current state it does not hurt to
@@ -941,7 +945,7 @@
   });
 }
 
-#endif
+#endif // RN_FABRIC_ENABLED
 
 @end
 
