@@ -850,6 +850,57 @@
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if (![childComponentView isKindOfClass:[RNSScreenView class]]) {
+    RCTLogError(@"ScreenStack only accepts children of type Screen");
+    return;
+  }
+
+  RCTAssert(
+      childComponentView.reactSuperview == nil,
+      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+      self,
+      childComponentView,
+      @(index),
+      @([childComponentView.superview tag]));
+
+  [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
+  ((RNSScreenView *)childComponentView).reactSuperview = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self maybeAddToParentAndUpdateContainer];
+  });
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
+  // We should only do a snapshot of a screen that is on the top
+  if (screenChildComponent == _controller.topViewController.view) {
+    [screenChildComponent.controller setViewToSnapshot:_snapshot];
+  }
+
+  RCTAssert(
+      screenChildComponent.reactSuperview == self,
+      @"Attempt to unmount a view which is mounted inside different view. (parent: %@, child: %@, index: %@)",
+      self,
+      screenChildComponent,
+      @(index));
+  RCTAssert(
+      (_reactSubviews.count > index) && [_reactSubviews objectAtIndex:index] == childComponentView,
+      @"Attempt to unmount a view which has a different index. (parent: %@, child: %@, index: %@, actual index: %@, tag at index: %@)",
+      self,
+      screenChildComponent,
+      @(index),
+      @([_reactSubviews indexOfObject:screenChildComponent]),
+      @([[_reactSubviews objectAtIndex:index] tag]));
+  screenChildComponent.reactSuperview = nil;
+  [_reactSubviews removeObject:screenChildComponent];
+  [screenChildComponent removeFromSuperview];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self maybeAddToParentAndUpdateContainer];
+  });
+}
 #else
 #pragma mark - Paper specific
 
