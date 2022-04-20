@@ -113,6 +113,25 @@
 #endif
 }
 
+#ifdef RN_FABRIC_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    static const auto defaultProps = std::make_shared<const RNSScreenStackProps>();
+    _props = defaultProps;
+    _reactSubviews = [NSMutableArray new];
+    _presentedModals = [NSMutableArray new];
+    _controller = [RNScreensNavigationController new];
+    _controller.delegate = self;
+    [_controller setViewControllers:@[ [UIViewController new] ]];
+#if !TARGET_OS_TV
+    [self setupGestureHandlers];
+#endif
+  }
+
+  return self;
+}
+#else
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
   if (self = [super init]) {
@@ -135,17 +154,24 @@
   }
   return self;
 }
+#endif // RN_FABRIC_ENABLED
 
-- (UIViewController *)reactViewController
-{
-  return _controller;
-}
+#pragma mark - Common
+
 
 - (void)navigationController:(UINavigationController *)navigationController
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
   UIView *view = viewController.view;
+  // TODO: Improve this merge when StackHeaderConfig is merged
+#ifdef RN_FABRIC_ENABLED
+  if ([view isKindOfClass:RNSScreenView.class]) {
+    RNSScreenStackHeaderConfigComponentView *config =
+        (RNSScreenStackHeaderConfigComponentView *)((RNSScreenView *)view).config;
+    [RNSScreenStackHeaderConfigComponentView willShowViewController:viewController animated:animated withConfig:config];
+  }
+#else
   RNSScreenStackHeaderConfig *config = nil;
   for (UIView *subview in view.reactSubviews) {
     if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
@@ -154,6 +180,7 @@
     }
   }
   [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
+#endif
 }
 
 - (void)navigationController:(UINavigationController *)navigationController
@@ -825,6 +852,19 @@
 {
   return _interactionController;
 }
+
+#ifdef RN_FABRIC_ENABLED
+#pragma mark - Fabric specific
+
+#else
+#pragma mark - Paper specific
+
+- (UIViewController *)reactViewController
+{
+  return _controller;
+}
+
+#endif
 
 @end
 
