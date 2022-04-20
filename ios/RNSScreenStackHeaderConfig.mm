@@ -368,6 +368,7 @@
   return nil;
 }
 
+// done
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated
                     withConfig:(RNSScreenStackHeaderConfig *)config
@@ -375,6 +376,7 @@
   [self updateViewController:vc withConfig:config animated:animated];
 }
 
+// done
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 + (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc
@@ -394,9 +396,12 @@
     appearance.backgroundColor = config.backgroundColor;
   }
 
+  // TODO: implement blurEffect on Fabric
+#ifndef RN_FABRIC_ENABLED
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
   }
+#endif
 
   if (config.hideShadow) {
     appearance.shadowColor = nil;
@@ -452,12 +457,16 @@
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
+#ifndef RN_FABRIC_ENABLED
   UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
     [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
   }
+#else
+  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
+#endif // RN_FABRIC_ENABLED
   return appearance;
 }
 #endif
