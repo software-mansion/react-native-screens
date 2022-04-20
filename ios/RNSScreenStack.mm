@@ -609,11 +609,17 @@
   _controller.view.frame = self.bounds;
 }
 
+// done
 - (void)dismissOnReload
 {
+#ifdef RN_FABRIC_ENABLED
+  auto screenController = (RNSScreen *)_controller.topViewController;
+  [screenController resetViewToScreen];
+#else
   dispatch_async(dispatch_get_main_queue(), ^{
     [self invalidate];
   });
+#endif
 }
 
 #pragma mark methods connected to transitioning
