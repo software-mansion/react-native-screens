@@ -1,7 +1,16 @@
-#import "RNSScreenStackHeaderConfig.h"
-#import "RNSScreen.h"
+#ifdef RN_FABRIC_ENABLED
+#import "RNSScreenStackHeaderSubviewComponentView.h"
+#import "RCTFabricComponentsPlugins.h"
+#import <React/UIView+React.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <React/RCTConversions.h>
+#import <React/RCTFont.h>
+#else
+// TODO: move this import when SearchBar is implemented on Fabric
 #import "RNSSearchBar.h"
-
 #import <React/RCTBridge.h>
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
@@ -10,7 +19,13 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#endif
+#import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreen.h"
+#import "./utils/RNSUIBarButtonItem.h"
 
+
+#ifndef RN_FABRIC_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
@@ -20,6 +35,7 @@
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
 @end
+#endif
 
 @interface RNSScreenStackHeaderSubview : UIView
 
@@ -50,37 +66,26 @@
 
 @end
 
-@interface RNSUIBarButtonItem : UIBarButtonItem
-
-@property (nonatomic) BOOL menuHidden;
-
-@end
-
-@implementation RNSUIBarButtonItem
-
-- (void)setMenuHidden:(BOOL)menuHidden
-{
-  _menuHidden = menuHidden;
-}
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
-- (void)setMenu:(UIMenu *)menu
-{
-  if (@available(iOS 14.0, *)) {
-    if (!_menuHidden) {
-      super.menu = menu;
-    }
-  }
-}
-#endif
-
-@end
-
 @implementation RNSScreenStackHeaderConfig {
+#ifndef RN_FABRIC_ENABLED
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
+#endif
 }
 
+#ifdef RN_FABRIC_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackHeaderConfigProps>();
+    _props = defaultProps;
+    self.hidden = YES;
+    _show = YES;
+    _translucent = NO;
+    _reactSubviews = [NSMutableArray new];
+  }
+  return self;
+}
+#else
 - (instancetype)init
 {
   if (self = [super init]) {
@@ -90,6 +95,7 @@
   }
   return self;
 }
+#endif
 
 - (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
 {
