@@ -186,12 +186,6 @@
   [navctr.view setNeedsLayout];
 }
 
-- (void)didUpdateReactSubviews
-{
-  [super didUpdateReactSubviews];
-  [self updateViewControllerIfNeeded];
-}
-
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
@@ -684,6 +678,12 @@
   if ([changedProps containsObject:@"translucent"]) {
     [self layoutNavigationControllerView];
   }
+}
+
+- (void)didUpdateReactSubviews
+{
+  [super didUpdateReactSubviews];
+  [self updateViewControllerIfNeeded];
 }
 
 #endif
