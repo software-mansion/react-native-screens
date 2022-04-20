@@ -704,6 +704,36 @@
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
++ (void)addSubviewsToNavItem:(UINavigationItem *)navitem withConfig:(RNSScreenStackHeaderConfig *)config
+{
+  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
+    switch (subview.type) {
+      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.leftBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.rightBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
+      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
+        navitem.titleView = subview;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
+        RCTLogWarn(@"SearchBar is not yet supported in react-native-screens with Fabric enabled");
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
+        break;
+      }
+    }
+  }
+}
+
 #else
 #pragma mark - Paper specific
 
