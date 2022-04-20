@@ -759,6 +759,122 @@
   [childComponentView removeFromSuperview];
 }
 
+#pragma mark - RCTComponentViewProtocol
+
+- (void)prepareForRecycle
+{
+  [super prepareForRecycle];
+  _initialPropsSet = NO;
+}
+
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
+}
+
+- (NSString *)getFontFamilyPropValue:(std::string)propValue
+{
+  if (propValue.length() > 0) {
+    return [[NSString alloc] initWithUTF8String:propValue.c_str()];
+  } else {
+    return nil;
+  }
+}
+
+- (NSString *)stringToPropValue:(std::string)value
+{
+  if (value.empty())
+    return nil;
+  return [[NSString alloc] initWithUTF8String:value.c_str()];
+}
+
+- (NSNumber *)getFontSizePropValue:(int)value
+{
+  if (value > 0)
+    return [NSNumber numberWithInt:value];
+  return nil;
+}
+
+- (UISemanticContentAttribute)getDirectionPropValue:(facebook::react::RNSScreenStackHeaderConfigDirection)direction
+{
+  switch (direction) {
+    case facebook::react::RNSScreenStackHeaderConfigDirection::Rtl:
+      return UISemanticContentAttributeForceRightToLeft;
+    case facebook::react::RNSScreenStackHeaderConfigDirection::Ltr:
+      return UISemanticContentAttributeForceLeftToRight;
+  }
+}
+
+- (void)updateProps:(facebook::react::Props::Shared const &)props oldProps:(facebook::react::Props::Shared const &)oldProps
+{
+  [super updateProps:props oldProps:oldProps];
+
+  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(props);
+
+  BOOL needsNavigationControllerLayout = !_initialPropsSet;
+
+  if (newScreenProps.hidden != !_show) {
+    _show = !newScreenProps.hidden;
+    needsNavigationControllerLayout = YES;
+  }
+
+  if (newScreenProps.translucent != _translucent) {
+    _translucent = newScreenProps.translucent;
+    needsNavigationControllerLayout = YES;
+  }
+
+  _title = [self stringToPropValue:newScreenProps.title];
+  if (newScreenProps.titleFontFamily != oldScreenProps.titleFontFamily) {
+    _titleFontFamily = [self getFontFamilyPropValue:newScreenProps.titleFontFamily];
+  }
+  _titleFontWeight = [self stringToPropValue:newScreenProps.titleFontWeight];
+  _titleFontSize = [self getFontSizePropValue:newScreenProps.titleFontSize];
+  _hideShadow = newScreenProps.hideShadow;
+
+  _largeTitle = newScreenProps.largeTitle;
+  if (newScreenProps.largeTitleFontFamily != oldScreenProps.largeTitleFontFamily) {
+    _largeTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.largeTitleFontFamily];
+  }
+  _largeTitleFontWeight = [self stringToPropValue:newScreenProps.largeTitleFontWeight];
+  _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
+  _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
+
+  _backTitle = [self stringToPropValue:newScreenProps.backTitle];
+  ;
+  if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
+    _backTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.backTitleFontFamily];
+  }
+  _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
+  _hideBackButton = newScreenProps.hideBackButton;
+  _disableBackButtonMenu = newScreenProps.disableBackButtonMenu;
+
+  if (newScreenProps.direction != oldScreenProps.direction) {
+    _direction = [self getDirectionPropValue:newScreenProps.direction];
+  }
+
+  // We cannot compare SharedColor because it is shared value.
+  // We could compare color value, but it is more performant to just assign new value
+  _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
+  _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
+  _color = RCTUIColorFromSharedColor(newScreenProps.color);
+
+  if (_backgroundSharedColor != newScreenProps.backgroundColor) {
+    _backgroundSharedColor = newScreenProps.backgroundColor;
+    _backgroundColor = RCTUIColorFromSharedColor(_backgroundSharedColor);
+  }
+
+  [self updateViewControllerIfNeeded];
+
+  if (needsNavigationControllerLayout) {
+    [self layoutNavigationControllerView];
+  }
+
+  _initialPropsSet = YES;
+  _props = std::static_pointer_cast<facebook::react::RNSScreenStackHeaderConfigProps const>(props);
+}
+
+
 #else
 #pragma mark - Paper specific
 
@@ -798,6 +914,13 @@
 
 #endif
 @end
+
+
+Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
+{
+  return RNSScreenStackHeaderConfig.class;
+}
+
 
 @implementation RNSScreenStackHeaderConfigManager
 
