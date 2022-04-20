@@ -214,20 +214,10 @@
   }
 }
 
+// done
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
-}
-
-- (void)didUpdateReactSubviews
-{
-  // we need to wait until children have their layout set. At this point they don't have the layout
-  // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
-  // ui queue will guarantee that the update will run after layout.
-  dispatch_async(dispatch_get_main_queue(), ^{
-    self->_hasLayout = YES;
-    [self maybeAddToParentAndUpdateContainer];
-  });
 }
 
 - (void)didMoveToWindow
@@ -934,13 +924,22 @@
   [_reactSubviews insertObject:subview atIndex:atIndex];
 }
 
-
 - (void)removeReactSubview:(RNSScreenView *)subview
 {
   subview.reactSuperview = nil;
   [_reactSubviews removeObject:subview];
 }
 
+- (void)didUpdateReactSubviews
+{
+  // we need to wait until children have their layout set. At this point they don't have the layout
+  // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
+  // ui queue will guarantee that the update will run after layout.
+  dispatch_async(dispatch_get_main_queue(), ^{
+    self->_hasLayout = YES;
+    [self maybeAddToParentAndUpdateContainer];
+  });
+}
 
 #endif
 
