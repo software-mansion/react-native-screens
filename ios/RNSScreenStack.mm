@@ -117,7 +117,7 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const RNSScreenStackProps>();
+    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackProps>();
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     _presentedModals = [NSMutableArray new];
@@ -885,7 +885,7 @@
   _snapshot = [_controller.topViewController.view snapshotViewAfterScreenUpdates:NO];
 }
 
-- (void)mountingTransactionWillMountWithMetadata:(MountingTransactionMetadata const &)metadata
+- (void)mountingTransactionWillMountWithMetadata:(facebook::react::MountingTransactionMetadata const &)metadata
 {
   [self takeSnapshot];
 }
@@ -906,9 +906,9 @@
   [_controller setViewControllers:@[ [UIViewController new] ]];
 }
 
-+ (ComponentDescriptorProvider)componentDescriptorProvider
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return concreteComponentDescriptorProvider<RNSScreenStackComponentDescriptor>();
+  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenStackComponentDescriptor>();
 }
 #else
 #pragma mark - Paper specific
