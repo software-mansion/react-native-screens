@@ -655,9 +655,16 @@
   while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
     parent = parent.superview;
   if (parent != nil) {
+#ifdef RN_FABRIC_ENABLED
+    RCTSurfaceTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler setEnabled:NO];
+    [touchHandler setEnabled:YES];
+    [touchHandler reset];
+#else
     RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
     [touchHandler cancel];
     [touchHandler reset];
+#endif
   }
 }
 
