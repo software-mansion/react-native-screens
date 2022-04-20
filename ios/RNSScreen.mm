@@ -73,17 +73,17 @@
 
 - (void)initCommonProps
 {
-    _controller = [[RNSScreen alloc] initWithView:self];
-    _stackPresentation = RNSScreenStackPresentationPush;
-    _stackAnimation = RNSScreenStackAnimationDefault;
-    _gestureEnabled = YES;
-    _replaceAnimation = RNSScreenReplaceAnimationPop;
-    _dismissed = NO;
-    _hasStatusBarStyleSet = NO;
-    _hasStatusBarAnimationSet = NO;
-    _hasStatusBarHiddenSet = NO;
-    _hasOrientationSet = NO;
-    _hasHomeIndicatorHiddenSet = NO;
+  _controller = [[RNSScreen alloc] initWithView:self];
+  _stackPresentation = RNSScreenStackPresentationPush;
+  _stackAnimation = RNSScreenStackAnimationDefault;
+  _gestureEnabled = YES;
+  _replaceAnimation = RNSScreenReplaceAnimationPop;
+  _dismissed = NO;
+  _hasStatusBarStyleSet = NO;
+  _hasStatusBarAnimationSet = NO;
+  _hasStatusBarHiddenSet = NO;
+  _hasOrientationSet = NO;
+  _hasHomeIndicatorHiddenSet = NO;
 }
 
 - (UIViewController *)reactViewController
