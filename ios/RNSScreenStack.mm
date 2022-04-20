@@ -741,18 +741,6 @@
 #endif
 }
 
-- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-{
-  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
-  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
-  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
-  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
-    return NO;
-  }
-  UIScrollView *scrollView = gestureRecognizer.view;
-  return scrollView.panGestureRecognizer == gestureRecognizer;
-}
-
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
@@ -1024,6 +1012,19 @@
       (gestureResponseDistanceValues[@"bottom"] && y > [gestureResponseDistanceValues[@"bottom"] floatValue]));
   return NO;
 }
+
+- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
+  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
+  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
+  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
+    return NO;
+  }
+  UIScrollView *scrollView = gestureRecognizer.view;
+  return scrollView.panGestureRecognizer == gestureRecognizer;
+}
+
 #endif // RN_FABRIC_ENABLED
 
 @end
