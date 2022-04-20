@@ -276,7 +276,11 @@
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
+#ifdef RN_FABRIC_ENABLED
+  BOOL isScreenReadyForShowing = self.window;
+#else
   BOOL isScreenReadyForShowing = self.window && _hasLayout;
+#endif
   if (!isScreenReadyForShowing && !wasScreenMounted) {
     // We wait with adding to parent controller until the stack is mounted and has its initial
     // layout done.
