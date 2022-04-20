@@ -183,15 +183,6 @@
 #endif
 }
 
-- (void)navigationController:(UINavigationController *)navigationController
-       didShowViewController:(UIViewController *)viewController
-                    animated:(BOOL)animated
-{
-  if (self.onFinishTransitioning) {
-    self.onFinishTransitioning(nil);
-  }
-  [RNSScreenWindowTraits updateWindowTraits];
-}
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
@@ -863,6 +854,17 @@
 {
   return _controller;
 }
+
+- (void)navigationController:(UINavigationController *)navigationController
+       didShowViewController:(UIViewController *)viewController
+                    animated:(BOOL)animated
+{
+  if (self.onFinishTransitioning) {
+    self.onFinishTransitioning(nil);
+  }
+  [RNSScreenWindowTraits updateWindowTraits];
+}
+
 
 #endif
 
