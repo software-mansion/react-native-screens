@@ -580,10 +580,11 @@
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
 #ifdef RN_FABRIC_ENABLED
-    if (screen.controller != nil) {
+    if (screen.controller != nil)
 #else
-    if (!screen.dismissed && screen.controller != nil) {
+    if (!screen.dismissed && screen.controller != nil)
 #endif
+    {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
@@ -601,6 +602,7 @@
   [self setModalViewControllers:modalControllers];
 }
 
+// done
 - (void)layoutSubviews
 {
   [super layoutSubviews];
