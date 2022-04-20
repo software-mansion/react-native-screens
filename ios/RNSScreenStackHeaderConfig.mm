@@ -471,6 +471,7 @@
 }
 #endif
 
+// done
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
@@ -483,7 +484,11 @@
       currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
 
   BOOL wasHidden = navctr.navigationBarHidden;
+#ifdef RN_FABRIC_ENABLED
+  BOOL shouldHide = config == nil || !config.show;
+#else
   BOOL shouldHide = config == nil || config.hide;
+#endif
 
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
@@ -587,6 +592,39 @@
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
+#ifdef RN_FABRIC_ENABLED
+  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
+    switch (subview.type) {
+      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
+        //#if !TARGET_OS_TV
+        //        navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
+        //#endif
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.leftBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.rightBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
+      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
+        navitem.titleView = subview;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
+        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
+        RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
+        break;
+        ;
+      }
+    }
+  }
+#else
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
@@ -630,6 +668,7 @@
       }
     }
   }
+#endif // RN_FABRIC_ENABLED
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
