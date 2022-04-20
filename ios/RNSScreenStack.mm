@@ -890,6 +890,26 @@
   [self takeSnapshot];
 }
 
+- (void)prepareForRecycle
+{
+  [super prepareForRecycle];
+  _reactSubviews = [NSMutableArray new];
+
+  for (UIViewController *controller in _presentedModals) {
+    [controller dismissViewControllerAnimated:NO completion:nil];
+  }
+
+  [_presentedModals removeAllObjects];
+  [self dismissOnReload];
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
+  [_controller setViewControllers:@[ [UIViewController new] ]];
+}
+
++ (ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return concreteComponentDescriptorProvider<RNSScreenStackComponentDescriptor>();
+}
 #else
 #pragma mark - Paper specific
 
@@ -1031,6 +1051,12 @@
 
 @end
 
+Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
+{
+  return RNSScreenStackView.class;
+}
+
+#ifndef RN_FABRIC_ENABLED
 @implementation RNSScreenStackManager {
   NSPointerArray *_stacks;
 }
@@ -1058,3 +1084,4 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 }
 
 @end
+#endif
