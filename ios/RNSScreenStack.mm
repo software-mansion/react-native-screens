@@ -437,6 +437,7 @@
   }
 }
 
+// done
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // when there is no change we return immediately
@@ -472,6 +473,56 @@
   }
 
   UIViewController *top = controllers.lastObject;
+#ifdef RN_FABRIC_ENABLED
+  UIViewController *previousTop = _controller.topViewController;
+
+  // At the start we set viewControllers to contain a single UIViewController
+  // instance. This is a workaround for header height adjustment bug (see comment
+  // in the init function). Here, we need to detect if the initial empty
+  // controller is still there
+  BOOL firstTimePush = ![previousTop isKindOfClass:[RNSScreen class]];
+
+  if (firstTimePush) {
+    // nothing pushed yet
+    [_controller setViewControllers:controllers animated:NO];
+  } else if (top != previousTop) {
+    if (![controllers containsObject:previousTop]) {
+      // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
+      // was called, so we check the animation
+      if (![_controller.viewControllers containsObject:top]) {
+        // setting new controllers with animation does `push` animation by default
+        auto screenController = (RNSScreen *)top;
+        [screenController resetViewToScreen];
+        [_controller setViewControllers:controllers animated:YES];
+      } else {
+        // last top controller is no longer on stack
+        // in this case we set the controllers stack to the new list with
+        // added the last top element to it and perform (animated) pop
+        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
+        [newControllers addObject:previousTop];
+        [_controller setViewControllers:newControllers animated:NO];
+        [_controller popViewControllerAnimated:YES];
+      }
+    } else if (![_controller.viewControllers containsObject:top]) {
+      // new top controller is not on the stack
+      // in such case we update the stack except from the last element with
+      // no animation and do animated push of the last item
+      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
+      [newControllers removeLastObject];
+      [_controller setViewControllers:newControllers animated:NO];
+      auto screenController = (RNSScreen *)top;
+      [screenController resetViewToScreen];
+      [_controller pushViewController:top animated:YES];
+    } else {
+      // don't really know what this case could be, but may need to handle it
+      // somehow
+      [_controller setViewControllers:controllers animated:YES];
+    }
+  } else {
+    // change wasn't on the top of the stack. We don't need animation.
+    [_controller setViewControllers:controllers animated:NO];
+  }
+#else
   UIViewController *lastTop = _controller.viewControllers.lastObject;
 
   // at the start we set viewControllers to contain a single UIVIewController
@@ -519,6 +570,7 @@
     // change wasn't on the top of the stack. We don't need animation.
     [_controller setViewControllers:controllers animated:NO];
   }
+#endif
 }
 
 - (void)updateContainer
