@@ -624,6 +624,7 @@
 
 #pragma mark methods connected to transitioning
 
+// done
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
                                   animationControllerForOperation:(UINavigationControllerOperation)operation
                                                fromViewController:(UIViewController *)fromVC
@@ -642,27 +643,6 @@
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
-}
-
-- (BOOL)isInGestureResponseDistance:(UIGestureRecognizer *)gestureRecognizer topScreen:(RNSScreenView *)topScreen
-{
-#ifndef RN_FABRIC_ENABLED
-  NSDictionary *gestureResponseDistanceValues = topScreen.gestureResponseDistance;
-  float x = [gestureRecognizer locationInView:gestureRecognizer.view].x;
-  float y = [gestureRecognizer locationInView:gestureRecognizer.view].y;
-  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
-  if (isRTL) {
-    x = _controller.view.frame.size.width - x;
-  }
-  // we check if any of the constraints are violated and return NO if so
-  return !(
-      (gestureResponseDistanceValues[@"start"] && x < [gestureResponseDistanceValues[@"start"] floatValue]) ||
-      (gestureResponseDistanceValues[@"end"] && x > [gestureResponseDistanceValues[@"end"] floatValue]) ||
-      (gestureResponseDistanceValues[@"top"] && y < [gestureResponseDistanceValues[@"top"] floatValue]) ||
-      (gestureResponseDistanceValues[@"bottom"] && y > [gestureResponseDistanceValues[@"bottom"] floatValue]));
-#else
-  return NO;
-#endif
 }
 
 - (void)cancelTouchesInParent
@@ -1013,6 +993,23 @@
   [_controller removeFromParentViewController];
 }
 
+- (BOOL)isInGestureResponseDistance:(UIGestureRecognizer *)gestureRecognizer topScreen:(RNSScreenView *)topScreen
+{
+  NSDictionary *gestureResponseDistanceValues = topScreen.gestureResponseDistance;
+  float x = [gestureRecognizer locationInView:gestureRecognizer.view].x;
+  float y = [gestureRecognizer locationInView:gestureRecognizer.view].y;
+  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+  if (isRTL) {
+    x = _controller.view.frame.size.width - x;
+  }
+  // we check if any of the constraints are violated and return NO if so
+  return !(
+      (gestureResponseDistanceValues[@"start"] && x < [gestureResponseDistanceValues[@"start"] floatValue]) ||
+      (gestureResponseDistanceValues[@"end"] && x > [gestureResponseDistanceValues[@"end"] floatValue]) ||
+      (gestureResponseDistanceValues[@"top"] && y < [gestureResponseDistanceValues[@"top"] floatValue]) ||
+      (gestureResponseDistanceValues[@"bottom"] && y > [gestureResponseDistanceValues[@"bottom"] floatValue]));
+  return NO;
+}
 #endif // RN_FABRIC_ENABLED
 
 @end
