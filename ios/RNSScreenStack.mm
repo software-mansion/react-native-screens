@@ -609,17 +609,6 @@
   _controller.view.frame = self.bounds;
 }
 
-- (void)invalidate
-{
-  _invalidated = YES;
-  for (UIViewController *controller in _presentedModals) {
-    [controller dismissViewControllerAnimated:NO completion:nil];
-  }
-  [_presentedModals removeAllObjects];
-  [_controller willMoveToParentViewController:nil];
-  [_controller removeFromParentViewController];
-}
-
 - (void)dismissOnReload
 {
   dispatch_async(dispatch_get_main_queue(), ^{
@@ -1006,6 +995,18 @@
   }
   return [super hitTest:point withEvent:event];
 }
+
+- (void)invalidate
+{
+  _invalidated = YES;
+  for (UIViewController *controller in _presentedModals) {
+    [controller dismissViewControllerAnimated:NO completion:nil];
+  }
+  [_presentedModals removeAllObjects];
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
+}
+
 #endif // RN_FABRIC_ENABLED
 
 @end
