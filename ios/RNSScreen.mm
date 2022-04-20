@@ -3,7 +3,6 @@
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenStack.h"
-#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
@@ -16,11 +15,11 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSConvert.h"
-#import "RNSScreenStackHeaderConfigComponentView.h"
 #else
 #import <React/RCTTouchHandler.h>
 #endif
 
+#import "RNSScreenStackHeaderConfig.h"
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 
@@ -414,15 +413,15 @@
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super mountChildComponentView:childComponentView index:index];
-  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfigComponentView class]]) {
+  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = childComponentView;
-    ((RNSScreenStackHeaderConfigComponentView *)childComponentView).screenView = self;
+    ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
   }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfigComponentView class]]) {
+  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = nil;
   }
   [super unmountChildComponentView:childComponentView index:index];

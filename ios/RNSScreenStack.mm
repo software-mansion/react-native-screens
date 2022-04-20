@@ -1,7 +1,4 @@
 #ifdef RN_FABRIC_ENABLED
-// TODO: merge this import when StackHeaderConfigComponentView is merged
-#import "RNSScreenStackHeaderConfigComponentView.h"
-
 #import <React/RCTMountingTransactionObserving.h>
 
 #import <React/UIView+React.h>
@@ -14,7 +11,6 @@
 
 #import <React/RCTSurfaceTouchHandler.h>
 #else
-#import "RNSScreenStackHeaderConfig.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTRootContentView.h>
@@ -28,6 +24,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSScreenStackHeaderConfig.h"
 
 @interface RNSScreenStackView ()
 #ifdef RN_FABRIC_ENABLED
@@ -165,9 +162,9 @@
   // TODO: Improve this merge when StackHeaderConfig is merged
 #ifdef RN_FABRIC_ENABLED
   if ([view isKindOfClass:RNSScreenView.class]) {
-    RNSScreenStackHeaderConfigComponentView *config =
-        (RNSScreenStackHeaderConfigComponentView *)((RNSScreenView *)view).config;
-    [RNSScreenStackHeaderConfigComponentView willShowViewController:viewController animated:animated withConfig:config];
+    RNSScreenStackHeaderConfig *config =
+        (RNSScreenStackHeaderConfig *)((RNSScreenView *)view).config;
+    [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
   }
 #else
   RNSScreenStackHeaderConfig *config = nil;
