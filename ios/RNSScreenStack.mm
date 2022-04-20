@@ -258,6 +258,11 @@
 
 - (void)didMoveToWindow
 {
+#ifdef RN_FABRIC_ENABLED
+  [super didMoveToWindow];
+  // for handling nested stacks
+  [self maybeAddToParentAndUpdateContainer];
+#else
   [super didMoveToWindow];
   if (!_invalidated) {
     // We check whether the view has been invalidated before running side-effects in didMoveToWindow
@@ -265,6 +270,7 @@
     // to a window despite the fact it has been removed from the React Native view hierarchy.
     [self maybeAddToParentAndUpdateContainer];
   }
+#endif
 }
 
 - (void)maybeAddToParentAndUpdateContainer
