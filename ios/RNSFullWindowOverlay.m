@@ -74,6 +74,18 @@
     if (_touchHandler == nil) {
       _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
     }
+
+    /**
+     * Reattach the RNSFullWindowOverlayContainer to the current
+     * window if it's not nil and has no superview. This scenario
+     * happens when another UIWindow is opened, causing the
+     * current RNSFullWindowOverlayContainer to be removed (see the 
+     * `removeFromSuperview` logic above) from its superview.
+     */
+    if (_container != nil && _container.superview == nil) {
+      [self show];
+    }
+
     [_touchHandler attachToView:_container];
   }
 }
