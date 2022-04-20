@@ -214,12 +214,6 @@
   }
 }
 
-- (void)removeReactSubview:(RNSScreenView *)subview
-{
-  subview.reactSuperview = nil;
-  [_reactSubviews removeObject:subview];
-}
-
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
@@ -938,6 +932,13 @@
   }
   subview.reactSuperview = self;
   [_reactSubviews insertObject:subview atIndex:atIndex];
+}
+
+
+- (void)removeReactSubview:(RNSScreenView *)subview
+{
+  subview.reactSuperview = nil;
+  [_reactSubviews removeObject:subview];
 }
 
 
