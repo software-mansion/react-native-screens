@@ -214,16 +214,6 @@
   }
 }
 
-- (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
-{
-  if (![subview isKindOfClass:[RNSScreenView class]]) {
-    RCTLogError(@"ScreenStack only accepts children of type Screen");
-    return;
-  }
-  subview.reactSuperview = self;
-  [_reactSubviews insertObject:subview atIndex:atIndex];
-}
-
 - (void)removeReactSubview:(RNSScreenView *)subview
 {
   subview.reactSuperview = nil;
@@ -938,6 +928,16 @@
     self.onFinishTransitioning(nil);
   }
   [RNSScreenWindowTraits updateWindowTraits];
+}
+
+- (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
+{
+  if (![subview isKindOfClass:[RNSScreenView class]]) {
+    RCTLogError(@"ScreenStack only accepts children of type Screen");
+    return;
+  }
+  subview.reactSuperview = self;
+  [_reactSubviews insertObject:subview atIndex:atIndex];
 }
 
 
