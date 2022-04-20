@@ -158,7 +158,7 @@
 
 #pragma mark - Common
 
-
+// done
 - (void)navigationController:(UINavigationController *)navigationController
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
@@ -183,7 +183,7 @@
 #endif
 }
 
-
+// done
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
   // We don't directly set presentation delegate but instead rely on the ScreenView's delegate to
@@ -212,16 +212,6 @@
     }
 #endif
   }
-}
-
-- (void)markChildUpdated
-{
-  // do nothing
-}
-
-- (void)didUpdateChildren
-{
-  // do nothing
 }
 
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
@@ -924,6 +914,16 @@
 
 #else
 #pragma mark - Paper specific
+
+- (void)markChildUpdated
+{
+  // do nothing
+}
+
+- (void)didUpdateChildren
+{
+  // do nothing
+}
 
 - (UIViewController *)reactViewController
 {
