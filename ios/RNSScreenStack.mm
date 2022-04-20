@@ -1,4 +1,5 @@
 #ifdef RN_FABRIC_ENABLED
+// TODO: merge this import when StackHeaderConfigComponentView is merged
 #import "RNSScreenStackHeaderConfigComponentView.h"
 
 #import <React/RCTMountingTransactionObserving.h>
