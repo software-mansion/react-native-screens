@@ -198,6 +198,8 @@
     // have tried to push another one during the transition
     _updatingModals = NO;
     [self updateContainer];
+    // TODO: implement onFinishTransitioning on Fabric
+#ifndef RN_FABRIC_ENABLED
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
       // main queue. We do that because onDismiss event is also enqueued and we want for the transition
@@ -208,6 +210,7 @@
         }
       });
     }
+#endif
   }
 }
 
