@@ -1194,7 +1194,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 RCT_EXPORT_MODULE()
 
-#ifndef RN_FABRIC_ENABLED
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
@@ -1228,7 +1227,6 @@ RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
-#endif // RN_FABRIC_ENABLED
 
 @end
 

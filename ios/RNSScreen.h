@@ -103,11 +103,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#ifndef RN_FABRIC_ENABLED
 @interface UIView (RNSScreen)
 - (UIViewController *)parentViewController;
 @end
-#endif
 
 @interface RNSScreenManager : RCTViewManager
 
