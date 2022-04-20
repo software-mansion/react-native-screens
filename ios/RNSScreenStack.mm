@@ -912,6 +912,12 @@
 {
   _snapshot = [_controller.topViewController.view snapshotViewAfterScreenUpdates:NO];
 }
+
+- (void)mountingTransactionWillMountWithMetadata:(MountingTransactionMetadata const &)metadata
+{
+  [self takeSnapshot];
+}
+
 #else
 #pragma mark - Paper specific
 
