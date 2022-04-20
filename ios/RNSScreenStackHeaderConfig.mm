@@ -101,22 +101,7 @@
 }
 #endif
 
-- (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
-{
-  [_reactSubviews insertObject:subview atIndex:atIndex];
-  subview.reactSuperview = self;
-}
-
-- (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
-{
-  [_reactSubviews removeObject:subview];
-}
-
-- (NSArray<UIView *> *)reactSubviews
-{
-  return _reactSubviews;
-}
-
+// done
 - (UIView *)reactSuperview
 {
   return _screenView;
@@ -657,10 +642,28 @@
   }
 }
 
+#ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
+#else
 #pragma mark - Paper specific
 
+- (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
+{
+  [_reactSubviews insertObject:subview atIndex:atIndex];
+  subview.reactSuperview = self;
+}
+
+- (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
+{
+  [_reactSubviews removeObject:subview];
+}
+
+- (NSArray<UIView *> *)reactSubviews
+{
+  return _reactSubviews;
+}
+#endif
 @end
 
 @implementation RNSScreenStackHeaderConfigManager
