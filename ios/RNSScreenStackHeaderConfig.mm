@@ -186,6 +186,7 @@
   [navctr.view setNeedsLayout];
 }
 
+// done
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
@@ -281,6 +282,7 @@
   }
 }
 
+// done
 + (void)setTitleAttibutes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
 {
   [button setTitleTextAttributes:attrs forState:UIControlStateNormal];
@@ -290,8 +292,12 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
+// done
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
+#ifdef RN_FABRIC_ENABLED
+    @throw([NSException exceptionWithName:@"UNIMPLEMENTED" reason:@"Implement" userInfo:nil]);
+#else
   BOOL hasBackButtonImage = NO;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
@@ -358,6 +364,7 @@
       }
     }
   }
+#endif // RN_FABRIC_ENABLED
   return nil;
 }
 
