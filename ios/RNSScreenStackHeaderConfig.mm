@@ -753,6 +753,12 @@
   [self updateViewControllerIfNeeded];
 }
 
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [_reactSubviews removeObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView];
+  [childComponentView removeFromSuperview];
+}
+
 #else
 #pragma mark - Paper specific
 
