@@ -657,6 +657,10 @@
   }
 }
 
+#pragma mark - Fabric specific
+
+#pragma mark - Paper specific
+
 @end
 
 @implementation RNSScreenStackHeaderConfigManager
