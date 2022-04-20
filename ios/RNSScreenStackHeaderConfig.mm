@@ -734,6 +734,25 @@
   }
 }
 
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if (![childComponentView isKindOfClass:[RNSScreenStackHeaderSubviewComponentView class]]) {
+    RCTLogError(@"ScreenStackHeader only accepts children of type ScreenStackHeaderSubview");
+    return;
+  }
+
+  RCTAssert(
+      childComponentView.superview == nil,
+      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+      self,
+      childComponentView,
+      @(index),
+      @([childComponentView.superview tag]));
+
+  [_reactSubviews insertObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView atIndex:index];
+  [self updateViewControllerIfNeeded];
+}
+
 #else
 #pragma mark - Paper specific
 
