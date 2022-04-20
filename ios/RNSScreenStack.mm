@@ -901,6 +901,11 @@
     [self maybeAddToParentAndUpdateContainer];
   });
 }
+
+- (void)takeSnapshot
+{
+  _snapshot = [_controller.topViewController.view snapshotViewAfterScreenUpdates:NO];
+}
 #else
 #pragma mark - Paper specific
 
