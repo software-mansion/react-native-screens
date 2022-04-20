@@ -40,41 +40,39 @@
 
 @implementation RNSScreenView {
   RNSScreen *_controller;
+  __weak RCTBridge *_bridge;
 #ifdef RN_FABRIC_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
 #else
-  __weak RCTBridge *_bridge;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
 #endif
 }
 
-#ifdef RN_FABRIC_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenProps>();
     _props = defaultProps;
-    _controller = [[RNSScreen alloc] initWithView:self];
-    // TODO: use default props (?)
-    _stackAnimation = RNSScreenStackAnimationDefault;
-    _stackPresentation = RNSScreenStackPresentationPush;
-    _hasStatusBarHiddenSet = NO;
-    _hasStatusBarStyleSet = NO;
-    _gestureEnabled = YES;
-    _hasStatusBarAnimationSet = NO;
-    _hasOrientationSet = NO;
-    _hasHomeIndicatorHiddenSet = NO;
+    [self initCommonProps];
   }
 
   return self;
 }
-#else
+
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
     _bridge = bridge;
+    [self initCommonProps];
+  }
+
+  return self;
+}
+
+- (void)initCommonProps
+{
     _controller = [[RNSScreen alloc] initWithView:self];
     _stackPresentation = RNSScreenStackPresentationPush;
     _stackAnimation = RNSScreenStackAnimationDefault;
@@ -86,11 +84,7 @@
     _hasStatusBarHiddenSet = NO;
     _hasOrientationSet = NO;
     _hasHomeIndicatorHiddenSet = NO;
-  }
-
-  return self;
 }
-#endif
 
 - (UIViewController *)reactViewController
 {
@@ -259,6 +253,7 @@
 
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
+  _dismissed = YES;
 #ifdef RN_FABRIC_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
@@ -267,7 +262,6 @@
         ->onDismissed(facebook::react::RNSScreenEventEmitter::OnDismissed{dismissCount : dismissCount});
   }
 #else
-  _dismissed = YES;
   if (self.onDismissed) {
     dispatch_async(dispatch_get_main_queue(), ^{
       if (self.onDismissed) {

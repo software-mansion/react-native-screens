@@ -58,6 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 @property (nonatomic, retain) NSNumber *transitionDuration;
+@property (nonatomic, readonly) BOOL dismissed;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
@@ -82,7 +83,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
-@property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) int activityState;
 @property (nonatomic) BOOL preventNativeDismiss;
 @property (nonatomic) BOOL customAnimationOnSwipe;
