@@ -58,6 +58,7 @@
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
 @property (nonatomic, retain) NSNumber *transitionDuration;
+@property (nonatomic) BOOL hideKeyboardOnSwipe;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
