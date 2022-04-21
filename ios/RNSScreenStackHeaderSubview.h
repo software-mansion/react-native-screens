@@ -19,9 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
-@property (nonatomic, weak) RCTBridge *bridge; // TODO: consider moving this to paper only section
-- (instancetype)initWithBridge:(RCTBridge *)bridge; // TODO: consider moving this to paper only section
-                                                    // right now it is possible to call this code in Fabric impl
 
 #ifndef RN_FABRIC_ENABLED
 @property (nonatomic, weak) UIView *reactSuperview;

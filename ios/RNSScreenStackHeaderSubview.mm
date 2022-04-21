@@ -18,14 +18,6 @@
 
 #pragma mark - Common
 
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super init]) {
-    _bridge = bridge;
-  }
-  return self;
-}
-
 #ifdef RN_FABRIC_ENABLED
 
 #pragma mark - Fabric specific
@@ -110,7 +102,7 @@ RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 
 - (UIView *)view
 {
-  return [[RNSScreenStackHeaderSubview alloc] initWithBridge:self.bridge];
+  return [RNSScreenStackHeaderSubview new];
 }
 
 @end
