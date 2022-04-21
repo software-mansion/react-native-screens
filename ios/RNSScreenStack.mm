@@ -1049,7 +1049,6 @@ Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
   return RNSScreenStackView.class;
 }
 
-#ifndef RN_FABRIC_ENABLED
 @implementation RNSScreenStackManager {
   NSPointerArray *_stacks;
 }
@@ -1058,6 +1057,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
+#ifndef RN_FABRIC_ENABLED
 - (UIView *)view
 {
   RNSScreenStackView *view = [[RNSScreenStackView alloc] initWithManager:self];
@@ -1067,6 +1067,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
   [_stacks addPointer:(__bridge void *)view];
   return view;
 }
+#endif // RN_FABRIC_ENABLED
 
 - (void)invalidate
 {
@@ -1077,4 +1078,3 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 }
 
 @end
-#endif
