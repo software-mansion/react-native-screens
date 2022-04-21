@@ -33,7 +33,6 @@
 @end
 
 @implementation RNSScreenView {
-  RNSScreen *_controller;
   __weak RCTBridge *_bridge;
 #ifdef RN_FABRIC_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
