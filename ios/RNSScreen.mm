@@ -787,6 +787,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 // so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
 // if the returned vc is nil, it means none of children could provide config and self does not have config either,
 // so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
+// done
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
@@ -826,6 +827,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
+// done
 - (BOOL)hasTraitSet:(RNSWindowTrait)trait
 {
   switch (trait) {
@@ -906,7 +908,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 
 #ifdef RN_FABRIC_ENABLED
-#pragma mark - Fabric
+#pragma mark - Fabric specific
 
 - (void)setViewToSnapshot:(UIView *)snapshot
 {
@@ -936,6 +938,17 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   }
   return nil;
+}
+
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+  [super willMoveToParentViewController:parent];
+  if (parent == nil) {
+    id responder = [self findFirstResponder:self.view];
+    if (responder != nil) {
+      _previousFirstResponder = responder;
+    }
+  }
 }
 #endif // RN_FABRIC_ENABLED
 
