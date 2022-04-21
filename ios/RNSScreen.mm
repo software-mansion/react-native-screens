@@ -979,6 +979,22 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 #endif
 }
+
+- (void)traverseForScrollView:(UIView *)view
+{
+  if (![[self.view valueForKey:@"_bridge"] valueForKey:@"_jsThread"]) {
+    // we don't want to send `scrollViewDidEndDecelerating` event to JS before the JS thread is ready
+    return;
+  }
+  if ([view isKindOfClass:[UIScrollView class]] &&
+      ([[(UIScrollView *)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)])) {
+    [[(UIScrollView *)view delegate] scrollViewDidEndDecelerating:(id)view];
+  }
+  [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+    [self traverseForScrollView:obj];
+  }];
+}
+
 #endif // RN_FABRIC_ENABLED
 
 @end
