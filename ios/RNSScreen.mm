@@ -995,6 +995,52 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }];
 }
 
+- (int)getIndexOfView:(UIView *)view
+{
+  return (int)[[self.view.reactSuperview reactSubviews] indexOfObject:view];
+}
+
+- (int)getParentChildrenCount
+{
+  return (int)[[self.view.reactSuperview reactSubviews] count];
+}
+
+#pragma mark - transition progress related methods
+
+- (void)setupProgressNotification
+{
+  if (self.transitionCoordinator != nil) {
+    _fakeView.alpha = 0.0;
+    [self.transitionCoordinator
+        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          [[context containerView] addSubview:self->_fakeView];
+          self->_fakeView.alpha = 1.0;
+          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        }
+        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          [self->_animationTimer setPaused:YES];
+          [self->_animationTimer invalidate];
+          [self->_fakeView removeFromSuperview];
+        }];
+  }
+}
+
+- (void)handleAnimation
+{
+  if ([[_fakeView layer] presentationLayer] != nil) {
+    CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
+    if (_currentAlpha != fakeViewAlpha) {
+      _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
+      [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
+    }
+  }
+}
+
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+{
+  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+}
 #endif // RN_FABRIC_ENABLED
 
 @end
