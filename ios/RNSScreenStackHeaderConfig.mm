@@ -973,19 +973,6 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 }
 
 RCT_ENUM_CONVERTER(
-    RNSScreenStackHeaderSubviewType,
-    (@{
-      @"back" : @(RNSScreenStackHeaderSubviewTypeBackButton),
-      @"left" : @(RNSScreenStackHeaderSubviewTypeLeft),
-      @"right" : @(RNSScreenStackHeaderSubviewTypeRight),
-      @"title" : @(RNSScreenStackHeaderSubviewTypeTitle),
-      @"center" : @(RNSScreenStackHeaderSubviewTypeCenter),
-      @"searchBar" : @(RNSScreenStackHeaderSubviewTypeSearchBar),
-    }),
-    RNSScreenStackHeaderSubviewTypeTitle,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
     UISemanticContentAttribute,
     (@{
       @"ltr" : @(UISemanticContentAttributeForceLeftToRight),
@@ -997,18 +984,3 @@ RCT_ENUM_CONVERTER(
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
 
 @end
-
-#ifndef RN_FABRIC_ENABLED
-@implementation RNSScreenStackHeaderSubviewManager
-
-RCT_EXPORT_MODULE()
-
-RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
-
-- (UIView *)view
-{
-  return [[RNSScreenStackHeaderSubview alloc] initWithBridge:self.bridge];
-}
-
-@end
-#endif // RN_FABRIC_ENABLED

@@ -67,7 +67,6 @@
 
 @interface RCTConvert (RNSScreenStackHeader)
 
-+ (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
 + (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
 
