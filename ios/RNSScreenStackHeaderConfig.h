@@ -1,7 +1,6 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
 #import <UIKit/UIKit.h>
-#import "RNSScreenStackHeaderSubviewComponentView.h"
 #else
 #import <React/RCTViewManager.h>
 // TODO: move this import when SearchBar is implemented on Fabric
@@ -10,6 +9,7 @@
 
 #import <React/RCTConvert.h>
 #import "RNSScreen.h"
+#import "RNSScreenStackHeaderSubview.h"
 
 @interface RNSScreenStackHeaderConfig :
 #ifdef RN_FABRIC_ENABLED
@@ -65,15 +65,6 @@
 @end
 #endif
 
-typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
-  RNSScreenStackHeaderSubviewTypeBackButton,
-  RNSScreenStackHeaderSubviewTypeLeft,
-  RNSScreenStackHeaderSubviewTypeRight,
-  RNSScreenStackHeaderSubviewTypeTitle,
-  RNSScreenStackHeaderSubviewTypeCenter,
-  RNSScreenStackHeaderSubviewTypeSearchBar,
-};
-
 @interface RCTConvert (RNSScreenStackHeader)
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
@@ -81,11 +72,3 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 + (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
 
 @end
-
-#ifndef RN_FABRIC_ENABLED
-@interface RNSScreenStackHeaderSubviewManager : RCTViewManager
-
-@property (nonatomic) RNSScreenStackHeaderSubviewType type;
-
-@end
-#endif
