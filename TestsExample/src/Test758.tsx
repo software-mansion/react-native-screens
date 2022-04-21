@@ -39,6 +39,7 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
 
   const searchBarOptions: SearchBarProps = {
     barTintColor: 'powderblue',
+    tintColor: 'red',
     textColor: 'red',
     hideWhenScrolling: true,
     obscureBackground: false,
