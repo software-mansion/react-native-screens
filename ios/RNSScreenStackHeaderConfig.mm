@@ -35,7 +35,6 @@
 @end
 #endif
 
-
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RN_FABRIC_ENABLED
