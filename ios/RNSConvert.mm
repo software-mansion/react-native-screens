@@ -1,5 +1,6 @@
 #import "RNSConvert.h"
 
+#ifdef RN_FABRIC_ENABLED
 @implementation RNSConvert
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
@@ -66,3 +67,5 @@
   }
 }
 @end
+
+#endif // RN_FABRIC_ENABLED
