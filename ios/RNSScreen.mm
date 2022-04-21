@@ -604,7 +604,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - Common
 
-// done
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
@@ -624,7 +623,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return self;
 }
 
-// done
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -659,7 +657,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-// done
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
@@ -700,7 +697,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-// done
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
@@ -719,7 +715,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-// done
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
@@ -755,7 +750,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-// done
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
@@ -787,7 +781,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 // so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
 // if the returned vc is nil, it means none of children could provide config and self does not have config either,
 // so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
-// done
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
@@ -827,7 +820,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
-// done
 - (BOOL)hasTraitSet:(RNSWindowTrait)trait
 {
   switch (trait) {
