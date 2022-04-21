@@ -19,9 +19,9 @@
 #import <React/RCTTouchHandler.h>
 #endif
 
-#import "RNSScreenStackHeaderConfig.h"
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
+#import "RNSScreenStackHeaderConfig.h"
 
 #import <rnscreens/RNSScreenComponentDescriptor.h>
 #import "RCTFabricComponentsPlugins.h"

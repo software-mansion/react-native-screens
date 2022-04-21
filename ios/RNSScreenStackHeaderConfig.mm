@@ -1,16 +1,15 @@
 #ifdef RN_FABRIC_ENABLED
-#import "RNSScreenStackHeaderSubviewComponentView.h"
-#import "RCTFabricComponentsPlugins.h"
+#import <React/RCTConversions.h>
+#import <React/RCTFont.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <React/RCTConversions.h>
-#import <React/RCTFont.h>
+#import "RCTFabricComponentsPlugins.h"
+#import "RNSScreenStackHeaderSubviewComponentView.h"
 #else
 // TODO: move this import when SearchBar is implemented on Fabric
-#import "RNSSearchBar.h"
 #import <React/RCTBridge.h>
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
@@ -19,11 +18,11 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import "RNSSearchBar.h"
 #endif
-#import "RNSScreenStackHeaderConfig.h"
-#import "RNSScreen.h"
 #import "./utils/RNSUIBarButtonItem.h"
-
+#import "RNSScreen.h"
+#import "RNSScreenStackHeaderConfig.h"
 
 #ifndef RN_FABRIC_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
@@ -296,7 +295,7 @@
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
 #ifdef RN_FABRIC_ENABLED
-    @throw([NSException exceptionWithName:@"UNIMPLEMENTED" reason:@"Implement" userInfo:nil]);
+  @throw([NSException exceptionWithName:@"UNIMPLEMENTED" reason:@"Implement" userInfo:nil]);
 #else
   BOOL hasBackButtonImage = NO;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
@@ -769,7 +768,8 @@
 
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
+  return facebook::react::concreteComponentDescriptorProvider<
+      facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
 - (NSString *)getFontFamilyPropValue:(std::string)propValue
@@ -805,11 +805,13 @@
   }
 }
 
-- (void)updateProps:(facebook::react::Props::Shared const &)props oldProps:(facebook::react::Props::Shared const &)oldProps
+- (void)updateProps:(facebook::react::Props::Shared const &)props
+           oldProps:(facebook::react::Props::Shared const &)oldProps
 {
   [super updateProps:props oldProps:oldProps];
 
-  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
+  const auto &oldScreenProps =
+      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(props);
 
   BOOL needsNavigationControllerLayout = !_initialPropsSet;
@@ -874,7 +876,6 @@
   _props = std::static_pointer_cast<facebook::react::RNSScreenStackHeaderConfigProps const>(props);
 }
 
-
 #else
 #pragma mark - Paper specific
 
@@ -914,7 +915,6 @@
 
 #endif
 @end
-
 
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 {

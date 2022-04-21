@@ -23,8 +23,8 @@
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
-#import "RNSScreenWindowTraits.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenWindowTraits.h"
 
 @interface RNSScreenStackView ()
 #ifdef RN_FABRIC_ENABLED
@@ -162,8 +162,7 @@
   // TODO: Improve this merge when StackHeaderConfig is merged
 #ifdef RN_FABRIC_ENABLED
   if ([view isKindOfClass:RNSScreenView.class]) {
-    RNSScreenStackHeaderConfig *config =
-        (RNSScreenStackHeaderConfig *)((RNSScreenView *)view).config;
+    RNSScreenStackHeaderConfig *config = (RNSScreenStackHeaderConfig *)((RNSScreenView *)view).config;
     [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
   }
 #else
