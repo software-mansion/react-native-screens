@@ -755,13 +755,30 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
+// done
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
+#ifdef RN_FABRIC_ENABLED
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
   if (isDisplayedWithinUINavController) {
     [_initialView updateBounds];
   }
+#else
+  // The below code makes the screen view adapt dimensions provided by the system. We take these
+  // into account only when the view is mounted under RNScreensNavigationController in which case system
+  // provides additional padding to account for possible header, and in the case when screen is
+  // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
+  // screen size
+  BOOL isDisplayedWithinUINavController =
+      [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
+  BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
+  if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
+      !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+    _lastViewFrame = self.view.frame;
+    [((RNSScreenView *)self.viewIfLoaded) updateBounds];
+  }
+#endif
 }
 
 #if !TARGET_OS_TV
