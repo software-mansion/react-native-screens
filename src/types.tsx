@@ -439,6 +439,12 @@ export interface SearchBarProps {
    */
   barTintColor?: string;
   /**
+   * The color for the cursor caret and cancel button text.
+   *
+   * @platform ios
+   */
+  tintColor?: string;
+  /**
    * The text to be used instead of default `Cancel` button text
    *
    * @platform ios
