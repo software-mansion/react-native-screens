@@ -20,9 +20,9 @@
 #import "RNSScreenStack.h"
 #endif
 
-#import "RNSScreenStackHeaderConfig.h"
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
+#import "RNSScreenStackHeaderConfig.h"
 
 @interface RNSScreenView ()
 #ifdef RN_FABRIC_ENABLED
@@ -921,7 +921,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [self.view removeFromSuperview];
   self.view = _initialView;
 }
-
 
 #else
 #pragma mark - Paper specific
