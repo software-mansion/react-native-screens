@@ -2,33 +2,27 @@
 
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
-#import "RNSScreenStack.h"
-#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
-#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-
-// TODO: Organize imports
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
+#import <React/RCTRootComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSScreenComponentDescriptor.h>
+#import "RCTFabricComponentsPlugins.h"
 #import "RNSConvert.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 #else
 #import <React/RCTTouchHandler.h>
+#import "RNSScreenStack.h"
 #endif
 
+#import "RNSScreenStackHeaderConfig.h"
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
-
-#import <rnscreens/RNSScreenComponentDescriptor.h>
-#import "RCTFabricComponentsPlugins.h"
-
-#import <React/RCTRootComponentView.h>
-#import <React/RCTSurfaceTouchHandler.h>
 
 @interface RNSScreenView ()
 #ifdef RN_FABRIC_ENABLED
@@ -39,7 +33,6 @@
 @end
 
 @implementation RNSScreenView {
-  RNSScreen *_controller;
   __weak RCTBridge *_bridge;
 #ifdef RN_FABRIC_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
@@ -50,6 +43,7 @@
 #endif
 }
 
+#ifdef RN_FABRIC_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -60,7 +54,7 @@
 
   return self;
 }
-
+#else
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
@@ -70,6 +64,7 @@
 
   return self;
 }
+#endif // RN_FABRIC_ENABLED
 
 - (void)initCommonProps
 {
@@ -397,14 +392,14 @@
   return nil;
 }
 
-// altough it is fabric specific code
+#pragma mark - Fabric specific
+#ifdef RN_FABRIC_ENABLED
+
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenComponentDescriptor>();
 }
 
-#pragma mark - Fabric specific
-#ifdef RN_FABRIC_ENABLED
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super mountChildComponentView:childComponentView index:index];
@@ -516,7 +511,7 @@
   int activityState = [activityStateOrNil intValue];
   if (activityStateOrNil != nil && activityState != _activityState) {
     _activityState = activityState;
-    [_reactSuperview markChildUpdated]
+    [_reactSuperview markChildUpdated];
   }
 }
 
@@ -581,212 +576,19 @@
 
 @end
 
+#ifdef RN_FABRIC_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return RNSScreenView.class;
 }
+#endif
 
 #pragma mark - RNSScreen
 
+@implementation RNSScreen {
 #ifdef RN_FABRIC_ENABLED
-
-@implementation RNSScreen {
   RNSScreenView *_initialView;
-}
-
-- (instancetype)initWithView:(UIView *)view
-{
-  if (self = [super init]) {
-    self.view = view;
-    if ([view isKindOfClass:[RNSScreenView class]]) {
-      _initialView = (RNSScreenView *)view;
-    } else {
-      RCTLogError(@"ScreenController can only be initialized with ScreenComponentView");
-    }
-  }
-  return self;
-}
-
-- (void)setViewToSnapshot:(UIView *)snapshot
-{
-  [self.view removeFromSuperview];
-  self.view = snapshot;
-}
-
-- (void)resetViewToScreen
-{
-  [self.view removeFromSuperview];
-  self.view = _initialView;
-}
-
-// TODO: Find out why this is executed when screen is going out
-- (void)viewWillAppear:(BOOL)animated
-{
-  [super viewWillAppear:animated];
-  [RNSScreenWindowTraits updateWindowTraits];
-  [_initialView notifyWillAppear];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-  [super viewWillDisappear:animated];
-  [_initialView notifyWillDisappear];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-  [super viewDidAppear:animated];
-  [_initialView notifyAppear];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-  [super viewDidDisappear:animated];
-  [_initialView notifyDisappear];
-  if (self.parentViewController == nil && self.presentingViewController == nil) {
-    // screen dismissed, send event
-    [_initialView notifyDismissedWithCount:1];
-  }
-}
-
-- (void)viewDidLayoutSubviews
-{
-  [super viewDidLayoutSubviews];
-  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
-  if (isDisplayedWithinUINavController) {
-    [_initialView updateBounds];
-  }
-}
-
-#if !TARGET_OS_TV
-// if the returned vc is a child, it means that it can provide config;
-// if the returned vc is self, it means that there is no child for config and self has config to provide,
-// so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
-// if the returned vc is nil, it means none of children could provide config and self does not have config either,
-// so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
-- (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
-{
-  UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
-    lastViewController = self.presentedViewController;
-    // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
-    // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
-    // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
-    // asks them by itself, so we can stop traversing here.
-    // for screen orientation, we need to start the search again from that modal
-    return !includingModals
-        ? nil
-        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
-            ?: lastViewController;
-  }
-
-  UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
-  if (lastViewController == nil) {
-    return selfOrNil;
-  } else {
-    if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the
-      // trait, we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return
-      // it, otherwise we return self if this VC has config, and nil if it doesn't we use
-      // `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
-      UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
-      if ([childScreen isKindOfClass:[RNSScreen class]]) {
-        return [(RNSScreen *)childScreen findChildVCForConfigAndTrait:trait includingModals:includingModals]
-            ?: selfOrNil;
-      } else {
-        return selfOrNil;
-      }
-    } else {
-      // child vc is not from this library, so we don't ask it
-      return selfOrNil;
-    }
-  }
-}
-
-- (BOOL)hasTraitSet:(RNSWindowTrait)trait
-{
-  switch (trait) {
-    case RNSWindowTraitStyle: {
-      return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
-    }
-    case RNSWindowTraitAnimation: {
-      return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
-    }
-    case RNSWindowTraitHidden: {
-      return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
-    }
-    case RNSWindowTraitOrientation: {
-      return ((RNSScreenView *)self.view).hasOrientationSet;
-    }
-    case RNSWindowTraitHomeIndicatorHidden: {
-      return ((RNSScreenView *)self.view).hasHomeIndicatorHiddenSet;
-    }
-    default: {
-      RCTLogError(@"Unknown trait passed: %d", (int)trait);
-    }
-  }
-  return NO;
-}
-
-- (UIViewController *)childViewControllerForStatusBarHidden
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitHidden includingModals:NO];
-  return vc == self ? nil : vc;
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-  return ((RNSScreenView *)self.view).statusBarHidden;
-}
-
-- (UIViewController *)childViewControllerForStatusBarStyle
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitStyle includingModals:NO];
-  return vc == self ? nil : vc;
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-  return [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:((RNSScreenView *)self.view).statusBarStyle];
-}
-
-- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitAnimation includingModals:NO];
-
-  if ([vc isKindOfClass:[RNSScreen class]]) {
-    return ((RNSScreenView *)vc.view).statusBarAnimation;
-  }
-  return UIStatusBarAnimationFade;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
-
-  if ([vc isKindOfClass:[RNSScreen class]]) {
-    return ((RNSScreenView *)vc.view).screenOrientation;
-  }
-  return UIInterfaceOrientationMaskAllButUpsideDown;
-}
-
-- (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitHomeIndicatorHidden includingModals:YES];
-  return vc == self ? nil : vc;
-}
-
-- (BOOL)prefersHomeIndicatorAutoHidden
-{
-  return ((RNSScreenView *)self.view).homeIndicatorHidden;
-}
-#endif
-
-@end
-
 #else
-
-@implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
   UIView *_fakeView;
@@ -797,147 +599,172 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
+#endif
 }
 
+#pragma mark - Common
+
+// done
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
     self.view = view;
+#ifdef RN_FABRIC_ENABLED
+    if ([view isKindOfClass:[RNSScreenView class]]) {
+      _initialView = (RNSScreenView *)view;
+    } else {
+      // TODO: fix this message
+      RCTLogError(@"ScreenController can only be initialized with ScreenComponentView");
+    }
+#else
     _shouldNotify = YES;
     _fakeView = [UIView new];
+#endif
   }
   return self;
 }
 
-#if !TARGET_OS_TV
-- (UIViewController *)childViewControllerForStatusBarStyle
+// done
+// TODO: Find out why this is executed when screen is going out
+- (void)viewWillAppear:(BOOL)animated
 {
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitStyle includingModals:NO];
-  return vc == self ? nil : vc;
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-  return [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:((RNSScreenView *)self.view).statusBarStyle];
-}
-
-- (UIViewController *)childViewControllerForStatusBarHidden
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitHidden includingModals:NO];
-  return vc == self ? nil : vc;
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-  return ((RNSScreenView *)self.view).statusBarHidden;
-}
-
-- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitAnimation includingModals:NO];
-
-  if ([vc isKindOfClass:[RNSScreen class]]) {
-    return ((RNSScreenView *)vc.view).statusBarAnimation;
-  }
-  return UIStatusBarAnimationFade;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
-
-  if ([vc isKindOfClass:[RNSScreen class]]) {
-    return ((RNSScreenView *)vc.view).screenOrientation;
-  }
-  return UIInterfaceOrientationMaskAllButUpsideDown;
-}
-
-- (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
-{
-  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitHomeIndicatorHidden includingModals:YES];
-  return vc == self ? nil : vc;
-}
-
-- (BOOL)prefersHomeIndicatorAutoHidden
-{
-  return ((RNSScreenView *)self.view).homeIndicatorHidden;
-}
-
-// if the returned vc is a child, it means that it can provide config;
-// if the returned vc is self, it means that there is no child for config and self has config to provide,
-// so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
-// if the returned vc is nil, it means none of children could provide config and self does not have config either,
-// so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
-- (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
-{
-  UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
-    lastViewController = self.presentedViewController;
-    // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
-    // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
-    // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
-    // asks them by itself, so we can stop traversing here.
-    // for screen orientation, we need to start the search again from that modal
-    return !includingModals
-        ? nil
-        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
-            ?: lastViewController;
-  }
-
-  UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
-  if (lastViewController == nil) {
-    return selfOrNil;
+  [super viewWillAppear:animated];
+#ifdef RN_FABRIC_ENABLED
+  [RNSScreenWindowTraits updateWindowTraits];
+  [_initialView notifyWillAppear];
+#else
+  if (!_isSwiping) {
+    [((RNSScreenView *)self.view) notifyWillAppear];
+    if (self.transitionCoordinator.isInteractive) {
+      // we started dismissing with swipe gesture
+      _isSwiping = YES;
+    }
   } else {
-    if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
-      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the
-      // trait, we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return
-      // it, otherwise we return self if this VC has config, and nil if it doesn't we use
-      // `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
-      UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
-      if ([childScreen isKindOfClass:[RNSScreen class]]) {
-        return [(RNSScreen *)childScreen findChildVCForConfigAndTrait:trait includingModals:includingModals]
-            ?: selfOrNil;
-      } else {
-        return selfOrNil;
-      }
-    } else {
-      // child vc is not from this library, so we don't ask it
-      return selfOrNil;
-    }
+    // this event is also triggered if we cancelled the swipe.
+    // The _isSwiping is still true, but we don't want to notify then
+    _shouldNotify = NO;
   }
-}
 
-- (BOOL)hasTraitSet:(RNSWindowTrait)trait
-{
-  switch (trait) {
-    case RNSWindowTraitStyle: {
-      return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
-    }
-    case RNSWindowTraitAnimation: {
-      return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
-    }
-    case RNSWindowTraitHidden: {
-      return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
-    }
-    case RNSWindowTraitOrientation: {
-      return ((RNSScreenView *)self.view).hasOrientationSet;
-    }
-    case RNSWindowTraitHomeIndicatorHidden: {
-      return ((RNSScreenView *)self.view).hasHomeIndicatorHiddenSet;
-    }
-    default: {
-      RCTLogError(@"Unknown trait passed: %d", (int)trait);
-    }
+  [self hideHeaderIfNecessary];
+
+  // as per documentation of these methods
+  _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
+
+  [RNSScreenWindowTraits updateWindowTraits];
+  if (_shouldNotify) {
+    _closing = NO;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self setupProgressNotification];
   }
-  return NO;
-}
-
 #endif
+}
 
+// done
+- (void)viewWillDisappear:(BOOL)animated
+{
+  [super viewWillDisappear:animated];
+#ifdef RN_FABRIC_ENABLED
+  [_initialView notifyWillDisappear];
+#else
+  if (!self.transitionCoordinator.isInteractive) {
+    // user might have long pressed ios 14 back button item,
+    // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
+    // We check it by calculating the difference between the index of currently displayed screen
+    // and the index of the target screen, which is the view of topViewController at this point.
+    // If the value is lower than 1, it means we are dismissing a modal, or navigating forward, or going back with JS.
+    int selfIndex = [self getIndexOfView:self.view];
+    int targetIndex = [self getIndexOfView:self.navigationController.topViewController.view];
+    _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
+  } else {
+    _dismissCount = 1;
+  }
+
+  // same flow as in viewWillAppear
+  if (!_isSwiping) {
+    [((RNSScreenView *)self.view) notifyWillDisappear];
+    if (self.transitionCoordinator.isInteractive) {
+      _isSwiping = YES;
+    }
+  } else {
+    _shouldNotify = NO;
+  }
+
+  // as per documentation of these methods
+  _goingForward = !([self isBeingDismissed] || [self isMovingFromParentViewController]);
+
+  if (_shouldNotify) {
+    _closing = YES;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self setupProgressNotification];
+  }
+#endif
+}
+
+// done
+- (void)viewDidAppear:(BOOL)animated
+{
+  [super viewDidAppear:animated];
+#ifdef RN_FABRIC_ENABLED
+  [_initialView notifyAppear];
+#else
+  if (!_isSwiping || _shouldNotify) {
+    // we are going forward or dismissing without swipe
+    // or successfully swiped back
+    [((RNSScreenView *)self.view) notifyAppear];
+    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
+  }
+
+  _isSwiping = NO;
+  _shouldNotify = YES;
+#endif
+}
+
+// done
+- (void)viewDidDisappear:(BOOL)animated
+{
+  [super viewDidDisappear:animated];
+#ifdef RN_FABRIC_ENABLED
+  [_initialView notifyDisappear];
+  if (self.parentViewController == nil && self.presentingViewController == nil) {
+    // screen dismissed, send event
+    [_initialView notifyDismissedWithCount:1];
+  }
+#else
+  if (self.parentViewController == nil && self.presentingViewController == nil) {
+    if (((RNSScreenView *)self.view).preventNativeDismiss) {
+      // if we want to prevent the native dismiss, we do not send dismissal event,
+      // but instead call `updateContainer`, which restores the JS navigation stack
+      [((RNSScreenView *)self.view).reactSuperview updateContainer];
+      [((RNSScreenView *)self.view) notifyDismissCancelledWithDismissCount:_dismissCount];
+    } else {
+      // screen dismissed, send event
+      [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
+    }
+  }
+
+  // same flow as in viewDidAppear
+  if (!_isSwiping || _shouldNotify) {
+    [((RNSScreenView *)self.view) notifyDisappear];
+    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
+  }
+
+  _isSwiping = NO;
+  _shouldNotify = YES;
+
+  [self traverseForScrollView:self.view];
+#endif
+}
+
+// done
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
-
+#ifdef RN_FABRIC_ENABLED
+  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
+  if (isDisplayedWithinUINavController) {
+    [_initialView updateBounds];
+  }
+#else
   // The below code makes the screen view adapt dimensions provided by the system. We take these
   // into account only when the view is mounted under RNScreensNavigationController in which case system
   // provides additional padding to account for possible header, and in the case when screen is
@@ -951,7 +778,153 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _lastViewFrame = self.view.frame;
     [((RNSScreenView *)self.viewIfLoaded) updateBounds];
   }
+#endif
 }
+
+#if !TARGET_OS_TV
+// if the returned vc is a child, it means that it can provide config;
+// if the returned vc is self, it means that there is no child for config and self has config to provide,
+// so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
+// if the returned vc is nil, it means none of children could provide config and self does not have config either,
+// so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
+// done
+- (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
+{
+  UIViewController *lastViewController = [[self childViewControllers] lastObject];
+  if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
+    lastViewController = self.presentedViewController;
+    // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
+    // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
+    // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
+    // asks them by itself, so we can stop traversing here.
+    // for screen orientation, we need to start the search again from that modal
+    return !includingModals
+        ? nil
+        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
+            ?: lastViewController;
+  }
+
+  UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
+  if (lastViewController == nil) {
+    return selfOrNil;
+  } else {
+    if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+      // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the
+      // trait, we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return
+      // it, otherwise we return self if this VC has config, and nil if it doesn't we use
+      // `childViewControllerForStatusBarStyle` for all options since the behavior is the same for all of them
+      UIViewController *childScreen = [lastViewController childViewControllerForStatusBarStyle];
+      if ([childScreen isKindOfClass:[RNSScreen class]]) {
+        return [(RNSScreen *)childScreen findChildVCForConfigAndTrait:trait includingModals:includingModals]
+            ?: selfOrNil;
+      } else {
+        return selfOrNil;
+      }
+    } else {
+      // child vc is not from this library, so we don't ask it
+      return selfOrNil;
+    }
+  }
+}
+
+// done
+- (BOOL)hasTraitSet:(RNSWindowTrait)trait
+{
+  switch (trait) {
+    case RNSWindowTraitStyle: {
+      return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
+    }
+    case RNSWindowTraitAnimation: {
+      return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
+    }
+    case RNSWindowTraitHidden: {
+      return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
+    }
+    case RNSWindowTraitOrientation: {
+      return ((RNSScreenView *)self.view).hasOrientationSet;
+    }
+    case RNSWindowTraitHomeIndicatorHidden: {
+      return ((RNSScreenView *)self.view).hasHomeIndicatorHiddenSet;
+    }
+    default: {
+      RCTLogError(@"Unknown trait passed: %d", (int)trait);
+    }
+  }
+  return NO;
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitHidden includingModals:NO];
+  return vc == self ? nil : vc;
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+  return ((RNSScreenView *)self.view).statusBarHidden;
+}
+
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitStyle includingModals:NO];
+  return vc == self ? nil : vc;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+  return [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:((RNSScreenView *)self.view).statusBarStyle];
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
+{
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitAnimation includingModals:NO];
+
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    return ((RNSScreenView *)vc.view).statusBarAnimation;
+  }
+  return UIStatusBarAnimationFade;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
+
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    return ((RNSScreenView *)vc.view).screenOrientation;
+  }
+  return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+
+- (UIViewController *)childViewControllerForHomeIndicatorAutoHidden
+{
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitHomeIndicatorHidden includingModals:YES];
+  return vc == self ? nil : vc;
+}
+
+- (BOOL)prefersHomeIndicatorAutoHidden
+{
+  return ((RNSScreenView *)self.view).homeIndicatorHidden;
+}
+#endif
+
+#ifdef RN_FABRIC_ENABLED
+#pragma mark - Fabric specific
+
+- (void)setViewToSnapshot:(UIView *)snapshot
+{
+  [self.view removeFromSuperview];
+  self.view = snapshot;
+}
+
+- (void)resetViewToScreen
+{
+  [self.view removeFromSuperview];
+  self.view = _initialView;
+}
+
+
+#else
+#pragma mark - Paper specific
 
 - (id)findFirstResponder:(UIView *)parent
 {
@@ -975,35 +948,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     if (responder != nil) {
       _previousFirstResponder = responder;
     }
-  }
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-  [super viewWillAppear:animated];
-
-  if (!_isSwiping) {
-    [((RNSScreenView *)self.view) notifyWillAppear];
-    if (self.transitionCoordinator.isInteractive) {
-      // we started dismissing with swipe gesture
-      _isSwiping = YES;
-    }
-  } else {
-    // this event is also triggered if we cancelled the swipe.
-    // The _isSwiping is still true, but we don't want to notify then
-    _shouldNotify = NO;
-  }
-
-  [self hideHeaderIfNecessary];
-
-  // as per documentation of these methods
-  _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
-
-  [RNSScreenWindowTraits updateWindowTraits];
-  if (_shouldNotify) {
-    _closing = NO;
-    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
-    [self setupProgressNotification];
   }
 }
 
@@ -1036,86 +980,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-  [super viewWillDisappear:animated];
-
-  if (!self.transitionCoordinator.isInteractive) {
-    // user might have long pressed ios 14 back button item,
-    // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
-    // We check it by calculating the difference between the index of currently displayed screen
-    // and the index of the target screen, which is the view of topViewController at this point.
-    // If the value is lower than 1, it means we are dismissing a modal, or navigating forward, or going back with JS.
-    int selfIndex = [self getIndexOfView:self.view];
-    int targetIndex = [self getIndexOfView:self.navigationController.topViewController.view];
-    _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
-  } else {
-    _dismissCount = 1;
-  }
-
-  // same flow as in viewWillAppear
-  if (!_isSwiping) {
-    [((RNSScreenView *)self.view) notifyWillDisappear];
-    if (self.transitionCoordinator.isInteractive) {
-      _isSwiping = YES;
-    }
-  } else {
-    _shouldNotify = NO;
-  }
-
-  // as per documentation of these methods
-  _goingForward = !([self isBeingDismissed] || [self isMovingFromParentViewController]);
-
-  if (_shouldNotify) {
-    _closing = YES;
-    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
-    [self setupProgressNotification];
-  }
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-  [super viewDidAppear:animated];
-
-  if (!_isSwiping || _shouldNotify) {
-    // we are going forward or dismissing without swipe
-    // or successfully swiped back
-    [((RNSScreenView *)self.view) notifyAppear];
-    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
-  }
-
-  _isSwiping = NO;
-  _shouldNotify = YES;
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-  [super viewDidDisappear:animated];
-
-  if (self.parentViewController == nil && self.presentingViewController == nil) {
-    if (((RNSScreenView *)self.view).preventNativeDismiss) {
-      // if we want to prevent the native dismiss, we do not send dismissal event,
-      // but instead call `updateContainer`, which restores the JS navigation stack
-      [((RNSScreenView *)self.view).reactSuperview updateContainer];
-      [((RNSScreenView *)self.view) notifyDismissCancelledWithDismissCount:_dismissCount];
-    } else {
-      // screen dismissed, send event
-      [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
-    }
-  }
-
-  // same flow as in viewDidAppear
-  if (!_isSwiping || _shouldNotify) {
-    [((RNSScreenView *)self.view) notifyDisappear];
-    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
-  }
-
-  _isSwiping = NO;
-  _shouldNotify = YES;
-
-  [self traverseForScrollView:self.view];
-}
-
 - (void)traverseForScrollView:(UIView *)view
 {
   if (![[self.view valueForKey:@"_bridge"] valueForKey:@"_jsThread"]) {
@@ -1139,14 +1003,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (int)getParentChildrenCount
 {
   return (int)[[self.view.reactSuperview reactSubviews] count];
-}
-
-- (void)notifyFinishTransitioning
-{
-  [_previousFirstResponder becomeFirstResponder];
-  _previousFirstResponder = nil;
-  // the correct Screen for appearance is set after the transition, same for orientation.
-  [RNSScreenWindowTraits updateWindowTraits];
 }
 
 #pragma mark - transition progress related methods
@@ -1185,10 +1041,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
+#endif // RN_FABRIC_ENABLED
 
 @end
-
-#endif // RN_FABRIC_ENABLED
 
 @implementation RNSScreenManager
 
@@ -1223,10 +1078,12 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 #endif
 
+#ifndef RN_FABRIC_ENABLED
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
+#endif
 
 @end
 

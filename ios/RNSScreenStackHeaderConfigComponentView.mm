@@ -3,6 +3,7 @@
 
 #import "./utils/RNSUIBarButtonItem.h"
 
+#ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFont.h>
 
@@ -666,3 +667,5 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 {
   return RNSScreenStackHeaderConfigComponentView.class;
 }
+
+#endif // RN_FABRIC_ENABLED

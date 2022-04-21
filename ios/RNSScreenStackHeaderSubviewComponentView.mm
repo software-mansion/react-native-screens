@@ -1,3 +1,4 @@
+#ifdef RN_FABRIC_ENABLED
 #import "RNSScreenStackHeaderSubviewComponentView.h"
 
 #import <React/RCTConversions.h>
@@ -75,3 +76,5 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubviewComponentView.class;
 }
+
+#endif // RN_FABRIC_ENABLED

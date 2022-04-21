@@ -1,3 +1,4 @@
+#ifdef RN_FABRIC_ENABLED
 #import <UIKit/UIKit.h>
 
 #import <React/RCTViewComponentView.h>
@@ -40,3 +41,4 @@
                     withConfig:(RNSScreenStackHeaderConfigComponentView *)config;
 
 @end
+#endif
