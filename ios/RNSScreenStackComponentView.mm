@@ -1,3 +1,4 @@
+#ifdef RN_FABRIC_ENABLED
 #import "RNSScreenStackComponentView.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackAnimator.h"
@@ -691,3 +692,5 @@ Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 {
   return RNSScreenStackComponentView.class;
 }
+
+#endif // RN_FABRIC_ENABLED

@@ -2,33 +2,27 @@
 
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
-#import "RNSScreenStack.h"
-#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
-#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-
-// TODO: Organize imports
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
+#import <React/RCTRootComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSScreenComponentDescriptor.h>
+#import "RCTFabricComponentsPlugins.h"
 #import "RNSConvert.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 #else
 #import <React/RCTTouchHandler.h>
+#import "RNSScreenStack.h"
+#import "RNSScreenStackHeaderConfig.h"
 #endif
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
-
-#import <rnscreens/RNSScreenComponentDescriptor.h>
-#import "RCTFabricComponentsPlugins.h"
-
-#import <React/RCTRootComponentView.h>
-#import <React/RCTSurfaceTouchHandler.h>
 
 @interface RNSScreenView ()
 #ifdef RN_FABRIC_ENABLED
@@ -50,6 +44,7 @@
 #endif
 }
 
+#ifdef RN_FABRIC_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -60,7 +55,7 @@
 
   return self;
 }
-
+#else
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
@@ -70,6 +65,7 @@
 
   return self;
 }
+#endif // RN_FABRIC_ENABLED
 
 - (void)initCommonProps
 {
@@ -397,14 +393,14 @@
   return nil;
 }
 
-// altough it is fabric specific code
+#pragma mark - Fabric specific
+#ifdef RN_FABRIC_ENABLED
+
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenComponentDescriptor>();
 }
 
-#pragma mark - Fabric specific
-#ifdef RN_FABRIC_ENABLED
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super mountChildComponentView:childComponentView index:index];
@@ -516,7 +512,7 @@
   int activityState = [activityStateOrNil intValue];
   if (activityStateOrNil != nil && activityState != _activityState) {
     _activityState = activityState;
-    [_reactSuperview markChildUpdated]
+    [_reactSuperview markChildUpdated];
   }
 }
 
@@ -581,10 +577,12 @@
 
 @end
 
+#ifdef RN_FABRIC_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return RNSScreenView.class;
 }
+#endif
 
 #pragma mark - RNSScreen
 
