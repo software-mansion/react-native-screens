@@ -6,8 +6,8 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
-#import "RCTFabricComponentsPlugins.h"
 #import <React/RCTConversions.h>
+#import "RCTFabricComponentsPlugins.h"
 #endif
 
 @implementation RNSScreenStackHeaderSubview {
@@ -48,11 +48,14 @@
   _isInitialValueSet = NO;
 }
 
-- (void)updateProps:(facebook::react::Props::Shared const &)props oldProps:(facebook::react::Props::Shared const &)oldProps
+- (void)updateProps:(facebook::react::Props::Shared const &)props
+           oldProps:(facebook::react::Props::Shared const &)oldProps
 {
-  const auto &newHeaderSubviewProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(props);
-  const auto &oldHeaderSubviewProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(_props);
-  
+  const auto &newHeaderSubviewProps =
+      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(props);
+  const auto &oldHeaderSubviewProps =
+      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(_props);
+
   if (newHeaderSubviewProps.type != oldHeaderSubviewProps.type) {
     _type = [RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type];
     _isInitialValueSet = YES;
@@ -63,7 +66,8 @@
 
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenStackHeaderSubviewComponentDescriptor>();
+  return facebook::react::concreteComponentDescriptorProvider<
+      facebook::react::RNSScreenStackHeaderSubviewComponentDescriptor>();
 }
 
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
@@ -132,4 +136,3 @@ RCT_ENUM_CONVERTER(
     integerValue)
 
 @end
-
