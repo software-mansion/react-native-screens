@@ -47,7 +47,7 @@ Pod::Spec.new do |s|
       ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
     end
   else 
-    s.source_files = "ios/**/*.{h,m}"
+    s.source_files = "ios/**/*.{h,m,mm}"
     s.requires_arc = true
   
     s.dependency "React-Core"
