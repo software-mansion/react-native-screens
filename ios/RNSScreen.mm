@@ -659,10 +659,45 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
+// done
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
+#ifdef RN_FABRIC_ENABLED
   [_initialView notifyWillDisappear];
+#else
+  if (!self.transitionCoordinator.isInteractive) {
+    // user might have long pressed ios 14 back button item,
+    // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
+    // We check it by calculating the difference between the index of currently displayed screen
+    // and the index of the target screen, which is the view of topViewController at this point.
+    // If the value is lower than 1, it means we are dismissing a modal, or navigating forward, or going back with JS.
+    int selfIndex = [self getIndexOfView:self.view];
+    int targetIndex = [self getIndexOfView:self.navigationController.topViewController.view];
+    _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
+  } else {
+    _dismissCount = 1;
+  }
+
+  // same flow as in viewWillAppear
+  if (!_isSwiping) {
+    [((RNSScreenView *)self.view) notifyWillDisappear];
+    if (self.transitionCoordinator.isInteractive) {
+      _isSwiping = YES;
+    }
+  } else {
+    _shouldNotify = NO;
+  }
+
+  // as per documentation of these methods
+  _goingForward = !([self isBeingDismissed] || [self isMovingFromParentViewController]);
+
+  if (_shouldNotify) {
+    _closing = YES;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self setupProgressNotification];
+  }
+#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated
