@@ -1,8 +1,11 @@
-#import <UIKit/UIKit.h>
 
+#ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
-#import <react/RCTViewManager.h>
+#import <UIKit/UIKit.h>
 #import <react/renderer/components/rnscreens/Props.h>
+#endif
+
+#import <react/RCTViewManager.h>
 #import "RNSEnums.h"
 
 NS_ASSUME_NONNULL_BEGIN
