@@ -59,11 +59,9 @@
 
 @end
 
-#ifndef RN_FABRIC_ENABLED
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
 
 @end
-#endif
 
 typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
   RNSScreenStackHeaderSubviewTypeBackButton,
