@@ -18,9 +18,9 @@
 #else
 #import <React/RCTTouchHandler.h>
 #import "RNSScreenStack.h"
-#import "RNSScreenStackHeaderConfig.h"
 #endif
 
+#import "RNSScreenStackHeaderConfig.h"
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 
@@ -585,35 +585,43 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - RNSScreen
 
-#ifdef RN_FABRIC_ENABLED
-
 @implementation RNSScreen {
+#ifdef RN_FABRIC_ENABLED
   RNSScreenView *_initialView;
+#else
+  __weak id _previousFirstResponder;
+  CGRect _lastViewFrame;
+  UIView *_fakeView;
+  CADisplayLink *_animationTimer;
+  CGFloat _currentAlpha;
+  BOOL _closing;
+  BOOL _goingForward;
+  int _dismissCount;
+  BOOL _isSwiping;
+  BOOL _shouldNotify;
+#endif
 }
 
+#pragma mark - Common
+
+// done
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
     self.view = view;
+#ifdef RN_FABRIC_ENABLED
     if ([view isKindOfClass:[RNSScreenView class]]) {
       _initialView = (RNSScreenView *)view;
     } else {
+      // TODO: fix this message
       RCTLogError(@"ScreenController can only be initialized with ScreenComponentView");
     }
+#else
+    _shouldNotify = YES;
+    _fakeView = [UIView new];
+#endif
   }
   return self;
-}
-
-- (void)setViewToSnapshot:(UIView *)snapshot
-{
-  [self.view removeFromSuperview];
-  self.view = snapshot;
-}
-
-- (void)resetViewToScreen
-{
-  [self.view removeFromSuperview];
-  self.view = _initialView;
 }
 
 // TODO: Find out why this is executed when screen is going out
@@ -779,9 +787,27 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 #endif
 
-@end
+#ifdef RN_FABRIC_ENABLED
+#pragma mark - Fabric
+
+- (void)setViewToSnapshot:(UIView *)snapshot
+{
+  [self.view removeFromSuperview];
+  self.view = snapshot;
+}
+
+- (void)resetViewToScreen
+{
+  [self.view removeFromSuperview];
+  self.view = _initialView;
+}
+
 
 #else
+#pragma mark - Paper specific
+#endif // RN_FABRIC_ENABLED
+
+@end
 
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
@@ -796,6 +822,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _shouldNotify;
 }
 
+// done 2
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
@@ -1185,8 +1212,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 @end
 
-#endif // RN_FABRIC_ENABLED
-
 @implementation RNSScreenManager
 
 RCT_EXPORT_MODULE()
@@ -1220,10 +1245,12 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 #endif
 
+#ifndef RN_FABRIC_ENABLED
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
+#endif
 
 @end
 
