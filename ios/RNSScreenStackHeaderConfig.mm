@@ -849,7 +849,6 @@ Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
   return RNSScreenStackHeaderConfig.class;
 }
 
-#ifndef RN_FABRIC_ENABLED
 @implementation RNSScreenStackHeaderConfigManager
 
 RCT_EXPORT_MODULE()
@@ -887,7 +886,6 @@ RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @end
-#endif // RN_FABRIC_ENABLED
 
 @implementation RCTConvert (RNSScreenStackHeader)
 
