@@ -700,10 +700,23 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
+// done
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
+#ifdef RN_FABRIC_ENABLED
   [_initialView notifyAppear];
+#else
+  if (!_isSwiping || _shouldNotify) {
+    // we are going forward or dismissing without swipe
+    // or successfully swiped back
+    [((RNSScreenView *)self.view) notifyAppear];
+    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
+  }
+
+  _isSwiping = NO;
+  _shouldNotify = YES;
+#endif
 }
 
 - (void)viewDidDisappear:(BOOL)animated
