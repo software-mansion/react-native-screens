@@ -719,14 +719,40 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
+// done
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
+#ifdef RN_FABRIC_ENABLED
   [_initialView notifyDisappear];
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
     [_initialView notifyDismissedWithCount:1];
   }
+#else
+  if (self.parentViewController == nil && self.presentingViewController == nil) {
+    if (((RNSScreenView *)self.view).preventNativeDismiss) {
+      // if we want to prevent the native dismiss, we do not send dismissal event,
+      // but instead call `updateContainer`, which restores the JS navigation stack
+      [((RNSScreenView *)self.view).reactSuperview updateContainer];
+      [((RNSScreenView *)self.view) notifyDismissCancelledWithDismissCount:_dismissCount];
+    } else {
+      // screen dismissed, send event
+      [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
+    }
+  }
+
+  // same flow as in viewDidAppear
+  if (!_isSwiping || _shouldNotify) {
+    [((RNSScreenView *)self.view) notifyDisappear];
+    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
+  }
+
+  _isSwiping = NO;
+  _shouldNotify = YES;
+
+  [self traverseForScrollView:self.view];
+#endif
 }
 
 - (void)viewDidLayoutSubviews
