@@ -7,7 +7,6 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RCTFabricComponentsPlugins.h"
-#import "RNSScreenStackHeaderSubviewComponentView.h"
 #else
 // TODO: move this import when SearchBar is implemented on Fabric
 #import <React/RCTBridge.h>
@@ -36,32 +35,13 @@
 @end
 #endif
 
-@implementation RNSScreenStackHeaderSubview
-
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super init]) {
-    _bridge = bridge;
-  }
-  return self;
-}
-
-- (void)reactSetFrame:(CGRect)frame
-{
-  // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
-  // makes UINavigationBar the only one to control the position of header content.
-  [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-}
-
-@end
 
 @implementation RNSScreenStackHeaderConfig {
+  NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RN_FABRIC_ENABLED
   BOOL _initialPropsSet;
-  NSMutableArray<RNSScreenStackHeaderSubviewComponentView *> *_reactSubviews;
   facebook::react::SharedColor _backgroundSharedColor;
 #else
-  NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #endif
 }
 
@@ -109,7 +89,7 @@
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
 #ifdef RN_FABRIC_ENABLED
-  for (RNSScreenStackHeaderSubviewComponentView *subview in _reactSubviews) {
+  for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     if (subview.type == facebook::react::RNSScreenStackHeaderSubviewType::Left ||
         subview.type == facebook::react::RNSScreenStackHeaderSubviewType::Right) {
       // we wrap the headerLeft/Right component in a UIBarButtonItem
@@ -582,7 +562,7 @@
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
 #ifdef RN_FABRIC_ENABLED
-  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
+  for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
         //#if !TARGET_OS_TV
@@ -695,7 +675,7 @@
 
 + (void)addSubviewsToNavItem:(UINavigationItem *)navitem withConfig:(RNSScreenStackHeaderConfig *)config
 {
-  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
+  for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
@@ -725,7 +705,7 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  if (![childComponentView isKindOfClass:[RNSScreenStackHeaderSubviewComponentView class]]) {
+  if (![childComponentView isKindOfClass:[RNSScreenStackHeaderSubview class]]) {
     RCTLogError(@"ScreenStackHeader only accepts children of type ScreenStackHeaderSubview");
     return;
   }
@@ -738,13 +718,13 @@
       @(index),
       @([childComponentView.superview tag]));
 
-  [_reactSubviews insertObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView atIndex:index];
+  [_reactSubviews insertObject:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
   [self updateViewControllerIfNeeded];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_reactSubviews removeObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView];
+  [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
 }
 
