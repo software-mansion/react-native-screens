@@ -2,6 +2,7 @@
 
 #import <React/RCTViewComponentView.h>
 #import <react/renderer/components/rnscreens/Props.h>
+#import "RNSEnums.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,14 +29,5 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 
 @end
-
-typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
-  RNSScreenStackHeaderSubviewTypeBackButton,
-  RNSScreenStackHeaderSubviewTypeLeft,
-  RNSScreenStackHeaderSubviewTypeRight,
-  RNSScreenStackHeaderSubviewTypeTitle,
-  RNSScreenStackHeaderSubviewTypeCenter,
-  RNSScreenStackHeaderSubviewTypeSearchBar,
-};
 
 NS_ASSUME_NONNULL_END

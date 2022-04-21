@@ -47,4 +47,22 @@
   }
 }
 
++ (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewTypeFromCppEquivalent:
+    (facebook::react::RNSScreenStackHeaderSubviewType)subviewType
+{
+  switch (subviewType) {
+    case facebook::react::RNSScreenStackHeaderSubviewType::Left:
+      return RNSScreenStackHeaderSubviewTypeLeft;
+    case facebook::react::RNSScreenStackHeaderSubviewType::Right:
+      return RNSScreenStackHeaderSubviewTypeRight;
+    case facebook::react::RNSScreenStackHeaderSubviewType::Title:
+      return RNSScreenStackHeaderSubviewTypeTitle;
+    case facebook::react::RNSScreenStackHeaderSubviewType::Center:
+      return RNSScreenStackHeaderSubviewTypeCenter;
+    case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar:
+      return RNSScreenStackHeaderSubviewTypeSearchBar;
+    case facebook::react::RNSScreenStackHeaderSubviewType::Back:
+      return RNSScreenStackHeaderSubviewTypeBackButton;
+  }
+}
 @end
