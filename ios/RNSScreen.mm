@@ -624,12 +624,39 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return self;
 }
 
+// done
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+#ifdef RN_FABRIC_ENABLED
   [RNSScreenWindowTraits updateWindowTraits];
   [_initialView notifyWillAppear];
+#else
+  if (!_isSwiping) {
+    [((RNSScreenView *)self.view) notifyWillAppear];
+    if (self.transitionCoordinator.isInteractive) {
+      // we started dismissing with swipe gesture
+      _isSwiping = YES;
+    }
+  } else {
+    // this event is also triggered if we cancelled the swipe.
+    // The _isSwiping is still true, but we don't want to notify then
+    _shouldNotify = NO;
+  }
+
+  [self hideHeaderIfNecessary];
+
+  // as per documentation of these methods
+  _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
+
+  [RNSScreenWindowTraits updateWindowTraits];
+  if (_shouldNotify) {
+    _closing = NO;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
+    [self setupProgressNotification];
+  }
+#endif
 }
 
 - (void)viewWillDisappear:(BOOL)animated
