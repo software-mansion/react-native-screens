@@ -30,10 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#ifndef RN_FABRIC_ENABLED
 @interface RNSScreenStackManager : RCTViewManager <RCTInvalidating>
 
 @end
-#endif
 
 NS_ASSUME_NONNULL_END
