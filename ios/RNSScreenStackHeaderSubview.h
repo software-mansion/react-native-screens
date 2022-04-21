@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 
 #import <React/RCTViewComponentView.h>
+#import <react/RCTViewManager.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
