@@ -342,17 +342,17 @@
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
 #ifdef RN_FABRIC_ENABLED
-#define EXPECTED_VIEW RCTRootComponentView
+#define RNS_EXPECTED_VIEW RCTRootComponentView
 #else
-#define EXPECTED_VIEW RCTRootView
+#define RNS_EXPECTED_VIEW RCTRootView
 #endif
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
-    if ([parent isKindOfClass:[EXPECTED_VIEW class]] || [parent isKindOfClass:[RNSScreenView class]]) {
+    if ([parent isKindOfClass:[RNS_EXPECTED_VIEW class]] || [parent isKindOfClass:[RNSScreenView class]]) {
       return YES;
     }
   }
   return NO;
-#undef EXPECTED_VIEW
+#undef RNS_EXPECTED_VIEW
 }
 
 - (void)didMoveToWindow
