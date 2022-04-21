@@ -62,6 +62,11 @@
 #endif
 }
 
+- (void)setTintColor:(UIColor *)tintColor
+{
+  [_controller.searchBar setTintColor:tintColor];
+}
+
 - (void)setTextColor:(UIColor *)textColor
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
@@ -186,6 +191,7 @@ RCT_EXPORT_VIEW_PROPERTY(hideWhenScrolling, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
 RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
 
