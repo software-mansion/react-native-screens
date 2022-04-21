@@ -421,7 +421,6 @@
 }
 #endif
 
-// done
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
@@ -542,45 +541,14 @@
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
-#ifdef RN_FABRIC_ENABLED
-  for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
-    switch (subview.type) {
-      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
-        //#if !TARGET_OS_TV
-        //        navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
-        //#endif
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.leftBarButtonItem = buttonItem;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.rightBarButtonItem = buttonItem;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
-      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
-        navitem.titleView = subview;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
-        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
-        RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
-        break;
-        ;
-      }
-    }
-  }
-#else
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
+#ifndef RN_FABRIC_ENABLED
 #if !TARGET_OS_TV
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
+#endif // RN_FABRIC_ENABLED
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
         navitem.leftBarButtonItem = buttonItem;
         break;
@@ -596,6 +564,9 @@
         break;
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
+#ifdef RN_FABRIC_ENABLED
+        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
+#else
         if (subview.subviews == nil || [subview.subviews count] == 0) {
           RCTLogWarn(
               @"Failed to attach search bar to the header. We recommend using `useLayoutEffect` when managing "
@@ -612,13 +583,19 @@
           }
 #endif
         }
+
+#endif // RN_FABRIC_ENABLED
+        break;
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
+#ifdef RN_FABRIC_ENABLED
+        RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
+#endif
         break;
+        ;
       }
     }
   }
-#endif // RN_FABRIC_ENABLED
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
