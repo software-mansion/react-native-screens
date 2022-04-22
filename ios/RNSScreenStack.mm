@@ -29,15 +29,16 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenWindowTraits.h"
 
-@interface RNSScreenStackView ()
-    <UINavigationControllerDelegate,
-     UIAdaptivePresentationControllerDelegate,
-     UIGestureRecognizerDelegate,
-     UIViewControllerTransitioningDelegate
+@interface RNSScreenStackView () <
+    UINavigationControllerDelegate,
+    UIAdaptivePresentationControllerDelegate,
+    UIGestureRecognizerDelegate,
+    UIViewControllerTransitioningDelegate
 #ifdef RN_FABRIC_ENABLED
-     , RCTMountingTransactionObserving>
+    ,
+    RCTMountingTransactionObserving>
 #else
-     >
+    >
 #endif
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
@@ -138,7 +139,7 @@
   _controller = [RNScreensNavigationController new];
   _controller.delegate = self;
 #if !TARGET_OS_TV
-    [self setupGestureHandlers];
+  [self setupGestureHandlers];
 #endif
   // we have to initialize viewControllers with a non empty array for
   // largeTitle header to render in the opened state. If it is empty
@@ -480,7 +481,8 @@
 #ifdef RN_FABRIC_ENABLED
       if (![_controller.viewControllers containsObject:top])
 #else
-      if (![_controller.viewControllers containsObject:top] && ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush)
+      if (![_controller.viewControllers containsObject:top] &&
+          ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush)
 #endif // RN_FABRIC_ENABLED
       {
         // setting new controllers with animation does `push` animation by default
