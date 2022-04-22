@@ -568,16 +568,10 @@
 
 - (void)updateContainer
 {
-#ifdef RN_FABRIC_ENABLED
-#else
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
-#ifdef RN_FABRIC_ENABLED
-    if (screen.controller != nil)
-#else
     if (!screen.dismissed && screen.controller != nil)
-#endif
     {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
@@ -594,7 +588,6 @@
 
   [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
-#endif // RN_FABRIC_ENABLED
 }
 
 - (void)layoutSubviews
