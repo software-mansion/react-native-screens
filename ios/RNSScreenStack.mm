@@ -1032,10 +1032,12 @@
 
 @end
 
+#ifdef RN_FABRIC_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 {
   return RNSScreenStackView.class;
 }
+#endif
 
 @implementation RNSScreenStackManager {
   NSPointerArray *_stacks;
