@@ -211,12 +211,11 @@
 
 - (void)didMoveToWindow
 {
-#ifdef RN_FABRIC_ENABLED
   [super didMoveToWindow];
+#ifdef RN_FABRIC_ENABLED
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
 #else
-  [super didMoveToWindow];
   if (!_invalidated) {
     // We check whether the view has been invalidated before running side-effects in didMoveToWindow
     // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
