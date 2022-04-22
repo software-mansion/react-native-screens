@@ -36,10 +36,9 @@
     UIViewControllerTransitioningDelegate
 #ifdef RN_FABRIC_ENABLED
     ,
-    RCTMountingTransactionObserving>
-#else
-    >
+    RCTMountingTransactionObserving
 #endif
+    >
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
