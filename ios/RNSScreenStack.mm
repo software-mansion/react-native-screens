@@ -156,7 +156,6 @@
 
 #pragma mark - Common
 
-// done
 - (void)navigationController:(UINavigationController *)navigationController
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
@@ -181,7 +180,6 @@
 #endif
 }
 
-// done
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
   // We don't directly set presentation delegate but instead rely on the ScreenView's delegate to
@@ -212,13 +210,11 @@
   }
 }
 
-// done
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
 }
 
-// done
 - (void)didMoveToWindow
 {
 #ifdef RN_FABRIC_ENABLED
@@ -236,7 +232,6 @@
 #endif
 }
 
-// done
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
@@ -272,7 +267,6 @@
   }
 }
 
-// done
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller
 {
   if (!controller.parentViewController) {
@@ -300,7 +294,6 @@
   }
 }
 
-// done
 - (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // prevent re-entry
@@ -435,7 +428,6 @@
   }
 }
 
-// done
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // when there is no change we return immediately
@@ -571,7 +563,6 @@
 #endif
 }
 
-// done
 - (void)updateContainer
 {
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
@@ -600,14 +591,12 @@
   [self setModalViewControllers:modalControllers];
 }
 
-// done
 - (void)layoutSubviews
 {
   [super layoutSubviews];
   _controller.view.frame = self.bounds;
 }
 
-// done
 - (void)dismissOnReload
 {
 #ifdef RN_FABRIC_ENABLED
@@ -622,7 +611,6 @@
 
 #pragma mark methods connected to transitioning
 
-// done
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
                                   animationControllerForOperation:(UINavigationControllerOperation)operation
                                                fromViewController:(UIViewController *)fromVC
@@ -643,7 +631,6 @@
   return nil;
 }
 
-// done
 - (void)cancelTouchesInParent
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
@@ -667,7 +654,6 @@
   }
 }
 
-// done
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
@@ -740,7 +726,6 @@
 }
 
 #if !TARGET_OS_TV
-// done
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
@@ -763,7 +748,6 @@
   [self addGestureRecognizer:panRecognizer];
 }
 
-// done
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
