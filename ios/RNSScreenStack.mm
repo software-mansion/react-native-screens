@@ -102,11 +102,11 @@
   BOOL _invalidated;
   BOOL _isFullWidthSwiping;
   UIPercentDrivenInteractiveTransition *_interactionController;
+  BOOL _hasLayout;
+  __weak RNSScreenStackManager *_manager;
 #ifdef RN_FABRIC_ENABLED
   UIView *_snapshot;
 #else
-  __weak RNSScreenStackManager *_manager;
-  BOOL _hasLayout;
   BOOL _updateScheduled;
 #endif
 }
@@ -129,7 +129,8 @@
 
   return self;
 }
-#else
+#endif // RN_FABRIC_ENABLED
+
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
   if (self = [super init]) {
@@ -152,7 +153,6 @@
   }
   return self;
 }
-#endif // RN_FABRIC_ENABLED
 
 #pragma mark - Common
 
@@ -1045,7 +1045,6 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
-#ifndef RN_FABRIC_ENABLED
 - (UIView *)view
 {
   RNSScreenStackView *view = [[RNSScreenStackView alloc] initWithManager:self];
@@ -1055,7 +1054,6 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
   [_stacks addPointer:(__bridge void *)view];
   return view;
 }
-#endif // RN_FABRIC_ENABLED
 
 - (void)invalidate
 {
