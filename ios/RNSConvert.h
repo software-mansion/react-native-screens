@@ -1,6 +1,3 @@
-#ifndef RNSConvert_h
-#define RNSConvert_h
-
 #ifdef RN_FABRIC_ENABLED
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
@@ -16,5 +13,3 @@
 @end
 
 #endif // RN_FABRIC_ENABLED
-
-#endif /* RNSConvert_h */

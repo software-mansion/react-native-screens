@@ -60,6 +60,11 @@ gestureResponseDistance: {
   bottom: 150,
 }
 ```
+
+###  `hideKeyboardOnSwipe` (iOS only)
+
+Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
+
 ### `homeIndicatorHidden` (iOS only)
 
 Whether the home indicator should be hidden on this screen. Defaults to `false`.
