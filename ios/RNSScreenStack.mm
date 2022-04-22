@@ -720,9 +720,9 @@
   }
   [self cancelTouchesInParent];
   return _controller.viewControllers.count >= 2;
-#endif
+#endif // !RN_FABRIC_ENABLED
 
-#endif
+#endif // TARGET_OS_TV
 }
 
 #if !TARGET_OS_TV
