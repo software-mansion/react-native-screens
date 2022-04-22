@@ -478,12 +478,8 @@
     if (![controllers containsObject:previousTop]) {
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
-#ifdef RN_FABRIC_ENABLED
-      if (![_controller.viewControllers containsObject:top])
-#else
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush)
-#endif // RN_FABRIC_ENABLED
       {
         // setting new controllers with animation does `push` animation by default
 #ifdef RN_FABRIC_ENABLED
