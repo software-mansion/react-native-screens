@@ -998,6 +998,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - transition progress related methods
 
+- (void)notifyFinishTransitioning
+{
+  [_previousFirstResponder becomeFirstResponder];
+  _previousFirstResponder = nil;
+  // the correct Screen for appearance is set after the transition, same for orientation.
+  [RNSScreenWindowTraits updateWindowTraits];
+}
+
 - (void)setupProgressNotification
 {
   if (self.transitionCoordinator != nil) {
