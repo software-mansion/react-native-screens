@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
       "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
     }
     s.platforms       = { ios: '11.0', tvos: '11.0' }
-    s.compiler_flags  = folly_compiler_flags
+    s.compiler_flags  = folly_compiler_flags + ' -DRN_FABRIC_ENABLED'
     s.source_files    = 'ios/**/*.{h,m,mm,cpp}'
     s.requires_arc    = true
   
@@ -47,7 +47,7 @@ Pod::Spec.new do |s|
       ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
     end
   else 
-    s.source_files = "ios/**/*.{h,m}"
+    s.source_files = "ios/**/*.{h,m,mm}"
     s.requires_arc = true
   
     s.dependency "React-Core"

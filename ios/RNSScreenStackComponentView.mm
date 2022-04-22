@@ -1,5 +1,6 @@
+#ifdef RN_FABRIC_ENABLED
 #import "RNSScreenStackComponentView.h"
-#import "RNSScreenComponentView.h"
+#import "RNSScreen.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfigComponentView.h"
 #import "RNSScreenWindowTraits.h"
@@ -49,7 +50,7 @@ using namespace facebook::react;
 
 @implementation RNSScreenStackComponentView {
   UINavigationController *_controller;
-  NSMutableArray<RNSScreenComponentView *> *_reactSubviews;
+  NSMutableArray<RNSScreenView *> *_reactSubviews;
   BOOL _invalidated;
   UIView *_snapshot;
   BOOL _isFullWidthSwiping;
@@ -76,7 +77,9 @@ using namespace facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  if (![childComponentView isKindOfClass:[RNSScreenComponentView class]]) {
+  // TODO: Remove this if def when merging with RNSScreenStack
+#ifdef RN_FABRIC_ENABLED
+  if (![childComponentView isKindOfClass:[RNSScreenView class]]) {
     RCTLogError(@"ScreenStack only accepts children of type Screen");
     return;
   }
@@ -89,16 +92,19 @@ using namespace facebook::react;
       @(index),
       @([childComponentView.superview tag]));
 
-  [_reactSubviews insertObject:(RNSScreenComponentView *)childComponentView atIndex:index];
-  ((RNSScreenComponentView *)childComponentView).reactSuperview = self;
+  [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
+  ((RNSScreenView *)childComponentView).reactSuperview = self;
   dispatch_async(dispatch_get_main_queue(), ^{
     [self maybeAddToParentAndUpdateContainer];
   });
+#endif
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  RNSScreenComponentView *screenChildComponent = (RNSScreenComponentView *)childComponentView;
+  // TODO: Remove this if def when merging with RNSScreenStack
+#ifdef RN_FABRIC_ENABLED
+  RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   // We should only do a snapshot of a screen that is on the top
   if (screenChildComponent == _controller.topViewController.view) {
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
@@ -124,6 +130,7 @@ using namespace facebook::react;
   dispatch_async(dispatch_get_main_queue(), ^{
     [self maybeAddToParentAndUpdateContainer];
   });
+#endif
 }
 
 - (void)takeSnapshot
@@ -152,12 +159,16 @@ using namespace facebook::react;
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
+  // TODO: Remove this if def when merging with RNSScreenStack
+#ifdef RN_FABRIC_ENABLED
+
   UIView *view = viewController.view;
-  if ([view isKindOfClass:RNSScreenComponentView.class]) {
+  if ([view isKindOfClass:RNSScreenView.class]) {
     RNSScreenStackHeaderConfigComponentView *config =
-        (RNSScreenStackHeaderConfigComponentView *)((RNSScreenComponentView *)view).config;
+        (RNSScreenStackHeaderConfigComponentView *)((RNSScreenView *)view).config;
     [RNSScreenStackHeaderConfigComponentView willShowViewController:viewController animated:animated withConfig:config];
   }
+#endif
 }
 
 - (void)maybeAddToParentAndUpdateContainer
@@ -208,7 +219,7 @@ using namespace facebook::react;
   // We don't directly set presentation delegate but instead rely on the ScreenView's delegate to
   // forward certain calls to the container (Stack).
   UIView *screenView = presentationController.presentedViewController.view;
-  if ([screenView isKindOfClass:[RNSScreenComponentView class]]) {
+  if ([screenView isKindOfClass:[RNSScreenView class]]) {
     // we trigger the update of status bar's appearance here because there is no other lifecycle method
     // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenWindowTraits updateWindowTraits];
@@ -233,6 +244,9 @@ using namespace facebook::react;
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
+  // TODO: Remove this if def when merging with RNSScreenStack
+#ifdef RN_FABRIC_ENABLED
+
   // when there is no change we return immediately
   if ([_controller.viewControllers isEqualToArray:controllers]) {
     return;
@@ -273,7 +287,7 @@ using namespace facebook::react;
   // instance. This is a workaround for header height adjustment bug (see comment
   // in the init function). Here, we need to detect if the initial empty
   // controller is still there
-  BOOL firstTimePush = ![previousTop isKindOfClass:[RNSScreenController class]];
+  BOOL firstTimePush = ![previousTop isKindOfClass:[RNSScreen class]];
 
   if (firstTimePush) {
     // nothing pushed yet
@@ -284,7 +298,7 @@ using namespace facebook::react;
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top]) {
         // setting new controllers with animation does `push` animation by default
-        auto screenController = (RNSScreenController *)top;
+        auto screenController = (RNSScreen *)top;
         [screenController resetViewToScreen];
         [_controller setViewControllers:controllers animated:YES];
       } else {
@@ -303,7 +317,7 @@ using namespace facebook::react;
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
-      auto screenController = (RNSScreenController *)top;
+      auto screenController = (RNSScreen *)top;
       [screenController resetViewToScreen];
       [_controller pushViewController:top animated:YES];
     } else {
@@ -315,6 +329,7 @@ using namespace facebook::react;
     // change wasn't on the top of the stack. We don't need animation.
     [_controller setViewControllers:controllers animated:NO];
   }
+#endif
 }
 
 - (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
@@ -413,8 +428,8 @@ using namespace facebook::react;
         }
 #endif
 
-        BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreenController class]] &&
-            ((RNSScreenComponentView *)next.view).stackAnimation != RNSScreenStackAnimationNone;
+        BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
+            ((RNSScreenView *)next.view).stackAnimation != RNSScreenStackAnimationNone;
 
         // if you want to present another modal quick enough after dismissing the previous one,
         // it will result in wrong changeRootController, see repro in
@@ -440,8 +455,8 @@ using namespace facebook::react;
   if (changeRootController.presentedViewController != nil &&
       [_presentedModals containsObject:changeRootController.presentedViewController]) {
     BOOL shouldAnimate = changeRootIndex == controllers.count &&
-        [changeRootController.presentedViewController isKindOfClass:[RNSScreenController class]] &&
-        ((RNSScreenComponentView *)changeRootController.presentedViewController.view).stackAnimation !=
+        [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
+        ((RNSScreenView *)changeRootController.presentedViewController.view).stackAnimation !=
             RNSScreenStackAnimationNone;
     [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
   } else {
@@ -453,7 +468,7 @@ using namespace facebook::react;
 {
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
-  for (RNSScreenComponentView *screen in _reactSubviews) {
+  for (RNSScreenView *screen in _reactSubviews) {
     if (screen.controller != nil) {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
@@ -480,8 +495,11 @@ using namespace facebook::react;
 
 - (void)dismissOnReload
 {
-  auto screenController = (RNSScreenController *)_controller.topViewController;
+  // TODO: Remove this ifdef when merging with RNSScreenStack
+#ifdef RN_FABRIC_ENABLED
+  auto screenController = (RNSScreen *)_controller.topViewController;
   [screenController resetViewToScreen];
+#endif
 }
 
 #pragma mark - methods connected to transitioning
@@ -526,9 +544,9 @@ using namespace facebook::react;
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-  RNSScreenComponentView *topScreen = (RNSScreenComponentView *)_controller.viewControllers.lastObject.view;
+  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
-  if (![topScreen isKindOfClass:[RNSScreenComponentView class]] || !topScreen.gestureEnabled ||
+  if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
       _controller.viewControllers.count < 2) {
     return NO;
   }
@@ -587,7 +605,7 @@ using namespace facebook::react;
 
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
-  RNSScreenComponentView *topScreen = (RNSScreenComponentView *)_controller.viewControllers.lastObject.view;
+  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
   float translation;
   float velocity;
@@ -674,3 +692,5 @@ Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 {
   return RNSScreenStackComponentView.class;
 }
+
+#endif // RN_FABRIC_ENABLED

@@ -485,6 +485,7 @@
 
 - (void)updateContainer
 {
+#ifndef RN_FABRIC_ENABLED
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
@@ -504,6 +505,7 @@
 
   [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
+#endif
 }
 
 // By default, the header buttons that are not inside the native hit area
@@ -571,6 +573,7 @@
 
 - (BOOL)isInGestureResponseDistance:(UIGestureRecognizer *)gestureRecognizer topScreen:(RNSScreenView *)topScreen
 {
+#ifndef RN_FABRIC_ENABLED
   NSDictionary *gestureResponseDistanceValues = topScreen.gestureResponseDistance;
   float x = [gestureRecognizer locationInView:gestureRecognizer.view].x;
   float y = [gestureRecognizer locationInView:gestureRecognizer.view].y;
@@ -584,6 +587,9 @@
       (gestureResponseDistanceValues[@"end"] && x > [gestureResponseDistanceValues[@"end"] floatValue]) ||
       (gestureResponseDistanceValues[@"top"] && y < [gestureResponseDistanceValues[@"top"] floatValue]) ||
       (gestureResponseDistanceValues[@"bottom"] && y > [gestureResponseDistanceValues[@"bottom"] floatValue]));
+#else
+  return NO;
+#endif
 }
 
 - (void)cancelTouchesInParent
@@ -627,6 +633,7 @@
     return NO;
   }
 
+#ifndef RN_FABRIC_ENABLED
   if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
@@ -652,6 +659,18 @@
     [self cancelTouchesInParent];
     return YES;
   }
+#else
+  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+    // it should only recognize with `customAnimationOnSwipe` set
+    return NO;
+  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    // it should only recognize with `fullScreenSwipeEnabled` set
+    return NO;
+  }
+  [self cancelTouchesInParent];
+  return _controller.viewControllers.count >= 2;
+#endif
+
 #endif
 }
 

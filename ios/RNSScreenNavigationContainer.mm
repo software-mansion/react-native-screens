@@ -17,6 +17,7 @@
 
 - (void)updateContainer
 {
+#ifndef RN_FABRIC_ENABLED
   for (RNSScreenView *screen in self.reactSubviews) {
     if (screen.activityState == RNSActivityStateOnTop) {
       // there should never be more than one screen with `RNSActivityStateOnTop`
@@ -27,6 +28,7 @@
   }
 
   [self maybeDismissVC];
+#endif
 }
 
 @end

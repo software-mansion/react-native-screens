@@ -1,13 +1,7 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStack.h"
 
-#if RN_FABRIC_ENABLED
-#import "RNSScreenComponentView.h"
-#define RNSView RNSScreenComponentView
-#else
 #import "RNSScreen.h"
-#define RNSView RNSScreenView
-#endif
 
 // proportions to default transition duration
 static const float RNSSlideOpenTransitionDurationProportion = 1;
@@ -32,15 +26,15 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext
 {
-  RNSView *screen;
+  RNSScreenView *screen;
   if (_operation == UINavigationControllerOperationPush) {
     UIViewController *toViewController =
         [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    screen = (RNSView *)toViewController.view;
+    screen = (RNSScreenView *)toViewController.view;
   } else if (_operation == UINavigationControllerOperationPop) {
     UIViewController *fromViewController =
         [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    screen = (RNSView *)fromViewController.view;
+    screen = (RNSScreenView *)fromViewController.view;
   }
 
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
@@ -62,22 +56,25 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
       [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
   toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
 
-  RNSView *screen;
+  RNSScreenView *screen;
   if (_operation == UINavigationControllerOperationPush) {
-    screen = (RNSView *)toViewController.view;
+    screen = (RNSScreenView *)toViewController.view;
   } else if (_operation == UINavigationControllerOperationPop) {
-    screen = (RNSView *)fromViewController.view;
+    screen = (RNSScreenView *)fromViewController.view;
   }
 
   if (screen != nil) {
     if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
       // we are swiping with full width gesture
+#ifndef RN_FABRIC_ENABLED
       if (screen.customAnimationOnSwipe) {
         [self animateTransitionWithStackAnimation:screen.stackAnimation
                                 transitionContext:transitionContext
                                              toVC:toViewController
                                            fromVC:fromViewController];
-      } else {
+      } else
+#endif
+      {
         // we have to provide an animation when swiping, otherwise the screen will be popped immediately,
         // so in case of no custom animation on swipe set, we provide the one closest to the default
         [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];

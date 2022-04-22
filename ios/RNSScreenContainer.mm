@@ -32,12 +32,14 @@
 
 - (UIViewController *)findActiveChildVC
 {
+#ifndef RN_FABRIC_ENABLED
   for (UIViewController *childVC in self.childViewControllers) {
     if ([childVC isKindOfClass:[RNSScreen class]] &&
         ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
       return childVC;
     }
   }
+#endif
   return [[self childViewControllers] lastObject];
 }
 
@@ -139,6 +141,7 @@
 
 - (void)updateContainer
 {
+#ifndef RN_FABRIC_ENABLED
   BOOL screenRemoved = NO;
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
@@ -188,6 +191,7 @@
   if (screenRemoved || screenAdded) {
     [self maybeDismissVC];
   }
+#endif
 }
 
 - (void)maybeDismissVC
