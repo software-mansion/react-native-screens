@@ -513,7 +513,12 @@
     } else {
       // don't really know what this case could be, but may need to handle it
       // somehow
-      [_controller setViewControllers:controllers animated:YES];
+#ifdef RN_FABRIC_ENABLED
+      BOOL shouldAnimate = YES;
+#else
+      BOOL shouldAnimate = NO;
+#endif
+      [_controller setViewControllers:controllers animated:shouldAnimate];
     }
   } else {
     // change wasn't on the top of the stack. We don't need animation.
