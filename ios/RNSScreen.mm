@@ -54,7 +54,8 @@
 
   return self;
 }
-#else
+#endif
+
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
@@ -64,7 +65,6 @@
 
   return self;
 }
-#endif // RN_FABRIC_ENABLED
 
 - (void)initCommonProps
 {
@@ -295,8 +295,10 @@
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillDisappear(facebook::react::RNSScreenEventEmitter::OnWillDisappear{});
   }
-
 #else
+  if (_hideKeyboardOnSwipe) {
+    [self endEditing:YES];
+  }
   if (self.onWillDisappear) {
     self.onWillDisappear(nil);
   }
@@ -342,17 +344,17 @@
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
 #ifdef RN_FABRIC_ENABLED
-#define EXPECTED_VIEW RCTRootComponentView
+#define RNS_EXPECTED_VIEW RCTRootComponentView
 #else
-#define EXPECTED_VIEW RCTRootView
+#define RNS_EXPECTED_VIEW RCTRootView
 #endif
   for (UIView *parent = self.superview; parent != nil; parent = parent.superview) {
-    if ([parent isKindOfClass:[EXPECTED_VIEW class]] || [parent isKindOfClass:[RNSScreenView class]]) {
+    if ([parent isKindOfClass:[RNS_EXPECTED_VIEW class]] || [parent isKindOfClass:[RNSScreenView class]]) {
       return YES;
     }
   }
   return NO;
-#undef EXPECTED_VIEW
+#undef RNS_EXPECTED_VIEW
 }
 
 - (void)didMoveToWindow
@@ -439,6 +441,7 @@
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
 
+#if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
   }
@@ -457,6 +460,7 @@
     [self setScreenOrientation:[RCTConvert UIInterfaceOrientationMask:RCTNSStringFromStringNilIfEmpty(
                                                                           newScreenProps.screenOrientation)]];
   }
+#endif
 
   if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
     [self
@@ -604,18 +608,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - Common
 
-// done
 - (instancetype)initWithView:(UIView *)view
 {
   if (self = [super init]) {
     self.view = view;
 #ifdef RN_FABRIC_ENABLED
-    if ([view isKindOfClass:[RNSScreenView class]]) {
-      _initialView = (RNSScreenView *)view;
-    } else {
-      // TODO: fix this message
-      RCTLogError(@"ScreenController can only be initialized with ScreenComponentView");
-    }
+    _initialView = (RNSScreenView *)view;
 #else
     _shouldNotify = YES;
     _fakeView = [UIView new];
@@ -624,7 +622,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return self;
 }
 
-// done
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -659,7 +656,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-// done
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
@@ -700,7 +696,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-// done
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
@@ -719,7 +714,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-// done
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
@@ -755,7 +749,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-// done
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
@@ -787,7 +780,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 // so we return self which results in asking self for preferredStatusBarStyle/Animation etc.;
 // if the returned vc is nil, it means none of children could provide config and self does not have config either,
 // so if it was asked by parent, it will fallback to parent's option, or use default option if it is the top Screen
-// done
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
@@ -827,7 +819,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
-// done
 - (BOOL)hasTraitSet:(RNSWindowTrait)trait
 {
   switch (trait) {
@@ -1006,6 +997,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 #pragma mark - transition progress related methods
 
+- (void)notifyFinishTransitioning
+{
+  [_previousFirstResponder becomeFirstResponder];
+  _previousFirstResponder = nil;
+  // the correct Screen for appearance is set after the transition, same for orientation.
+  [RNSScreenWindowTraits updateWindowTraits];
+}
+
 - (void)setupProgressNotification
 {
   if (self.transitionCoordinator != nil) {
@@ -1054,6 +1053,7 @@ RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
+RCT_EXPORT_VIEW_PROPERTY(hideKeyboardOnSwipe, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
@@ -1077,26 +1077,14 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 #endif
 
-#ifndef RN_FABRIC_ENABLED
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
-#endif
 
 @end
 
 @implementation RCTConvert (RNSScreen)
-
-RCT_ENUM_CONVERTER(
-    UIStatusBarAnimation,
-    (@{
-      @"none" : @(UIStatusBarAnimationNone),
-      @"fade" : @(UIStatusBarAnimationFade),
-      @"slide" : @(UIStatusBarAnimationSlide)
-    }),
-    UIStatusBarAnimationNone,
-    integerValue)
 
 RCT_ENUM_CONVERTER(
     RNSScreenStackPresentation,
@@ -1147,6 +1135,16 @@ RCT_ENUM_CONVERTER(
     integerValue)
 
 #if !TARGET_OS_TV
+RCT_ENUM_CONVERTER(
+    UIStatusBarAnimation,
+    (@{
+      @"none" : @(UIStatusBarAnimationNone),
+      @"fade" : @(UIStatusBarAnimationFade),
+      @"slide" : @(UIStatusBarAnimationSlide)
+    }),
+    UIStatusBarAnimationNone,
+    integerValue)
+
 RCT_ENUM_CONVERTER(
     RNSStatusBarStyle,
     (@{

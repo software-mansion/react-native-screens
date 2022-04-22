@@ -39,12 +39,12 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 #ifdef RN_FABRIC_ENABLED
-#define BASE_VIEW RCTViewComponentView
+#define RNS_BASE_VIEW RCTViewComponentView
 #else
-#define BASE_VIEW RCTView
+#define RNS_BASE_VIEW RCTView
 #endif
 
-@interface RNSScreenView : BASE_VIEW
+@interface RNSScreenView : RNS_BASE_VIEW
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL gestureEnabled;
@@ -81,6 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 
+@property (nonatomic) BOOL hideKeyboardOnSwipe;
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic) int activityState;
 @property (nonatomic) BOOL preventNativeDismiss;
