@@ -565,6 +565,7 @@
 
 - (void)updateContainer
 {
+#ifndef RN_FABRIC_ENABLED
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
@@ -589,6 +590,7 @@
 
   [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
+#endif
 }
 
 - (void)layoutSubviews
