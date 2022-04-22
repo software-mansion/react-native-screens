@@ -113,14 +113,7 @@
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackProps>();
     _props = defaultProps;
-    _reactSubviews = [NSMutableArray new];
-    _presentedModals = [NSMutableArray new];
-    _controller = [RNScreensNavigationController new];
-    _controller.delegate = self;
-    [_controller setViewControllers:@[ [UIViewController new] ]];
-#if !TARGET_OS_TV
-    [self setupGestureHandlers];
-#endif
+    [self initCommonProps];
   }
 
   return self;
@@ -133,21 +126,25 @@
     _hasLayout = NO;
     _invalidated = NO;
     _manager = manager;
-    _reactSubviews = [NSMutableArray new];
-    _presentedModals = [NSMutableArray new];
-    _controller = [[RNScreensNavigationController alloc] init];
-    _controller.delegate = self;
+    [self initCommonProps];
+  }
+  return self;
+}
 
+- (void)initCommonProps
+{
+  _reactSubviews = [NSMutableArray new];
+  _presentedModals = [NSMutableArray new];
+  _controller = [RNScreensNavigationController new];
+  _controller.delegate = self;
 #if !TARGET_OS_TV
     [self setupGestureHandlers];
 #endif
-    // we have to initialize viewControllers with a non empty array for
-    // largeTitle header to render in the opened state. If it is empty
-    // the header will render in collapsed state which is perhaps a bug
-    // in UIKit but ¯\_(ツ)_/¯
-    [_controller setViewControllers:@[ [UIViewController new] ]];
-  }
-  return self;
+  // we have to initialize viewControllers with a non empty array for
+  // largeTitle header to render in the opened state. If it is empty
+  // the header will render in collapsed state which is perhaps a bug
+  // in UIKit but ¯\_(ツ)_/¯
+  [_controller setViewControllers:@[ [UIViewController new] ]];
 }
 
 #pragma mark - Common
