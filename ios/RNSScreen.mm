@@ -613,12 +613,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (self = [super init]) {
     self.view = view;
 #ifdef RN_FABRIC_ENABLED
-    if ([view isKindOfClass:[RNSScreenView class]]) {
-      _initialView = (RNSScreenView *)view;
-    } else {
-      // TODO: fix this message
-      RCTLogError(@"ScreenController can only be initialized with ScreenComponentView");
-    }
+    _initialView = (RNSScreenView *)view;
 #else
     _shouldNotify = YES;
     _fakeView = [UIView new];
