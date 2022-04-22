@@ -54,7 +54,8 @@
 
   return self;
 }
-#else
+#endif
+
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
@@ -64,7 +65,6 @@
 
   return self;
 }
-#endif // RN_FABRIC_ENABLED
 
 - (void)initCommonProps
 {
@@ -1069,12 +1069,10 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 #endif
 
-#ifndef RN_FABRIC_ENABLED
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
-#endif
 
 @end
 
