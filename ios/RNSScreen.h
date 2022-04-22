@@ -81,6 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 
+@property (nonatomic) BOOL hideKeyboardOnSwipe;
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic) int activityState;
 @property (nonatomic) BOOL preventNativeDismiss;
