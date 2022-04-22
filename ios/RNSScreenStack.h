@@ -1,6 +1,5 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
-#import <UIKit/UIKit.h>
 #else
 #import <React/RCTUIManagerObserverCoordinator.h>
 #import <React/RCTViewManager.h>
