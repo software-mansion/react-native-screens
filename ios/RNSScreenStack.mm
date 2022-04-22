@@ -100,11 +100,9 @@
   UIPercentDrivenInteractiveTransition *_interactionController;
   BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
+  BOOL _updateScheduled;
 #ifdef RN_FABRIC_ENABLED
-  BOOL _updateScheduled;
   UIView *_snapshot;
-#else
-  BOOL _updateScheduled;
 #endif
 }
 
