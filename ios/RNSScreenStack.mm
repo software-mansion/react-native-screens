@@ -195,7 +195,8 @@
     _updatingModals = NO;
     [self updateContainer];
     // TODO: implement onFinishTransitioning on Fabric
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
       // main queue. We do that because onDismiss event is also enqueued and we want for the transition
@@ -278,7 +279,8 @@
 #if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
         [controller didMoveToParentViewController:parentView.reactViewController];
 #endif
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
@@ -345,7 +347,8 @@
 
   void (^afterTransitions)(void) = ^{
   // TODO: Implement onFinishTransitioning on Fabric
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
     if (weakSelf.onFinishTransitioning) {
       weakSelf.onFinishTransitioning(nil);
     }
@@ -565,7 +568,8 @@
 
 - (void)updateContainer
 {
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
@@ -590,7 +594,7 @@
 
   [self setPushViewControllers:pushControllers];
   [self setModalViewControllers:modalControllers];
-#endif
+#endif // RN_FABRIC_ENABLED
 }
 
 - (void)layoutSubviews
@@ -686,7 +690,17 @@
     return NO;
   }
 
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+    // it should only recognize with `customAnimationOnSwipe` set
+    return NO;
+  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    // it should only recognize with `fullScreenSwipeEnabled` set
+    return NO;
+  }
+  [self cancelTouchesInParent];
+  return _controller.viewControllers.count >= 2;
+#else
   if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
@@ -712,17 +726,7 @@
     [self cancelTouchesInParent];
     return YES;
   }
-#else
-  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
-    // it should only recognize with `customAnimationOnSwipe` set
-    return NO;
-  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    // it should only recognize with `fullScreenSwipeEnabled` set
-    return NO;
-  }
-  [self cancelTouchesInParent];
-  return _controller.viewControllers.count >= 2;
-#endif // !RN_FABRIC_ENABLED
+#endif // RN_FABRIC_ENABLED
 
 #endif // TARGET_OS_TV
 }
