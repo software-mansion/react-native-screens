@@ -30,19 +30,14 @@
 #import "RNSScreenWindowTraits.h"
 
 @interface RNSScreenStackView ()
+    <UINavigationControllerDelegate,
+     UIAdaptivePresentationControllerDelegate,
+     UIGestureRecognizerDelegate,
+     UIViewControllerTransitioningDelegate
 #ifdef RN_FABRIC_ENABLED
-    <UINavigationControllerDelegate,
-     UIAdaptivePresentationControllerDelegate,
-     UIGestureRecognizerDelegate,
-     UIViewControllerTransitioningDelegate,
-     RCTMountingTransactionObserving> {
-  BOOL _updateScheduled;
-}
+     , RCTMountingTransactionObserving>
 #else
-    <UINavigationControllerDelegate,
-     UIAdaptivePresentationControllerDelegate,
-     UIGestureRecognizerDelegate,
-     UIViewControllerTransitioningDelegate>
+     >
 #endif
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
@@ -105,6 +100,7 @@
   BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
 #ifdef RN_FABRIC_ENABLED
+  BOOL _updateScheduled;
   UIView *_snapshot;
 #else
   BOOL _updateScheduled;
