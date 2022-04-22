@@ -807,6 +807,11 @@
   // do nothing
 }
 
+- (UIViewController *)reactViewController
+{
+  return _controller;
+}
+
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
@@ -894,11 +899,6 @@
 }
 #else
 #pragma mark - Paper specific
-
-- (UIViewController *)reactViewController
-{
-  return _controller;
-}
 
 - (void)navigationController:(UINavigationController *)navigationController
        didShowViewController:(UIViewController *)viewController
