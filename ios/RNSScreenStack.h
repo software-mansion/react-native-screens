@@ -21,12 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
     UIView <RNSScreenContainerDelegate, RCTInvalidating>
 #endif
 
+- (void)markChildUpdated;
+- (void)didUpdateChildren;
+
 #ifdef RN_FABRIC_ENABLED
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
-
-- (void)markChildUpdated;
-- (void)didUpdateChildren;
 #endif // RN_FABRIC_ENABLED
 
 @end

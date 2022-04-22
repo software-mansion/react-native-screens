@@ -805,6 +805,16 @@
 }
 #endif
 
+- (void)markChildUpdated
+{
+  // do nothing
+}
+
+- (void)didUpdateChildren
+{
+  // do nothing
+}
+
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
@@ -892,16 +902,6 @@
 }
 #else
 #pragma mark - Paper specific
-
-- (void)markChildUpdated
-{
-  // do nothing
-}
-
-- (void)didUpdateChildren
-{
-  // do nothing
-}
 
 - (UIViewController *)reactViewController
 {
