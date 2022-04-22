@@ -441,6 +441,7 @@
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
 
+#if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
   }
@@ -459,6 +460,7 @@
     [self setScreenOrientation:[RCTConvert UIInterfaceOrientationMask:RCTNSStringFromStringNilIfEmpty(
                                                                           newScreenProps.screenOrientation)]];
   }
+#endif
 
   if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
     [self
@@ -1090,16 +1092,6 @@ RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 @implementation RCTConvert (RNSScreen)
 
 RCT_ENUM_CONVERTER(
-    UIStatusBarAnimation,
-    (@{
-      @"none" : @(UIStatusBarAnimationNone),
-      @"fade" : @(UIStatusBarAnimationFade),
-      @"slide" : @(UIStatusBarAnimationSlide)
-    }),
-    UIStatusBarAnimationNone,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
     RNSScreenStackPresentation,
     (@{
       @"push" : @(RNSScreenStackPresentationPush),
@@ -1148,6 +1140,16 @@ RCT_ENUM_CONVERTER(
     integerValue)
 
 #if !TARGET_OS_TV
+RCT_ENUM_CONVERTER(
+    UIStatusBarAnimation,
+    (@{
+      @"none" : @(UIStatusBarAnimationNone),
+      @"fade" : @(UIStatusBarAnimationFade),
+      @"slide" : @(UIStatusBarAnimationSlide)
+    }),
+    UIStatusBarAnimationNone,
+    integerValue)
+
 RCT_ENUM_CONVERTER(
     RNSStatusBarStyle,
     (@{
