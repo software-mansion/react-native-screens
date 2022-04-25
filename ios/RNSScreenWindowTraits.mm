@@ -55,7 +55,9 @@
   } else
 #endif
   {
-    [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsUpdateOfHomeIndicatorAutoHidden];
+    if (@available(iOS 11.0, *)) {
+      [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsUpdateOfHomeIndicatorAutoHidden];
+    }
   }
 #endif
 }
