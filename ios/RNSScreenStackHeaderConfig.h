@@ -80,10 +80,8 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 
 @end
 
-#ifndef RN_FABRIC_ENABLED
 @interface RNSScreenStackHeaderSubviewManager : RCTViewManager
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 
 @end
-#endif

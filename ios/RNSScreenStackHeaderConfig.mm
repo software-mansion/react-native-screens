@@ -1027,7 +1027,6 @@ RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurE
 
 @end
 
-#ifndef RN_FABRIC_ENABLED
 @implementation RNSScreenStackHeaderSubviewManager
 
 RCT_EXPORT_MODULE()
@@ -1040,4 +1039,3 @@ RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 }
 
 @end
-#endif // RN_FABRIC_ENABLED
