@@ -125,7 +125,6 @@
   }
   return self;
 }
-#endif // RN_FABRIC_ENABLED
 
 - (void)initCommonProps
 {
@@ -207,10 +206,6 @@
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-#ifdef RN_FABRIC_ENABLED
-  // for handling nested stacks
-  [self maybeAddToParentAndUpdateContainer];
-#else
 #ifdef RN_FABRIC_ENABLED
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
@@ -517,7 +512,6 @@
     // change wasn't on the top of the stack. We don't need animation.
     [_controller setViewControllers:controllers animated:NO];
   }
-#endif
 }
 
 // done
