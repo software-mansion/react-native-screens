@@ -916,10 +916,12 @@
 #endif
 @end
 
+#ifdef RN_FABRIC_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 {
   return RNSScreenStackHeaderConfig.class;
 }
+#endif
 
 @implementation RNSScreenStackHeaderConfigManager
 
