@@ -1,5 +1,9 @@
+#ifdef RN_FABRIC_ENABLED
+#import <React/RCTViewComponentView.h>
+#else
 #import <React/RCTUIManagerObserverCoordinator.h>
 #import <React/RCTViewManager.h>
+#endif
 
 #import "RNSScreenContainer.h"
 
@@ -9,12 +13,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSScreenStackView : UIView <RNSScreenContainerDelegate, RCTInvalidating>
-
-@property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
+@interface RNSScreenStackView :
+#ifdef RN_FABRIC_ENABLED
+    RCTViewComponentView
+#else
+    UIView <RNSScreenContainerDelegate, RCTInvalidating>
+#endif
 
 - (void)markChildUpdated;
 - (void)didUpdateChildren;
+
+#ifdef RN_FABRIC_ENABLED
+#else
+@property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
+#endif // RN_FABRIC_ENABLED
 
 @end
 
