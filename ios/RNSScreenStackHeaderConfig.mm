@@ -764,15 +764,6 @@
       facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
-- (NSString *)getFontFamilyPropValue:(std::string)propValue
-{
-  if (propValue.length() > 0) {
-    return [[NSString alloc] initWithUTF8String:propValue.c_str()];
-  } else {
-    return nil;
-  }
-}
-
 - (NSString *)stringToPropValue:(std::string)value
 {
   if (value.empty())
@@ -820,7 +811,7 @@
 
   _title = [self stringToPropValue:newScreenProps.title];
   if (newScreenProps.titleFontFamily != oldScreenProps.titleFontFamily) {
-    _titleFontFamily = [self getFontFamilyPropValue:newScreenProps.titleFontFamily];
+    _titleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontFamily);
   }
   _titleFontWeight = [self stringToPropValue:newScreenProps.titleFontWeight];
   _titleFontSize = [self getFontSizePropValue:newScreenProps.titleFontSize];
@@ -828,7 +819,7 @@
 
   _largeTitle = newScreenProps.largeTitle;
   if (newScreenProps.largeTitleFontFamily != oldScreenProps.largeTitleFontFamily) {
-    _largeTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.largeTitleFontFamily];
+    _largeTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontFamily);
   }
   _largeTitleFontWeight = [self stringToPropValue:newScreenProps.largeTitleFontWeight];
   _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
@@ -837,7 +828,7 @@
   _backTitle = [self stringToPropValue:newScreenProps.backTitle];
   ;
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
-    _backTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.backTitleFontFamily];
+    _backTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitleFontFamily);
   }
   _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
   _hideBackButton = newScreenProps.hideBackButton;
