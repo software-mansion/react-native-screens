@@ -105,6 +105,11 @@
   return _screenView;
 }
 
+- (NSArray<UIView *> *)reactSubviews
+{
+  return _reactSubviews;
+}
+
 - (void)removeFromSuperview
 {
   [super removeFromSuperview];
@@ -863,11 +868,6 @@
 - (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
 {
   [_reactSubviews removeObject:subview];
-}
-
-- (NSArray<UIView *> *)reactSubviews
-{
-  return _reactSubviews;
 }
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
