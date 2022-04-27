@@ -764,13 +764,6 @@
       facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
-- (NSString *)stringToPropValue:(std::string)value
-{
-  if (value.empty())
-    return nil;
-  return [[NSString alloc] initWithUTF8String:value.c_str()];
-}
-
 - (NSNumber *)getFontSizePropValue:(int)value
 {
   if (value > 0)
@@ -809,11 +802,11 @@
     needsNavigationControllerLayout = YES;
   }
 
-  _title = [self stringToPropValue:newScreenProps.title];
+  _title = RCTNSStringFromStringNilIfEmpty(newScreenProps.title);
   if (newScreenProps.titleFontFamily != oldScreenProps.titleFontFamily) {
     _titleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontFamily);
   }
-  _titleFontWeight = [self stringToPropValue:newScreenProps.titleFontWeight];
+  _titleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontWeight);
   _titleFontSize = [self getFontSizePropValue:newScreenProps.titleFontSize];
   _hideShadow = newScreenProps.hideShadow;
 
@@ -821,12 +814,11 @@
   if (newScreenProps.largeTitleFontFamily != oldScreenProps.largeTitleFontFamily) {
     _largeTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontFamily);
   }
-  _largeTitleFontWeight = [self stringToPropValue:newScreenProps.largeTitleFontWeight];
+  _largeTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontWeight);
   _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
 
-  _backTitle = [self stringToPropValue:newScreenProps.backTitle];
-  ;
+  _backTitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitle);
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
     _backTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitleFontFamily);
   }
