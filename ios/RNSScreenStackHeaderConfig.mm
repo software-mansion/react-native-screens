@@ -100,20 +100,17 @@
 }
 #endif
 
-// done
 - (UIView *)reactSuperview
 {
   return _screenView;
 }
 
-// done
 - (void)removeFromSuperview
 {
   [super removeFromSuperview];
   _screenView = nil;
 }
 
-// done
 // this method is never invoked by the system since this view
 // is not added to native view hierarchy so we can apply our logic
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -153,7 +150,6 @@
   return nil;
 }
 
-// done
 - (void)updateViewControllerIfNeeded
 {
   UIViewController *vc = _screenView.controller;
@@ -177,7 +173,6 @@
   }
 }
 
-// done
 - (void)layoutNavigationControllerView
 {
   // We need to layout navigation controller view after translucent prop changes, because otherwise
@@ -188,7 +183,6 @@
   [navctr.view setNeedsLayout];
 }
 
-// done
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
@@ -284,7 +278,6 @@
   }
 }
 
-// done
 + (void)setTitleAttibutes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
 {
   [button setTitleTextAttributes:attrs forState:UIControlStateNormal];
@@ -294,7 +287,6 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
-// done
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
 #ifdef RN_FABRIC_ENABLED
@@ -370,7 +362,6 @@
   return nil;
 }
 
-// done
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated
                     withConfig:(RNSScreenStackHeaderConfig *)config
@@ -378,7 +369,6 @@
   [self updateViewController:vc withConfig:config animated:animated];
 }
 
-// done
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 + (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc
@@ -473,7 +463,6 @@
 }
 #endif
 
-// done
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
