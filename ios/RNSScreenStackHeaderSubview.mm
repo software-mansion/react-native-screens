@@ -108,10 +108,13 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 
+#ifdef RN_FABRIC_ENABLED
+#else
 - (UIView *)view
 {
   return [[RNSScreenStackHeaderSubview alloc] initWithBridge:self.bridge];
 }
+#endif
 
 @end
 
