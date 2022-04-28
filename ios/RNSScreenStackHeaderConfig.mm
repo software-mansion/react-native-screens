@@ -1,6 +1,5 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
-#import <React/RCTFont.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -10,7 +9,6 @@
 #else
 // TODO: move this import when SearchBar is implemented on Fabric
 #import <React/RCTBridge.h>
-#import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 #import <React/RCTImageView.h>
@@ -19,7 +17,8 @@
 #import <React/RCTUIManagerUtils.h>
 #import "RNSSearchBar.h"
 #endif
-#import "./utils/RNSUIBarButtonItem.h"
+#import <React/RCTFont.h>
+#import "RNSUIBarButtonItem.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -39,7 +38,6 @@
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RN_FABRIC_ENABLED
   BOOL _initialPropsSet;
-  facebook::react::SharedColor _backgroundSharedColor;
 #else
 #endif
 }
@@ -738,11 +736,7 @@
   _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
   _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
   _color = RCTUIColorFromSharedColor(newScreenProps.color);
-
-  if (_backgroundSharedColor != newScreenProps.backgroundColor) {
-    _backgroundSharedColor = newScreenProps.backgroundColor;
-    _backgroundColor = RCTUIColorFromSharedColor(_backgroundSharedColor);
-  }
+  _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
 
   [self updateViewControllerIfNeeded];
 

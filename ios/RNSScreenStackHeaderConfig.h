@@ -1,6 +1,5 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
-#import <UIKit/UIKit.h>
 #else
 #import <React/RCTViewManager.h>
 // TODO: move this import when SearchBar is implemented on Fabric

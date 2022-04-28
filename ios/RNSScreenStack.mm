@@ -1,6 +1,6 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTMountingTransactionObserving.h>
-
+#import <React/RCTSurfaceTouchHandler.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -9,9 +9,7 @@
 
 #import "RCTFabricComponentsPlugins.h"
 
-#import <React/RCTSurfaceTouchHandler.h>
 #else
-
 #import <React/RCTBridge.h>
 #import <React/RCTRootContentView.h>
 #import <React/RCTShadowView.h>
@@ -265,9 +263,7 @@
 #if !TARGET_OS_TV
         _controller.interactivePopGestureRecognizer.delegate = self;
 #endif
-#ifndef RN_FABRIC_ENABLED
         [controller didMoveToParentViewController:parentView.reactViewController];
-#endif
         // On iOS pre 12 we observed that `willShowViewController` delegate method does not always
         // get triggered when the navigation controller is instantiated. As the only thing we do in
         // that delegate method is ask nav header to update to the current state it does not hurt to
@@ -994,7 +990,8 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
 - (UIView *)view
 {
   RNSScreenStackView *view = [[RNSScreenStackView alloc] initWithManager:self];
