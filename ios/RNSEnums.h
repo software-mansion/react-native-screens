@@ -1,6 +1,3 @@
-#ifndef RNSEnums_h
-#define RNSEnums_h
-
 typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
   RNSScreenStackPresentationPush,
   RNSScreenStackPresentationModal,
@@ -60,5 +57,3 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
   RNSScreenStackHeaderSubviewTypeCenter,
   RNSScreenStackHeaderSubviewTypeSearchBar,
 };
-
-#endif /* RNSEnums_h */
