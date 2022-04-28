@@ -21,7 +21,6 @@
 @property (nonatomic, weak) RNSScreenView *screenView;
 
 #ifdef RN_FABRIC_ENABLED
-// TODO: change type when StackHeaderSubview is merged (??)
 @property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubview *> *reactSubviews;
 @property (nonatomic) BOOL show;
 #else
