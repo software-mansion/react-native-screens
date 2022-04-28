@@ -219,7 +219,6 @@
 #endif
 }
 
-// done
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
@@ -255,7 +254,6 @@
   }
 }
 
-// done
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller
 {
   if (!controller.parentViewController) {
@@ -283,7 +281,6 @@
   }
 }
 
-// done
 - (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // prevent re-entry
@@ -419,7 +416,6 @@
   }
 }
 
-// done
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // when there is no change we return immediately
@@ -514,7 +510,6 @@
   }
 }
 
-// done
 - (void)updateContainer
 {
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
@@ -563,7 +558,6 @@
 
 #pragma mark methods connected to transitioning
 
-// done
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
                                   animationControllerForOperation:(UINavigationControllerOperation)operation
                                                fromViewController:(UIViewController *)fromVC
@@ -607,7 +601,6 @@
   }
 }
 
-// done
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
@@ -680,7 +673,6 @@
 }
 
 #if !TARGET_OS_TV
-// done
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
@@ -703,7 +695,6 @@
   [self addGestureRecognizer:panRecognizer];
 }
 
-// done
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
