@@ -67,7 +67,6 @@
 @implementation RNSScreenStackHeaderConfig {
 #ifdef RN_FABRIC_ENABLED
   BOOL _initialPropsSet;
-  facebook::react::SharedColor _backgroundSharedColor;
 #else
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #endif
@@ -838,11 +837,7 @@
   _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
   _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
   _color = RCTUIColorFromSharedColor(newScreenProps.color);
-
-  if (_backgroundSharedColor != newScreenProps.backgroundColor) {
-    _backgroundSharedColor = newScreenProps.backgroundColor;
-    _backgroundColor = RCTUIColorFromSharedColor(_backgroundSharedColor);
-  }
+  _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
 
   [self updateViewControllerIfNeeded];
 
