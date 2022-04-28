@@ -22,7 +22,8 @@
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
@@ -343,7 +344,8 @@
   }
 
   // TODO: implement blurEffect on Fabric
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
   }
@@ -403,15 +405,15 @@
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
+#else
   UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
     [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
   }
-#else
-  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
 #endif // RN_FABRIC_ENABLED
   return appearance;
 }
