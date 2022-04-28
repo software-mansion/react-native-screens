@@ -19,9 +19,9 @@
 #endif
 
 @property (nonatomic, weak) RNSScreenView *screenView;
+@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubview *> *reactSubviews;
 
 #ifdef RN_FABRIC_ENABLED
-@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubview *> *reactSubviews;
 @property (nonatomic) BOOL show;
 #else
 @property (nonatomic) UIBlurEffectStyle blurEffect;
