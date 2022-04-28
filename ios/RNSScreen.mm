@@ -14,7 +14,6 @@
 #import <rnscreens/RNSScreenComponentDescriptor.h>
 #import "RCTFabricComponentsPlugins.h"
 #import "RNSConvert.h"
-#import "RNSScreenStackHeaderConfigComponentView.h"
 #else
 #import <React/RCTTouchHandler.h>
 #import "RNSScreenStack.h"
@@ -405,15 +404,15 @@
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [super mountChildComponentView:childComponentView index:index];
-  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfigComponentView class]]) {
+  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = childComponentView;
-    ((RNSScreenStackHeaderConfigComponentView *)childComponentView).screenView = self;
+    ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
   }
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfigComponentView class]]) {
+  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = nil;
   }
   [super unmountChildComponentView:childComponentView index:index];

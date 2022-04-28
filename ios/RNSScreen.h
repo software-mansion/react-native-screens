@@ -38,13 +38,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface RNSScreenView :
 #ifdef RN_FABRIC_ENABLED
-#define RNS_BASE_VIEW RCTViewComponentView
+    RCTViewComponentView
 #else
-#define RNS_BASE_VIEW RCTView
+    RCTView
 #endif
-
-@interface RNSScreenView : RNS_BASE_VIEW
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
 @property (nonatomic) BOOL gestureEnabled;

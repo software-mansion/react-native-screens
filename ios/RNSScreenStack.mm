@@ -1,9 +1,6 @@
 #ifdef RN_FABRIC_ENABLED
-// TODO: merge this import when StackHeaderConfigComponentView is merged
-#import "RNSScreenStackHeaderConfigComponentView.h"
-
 #import <React/RCTMountingTransactionObserving.h>
-
+#import <React/RCTSurfaceTouchHandler.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -12,10 +9,7 @@
 
 #import "RCTFabricComponentsPlugins.h"
 
-#import <React/RCTSurfaceTouchHandler.h>
 #else
-#import "RNSScreenStackHeaderConfig.h"
-
 #import <React/RCTBridge.h>
 #import <React/RCTRootContentView.h>
 #import <React/RCTShadowView.h>
@@ -27,6 +21,7 @@
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
+#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
 @interface RNSScreenStackView () <
@@ -155,9 +150,8 @@
   // TODO: Improve this merge when StackHeaderConfig is merged
 #ifdef RN_FABRIC_ENABLED
   if ([view isKindOfClass:RNSScreenView.class]) {
-    RNSScreenStackHeaderConfigComponentView *config =
-        (RNSScreenStackHeaderConfigComponentView *)((RNSScreenView *)view).config;
-    [RNSScreenStackHeaderConfigComponentView willShowViewController:viewController animated:animated withConfig:config];
+    RNSScreenStackHeaderConfig *config = (RNSScreenStackHeaderConfig *)((RNSScreenView *)view).config;
+    [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
   }
 #else
   RNSScreenStackHeaderConfig *config = nil;
@@ -473,8 +467,7 @@
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
       if (![_controller.viewControllers containsObject:top] &&
-          ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush)
-      {
+          ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
 #ifdef RN_FABRIC_ENABLED
         auto screenController = (RNSScreen *)top;
@@ -518,7 +511,12 @@
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
-    if (!screen.dismissed && screen.controller != nil) {
+#ifdef RN_FABRIC_ENABLED
+    if (screen.controller != nil)
+#else
+    if (!screen.dismissed && screen.controller != nil)
+#endif
+    {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
@@ -992,6 +990,8 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
+#ifdef RN_FABRIC_ENABLED
+#else
 - (UIView *)view
 {
   RNSScreenStackView *view = [[RNSScreenStackView alloc] initWithManager:self];
@@ -1001,6 +1001,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
   [_stacks addPointer:(__bridge void *)view];
   return view;
 }
+#endif // RN_FABRIC_ENABLED
 
 - (void)invalidate
 {

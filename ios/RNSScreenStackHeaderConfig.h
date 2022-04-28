@@ -1,12 +1,33 @@
-#import <React/RCTConvert.h>
+#ifdef RN_FABRIC_ENABLED
+#import <React/RCTViewComponentView.h>
+#import "RNSScreenStackHeaderSubviewComponentView.h"
+#else
 #import <React/RCTViewManager.h>
-
-#import "RNSScreen.h"
+// TODO: move this import when SearchBar is implemented on Fabric
 #import "RNSSearchBar.h"
+#endif
 
-@interface RNSScreenStackHeaderConfig : UIView
+#import <React/RCTConvert.h>
+#import "RNSScreen.h"
+
+@interface RNSScreenStackHeaderConfig :
+#ifdef RN_FABRIC_ENABLED
+    RCTViewComponentView
+#else
+    UIView
+#endif
 
 @property (nonatomic, weak) RNSScreenView *screenView;
+
+#ifdef RN_FABRIC_ENABLED
+// TODO: change type when StackHeaderSubview is merged (??)
+@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubviewComponentView *> *reactSubviews;
+@property (nonatomic) BOOL show;
+#else
+@property (nonatomic) UIBlurEffectStyle blurEffect;
+@property (nonatomic) BOOL hide;
+@property (nonatomic) BOOL backButtonInCustomView;
+#endif
 
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *titleFontFamily;
@@ -17,9 +38,7 @@
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;
 @property (nonatomic, retain) UIColor *backgroundColor;
-@property (nonatomic) UIBlurEffectStyle blurEffect;
 @property (nonatomic, retain) UIColor *color;
-@property (nonatomic) BOOL hide;
 @property (nonatomic) BOOL largeTitle;
 @property (nonatomic, retain) NSString *largeTitleFontFamily;
 @property (nonatomic, retain) NSNumber *largeTitleFontSize;
@@ -28,7 +47,6 @@
 @property (nonatomic) BOOL largeTitleHideShadow;
 @property (nonatomic, retain) UIColor *largeTitleColor;
 @property (nonatomic) BOOL hideBackButton;
-@property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) BOOL disableBackButtonMenu;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;

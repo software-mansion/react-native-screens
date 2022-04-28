@@ -1,16 +1,29 @@
-#import "RNSScreenStackHeaderConfig.h"
-#import "RNSScreen.h"
-#import "RNSSearchBar.h"
-
+#ifdef RN_FABRIC_ENABLED
+#import <React/RCTConversions.h>
+#import <React/UIView+React.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTFabricComponentsPlugins.h"
+#import "RNSScreenStackHeaderSubviewComponentView.h"
+#else
+// TODO: move this import when SearchBar is implemented on Fabric
 #import <React/RCTBridge.h>
-#import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
 #import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import "RNSSearchBar.h"
+#endif
+#import <React/RCTFont.h>
+#import "RNSUIBarButtonItem.h"
+#import "RNSScreen.h"
+#import "RNSScreenStackHeaderConfig.h"
 
+#ifndef RN_FABRIC_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
@@ -20,6 +33,7 @@
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
 @end
+#endif
 
 @interface RNSScreenStackHeaderSubview : UIView
 
@@ -50,37 +64,28 @@
 
 @end
 
-@interface RNSUIBarButtonItem : UIBarButtonItem
-
-@property (nonatomic) BOOL menuHidden;
-
-@end
-
-@implementation RNSUIBarButtonItem
-
-- (void)setMenuHidden:(BOOL)menuHidden
-{
-  _menuHidden = menuHidden;
-}
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
-- (void)setMenu:(UIMenu *)menu
-{
-  if (@available(iOS 14.0, *)) {
-    if (!_menuHidden) {
-      super.menu = menu;
-    }
-  }
-}
-#endif
-
-@end
-
 @implementation RNSScreenStackHeaderConfig {
+#ifdef RN_FABRIC_ENABLED
+  BOOL _initialPropsSet;
+#else
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
+#endif
 }
 
+#ifdef RN_FABRIC_ENABLED
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackHeaderConfigProps>();
+    _props = defaultProps;
+    self.hidden = YES;
+    _show = YES;
+    _translucent = NO;
+    _reactSubviews = [NSMutableArray new];
+  }
+  return self;
+}
+#else
 - (instancetype)init
 {
   if (self = [super init]) {
@@ -90,26 +95,16 @@
   }
   return self;
 }
+#endif
 
-- (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
+- (UIView *)reactSuperview
 {
-  [_reactSubviews insertObject:subview atIndex:atIndex];
-  subview.reactSuperview = self;
-}
-
-- (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
-{
-  [_reactSubviews removeObject:subview];
+  return _screenView;
 }
 
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
-}
-
-- (UIView *)reactSuperview
-{
-  return _screenView;
 }
 
 - (void)removeFromSuperview
@@ -122,6 +117,23 @@
 // is not added to native view hierarchy so we can apply our logic
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
+#ifdef RN_FABRIC_ENABLED
+  for (RNSScreenStackHeaderSubviewComponentView *subview in _reactSubviews) {
+    if (subview.type == facebook::react::RNSScreenStackHeaderSubviewType::Left ||
+        subview.type == facebook::react::RNSScreenStackHeaderSubviewType::Right) {
+      // we wrap the headerLeft/Right component in a UIBarButtonItem
+      // so we need to use the only subview of it to retrieve the correct view
+      UIView *headerComponent = subview.subviews.firstObject;
+      // we convert the point to RNSScreenStackView since it always contains the header inside it
+      CGPoint convertedPoint = [_screenView.reactSuperview convertPoint:point toView:headerComponent];
+
+      UIView *hitTestResult = [headerComponent hitTest:convertedPoint withEvent:event];
+      if (hitTestResult != nil) {
+        return hitTestResult;
+      }
+    }
+  }
+#else
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeLeft || subview.type == RNSScreenStackHeaderSubviewTypeRight) {
       // we wrap the headerLeft/Right component in a UIBarButtonItem
@@ -136,6 +148,7 @@
       }
     }
   }
+#endif
   return nil;
 }
 
@@ -164,27 +177,12 @@
 
 - (void)layoutNavigationControllerView
 {
-  UIViewController *vc = _screenView.controller;
-  UINavigationController *navctr = vc.navigationController;
-  [navctr.view setNeedsLayout];
-}
-
-- (void)didSetProps:(NSArray<NSString *> *)changedProps
-{
-  [super didSetProps:changedProps];
-  [self updateViewControllerIfNeeded];
   // We need to layout navigation controller view after translucent prop changes, because otherwise
   // frame of RNSScreen will not be changed and screen content will remain the same size.
   // For more details look at https://github.com/software-mansion/react-native-screens/issues/1158
-  if ([changedProps containsObject:@"translucent"]) {
-    [self layoutNavigationControllerView];
-  }
-}
-
-- (void)didUpdateReactSubviews
-{
-  [super didUpdateReactSubviews];
-  [self updateViewControllerIfNeeded];
+  UIViewController *vc = _screenView.controller;
+  UINavigationController *navctr = vc.navigationController;
+  [navctr.view setNeedsLayout];
 }
 
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
@@ -293,6 +291,9 @@
 
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
+#ifdef RN_FABRIC_ENABLED
+  @throw([NSException exceptionWithName:@"UNIMPLEMENTED" reason:@"Implement" userInfo:nil]);
+#else
   BOOL hasBackButtonImage = NO;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
@@ -359,6 +360,7 @@
       }
     }
   }
+#endif // RN_FABRIC_ENABLED
   return nil;
 }
 
@@ -388,9 +390,12 @@
     appearance.backgroundColor = config.backgroundColor;
   }
 
+  // TODO: implement blurEffect on Fabric
+#ifndef RN_FABRIC_ENABLED
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
   }
+#endif
 
   if (config.hideShadow) {
     appearance.shadowColor = nil;
@@ -446,12 +451,16 @@
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
+#ifndef RN_FABRIC_ENABLED
   UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
     [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
   }
+#else
+  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
+#endif // RN_FABRIC_ENABLED
   return appearance;
 }
 #endif
@@ -468,7 +477,11 @@
       currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
 
   BOOL wasHidden = navctr.navigationBarHidden;
+#ifdef RN_FABRIC_ENABLED
+  BOOL shouldHide = config == nil || !config.show;
+#else
   BOOL shouldHide = config == nil || config.hide;
+#endif
 
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
@@ -572,6 +585,39 @@
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
+#ifdef RN_FABRIC_ENABLED
+  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
+    switch (subview.type) {
+      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
+        //#if !TARGET_OS_TV
+        //        navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
+        //#endif
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.leftBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.rightBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
+      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
+        navitem.titleView = subview;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
+        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
+        RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
+        break;
+        ;
+      }
+    }
+  }
+#else
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
@@ -615,6 +661,7 @@
       }
     }
   }
+#endif // RN_FABRIC_ENABLED
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
@@ -647,7 +694,202 @@
   }
 }
 
+#ifdef RN_FABRIC_ENABLED
+#pragma mark - Fabric specific
+
++ (void)addSubviewsToNavItem:(UINavigationItem *)navitem withConfig:(RNSScreenStackHeaderConfig *)config
+{
+  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
+    switch (subview.type) {
+      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.leftBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.rightBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
+      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
+        navitem.titleView = subview;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
+        RCTLogWarn(@"SearchBar is not yet supported in react-native-screens with Fabric enabled");
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
+        break;
+      }
+    }
+  }
+}
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  if (![childComponentView isKindOfClass:[RNSScreenStackHeaderSubviewComponentView class]]) {
+    RCTLogError(@"ScreenStackHeader only accepts children of type ScreenStackHeaderSubview");
+    return;
+  }
+
+  RCTAssert(
+      childComponentView.superview == nil,
+      @"Attempt to mount already mounted component view. (parent: %@, child: %@, index: %@, existing parent: %@)",
+      self,
+      childComponentView,
+      @(index),
+      @([childComponentView.superview tag]));
+
+  [_reactSubviews insertObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView atIndex:index];
+  [self updateViewControllerIfNeeded];
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [_reactSubviews removeObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView];
+  [childComponentView removeFromSuperview];
+}
+
+#pragma mark - RCTComponentViewProtocol
+
+- (void)prepareForRecycle
+{
+  [super prepareForRecycle];
+  _initialPropsSet = NO;
+}
+
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return facebook::react::concreteComponentDescriptorProvider<
+      facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
+}
+
+- (NSNumber *)getFontSizePropValue:(int)value
+{
+  if (value > 0)
+    return [NSNumber numberWithInt:value];
+  return nil;
+}
+
+- (UISemanticContentAttribute)getDirectionPropValue:(facebook::react::RNSScreenStackHeaderConfigDirection)direction
+{
+  switch (direction) {
+    case facebook::react::RNSScreenStackHeaderConfigDirection::Rtl:
+      return UISemanticContentAttributeForceRightToLeft;
+    case facebook::react::RNSScreenStackHeaderConfigDirection::Ltr:
+      return UISemanticContentAttributeForceLeftToRight;
+  }
+}
+
+- (void)updateProps:(facebook::react::Props::Shared const &)props
+           oldProps:(facebook::react::Props::Shared const &)oldProps
+{
+  [super updateProps:props oldProps:oldProps];
+
+  const auto &oldScreenProps =
+      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(props);
+
+  BOOL needsNavigationControllerLayout = !_initialPropsSet;
+
+  if (newScreenProps.hidden != !_show) {
+    _show = !newScreenProps.hidden;
+    needsNavigationControllerLayout = YES;
+  }
+
+  if (newScreenProps.translucent != _translucent) {
+    _translucent = newScreenProps.translucent;
+    needsNavigationControllerLayout = YES;
+  }
+
+  _title = RCTNSStringFromStringNilIfEmpty(newScreenProps.title);
+  if (newScreenProps.titleFontFamily != oldScreenProps.titleFontFamily) {
+    _titleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontFamily);
+  }
+  _titleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontWeight);
+  _titleFontSize = [self getFontSizePropValue:newScreenProps.titleFontSize];
+  _hideShadow = newScreenProps.hideShadow;
+
+  _largeTitle = newScreenProps.largeTitle;
+  if (newScreenProps.largeTitleFontFamily != oldScreenProps.largeTitleFontFamily) {
+    _largeTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontFamily);
+  }
+  _largeTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontWeight);
+  _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
+  _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
+
+  _backTitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitle);
+  if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
+    _backTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitleFontFamily);
+  }
+  _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
+  _hideBackButton = newScreenProps.hideBackButton;
+  _disableBackButtonMenu = newScreenProps.disableBackButtonMenu;
+
+  if (newScreenProps.direction != oldScreenProps.direction) {
+    _direction = [self getDirectionPropValue:newScreenProps.direction];
+  }
+
+  // We cannot compare SharedColor because it is shared value.
+  // We could compare color value, but it is more performant to just assign new value
+  _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
+  _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
+  _color = RCTUIColorFromSharedColor(newScreenProps.color);
+  _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
+
+  [self updateViewControllerIfNeeded];
+
+  if (needsNavigationControllerLayout) {
+    [self layoutNavigationControllerView];
+  }
+
+  _initialPropsSet = YES;
+  _props = std::static_pointer_cast<facebook::react::RNSScreenStackHeaderConfigProps const>(props);
+}
+
+#else
+#pragma mark - Paper specific
+
+- (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
+{
+  [_reactSubviews insertObject:subview atIndex:atIndex];
+  subview.reactSuperview = self;
+}
+
+- (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
+{
+  [_reactSubviews removeObject:subview];
+}
+
+- (void)didSetProps:(NSArray<NSString *> *)changedProps
+{
+  [super didSetProps:changedProps];
+  [self updateViewControllerIfNeeded];
+  // We need to layout navigation controller view after translucent prop changes, because otherwise
+  // frame of RNSScreen will not be changed and screen content will remain the same size.
+  // For more details look at https://github.com/software-mansion/react-native-screens/issues/1158
+  if ([changedProps containsObject:@"translucent"]) {
+    [self layoutNavigationControllerView];
+  }
+}
+
+- (void)didUpdateReactSubviews
+{
+  [super didUpdateReactSubviews];
+  [self updateViewControllerIfNeeded];
+}
+
+#endif
 @end
+
+#ifdef RN_FABRIC_ENABLED
+Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
+{
+  return RNSScreenStackHeaderConfig.class;
+}
+#endif
 
 @implementation RNSScreenStackHeaderConfigManager
 
