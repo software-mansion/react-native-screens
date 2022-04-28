@@ -84,6 +84,14 @@
 #else
 #pragma mark - Paper specific
 
+- (instancetype)initWithBridge:(RCTBridge *)bridge
+{
+  if (self = [super init]) {
+    _bridge = bridge;
+  }
+  return self;
+}
+
 - (void)reactSetFrame:(CGRect)frame
 {
   // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
@@ -102,7 +110,7 @@ RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 
 - (UIView *)view
 {
-  return [RNSScreenStackHeaderSubview new];
+  return [[RNSScreenStackHeaderSubview alloc] initWithBridge:self.bridge];
 }
 
 @end
