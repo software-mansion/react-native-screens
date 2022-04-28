@@ -20,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) RNSScreenStackHeaderSubviewType type;
 
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
 @property (nonatomic, weak) UIView *reactSuperview;
 #endif
 
