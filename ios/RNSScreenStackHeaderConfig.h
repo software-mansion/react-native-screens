@@ -19,7 +19,6 @@
 #endif
 
 @property (nonatomic, weak) RNSScreenView *screenView;
-@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubview *> *reactSubviews;
 
 #ifdef RN_FABRIC_ENABLED
 @property (nonatomic) BOOL show;
