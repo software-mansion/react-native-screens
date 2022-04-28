@@ -87,6 +87,23 @@
 // is not added to native view hierarchy so we can apply our logic
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
+#ifdef RN_FABRIC_ENABLED
+  for (RNSScreenStackHeaderSubviewComponentView *subview in _reactSubviews) {
+    if (subview.type == facebook::react::RNSScreenStackHeaderSubviewType::Left ||
+        subview.type == facebook::react::RNSScreenStackHeaderSubviewType::Right) {
+      // we wrap the headerLeft/Right component in a UIBarButtonItem
+      // so we need to use the only subview of it to retrieve the correct view
+      UIView *headerComponent = subview.subviews.firstObject;
+      // we convert the point to RNSScreenStackView since it always contains the header inside it
+      CGPoint convertedPoint = [_screenView.reactSuperview convertPoint:point toView:headerComponent];
+
+      UIView *hitTestResult = [headerComponent hitTest:convertedPoint withEvent:event];
+      if (hitTestResult != nil) {
+        return hitTestResult;
+      }
+    }
+  }
+#else
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeLeft || subview.type == RNSScreenStackHeaderSubviewTypeRight) {
       // we wrap the headerLeft/Right component in a UIBarButtonItem
@@ -101,6 +118,7 @@
       }
     }
   }
+#endif
   return nil;
 }
 
@@ -537,6 +555,39 @@
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
+#ifdef RN_FABRIC_ENABLED
+  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
+    switch (subview.type) {
+      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
+        //#if !TARGET_OS_TV
+        //        navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
+        //#endif
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.leftBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
+        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
+        navitem.rightBarButtonItem = buttonItem;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
+      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
+        navitem.titleView = subview;
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
+        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
+        break;
+      }
+      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
+        RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
+        break;
+        ;
+      }
+    }
+  }
+#else
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
@@ -591,6 +642,7 @@
       }
     }
   }
+#endif // RN_FABRIC_ENABLED
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
