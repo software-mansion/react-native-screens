@@ -68,7 +68,6 @@
 @implementation RNSScreenStackHeaderConfig {
 #ifdef RN_FABRIC_ENABLED
   BOOL _initialPropsSet;
-  NSMutableArray<RNSScreenStackHeaderSubviewComponentView *> *_reactSubviews;
   facebook::react::SharedColor _backgroundSharedColor;
 #else
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
