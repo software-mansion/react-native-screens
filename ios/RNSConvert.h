@@ -10,6 +10,9 @@
 + (RNSScreenStackAnimation)RNSScreenStackAnimationFromCppEquivalent:
     (facebook::react::RNSScreenStackAnimation)stackAnimation;
 
++ (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewTypeFromCppEquivalent:
+    (facebook::react::RNSScreenStackHeaderSubviewType)subviewType;
+
 @end
 
 #endif // RN_FABRIC_ENABLED

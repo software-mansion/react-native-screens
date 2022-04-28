@@ -1,6 +1,3 @@
-#ifndef RNSEnums_h
-#define RNSEnums_h
-
 typedef NS_ENUM(NSInteger, RNSScreenStackPresentation) {
   RNSScreenStackPresentationPush,
   RNSScreenStackPresentationModal,
@@ -52,4 +49,11 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
   RNSWindowTraitHomeIndicatorHidden,
 };
 
-#endif /* RNSEnums_h */
+typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
+  RNSScreenStackHeaderSubviewTypeBackButton,
+  RNSScreenStackHeaderSubviewTypeLeft,
+  RNSScreenStackHeaderSubviewTypeRight,
+  RNSScreenStackHeaderSubviewTypeTitle,
+  RNSScreenStackHeaderSubviewTypeCenter,
+  RNSScreenStackHeaderSubviewTypeSearchBar,
+};

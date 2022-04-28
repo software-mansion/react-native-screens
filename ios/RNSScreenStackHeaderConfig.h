@@ -1,6 +1,5 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
-#import "RNSScreenStackHeaderSubviewComponentView.h"
 #else
 #import <React/RCTViewManager.h>
 // TODO: move this import when SearchBar is implemented on Fabric
@@ -9,6 +8,7 @@
 
 #import <React/RCTConvert.h>
 #import "RNSScreen.h"
+#import "RNSScreenStackHeaderSubview.h"
 
 @interface RNSScreenStackHeaderConfig :
 #ifdef RN_FABRIC_ENABLED
@@ -20,8 +20,6 @@
 @property (nonatomic, weak) RNSScreenView *screenView;
 
 #ifdef RN_FABRIC_ENABLED
-// TODO: change type when StackHeaderSubview is merged (??)
-@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubviewComponentView *> *reactSubviews;
 @property (nonatomic) BOOL show;
 #else
 @property (nonatomic) UIBlurEffectStyle blurEffect;
@@ -62,25 +60,9 @@
 
 @end
 
-typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
-  RNSScreenStackHeaderSubviewTypeBackButton,
-  RNSScreenStackHeaderSubviewTypeLeft,
-  RNSScreenStackHeaderSubviewTypeRight,
-  RNSScreenStackHeaderSubviewTypeTitle,
-  RNSScreenStackHeaderSubviewTypeCenter,
-  RNSScreenStackHeaderSubviewTypeSearchBar,
-};
-
 @interface RCTConvert (RNSScreenStackHeader)
 
-+ (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewType:(id)json;
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
 + (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
-
-@end
-
-@interface RNSScreenStackHeaderSubviewManager : RCTViewManager
-
-@property (nonatomic) RNSScreenStackHeaderSubviewType type;
 
 @end

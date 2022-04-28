@@ -6,7 +6,6 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RCTFabricComponentsPlugins.h"
-#import "RNSScreenStackHeaderSubviewComponentView.h"
 #else
 // TODO: move this import when SearchBar is implemented on Fabric
 #import <React/RCTBridge.h>
@@ -23,7 +22,8 @@
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
@@ -35,40 +35,11 @@
 @end
 #endif
 
-@interface RNSScreenStackHeaderSubview : UIView
-
-@property (nonatomic, weak) RCTBridge *bridge;
-@property (nonatomic, weak) UIView *reactSuperview;
-@property (nonatomic) RNSScreenStackHeaderSubviewType type;
-
-- (instancetype)initWithBridge:(RCTBridge *)bridge;
-
-@end
-
-@implementation RNSScreenStackHeaderSubview
-
-- (instancetype)initWithBridge:(RCTBridge *)bridge
-{
-  if (self = [super init]) {
-    _bridge = bridge;
-  }
-  return self;
-}
-
-- (void)reactSetFrame:(CGRect)frame
-{
-  // Block any attempt to set coordinates on RNSScreenStackHeaderSubview. This
-  // makes UINavigationBar the only one to control the position of header content.
-  [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-}
-
-@end
-
 @implementation RNSScreenStackHeaderConfig {
+  NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RN_FABRIC_ENABLED
   BOOL _initialPropsSet;
 #else
-  NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #endif
 }
 
@@ -117,23 +88,6 @@
 // is not added to native view hierarchy so we can apply our logic
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-#ifdef RN_FABRIC_ENABLED
-  for (RNSScreenStackHeaderSubviewComponentView *subview in _reactSubviews) {
-    if (subview.type == facebook::react::RNSScreenStackHeaderSubviewType::Left ||
-        subview.type == facebook::react::RNSScreenStackHeaderSubviewType::Right) {
-      // we wrap the headerLeft/Right component in a UIBarButtonItem
-      // so we need to use the only subview of it to retrieve the correct view
-      UIView *headerComponent = subview.subviews.firstObject;
-      // we convert the point to RNSScreenStackView since it always contains the header inside it
-      CGPoint convertedPoint = [_screenView.reactSuperview convertPoint:point toView:headerComponent];
-
-      UIView *hitTestResult = [headerComponent hitTest:convertedPoint withEvent:event];
-      if (hitTestResult != nil) {
-        return hitTestResult;
-      }
-    }
-  }
-#else
   for (RNSScreenStackHeaderSubview *subview in _reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeLeft || subview.type == RNSScreenStackHeaderSubviewTypeRight) {
       // we wrap the headerLeft/Right component in a UIBarButtonItem
@@ -148,7 +102,6 @@
       }
     }
   }
-#endif
   return nil;
 }
 
@@ -391,7 +344,8 @@
   }
 
   // TODO: implement blurEffect on Fabric
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
   }
@@ -451,15 +405,15 @@
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
+#else
   UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
     [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
   }
-#else
-  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
 #endif // RN_FABRIC_ENABLED
   return appearance;
 }
@@ -585,45 +539,16 @@
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
-#ifdef RN_FABRIC_ENABLED
-  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
-    switch (subview.type) {
-      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
-        //#if !TARGET_OS_TV
-        //        navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
-        //#endif
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.leftBarButtonItem = buttonItem;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.rightBarButtonItem = buttonItem;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
-      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
-        navitem.titleView = subview;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
-        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
-        RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
-        break;
-        ;
-      }
-    }
-  }
-#else
+  
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
+#ifdef RN_FABRIC_ENABLED
+#else
 #if !TARGET_OS_TV
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
+#endif // RN_FABRIC_ENABLED
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
         navitem.leftBarButtonItem = buttonItem;
         break;
@@ -639,6 +564,9 @@
         break;
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
+#ifdef RN_FABRIC_ENABLED
+        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
+#else
         if (subview.subviews == nil || [subview.subviews count] == 0) {
           RCTLogWarn(
               @"Failed to attach search bar to the header. We recommend using `useLayoutEffect` when managing "
@@ -655,13 +583,18 @@
           }
 #endif
         }
+
+#endif // RN_FABRIC_ENABLED
+        break;
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
+#ifdef RN_FABRIC_ENABLED
+        RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
+#endif
         break;
       }
     }
   }
-#endif // RN_FABRIC_ENABLED
 
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
@@ -697,39 +630,9 @@
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
-+ (void)addSubviewsToNavItem:(UINavigationItem *)navitem withConfig:(RNSScreenStackHeaderConfig *)config
-{
-  for (RNSScreenStackHeaderSubviewComponentView *subview in config.reactSubviews) {
-    switch (subview.type) {
-      case facebook::react::RNSScreenStackHeaderSubviewType::Left: {
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.leftBarButtonItem = buttonItem;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Right: {
-        UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
-        navitem.rightBarButtonItem = buttonItem;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Center:
-      case facebook::react::RNSScreenStackHeaderSubviewType::Title: {
-        navitem.titleView = subview;
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::SearchBar: {
-        RCTLogWarn(@"SearchBar is not yet supported in react-native-screens with Fabric enabled");
-        break;
-      }
-      case facebook::react::RNSScreenStackHeaderSubviewType::Back: {
-        break;
-      }
-    }
-  }
-}
-
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  if (![childComponentView isKindOfClass:[RNSScreenStackHeaderSubviewComponentView class]]) {
+  if (![childComponentView isKindOfClass:[RNSScreenStackHeaderSubview class]]) {
     RCTLogError(@"ScreenStackHeader only accepts children of type ScreenStackHeaderSubview");
     return;
   }
@@ -742,13 +645,13 @@
       @(index),
       @([childComponentView.superview tag]));
 
-  [_reactSubviews insertObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView atIndex:index];
+  [_reactSubviews insertObject:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
   [self updateViewControllerIfNeeded];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_reactSubviews removeObject:(RNSScreenStackHeaderSubviewComponentView *)childComponentView];
+  [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
 }
 
@@ -972,19 +875,6 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 }
 
 RCT_ENUM_CONVERTER(
-    RNSScreenStackHeaderSubviewType,
-    (@{
-      @"back" : @(RNSScreenStackHeaderSubviewTypeBackButton),
-      @"left" : @(RNSScreenStackHeaderSubviewTypeLeft),
-      @"right" : @(RNSScreenStackHeaderSubviewTypeRight),
-      @"title" : @(RNSScreenStackHeaderSubviewTypeTitle),
-      @"center" : @(RNSScreenStackHeaderSubviewTypeCenter),
-      @"searchBar" : @(RNSScreenStackHeaderSubviewTypeSearchBar),
-    }),
-    RNSScreenStackHeaderSubviewTypeTitle,
-    integerValue)
-
-RCT_ENUM_CONVERTER(
     UISemanticContentAttribute,
     (@{
       @"ltr" : @(UISemanticContentAttributeForceLeftToRight),
@@ -994,18 +884,5 @@ RCT_ENUM_CONVERTER(
     integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
-
-@end
-
-@implementation RNSScreenStackHeaderSubviewManager
-
-RCT_EXPORT_MODULE()
-
-RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
-
-- (UIView *)view
-{
-  return [[RNSScreenStackHeaderSubview alloc] initWithBridge:self.bridge];
-}
 
 @end
