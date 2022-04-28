@@ -10,11 +10,7 @@
 #import "RCTFabricComponentsPlugins.h"
 #endif
 
-@implementation RNSScreenStackHeaderSubview {
-#ifdef RN_FABRIC_ENABLED
-  BOOL _isInitialValueSet;
-#endif
-}
+@implementation RNSScreenStackHeaderSubview
 
 #pragma mark - Common
 
@@ -37,7 +33,6 @@
 - (void)prepareForRecycle
 {
   [super prepareForRecycle];
-  _isInitialValueSet = NO;
 }
 
 - (void)updateProps:(facebook::react::Props::Shared const &)props
@@ -50,7 +45,6 @@
 
   if (newHeaderSubviewProps.type != oldHeaderSubviewProps.type) {
     _type = [RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type];
-    _isInitialValueSet = YES;
   }
 
   [super updateProps:props oldProps:oldProps];
