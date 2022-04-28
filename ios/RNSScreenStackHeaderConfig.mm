@@ -590,7 +590,6 @@
         RCTLogWarn(@"Back button subivew is not yet Fabric compatible in react-native-screens");
 #endif
         break;
-        ;
       }
     }
   }

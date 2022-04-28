@@ -1,8 +1,6 @@
 
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
-#import <UIKit/UIKit.h>
-#import <react/renderer/components/rnscreens/Props.h>
 #endif
 
 #import <React/RCTConvert.h>
