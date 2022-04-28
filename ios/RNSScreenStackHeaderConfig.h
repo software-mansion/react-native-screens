@@ -18,9 +18,10 @@
 #endif
 
 @property (nonatomic, weak) RNSScreenView *screenView;
-@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubview *> *reactSubviews;
 
 #ifdef RN_FABRIC_ENABLED
+// TODO: change type when StackHeaderSubview is merged (??)
+@property (nonatomic) NSMutableArray<RNSScreenStackHeaderSubviewComponentView *> *reactSubviews;
 @property (nonatomic) BOOL show;
 #else
 @property (nonatomic) UIBlurEffectStyle blurEffect;
