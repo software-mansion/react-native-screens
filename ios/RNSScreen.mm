@@ -2,7 +2,6 @@
 
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
-#import "RNSScreenStack.h"
 #import "RNSScreenWindowTraits.h"
 
 #ifdef RN_FABRIC_ENABLED

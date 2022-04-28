@@ -69,20 +69,22 @@
 }
 #endif
 
-// done
 - (UIView *)reactSuperview
 {
   return _screenView;
 }
 
-// done
+- (NSArray<UIView *> *)reactSubviews
+{
+  return _reactSubviews;
+}
+
 - (void)removeFromSuperview
 {
   [super removeFromSuperview];
   _screenView = nil;
 }
 
-// done
 // this method is never invoked by the system since this view
 // is not added to native view hierarchy so we can apply our logic
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -104,7 +106,6 @@
   return nil;
 }
 
-// done
 - (void)updateViewControllerIfNeeded
 {
   UIViewController *vc = _screenView.controller;
@@ -128,15 +129,16 @@
   }
 }
 
-// done
 - (void)layoutNavigationControllerView
 {
+  // We need to layout navigation controller view after translucent prop changes, because otherwise
+  // frame of RNSScreen will not be changed and screen content will remain the same size.
+  // For more details look at https://github.com/software-mansion/react-native-screens/issues/1158
   UIViewController *vc = _screenView.controller;
   UINavigationController *navctr = vc.navigationController;
   [navctr.view setNeedsLayout];
 }
 
-// done
 + (void)setAnimatedConfig:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   UINavigationBar *navbar = ((UINavigationController *)vc.parentViewController).navigationBar;
@@ -232,7 +234,6 @@
   }
 }
 
-// done
 + (void)setTitleAttibutes:(NSDictionary *)attrs forButton:(UIBarButtonItem *)button
 {
   [button setTitleTextAttributes:attrs forState:UIControlStateNormal];
@@ -242,7 +243,6 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
-// done
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
 #ifdef RN_FABRIC_ENABLED
@@ -318,7 +318,6 @@
   return nil;
 }
 
-// done
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated
                     withConfig:(RNSScreenStackHeaderConfig *)config
@@ -326,7 +325,6 @@
   [self updateViewController:vc withConfig:config animated:animated];
 }
 
-// done
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
 + (UINavigationBarAppearance *)buildAppearance:(UIViewController *)vc
@@ -700,22 +698,6 @@
       facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
-- (NSString *)getFontFamilyPropValue:(std::string)propValue
-{
-  if (propValue.length() > 0) {
-    return [[NSString alloc] initWithUTF8String:propValue.c_str()];
-  } else {
-    return nil;
-  }
-}
-
-- (NSString *)stringToPropValue:(std::string)value
-{
-  if (value.empty())
-    return nil;
-  return [[NSString alloc] initWithUTF8String:value.c_str()];
-}
-
 - (NSNumber *)getFontSizePropValue:(int)value
 {
   if (value > 0)
@@ -754,26 +736,25 @@
     needsNavigationControllerLayout = YES;
   }
 
-  _title = [self stringToPropValue:newScreenProps.title];
+  _title = RCTNSStringFromStringNilIfEmpty(newScreenProps.title);
   if (newScreenProps.titleFontFamily != oldScreenProps.titleFontFamily) {
-    _titleFontFamily = [self getFontFamilyPropValue:newScreenProps.titleFontFamily];
+    _titleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontFamily);
   }
-  _titleFontWeight = [self stringToPropValue:newScreenProps.titleFontWeight];
+  _titleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontWeight);
   _titleFontSize = [self getFontSizePropValue:newScreenProps.titleFontSize];
   _hideShadow = newScreenProps.hideShadow;
 
   _largeTitle = newScreenProps.largeTitle;
   if (newScreenProps.largeTitleFontFamily != oldScreenProps.largeTitleFontFamily) {
-    _largeTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.largeTitleFontFamily];
+    _largeTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontFamily);
   }
-  _largeTitleFontWeight = [self stringToPropValue:newScreenProps.largeTitleFontWeight];
+  _largeTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontWeight);
   _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
 
-  _backTitle = [self stringToPropValue:newScreenProps.backTitle];
-  ;
+  _backTitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitle);
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
-    _backTitleFontFamily = [self getFontFamilyPropValue:newScreenProps.backTitleFontFamily];
+    _backTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitleFontFamily);
   }
   _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
   _hideBackButton = newScreenProps.hideBackButton;
@@ -818,11 +799,6 @@
   [_reactSubviews removeObject:subview];
 }
 
-- (NSArray<UIView *> *)reactSubviews
-{
-  return _reactSubviews;
-}
-
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
@@ -844,10 +820,12 @@
 #endif
 @end
 
+#ifdef RN_FABRIC_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 {
   return RNSScreenStackHeaderConfig.class;
 }
+#endif
 
 @implementation RNSScreenStackHeaderConfigManager
 

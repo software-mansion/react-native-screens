@@ -26,21 +26,16 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
-@interface RNSScreenStackView ()
+@interface RNSScreenStackView () <
+    UINavigationControllerDelegate,
+    UIAdaptivePresentationControllerDelegate,
+    UIGestureRecognizerDelegate,
+    UIViewControllerTransitioningDelegate
 #ifdef RN_FABRIC_ENABLED
-    <UINavigationControllerDelegate,
-     UIAdaptivePresentationControllerDelegate,
-     UIGestureRecognizerDelegate,
-     UIViewControllerTransitioningDelegate,
-     RCTMountingTransactionObserving> {
-  BOOL _updateScheduled;
-}
-#else
-    <UINavigationControllerDelegate,
-     UIAdaptivePresentationControllerDelegate,
-     UIGestureRecognizerDelegate,
-     UIViewControllerTransitioningDelegate>
+    ,
+    RCTMountingTransactionObserving
 #endif
+    >
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -99,12 +94,11 @@
   BOOL _invalidated;
   BOOL _isFullWidthSwiping;
   UIPercentDrivenInteractiveTransition *_interactionController;
+  BOOL _hasLayout;
+  __weak RNSScreenStackManager *_manager;
+  BOOL _updateScheduled;
 #ifdef RN_FABRIC_ENABLED
   UIView *_snapshot;
-#else
-  __weak RNSScreenStackManager *_manager;
-  BOOL _hasLayout;
-  BOOL _updateScheduled;
 #endif
 }
 
@@ -114,46 +108,42 @@
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackProps>();
     _props = defaultProps;
-    _reactSubviews = [NSMutableArray new];
-    _presentedModals = [NSMutableArray new];
-    _controller = [RNScreensNavigationController new];
-    _controller.delegate = self;
-    [_controller setViewControllers:@[ [UIViewController new] ]];
-#if !TARGET_OS_TV
-    [self setupGestureHandlers];
-#endif
+    [self initCommonProps];
   }
 
   return self;
 }
-#else
+#endif // RN_FABRIC_ENABLED
+
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
   if (self = [super init]) {
     _hasLayout = NO;
     _invalidated = NO;
     _manager = manager;
-    _reactSubviews = [NSMutableArray new];
-    _presentedModals = [NSMutableArray new];
-    _controller = [[RNScreensNavigationController alloc] init];
-    _controller.delegate = self;
-
-#if !TARGET_OS_TV
-    [self setupGestureHandlers];
-#endif
-    // we have to initialize viewControllers with a non empty array for
-    // largeTitle header to render in the opened state. If it is empty
-    // the header will render in collapsed state which is perhaps a bug
-    // in UIKit but ¯\_(ツ)_/¯
-    [_controller setViewControllers:@[ [UIViewController new] ]];
+    [self initCommonProps];
   }
   return self;
 }
-#endif // RN_FABRIC_ENABLED
+
+- (void)initCommonProps
+{
+  _reactSubviews = [NSMutableArray new];
+  _presentedModals = [NSMutableArray new];
+  _controller = [RNScreensNavigationController new];
+  _controller.delegate = self;
+#if !TARGET_OS_TV
+  [self setupGestureHandlers];
+#endif
+  // we have to initialize viewControllers with a non empty array for
+  // largeTitle header to render in the opened state. If it is empty
+  // the header will render in collapsed state which is perhaps a bug
+  // in UIKit but ¯\_(ツ)_/¯
+  [_controller setViewControllers:@[ [UIViewController new] ]];
+}
 
 #pragma mark - Common
 
-// done
 - (void)navigationController:(UINavigationController *)navigationController
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
@@ -177,7 +167,6 @@
 #endif
 }
 
-// done
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
   // We don't directly set presentation delegate but instead rely on the ScreenView's delegate to
@@ -193,7 +182,8 @@
     _updatingModals = NO;
     [self updateContainer];
     // TODO: implement onFinishTransitioning on Fabric
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
       // main queue. We do that because onDismiss event is also enqueued and we want for the transition
@@ -208,21 +198,18 @@
   }
 }
 
-// done
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
 }
 
-// done
 - (void)didMoveToWindow
 {
-#ifdef RN_FABRIC_ENABLED
   [super didMoveToWindow];
+#ifdef RN_FABRIC_ENABLED
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
 #else
-  [super didMoveToWindow];
   if (!_invalidated) {
     // We check whether the view has been invalidated before running side-effects in didMoveToWindow
     // This is needed because when LayoutAnimations are used it is possible for view to be re-attached
@@ -348,7 +335,8 @@
 
   void (^afterTransitions)(void) = ^{
   // TODO: Implement onFinishTransitioning on Fabric
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+#else
     if (weakSelf.onFinishTransitioning) {
       weakSelf.onFinishTransitioning(nil);
     }
@@ -469,6 +457,9 @@
   UIViewController *top = controllers.lastObject;
 #ifdef RN_FABRIC_ENABLED
   UIViewController *previousTop = _controller.topViewController;
+#else
+  UIViewController *previousTop = _controller.viewControllers.lastObject;
+#endif
 
   // At the start we set viewControllers to contain a single UIViewController
   // instance. This is a workaround for header height adjustment bug (see comment
@@ -483,10 +474,13 @@
     if (![controllers containsObject:previousTop]) {
       // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
       // was called, so we check the animation
-      if (![_controller.viewControllers containsObject:top]) {
+      if (![_controller.viewControllers containsObject:top] &&
+          ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
+#ifdef RN_FABRIC_ENABLED
         auto screenController = (RNSScreen *)top;
         [screenController resetViewToScreen];
+#endif
         [_controller setViewControllers:controllers animated:YES];
       } else {
         // last top controller is no longer on stack
@@ -504,56 +498,10 @@
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
+#ifdef RN_FABRIC_ENABLED
       auto screenController = (RNSScreen *)top;
       [screenController resetViewToScreen];
-      [_controller pushViewController:top animated:YES];
-    } else {
-      // don't really know what this case could be, but may need to handle it
-      // somehow
-      [_controller setViewControllers:controllers animated:YES];
-    }
-  } else {
-    // change wasn't on the top of the stack. We don't need animation.
-    [_controller setViewControllers:controllers animated:NO];
-  }
-#else
-  UIViewController *lastTop = _controller.viewControllers.lastObject;
-
-  // at the start we set viewControllers to contain a single UIVIewController
-  // instance. This is a workaround for header height adjustment bug (see comment
-  // in the init function). Here, we need to detect if the initial empty
-  // controller is still there
-  BOOL firstTimePush = ![lastTop isKindOfClass:[RNSScreen class]];
-
-  if (firstTimePush) {
-    // nothing pushed yet
-    [_controller setViewControllers:controllers animated:NO];
-  } else if (top != lastTop) {
-    // we always provide `animated:YES` since, if the user does not want the animation, he will provide
-    // `stackAnimation: 'none'`, which will resolve in no animation anyways.
-    if (![controllers containsObject:lastTop]) {
-      // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace
-      // was called, so we check the animation
-      if (![_controller.viewControllers containsObject:top] &&
-          ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
-        // setting new controllers with animation does `push` animation by default
-        [_controller setViewControllers:controllers animated:YES];
-      } else {
-        // last top controller is no longer on stack
-        // in this case we set the controllers stack to the new list with
-        // added the last top element to it and perform (animated) pop
-        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-        [newControllers addObject:lastTop];
-        [_controller setViewControllers:newControllers animated:NO];
-        [_controller popViewControllerAnimated:YES];
-      }
-    } else if (![_controller.viewControllers containsObject:top]) {
-      // new top controller is not on the stack
-      // in such case we update the stack except from the last element with
-      // no animation and do animated push of the last item
-      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-      [newControllers removeLastObject];
-      [_controller setViewControllers:newControllers animated:NO];
+#endif
       [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
@@ -564,7 +512,6 @@
     // change wasn't on the top of the stack. We don't need animation.
     [_controller setViewControllers:controllers animated:NO];
   }
-#endif
 }
 
 // done
@@ -596,14 +543,12 @@
   [self setModalViewControllers:modalControllers];
 }
 
-// done
 - (void)layoutSubviews
 {
   [super layoutSubviews];
   _controller.view.frame = self.bounds;
 }
 
-// done
 - (void)dismissOnReload
 {
 #ifdef RN_FABRIC_ENABLED
@@ -639,7 +584,6 @@
   return nil;
 }
 
-// done
 - (void)cancelTouchesInParent
 {
   // cancel touches in parent, this is needed to cancel RN touch events. For example when Touchable
@@ -694,7 +638,17 @@
     return NO;
   }
 
-#ifndef RN_FABRIC_ENABLED
+#ifdef RN_FABRIC_ENABLED
+  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+    // it should only recognize with `customAnimationOnSwipe` set
+    return NO;
+  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    // it should only recognize with `fullScreenSwipeEnabled` set
+    return NO;
+  }
+  [self cancelTouchesInParent];
+  return _controller.viewControllers.count >= 2;
+#else
   if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
@@ -720,19 +674,9 @@
     [self cancelTouchesInParent];
     return YES;
   }
-#else
-  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
-    // it should only recognize with `customAnimationOnSwipe` set
-    return NO;
-  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    // it should only recognize with `fullScreenSwipeEnabled` set
-    return NO;
-  }
-  [self cancelTouchesInParent];
-  return _controller.viewControllers.count >= 2;
-#endif
+#endif // RN_FABRIC_ENABLED
 
-#endif
+#endif // TARGET_OS_TV
 }
 
 #if !TARGET_OS_TV
@@ -817,6 +761,21 @@
   }
 }
 #endif
+
+- (void)markChildUpdated
+{
+  // do nothing
+}
+
+- (void)didUpdateChildren
+{
+  // do nothing
+}
+
+- (UIViewController *)reactViewController
+{
+  return _controller;
+}
 
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
@@ -905,21 +864,6 @@
 }
 #else
 #pragma mark - Paper specific
-
-- (void)markChildUpdated
-{
-  // do nothing
-}
-
-- (void)didUpdateChildren
-{
-  // do nothing
-}
-
-- (UIViewController *)reactViewController
-{
-  return _controller;
-}
 
 - (void)navigationController:(UINavigationController *)navigationController
        didShowViewController:(UIViewController *)viewController
@@ -1044,10 +988,12 @@
 
 @end
 
+#ifdef RN_FABRIC_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 {
   return RNSScreenStackView.class;
 }
+#endif
 
 @implementation RNSScreenStackManager {
   NSPointerArray *_stacks;

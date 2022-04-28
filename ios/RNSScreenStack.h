@@ -1,6 +1,5 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
-#import <UIKit/UIKit.h>
 #else
 #import <React/RCTUIManagerObserverCoordinator.h>
 #import <React/RCTViewManager.h>
@@ -21,12 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
     UIView <RNSScreenContainerDelegate, RCTInvalidating>
 #endif
 
-#ifndef RN_FABRIC_ENABLED
-@property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
-
 - (void)markChildUpdated;
 - (void)didUpdateChildren;
-#endif
+
+#ifdef RN_FABRIC_ENABLED
+#else
+@property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
+#endif // RN_FABRIC_ENABLED
 
 @end
 
