@@ -470,6 +470,10 @@
     [self setStackAnimation:[RNSConvert RNSScreenStackAnimationFromCppEquivalent:newScreenProps.stackAnimation]];
   }
 
+  if (newScreenProps.replaceAnimation != oldScreenProps.replaceAnimation) {
+    [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
