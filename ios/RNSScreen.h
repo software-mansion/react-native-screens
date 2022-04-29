@@ -59,6 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) BOOL hideKeyboardOnSwipe;
+@property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic, retain) RNSScreen *controller;
 
 #if !TARGET_OS_TV
@@ -84,7 +85,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic) int activityState;
 @property (nonatomic) BOOL preventNativeDismiss;
-@property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
 #endif
 
