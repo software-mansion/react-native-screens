@@ -253,7 +253,7 @@
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onDismissed(facebook::react::RNSScreenEventEmitter::OnDismissed{dismissCount : dismissCount});
+        ->onDismissed(facebook::react::RNSScreenEventEmitter::OnDismissed{.dismissCount = dismissCount});
   }
 #else
   if (self.onDismissed) {
