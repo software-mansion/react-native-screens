@@ -18,9 +18,9 @@
 #import "RNSSearchBar.h"
 #endif
 #import <React/RCTFont.h>
-#import "RNSUIBarButtonItem.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSUIBarButtonItem.h"
 
 #ifdef RN_FABRIC_ENABLED
 #else
@@ -539,7 +539,7 @@
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
-  
+
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
