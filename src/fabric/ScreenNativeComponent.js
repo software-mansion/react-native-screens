@@ -60,6 +60,7 @@ export type NativeProps = $ReadOnly<{|
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
   transitionDuration?: WithDefault<Int32, 350>,
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
+  hideKeyboardOnSwipe?: boolean,
   // TODO: implement these props on iOS
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,
