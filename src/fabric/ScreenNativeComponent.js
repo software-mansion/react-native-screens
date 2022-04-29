@@ -19,6 +19,13 @@ type ScreenDismissedEvent = $ReadOnly<{|
   dismissCount: Int32,
 |}>;
 
+type GestureResponseDistanceType = $ReadOnly<{|
+  start: Int32,
+  end: Int32,
+  top: Int32,
+  bottom: Int32,
+|}>;
+
 type StackPresentation =
   | 'push'
   | 'modal'
@@ -57,6 +64,7 @@ export type NativeProps = $ReadOnly<{|
   statusBarAnimation?: string,
   statusBarStyle?: string,
   statusBarTranslucent?: boolean,
+  gestureResponseDistance?: GestureResponseDistanceType,
   stackPresentation?: WithDefault<StackPresentation, 'push'>,
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
   transitionDuration?: WithDefault<Int32, 350>,
