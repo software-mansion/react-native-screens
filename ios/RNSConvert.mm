@@ -66,6 +66,17 @@
       return RNSScreenStackHeaderSubviewTypeBackButton;
   }
 }
+
++ (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
+    (facebook::react::RNSScreenReplaceAnimation)replaceAnimation
+{
+  switch (replaceAnimation) {
+    case facebook::react::RNSScreenReplaceAnimation::Pop:
+      return RNSScreenReplaceAnimationPop;
+    case facebook::react::RNSScreenReplaceAnimation::Push:
+      return RNSScreenReplaceAnimationPush;
+  }
+}
 @end
 
 #endif // RN_FABRIC_ENABLED
