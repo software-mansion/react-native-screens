@@ -440,7 +440,7 @@
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
-  
+
   [self setHideKeyboardOnSwipe:newScreenProps.hideKeyboardOnSwipe];
 
 #if !TARGET_OS_TV
