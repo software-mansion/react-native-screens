@@ -621,18 +621,7 @@
     }
     return NO;
   }
-
-#ifdef RN_FABRIC_ENABLED
-  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
-    // it should only recognize with `customAnimationOnSwipe` set
-    return NO;
-  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    // it should only recognize with `fullScreenSwipeEnabled` set
-    return NO;
-  }
-  [self cancelTouchesInParent];
-  return _controller.viewControllers.count >= 2;
-#else
+  
   if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
@@ -656,9 +645,12 @@
       return NO;
     }
     [self cancelTouchesInParent];
+#ifdef RN_FABRIC_ENABLED
+    return _controller.viewControllers.count >= 2;
+#else
     return YES;
-  }
 #endif // RN_FABRIC_ENABLED
+  }
 
 #endif // TARGET_OS_TV
 }
