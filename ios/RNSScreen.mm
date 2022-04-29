@@ -287,6 +287,9 @@
 
 - (void)notifyWillDisappear
 {
+  if (_hideKeyboardOnSwipe) {
+    [self endEditing:YES];
+  }
 #ifdef RN_FABRIC_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
@@ -295,9 +298,6 @@
         ->onWillDisappear(facebook::react::RNSScreenEventEmitter::OnWillDisappear{});
   }
 #else
-  if (_hideKeyboardOnSwipe) {
-    [self endEditing:YES];
-  }
   if (self.onWillDisappear) {
     self.onWillDisappear(nil);
   }
