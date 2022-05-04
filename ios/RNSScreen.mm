@@ -443,6 +443,8 @@
   [self setHideKeyboardOnSwipe:newScreenProps.hideKeyboardOnSwipe];
 
   [self setCustomAnimationOnSwipe:newScreenProps.customAnimationOnSwipe];
+  
+  [self setGestureResponseDistance:[RNSConvert gestureResponseDistanceDictFromCppStruct:newScreenProps.gestureResponseDistance]];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
