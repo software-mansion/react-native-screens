@@ -467,6 +467,8 @@
       setGestureResponseDistance:[RNSConvert
                                      gestureResponseDistanceDictFromCppStruct:newScreenProps.gestureResponseDistance]];
 
+  [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
+
   [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
   
 #if !TARGET_OS_TV
