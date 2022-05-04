@@ -406,6 +406,11 @@
   return nil;
 }
 
+- (void)notifyFinishTransitioning
+{
+  [_controller notifyFinishTransitioning];
+}
+
 #pragma mark - Fabric specific
 #ifdef RN_FABRIC_ENABLED
 
@@ -512,11 +517,6 @@
 #pragma mark - Paper specific
 #else
 
-- (void)notifyFinishTransitioning
-{
-  [_controller notifyFinishTransitioning];
-}
-
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
 {
   if (self.onNativeDismissCancelled) {
@@ -606,10 +606,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #pragma mark - RNSScreen
 
 @implementation RNSScreen {
+  __weak id _previousFirstResponder;
 #ifdef RN_FABRIC_ENABLED
   RNSScreenView *_initialView;
 #else
-  __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
@@ -790,6 +790,39 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
+- (void)notifyFinishTransitioning
+{
+  [_previousFirstResponder becomeFirstResponder];
+  _previousFirstResponder = nil;
+  // the correct Screen for appearance is set after the transition, same for orientation.
+  [RNSScreenWindowTraits updateWindowTraits];
+}
+
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+  [super willMoveToParentViewController:parent];
+  if (parent == nil) {
+    id responder = [self findFirstResponder:self.view];
+    if (responder != nil) {
+      _previousFirstResponder = responder;
+    }
+  }
+}
+
+- (id)findFirstResponder:(UIView *)parent
+{
+  if (parent.isFirstResponder) {
+    return parent;
+  }
+  for (UIView *subView in parent.subviews) {
+    id responder = [self findFirstResponder:subView];
+    if (responder != nil) {
+      return responder;
+    }
+  }
+  return nil;
+}
+
 #if !TARGET_OS_TV
 // if the returned vc is a child, it means that it can provide config;
 // if the returned vc is self, it means that there is no child for config and self has config to provide,
@@ -932,31 +965,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
 #pragma mark - Paper specific
 
-- (id)findFirstResponder:(UIView *)parent
-{
-  if (parent.isFirstResponder) {
-    return parent;
-  }
-  for (UIView *subView in parent.subviews) {
-    id responder = [self findFirstResponder:subView];
-    if (responder != nil) {
-      return responder;
-    }
-  }
-  return nil;
-}
-
-- (void)willMoveToParentViewController:(UIViewController *)parent
-{
-  [super willMoveToParentViewController:parent];
-  if (parent == nil) {
-    id responder = [self findFirstResponder:self.view];
-    if (responder != nil) {
-      _previousFirstResponder = responder;
-    }
-  }
-}
-
 - (void)hideHeaderIfNecessary
 {
 #if !TARGET_OS_TV
@@ -1012,14 +1020,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 
 #pragma mark - transition progress related methods
-
-- (void)notifyFinishTransitioning
-{
-  [_previousFirstResponder becomeFirstResponder];
-  _previousFirstResponder = nil;
-  // the correct Screen for appearance is set after the transition, same for orientation.
-  [RNSScreenWindowTraits updateWindowTraits];
-}
 
 - (void)setupProgressNotification
 {
