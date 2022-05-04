@@ -144,6 +144,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setTransitionDuration(view: Screen?, value: Int) = Unit
 
+    override fun setHideKeyboardOnSwipe(view: Screen?, value: Boolean) = Unit
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map: MutableMap<String, Any> = MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,
