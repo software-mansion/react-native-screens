@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -147,6 +148,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setHideKeyboardOnSwipe(view: Screen?, value: Boolean) = Unit
 
     override fun setCustomAnimationOnSwipe(view: Screen?, value: Boolean) = Unit
+
+    override fun setGestureResponseDistance(view: Screen?, value: ReadableMap?) = Unit
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map: MutableMap<String, Any> = MapBuilder.of(
