@@ -29,11 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
+- (void)notifyFinishTransitioning;
 #ifdef RN_FABRIC_ENABLED
 - (void)setViewToSnapshot:(UIView *)snapshot;
 - (void)resetViewToScreen;
-#else
-- (void)notifyFinishTransitioning;
 #endif
 
 @end
@@ -87,6 +86,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL preventNativeDismiss;
 #endif
 
+- (void)notifyFinishTransitioning;
+
 #ifdef RN_FABRIC_ENABLED
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;
@@ -95,7 +96,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 #else
-- (void)notifyFinishTransitioning;
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 #endif
 
