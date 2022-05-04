@@ -63,6 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, retain) RNSScreen *controller;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
 @property (nonatomic) int activityState;
+@property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
@@ -74,7 +75,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #ifdef RN_FABRIC_ENABLED
 @property (weak, nonatomic) UIView *config;
-@property (weak, nonatomic) UIView *reactSuperview;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
@@ -84,7 +84,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 
-@property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic) BOOL preventNativeDismiss;
 #endif
 
