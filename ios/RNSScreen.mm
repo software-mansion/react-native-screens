@@ -466,6 +466,10 @@
     [self setScreenOrientation:[RCTConvert UIInterfaceOrientationMask:RCTNSStringFromStringNilIfEmpty(
                                                                           newScreenProps.screenOrientation)]];
   }
+  
+  if (newScreenProps.homeIndicatorHidden != oldScreenProps.homeIndicatorHidden) {
+    [self setHomeIndicatorHidden:newScreenProps.homeIndicatorHidden];
+  }
 #endif
 
   if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
