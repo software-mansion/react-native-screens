@@ -465,7 +465,9 @@
   [self
       setGestureResponseDistance:[RNSConvert
                                      gestureResponseDistanceDictFromCppStruct:newScreenProps.gestureResponseDistance]];
-
+  
+  [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
+  
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
