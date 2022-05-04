@@ -62,6 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic, retain) RNSScreen *controller;
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
+@property (nonatomic) int activityState;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
@@ -84,7 +85,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
-@property (nonatomic) int activityState;
 @property (nonatomic) BOOL preventNativeDismiss;
 #endif
 
