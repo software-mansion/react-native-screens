@@ -20,10 +20,10 @@ type ScreenDismissedEvent = $ReadOnly<{|
 |}>;
 
 type GestureResponseDistanceType = $ReadOnly<{|
-  start: Int32,
-  end: Int32,
-  top: Int32,
-  bottom: Int32,
+  start: Float,
+  end: Float,
+  top: Float,
+  bottom: Float,
 |}>;
 
 type StackPresentation =
