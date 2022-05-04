@@ -77,6 +77,18 @@
       return RNSScreenReplaceAnimationPush;
   }
 }
+
++ (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
+    (const facebook::react::RNSScreenGestureResponseDistanceStruct&)gestureResponseDistance
+{
+  return @{
+    @"start": @(gestureResponseDistance.start),
+    @"end": @(gestureResponseDistance.end),
+    @"top": @(gestureResponseDistance.top),
+    @"bottom": @(gestureResponseDistance.bottom),
+  };
+}
+
 @end
 
 #endif // RN_FABRIC_ENABLED
