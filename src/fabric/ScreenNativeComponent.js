@@ -58,6 +58,7 @@ export type NativeProps = $ReadOnly<{|
   customAnimationOnSwipe?: boolean,
   fullScreenSwipeEnabled?: boolean,
   homeIndicatorHidden?: boolean,
+  preventNativeDismiss?: boolean,
   gestureEnabled?: WithDefault<boolean, true>,
   statusBarColor?: ColorValue,
   statusBarHidden?: boolean,
