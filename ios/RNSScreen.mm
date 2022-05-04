@@ -192,6 +192,19 @@
   _replaceAnimation = replaceAnimation;
 }
 
+// Nil will be provided when activityState is set as an animated value and we change
+// it from JS to be a plain value (non animated).
+// In case when nil is received, we want to ignore such value and not make
+// any updates as the actual non-nil value will follow immediately.
+- (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
+{
+  int activityState = [activityStateOrNil intValue];
+  if (activityStateOrNil != nil && activityState != _activityState) {
+    _activityState = activityState;
+    [_reactSuperview markChildUpdated];
+  }
+}
+
 #if !TARGET_OS_TV
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
@@ -465,7 +478,7 @@
     [self setScreenOrientation:[RCTConvert UIInterfaceOrientationMask:RCTNSStringFromStringNilIfEmpty(
                                                                           newScreenProps.screenOrientation)]];
   }
-  
+
   if (newScreenProps.homeIndicatorHidden != oldScreenProps.homeIndicatorHidden) {
     [self setHomeIndicatorHidden:newScreenProps.homeIndicatorHidden];
   }
@@ -516,19 +529,6 @@
       @"closing" : @(closing ? 1 : 0),
       @"goingForward" : @(goingForward ? 1 : 0),
     });
-  }
-}
-
-// Nil will be provided when activityState is set as an animated value and we change
-// it from JS to be a plain value (non animated).
-// In case when nil is received, we want to ignore such value and not make
-// any updates as the actual non-nil value will follow immediately.
-- (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
-{
-  int activityState = [activityStateOrNil intValue];
-  if (activityStateOrNil != nil && activityState != _activityState) {
-    _activityState = activityState;
-    [_reactSuperview markChildUpdated];
   }
 }
 
