@@ -79,13 +79,13 @@
 }
 
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
-    (const facebook::react::RNSScreenGestureResponseDistanceStruct&)gestureResponseDistance
+    (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance
 {
   return @{
-    @"start": @(gestureResponseDistance.start),
-    @"end": @(gestureResponseDistance.end),
-    @"top": @(gestureResponseDistance.top),
-    @"bottom": @(gestureResponseDistance.bottom),
+    @"start" : @(gestureResponseDistance.start),
+    @"end" : @(gestureResponseDistance.end),
+    @"top" : @(gestureResponseDistance.top),
+    @"bottom" : @(gestureResponseDistance.bottom),
   };
 }
 
