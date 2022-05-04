@@ -71,11 +71,11 @@ export type NativeProps = $ReadOnly<{|
   transitionDuration?: WithDefault<Int32, 350>,
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
   hideKeyboardOnSwipe?: boolean,
+  activityState?: WithDefault<Int32, -1>,
   // TODO: implement these props on iOS
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,
   nativeBackButtonDismissalEnabled?: boolean,
-  activityState?: WithDefault<Int32, -1>,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
