@@ -767,6 +767,23 @@
       (bottom != -1 && y > bottom));
 }
 
+// By default, the header buttons that are not inside the native hit area
+// cannot be clicked, so we check it by ourselves
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+  if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
+    // headerConfig should be the first subview of the topmost screen
+    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
+    if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
+      if (headerHitTestResult != nil) {
+        return headerHitTestResult;
+      }
+    }
+  }
+  return [super hitTest:point withEvent:event];
+}
+
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
@@ -890,23 +907,6 @@
     self->_hasLayout = YES;
     [self maybeAddToParentAndUpdateContainer];
   });
-}
-
-// By default, the header buttons that are not inside the native hit area
-// cannot be clicked, so we check it by ourselves
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-  if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
-    // headerConfig should be the first subview of the topmost screen
-    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
-    if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
-      if (headerHitTestResult != nil) {
-        return headerHitTestResult;
-      }
-    }
-  }
-  return [super hitTest:point withEvent:event];
 }
 
 - (void)invalidate
