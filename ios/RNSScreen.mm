@@ -20,8 +20,8 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
-#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenStack.h"
+#import "RNSScreenStackHeaderConfig.h"
 
 @interface RNSScreenView ()
 #ifdef RN_FABRIC_ENABLED
@@ -772,7 +772,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
-  
+
   // The below code makes the screen view adapt dimensions provided by the system. We take these
   // into account only when the view is mounted under RNScreensNavigationController in which case system
   // provides additional padding to account for possible header, and in the case when screen is
@@ -781,7 +781,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL isDisplayedWithinUINavController =
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
-  
+
   if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
       !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
