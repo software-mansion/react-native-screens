@@ -16,12 +16,12 @@
 #import "RNSConvert.h"
 #else
 #import <React/RCTTouchHandler.h>
-#import "RNSScreenStack.h"
 #endif
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenStack.h"
 
 @interface RNSScreenView ()
 #ifdef RN_FABRIC_ENABLED
@@ -611,10 +611,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
+  CGRect _lastViewFrame;
 #ifdef RN_FABRIC_ENABLED
   RNSScreenView *_initialView;
 #else
-  CGRect _lastViewFrame;
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
@@ -772,12 +772,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
-#ifdef RN_FABRIC_ENABLED
-  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
-  if (isDisplayedWithinUINavController) {
-    [_initialView updateBounds];
-  }
-#else
+  
   // The below code makes the screen view adapt dimensions provided by the system. We take these
   // into account only when the view is mounted under RNScreensNavigationController in which case system
   // provides additional padding to account for possible header, and in the case when screen is
@@ -786,12 +781,16 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL isDisplayedWithinUINavController =
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
+  
   if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
       !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
     _lastViewFrame = self.view.frame;
+#ifdef RN_FABRIC_ENABLED
+    [_initialView updateBounds];
+#else
     [((RNSScreenView *)self.viewIfLoaded) updateBounds];
-  }
 #endif
+  }
 }
 
 - (void)notifyFinishTransitioning
