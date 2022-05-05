@@ -781,6 +781,30 @@
   return [super hitTest:point withEvent:event];
 }
 
+- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
+  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
+  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
+  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
+    return NO;
+  }
+  UIScrollView *scrollView = (UIScrollView *)gestureRecognizer.view;
+  return scrollView.panGestureRecognizer == gestureRecognizer;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
+}
+
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
@@ -915,30 +939,6 @@
   [_presentedModals removeAllObjects];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
-}
-
-- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-{
-  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
-  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
-  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
-  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
-    return NO;
-  }
-  UIScrollView *scrollView = gestureRecognizer.view;
-  return scrollView.panGestureRecognizer == gestureRecognizer;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
