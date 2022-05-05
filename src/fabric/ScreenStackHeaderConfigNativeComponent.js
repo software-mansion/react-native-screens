@@ -41,9 +41,9 @@ export type NativeProps = $ReadOnly<{|
   titleColor?: ColorValue,
   disableBackButtonMenu?: boolean,
   hideBackButton?: boolean,
+  backButtonInCustomView?: boolean,
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean,
-  backButtonInCustomView?: boolean,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
