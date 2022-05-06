@@ -761,7 +761,6 @@
       (gestureResponseDistanceValues[@"end"] && x > [gestureResponseDistanceValues[@"end"] floatValue]) ||
       (gestureResponseDistanceValues[@"top"] && y < [gestureResponseDistanceValues[@"top"] floatValue]) ||
       (gestureResponseDistanceValues[@"bottom"] && y > [gestureResponseDistanceValues[@"bottom"] floatValue]));
-  return NO;
 }
 
 // By default, the header buttons that are not inside the native hit area
