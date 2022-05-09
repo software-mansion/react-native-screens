@@ -2,7 +2,7 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-fabric_enabled = ENV['RCT_NEW_ARCH_ENABLED']
+fabric_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 
 # folly_version must match the version used in React Native
 # See folly_version in react-native/React/FBReactNativeSpec/FBReactNativeSpec.podspec
