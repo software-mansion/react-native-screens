@@ -5,7 +5,10 @@ function ScreenContainer(props) {
   return (
     <ScreenContainerNativeComponent
       {...props}
-      style={[{ flex: 1 }, props.style]}
+      style={[
+        { flex: 1, alignItems: 'center', justifyContent: 'center' },
+        props.style,
+      ]}
     />
   );
 }
