@@ -32,14 +32,12 @@
 
 - (UIViewController *)findActiveChildVC
 {
-#ifndef RN_FABRIC_ENABLED
   for (UIViewController *childVC in self.childViewControllers) {
     if ([childVC isKindOfClass:[RNSScreen class]] &&
         ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
       return childVC;
     }
   }
-#endif
   return [[self childViewControllers] lastObject];
 }
 
