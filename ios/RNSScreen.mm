@@ -782,13 +782,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
-  if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
-      !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
-    _lastViewFrame = self.view.frame;
+  if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
 #ifdef RN_FABRIC_ENABLED
     [_initialView updateBounds];
 #else
-    [((RNSScreenView *)self.viewIfLoaded) updateBounds];
+    if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+      _lastViewFrame = self.view.frame;
+      [((RNSScreenView *)self.viewIfLoaded) updateBounds];
+    }
 #endif
   }
 }
