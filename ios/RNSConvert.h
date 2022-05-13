@@ -16,6 +16,9 @@
 + (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
     (facebook::react::RNSScreenReplaceAnimation)replaceAnimation;
 
++ (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
+    (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance;
+
 @end
 
 #endif // RN_FABRIC_ENABLED

@@ -24,7 +24,6 @@
 #else
 @property (nonatomic) UIBlurEffectStyle blurEffect;
 @property (nonatomic) BOOL hide;
-@property (nonatomic) BOOL backButtonInCustomView;
 #endif
 
 @property (nonatomic, retain) NSString *title;
@@ -48,6 +47,7 @@
 @property (nonatomic) BOOL disableBackButtonMenu;
 @property (nonatomic) BOOL hideShadow;
 @property (nonatomic) BOOL translucent;
+@property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) UISemanticContentAttribute direction;
 
 + (void)willShowViewController:(UIViewController *)vc
