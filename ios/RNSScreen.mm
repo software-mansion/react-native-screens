@@ -425,6 +425,7 @@
   [super prepareForRecycle];
   // TODO: Make sure that there is no edge case when this should be uncommented
   // _controller=nil;
+  _dismissed = NO;
   _state.reset();
 }
 
