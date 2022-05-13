@@ -751,12 +751,20 @@
   if (isRTL) {
     x = _controller.view.frame.size.width - x;
   }
+  
+  // see: https://github.com/software-mansion/react-native-screens/pull/1442/commits/c0413bddadc1023022d3d390373321632ad3539d
+  // this prop is always default initialized so we do not expect any nils
+  float start = [gestureResponseDistanceValues[@"start"] floatValue];
+  float end = [gestureResponseDistanceValues[@"end"] floatValue];
+  float top = [gestureResponseDistanceValues[@"top"] floatValue];
+  float bottom = [gestureResponseDistanceValues[@"bottom"] floatValue];
+
   // we check if any of the constraints are violated and return NO if so
   return !(
-      (gestureResponseDistanceValues[@"start"] && x < [gestureResponseDistanceValues[@"start"] floatValue]) ||
-      (gestureResponseDistanceValues[@"end"] && x > [gestureResponseDistanceValues[@"end"] floatValue]) ||
-      (gestureResponseDistanceValues[@"top"] && y < [gestureResponseDistanceValues[@"top"] floatValue]) ||
-      (gestureResponseDistanceValues[@"bottom"] && y > [gestureResponseDistanceValues[@"bottom"] floatValue]));
+      (start != -1 && x < start) ||
+      (end != -1 && x > end) ||
+      (top != -1 && y < top) ||
+      (bottom != -1 && y > bottom));
 }
 
 #ifdef RN_FABRIC_ENABLED
