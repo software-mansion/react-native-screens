@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSScreenStackView :
 #ifdef RN_FABRIC_ENABLED
-    RCTViewComponentView
+    RCTViewComponentView <RNSScreenContainerDelegate>
 #else
     UIView <RNSScreenContainerDelegate, RCTInvalidating>
 #endif
