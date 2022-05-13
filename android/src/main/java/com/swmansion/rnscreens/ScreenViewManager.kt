@@ -153,6 +153,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setHomeIndicatorHidden(view: Screen?, value: Boolean) = Unit
 
+    override fun setPreventNativeDismiss(view: Screen?, value: Boolean) = Unit
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map: MutableMap<String, Any> = MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,

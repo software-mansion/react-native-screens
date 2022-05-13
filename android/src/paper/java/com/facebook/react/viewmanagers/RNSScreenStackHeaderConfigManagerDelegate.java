@@ -91,11 +91,11 @@ public class RNSScreenStackHeaderConfigManagerDelegate<T extends View, U extends
       case "hideBackButton":
         mViewManager.setHideBackButton(view, value == null ? false : (boolean) value);
         break;
-      case "topInsetEnabled":
-        mViewManager.setTopInsetEnabled(view, value == null ? false : (boolean) value);
-        break;
       case "backButtonInCustomView":
         mViewManager.setBackButtonInCustomView(view, value == null ? false : (boolean) value);
+        break;
+      case "topInsetEnabled":
+        mViewManager.setTopInsetEnabled(view, value == null ? false : (boolean) value);
         break;
       default:
         super.setProperty(view, propName, value);
