@@ -140,7 +140,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
-    // these props are not available on Android, however we must override their getters
+    // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(view: Screen?, value: Boolean) = Unit
 
     override fun setTransitionDuration(view: Screen?, value: Int) = Unit
@@ -150,6 +150,10 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setCustomAnimationOnSwipe(view: Screen?, value: Boolean) = Unit
 
     override fun setGestureResponseDistance(view: Screen?, value: ReadableMap?) = Unit
+
+    override fun setHomeIndicatorHidden(view: Screen?, value: Boolean) = Unit
+
+    override fun setPreventNativeDismiss(view: Screen?, value: Boolean) = Unit
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map: MutableMap<String, Any> = MapBuilder.of(

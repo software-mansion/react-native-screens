@@ -752,7 +752,7 @@
     x = _controller.view.frame.size.width - x;
   }
   
-  // see: https://github.com/software-mansion/react-native-screens/pull/1442/commits/c0413bddadc1023022d3d390373321632ad3539d
+  // see: https://github.com/software-mansion/react-native-screens/pull/1442/commits/74d4bae321875d8305ad021b3d448ebf713e7d56
   // this prop is always default initialized so we do not expect any nils
   float start = [gestureResponseDistanceValues[@"start"] floatValue];
   float end = [gestureResponseDistanceValues[@"end"] floatValue];
@@ -765,6 +765,47 @@
       (end != -1 && x > end) ||
       (top != -1 && y < top) ||
       (bottom != -1 && y > bottom));
+}
+
+// By default, the header buttons that are not inside the native hit area
+// cannot be clicked, so we check it by ourselves
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+  if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
+    // headerConfig should be the first subview of the topmost screen
+    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
+    if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
+      if (headerHitTestResult != nil) {
+        return headerHitTestResult;
+      }
+    }
+  }
+  return [super hitTest:point withEvent:event];
+}
+
+- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
+  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
+  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
+  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
+    return NO;
+  }
+  UIScrollView *scrollView = (UIScrollView *)gestureRecognizer.view;
+  return scrollView.panGestureRecognizer == gestureRecognizer;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
 #ifdef RN_FABRIC_ENABLED
@@ -892,23 +933,6 @@
   });
 }
 
-// By default, the header buttons that are not inside the native hit area
-// cannot be clicked, so we check it by ourselves
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-  if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
-    // headerConfig should be the first subview of the topmost screen
-    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
-    if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
-      if (headerHitTestResult != nil) {
-        return headerHitTestResult;
-      }
-    }
-  }
-  return [super hitTest:point withEvent:event];
-}
-
 - (void)invalidate
 {
   _invalidated = YES;
@@ -918,30 +942,6 @@
   [_presentedModals removeAllObjects];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
-}
-
-- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-{
-  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
-  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
-  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
-  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
-    return NO;
-  }
-  UIScrollView *scrollView = gestureRecognizer.view;
-  return scrollView.panGestureRecognizer == gestureRecognizer;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
