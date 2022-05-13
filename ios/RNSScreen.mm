@@ -199,7 +199,7 @@
 - (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
 {
   int activityState = [activityStateOrNil intValue];
-  if (activityStateOrNil != nil && activityState != _activityState) {
+  if (activityStateOrNil != nil && activityState != -1 && activityState != _activityState) {
     _activityState = activityState;
     [_reactSuperview markChildUpdated];
   }
@@ -467,6 +467,8 @@
       setGestureResponseDistance:[RNSConvert
                                      gestureResponseDistanceDictFromCppStruct:newScreenProps.gestureResponseDistance]];
 
+  [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
+  
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -504,7 +506,7 @@
   if (newScreenProps.replaceAnimation != oldScreenProps.replaceAnimation) {
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
-
+  
   [super updateProps:props oldProps:oldProps];
 }
 
