@@ -16,11 +16,11 @@
 #import "RNSConvert.h"
 #else
 #import <React/RCTTouchHandler.h>
-#import "RNSScreenStack.h"
 #endif
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
+#import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
 @interface RNSScreenView ()
@@ -190,6 +190,19 @@
 - (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
 {
   _replaceAnimation = replaceAnimation;
+}
+
+// Nil will be provided when activityState is set as an animated value and we change
+// it from JS to be a plain value (non animated).
+// In case when nil is received, we want to ignore such value and not make
+// any updates as the actual non-nil value will follow immediately.
+- (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
+{
+  int activityState = [activityStateOrNil intValue];
+  if (activityStateOrNil != nil && activityState != -1 && activityState != _activityState) {
+    _activityState = activityState;
+    [_reactSuperview markChildUpdated];
+  }
 }
 
 #if !TARGET_OS_TV
@@ -393,6 +406,11 @@
   return nil;
 }
 
+- (void)notifyFinishTransitioning
+{
+  [_controller notifyFinishTransitioning];
+}
+
 #pragma mark - Fabric specific
 #ifdef RN_FABRIC_ENABLED
 
@@ -440,9 +458,19 @@
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
-  
+
   [self setHideKeyboardOnSwipe:newScreenProps.hideKeyboardOnSwipe];
 
+  [self setCustomAnimationOnSwipe:newScreenProps.customAnimationOnSwipe];
+
+  [self
+      setGestureResponseDistance:[RNSConvert
+                                     gestureResponseDistanceDictFromCppStruct:newScreenProps.gestureResponseDistance]];
+
+  [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
+
+  [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
+  
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -462,6 +490,10 @@
     [self setScreenOrientation:[RCTConvert UIInterfaceOrientationMask:RCTNSStringFromStringNilIfEmpty(
                                                                           newScreenProps.screenOrientation)]];
   }
+
+  if (newScreenProps.homeIndicatorHidden != oldScreenProps.homeIndicatorHidden) {
+    [self setHomeIndicatorHidden:newScreenProps.homeIndicatorHidden];
+  }
 #endif
 
   if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
@@ -476,7 +508,7 @@
   if (newScreenProps.replaceAnimation != oldScreenProps.replaceAnimation) {
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
-
+  
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -488,11 +520,6 @@
 
 #pragma mark - Paper specific
 #else
-
-- (void)notifyFinishTransitioning
-{
-  [_controller notifyFinishTransitioning];
-}
 
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
 {
@@ -509,19 +536,6 @@
       @"closing" : @(closing ? 1 : 0),
       @"goingForward" : @(goingForward ? 1 : 0),
     });
-  }
-}
-
-// Nil will be provided when activityState is set as an animated value and we change
-// it from JS to be a plain value (non animated).
-// In case when nil is received, we want to ignore such value and not make
-// any updates as the actual non-nil value will follow immediately.
-- (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
-{
-  int activityState = [activityStateOrNil intValue];
-  if (activityStateOrNil != nil && activityState != _activityState) {
-    _activityState = activityState;
-    [_reactSuperview markChildUpdated];
   }
 }
 
@@ -596,11 +610,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #pragma mark - RNSScreen
 
 @implementation RNSScreen {
+  __weak id _previousFirstResponder;
+  CGRect _lastViewFrame;
 #ifdef RN_FABRIC_ENABLED
   RNSScreenView *_initialView;
 #else
-  __weak id _previousFirstResponder;
-  CGRect _lastViewFrame;
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
@@ -758,12 +772,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidLayoutSubviews
 {
   [super viewDidLayoutSubviews];
-#ifdef RN_FABRIC_ENABLED
-  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[UINavigationController class]];
-  if (isDisplayedWithinUINavController) {
-    [_initialView updateBounds];
-  }
-#else
+
   // The below code makes the screen view adapt dimensions provided by the system. We take these
   // into account only when the view is mounted under RNScreensNavigationController in which case system
   // provides additional padding to account for possible header, and in the case when screen is
@@ -772,12 +781,50 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL isDisplayedWithinUINavController =
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
-  if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
-      !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
-    _lastViewFrame = self.view.frame;
-    [((RNSScreenView *)self.viewIfLoaded) updateBounds];
-  }
+
+  if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
+#ifdef RN_FABRIC_ENABLED
+    [_initialView updateBounds];
+#else
+    if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+      _lastViewFrame = self.view.frame;
+      [((RNSScreenView *)self.viewIfLoaded) updateBounds];
+    }
 #endif
+  }
+}
+
+- (void)notifyFinishTransitioning
+{
+  [_previousFirstResponder becomeFirstResponder];
+  _previousFirstResponder = nil;
+  // the correct Screen for appearance is set after the transition, same for orientation.
+  [RNSScreenWindowTraits updateWindowTraits];
+}
+
+- (void)willMoveToParentViewController:(UIViewController *)parent
+{
+  [super willMoveToParentViewController:parent];
+  if (parent == nil) {
+    id responder = [self findFirstResponder:self.view];
+    if (responder != nil) {
+      _previousFirstResponder = responder;
+    }
+  }
+}
+
+- (id)findFirstResponder:(UIView *)parent
+{
+  if (parent.isFirstResponder) {
+    return parent;
+  }
+  for (UIView *subView in parent.subviews) {
+    id responder = [self findFirstResponder:subView];
+    if (responder != nil) {
+      return responder;
+    }
+  }
+  return nil;
 }
 
 #if !TARGET_OS_TV
@@ -922,31 +969,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
 #pragma mark - Paper specific
 
-- (id)findFirstResponder:(UIView *)parent
-{
-  if (parent.isFirstResponder) {
-    return parent;
-  }
-  for (UIView *subView in parent.subviews) {
-    id responder = [self findFirstResponder:subView];
-    if (responder != nil) {
-      return responder;
-    }
-  }
-  return nil;
-}
-
-- (void)willMoveToParentViewController:(UIViewController *)parent
-{
-  [super willMoveToParentViewController:parent];
-  if (parent == nil) {
-    id responder = [self findFirstResponder:self.view];
-    if (responder != nil) {
-      _previousFirstResponder = responder;
-    }
-  }
-}
-
 - (void)hideHeaderIfNecessary
 {
 #if !TARGET_OS_TV
@@ -1002,14 +1024,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 
 #pragma mark - transition progress related methods
-
-- (void)notifyFinishTransitioning
-{
-  [_previousFirstResponder becomeFirstResponder];
-  _previousFirstResponder = nil;
-  // the correct Screen for appearance is set after the transition, same for orientation.
-  [RNSScreenWindowTraits updateWindowTraits];
-}
 
 - (void)setupProgressNotification
 {
