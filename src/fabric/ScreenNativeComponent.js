@@ -19,6 +19,13 @@ type ScreenDismissedEvent = $ReadOnly<{|
   dismissCount: Int32,
 |}>;
 
+type GestureResponseDistanceType = $ReadOnly<{|
+  start: Float,
+  end: Float,
+  top: Float,
+  bottom: Float,
+|}>;
+
 type StackPresentation =
   | 'push'
   | 'modal'
@@ -48,7 +55,10 @@ export type NativeProps = $ReadOnly<{|
   onDismissed?: ?BubblingEventHandler<ScreenDismissedEvent>,
   onWillAppear?: ?BubblingEventHandler<ScreenEvent>,
   onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
+  customAnimationOnSwipe?: boolean,
   fullScreenSwipeEnabled?: boolean,
+  homeIndicatorHidden?: boolean,
+  preventNativeDismiss?: boolean,
   gestureEnabled?: WithDefault<boolean, true>,
   statusBarColor?: ColorValue,
   statusBarHidden?: boolean,
@@ -56,15 +66,17 @@ export type NativeProps = $ReadOnly<{|
   statusBarAnimation?: string,
   statusBarStyle?: string,
   statusBarTranslucent?: boolean,
+  gestureResponseDistance?: GestureResponseDistanceType,
   stackPresentation?: WithDefault<StackPresentation, 'push'>,
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
   transitionDuration?: WithDefault<Int32, 350>,
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
+  hideKeyboardOnSwipe?: boolean,
+  activityState?: WithDefault<Int32, -1>,
   // TODO: implement these props on iOS
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,
   nativeBackButtonDismissalEnabled?: boolean,
-  activityState?: WithDefault<Int32, -1>,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
