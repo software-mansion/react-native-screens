@@ -752,7 +752,7 @@
     x = _controller.view.frame.size.width - x;
   }
   
-  // see: https://github.com/software-mansion/react-native-screens/pull/1442/commits/c0413bddadc1023022d3d390373321632ad3539d
+  // see: https://github.com/software-mansion/react-native-screens/pull/1442/commits/74d4bae321875d8305ad021b3d448ebf713e7d56
   // this prop is always default initialized so we do not expect any nils
   float start = [gestureResponseDistanceValues[@"start"] floatValue];
   float end = [gestureResponseDistanceValues[@"end"] floatValue];
