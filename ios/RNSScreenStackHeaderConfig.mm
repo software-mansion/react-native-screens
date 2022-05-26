@@ -624,6 +624,23 @@
   }
 }
 
+- (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
+{
+  [_reactSubviews insertObject:subview atIndex:atIndex];
+  subview.reactSuperview = self;
+}
+
+- (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
+{
+  [_reactSubviews removeObject:subview];
+}
+
+- (void)didUpdateReactSubviews
+{
+  [super didUpdateReactSubviews];
+  [self updateViewControllerIfNeeded];
+}
+
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
@@ -642,7 +659,8 @@
       @(index),
       @([childComponentView.superview tag]));
 
-  [_reactSubviews insertObject:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
+  //  [_reactSubviews insertObject:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
+  [self insertReactSubview:(RNSScreenStackHeaderSubview *)childComponentView atIndex:index];
   [self updateViewControllerIfNeeded];
 }
 
@@ -756,17 +774,6 @@
 #else
 #pragma mark - Paper specific
 
-- (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
-{
-  [_reactSubviews insertObject:subview atIndex:atIndex];
-  subview.reactSuperview = self;
-}
-
-- (void)removeReactSubview:(RNSScreenStackHeaderSubview *)subview
-{
-  [_reactSubviews removeObject:subview];
-}
-
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
@@ -777,12 +784,6 @@
   if ([changedProps containsObject:@"translucent"]) {
     [self layoutNavigationControllerView];
   }
-}
-
-- (void)didUpdateReactSubviews
-{
-  [super didUpdateReactSubviews];
-  [self updateViewControllerIfNeeded];
 }
 
 #endif

@@ -876,24 +876,26 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (BOOL)hasTraitSet:(RNSWindowTrait)trait
 {
-  switch (trait) {
-    case RNSWindowTraitStyle: {
-      return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
-    }
-    case RNSWindowTraitAnimation: {
-      return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
-    }
-    case RNSWindowTraitHidden: {
-      return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
-    }
-    case RNSWindowTraitOrientation: {
-      return ((RNSScreenView *)self.view).hasOrientationSet;
-    }
-    case RNSWindowTraitHomeIndicatorHidden: {
-      return ((RNSScreenView *)self.view).hasHomeIndicatorHiddenSet;
-    }
-    default: {
-      RCTLogError(@"Unknown trait passed: %d", (int)trait);
+  if ([self.view isKindOfClass:[RNSScreenView class]]) {
+    switch (trait) {
+      case RNSWindowTraitStyle: {
+        return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
+      }
+      case RNSWindowTraitAnimation: {
+        return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
+      }
+      case RNSWindowTraitHidden: {
+        return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
+      }
+      case RNSWindowTraitOrientation: {
+        return ((RNSScreenView *)self.view).hasOrientationSet;
+      }
+      case RNSWindowTraitHomeIndicatorHidden: {
+        return ((RNSScreenView *)self.view).hasHomeIndicatorHiddenSet;
+      }
+      default: {
+        RCTLogError(@"Unknown trait passed: %d", (int)trait);
+      }
     }
   }
   return NO;
