@@ -245,6 +245,13 @@
 
 @end
 
+#ifdef RN_FABRIC_ENABLED
+Class<RCTComponentViewProtocol> RNSScreenContainerCls(void)
+{
+  return RNSScreenContainerView.class;
+}
+#endif
+
 @implementation RNSScreenContainerManager
 
 RCT_EXPORT_MODULE()
