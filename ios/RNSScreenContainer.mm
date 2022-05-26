@@ -240,30 +240,7 @@
 }
 
 #ifdef RN_FABRIC_ENABLED
-#pragma mark - RCTComponentViewProtocol
 
-- (void)prepareForRecycle
-{
-  [super prepareForRecycle];
-  // TODO: Make sure that there is no edge case when this should be uncommented
-  // _controller=nil;
-//  _state.reset();
-}
-
-- (void)updateProps:(facebook::react::Props::Shared const &)props
-           oldProps:(facebook::react::Props::Shared const &)oldProps
-{
-  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenContainerProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenContainerProps>(props);
-
-  [super updateProps:props oldProps:oldProps];
-}
-
-- (void)updateState:(facebook::react::State::Shared const &)state
-           oldState:(facebook::react::State::Shared const &)oldState
-{
-  _state = std::static_pointer_cast<const facebook::react::RNSScreenShadowNode::ConcreteState>(state);
-}
 #endif
 
 @end
