@@ -3,6 +3,7 @@
 
 #ifdef RN_FABRIC_ENABLED
 #import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #endif
 
 @implementation RNScreensViewController
@@ -240,7 +241,10 @@
 }
 
 #ifdef RN_FABRIC_ENABLED
-
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenContainerComponentDescriptor>();
+}
 #endif
 
 @end
