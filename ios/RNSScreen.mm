@@ -34,9 +34,9 @@
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
 #ifdef RN_FABRIC_ENABLED
-// we recreate the behavior of `reactSetFrame` on new architecture
-    facebook::react::LayoutMetrics _oldLayoutMetrics;
-    facebook::react::LayoutMetrics _newLayoutMetrics;
+  // we recreate the behavior of `reactSetFrame` on new architecture
+  facebook::react::LayoutMetrics _oldLayoutMetrics;
+  facebook::react::LayoutMetrics _newLayoutMetrics;
   RCTSurfaceTouchHandler *_touchHandler;
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
 #else
@@ -291,7 +291,7 @@
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillAppear(facebook::react::RNSScreenEventEmitter::OnWillAppear{});
   }
-    [self updateLayoutMetrics:_layoutMetrics oldLayoutMetrics:_oldLayoutMetrics];
+  [self updateLayoutMetrics:_layoutMetrics oldLayoutMetrics:_oldLayoutMetrics];
 #else
   if (self.onWillAppear) {
     self.onWillAppear(nil);
@@ -529,23 +529,23 @@
   _state = std::static_pointer_cast<const facebook::react::RNSScreenShadowNode::ConcreteState>(state);
 }
 
- - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
-            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
- {
-     _layoutMetrics = layoutMetrics;
-     _oldLayoutMetrics = oldLayoutMetrics;
-     UIViewController *parentVC = self.reactViewController.parentViewController;
-     if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
-         [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
-     }
-     // when screen is mounted under RNScreensNavigationController it's size is controller
-     // by the navigation controller itself. That is, it is set to fill space of
-     // the controller. In that case we ignore react layout system from managing
-     // the screen dimensions and we wait for the screen VC to update and then we
-     // pass the dimensions to ui view manager to take into account when laying out
-     // subviews
-     // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
- }
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  _layoutMetrics = layoutMetrics;
+  _oldLayoutMetrics = oldLayoutMetrics;
+  UIViewController *parentVC = self.reactViewController.parentViewController;
+  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+  }
+  // when screen is mounted under RNScreensNavigationController it's size is controller
+  // by the navigation controller itself. That is, it is set to fill space of
+  // the controller. In that case we ignore react layout system from managing
+  // the screen dimensions and we wait for the screen VC to update and then we
+  // pass the dimensions to ui view manager to take into account when laying out
+  // subviews
+  // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
+}
 
 #pragma mark - Paper specific
 #else
@@ -674,7 +674,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [super viewWillAppear:animated];
   if (!_isSwiping) {
 #ifdef RN_FABRIC_ENABLED
-  [_initialView notifyWillAppear];
+    [_initialView notifyWillAppear];
 #else
     [((RNSScreenView *)self.view) notifyWillAppear];
 #endif
@@ -727,7 +727,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // same flow as in viewWillAppear
   if (!_isSwiping) {
 #ifdef RN_FABRIC_ENABLED
-  [_initialView notifyWillDisappear];
+    [_initialView notifyWillDisappear];
 #else
     [((RNSScreenView *)self.view) notifyWillDisappear];
 #endif
@@ -755,9 +755,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
-
 #ifdef RN_FABRIC_ENABLED
-      [_initialView notifyAppear];
+    [_initialView notifyAppear];
 #else
     // we are going forward or dismissing without swipe
     // or successfully swiped back
@@ -794,7 +793,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // same flow as in viewDidAppear
   if (!_isSwiping || _shouldNotify) {
 #ifdef RN_FABRIC_ENABLED
-      [_initialView notifyDisappear];
+    [_initialView notifyDisappear];
 #else
     [((RNSScreenView *)self.view) notifyDisappear];
     [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
