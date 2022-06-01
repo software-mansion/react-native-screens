@@ -703,7 +703,7 @@
     _translucent = newScreenProps.translucent;
     needsNavigationControllerLayout = YES;
   }
-  
+
   if (newScreenProps.backButtonInCustomView != _backButtonInCustomView) {
     [self setBackButtonInCustomView:newScreenProps.backButtonInCustomView];
   }
