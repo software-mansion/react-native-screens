@@ -291,7 +291,7 @@
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillAppear(facebook::react::RNSScreenEventEmitter::OnWillAppear{});
   }
-  [self updateLayoutMetrics:_layoutMetrics oldLayoutMetrics:_oldLayoutMetrics];
+  [self updateLayoutMetrics:_newLayoutMetrics oldLayoutMetrics:_oldLayoutMetrics];
 #else
   if (self.onWillAppear) {
     self.onWillAppear(nil);
@@ -479,7 +479,7 @@
   [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
 
   [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
-  
+
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
 #if !TARGET_OS_TV
@@ -532,7 +532,7 @@
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
 {
-  _layoutMetrics = layoutMetrics;
+  _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
