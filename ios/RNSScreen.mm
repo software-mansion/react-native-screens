@@ -34,6 +34,9 @@
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
 #ifdef RN_FABRIC_ENABLED
+  // we recreate the behavior of `reactSetFrame` on new architecture
+  facebook::react::LayoutMetrics _oldLayoutMetrics;
+  facebook::react::LayoutMetrics _newLayoutMetrics;
   RCTSurfaceTouchHandler *_touchHandler;
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
 #else
@@ -288,6 +291,7 @@
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillAppear(facebook::react::RNSScreenEventEmitter::OnWillAppear{});
   }
+  [self updateLayoutMetrics:_newLayoutMetrics oldLayoutMetrics:_oldLayoutMetrics];
 #else
   if (self.onWillAppear) {
     self.onWillAppear(nil);
@@ -444,6 +448,11 @@
   // TODO: Make sure that there is no edge case when this should be uncommented
   // _controller=nil;
   _dismissed = NO;
+  // we don't reset the transform of view at the end of custom transitions,
+  // so in order not to add code to all transitions, we just reset it here.
+  // Maybe it would be better to do it in each animation since we could change other
+  // view props there too and they need to be reset due to view recycling.
+  self.transform = CGAffineTransformIdentity;
   _state.reset();
 }
 
@@ -470,7 +479,7 @@
   [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
 
   [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
-  
+
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
 #if !TARGET_OS_TV
@@ -518,6 +527,24 @@
            oldState:(facebook::react::State::Shared const &)oldState
 {
   _state = std::static_pointer_cast<const facebook::react::RNSScreenShadowNode::ConcreteState>(state);
+}
+
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  _newLayoutMetrics = layoutMetrics;
+  _oldLayoutMetrics = oldLayoutMetrics;
+  UIViewController *parentVC = self.reactViewController.parentViewController;
+  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+  }
+  // when screen is mounted under RNScreensNavigationController it's size is controller
+  // by the navigation controller itself. That is, it is set to fill space of
+  // the controller. In that case we ignore react layout system from managing
+  // the screen dimensions and we wait for the screen VC to update and then we
+  // pass the dimensions to ui view manager to take into account when laying out
+  // subviews
+  // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
 }
 
 #pragma mark - Paper specific
@@ -614,9 +641,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
-#ifdef RN_FABRIC_ENABLED
   RNSScreenView *_initialView;
-#else
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
@@ -625,7 +650,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
-#endif
 }
 
 #pragma mark - Common
@@ -648,12 +672,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-#ifdef RN_FABRIC_ENABLED
-  [RNSScreenWindowTraits updateWindowTraits];
-  [_initialView notifyWillAppear];
-#else
   if (!_isSwiping) {
+#ifdef RN_FABRIC_ENABLED
+    [_initialView notifyWillAppear];
+#else
     [((RNSScreenView *)self.view) notifyWillAppear];
+#endif
     if (self.transitionCoordinator.isInteractive) {
       // we started dismissing with swipe gesture
       _isSwiping = YES;
@@ -663,26 +687,28 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // The _isSwiping is still true, but we don't want to notify then
     _shouldNotify = NO;
   }
-
+#ifdef RN_FABRIC_ENABLED
+#else
   [self hideHeaderIfNecessary];
-
+#endif
   // as per documentation of these methods
   _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
 
   [RNSScreenWindowTraits updateWindowTraits];
   if (_shouldNotify) {
     _closing = NO;
+#ifdef RN_FABRIC_ENABLED
+#else
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
-  }
 #endif
+  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
 #ifdef RN_FABRIC_ENABLED
-  [_initialView notifyWillDisappear];
 #else
   if (!self.transitionCoordinator.isInteractive) {
     // user might have long pressed ios 14 back button item,
@@ -696,10 +722,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   } else {
     _dismissCount = 1;
   }
+#endif
 
   // same flow as in viewWillAppear
   if (!_isSwiping) {
+#ifdef RN_FABRIC_ENABLED
+    [_initialView notifyWillDisappear];
+#else
     [((RNSScreenView *)self.view) notifyWillDisappear];
+#endif
     if (self.transitionCoordinator.isInteractive) {
       _isSwiping = YES;
     }
@@ -712,35 +743,36 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (_shouldNotify) {
     _closing = YES;
+#ifdef RN_FABRIC_ENABLED
+#else
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
-  }
 #endif
+  }
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-#ifdef RN_FABRIC_ENABLED
-  [_initialView notifyAppear];
-#else
   if (!_isSwiping || _shouldNotify) {
+#ifdef RN_FABRIC_ENABLED
+    [_initialView notifyAppear];
+#else
     // we are going forward or dismissing without swipe
     // or successfully swiped back
     [((RNSScreenView *)self.view) notifyAppear];
     [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
+#endif
   }
 
   _isSwiping = NO;
   _shouldNotify = YES;
-#endif
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
 #ifdef RN_FABRIC_ENABLED
-  [_initialView notifyDisappear];
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     // screen dismissed, send event
     [_initialView notifyDismissedWithCount:1];
@@ -757,16 +789,21 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
     }
   }
-
+#endif
   // same flow as in viewDidAppear
   if (!_isSwiping || _shouldNotify) {
+#ifdef RN_FABRIC_ENABLED
+    [_initialView notifyDisappear];
+#else
     [((RNSScreenView *)self.view) notifyDisappear];
     [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
+#endif
   }
 
   _isSwiping = NO;
   _shouldNotify = YES;
-
+#ifdef RN_FABRIC_ENABLED
+#else
   [self traverseForScrollView:self.view];
 #endif
 }
@@ -876,24 +913,26 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (BOOL)hasTraitSet:(RNSWindowTrait)trait
 {
-  switch (trait) {
-    case RNSWindowTraitStyle: {
-      return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
-    }
-    case RNSWindowTraitAnimation: {
-      return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
-    }
-    case RNSWindowTraitHidden: {
-      return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
-    }
-    case RNSWindowTraitOrientation: {
-      return ((RNSScreenView *)self.view).hasOrientationSet;
-    }
-    case RNSWindowTraitHomeIndicatorHidden: {
-      return ((RNSScreenView *)self.view).hasHomeIndicatorHiddenSet;
-    }
-    default: {
-      RCTLogError(@"Unknown trait passed: %d", (int)trait);
+  if ([self.view isKindOfClass:[RNSScreenView class]]) {
+    switch (trait) {
+      case RNSWindowTraitStyle: {
+        return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
+      }
+      case RNSWindowTraitAnimation: {
+        return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
+      }
+      case RNSWindowTraitHidden: {
+        return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
+      }
+      case RNSWindowTraitOrientation: {
+        return ((RNSScreenView *)self.view).hasOrientationSet;
+      }
+      case RNSWindowTraitHomeIndicatorHidden: {
+        return ((RNSScreenView *)self.view).hasHomeIndicatorHiddenSet;
+      }
+      default: {
+        RCTLogError(@"Unknown trait passed: %d", (int)trait);
+      }
     }
   }
   return NO;
