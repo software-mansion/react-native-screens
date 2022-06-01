@@ -806,6 +806,19 @@
   return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
+                         interactionControllerForAnimationController:
+                             (id<UIViewControllerAnimatedTransitioning>)animationController
+{
+  return _interactionController;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
+    (id<UIViewControllerAnimatedTransitioning>)animator
+{
+  return _interactionController;
+}
+
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
@@ -940,19 +953,6 @@
   [_presentedModals removeAllObjects];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-                         interactionControllerForAnimationController:
-                             (id<UIViewControllerAnimatedTransitioning>)animationController
-{
-  return _interactionController;
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
-    (id<UIViewControllerAnimatedTransitioning>)animator
-{
-  return _interactionController;
 }
 #endif // RN_FABRIC_ENABLED
 

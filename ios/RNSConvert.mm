@@ -78,6 +78,17 @@
   }
 }
 
++ (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:
+    (facebook::react::RNSScreenSwipeDirection)swipeDirection
+{
+  switch (swipeDirection) {
+    case facebook::react::RNSScreenSwipeDirection::Horizontal:
+      return RNSScreenSwipeDirectionHorizontal;
+    case facebook::react::RNSScreenSwipeDirection::Vertical:
+      return RNSScreenSwipeDirectionVertical;
+  }
+}
+
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
     (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance
 {
