@@ -228,13 +228,6 @@
   }
 }
 
-- (void)invalidate
-{
-  _invalidated = YES;
-  [_controller willMoveToParentViewController:nil];
-  [_controller removeFromParentViewController];
-}
-
 - (void)layoutSubviews
 {
   [super layoutSubviews];
@@ -250,6 +243,15 @@
 {
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenContainerComponentDescriptor>();
 }
+#else
+
+- (void)invalidate
+{
+  _invalidated = YES;
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
+}
+
 #endif
 
 @end
