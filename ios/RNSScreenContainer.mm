@@ -238,11 +238,14 @@
   }
 }
 
+#pragma mark-- Fabric specific
 #ifdef RN_FABRIC_ENABLED
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenContainerComponentDescriptor>();
 }
+
+#pragma mark-- Paper specific
 #else
 
 - (void)invalidate
