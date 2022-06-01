@@ -199,7 +199,7 @@
 - (void)setActivityStateOrNil:(NSNumber *)activityStateOrNil
 {
   int activityState = [activityStateOrNil intValue];
-  if (activityStateOrNil != nil && activityState != _activityState) {
+  if (activityStateOrNil != nil && activityState != -1 && activityState != _activityState) {
     _activityState = activityState;
     [_reactSuperview markChildUpdated];
   }
@@ -443,6 +443,7 @@
   [super prepareForRecycle];
   // TODO: Make sure that there is no edge case when this should be uncommented
   // _controller=nil;
+  _dismissed = NO;
   _state.reset();
 }
 
@@ -467,6 +468,8 @@
                                      gestureResponseDistanceDictFromCppStruct:newScreenProps.gestureResponseDistance]];
 
   [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
+
+  [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
@@ -779,13 +782,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
-  if ((isDisplayedWithinUINavController || isPresentedAsNativeModal) &&
-      !CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
-    _lastViewFrame = self.view.frame;
+  if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
 #ifdef RN_FABRIC_ENABLED
     [_initialView updateBounds];
 #else
-    [((RNSScreenView *)self.viewIfLoaded) updateBounds];
+    if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
+      _lastViewFrame = self.view.frame;
+      [((RNSScreenView *)self.viewIfLoaded) updateBounds];
+    }
 #endif
   }
 }

@@ -708,6 +708,10 @@
     [self setBackButtonInCustomView:newScreenProps.backButtonInCustomView];
   }
 
+  if (newScreenProps.backButtonInCustomView != _backButtonInCustomView) {
+    [self setBackButtonInCustomView:newScreenProps.backButtonInCustomView];
+  }
+
   _title = RCTNSStringFromStringNilIfEmpty(newScreenProps.title);
   if (newScreenProps.titleFontFamily != oldScreenProps.titleFontFamily) {
     _titleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontFamily);

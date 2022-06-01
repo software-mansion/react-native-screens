@@ -150,7 +150,6 @@ const RouteView = ({
   const { options, render: renderScene } = descriptors[route.key];
   const {
     gestureEnabled,
-    gestureResponseDistance,
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
@@ -171,6 +170,7 @@ const RouteView = ({
   let {
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
+    gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
   } = options;
@@ -189,6 +189,29 @@ const RouteView = ({
     }
     if (stackAnimation === undefined) {
       stackAnimation = 'slide_from_bottom';
+    }
+  }
+
+  if (gestureResponseDistance === undefined) {
+    // default values, required for unification of Fabric & Paper implementation
+    gestureResponseDistance = {
+      start: -1,
+      end: -1,
+      top: -1,
+      bottom: -1,
+    };
+  } else {
+    if (gestureResponseDistance.start === undefined) {
+      gestureResponseDistance.start = -1;
+    }
+    if (gestureResponseDistance.end === undefined) {
+      gestureResponseDistance.end = -1;
+    }
+    if (gestureResponseDistance.top === undefined) {
+      gestureResponseDistance.top = -1;
+    }
+    if (gestureResponseDistance.bottom === undefined) {
+      gestureResponseDistance.bottom = -1;
     }
   }
 
