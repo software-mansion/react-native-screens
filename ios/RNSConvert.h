@@ -16,6 +16,9 @@
 + (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
     (facebook::react::RNSScreenReplaceAnimation)replaceAnimation;
 
++ (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:
+    (facebook::react::RNSScreenSwipeDirection)swipeDirection;
+
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
     (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance;
 
