@@ -155,6 +155,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setPreventNativeDismiss(view: Screen?, value: Boolean) = Unit
 
+    override fun setSwipeDirection(view: Screen?, value: String?) = Unit
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         val map: MutableMap<String, Any> = MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,

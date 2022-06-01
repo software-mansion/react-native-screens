@@ -46,6 +46,8 @@ type StackAnimation =
   | 'slide_from_bottom'
   | 'fade_from_bottom';
 
+type SwipeDirection = 'vertical' | 'horizontal';
+
 type ReplaceAnimation = 'pop' | 'push';
 
 export type NativeProps = $ReadOnly<{|
@@ -71,6 +73,7 @@ export type NativeProps = $ReadOnly<{|
   stackAnimation?: WithDefault<StackAnimation, 'default'>,
   transitionDuration?: WithDefault<Int32, 350>,
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
+  swipeDirection?: WithDefault<SwipeDirection, 'horizontal'>,
   hideKeyboardOnSwipe?: boolean,
   activityState?: WithDefault<Int32, -1>,
   // TODO: implement these props on iOS

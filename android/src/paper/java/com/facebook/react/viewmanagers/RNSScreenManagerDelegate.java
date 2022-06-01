@@ -71,6 +71,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "replaceAnimation":
         mViewManager.setReplaceAnimation(view, (String) value);
         break;
+      case "swipeDirection":
+        mViewManager.setSwipeDirection(view, (String) value);
+        break;
       case "hideKeyboardOnSwipe":
         mViewManager.setHideKeyboardOnSwipe(view, value == null ? false : (boolean) value);
         break;

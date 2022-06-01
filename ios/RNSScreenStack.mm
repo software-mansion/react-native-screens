@@ -751,8 +751,9 @@
   if (isRTL) {
     x = _controller.view.frame.size.width - x;
   }
-  
-  // see: https://github.com/software-mansion/react-native-screens/pull/1442/commits/74d4bae321875d8305ad021b3d448ebf713e7d56
+
+  // see:
+  // https://github.com/software-mansion/react-native-screens/pull/1442/commits/74d4bae321875d8305ad021b3d448ebf713e7d56
   // this prop is always default initialized so we do not expect any nils
   float start = [gestureResponseDistanceValues[@"start"] floatValue];
   float end = [gestureResponseDistanceValues[@"end"] floatValue];
@@ -761,10 +762,7 @@
 
   // we check if any of the constraints are violated and return NO if so
   return !(
-      (start != -1 && x < start) ||
-      (end != -1 && x > end) ||
-      (top != -1 && y < top) ||
-      (bottom != -1 && y > bottom));
+      (start != -1 && x < start) || (end != -1 && x > end) || (top != -1 && y < top) || (bottom != -1 && y > bottom));
 }
 
 // By default, the header buttons that are not inside the native hit area
@@ -806,6 +804,19 @@
     shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
   return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
+                         interactionControllerForAnimationController:
+                             (id<UIViewControllerAnimatedTransitioning>)animationController
+{
+  return _interactionController;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
+    (id<UIViewControllerAnimatedTransitioning>)animator
+{
+  return _interactionController;
 }
 
 #ifdef RN_FABRIC_ENABLED
@@ -942,19 +953,6 @@
   [_presentedModals removeAllObjects];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-                         interactionControllerForAnimationController:
-                             (id<UIViewControllerAnimatedTransitioning>)animationController
-{
-  return _interactionController;
-}
-
-- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
-    (id<UIViewControllerAnimatedTransitioning>)animator
-{
-  return _interactionController;
 }
 #endif // RN_FABRIC_ENABLED
 
