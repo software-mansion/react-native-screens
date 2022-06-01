@@ -103,6 +103,7 @@ const ScreensNativeModules = {
   get NativeScreenContainer() {
     NativeScreenContainerValue =
       NativeScreenContainerValue ||
+      FabricComponents.ScreenContainer ||
       requireNativeComponent('RNSScreenContainer');
     return NativeScreenContainerValue;
   },
