@@ -18,9 +18,9 @@
 #import "RNSSearchBar.h"
 #endif
 #import <React/RCTFont.h>
-#import "RNSUIBarButtonItem.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSUIBarButtonItem.h"
 
 #ifdef RN_FABRIC_ENABLED
 #else
@@ -539,16 +539,13 @@
   navitem.leftBarButtonItem = nil;
   navitem.rightBarButtonItem = nil;
   navitem.titleView = nil;
-  
+
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
-#ifdef RN_FABRIC_ENABLED
-#else
 #if !TARGET_OS_TV
         navitem.leftItemsSupplementBackButton = config.backButtonInCustomView;
 #endif
-#endif // RN_FABRIC_ENABLED
         UIBarButtonItem *buttonItem = [[UIBarButtonItem alloc] initWithCustomView:subview];
         navitem.leftBarButtonItem = buttonItem;
         break;
@@ -705,6 +702,10 @@
   if (newScreenProps.translucent != _translucent) {
     _translucent = newScreenProps.translucent;
     needsNavigationControllerLayout = YES;
+  }
+  
+  if (newScreenProps.backButtonInCustomView != _backButtonInCustomView) {
+    [self setBackButtonInCustomView:newScreenProps.backButtonInCustomView];
   }
 
   _title = RCTNSStringFromStringNilIfEmpty(newScreenProps.title);

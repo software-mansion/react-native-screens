@@ -141,7 +141,6 @@
 
 - (void)updateContainer
 {
-#ifndef RN_FABRIC_ENABLED
   BOOL screenRemoved = NO;
   // remove screens that are no longer active
   NSMutableSet *orphaned = [NSMutableSet setWithSet:_activeScreens];
@@ -191,7 +190,6 @@
   if (screenRemoved || screenAdded) {
     [self maybeDismissVC];
   }
-#endif
 }
 
 - (void)maybeDismissVC

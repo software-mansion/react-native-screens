@@ -511,12 +511,7 @@
   NSMutableArray<UIViewController *> *pushControllers = [NSMutableArray new];
   NSMutableArray<UIViewController *> *modalControllers = [NSMutableArray new];
   for (RNSScreenView *screen in _reactSubviews) {
-#ifdef RN_FABRIC_ENABLED
-    if (screen.controller != nil)
-#else
-    if (!screen.dismissed && screen.controller != nil)
-#endif
-    {
+    if (!screen.dismissed && screen.controller != nil) {
       if (pushControllers.count == 0) {
         // first screen on the list needs to be places as "push controller"
         [pushControllers addObject:screen.controller];
@@ -613,13 +608,8 @@
   if (topScreen.fullScreenSwipeEnabled) {
     // we want only `RNSPanGestureRecognizer` to be able to recognize when
     // `fullScreenSwipeEnabled` is set, and we are in the bounds set by user
-#ifdef RN_FABRIC_ENABLED
-    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]])
-#else
     if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
-        [self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen])
-#endif
-    {
+        [self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
@@ -627,17 +617,6 @@
     return NO;
   }
 
-#ifdef RN_FABRIC_ENABLED
-  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
-    // it should only recognize with `customAnimationOnSwipe` set
-    return NO;
-  } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-    // it should only recognize with `fullScreenSwipeEnabled` set
-    return NO;
-  }
-  [self cancelTouchesInParent];
-  return _controller.viewControllers.count >= 2;
-#else
   if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
@@ -663,7 +642,6 @@
     [self cancelTouchesInParent];
     return YES;
   }
-#endif // RN_FABRIC_ENABLED
 
 #endif // TARGET_OS_TV
 }
@@ -762,6 +740,72 @@
 - (UIViewController *)reactViewController
 {
   return _controller;
+}
+
+- (BOOL)isInGestureResponseDistance:(UIGestureRecognizer *)gestureRecognizer topScreen:(RNSScreenView *)topScreen
+{
+  NSDictionary *gestureResponseDistanceValues = topScreen.gestureResponseDistance;
+  float x = [gestureRecognizer locationInView:gestureRecognizer.view].x;
+  float y = [gestureRecognizer locationInView:gestureRecognizer.view].y;
+  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+  if (isRTL) {
+    x = _controller.view.frame.size.width - x;
+  }
+  
+  // see: https://github.com/software-mansion/react-native-screens/pull/1442/commits/74d4bae321875d8305ad021b3d448ebf713e7d56
+  // this prop is always default initialized so we do not expect any nils
+  float start = [gestureResponseDistanceValues[@"start"] floatValue];
+  float end = [gestureResponseDistanceValues[@"end"] floatValue];
+  float top = [gestureResponseDistanceValues[@"top"] floatValue];
+  float bottom = [gestureResponseDistanceValues[@"bottom"] floatValue];
+
+  // we check if any of the constraints are violated and return NO if so
+  return !(
+      (start != -1 && x < start) ||
+      (end != -1 && x > end) ||
+      (top != -1 && y < top) ||
+      (bottom != -1 && y > bottom));
+}
+
+// By default, the header buttons that are not inside the native hit area
+// cannot be clicked, so we check it by ourselves
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+  if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
+    // headerConfig should be the first subview of the topmost screen
+    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
+    if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+      UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
+      if (headerHitTestResult != nil) {
+        return headerHitTestResult;
+      }
+    }
+  }
+  return [super hitTest:point withEvent:event];
+}
+
+- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
+  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
+  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
+  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
+    return NO;
+  }
+  UIScrollView *scrollView = (UIScrollView *)gestureRecognizer.view;
+  return scrollView.panGestureRecognizer == gestureRecognizer;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
 #ifdef RN_FABRIC_ENABLED
@@ -889,23 +933,6 @@
   });
 }
 
-// By default, the header buttons that are not inside the native hit area
-// cannot be clicked, so we check it by ourselves
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-  if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
-    // headerConfig should be the first subview of the topmost screen
-    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
-    if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-      UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
-      if (headerHitTestResult != nil) {
-        return headerHitTestResult;
-      }
-    }
-  }
-  return [super hitTest:point withEvent:event];
-}
-
 - (void)invalidate
 {
   _invalidated = YES;
@@ -915,48 +942,6 @@
   [_presentedModals removeAllObjects];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
-}
-
-- (BOOL)isInGestureResponseDistance:(UIGestureRecognizer *)gestureRecognizer topScreen:(RNSScreenView *)topScreen
-{
-  NSDictionary *gestureResponseDistanceValues = topScreen.gestureResponseDistance;
-  float x = [gestureRecognizer locationInView:gestureRecognizer.view].x;
-  float y = [gestureRecognizer locationInView:gestureRecognizer.view].y;
-  BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
-  if (isRTL) {
-    x = _controller.view.frame.size.width - x;
-  }
-  // we check if any of the constraints are violated and return NO if so
-  return !(
-      (gestureResponseDistanceValues[@"start"] && x < [gestureResponseDistanceValues[@"start"] floatValue]) ||
-      (gestureResponseDistanceValues[@"end"] && x > [gestureResponseDistanceValues[@"end"] floatValue]) ||
-      (gestureResponseDistanceValues[@"top"] && y < [gestureResponseDistanceValues[@"top"] floatValue]) ||
-      (gestureResponseDistanceValues[@"bottom"] && y > [gestureResponseDistanceValues[@"bottom"] floatValue]));
-  return NO;
-}
-
-- (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-{
-  // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
-  // without this, on a screen with a scroll view, it's only possible to pop view by panning horizontally
-  // if even slightly diagonal (or if in motion), scroll view will scroll, and edge swipe will be cancelled
-  if (![[gestureRecognizer view] isKindOfClass:[UIScrollView class]]) {
-    return NO;
-  }
-  UIScrollView *scrollView = gestureRecognizer.view;
-  return scrollView.panGestureRecognizer == gestureRecognizer;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-    shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-    shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
 - (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController

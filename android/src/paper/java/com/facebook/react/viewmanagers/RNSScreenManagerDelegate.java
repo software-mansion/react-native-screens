@@ -12,6 +12,7 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ColorPropConverter;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.BaseViewManagerInterface;
 
@@ -22,8 +23,17 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
+      case "customAnimationOnSwipe":
+        mViewManager.setCustomAnimationOnSwipe(view, value == null ? false : (boolean) value);
+        break;
       case "fullScreenSwipeEnabled":
         mViewManager.setFullScreenSwipeEnabled(view, value == null ? false : (boolean) value);
+        break;
+      case "homeIndicatorHidden":
+        mViewManager.setHomeIndicatorHidden(view, value == null ? false : (boolean) value);
+        break;
+      case "preventNativeDismiss":
+        mViewManager.setPreventNativeDismiss(view, value == null ? false : (boolean) value);
         break;
       case "gestureEnabled":
         mViewManager.setGestureEnabled(view, value == null ? true : (boolean) value);
@@ -46,6 +56,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "statusBarTranslucent":
         mViewManager.setStatusBarTranslucent(view, value == null ? false : (boolean) value);
         break;
+      case "gestureResponseDistance":
+        mViewManager.setGestureResponseDistance(view, (ReadableMap) value);
+        break;
       case "stackPresentation":
         mViewManager.setStackPresentation(view, (String) value);
         break;
@@ -58,6 +71,12 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "replaceAnimation":
         mViewManager.setReplaceAnimation(view, (String) value);
         break;
+      case "hideKeyboardOnSwipe":
+        mViewManager.setHideKeyboardOnSwipe(view, value == null ? false : (boolean) value);
+        break;
+      case "activityState":
+        mViewManager.setActivityState(view, value == null ? -1 : ((Double) value).intValue());
+        break;
       case "navigationBarColor":
         mViewManager.setNavigationBarColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
@@ -66,9 +85,6 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
         break;
       case "nativeBackButtonDismissalEnabled":
         mViewManager.setNativeBackButtonDismissalEnabled(view, value == null ? false : (boolean) value);
-        break;
-      case "activityState":
-        mViewManager.setActivityState(view, value == null ? -1 : ((Double) value).intValue());
         break;
       default:
         super.setProperty(view, propName, value);

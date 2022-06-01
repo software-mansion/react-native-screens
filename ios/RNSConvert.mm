@@ -66,6 +66,29 @@
       return RNSScreenStackHeaderSubviewTypeBackButton;
   }
 }
+
++ (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
+    (facebook::react::RNSScreenReplaceAnimation)replaceAnimation
+{
+  switch (replaceAnimation) {
+    case facebook::react::RNSScreenReplaceAnimation::Pop:
+      return RNSScreenReplaceAnimationPop;
+    case facebook::react::RNSScreenReplaceAnimation::Push:
+      return RNSScreenReplaceAnimationPush;
+  }
+}
+
++ (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
+    (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance
+{
+  return @{
+    @"start" : @(gestureResponseDistance.start),
+    @"end" : @(gestureResponseDistance.end),
+    @"top" : @(gestureResponseDistance.top),
+    @"bottom" : @(gestureResponseDistance.bottom),
+  };
+}
+
 @end
 
 #endif // RN_FABRIC_ENABLED
