@@ -57,6 +57,10 @@
 - (instancetype)init
 {
   if (self = [super init]) {
+#ifdef RN_FABRIC_ENABLED
+    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenContainerProps>();
+    _props = defaultProps;
+#endif
     _activeScreens = [NSMutableSet new];
     _reactSubviews = [NSMutableArray new];
     [self setupController];
