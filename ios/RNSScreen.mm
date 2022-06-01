@@ -471,6 +471,8 @@
 
   [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
   
+  [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
+
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
     [self setStatusBarHidden:newScreenProps.statusBarHidden];
@@ -508,7 +510,7 @@
   if (newScreenProps.replaceAnimation != oldScreenProps.replaceAnimation) {
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
-  
+
   [super updateProps:props oldProps:oldProps];
 }
 
