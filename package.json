@@ -111,7 +111,7 @@
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
     "src/**/*.{js,ts,tsx}": "yarn lint-js",
     "android/**/*.kt": "yarn format-android",
-    "ios/**/*.{h,m,cpp}": "yarn format-ios"
+    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios"
   },
   "@react-native-community/bob": {
     "source": "src",
