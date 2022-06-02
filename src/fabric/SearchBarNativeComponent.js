@@ -19,6 +19,10 @@ type SearchButtonPressedEvent = $ReadOnly<{|
   text?: string,
 |}>;
 
+type ChangeTextEvent = $ReadOnly<{|
+  text?: string,
+|}>;
+
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 type NativeProps = $ReadOnly<{|
@@ -28,7 +32,7 @@ type NativeProps = $ReadOnly<{|
   onBlur?: ?BubblingEventHandler<SearchBarEvent>,
   onSearchButtonPress?: ?BubblingEventHandler<SearchButtonPressedEvent>,
   onCancelButtonPress?: ?BubblingEventHandler<SearchBarEvent>,
-  onChangeText?: ?BubblingEventHandler<SearchBarEvent>,
+  onChangeText?: ?BubblingEventHandler<ChangeTextEvent>,
   hideWhenScrolling?: boolean,
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>,
   placeholder?: string,
