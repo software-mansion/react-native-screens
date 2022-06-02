@@ -146,7 +146,7 @@
 {
 #ifdef RN_FABRIC_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<facebook::react::RNSScreenStackEventEmitter>(_eventEmitter)
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenStackEventEmitter>(_eventEmitter)
         ->onFinishTransitioning(facebook::react::RNSScreenStackEventEmitter::OnFinishTransitioning{});
   }
 #else
