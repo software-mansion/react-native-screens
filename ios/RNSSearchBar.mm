@@ -148,36 +148,47 @@
 
   [self showCancelButton];
   [self becomeFirstResponder];
-
+#ifdef RN_FABRIC_ENABLED
+#else
   if (self.onFocus) {
     self.onFocus(@{});
   }
+#endif
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
 {
+#ifdef RN_FABRIC_ENABLED
+#else
   if (self.onBlur) {
     self.onBlur(@{});
   }
+#endif
   [self hideCancelButton];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
+#ifdef RN_FABRIC_ENABLED
+#else
   if (self.onChangeText) {
     self.onChangeText(@{
       @"text" : _controller.searchBar.text,
     });
   }
+#endif
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
+#ifdef RN_FABRIC_ENABLED
+#else
   if (self.onSearchButtonPress) {
     self.onSearchButtonPress(@{
       @"text" : _controller.searchBar.text,
     });
   }
+#endif
 }
 
 #if !TARGET_OS_TV
@@ -187,6 +198,8 @@
   [self resignFirstResponder];
   [self hideCancelButton];
 
+#ifdef RN_FABRIC_ENABLED
+#else
   if (self.onCancelButtonPress) {
     self.onCancelButtonPress(@{});
   }
@@ -195,8 +208,9 @@
       @"text" : _controller.searchBar.text,
     });
   }
+#endif // RN_FABRIC_ENABLED
 }
-#endif
+#endif // !TARGET_OS_TV
 
 #pragma mark-- Fabric specific
 
