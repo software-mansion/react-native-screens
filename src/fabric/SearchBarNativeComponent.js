@@ -15,6 +15,10 @@ import { tintColor } from 'react-native/Libraries/Components/View/ReactNativeSty
 
 type SearchBarEvent = $ReadOnly<{||}>;
 
+type SearchButtonPressedEvent = $ReadOnly<{|
+  text?: string,
+|}>;
+
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 type NativeProps = $ReadOnly<{|
@@ -22,7 +26,7 @@ type NativeProps = $ReadOnly<{|
   // implement these on iOS
   onFocus?: ?BubblingEventHandler<SearchBarEvent>,
   onBlur?: ?BubblingEventHandler<SearchBarEvent>,
-  onSearchButtonPress?: ?BubblingEventHandler<SearchBarEvent>,
+  onSearchButtonPress?: ?BubblingEventHandler<SearchButtonPressedEvent>,
   onCancelButtonPress?: ?BubblingEventHandler<SearchBarEvent>,
   onChangeText?: ?BubblingEventHandler<SearchBarEvent>,
   hideWhenScrolling?: boolean,
