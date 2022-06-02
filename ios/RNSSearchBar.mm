@@ -232,10 +232,22 @@
   [super updateProps:props oldProps:oldProps];
 }
 
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSSearchBarComponentDescriptor>();
+}
+
 #else
 #endif
 
 @end
+
+#ifdef RN_FABRIC_ENABLED
+Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
+{
+  return RNSSearchBar.class;
+}
+#endif
 
 @implementation RNSSearchBarManager
 
