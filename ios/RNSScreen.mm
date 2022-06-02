@@ -666,11 +666,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   if (self = [super init]) {
     self.view = view;
+    _fakeView = [UIView new];
+    _shouldNotify = YES;
 #ifdef RN_FABRIC_ENABLED
     _initialView = (RNSScreenView *)view;
-#else
-    _shouldNotify = YES;
-    _fakeView = [UIView new];
 #endif
   }
   return self;
@@ -705,9 +704,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [RNSScreenWindowTraits updateWindowTraits];
   if (_shouldNotify) {
     _closing = NO;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
 #ifdef RN_FABRIC_ENABLED
 #else
-    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
 #endif
   }
@@ -751,9 +750,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (_shouldNotify) {
     _closing = YES;
+    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
 #ifdef RN_FABRIC_ENABLED
 #else
-    [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
 #endif
   }
@@ -765,6 +764,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (!_isSwiping || _shouldNotify) {
 #ifdef RN_FABRIC_ENABLED
     [_initialView notifyAppear];
+    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
 #else
     // we are going forward or dismissing without swipe
     // or successfully swiped back
@@ -802,6 +802,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (!_isSwiping || _shouldNotify) {
 #ifdef RN_FABRIC_ENABLED
     [_initialView notifyDisappear];
+    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
 #else
     [((RNSScreenView *)self.view) notifyDisappear];
     [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
@@ -872,6 +873,43 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   }
   return nil;
+}
+
+#pragma mark - transition progress related methods
+
+- (void)setupProgressNotification
+{
+  if (self.transitionCoordinator != nil) {
+    _fakeView.alpha = 0.0;
+    [self.transitionCoordinator
+        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          [[context containerView] addSubview:self->_fakeView];
+          self->_fakeView.alpha = 1.0;
+          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        }
+        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          [self->_animationTimer setPaused:YES];
+          [self->_animationTimer invalidate];
+          [self->_fakeView removeFromSuperview];
+        }];
+  }
+}
+
+- (void)handleAnimation
+{
+  if ([[_fakeView layer] presentationLayer] != nil) {
+    CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
+    if (_currentAlpha != fakeViewAlpha) {
+      _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
+      [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
+    }
+  }
+}
+
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+{
+  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
 
 #if !TARGET_OS_TV
@@ -1070,43 +1108,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (int)getParentChildrenCount
 {
   return (int)[[self.view.reactSuperview reactSubviews] count];
-}
-
-#pragma mark - transition progress related methods
-
-- (void)setupProgressNotification
-{
-  if (self.transitionCoordinator != nil) {
-    _fakeView.alpha = 0.0;
-    [self.transitionCoordinator
-        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [[context containerView] addSubview:self->_fakeView];
-          self->_fakeView.alpha = 1.0;
-          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        }
-        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self->_animationTimer setPaused:YES];
-          [self->_animationTimer invalidate];
-          [self->_fakeView removeFromSuperview];
-        }];
-  }
-}
-
-- (void)handleAnimation
-{
-  if ([[_fakeView layer] presentationLayer] != nil) {
-    CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
-    if (_currentAlpha != fakeViewAlpha) {
-      _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
-      [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
-    }
-  }
-}
-
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
-{
-  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
 #endif // RN_FABRIC_ENABLED
 
