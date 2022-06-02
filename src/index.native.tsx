@@ -141,7 +141,10 @@ const ScreensNativeModules = {
   },
 
   get NativeSearchBar() {
-    NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
+    NativeSearchBar =
+      NativeSearchBar ||
+      FabricComponents.SearchBar ||
+      requireNativeComponent('RNSSearchBar');
     return NativeSearchBar;
   },
 
