@@ -6,12 +6,16 @@
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { ViewProps } from 'react-native/Libraries/Components/View/ViewPropTypes';
 import type { HostComponent } from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
+import { ColorValue } from 'react-native/Libraries/StyleSheet/StyleSheet';
 import type {
   WithDefault,
   BubblingEventHandler,
 } from 'react-native/Libraries/Types/CodegenTypes';
+import { tintColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 type SearchBarEvent = $ReadOnly<{||}>;
+
+type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 type NativeProps = $ReadOnly<{|
   ...ViewProps,
@@ -20,6 +24,15 @@ type NativeProps = $ReadOnly<{|
   onSearchButtonPress?: ?BubblingEventHandler<SearchBarEvent>,
   onCancelButtonPress?: ?BubblingEventHandler<SearchBarEvent>,
   onChangeText?: ?BubblingEventHandler<SearchBarEvent>,
+  hideWhenScrolling?: boolean,
+  autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>,
+  placeholder?: string,
+  obscureBackground?: boolean,
+  hideNavigationBar?: boolean,
+  barTintColor?: ColorValue,
+  tintColor?: ColorValue,
+  textColor?: ColorValue,
+  cancelButtonText?: string,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
