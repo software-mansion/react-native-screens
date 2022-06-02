@@ -288,6 +288,8 @@
     [self setAutoCapitalize:[RNSConvert UITextAutocapitalizationTypeFromCppEquivalent:newScreenProps.autoCapitalize]];
   }
 
+  // TODO: implement props with Color types
+
   [super updateProps:props oldProps:oldProps];
 }
 
