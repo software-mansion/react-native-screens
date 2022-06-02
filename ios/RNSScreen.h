@@ -74,6 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 #ifdef RN_FABRIC_ENABLED
+// we recreate the behavior of `reactSetFrame` on new architecture
+@property (nonatomic) facebook::react::LayoutMetrics oldLayoutMetrics;
+@property (nonatomic) facebook::react::LayoutMetrics newLayoutMetrics;
 @property (weak, nonatomic) UIView *config;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
