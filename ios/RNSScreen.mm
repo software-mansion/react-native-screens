@@ -415,6 +415,25 @@
   [_controller notifyFinishTransitioning];
 }
 
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onTransitionProgress(facebook::react::RNSScreenEventEmitter::OnTransitionProgress{
+            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+  }
+#else
+  if (self.onTransitionProgress) {
+    self.onTransitionProgress(@{
+      @"progress" : @(progress),
+      @"closing" : @(closing ? 1 : 0),
+      @"goingForward" : @(goingForward ? 1 : 0),
+    });
+  }
+#endif
+}
+
 #pragma mark - Fabric specific
 #ifdef RN_FABRIC_ENABLED
 
@@ -554,17 +573,6 @@
 {
   if (self.onNativeDismissCancelled) {
     self.onNativeDismissCancelled(@{@"dismissCount" : @(dismissCount)});
-  }
-}
-
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
-{
-  if (self.onTransitionProgress) {
-    self.onTransitionProgress(@{
-      @"progress" : @(progress),
-      @"closing" : @(closing ? 1 : 0),
-      @"goingForward" : @(goingForward ? 1 : 0),
-    });
   }
 }
 
