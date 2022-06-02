@@ -19,6 +19,12 @@ type ScreenDismissedEvent = $ReadOnly<{|
   dismissCount: Int32,
 |}>;
 
+type TransitionProgressEvent = $ReadOnly<{|
+  progress: Float,
+  closing: Int32,
+  goingForward: Int32,
+|}>;
+
 type GestureResponseDistanceType = $ReadOnly<{|
   start: Float,
   end: Float,
@@ -57,6 +63,7 @@ export type NativeProps = $ReadOnly<{|
   onDismissed?: ?BubblingEventHandler<ScreenDismissedEvent>,
   onWillAppear?: ?BubblingEventHandler<ScreenEvent>,
   onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
+  onTransitionProgress?: ?BubblingEventHandler<TransitionProgressEvent>,
   customAnimationOnSwipe?: boolean,
   fullScreenSwipeEnabled?: boolean,
   homeIndicatorHidden?: boolean,
