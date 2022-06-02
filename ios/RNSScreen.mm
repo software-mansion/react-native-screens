@@ -705,10 +705,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (_shouldNotify) {
     _closing = NO;
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
-#ifdef RN_FABRIC_ENABLED
-#else
     [self setupProgressNotification];
-#endif
   }
 }
 
@@ -751,10 +748,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (_shouldNotify) {
     _closing = YES;
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
-#ifdef RN_FABRIC_ENABLED
-#else
     [self setupProgressNotification];
-#endif
   }
 }
 
@@ -764,13 +758,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (!_isSwiping || _shouldNotify) {
 #ifdef RN_FABRIC_ENABLED
     [_initialView notifyAppear];
-    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
 #else
     // we are going forward or dismissing without swipe
     // or successfully swiped back
     [((RNSScreenView *)self.view) notifyAppear];
-    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
 #endif
+    [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
   }
 
   _isSwiping = NO;
@@ -802,11 +795,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (!_isSwiping || _shouldNotify) {
 #ifdef RN_FABRIC_ENABLED
     [_initialView notifyDisappear];
-    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
 #else
     [((RNSScreenView *)self.view) notifyDisappear];
-    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
 #endif
+    [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
   }
 
   _isSwiping = NO;
