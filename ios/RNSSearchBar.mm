@@ -28,9 +28,7 @@
 {
   if (self = [super init]) {
     _bridge = bridge;
-    _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
-    _controller.searchBar.delegate = self;
-    _hideWhenScrolling = YES;
+    [self initCommonProps];
   }
   return self;
 }
@@ -41,13 +39,18 @@
   if (self = [super init]) {
     static const auto defaultProps = std::make_shared<const facebook::react::RNSSearchBarProps>();
     _props = defaultProps;
-    _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
-    _controller.searchBar.delegate = self;
-    _hideWhenScrolling = YES;
+    [self initCommonProps];
   }
   return self;
 }
 #endif
+
+- (void)initCommonProps
+{
+  _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
+  _controller.searchBar.delegate = self;
+  _hideWhenScrolling = YES;
+}
 
 - (void)setObscureBackground:(BOOL)obscureBackground
 {
