@@ -6,6 +6,16 @@
 #import <React/RCTComponent.h>
 #import <React/RCTUIManager.h>
 
+#ifdef RN_FABRIC_ENABLED
+#import <React/RCTConversions.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import <rnscreens/RNSScreenComponentDescriptor.h>
+#import "RCTFabricComponentsPlugins.h"
+#import "RNSConvert.h"
+#endif
+
 @implementation RNSSearchBar {
   __weak RCTBridge *_bridge;
   UISearchController *_controller;
@@ -24,6 +34,20 @@
   }
   return self;
 }
+
+#ifdef RN_FABRIC_ENABLED
+- (instancetype)init
+{
+  if (self = [super init]) {
+    static const auto defaultProps = std::make_shared<const facebook::react::RNSSearchBarProps>();
+    _props = defaultProps;
+    _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
+    _controller.searchBar.delegate = self;
+    _hideWhenScrolling = YES;
+  }
+  return self;
+}
+#endif
 
 - (void)setObscureBackground:(BOOL)obscureBackground
 {
@@ -172,6 +196,43 @@
     });
   }
 }
+#endif
+
+#pragma mark-- Fabric specific
+
+#ifdef RN_FABRIC_ENABLED
+- (void)updateProps:(facebook::react::Props::Shared const &)props
+           oldProps:(facebook::react::Props::Shared const &)oldProps
+{
+  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSSearchBarProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSSearchBarProps>(props);
+
+  [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+
+  if (oldScreenProps.cancelButtonText != newScreenProps.cancelButtonText) {
+    [self setCancelButtonText:RCTNSStringFromStringNilIfEmpty(newScreenProps.cancelButtonText)];
+  }
+
+  if (oldScreenProps.obscureBackground != newScreenProps.obscureBackground) {
+    [self setObscureBackground:newScreenProps.obscureBackground];
+  }
+
+  if (oldScreenProps.hideNavigationBar != newScreenProps.hideNavigationBar) {
+    [self setHideNavigationBar:newScreenProps.hideNavigationBar];
+  }
+
+  if (oldScreenProps.placeholder != newScreenProps.placeholder) {
+    [self setPlaceholder:RCTNSStringFromStringNilIfEmpty(newScreenProps.placeholder)];
+  }
+
+  if (oldScreenProps.autoCapitalize != newScreenProps.autoCapitalize) {
+    [self setAutoCapitalize:[RNSConvert UITextAutocapitalizationTypeFromCppEquivalent:newScreenProps.autoCapitalize]];
+  }
+
+  [super updateProps:props oldProps:oldProps];
+}
+
+#else
 #endif
 
 @end
