@@ -112,7 +112,8 @@ const ScreensNativeModules = {
     NativeScreenNavigationContainerValue =
       NativeScreenNavigationContainerValue ||
       (Platform.OS === 'ios'
-        ? requireNativeComponent('RNSScreenNavigationContainer')
+        ? FabricComponents.ScreenNavigationContainer ||
+          requireNativeComponent('RNSScreenNavigationContainer')
         : this.NativeScreenContainer);
     return NativeScreenNavigationContainerValue;
   },
