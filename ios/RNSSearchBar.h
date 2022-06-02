@@ -1,10 +1,19 @@
 #import <UIKit/UIKit.h>
 
+#ifdef RN_FABRIC_ENABLED
+#import <React/RCTViewComponentView.h>
+#endif
+
 #import <React/RCTBridge.h>
 #import <React/RCTComponent.h>
 #import <React/RCTViewManager.h>
 
-@interface RNSSearchBar : UIView <UISearchBarDelegate>
+@interface RNSSearchBar :
+#ifdef RN_FABRIC_ENABLED
+    RCTViewComponentView <UISearchBarDelegate>
+#else
+    UIView <UISearchBarDelegate>
+#endif
 
 @property (nonatomic) BOOL hideWhenScrolling;
 
