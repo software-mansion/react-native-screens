@@ -2,13 +2,12 @@
 #import <React/RCTViewComponentView.h>
 #else
 #import <React/RCTViewManager.h>
-// TODO: move this import when SearchBar is implemented on Fabric
-#import "RNSSearchBar.h"
 #endif
 
 #import <React/RCTConvert.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderSubview.h"
+#import "RNSSearchBar.h"
 
 @interface RNSScreenStackHeaderConfig :
 #ifdef RN_FABRIC_ENABLED
