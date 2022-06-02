@@ -20,7 +20,7 @@ type ScreenDismissedEvent = $ReadOnly<{|
 |}>;
 
 type TransitionProgressEvent = $ReadOnly<{|
-  progress: Float,
+  progress: Double,
   closing: Int32,
   goingForward: Int32,
 |}>;
