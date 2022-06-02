@@ -419,7 +419,7 @@
 {
 #ifdef RN_FABRIC_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onTransitionProgress(facebook::react::RNSScreenEventEmitter::OnTransitionProgress{
             .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
