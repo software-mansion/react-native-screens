@@ -19,6 +19,7 @@ type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 type NativeProps = $ReadOnly<{|
   ...ViewProps,
+  // implement these on iOS
   onFocus?: ?BubblingEventHandler<SearchBarEvent>,
   onBlur?: ?BubblingEventHandler<SearchBarEvent>,
   onSearchButtonPress?: ?BubblingEventHandler<SearchBarEvent>,
@@ -33,6 +34,16 @@ type NativeProps = $ReadOnly<{|
   tintColor?: ColorValue,
   textColor?: ColorValue,
   cancelButtonText?: string,
+
+  // Android only
+  disableBackButtonOverride?: boolean,
+  // consider creating enum here
+  inputType?: string,
+  onClose?: ?BubblingEventHandler<SearchBarEvent>,
+  onOpen?: ?BubblingEventHandler<SearchBarEvent>,
+  hintTextColor?: ColorValue,
+  headerIconColor?: ColorValue,
+  shouldShowHintSearchIcon?: WithDefault<boolean, true>,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
