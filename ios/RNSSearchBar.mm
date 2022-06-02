@@ -52,6 +52,81 @@
   _hideWhenScrolling = YES;
 }
 
+- (void)emitOnFocusEvent
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onFocus(facebook::react::RNSSearchBarEventEmitter::OnFocus{});
+  }
+#else
+  if (self.onFocus) {
+    self.onFocus(@{});
+  }
+#endif
+}
+
+- (void)emitOnBlurEvent
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onBlur(facebook::react::RNSSearchBarEventEmitter::OnBlur{});
+  }
+#else
+  if (self.onBlur) {
+    self.onBlur(@{});
+  }
+#endif
+}
+
+- (void)emitOnSearchButtonPressEventWithText:(NSString *)text
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onSearchButtonPress(
+            facebook::react::RNSSearchBarEventEmitter::OnSearchButtonPress{.text = RCTStringFromNSString(text)});
+  }
+#else
+  if (self.onSearchButtonPress) {
+    self.onSearchButtonPress(@{
+      @"text" : text,
+    });
+  }
+#endif
+}
+
+- (void)emitOnCancelButtonPressEvent
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onCancelButtonPress(facebook::react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
+  }
+#else
+  if (self.onCancelButtonPress) {
+    self.onCancelButtonPress(@{});
+  }
+#endif
+}
+
+- (void)emitOnChangeTextEventWithText:(NSString *)text
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onChangeText(facebook::react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
+  }
+#else
+  if (self.onChangeText) {
+    self.onChangeText(@{
+      @"text" : text,
+    });
+  }
+#endif
+}
+
 - (void)setObscureBackground:(BOOL)obscureBackground
 {
   if (@available(iOS 9.1, *)) {
