@@ -725,6 +725,32 @@
     }
   }
 }
+
+- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
+                         interactionControllerForAnimationController:
+                             (id<UIViewControllerAnimatedTransitioning>)animationController
+{
+  return _interactionController;
+}
+
+- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
+    (id<UIViewControllerAnimatedTransitioning>)animator
+{
+  return _interactionController;
+}
+
+- (void)navigationController:(UINavigationController *)navigationController
+       didShowViewController:(UIViewController *)viewController
+                    animated:(BOOL)animated
+{
+#ifdef RN_FABRIC_ENABLED
+#else
+  if (self.onFinishTransitioning) {
+    self.onFinishTransitioning(nil);
+  }
+#endif
+  [RNSScreenWindowTraits updateWindowTraits];
+}
 #endif
 
 - (void)markChildUpdated
@@ -806,17 +832,31 @@
   return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
 }
 
-- (id<UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-                         interactionControllerForAnimationController:
-                             (id<UIViewControllerAnimatedTransitioning>)animationController
+- (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
 {
-  return _interactionController;
+  if (![subview isKindOfClass:[RNSScreenView class]]) {
+    RCTLogError(@"ScreenStack only accepts children of type Screen");
+    return;
+  }
+  subview.reactSuperview = self;
+  [_reactSubviews insertObject:subview atIndex:atIndex];
 }
 
-- (id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
-    (id<UIViewControllerAnimatedTransitioning>)animator
+- (void)removeReactSubview:(RNSScreenView *)subview
 {
-  return _interactionController;
+  subview.reactSuperview = nil;
+  [_reactSubviews removeObject:subview];
+}
+
+- (void)didUpdateReactSubviews
+{
+  // we need to wait until children have their layout set. At this point they don't have the layout
+  // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
+  // ui queue will guarantee that the update will run after layout.
+  dispatch_async(dispatch_get_main_queue(), ^{
+    self->_hasLayout = YES;
+    [self maybeAddToParentAndUpdateContainer];
+  });
 }
 
 #ifdef RN_FABRIC_ENABLED
@@ -907,43 +947,6 @@
 #else
 #pragma mark - Paper specific
 
-- (void)navigationController:(UINavigationController *)navigationController
-       didShowViewController:(UIViewController *)viewController
-                    animated:(BOOL)animated
-{
-  if (self.onFinishTransitioning) {
-    self.onFinishTransitioning(nil);
-  }
-  [RNSScreenWindowTraits updateWindowTraits];
-}
-
-- (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
-{
-  if (![subview isKindOfClass:[RNSScreenView class]]) {
-    RCTLogError(@"ScreenStack only accepts children of type Screen");
-    return;
-  }
-  subview.reactSuperview = self;
-  [_reactSubviews insertObject:subview atIndex:atIndex];
-}
-
-- (void)removeReactSubview:(RNSScreenView *)subview
-{
-  subview.reactSuperview = nil;
-  [_reactSubviews removeObject:subview];
-}
-
-- (void)didUpdateReactSubviews
-{
-  // we need to wait until children have their layout set. At this point they don't have the layout
-  // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
-  // ui queue will guarantee that the update will run after layout.
-  dispatch_async(dispatch_get_main_queue(), ^{
-    self->_hasLayout = YES;
-    [self maybeAddToParentAndUpdateContainer];
-  });
-}
-
 - (void)invalidate
 {
   _invalidated = YES;
@@ -954,6 +957,7 @@
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
 }
+
 #endif // RN_FABRIC_ENABLED
 
 @end

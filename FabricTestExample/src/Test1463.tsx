@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
+import {Button, Dimensions, Image, StyleSheet, Text, View} from 'react-native';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -20,22 +20,28 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <ScrollView>
-      <Post onPress={() => navigation.navigate('Second')} />
-      <Post onPress={() => navigation.navigate('Second')} />
-      <Post onPress={() => navigation.navigate('Second')} />
-    </ScrollView>
+    <View style={{
+      flex: 1,
+      backgroundColor: 'blue',
+    }}>
+      <Button
+        onPress={() => navigation.navigate('Second')}
+        title="Go to second"
+      />
+    </View>
   );
 }
 
 function Second() {
   return (
-    <ScrollView>
+    <View style={{
+      flex: 1, 
+      backgroundColor: 'red',
+    }}>
       <Text style={styles.subTitle}>
         Use swipe back gesture to go back (iOS only)
       </Text>
-      <Post />
-    </ScrollView>
+    </View>
   );
 }
 
@@ -45,8 +51,8 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            fullScreenSwipeEnabled: true,
-            stackAnimation: 'default',
+            fullScreenSwipeEnabled: false,
+            stackAnimation: 'fade',
             customAnimationOnSwipe: true,
           }}>
           <Stack.Screen name="First" component={First} />
