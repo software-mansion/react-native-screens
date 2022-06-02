@@ -316,7 +316,11 @@ RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
+#ifdef RN_FABRIC_ENABLED
+  return [[RNSSearchBar alloc] init];
+#else
   return [[RNSSearchBar alloc] initWithBridge:self.bridge];
+#endif
 }
 
 RCT_EXPORT_VIEW_PROPERTY(obscureBackground, BOOL)
