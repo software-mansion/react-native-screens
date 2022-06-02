@@ -226,47 +226,23 @@
 
   [self showCancelButton];
   [self becomeFirstResponder];
-#ifdef RN_FABRIC_ENABLED
-#else
-  if (self.onFocus) {
-    self.onFocus(@{});
-  }
-#endif
+  [self emitOnFocusEvent];
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
 {
-#ifdef RN_FABRIC_ENABLED
-#else
-  if (self.onBlur) {
-    self.onBlur(@{});
-  }
-#endif
+  [self emitOnBlurEvent];
   [self hideCancelButton];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-#ifdef RN_FABRIC_ENABLED
-#else
-  if (self.onChangeText) {
-    self.onChangeText(@{
-      @"text" : _controller.searchBar.text,
-    });
-  }
-#endif
+  [self emitOnChangeTextEventWithText:_controller.searchBar.text];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-#ifdef RN_FABRIC_ENABLED
-#else
-  if (self.onSearchButtonPress) {
-    self.onSearchButtonPress(@{
-      @"text" : _controller.searchBar.text,
-    });
-  }
-#endif
+  [self emitOnSearchButtonPressEventWithText:_controller.searchBar.text];
 }
 
 #if !TARGET_OS_TV
@@ -276,17 +252,8 @@
   [self resignFirstResponder];
   [self hideCancelButton];
 
-#ifdef RN_FABRIC_ENABLED
-#else
-  if (self.onCancelButtonPress) {
-    self.onCancelButtonPress(@{});
-  }
-  if (self.onChangeText) {
-    self.onChangeText(@{
-      @"text" : _controller.searchBar.text,
-    });
-  }
-#endif // RN_FABRIC_ENABLED
+  [self emitOnCancelButtonPressEvent];
+  [self emitOnChangeTextEventWithText:_controller.searchBar.text];
 }
 #endif // !TARGET_OS_TV
 
