@@ -27,7 +27,6 @@ type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 type NativeProps = $ReadOnly<{|
   ...ViewProps,
-  // implement these on iOS
   onFocus?: ?BubblingEventHandler<SearchBarEvent>,
   onBlur?: ?BubblingEventHandler<SearchBarEvent>,
   onSearchButtonPress?: ?BubblingEventHandler<SearchButtonPressedEvent>,
@@ -38,14 +37,15 @@ type NativeProps = $ReadOnly<{|
   placeholder?: string,
   obscureBackground?: boolean,
   hideNavigationBar?: boolean,
+  cancelButtonText?: string,
+  // TODO: implement these on iOS
   barTintColor?: ColorValue,
   tintColor?: ColorValue,
   textColor?: ColorValue,
-  cancelButtonText?: string,
 
   // Android only
   disableBackButtonOverride?: boolean,
-  // consider creating enum here
+  // TODO: consider creating enum here
   inputType?: string,
   onClose?: ?BubblingEventHandler<SearchBarEvent>,
   onOpen?: ?BubblingEventHandler<SearchBarEvent>,
