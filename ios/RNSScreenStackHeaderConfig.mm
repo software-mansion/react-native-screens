@@ -560,9 +560,6 @@
         break;
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
-#ifdef RN_FABRIC_ENABLED
-        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
-#else
         if (subview.subviews == nil || [subview.subviews count] == 0) {
           RCTLogWarn(
               @"Failed to attach search bar to the header. We recommend using `useLayoutEffect` when managing "
@@ -579,8 +576,6 @@
           }
 #endif
         }
-
-#endif // RN_FABRIC_ENABLED
         break;
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
