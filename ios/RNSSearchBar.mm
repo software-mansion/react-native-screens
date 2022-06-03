@@ -288,7 +288,17 @@
     [self setAutoCapitalize:[RNSConvert UITextAutocapitalizationTypeFromCppEquivalent:newScreenProps.autoCapitalize]];
   }
 
-  // TODO: implement props with Color types
+  if (oldScreenProps.tintColor != newScreenProps.tintColor) {
+    [self setTintColor:RCTUIColorFromSharedColor(newScreenProps.tintColor)];
+  }
+
+  if (oldScreenProps.barTintColor != newScreenProps.barTintColor) {
+    [self setBarTintColor:RCTUIColorFromSharedColor(newScreenProps.barTintColor)];
+  }
+
+  if (oldScreenProps.textColor != newScreenProps.textColor) {
+    [self setTextColor:RCTUIColorFromSharedColor(newScreenProps.textColor)];
+  }
 
   [super updateProps:props oldProps:oldProps];
 }
