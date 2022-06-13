@@ -232,15 +232,9 @@ class Screen extends React.Component<ScreenProps> {
     const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
     if (enabled && isPlatformSupported) {
-      if (!AnimatedNativeScreen) {
-        if (ENABLE_FABRIC) {
-          AnimatedNativeScreen = ScreensNativeModules.NativeScreen;
-        } else {
-          AnimatedNativeScreen = Animated.createAnimatedComponent(
-            ScreensNativeModules.NativeScreen
-          ) as React.ComponentType<ScreenProps>;
-        }
-      }
+      AnimatedNativeScreen =
+        AnimatedNativeScreen ||
+        Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
 
       let {
         // Filter out active prop in this case because it is unused and

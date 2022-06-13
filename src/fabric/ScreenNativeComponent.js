@@ -75,7 +75,7 @@ export type NativeProps = $ReadOnly<{|
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
   swipeDirection?: WithDefault<SwipeDirection, 'horizontal'>,
   hideKeyboardOnSwipe?: boolean,
-  activityState?: WithDefault<Int32, -1>,
+  activityState?: WithDefault<Float, -1.0>,
   // TODO: implement these props on iOS
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,

@@ -475,7 +475,7 @@
 
   [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
 
-  [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
+  [self setActivityStateOrNil:[NSNumber numberWithFloat:newScreenProps.activityState]];
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
