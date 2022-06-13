@@ -1,5 +1,7 @@
 #import "RNSScreenStackAnimator.h"
+#import "RNSEnums.h"
 #import "RNSScreenStack.h"
+#import "RNSSharedElementTransitionOptions.h"
 
 #import "RNSScreen.h"
 
@@ -62,8 +64,13 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
   } else if (_operation == UINavigationControllerOperationPop) {
     screen = (RNSScreenView *)fromViewController.view;
   }
-
   if (screen != nil) {
+    if (screen.sharedElementTransitions != nil) {
+      [self animateSharedElements:screen.sharedElementTransitions
+                transitionContext:transitionContext
+                             toVC:toViewController
+                           fromVC:fromViewController];
+    }
     if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
       // we are swiping with full width gesture
       if (screen.customAnimationOnSwipe) {
@@ -284,6 +291,186 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
                      }
                      completion:nil];
   }
+}
+
+- (void)animateSharedElements:(NSArray<RNSSharedElementTransitionOptions *> *)sharedElementTransitions
+            transitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                         toVC:(UIViewController *)toViewController
+                       fromVC:(UIViewController *)fromViewController
+
+{
+  RNSScreenView *toScreen = (RNSScreenView *)toViewController.view;
+  RNSScreenView *fromScreen = (RNSScreenView *)fromViewController.view;
+  if (toScreen == nil || fromScreen == nil) {
+    return;
+  }
+  for (RNSSharedElementTransitionOptions *sharedElementTransition in sharedElementTransitions) {
+    if (sharedElementTransition != nil) {
+      NSString *fromID = sharedElementTransition.from;
+      NSString *toID = sharedElementTransition.to;
+      if (_operation == UINavigationControllerOperationPop) {
+        NSString *temp = fromID;
+        fromID = toID;
+        toID = temp;
+      }
+      UIView *fromView = [fromScreen findElementForID:fromID];
+      UIView *toView = [toScreen findElementForID:toID];
+
+      if (fromView == nil || toView == nil) {
+        continue;
+      }
+      [self animateSharedElement:sharedElementTransition
+               transitionContext:transitionContext
+                          toView:toView
+                        fromView:fromView];
+    }
+  }
+}
+
+- (void)animateSharedElement:(RNSSharedElementTransitionOptions *)sharedElementTransition
+           transitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                      toView:(UIView *)toView
+                    fromView:(UIView *)fromView
+{
+  UIViewAnimationOptions animationOptions;
+  switch (sharedElementTransition.easing) {
+    case RNSSharedElementTransitionEasingLinear:
+      animationOptions = UIViewAnimationCurveEaseIn;
+      break;
+    case RNSSharedElementTransitionEasingEaseOut:
+      animationOptions = UIViewAnimationCurveEaseOut;
+      break;
+    case RNSSharedElementTransitionEasingEaseInOut:
+      animationOptions = UIViewAnimationCurveEaseInOut;
+      break;
+
+    default:
+      animationOptions = UIViewAnimationCurveLinear;
+      break;
+  }
+
+  UIView *container = transitionContext.containerView;
+
+  CGRect initialFrame = [fromView.superview convertRect:fromView.frame toView:container];
+  CGRect targetFrame = [toView.superview convertRect:toView.frame toView:container];
+
+  CGFloat centerX;
+  CGFloat centerY;
+  switch (sharedElementTransition.align) {
+    case RNSSharedElementTransitionAlignLeftCenter:
+      centerX = targetFrame.origin.x + initialFrame.size.width / 2;
+      centerY = targetFrame.origin.y + targetFrame.size.height / 2;
+      break;
+    case RNSSharedElementTransitionAlignLeftBottom:
+      centerX = targetFrame.origin.x + initialFrame.size.width / 2;
+      centerY = targetFrame.origin.y + targetFrame.size.height - initialFrame.size.height / 2;
+      break;
+    case RNSSharedElementTransitionAlignCenterTop:
+      centerX = targetFrame.origin.x + targetFrame.size.width / 2;
+      centerY = targetFrame.origin.y + initialFrame.size.height / 2;
+      break;
+    case RNSSharedElementTransitionAlignCenterCenter:
+      centerX = targetFrame.origin.x + targetFrame.size.width / 2;
+      centerY = targetFrame.origin.y + targetFrame.size.height / 2;
+      break;
+    case RNSSharedElementTransitionAlignCenterBottom:
+      centerX = targetFrame.origin.x + targetFrame.size.width / 2;
+      centerY = targetFrame.origin.y + targetFrame.size.height - initialFrame.size.height / 2;
+      break;
+    case RNSSharedElementTransitionAlignRightTop:
+      centerX = targetFrame.origin.x + targetFrame.size.width - initialFrame.size.width / 2;
+      centerY = targetFrame.origin.y + initialFrame.size.height / 2;
+      break;
+    case RNSSharedElementTransitionAlignRightCenter:
+      centerX = targetFrame.origin.x + targetFrame.size.width - initialFrame.size.width / 2;
+      centerY = targetFrame.origin.y + targetFrame.size.height / 2;
+      break;
+    case RNSSharedElementTransitionAlignRightBottom:
+      centerX = targetFrame.origin.x + targetFrame.size.width - initialFrame.size.width / 2;
+      centerY = targetFrame.origin.y + targetFrame.size.height - initialFrame.size.height / 2;
+      break;
+    default:
+      centerX = targetFrame.origin.x + initialFrame.size.width / 2;
+      centerY = targetFrame.origin.y + initialFrame.size.height / 2;
+      break;
+  }
+
+  CGPoint targetCenter = CGPointMake(centerX, centerY);
+  UIView *snapshot;
+  if (sharedElementTransition.resizeMode == RNSSharedElementTransitionResizeModeResize &&
+      ([NSStringFromClass(fromView.class) isEqualToString:@"RCTImageView"] ||
+       [NSStringFromClass(fromView.class) isEqualToString:@"RCTImageComponentView"])) {
+    UIImageView *imageView = fromView.subviews.firstObject;
+    if (imageView != nil && imageView.image != nil) {
+      UIImage *image = imageView.image;
+
+      CGFloat largerWidth =
+          fromView.bounds.size.width > toView.bounds.size.width ? fromView.bounds.size.width : toView.bounds.size.width;
+
+      CGFloat largerHeight = fromView.bounds.size.height > toView.bounds.size.height ? fromView.bounds.size.height
+                                                                                     : toView.bounds.size.height;
+
+      CGFloat imageAspectRatio = image.size.width / image.size.height;
+      CGSize drawSize = largerHeight > largerWidth ? CGSizeMake(largerHeight * imageAspectRatio, largerHeight)
+                                                   : CGSizeMake(largerWidth, largerWidth / imageAspectRatio);
+
+      UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:drawSize];
+      UIImage *resizedImage = [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull context) {
+        [image drawInRect:CGRectMake(0, 0, drawSize.width, drawSize.height)];
+      }];
+
+      if (resizedImage != nil) {
+        UIImageView *imageSnapshot = [[UIImageView alloc] initWithImage:resizedImage];
+        imageSnapshot.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+        imageSnapshot.contentMode = imageView.contentMode;
+        imageSnapshot.clipsToBounds = YES;
+        snapshot = imageSnapshot;
+      }
+    }
+  }
+
+  if (snapshot == nil) {
+    snapshot = [fromView snapshotViewAfterScreenUpdates:NO];
+  }
+
+  snapshot.alpha = 1.0;
+  snapshot.layer.zPosition = 1;
+  snapshot.frame = initialFrame;
+  [container addSubview:snapshot];
+
+  CGFloat initialFromViewAlpha = fromView.alpha;
+  if (!sharedElementTransition.showFromElementDuringAnimation) {
+    fromView.alpha = 0.0;
+  }
+  CGFloat initialToViewAlpha = toView.alpha;
+  if (!sharedElementTransition.showToElementDuringAnimation) {
+    toView.alpha = 0.0;
+  }
+
+  NSTimeInterval duration = sharedElementTransition.duration != 0 ? sharedElementTransition.duration
+                                                                  : [self transitionDuration:transitionContext];
+
+  [UIView animateWithDuration:duration
+      delay:sharedElementTransition.delay
+      usingSpringWithDamping:sharedElementTransition.damping
+      initialSpringVelocity:sharedElementTransition.initialVelocity
+      options:animationOptions
+      animations:^{
+        if (sharedElementTransition.resizeMode == RNSSharedElementTransitionResizeModeNone) {
+          snapshot.center = targetCenter;
+        } else {
+          snapshot.frame = targetFrame;
+        }
+      }
+      completion:^(BOOL finished) {
+        [snapshot removeFromSuperview];
+        if (!sharedElementTransition.showFromElementDuringAnimation) {
+          fromView.alpha = initialFromViewAlpha;
+        }
+        if (!sharedElementTransition.showToElementDuringAnimation) {
+          toView.alpha = initialToViewAlpha;
+        }
+      }];
 }
 
 + (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation

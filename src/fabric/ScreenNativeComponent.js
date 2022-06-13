@@ -11,6 +11,8 @@ import type {
   BubblingEventHandler,
   WithDefault,
   Int32,
+  Double,
+  Float,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 type ScreenEvent = $ReadOnly<{||}>;
@@ -50,6 +52,22 @@ type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
 
+type SharedElementTransition = $ReadOnly<{|
+  from: string,
+  to: string,
+  delay?: WithDefault<Double, 0>,
+  duration?: WithDefault<Double, 0>,
+  damping?: WithDefault<Float, 1>,
+  initialVelocity?: WithDefault<Float, 0>,
+  // Codegen doesn't generate code for thoses enums (easing, resizeMode, align)
+  // it seems coming from the fact that it's wrapped in a `$ReadOnlyArray`
+  easing?: WithDefault<string, 'linear'>,
+  resizeMode?: WithDefault<string, 'resize'>,
+  align?: WithDefault<string, 'left-top'>,
+  showFromElementDuringAnimation?: WithDefault<boolean, false>,
+  showToElementDuringAnimation?: WithDefault<boolean, false>,
+|}>;
+
 export type NativeProps = $ReadOnly<{|
   ...ViewProps,
   onAppear?: ?BubblingEventHandler<ScreenEvent>,
@@ -62,6 +80,7 @@ export type NativeProps = $ReadOnly<{|
   homeIndicatorHidden?: boolean,
   preventNativeDismiss?: boolean,
   gestureEnabled?: WithDefault<boolean, true>,
+  sharedElementTransitions?: $ReadOnlyArray<SharedElementTransition>,
   statusBarColor?: ColorValue,
   statusBarHidden?: boolean,
   screenOrientation?: string,

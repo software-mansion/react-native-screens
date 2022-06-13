@@ -393,6 +393,47 @@
 }
 
 #ifdef RN_FABRIC_ENABLED
+- (UIView *)_lookupViewForNativeID:(NSString *)nativeID inView:(UIView *)view
+{
+  if (view == nil) {
+    return nil;
+  }
+  NSString *viewNativeID = view.nativeID;
+  if ([view isKindOfClass:[RCTViewComponentView class]]) {
+    viewNativeID = ((RCTViewComponentView *)view).nativeId;
+  }
+  if ([nativeID isEqualToString:viewNativeID]) {
+    return view;
+  }
+
+  if (view != nil) {
+    for (UIView *subview in view.subviews) {
+      UIView *targetView = [self _lookupViewForNativeID:nativeID inView:subview];
+      if (targetView != nil) {
+        return targetView;
+      }
+    }
+  }
+  return nil;
+}
+#endif
+
+- (UIView *)findElementForID:(NSString *)nativeID
+{
+  if (nativeID == nil) {
+    return nil;
+  }
+#ifdef RN_FABRIC_ENABLED
+  return [self _lookupViewForNativeID:nativeID inView:self];
+#else
+  if (_bridge != nil) {
+    return [_bridge.uiManager viewForNativeID:nativeID withRootTag:self.rootTag];
+  }
+#endif
+  return nil;
+}
+
+#ifdef RN_FABRIC_ENABLED
 - (RCTSurfaceTouchHandler *)touchHandler
 #else
 - (RCTTouchHandler *)touchHandler
@@ -481,6 +522,9 @@
   [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
+
+  [self setSharedElementTransitions:[RNSConvert
+                                        sharedElementTransitionsFromCppStruct:newScreenProps.sharedElementTransitions]];
 
 #if !TARGET_OS_TV
   if (newScreenProps.statusBarHidden != oldScreenProps.statusBarHidden) {
@@ -1116,6 +1160,7 @@ RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(hideKeyboardOnSwipe, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(sharedElementTransitions, NSArray<RNSSharedElementTransitionOptions *>)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)
 RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
@@ -1194,6 +1239,63 @@ RCT_ENUM_CONVERTER(
     }),
     RNSScreenSwipeDirectionHorizontal,
     integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSSharedElementTransitionResizeMode,
+    (@{
+      @"none" : @(RNSSharedElementTransitionResizeModeNone),
+      @"resize" : @(RNSSharedElementTransitionResizeModeResize),
+    }),
+    RNSSharedElementTransitionResizeModeResize,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSSharedElementTransitionAlign,
+    (@{
+      @"left-top" : @(RNSSharedElementTransitionAlignLeftTop),
+      @"left-center" : @(RNSSharedElementTransitionAlignLeftCenter),
+      @"left-bottom" : @(RNSSharedElementTransitionAlignLeftBottom),
+      @"center-top" : @(RNSSharedElementTransitionAlignCenterTop),
+      @"center-center" : @(RNSSharedElementTransitionAlignCenterCenter),
+      @"center-bottom" : @(RNSSharedElementTransitionAlignCenterBottom),
+      @"right-top" : @(RNSSharedElementTransitionAlignRightTop),
+      @"right-center" : @(RNSSharedElementTransitionAlignRightCenter),
+      @"right-bottom" : @(RNSSharedElementTransitionAlignRightBottom),
+    }),
+    RNSSharedElementTransitionAlignLeftTop,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSSharedElementTransitionEasing,
+    (@{
+      @"linear" : @(RNSSharedElementTransitionEasingLinear),
+      @"ease-in" : @(RNSSharedElementTransitionEasingEaseIn),
+      @"ease-out" : @(RNSSharedElementTransitionEasingEaseOut),
+      @"ease-in-out" : @(RNSSharedElementTransitionEasingEaseInOut)
+    }),
+    RNSSharedElementTransitionResizeModeResize,
+    integerValue)
+
++ (RNSSharedElementTransitionOptions *)RNSSharedElementTransitionOptions:(id)json
+{
+  RNSSharedElementTransitionOptions *sharedElementTransition = [[RNSSharedElementTransitionOptions alloc] init];
+
+  sharedElementTransition.from = [self NSString:json[@"from"]];
+  sharedElementTransition.to = [self NSString:json[@"to"]];
+  sharedElementTransition.delay = [self NSTimeInterval:json[@"delay"]];
+  sharedElementTransition.duration = [self NSTimeInterval:json[@"duration"]];
+  sharedElementTransition.damping = json[@"damping"] != nil ? [self CGFloat:json[@"damping"]] : 1;
+  sharedElementTransition.initialVelocity = [self CGFloat:json[@"initialVelocity"]];
+  sharedElementTransition.showFromElementDuringAnimation = [self BOOL:json[@"showFromElementDuringAnimation"]];
+  sharedElementTransition.showToElementDuringAnimation = [self BOOL:json[@"showToElementDuringAnimation"]];
+  sharedElementTransition.resizeMode = [self RNSSharedElementTransitionResizeMode:json[@"resizeMode"]];
+  sharedElementTransition.easing = [self RNSSharedElementTransitionEasing:json[@"easing"]];
+  sharedElementTransition.align = [self RNSSharedElementTransitionAlign:json[@"align"]];
+
+  return sharedElementTransition;
+}
+
+RCT_ARRAY_CONVERTER(RNSSharedElementTransitionOptions)
 
 #if !TARGET_OS_TV
 RCT_ENUM_CONVERTER(

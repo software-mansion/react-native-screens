@@ -1,18 +1,48 @@
 package com.swmansion.rnscreens
 
+
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.animation.TypeEvaluator
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Point
+import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.ViewCompat
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionSet
+import androidx.transition.TransitionValues
+import com.facebook.drawee.drawable.ForwardingDrawable
+import com.facebook.drawee.drawable.ScaleTypeDrawable
+import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.uimanager.util.ReactFindViewUtil
+import com.facebook.react.views.image.ReactImageView
+import com.swmansion.rnscreens.Screen.Easing.*
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
+import kotlin.math.roundToInt
 
 class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(context) {
     private val mStack = ArrayList<ScreenStackFragment>()
+    private val mScreensToRemove: MutableSet<ScreenStackFragment> = HashSet()
     private val mDismissed: MutableSet<ScreenStackFragment> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
@@ -74,9 +104,14 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun removeScreenAt(index: Int) {
-        val toBeRemoved = getScreenAt(index)
-        mDismissed.remove(toBeRemoved.fragment)
-        super.removeScreenAt(index)
+        val toBeRemovedFragment = getScreenAt(index).fragment
+        mDismissed.remove(toBeRemovedFragment)
+        // We can't remove screen directly since it would break shared element animation
+        // instead we remove the screen during the FragmentTransaction
+        if (toBeRemovedFragment is ScreenStackFragment) {
+            mScreensToRemove.add(toBeRemovedFragment)
+        }
+        performUpdatesNow()
     }
 
     override fun removeAllScreens() {
@@ -97,7 +132,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
         for (i in mScreenFragments.indices.reversed()) {
             val screen = mScreenFragments[i]
-            if (!mDismissed.contains(screen)) {
+            if (!mDismissed.contains(screen) && !mScreensToRemove.contains(screen)) {
                 if (newTop == null) {
                     newTop = screen
                 } else {
@@ -110,6 +145,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         }
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
+        var sharedElementTransitions: List<Screen.SharedElementTransitionOptions>? = null
+        // Only used for shared element transitions
+        var transitionDuration: Long = SHARED_ELEMENT_TRANSITION_DEFAULT_DURATION
         if (!mStack.contains(newTop)) {
             // if new top screen wasn't on stack we do "open animation" so long it is not the very first
             // screen on stack
@@ -122,7 +160,15 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
                 shouldUseOpenAnimation = containsTopScreen || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
-                stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else mTopScreen?.screen?.stackAnimation
+                if (shouldUseOpenAnimation) {
+                    stackAnimation = newTop.screen.stackAnimation
+                    sharedElementTransitions = newTop.screen.sharedElementTransitions
+                    transitionDuration = newTop.screen.transitionDuration.toLong()
+                } else {
+                    stackAnimation = mTopScreen?.screen?.stackAnimation
+                    sharedElementTransitions = mTopScreen?.screen?.sharedElementTransitions
+                    transitionDuration = newTop.screen.transitionDuration.toLong()
+                }
             } else if (mTopScreen == null && newTop != null) {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering
@@ -133,11 +179,68 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             // otherwise if we are performing top screen change we do "close animation"
             shouldUseOpenAnimation = false
             stackAnimation = mTopScreen?.screen?.stackAnimation
+            sharedElementTransitions = mTopScreen?.screen?.sharedElementTransitions
+            transitionDuration = mTopScreen?.screen?.transitionDuration?.toLong() ?: 0L
         }
 
         createTransaction().let {
             // animation logic start
-            if (stackAnimation != null) {
+            if (sharedElementTransitions != null && sharedElementTransitions.isNotEmpty()) {
+                val fromScreen = mTopScreen?.screen
+                val toScreen = newTop?.screen
+                val sharedElementTransitionSet = TransitionSet()
+
+                sharedElementTransitions.forEach { sharedElementTransitionOptions ->
+                    var toId = sharedElementTransitionOptions.to
+                    var fromId = sharedElementTransitionOptions.from
+                    if (!shouldUseOpenAnimation) {
+                        val temp = toId
+                        toId = fromId
+                        fromId = temp
+                    }
+                    if (toId != null && fromId != null) {
+                        var fromView: View? = null
+
+                        if (fromScreen != null) {
+                            fromView = ReactFindViewUtil.findView(fromScreen, fromId)
+                        }
+                        var toView: View? = null
+                        if (toScreen != null) {
+                            toView = ReactFindViewUtil.findView(toScreen, toId)
+                        }
+                        if (fromView != null && toView != null) {
+                            ViewCompat.setTransitionName(fromView, fromId)
+                            ViewCompat.setTransitionName(toView, toId)
+                            it.addSharedElement(fromView, toId)
+                            val transition = SharedElementTransition(
+                                context.resources,
+                                sharedElementTransitionOptions,
+                                transitionDuration
+                            )
+                            transition.addTarget(toView.transitionName)
+                            transition.addTarget(fromView.transitionName)
+                            sharedElementTransitionSet.addTransition(transition)
+                        }
+                    }
+                }
+                newTop?.sharedElementEnterTransition = sharedElementTransitionSet
+
+                // Custom animation doesn't work with shared element transition, so we at lease
+                // implement fade transition (which is the most common with shared element)
+                val (enterTransition, exitTransition) = when(stackAnimation) {
+                    StackAnimation.NONE -> Pair(null, null)
+                    else -> Pair(Fade(), Fade())
+                }
+                enterTransition?.duration = transitionDuration
+                exitTransition?.duration = transitionDuration
+                if (shouldUseOpenAnimation) {
+                    newTop?.enterTransition = enterTransition
+                    mTopScreen?.exitTransition = exitTransition
+                } else {
+                    newTop?.enterTransition = exitTransition
+                    mTopScreen?.exitTransition = enterTransition
+                }
+            } else if (stackAnimation != null) {
                 if (shouldUseOpenAnimation) {
                     when (stackAnimation) {
                         StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
@@ -184,7 +287,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
             // remove all screens previously on stack
             for (screen in mStack) {
-                if (!mScreenFragments.contains(screen) || mDismissed.contains(screen)) {
+                if (!mScreenFragments.contains(screen) ||
+                    mDismissed.contains(screen) ||
+                    mScreensToRemove.contains(screen)) {
                     it.remove(screen)
                 }
             }
@@ -195,7 +300,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                     break
                 }
                 // detach all screens that should not be visible
-                if (screen !== newTop && !mDismissed.contains(screen)) {
+                if (screen !== newTop &&
+                    !mDismissed.contains(screen) &&
+                    !mScreensToRemove.contains(screen)) {
                     it.remove(screen)
                 }
             }
@@ -217,6 +324,12 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             } else if (newTop != null && !newTop.isAdded) {
                 it.add(id, newTop)
             }
+
+            mScreensToRemove.forEach { frag ->
+                frag.screen.container = null
+                mScreenFragments.remove(frag)
+            }
+            mScreensToRemove.clear()
             mTopScreen = newTop
             mStack.clear()
             mStack.addAll(mScreenFragments)
@@ -333,6 +446,197 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         }
     }
 
+    private inner class SharedElementTransition(
+        res: Resources,
+        options: Screen.SharedElementTransitionOptions,
+        defaultDuration: Long
+    ): Transition() {
+        private val mOptions = options
+        private val mRes = res
+
+        init {
+            startDelay = options.delay.toLong()
+            duration =
+                if (options.duration > 0) options.duration.toLong()
+                else defaultDuration
+            interpolator = when(options.easing) {
+                LINEAR -> LinearInterpolator()
+                EASE_IN -> AccelerateInterpolator()
+                EASE_OUT -> DecelerateInterpolator()
+                EASE_IN_OUT -> AccelerateDecelerateInterpolator()
+            }
+        }
+
+        override fun captureStartValues(transitionValues: TransitionValues) {
+            captureValues(transitionValues)
+        }
+
+        override fun captureEndValues(transitionValues: TransitionValues) {
+            captureValues(transitionValues)
+        }
+
+        private fun captureValues(transitionValues: TransitionValues) {
+            val location = getViewLocation(transitionValues.view)
+            transitionValues.values[PROP_BOUNDS] = Rect(
+                location.x,
+                location.y,
+                location.x + transitionValues.view.width,
+                location.y + transitionValues.view.height,
+            )
+        }
+
+        override fun createAnimator(
+            sceneRoot: ViewGroup,
+            startValues: TransitionValues?, endValues: TransitionValues?
+        ): Animator? {
+            if (startValues == null || endValues == null)  {
+                return null
+            }
+            val startView = startValues.view
+            val endView = endValues.view
+            val startBounds = startValues.values[PROP_BOUNDS] as Rect?
+            val endBounds = endValues.values[PROP_BOUNDS] as Rect?
+            if (startBounds == null || endBounds == null)  {
+                return null
+            }
+            val sceneLocation = getViewLocation(sceneRoot)
+            val startX = startBounds.left - sceneLocation.x
+            val startY = startBounds.top - sceneLocation.y
+            val endX = endBounds.left - sceneLocation.x
+            val endY = endBounds.top - sceneLocation.y
+            var targetX = endX
+            var targetY = endY
+
+            if (mOptions.resizeMode === Screen.ResizeMode.NONE) {
+                when (mOptions.align) {
+                    Screen.Align.LEFT_TOP -> {
+                        targetX = endX
+                        targetY = endY
+                    }
+                    Screen.Align.LEFT_CENTER -> {
+                        targetX = endX
+                        targetY = endY + (endView.height - startView.height) / 2
+                    }
+                    Screen.Align.LEFT_BOTTOM -> {
+                        targetX = endX
+                        targetY = endY + (endView.height - startView.height)
+                    }
+                    Screen.Align.CENTER_TOP -> {
+                        targetX = endX + (endView.width - startView.width) / 2
+                        targetY = endY
+                    }
+                    Screen.Align.CENTER_CENTER -> {
+                        targetX = endX + (endView.width - startView.width) / 2
+                        targetY = endY + (endView.height - startView.height) / 2
+                    }
+                    Screen.Align.CENTER_BOTTOM -> {
+                        targetX = endX + (endView.width - startView.width) / 2
+                        targetY = endY + (endView.height - startView.height)
+                    }
+                    Screen.Align.RIGHT_TOP -> {
+                        targetX = endX + (endView.width - startView.width)
+                        targetY = endY
+                    }
+                    Screen.Align.RIGHT_CENTER -> {
+                        targetX = endX + (endView.width - startView.width)
+                        targetY = endY + (endView.height - startView.height) / 2
+                    }
+                    Screen.Align.RIGHT_BOTTOM -> {
+                        targetX = endX + (endView.width - startView.width)
+                        targetY = endY + (endView.height - startView.height)
+                    }
+                }
+            }
+
+            val targetWidth = when (mOptions.resizeMode)  {
+                Screen.ResizeMode.RESIZE -> endBounds.width()
+                else -> startBounds.width()
+            }
+            val targetHeight = when (mOptions.resizeMode)  {
+                Screen.ResizeMode.RESIZE -> endBounds.height()
+                else -> startBounds.height()
+            }
+
+            var drawable: Drawable? = null
+            if (startView is ReactImageView) {
+                val scaleDrawable = ScalingUtils.getActiveScaleTypeDrawable(startView.drawable)
+                var innerDrawable = scaleDrawable?.drawable
+
+                // React native image view drawable doesn't implement
+                // correctly newState() so we have to use bitmap to clone the drawable
+                while (innerDrawable is ForwardingDrawable)  {
+                    innerDrawable = innerDrawable.drawable
+                }
+                if (innerDrawable != null) {
+                    val bitmap = innerDrawable.toBitmap()
+                    val bitmapDrawable = BitmapDrawable(mRes, bitmap)
+                    drawable = ScaleTypeDrawable(bitmapDrawable, scaleDrawable?.scaleType)
+                }
+            } else {
+                val bitmap = Bitmap.createBitmap(
+                    startBounds.width(), startBounds.height(),
+                    Bitmap.Config.ARGB_8888
+                )
+                val canvas = Canvas(bitmap)
+                startView.draw(canvas)
+                drawable = BitmapDrawable(mRes, bitmap)
+            }
+            if (drawable == null) {
+                return null
+            }
+
+            sceneRoot.overlay.add(drawable)
+            drawable.bounds = Rect(
+                startX,
+                startY,
+                startBounds.right,
+                startBounds.bottom
+            )
+
+            val fromAlpha = startView.alpha
+            if (!mOptions.showFromElementDuringAnimation) {
+                startView.alpha = 0f
+            }
+            val endAlpha = endView.alpha
+            if (!mOptions.showFromElementDuringAnimation) {
+                endView.alpha = 0f
+            }
+
+            val objectAnimator = ObjectAnimator.ofObject(
+                drawable,
+                "bounds",
+                object : TypeEvaluator<Rect> {
+                    private val mRect = Rect()
+                    override fun evaluate(ratio: Float, fromRect: Rect, targetRect: Rect): Rect {
+                        mRect.set(
+                            (fromRect.left + (targetRect.left - fromRect.left) * ratio).roundToInt(),
+                            (fromRect.top + (targetRect.top - fromRect.top) * ratio).roundToInt(),
+                            (fromRect.right + (targetRect.right - fromRect.right) * ratio).roundToInt(),
+                            (fromRect.bottom + (targetRect.bottom - fromRect.bottom) * ratio).roundToInt()
+                        )
+                        return mRect
+                    }
+                },
+                startBounds,
+                Rect(
+                    targetX,
+                    targetY,
+                    targetX + targetWidth,
+                    targetY + targetHeight,
+                )
+            )
+            objectAnimator.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    sceneRoot.overlay.remove(drawable)
+                    startView.alpha = fromAlpha
+                    endView.alpha = endAlpha
+                }
+            })
+            return objectAnimator
+        }
+    }
+
+
     companion object {
         private fun isTransparent(fragment: ScreenStackFragment): Boolean {
             return (
@@ -346,6 +650,16 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                 fragment.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
                     fragment.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
                 )
+        }
+
+        private const val SHARED_ELEMENT_TRANSITION_DEFAULT_DURATION = 400L
+
+        private const val PROP_BOUNDS = "rns:sharedElementTransition:bounds"
+
+        private val mLocation = IntArray(2)
+        private fun getViewLocation(view: View): Point {
+            view.getLocationInWindow(mLocation)
+            return Point(mLocation[0], mLocation[1])
         }
     }
 }

@@ -1,6 +1,7 @@
 #ifdef RN_FABRIC_ENABLED
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
+#import "RNSSharedElementTransitionOptions.h"
 
 @interface RNSConvert : NSObject
 
@@ -21,6 +22,9 @@
 
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
     (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance;
+
++ (NSArray<RNSSharedElementTransitionOptions *> *)sharedElementTransitionsFromCppStruct:
+    (const std::vector<facebook::react::RNSScreenSharedElementTransitionsStruct> &)sharedElementTransitions;
 
 @end
 

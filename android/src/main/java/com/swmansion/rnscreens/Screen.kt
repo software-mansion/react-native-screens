@@ -8,13 +8,10 @@ import android.util.SparseArray
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
-import androidx.annotation.UiThread
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.WritableMap
-import com.facebook.react.bridge.WritableNativeMap
-import com.facebook.react.uimanager.PixelUtil
+import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.bridge.ReadableType
 import com.facebook.react.uimanager.UIManagerModule
 
 @SuppressLint("ViewConstructor")
@@ -30,6 +27,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     var stackAnimation = StackAnimation.DEFAULT
     var isGestureEnabled = true
     var screenOrientation: Int? = null
+    var sharedElementTransitions: List<SharedElementTransitionOptions>? = null
         private set
     private var mStatusBarStyle: String? = null
     private var mStatusBarHidden: Boolean? = null
@@ -142,6 +140,85 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         container?.notifyChildUpdate()
     }
 
+    fun setSharedElementTransitions(readableArray: ReadableArray?) {
+        if (readableArray == null) {
+            this.sharedElementTransitions = null
+            return
+        }
+
+        var size = readableArray.size()
+        var sharedElementTransitions = ArrayList<SharedElementTransitionOptions>(size)
+        for (i in 0 until size) {
+            var type = readableArray.getType(i)
+            if (type != ReadableType.Map) {
+                continue
+            }
+            var readableMap = readableArray.getMap(i)
+            var sharedElementTransitionOption = SharedElementTransitionOptions()
+
+            if (readableMap.hasKey("from")) {
+                sharedElementTransitionOption.from = readableMap.getString("from")
+            }
+            if (readableMap.hasKey("to")) {
+                sharedElementTransitionOption.to = readableMap.getString("to")
+            }
+            if (readableMap.hasKey("delay")) {
+                sharedElementTransitionOption.delay = readableMap.getDouble("delay")
+            }
+            if (readableMap.hasKey("duration")) {
+                sharedElementTransitionOption.duration = readableMap.getDouble("duration")
+            }
+            if (readableMap.hasKey("damping")) {
+                sharedElementTransitionOption.damping = readableMap.getDouble("damping").toFloat()
+            }
+            if (readableMap.hasKey("initialVelocity")) {
+                sharedElementTransitionOption.initialVelocity =
+                    readableMap.getDouble("initialVelocity").toFloat()
+            }
+            if (readableMap.hasKey("easing")) {
+                sharedElementTransitionOption.easing = when (readableMap.getString("easing")) {
+                    "linear" -> Easing.LINEAR
+                    "ease-in" -> Easing.EASE_IN
+                    "ease-out" -> Easing.EASE_OUT
+                    "ease-in-out" -> Easing.EASE_IN_OUT
+                    else -> Easing.LINEAR
+                }
+            }
+            if (readableMap.hasKey("showToElementDuringAnimation")) {
+                sharedElementTransitionOption.showToElementDuringAnimation =
+                    readableMap.getBoolean("showToElementDuringAnimation")
+            }
+            if (readableMap.hasKey("showFromElementDuringAnimation")) {
+                sharedElementTransitionOption.showFromElementDuringAnimation =
+                    readableMap.getBoolean("showFromElementDuringAnimation")
+            }
+            if (readableMap.hasKey("resizeMode")) {
+                sharedElementTransitionOption.resizeMode =
+                    when (readableMap.getString("resizeMode")) {
+                        "resize" -> ResizeMode.RESIZE
+                        "none" -> ResizeMode.NONE
+                        else -> ResizeMode.RESIZE
+                    }
+            }
+            if (readableMap.hasKey("align")) {
+                sharedElementTransitionOption.align = when (readableMap.getString("align")) {
+                    "left-top" -> Align.LEFT_TOP
+                    "left-center" -> Align.LEFT_CENTER
+                    "left-bottom" -> Align.LEFT_BOTTOM
+                    "center-top" -> Align.CENTER_TOP
+                    "center-center" -> Align.CENTER_CENTER
+                    "center-bottom" -> Align.CENTER_BOTTOM
+                    "right-top" -> Align.RIGHT_TOP
+                    "right-center" -> Align.RIGHT_CENTER
+                    "right-bottom" -> Align.RIGHT_BOTTOM
+                    else -> Align.LEFT_TOP
+                }
+            }
+            sharedElementTransitions.add(sharedElementTransitionOption)
+        }
+        this.sharedElementTransitions = sharedElementTransitions
+    }
+
     fun setScreenOrientation(screenOrientation: String?) {
         if (screenOrientation == null) {
             this.screenOrientation = null
@@ -246,6 +323,9 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
         }
 
+    // Only used for shared element transitions
+    var transitionDuration: Int = 0
+
     enum class StackPresentation {
         PUSH, MODAL, TRANSPARENT_MODAL
     }
@@ -264,5 +344,31 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
+    }
+
+    enum class Easing {
+        LINEAR, EASE_IN, EASE_OUT, EASE_IN_OUT,
+    }
+
+    enum class ResizeMode {
+        RESIZE, NONE,
+    }
+
+    enum class Align {
+        LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM, CENTER_TOP, CENTER_CENTER, CENTER_BOTTOM, RIGHT_TOP, RIGHT_CENTER, RIGHT_BOTTOM
+    }
+
+    class SharedElementTransitionOptions {
+        var from: String? = null
+        var to: String? = null
+        var delay: Double = 0.0
+        var duration: Double = 0.0
+        var damping: Float = 1.0f
+        var initialVelocity: Float = 0.0f
+        var easing: Easing = Easing.LINEAR
+        var showFromElementDuringAnimation: Boolean = false
+        var showToElementDuringAnimation: Boolean = false
+        var resizeMode: ResizeMode = ResizeMode.RESIZE
+        var align: Align = Align.LEFT_TOP
     }
 }

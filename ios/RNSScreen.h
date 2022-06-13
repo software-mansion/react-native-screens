@@ -3,6 +3,7 @@
 
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
+#import "RNSSharedElementTransitionOptions.h"
 
 #if RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
@@ -16,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentation:(id)json;
 + (RNSScreenStackAnimation)RNSScreenStackAnimation:(id)json;
++ (RNSSharedElementTransitionOptions *)RNSSharedElementTransitionOptions:(id)json;
 
 #if !TARGET_OS_TV
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
@@ -51,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL hasStatusBarAnimationSet;
 @property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
 @property (nonatomic) BOOL hasOrientationSet;
+@property (nonatomic, retain) NSArray<RNSSharedElementTransitionOptions *> *sharedElementTransitions;
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
@@ -86,6 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 - (void)notifyFinishTransitioning;
+- (UIView *)findElementForID:(NSString *)elementID;
 
 #ifdef RN_FABRIC_ENABLED
 - (void)notifyWillAppear;

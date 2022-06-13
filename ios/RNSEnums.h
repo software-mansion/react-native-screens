@@ -57,3 +57,27 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
   RNSScreenStackHeaderSubviewTypeCenter,
   RNSScreenStackHeaderSubviewTypeSearchBar,
 };
+
+typedef NS_ENUM(NSInteger, RNSSharedElementTransitionResizeMode) {
+  RNSSharedElementTransitionResizeModeNone,
+  RNSSharedElementTransitionResizeModeResize
+};
+
+typedef NS_ENUM(NSInteger, RNSSharedElementTransitionAlign) {
+  RNSSharedElementTransitionAlignLeftTop,
+  RNSSharedElementTransitionAlignLeftCenter,
+  RNSSharedElementTransitionAlignLeftBottom,
+  RNSSharedElementTransitionAlignCenterTop,
+  RNSSharedElementTransitionAlignCenterCenter,
+  RNSSharedElementTransitionAlignCenterBottom,
+  RNSSharedElementTransitionAlignRightTop,
+  RNSSharedElementTransitionAlignRightCenter,
+  RNSSharedElementTransitionAlignRightBottom
+};
+
+typedef NS_ENUM(NSInteger, RNSSharedElementTransitionEasing) {
+  RNSSharedElementTransitionEasingLinear,
+  RNSSharedElementTransitionEasingEaseIn,
+  RNSSharedElementTransitionEasingEaseOut,
+  RNSSharedElementTransitionEasingEaseInOut
+};

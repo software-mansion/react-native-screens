@@ -1,6 +1,9 @@
 #import "RNSConvert.h"
 
 #ifdef RN_FABRIC_ENABLED
+
+#import <React/RCTConversions.h>
+
 @implementation RNSConvert
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
@@ -98,6 +101,67 @@
     @"top" : @(gestureResponseDistance.top),
     @"bottom" : @(gestureResponseDistance.bottom),
   };
+}
+
++ (NSArray<RNSSharedElementTransitionOptions *> *)sharedElementTransitionsFromCppStruct:
+    (const std::vector<facebook::react::RNSScreenSharedElementTransitionsStruct> &)sharedElementTransitions
+{
+  NSMutableArray<RNSSharedElementTransitionOptions *> *result = [NSMutableArray array];
+
+  for (auto sharedElementTransitionStruct : sharedElementTransitions) {
+    RNSSharedElementTransitionOptions *option = [[RNSSharedElementTransitionOptions alloc] init];
+
+    option.from = RCTNSStringFromStringNilIfEmpty(sharedElementTransitionStruct.from);
+    option.to = RCTNSStringFromStringNilIfEmpty(sharedElementTransitionStruct.to);
+    option.delay = sharedElementTransitionStruct.delay / 1000;
+    option.duration = sharedElementTransitionStruct.duration / 1000;
+    option.damping = sharedElementTransitionStruct.damping;
+    option.initialVelocity = sharedElementTransitionStruct.initialVelocity;
+    option.showFromElementDuringAnimation = sharedElementTransitionStruct.showFromElementDuringAnimation;
+    option.showToElementDuringAnimation = sharedElementTransitionStruct.showToElementDuringAnimation;
+
+    NSString *easing = RCTNSStringFromStringNilIfEmpty(sharedElementTransitionStruct.easing);
+    if (easing == nil || [easing isEqual:@"linear"]) {
+      option.easing = RNSSharedElementTransitionEasingLinear;
+    } else if ([easing isEqual:@"ease-in"]) {
+      option.easing = RNSSharedElementTransitionEasingEaseIn;
+    } else if ([easing isEqual:@"ease-out"]) {
+      option.easing = RNSSharedElementTransitionEasingEaseOut;
+    } else if ([easing isEqual:@"ease-in-out"]) {
+      option.easing = RNSSharedElementTransitionEasingEaseInOut;
+    }
+
+    NSString *resizeMode = RCTNSStringFromStringNilIfEmpty(sharedElementTransitionStruct.resizeMode);
+    if (resizeMode == nil || [resizeMode isEqual:@"resize"]) {
+      option.resizeMode = RNSSharedElementTransitionResizeModeResize;
+    } else if ([resizeMode isEqual:@"none"]) {
+      option.resizeMode = RNSSharedElementTransitionResizeModeNone;
+    }
+
+    NSString *align = RCTNSStringFromStringNilIfEmpty(sharedElementTransitionStruct.align);
+    if (align == nil || [align isEqual:@"left-top"]) {
+      option.align = RNSSharedElementTransitionAlignLeftTop;
+    } else if ([align isEqual:@"left-center"]) {
+      option.align = RNSSharedElementTransitionAlignLeftCenter;
+    } else if ([align isEqual:@"left-bottom"]) {
+      option.align = RNSSharedElementTransitionAlignLeftBottom;
+    } else if ([align isEqual:@"center-top"]) {
+      option.align = RNSSharedElementTransitionAlignCenterTop;
+    } else if ([align isEqual:@"center-center"]) {
+      option.align = RNSSharedElementTransitionAlignCenterCenter;
+    } else if ([align isEqual:@"center-bottom"]) {
+      option.align = RNSSharedElementTransitionAlignCenterBottom;
+    } else if ([align isEqual:@"right-top"]) {
+      option.align = RNSSharedElementTransitionAlignRightTop;
+    } else if ([align isEqual:@"right-center"]) {
+      option.align = RNSSharedElementTransitionAlignRightCenter;
+    } else if ([align isEqual:@"right-bottom"]) {
+      option.align = RNSSharedElementTransitionAlignRightBottom;
+    }
+
+    [result addObject:option];
+  }
+  return result;
 }
 
 @end

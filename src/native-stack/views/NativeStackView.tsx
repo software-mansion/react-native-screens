@@ -165,6 +165,7 @@ const RouteView = ({
     statusBarTranslucent,
     swipeDirection = 'horizontal',
     transitionDuration,
+    sharedElementTransitions,
   } = options;
 
   let {
@@ -251,6 +252,7 @@ const RouteView = ({
       navigationBarColor={navigationBarColor}
       navigationBarHidden={navigationBarHidden}
       replaceAnimation={replaceAnimation}
+      sharedElementTransitions={sharedElementTransitions}
       screenOrientation={screenOrientation}
       stackAnimation={stackAnimation}
       stackPresentation={stackPresentation}

@@ -563,7 +563,8 @@
   if (screen != nil &&
       // we need to return the animator when full width swiping even if the animation is not custom,
       // otherwise the screen will be just popped immediately due to no animation
-      (_isFullWidthSwiping || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+      (_isFullWidthSwiping || screen.sharedElementTransitions != nil ||
+       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -617,7 +618,9 @@
     return NO;
   }
 
-  if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
+  if (topScreen.customAnimationOnSwipe &&
+      ([RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation] ||
+       topScreen.sharedElementTransitions != nil)) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
       // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not

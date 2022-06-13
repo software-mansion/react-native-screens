@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -91,6 +92,11 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         }
     }
 
+    @ReactProp(name = "sharedElementTransitions")
+    override fun setSharedElementTransitions(view: Screen, value: ReadableArray?) {
+        view.setSharedElementTransitions(value);
+    }
+
     @ReactProp(name = "screenOrientation")
     override fun setScreenOrientation(view: Screen, screenOrientation: String?) {
         view.setScreenOrientation(screenOrientation)
@@ -140,10 +146,13 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
+    @ReactProp(name = "transitionDuration")
+    override fun setTransitionDuration(view: Screen, value: Int)  {
+        view.transitionDuration = value
+    }
+
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(view: Screen?, value: Boolean) = Unit
-
-    override fun setTransitionDuration(view: Screen?, value: Int) = Unit
 
     override fun setHideKeyboardOnSwipe(view: Screen?, value: Boolean) = Unit
 

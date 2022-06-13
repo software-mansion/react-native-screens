@@ -11,6 +11,7 @@ package com.facebook.react.viewmanagers;
 
 import android.view.View;
 import androidx.annotation.Nullable;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
 public interface RNSScreenManagerInterface<T extends View> {
@@ -19,6 +20,7 @@ public interface RNSScreenManagerInterface<T extends View> {
   void setHomeIndicatorHidden(T view, boolean value);
   void setPreventNativeDismiss(T view, boolean value);
   void setGestureEnabled(T view, boolean value);
+  void setSharedElementTransitions(T view, @Nullable ReadableArray value);
   void setStatusBarColor(T view, @Nullable Integer value);
   void setStatusBarHidden(T view, boolean value);
   void setScreenOrientation(T view, @Nullable String value);

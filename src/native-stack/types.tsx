@@ -15,6 +15,7 @@ import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
+  SharedElementTransition,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -288,6 +289,10 @@ export type NativeStackNavigationOptions = {
    * - "pop" – the new screen will perform pop animation.
    */
   replaceAnimation?: ScreenProps['replaceAnimation'];
+  /**
+   * TODO FRANCOIS DOC
+   */
+  sharedElementTransitions?: SharedElementTransition[];
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:

@@ -12,6 +12,7 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ColorPropConverter;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.BaseViewManagerInterface;
@@ -37,6 +38,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
         break;
       case "gestureEnabled":
         mViewManager.setGestureEnabled(view, value == null ? true : (boolean) value);
+        break;
+      case "sharedElementTransitions":
+        mViewManager.setSharedElementTransitions(view, (ReadableArray) value);
         break;
       case "statusBarColor":
         mViewManager.setStatusBarColor(view, ColorPropConverter.getColor(value, view.getContext()));

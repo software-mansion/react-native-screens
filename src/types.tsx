@@ -77,6 +77,66 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
+export type SharedElementTransition = {
+  /**
+   * The `nativeID` of the element of the disappearing screen
+   */
+  from: string;
+  /**
+   * The `nativeID` of the element of the appearing screen
+   */
+  to: string;
+  /**
+   * The delay (in milliseconds) before the transition start. Defaults to `0`.
+   */
+  delay?: number;
+  /**
+   * The duration (in milliseconds) of the transition, if not provided the transition will be synchronized with the screen transition. Defaults to `null`.
+   */
+  duration?: number;
+  /**
+   * See https://developer.apple.com/documentation/uikit/uiview/1622594-animatewithduration. Defaults to `1`.
+   *
+   * @platform ios
+   */
+  damping?: number;
+  /**
+   * See https://developer.apple.com/documentation/uikit/uiview/1622594-animatewithduration. Defaults to `0`.
+   *
+   * @platform ios
+   */
+  initialVelocity?: number;
+  /**
+   * Easing function applied to the transition. Defaults to `linear`.
+   */
+  easing?: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+  /**
+   * Should the shared element be resized to match the bounds of appearing screen element. Defaults to `resize`.
+   */
+  resizeMode?: 'resize' | 'none';
+  /**
+   * How should the shared element be aligned inside the target element bounds, only apply if resize is 'none'. Defaults to `left-top`.
+   */
+  align?:
+    | 'left-top'
+    | 'left-center'
+    | 'left-right'
+    | 'center-top'
+    | 'center-center'
+    | 'center-bottom'
+    | 'right-top'
+    | 'right-center'
+    | 'right-bottom';
+  /**
+   * If true show the in place element of the disappearing screen during the transition Defaults to `false`
+   */
+  showFromElementDuringAnimation?: boolean;
+  /**
+   * If true show the in place element of the appearing screen during the transition. Defaults to `false`.
+   */
+  showToElementDuringAnimation?: boolean;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
@@ -189,6 +249,10 @@ export interface ScreenProps extends ViewProps {
    * - "pop" – the new screen will perform pop animation.
    */
   replaceAnimation?: ScreenReplaceTypes;
+  /**
+   * Animations to be applied on elements which are shared between the appearing and disappearing screens
+   */
+  sharedElementTransitions?: SharedElementTransition[];
   /**
    * In which orientation should the screen appear.
    * The following values are currently supported:
