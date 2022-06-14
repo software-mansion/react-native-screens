@@ -103,6 +103,7 @@ const ScreensNativeModules = {
   get NativeScreenContainer() {
     NativeScreenContainerValue =
       NativeScreenContainerValue ||
+      FabricComponents.ScreenContainer ||
       requireNativeComponent('RNSScreenContainer');
     return NativeScreenContainerValue;
   },
@@ -111,7 +112,8 @@ const ScreensNativeModules = {
     NativeScreenNavigationContainerValue =
       NativeScreenNavigationContainerValue ||
       (Platform.OS === 'ios'
-        ? requireNativeComponent('RNSScreenNavigationContainer')
+        ? FabricComponents.ScreenNavigationContainer ||
+          requireNativeComponent('RNSScreenNavigationContainer')
         : this.NativeScreenContainer);
     return NativeScreenNavigationContainerValue;
   },
@@ -230,15 +232,9 @@ class Screen extends React.Component<ScreenProps> {
     const { enabled = ENABLE_SCREENS, ...rest } = this.props;
 
     if (enabled && isPlatformSupported) {
-      if (!AnimatedNativeScreen) {
-        if (ENABLE_FABRIC) {
-          AnimatedNativeScreen = ScreensNativeModules.NativeScreen;
-        } else {
-          AnimatedNativeScreen = Animated.createAnimatedComponent(
-            ScreensNativeModules.NativeScreen
-          ) as React.ComponentType<ScreenProps>;
-        }
-      }
+      AnimatedNativeScreen =
+        AnimatedNativeScreen ||
+        Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
 
       let {
         // Filter out active prop in this case because it is unused and

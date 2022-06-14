@@ -353,7 +353,7 @@ PODS:
     - React-jsi (= 0.68.0-rc.2)
     - React-logger (= 0.68.0-rc.2)
     - React-perflogger (= 0.68.0-rc.2)
-  - RNGestureHandler (2.2.0):
+  - RNGestureHandler (2.4.2):
     - React-Core
   - RNReanimated (2.4.1):
     - DoubleConversion
@@ -546,8 +546,8 @@ SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
-  FBLazyVector: bcdeff523be9f87a135b7c6fde8736db94904716
-  FBReactNativeSpec: 87ff61e326f0827d55bb888c274b0f5a9b4f2e33
+  FBLazyVector: 07eb8bb0d56ecb0c16f771d81f0f25008bc403b5
+  FBReactNativeSpec: 27a8800b49082f82770e7bafa26067e72bb3e4fe
   Flipper: 26fc4b7382499f1281eb8cb921e5c3ad6de91fe0
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
   Flipper-DoubleConversion: 57ffbe81ef95306cc9e69c4aa3aeeeeb58a6a28c
@@ -587,13 +587,13 @@ SPEC CHECKSUMS:
   React-RCTVibration: 25ef5d6f6141ea389d41d93d5a2ca1b4771920b4
   React-runtimeexecutor: 37e5fa0b81067a8e487391e2816bae8813b226a5
   ReactCommon: 4c7431a20d472996669b2230f34df0115bf5dc8d
-  RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
+  RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
   RNReanimated: 3d1432ce7b6b7fc31f375dcabe5b4585e0634a43
-  RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
+  RNScreens: d50711364166e9ab83230898b64f09dcd6e0a4f1
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: d7b12009fb66b91a161cddf00c349d42a0015de2
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 54439993ba279e900534ada11d49259eaead9508
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

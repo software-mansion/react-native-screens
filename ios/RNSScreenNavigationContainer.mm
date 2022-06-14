@@ -2,6 +2,12 @@
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 
+#ifdef RN_FABRIC_ENABLED
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/Props.h>
+#import "RCTFabricComponentsPlugins.h"
+#endif
+
 @implementation RNScreensContainerNavigationController
 
 @end
@@ -17,7 +23,6 @@
 
 - (void)updateContainer
 {
-#ifndef RN_FABRIC_ENABLED
   for (RNSScreenView *screen in self.reactSubviews) {
     if (screen.activityState == RNSActivityStateOnTop) {
       // there should never be more than one screen with `RNSActivityStateOnTop`
@@ -28,10 +33,25 @@
   }
 
   [self maybeDismissVC];
-#endif
 }
 
+#pragma mark-- Fabric specific
+#ifdef RN_FABRIC_ENABLED
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return facebook::react::concreteComponentDescriptorProvider<
+      facebook::react::RNSScreenNavigationContainerComponentDescriptor>();
+}
+#endif
+
 @end
+
+#ifdef RN_FABRIC_ENABLED
+Class<RCTComponentViewProtocol> RNSScreenNavigationContainerCls(void)
+{
+  return RNSScreenNavigationContainerView.class;
+}
+#endif
 
 @implementation RNSScreenNavigationContainerManager
 

@@ -34,9 +34,6 @@
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
 #ifdef RN_FABRIC_ENABLED
-  // we recreate the behavior of `reactSetFrame` on new architecture
-  facebook::react::LayoutMetrics _oldLayoutMetrics;
-  facebook::react::LayoutMetrics _newLayoutMetrics;
   RCTSurfaceTouchHandler *_touchHandler;
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
 #else
@@ -478,7 +475,7 @@
 
   [self setPreventNativeDismiss:newScreenProps.preventNativeDismiss];
 
-  [self setActivityStateOrNil:[NSNumber numberWithInt:newScreenProps.activityState]];
+  [self setActivityStateOrNil:[NSNumber numberWithFloat:newScreenProps.activityState]];
 
   [self setSwipeDirection:[RNSConvert RNSScreenSwipeDirectionFromCppEquivalent:newScreenProps.swipeDirection]];
 
