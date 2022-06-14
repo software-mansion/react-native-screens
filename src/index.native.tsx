@@ -189,30 +189,29 @@ function MaybeFreeze({ freeze, children }: FreezeWrapperProps) {
 function ScreenStack(props: ScreenStackProps) {
   if (ENABLE_FREEZE) {
     const { children, ...rest } = props;
-    const [appFreezIndex, setAppFreezeIndex] = useState(1)
-
+    const [appFreezeIndex, setAppFreezeIndex] = useState(1)
+    
+    const handleAppFreezeIndex = (nextAppState) => {
+      if (nextAppState === 'active'){
+        setAppFreezeIndex(1)
+      } else {
+        // forground && background issue will resolve due to make index 2 screens
+        // don't know why but RNScreen count other layouts as 1 screen
+        setAppFreezeIndex(2)
+      }
+    }
+    
     React.useEffect(() => {
-      const appStateListener = AppState.addEventListener(
-        'change',
-        nextAppState => {
-          if (nextAppState === 'active'){
-            setAppFreezeIndex(1)
-          } else {
-            // forground && background issue will resolve due to make index 2 screens
-            // don't know why but RNScreen count other layouts as 1 screen
-            setAppFreezeIndex(2)
-          }
-        },
-      );
+      AppState.addEventListener('change', handleAppFreezeIndex);
       return () => {
-        appStateListener?.remove();
+        AppState.removeEventListener('change', handleAppFreezeIndex);
       };
     }, []);
 
     const size = React.Children.count(children);
     // freezes all screens except the top one
     const childrenWithFreeze = React.Children.map(children, (child, index) => (
-      <DelayedFreeze freeze={size - index > appFreezIndex}>{child}</DelayedFreeze>
+      <DelayedFreeze freeze={size - index > appFreeze}>{child}</DelayedFreeze>
     ));
 
     return (
