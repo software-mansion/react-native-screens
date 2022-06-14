@@ -191,7 +191,7 @@ function ScreenStack(props: ScreenStackProps) {
     const { children, ...rest } = props;
     const [appFreezeIndex, setAppFreezeIndex] = useState(1)
     
-    const handleAppFreezeIndex = (nextAppState) => {
+    const handleAppFreezeIndex = (nextAppState: string) => {
       if (nextAppState === 'active'){
         setAppFreezeIndex(1)
       } else {
@@ -211,7 +211,7 @@ function ScreenStack(props: ScreenStackProps) {
     const size = React.Children.count(children);
     // freezes all screens except the top one
     const childrenWithFreeze = React.Children.map(children, (child, index) => (
-      <DelayedFreeze freeze={size - index > appFreeze}>{child}</DelayedFreeze>
+      <DelayedFreeze freeze={size - index > appFreezeIndex}>{child}</DelayedFreeze>
     ));
 
     return (
