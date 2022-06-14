@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Animated,
+  AppState,
   Image,
   ImageProps,
   Platform,
@@ -11,6 +12,9 @@ import {
   ViewProps,
 } from 'react-native';
 import { Freeze } from 'react-freeze';
+// @ts-ignore Getting private component
+// eslint-disable-next-line import/default
+import processColor from 'react-native/Libraries/StyleSheet/processColor';
 import { version } from 'react-native/package.json';
 
 import TransitionProgressContext from './TransitionProgressContext';
@@ -185,11 +189,32 @@ function MaybeFreeze({ freeze, children }: FreezeWrapperProps) {
 function ScreenStack(props: ScreenStackProps) {
   if (ENABLE_FREEZE) {
     const { children, ...rest } = props;
+    const [appFreezIndex, setAppFreezeIndex] = useState(1)
+
+    React.useEffect(() => {
+      const appStateListener = AppState.addEventListener(
+        'change',
+        nextAppState => {
+          if (nextAppState === 'active'){
+            setAppFreezeIndex(1)
+          } else {
+            // forground && background issue will resolve due to make index 2 screens
+            // don't know why but RNScreen count other layouts as 1 screen
+            setAppFreezeIndex(2)
+          }
+        },
+      );
+      return () => {
+        appStateListener?.remove();
+      };
+    }, []);
+
     const size = React.Children.count(children);
     // freezes all screens except the top one
     const childrenWithFreeze = React.Children.map(children, (child, index) => (
-      <DelayedFreeze freeze={size - index > 1}>{child}</DelayedFreeze>
+      <DelayedFreeze freeze={size - index > appFreezIndex}>{child}</DelayedFreeze>
     ));
+
     return (
       <ScreensNativeModules.NativeScreenStack {...rest}>
         {childrenWithFreeze}
@@ -248,6 +273,7 @@ class Screen extends React.Component<ScreenProps> {
         activityState,
         children,
         isNativeStack,
+        statusBarColor,
         ...props
       } = rest;
 
@@ -257,6 +283,8 @@ class Screen extends React.Component<ScreenProps> {
         );
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
+
+      const processedColor = processColor(statusBarColor);
 
       const handleRef = (ref: ViewConfig) => {
         if (!ENABLE_FABRIC) {
@@ -274,6 +302,7 @@ class Screen extends React.Component<ScreenProps> {
         <MaybeFreeze freeze={activityState === 0}>
           <AnimatedNativeScreen
             {...props}
+            statusBarColor={processedColor}
             activityState={activityState}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
