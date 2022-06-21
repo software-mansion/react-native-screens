@@ -9,7 +9,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-       screenOptions={{stackPresentation: 'push', headerShown: true, stackAnimation: 'default'}}
+       screenOptions={{stackPresentation: 'modal', headerShown: true, stackAnimation: 'default'}}
        >
         <Stack.Screen name="First" component={First} />
         <Stack.Screen

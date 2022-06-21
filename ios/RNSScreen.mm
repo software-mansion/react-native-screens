@@ -1032,11 +1032,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   // modals of native stack seem not to support
   // changing their view by just setting the view
-  // and this code seems to work ok for normal views
-  //  UIView *superView = self.view.superview;
-  [self.view removeFromSuperview];
-  self.view = snapshot;
-  //  [superView addSubview:self.view];
+  if (_initialView.stackPresentation != RNSScreenStackPresentationPush) {
+    UIView *superView = self.view.superview;
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+    [superView addSubview:self.view];
+  } else {
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+  }
 }
 
 - (void)resetViewToScreen
