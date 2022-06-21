@@ -36,6 +36,8 @@
 #ifdef RN_FABRIC_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
+  // on fabric, they are not available by default so we need them exposed here too
+  NSMutableArray<UIView *> *_reactSubviews;
 #else
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
@@ -48,6 +50,7 @@
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenProps>();
     _props = defaultProps;
+    _reactSubviews = [NSMutableArray new];
     [self initCommonProps];
   }
 
@@ -84,6 +87,13 @@
 {
   return _controller;
 }
+
+#ifdef RN_FABRIC_ENABLED
+- (NSArray<UIView *> *)reactSubviews
+{
+  return _reactSubviews;
+}
+#endif
 
 - (void)updateBounds
 {
@@ -487,6 +497,7 @@
     _config = childComponentView;
     ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
   }
+  [_reactSubviews insertObject:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -494,6 +505,7 @@
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = nil;
   }
+  [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];
 }
 

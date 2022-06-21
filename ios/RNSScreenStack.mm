@@ -146,14 +146,13 @@
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
-  // TODO: Improve this merge when StackHeaderConfig is merged
-#ifdef RN_FABRIC_ENABLED
-  if ([viewController isKindOfClass:[RNSScreen class]]) {
-    RNSScreenStackHeaderConfig *config = (RNSScreenStackHeaderConfig *)((RNSScreen *)viewController).screenView.config;
-    [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
-  }
-#else
   UIView *view = viewController.view;
+#ifdef RN_FABRIC_ENABLED
+  if (![view isKindOfClass:[RNSScreenView class]]) {
+    // if the current view is a snapshot, config was already removed so we don't trigger the method
+    return;
+  }
+#endif
   RNSScreenStackHeaderConfig *config = nil;
   for (UIView *subview in view.reactSubviews) {
     if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
@@ -162,7 +161,6 @@
     }
   }
   [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
-#endif
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
