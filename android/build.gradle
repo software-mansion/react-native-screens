@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.4.10')}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.6.21')}"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.15.0"
     }
 }
