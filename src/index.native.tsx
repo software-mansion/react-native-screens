@@ -231,13 +231,9 @@ class Screen extends React.Component<ScreenProps> {
 
     if (enabled && isPlatformSupported) {
       if (!AnimatedNativeScreen) {
-        if (ENABLE_FABRIC) {
-          AnimatedNativeScreen = ScreensNativeModules.NativeScreen;
-        } else {
-          AnimatedNativeScreen = Animated.createAnimatedComponent(
-            ScreensNativeModules.NativeScreen
-          ) as React.ComponentType<ScreenProps>;
-        }
+        AnimatedNativeScreen = Animated.createAnimatedComponent(
+          ScreensNativeModules.NativeScreen
+        ) as React.ComponentType<ScreenProps>;
       }
 
       let {
