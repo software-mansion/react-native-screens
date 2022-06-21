@@ -758,9 +758,9 @@
           self->_fakeView.alpha = 1.0;
           if (self->_closing) {
             for (NSArray *sharedElement in sharedElements) {
-              UIView *startingView = sharedElement[0];
+              UIView *endingView = sharedElement[1];
               // we add all views immediately, otherwise it won't work correctly
-              [[context containerView] addSubview:startingView];
+              [[context containerView] addSubview:endingView];
             }
             [RNSScreen asignEndingValuesWithTransitionContext:context
                                                sharedElements:sharedElements
@@ -814,14 +814,14 @@
   }
   for (NSArray *sharedElement in sharedElements) {
     UIView *startingView = sharedElement[0];
-    UIView *startingViewParent = sharedElement[2];
+    UIView *endingViewParent = sharedElement[2];
     UIView *endingView = sharedElement[1];
 
     [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
                                                   fromView:startingView
-                                         fromViewConverter:startingViewParent
+                                         fromViewConverter:startingView.superview
                                                     toView:endingView
-                                           toViewConverter:endingView.superview
+                                           toViewConverter:endingViewParent
                                             transitionType:@"sharedElementTransition"];
   }
   [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
@@ -841,14 +841,14 @@
 - (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<NSArray *> *)sharedElements
 {
   for (NSArray *sharedElement in sharedElements) {
-    UIView *startingView = sharedElement[0];
-    [startingView removeFromSuperview];
-    UIView *startContainer = sharedElement[2];
-    int index = [sharedElement[3] intValue];
-    [startContainer insertSubview:startingView atIndex:index];
-    startingView.frame = [sharedElement[4] CGRectValue];
     UIView *endingView = sharedElement[1];
-    endingView.hidden = NO;
+    [endingView removeFromSuperview];
+    UIView *endingContainer = sharedElement[2];
+    int index = [sharedElement[3] intValue];
+    [endingContainer insertSubview:endingView atIndex:index];
+    endingView.frame = [sharedElement[4] CGRectValue];
+    UIView *startingView = sharedElement[0];
+    startingView.hidden = NO;
   }
 
   [self->_animationTimer setPaused:YES];
