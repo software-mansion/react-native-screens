@@ -36,6 +36,8 @@
 #ifdef RN_FABRIC_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
+  // on fabric, they are not available by default so we need them exposed here too
+  NSMutableArray<UIView *> *_reactSubviews;
 #else
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
@@ -48,6 +50,7 @@
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenProps>();
     _props = defaultProps;
+    _reactSubviews = [NSMutableArray new];
     [self initCommonProps];
   }
 
@@ -84,6 +87,13 @@
 {
   return _controller;
 }
+
+#ifdef RN_FABRIC_ENABLED
+- (NSArray<UIView *> *)reactSubviews
+{
+  return _reactSubviews;
+}
+#endif
 
 - (void)updateBounds
 {
@@ -146,8 +156,13 @@
     // https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
     _controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
+#ifdef RN_FABRIC_ENABLED
+    // TODO: on Fabric, same controllers can be used as modals and then recycled and used a push which would result in
+    // this error. It would be good to check if it doesn't leak in such case.
+#else
     RCTLogError(
         @"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
+#endif
   }
   _stackPresentation = stackPresentation;
 }
@@ -260,7 +275,6 @@
 
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
-  _dismissed = YES;
 #ifdef RN_FABRIC_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
@@ -269,12 +283,31 @@
         ->onDismissed(facebook::react::RNSScreenEventEmitter::OnDismissed{.dismissCount = dismissCount});
   }
 #else
+  // TODO: hopefully problems connected to dismissed prop are only the case on paper
+  _dismissed = YES;
   if (self.onDismissed) {
     dispatch_async(dispatch_get_main_queue(), ^{
       if (self.onDismissed) {
         self.onDismissed(@{@"dismissCount" : @(dismissCount)});
       }
     });
+  }
+#endif
+}
+
+- (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
+{
+#ifdef RN_FABRIC_ENABLED
+  // If screen is already unmounted then there will be no event emitter
+  // it will be cleaned in prepareForRecycle
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onNativeDismissCancelled(
+            facebook::react::RNSScreenEventEmitter::OnNativeDismissCancelled{.dismissCount = dismissCount});
+  }
+#else
+  if (self.onNativeDismissCancelled) {
+    self.onNativeDismissCancelled(@{@"dismissCount" : @(dismissCount)});
   }
 #endif
 }
@@ -412,6 +445,43 @@
   [_controller notifyFinishTransitioning];
 }
 
+- (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
+{
+  // We need to call both "cancel" and "reset" here because RN's gesture recognizer
+  // does not handle the scenario when it gets cancelled by other top
+  // level gesture recognizer. In this case by the modal dismiss gesture.
+  // Because of that, at the moment when this method gets called the React's
+  // gesture recognizer is already in FAILED state but cancel events never gets
+  // send to JS. Calling "reset" forces RCTTouchHanler to dispatch cancel event.
+  // To test this behavior one need to open a dismissable modal and start
+  // pulling down starting at some touchable item. Without "reset" the touchable
+  // will never go back from highlighted state even when the modal start sliding
+  // down.
+#ifdef RN_FABRIC_ENABLED
+  [_touchHandler setEnabled:NO];
+  [_touchHandler setEnabled:YES];
+#else
+  [_touchHandler cancel];
+#endif
+  [_touchHandler reset];
+}
+
+- (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
+{
+  if (_preventNativeDismiss) {
+    [self notifyDismissCancelledWithDismissCount:1];
+    return NO;
+  }
+  return _gestureEnabled;
+}
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+  if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
+    [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:) withObject:presentationController];
+  }
+}
+
 #pragma mark - Fabric specific
 #ifdef RN_FABRIC_ENABLED
 
@@ -427,6 +497,7 @@
     _config = childComponentView;
     ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
   }
+  [_reactSubviews insertObject:childComponentView atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -434,6 +505,7 @@
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = nil;
   }
+  [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];
 }
 
@@ -451,6 +523,7 @@
   // view props there too and they need to be reset due to view recycling.
   self.transform = CGAffineTransformIdentity;
   _state.reset();
+  _touchHandler = nil;
 }
 
 - (void)updateProps:(facebook::react::Props::Shared const &)props
@@ -547,13 +620,6 @@
 #pragma mark - Paper specific
 #else
 
-- (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
-{
-  if (self.onNativeDismissCancelled) {
-    self.onNativeDismissCancelled(@{@"dismissCount" : @(dismissCount)});
-  }
-}
-
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
   if (self.onTransitionProgress) {
@@ -584,38 +650,6 @@
   // the screen dimensions and we wait for the screen VC to update and then we
   // pass the dimensions to ui view manager to take into account when laying out
   // subviews
-}
-
-- (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
-{
-  // We need to call both "cancel" and "reset" here because RN's gesture recognizer
-  // does not handle the scenario when it gets cancelled by other top
-  // level gesture recognizer. In this case by the modal dismiss gesture.
-  // Because of that, at the moment when this method gets called the React's
-  // gesture recognizer is already in FAILED state but cancel events never gets
-  // send to JS. Calling "reset" forces RCTTouchHanler to dispatch cancel event.
-  // To test this behavior one need to open a dismissable modal and start
-  // pulling down starting at some touchable item. Without "reset" the touchable
-  // will never go back from highlighted state even when the modal start sliding
-  // down.
-  [_touchHandler cancel];
-  [_touchHandler reset];
-}
-
-- (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
-{
-  if (_preventNativeDismiss) {
-    [self notifyDismissCancelledWithDismissCount:1];
-    return NO;
-  }
-  return _gestureEnabled;
-}
-
-- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
-{
-  if ([_reactSuperview respondsToSelector:@selector(presentationControllerDidDismiss:)]) {
-    [_reactSuperview performSelector:@selector(presentationControllerDidDismiss:) withObject:presentationController];
-  }
 }
 
 - (void)invalidate
@@ -670,11 +704,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [super viewWillAppear:animated];
   if (!_isSwiping) {
-#ifdef RN_FABRIC_ENABLED
-    [_initialView notifyWillAppear];
-#else
-    [((RNSScreenView *)self.view) notifyWillAppear];
-#endif
+    [self.screenView notifyWillAppear];
     if (self.transitionCoordinator.isInteractive) {
       // we started dismissing with swipe gesture
       _isSwiping = YES;
@@ -705,8 +735,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-#ifdef RN_FABRIC_ENABLED
-#else
   if (!self.transitionCoordinator.isInteractive) {
     // user might have long pressed ios 14 back button item,
     // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
@@ -719,15 +747,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   } else {
     _dismissCount = 1;
   }
-#endif
 
   // same flow as in viewWillAppear
   if (!_isSwiping) {
-#ifdef RN_FABRIC_ENABLED
-    [_initialView notifyWillDisappear];
-#else
-    [((RNSScreenView *)self.view) notifyWillDisappear];
-#endif
+    [self.screenView notifyWillDisappear];
     if (self.transitionCoordinator.isInteractive) {
       _isSwiping = YES;
     }
@@ -752,12 +775,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [super viewDidAppear:animated];
   if (!_isSwiping || _shouldNotify) {
-#ifdef RN_FABRIC_ENABLED
-    [_initialView notifyAppear];
-#else
     // we are going forward or dismissing without swipe
     // or successfully swiped back
-    [((RNSScreenView *)self.view) notifyAppear];
+    [self.screenView notifyAppear];
+#ifdef RN_FABRIC_ENABLED
+#else
     [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
 #endif
   }
@@ -770,29 +792,24 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [super viewDidDisappear:animated];
 #ifdef RN_FABRIC_ENABLED
+  [self resetViewToScreen];
+#endif
   if (self.parentViewController == nil && self.presentingViewController == nil) {
-    // screen dismissed, send event
-    [_initialView notifyDismissedWithCount:1];
-  }
-#else
-  if (self.parentViewController == nil && self.presentingViewController == nil) {
-    if (((RNSScreenView *)self.view).preventNativeDismiss) {
+    if (self.screenView.preventNativeDismiss) {
       // if we want to prevent the native dismiss, we do not send dismissal event,
       // but instead call `updateContainer`, which restores the JS navigation stack
-      [((RNSScreenView *)self.view).reactSuperview updateContainer];
-      [((RNSScreenView *)self.view) notifyDismissCancelledWithDismissCount:_dismissCount];
+      [self.screenView.reactSuperview updateContainer];
+      [self.screenView notifyDismissCancelledWithDismissCount:_dismissCount];
     } else {
       // screen dismissed, send event
-      [((RNSScreenView *)self.view) notifyDismissedWithCount:_dismissCount];
+      [self.screenView notifyDismissedWithCount:_dismissCount];
     }
   }
-#endif
   // same flow as in viewDidAppear
   if (!_isSwiping || _shouldNotify) {
+    [self.screenView notifyDisappear];
 #ifdef RN_FABRIC_ENABLED
-    [_initialView notifyDisappear];
 #else
-    [((RNSScreenView *)self.view) notifyDisappear];
     [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
 #endif
   }
@@ -801,7 +818,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   _shouldNotify = YES;
 #ifdef RN_FABRIC_ENABLED
 #else
-  [self traverseForScrollView:self.view];
+  [self traverseForScrollView:self.screenView];
 #endif
 }
 
@@ -820,10 +837,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
 #ifdef RN_FABRIC_ENABLED
-    [_initialView updateBounds];
+    [self.screenView updateBounds];
 #else
-    if (!CGRectEqualToRect(_lastViewFrame, self.view.frame)) {
-      _lastViewFrame = self.view.frame;
+    if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
+      _lastViewFrame = self.screenView.frame;
       [((RNSScreenView *)self.viewIfLoaded) updateBounds];
     }
 #endif
@@ -910,26 +927,24 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (BOOL)hasTraitSet:(RNSWindowTrait)trait
 {
-  if ([self.view isKindOfClass:[RNSScreenView class]]) {
-    switch (trait) {
-      case RNSWindowTraitStyle: {
-        return ((RNSScreenView *)self.view).hasStatusBarStyleSet;
-      }
-      case RNSWindowTraitAnimation: {
-        return ((RNSScreenView *)self.view).hasStatusBarAnimationSet;
-      }
-      case RNSWindowTraitHidden: {
-        return ((RNSScreenView *)self.view).hasStatusBarHiddenSet;
-      }
-      case RNSWindowTraitOrientation: {
-        return ((RNSScreenView *)self.view).hasOrientationSet;
-      }
-      case RNSWindowTraitHomeIndicatorHidden: {
-        return ((RNSScreenView *)self.view).hasHomeIndicatorHiddenSet;
-      }
-      default: {
-        RCTLogError(@"Unknown trait passed: %d", (int)trait);
-      }
+  switch (trait) {
+    case RNSWindowTraitStyle: {
+      return self.screenView.hasStatusBarStyleSet;
+    }
+    case RNSWindowTraitAnimation: {
+      return self.screenView.hasStatusBarAnimationSet;
+    }
+    case RNSWindowTraitHidden: {
+      return self.screenView.hasStatusBarHiddenSet;
+    }
+    case RNSWindowTraitOrientation: {
+      return self.screenView.hasOrientationSet;
+    }
+    case RNSWindowTraitHomeIndicatorHidden: {
+      return self.screenView.hasHomeIndicatorHiddenSet;
+    }
+    default: {
+      RCTLogError(@"Unknown trait passed: %d", (int)trait);
     }
   }
   return NO;
@@ -943,7 +958,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (BOOL)prefersStatusBarHidden
 {
-  return ((RNSScreenView *)self.view).statusBarHidden;
+  return self.screenView.statusBarHidden;
 }
 
 - (UIViewController *)childViewControllerForStatusBarStyle
@@ -954,7 +969,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-  return [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:((RNSScreenView *)self.view).statusBarStyle];
+  return [RNSScreenWindowTraits statusBarStyleForRNSStatusBarStyle:self.screenView.statusBarStyle];
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation
@@ -962,7 +977,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitAnimation includingModals:NO];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
-    return ((RNSScreenView *)vc.view).statusBarAnimation;
+    return ((RNSScreen *)vc).screenView.statusBarAnimation;
   }
   return UIStatusBarAnimationFade;
 }
@@ -972,7 +987,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
-    return ((RNSScreenView *)vc.view).screenOrientation;
+    return ((RNSScreen *)vc).screenView.screenOrientation;
   }
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
@@ -985,23 +1000,55 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (BOOL)prefersHomeIndicatorAutoHidden
 {
-  return ((RNSScreenView *)self.view).homeIndicatorHidden;
+  return self.screenView.homeIndicatorHidden;
+}
+
+- (int)getIndexOfView:(UIView *)view
+{
+  return (int)[[self.screenView.reactSuperview reactSubviews] indexOfObject:view];
+}
+
+- (int)getParentChildrenCount
+{
+  return (int)[[self.screenView.reactSuperview reactSubviews] count];
 }
 #endif
+
+// since on Fabric the view of controller can be a snapshot of type `UIView`,
+// when we want to check props of ScreenView, we need to get them from _initialView
+- (RNSScreenView *)screenView
+{
+#ifdef RN_FABRIC_ENABLED
+  return _initialView;
+#else
+  return (RNSScreenView *)self.view;
+#endif
+}
 
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric specific
 
 - (void)setViewToSnapshot:(UIView *)snapshot
 {
-  [self.view removeFromSuperview];
-  self.view = snapshot;
+  // modals of native stack seem not to support
+  // changing their view by just setting the view
+  if (_initialView.stackPresentation != RNSScreenStackPresentationPush) {
+    UIView *superView = self.view.superview;
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+    [superView addSubview:self.view];
+  } else {
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+  }
 }
 
 - (void)resetViewToScreen
 {
-  [self.view removeFromSuperview];
-  self.view = _initialView;
+  if (self.view != _initialView) {
+    [self.view removeFromSuperview];
+    self.view = _initialView;
+  }
 }
 
 #else
@@ -1049,16 +1096,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [view.subviews enumerateObjectsUsingBlock:^(__kindof UIView *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
     [self traverseForScrollView:obj];
   }];
-}
-
-- (int)getIndexOfView:(UIView *)view
-{
-  return (int)[[self.view.reactSuperview reactSubviews] indexOfObject:view];
-}
-
-- (int)getParentChildrenCount
-{
-  return (int)[[self.view.reactSuperview reactSubviews] count];
 }
 
 #pragma mark - transition progress related methods

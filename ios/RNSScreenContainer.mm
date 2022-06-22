@@ -41,7 +41,7 @@
 {
   for (UIViewController *childVC in self.childViewControllers) {
     if ([childVC isKindOfClass:[RNSScreen class]] &&
-        ((RNSScreenView *)((RNSScreen *)childVC.view)).activityState == RNSActivityStateOnTop) {
+        ((RNSScreen *)childVC).screenView.activityState == RNSActivityStateOnTop) {
       return childVC;
     }
   }
