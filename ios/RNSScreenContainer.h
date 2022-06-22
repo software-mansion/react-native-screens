@@ -1,3 +1,8 @@
+#ifdef RN_FABRIC_ENABLED
+#import <React/RCTViewComponentView.h>
+#else
+#endif
+
 #import <React/RCTViewManager.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -23,7 +28,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSScreenContainerView : UIView <RNSScreenContainerDelegate, RCTInvalidating>
+@interface RNSScreenContainerView :
+#ifdef RN_FABRIC_ENABLED
+    RCTViewComponentView <RNSScreenContainerDelegate>
+#else
+    UIView <RNSScreenContainerDelegate, RCTInvalidating>
+#endif
 
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, retain) NSMutableArray *reactSubviews;

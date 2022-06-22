@@ -35,8 +35,12 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         return Screen(reactContext)
     }
 
+    override fun setActivityState(view: Screen, activityState: Float) {
+        setActivityState(view, activityState.toInt())
+    }
+
     @ReactProp(name = "activityState")
-    override fun setActivityState(view: Screen, activityState: Int) {
+    fun setActivityState(view: Screen, activityState: Int) {
         if (activityState == -1) {
             // Null will be provided when activityState is set as an animated value and we change
             // it from JS to be a plain value (non animated).

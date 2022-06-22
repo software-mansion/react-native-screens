@@ -32,7 +32,7 @@ public interface RNSScreenManagerInterface<T extends View> {
   void setReplaceAnimation(T view, @Nullable String value);
   void setSwipeDirection(T view, @Nullable String value);
   void setHideKeyboardOnSwipe(T view, boolean value);
-  void setActivityState(T view, int value);
+  void setActivityState(T view, float value);
   void setNavigationBarColor(T view, @Nullable Integer value);
   void setNavigationBarHidden(T view, boolean value);
   void setNativeBackButtonDismissalEnabled(T view, boolean value);

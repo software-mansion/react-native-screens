@@ -78,7 +78,7 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
         mViewManager.setHideKeyboardOnSwipe(view, value == null ? false : (boolean) value);
         break;
       case "activityState":
-        mViewManager.setActivityState(view, value == null ? -1 : ((Double) value).intValue());
+        mViewManager.setActivityState(view, value == null ? -1f : ((Double) value).floatValue());
         break;
       case "navigationBarColor":
         mViewManager.setNavigationBarColor(view, ColorPropConverter.getColor(value, view.getContext()));

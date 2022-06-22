@@ -55,6 +55,7 @@ export type NativeProps = $ReadOnly<{|
   onAppear?: ?BubblingEventHandler<ScreenEvent>,
   onDisappear?: ?BubblingEventHandler<ScreenEvent>,
   onDismissed?: ?BubblingEventHandler<ScreenDismissedEvent>,
+  onNativeDismissCancelled?: ?BubblingEventHandler<ScreenDismissedEvent>,
   onWillAppear?: ?BubblingEventHandler<ScreenEvent>,
   onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
   customAnimationOnSwipe?: boolean,
@@ -75,7 +76,7 @@ export type NativeProps = $ReadOnly<{|
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>,
   swipeDirection?: WithDefault<SwipeDirection, 'horizontal'>,
   hideKeyboardOnSwipe?: boolean,
-  activityState?: WithDefault<Int32, -1>,
+  activityState?: WithDefault<Float, -1.0>,
   // TODO: implement these props on iOS
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,
