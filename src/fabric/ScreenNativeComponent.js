@@ -61,6 +61,7 @@ export type NativeProps = $ReadOnly<{|
   onAppear?: ?BubblingEventHandler<ScreenEvent>,
   onDisappear?: ?BubblingEventHandler<ScreenEvent>,
   onDismissed?: ?BubblingEventHandler<ScreenDismissedEvent>,
+  onNativeDismissCancelled?: ?BubblingEventHandler<ScreenDismissedEvent>,
   onWillAppear?: ?BubblingEventHandler<ScreenEvent>,
   onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
   onTransitionProgress?: ?BubblingEventHandler<TransitionProgressEvent>,

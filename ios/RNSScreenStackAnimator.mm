@@ -30,11 +30,11 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
   if (_operation == UINavigationControllerOperationPush) {
     UIViewController *toViewController =
         [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    screen = (RNSScreenView *)toViewController.view;
+    screen = ((RNSScreen *)toViewController).screenView;
   } else if (_operation == UINavigationControllerOperationPop) {
     UIViewController *fromViewController =
         [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    screen = (RNSScreenView *)fromViewController.view;
+    screen = ((RNSScreen *)fromViewController).screenView;
   }
 
   if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
@@ -58,9 +58,9 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
 
   RNSScreenView *screen;
   if (_operation == UINavigationControllerOperationPush) {
-    screen = (RNSScreenView *)toViewController.view;
+    screen = ((RNSScreen *)toViewController).screenView;
   } else if (_operation == UINavigationControllerOperationPop) {
-    screen = (RNSScreenView *)fromViewController.view;
+    screen = ((RNSScreen *)fromViewController).screenView;
   }
 
   if (screen != nil) {

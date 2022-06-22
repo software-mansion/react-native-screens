@@ -25,11 +25,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@class RNSScreenView;
+
 @interface RNSScreen : UIViewController <RNScreensViewControllerDelegate>
 
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (void)notifyFinishTransitioning;
+- (RNSScreenView *)screenView;
 #ifdef RN_FABRIC_ENABLED
 - (void)setViewToSnapshot:(UIView *)snapshot;
 - (void)resetViewToScreen;

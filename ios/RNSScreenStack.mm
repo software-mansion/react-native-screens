@@ -147,13 +147,12 @@
                     animated:(BOOL)animated
 {
   UIView *view = viewController.view;
-  // TODO: Improve this merge when StackHeaderConfig is merged
 #ifdef RN_FABRIC_ENABLED
-  if ([view isKindOfClass:RNSScreenView.class]) {
-    RNSScreenStackHeaderConfig *config = (RNSScreenStackHeaderConfig *)((RNSScreenView *)view).config;
-    [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
+  if (![view isKindOfClass:[RNSScreenView class]]) {
+    // if the current view is a snapshot, config was already removed so we don't trigger the method
+    return;
   }
-#else
+#endif
   RNSScreenStackHeaderConfig *config = nil;
   for (UIView *subview in view.reactSubviews) {
     if ([subview isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
@@ -162,15 +161,13 @@
     }
   }
   [RNSScreenStackHeaderConfig willShowViewController:viewController animated:animated withConfig:config];
-#endif
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
   // We don't directly set presentation delegate but instead rely on the ScreenView's delegate to
   // forward certain calls to the container (Stack).
-  UIView *screenView = presentationController.presentedViewController.view;
-  if ([screenView isKindOfClass:[RNSScreenView class]]) {
+  if ([presentationController.presentedViewController isKindOfClass:[RNSScreen class]]) {
     // we trigger the update of status bar's appearance here because there is no other lifecycle method
     // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenWindowTraits updateWindowTraits];
@@ -377,7 +374,7 @@
 #endif
 
         BOOL shouldAnimate = lastModal && [next isKindOfClass:[RNSScreen class]] &&
-            ((RNSScreenView *)next.view).stackAnimation != RNSScreenStackAnimationNone;
+            ((RNSScreen *)next).screenView.stackAnimation != RNSScreenStackAnimationNone;
 
         // if you want to present another modal quick enough after dismissing the previous one,
         // it will result in wrong changeRootController, see repro in
@@ -404,7 +401,7 @@
       [_presentedModals containsObject:changeRootController.presentedViewController]) {
     BOOL shouldAnimate = changeRootIndex == controllers.count &&
         [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
-        ((RNSScreenView *)changeRootController.presentedViewController.view).stackAnimation !=
+        ((RNSScreen *)changeRootController.presentedViewController).screenView.stackAnimation !=
             RNSScreenStackAnimationNone;
     [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
   } else {
@@ -538,8 +535,9 @@
 - (void)dismissOnReload
 {
 #ifdef RN_FABRIC_ENABLED
-  auto screenController = (RNSScreen *)_controller.topViewController;
-  [screenController resetViewToScreen];
+  if ([_controller.visibleViewController isKindOfClass:[RNSScreen class]]) {
+    [(RNSScreen *)_controller.visibleViewController resetViewToScreen];
+  }
 #else
   dispatch_async(dispatch_get_main_queue(), ^{
     [self invalidate];
@@ -556,9 +554,9 @@
 {
   RNSScreenView *screen;
   if (operation == UINavigationControllerOperationPush) {
-    screen = (RNSScreenView *)toVC.view;
+    screen = ((RNSScreen *)toVC).screenView;
   } else if (operation == UINavigationControllerOperationPop) {
-    screen = (RNSScreenView *)fromVC.view;
+    screen = ((RNSScreen *)fromVC).screenView;
   }
   if (screen != nil &&
       // we need to return the animator when full width swiping even if the animation is not custom,
@@ -581,14 +579,12 @@
   if (parent != nil) {
 #ifdef RN_FABRIC_ENABLED
     RCTSurfaceTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+#else
+    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+#endif
     [touchHandler setEnabled:NO];
     [touchHandler setEnabled:YES];
     [touchHandler reset];
-#else
-    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-    [touchHandler cancel];
-    [touchHandler reset];
-#endif
   }
 }
 
@@ -671,7 +667,7 @@
 
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
-  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+  RNSScreenView *topScreen = ((RNSScreen *)_controller.viewControllers.lastObject).screenView;
   float translation;
   float velocity;
   float distance;
@@ -888,7 +884,7 @@
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   // We should only do a snapshot of a screen that is on the top
-  if (screenChildComponent == _controller.topViewController.view) {
+  if (screenChildComponent == _controller.visibleViewController.view) {
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
   }
 
@@ -916,7 +912,7 @@
 
 - (void)takeSnapshot
 {
-  _snapshot = [_controller.topViewController.view snapshotViewAfterScreenUpdates:NO];
+  _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
 }
 
 - (void)mountingTransactionWillMountWithMetadata:(facebook::react::MountingTransactionMetadata const &)metadata
