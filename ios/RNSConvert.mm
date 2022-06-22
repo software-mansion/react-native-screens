@@ -100,6 +100,21 @@
   };
 }
 
++ (UITextAutocapitalizationType)UITextAutocapitalizationTypeFromCppEquivalent:
+    (facebook::react::RNSSearchBarAutoCapitalize)autoCapitalize
+{
+  switch (autoCapitalize) {
+    case facebook::react::RNSSearchBarAutoCapitalize::Words:
+      return UITextAutocapitalizationTypeWords;
+    case facebook::react::RNSSearchBarAutoCapitalize::Sentences:
+      return UITextAutocapitalizationTypeSentences;
+    case facebook::react::RNSSearchBarAutoCapitalize::Characters:
+      return UITextAutocapitalizationTypeAllCharacters;
+    case facebook::react::RNSSearchBarAutoCapitalize::None:
+      return UITextAutocapitalizationTypeNone;
+  }
+}
+
 @end
 
 #endif // RN_FABRIC_ENABLED

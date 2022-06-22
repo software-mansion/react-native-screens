@@ -6,6 +6,16 @@
 #import <React/RCTComponent.h>
 #import <React/RCTUIManager.h>
 
+#ifdef RN_FABRIC_ENABLED
+#import <React/RCTConversions.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/EventEmitters.h>
+#import <react/renderer/components/rnscreens/Props.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTFabricComponentsPlugins.h"
+#import "RNSConvert.h"
+#endif
+
 @implementation RNSSearchBar {
   __weak RCTBridge *_bridge;
   UISearchController *_controller;
@@ -18,11 +28,103 @@
 {
   if (self = [super init]) {
     _bridge = bridge;
-    _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
-    _controller.searchBar.delegate = self;
-    _hideWhenScrolling = YES;
+    [self initCommonProps];
   }
   return self;
+}
+
+#ifdef RN_FABRIC_ENABLED
+- (instancetype)init
+{
+  if (self = [super init]) {
+    static const auto defaultProps = std::make_shared<const facebook::react::RNSSearchBarProps>();
+    _props = defaultProps;
+    [self initCommonProps];
+  }
+  return self;
+}
+#endif
+
+- (void)initCommonProps
+{
+  _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
+  _controller.searchBar.delegate = self;
+  _hideWhenScrolling = YES;
+}
+
+- (void)emitOnFocusEvent
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onFocus(facebook::react::RNSSearchBarEventEmitter::OnFocus{});
+  }
+#else
+  if (self.onFocus) {
+    self.onFocus(@{});
+  }
+#endif
+}
+
+- (void)emitOnBlurEvent
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onBlur(facebook::react::RNSSearchBarEventEmitter::OnBlur{});
+  }
+#else
+  if (self.onBlur) {
+    self.onBlur(@{});
+  }
+#endif
+}
+
+- (void)emitOnSearchButtonPressEventWithText:(NSString *)text
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onSearchButtonPress(
+            facebook::react::RNSSearchBarEventEmitter::OnSearchButtonPress{.text = RCTStringFromNSString(text)});
+  }
+#else
+  if (self.onSearchButtonPress) {
+    self.onSearchButtonPress(@{
+      @"text" : text,
+    });
+  }
+#endif
+}
+
+- (void)emitOnCancelButtonPressEvent
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onCancelButtonPress(facebook::react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
+  }
+#else
+  if (self.onCancelButtonPress) {
+    self.onCancelButtonPress(@{});
+  }
+#endif
+}
+
+- (void)emitOnChangeTextEventWithText:(NSString *)text
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onChangeText(facebook::react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
+  }
+#else
+  if (self.onChangeText) {
+    self.onChangeText(@{
+      @"text" : text,
+    });
+  }
+#endif
 }
 
 - (void)setObscureBackground:(BOOL)obscureBackground
@@ -124,36 +226,23 @@
 
   [self showCancelButton];
   [self becomeFirstResponder];
-
-  if (self.onFocus) {
-    self.onFocus(@{});
-  }
+  [self emitOnFocusEvent];
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
 {
-  if (self.onBlur) {
-    self.onBlur(@{});
-  }
+  [self emitOnBlurEvent];
   [self hideCancelButton];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-  if (self.onChangeText) {
-    self.onChangeText(@{
-      @"text" : _controller.searchBar.text,
-    });
-  }
+  [self emitOnChangeTextEventWithText:_controller.searchBar.text];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-  if (self.onSearchButtonPress) {
-    self.onSearchButtonPress(@{
-      @"text" : _controller.searchBar.text,
-    });
-  }
+  [self emitOnSearchButtonPressEventWithText:_controller.searchBar.text];
 }
 
 #if !TARGET_OS_TV
@@ -163,27 +252,85 @@
   [self resignFirstResponder];
   [self hideCancelButton];
 
-  if (self.onCancelButtonPress) {
-    self.onCancelButtonPress(@{});
-  }
-  if (self.onChangeText) {
-    self.onChangeText(@{
-      @"text" : _controller.searchBar.text,
-    });
-  }
+  [self emitOnCancelButtonPressEvent];
+  [self emitOnChangeTextEventWithText:_controller.searchBar.text];
 }
+#endif // !TARGET_OS_TV
+
+#pragma mark-- Fabric specific
+
+#ifdef RN_FABRIC_ENABLED
+- (void)updateProps:(facebook::react::Props::Shared const &)props
+           oldProps:(facebook::react::Props::Shared const &)oldProps
+{
+  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSSearchBarProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSSearchBarProps>(props);
+
+  [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
+
+  if (oldScreenProps.cancelButtonText != newScreenProps.cancelButtonText) {
+    [self setCancelButtonText:RCTNSStringFromStringNilIfEmpty(newScreenProps.cancelButtonText)];
+  }
+
+  if (oldScreenProps.obscureBackground != newScreenProps.obscureBackground) {
+    [self setObscureBackground:newScreenProps.obscureBackground];
+  }
+
+  if (oldScreenProps.hideNavigationBar != newScreenProps.hideNavigationBar) {
+    [self setHideNavigationBar:newScreenProps.hideNavigationBar];
+  }
+
+  if (oldScreenProps.placeholder != newScreenProps.placeholder) {
+    [self setPlaceholder:RCTNSStringFromStringNilIfEmpty(newScreenProps.placeholder)];
+  }
+
+  if (oldScreenProps.autoCapitalize != newScreenProps.autoCapitalize) {
+    [self setAutoCapitalize:[RNSConvert UITextAutocapitalizationTypeFromCppEquivalent:newScreenProps.autoCapitalize]];
+  }
+
+  if (oldScreenProps.tintColor != newScreenProps.tintColor) {
+    [self setTintColor:RCTUIColorFromSharedColor(newScreenProps.tintColor)];
+  }
+
+  if (oldScreenProps.barTintColor != newScreenProps.barTintColor) {
+    [self setBarTintColor:RCTUIColorFromSharedColor(newScreenProps.barTintColor)];
+  }
+
+  if (oldScreenProps.textColor != newScreenProps.textColor) {
+    [self setTextColor:RCTUIColorFromSharedColor(newScreenProps.textColor)];
+  }
+
+  [super updateProps:props oldProps:oldProps];
+}
+
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSSearchBarComponentDescriptor>();
+}
+
+#else
 #endif
 
 @end
+
+#ifdef RN_FABRIC_ENABLED
+Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
+{
+  return RNSSearchBar.class;
+}
+#endif
 
 @implementation RNSSearchBarManager
 
 RCT_EXPORT_MODULE()
 
+#ifdef RN_FABRIC_ENABLED
+#else
 - (UIView *)view
 {
   return [[RNSSearchBar alloc] initWithBridge:self.bridge];
 }
+#endif
 
 RCT_EXPORT_VIEW_PROPERTY(obscureBackground, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, BOOL)
