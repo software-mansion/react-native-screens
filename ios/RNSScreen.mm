@@ -14,6 +14,7 @@
 #import <rnscreens/RNSScreenComponentDescriptor.h>
 #import "RCTFabricComponentsPlugins.h"
 #import "RNSConvert.h"
+#import "RNSScreenViewEvent.h"
 #else
 #import <React/RCTTouchHandler.h>
 #endif
@@ -453,6 +454,12 @@
         ->onTransitionProgress(facebook::react::RNSScreenEventEmitter::OnTransitionProgress{
             .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
+  RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
+                                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                                   progress:progress
+                                                                    closing:closing
+                                                               goingForward:goingForward];
+  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
@@ -909,7 +916,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
-  [self.screenView notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+  if ([self.view isKindOfClass:[RNSScreenView class]]) {
+    // if the view is already snapshot, there is not sense in sending progress since on JS side
+    // the component is already not present
+    [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+  }
 }
 
 #if !TARGET_OS_TV
