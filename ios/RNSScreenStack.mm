@@ -916,18 +916,11 @@
   _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
 }
 
-#if RNS_RN_VERSION_MINOR >= 69
 - (void)mountingTransactionDidMount:(facebook::react::MountingTransaction const &)transaction
                withSurfaceTelemetry:(facebook::react::SurfaceTelemetry const &)surfaceTelemetry
 {
   [self takeSnapshot];
 }
-#else
-- (void)mountingTransactionWillMountWithMetadata:(facebook::react::MountingTransactionMetadata const &)metadata
-{
-  [self takeSnapshot];
-}
-#endif // RNS_RN_VERSION_MINOR >= 69
 
 - (void)prepareForRecycle
 {
