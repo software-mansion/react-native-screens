@@ -2,43 +2,6 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-def self.detect_rn_version
-  begin
-    # standard app layout
-    # /appName/node_modules/react-native-screens/RNScreens.podspec
-    # /appName/node_modules/react-native/package.json
-    react_json = JSON.parse(File.read(File.join(__dir__, "..", "..", "node_modules", "react-native", "package.json")))
-    react_native_version = react_json["version"]
-  rescue
-    begin
-      # monorepo
-      # /monorepo/packages/appName/node_modules/react-native-screens/RNScreens.podspec
-      # /monorepo/node_modules/react-native/package.json
-      react_json = JSON.parse(File.read(File.join(__dir__, "..", "..", "..", "..", "node_modules", "react-native", "package.json")))
-      react_native_version = react_json["version"]
-    rescue
-      begin
-        # Example apps in screens repo
-        # /react-native-screens/RNScreens.podspec
-        # /react-native-screens/node_modules/react-native/package.json
-        react_json = JSON.parse(File.read(File.join(__dir__, "node_modules", "react-native", "package.json")))
-        react_native_version = react_json["version"]
-      rescue
-        # should never happen
-        react_native_version = '0.68.0'
-        puts "[RNScreens] Unable to recognized your `react-native` version! Default `react-native` version: " + react_native_version
-        return react_native_version
-      end
-    end
-  end
-  puts "[RNSScreens] Detected `react-native` version: #{react_native_version}"
-  return react_native_version
-end
-
-react_native_version = detect_rn_version()
-react_native_version_minor = react_native_version.split('.')[1]
-react_native_version_flag = '-DRNS_RN_VERSION_MINOR=' + react_native_version_minor 
-
 fabric_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 
 # folly_version must match the version used in React Native
@@ -66,7 +29,7 @@ Pod::Spec.new do |s|
       "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
     }
     s.platforms       = { ios: '11.0', tvos: '11.0' }
-    s.compiler_flags  = react_native_version_flag + ' ' + folly_compiler_flags + ' ' + '-DRN_FABRIC_ENABLED'
+    s.compiler_flags  = folly_compiler_flags + ' ' + '-DRN_FABRIC_ENABLED'
     s.source_files    = 'ios/**/*.{h,m,mm,cpp}'
     s.requires_arc    = true
   
@@ -84,7 +47,6 @@ Pod::Spec.new do |s|
       ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
     end
   else 
-    s.compiler_flags = react_native_version_flag
     s.source_files = "ios/**/*.{h,m,mm}"
     s.requires_arc = true
   
