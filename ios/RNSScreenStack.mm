@@ -917,7 +917,6 @@
 }
 
 - (void)mountingTransactionDidMount:(facebook::react::MountingTransaction const &)transaction
-               withSurfaceTelemetry:(facebook::react::SurfaceTelemetry const &)surfaceTelemetry
 {
   [self takeSnapshot];
 }
