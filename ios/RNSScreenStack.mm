@@ -918,7 +918,13 @@
 
 - (void)mountingTransactionDidMount:(facebook::react::MountingTransaction const &)transaction
 {
-  [self takeSnapshot];
+  for (auto mutation : transaction.getMutations()) {
+    if (mutation.type == facebook::react::ShadowViewMutation::Type::Delete &&
+        strcmp(mutation.parentShadowView.componentName, "RNSScreen") == 0) {
+      [self takeSnapshot];
+      return;
+    }
+  }
 }
 
 - (void)prepareForRecycle
