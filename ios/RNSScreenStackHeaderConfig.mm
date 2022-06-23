@@ -7,7 +7,6 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RCTFabricComponentsPlugins.h"
 #else
-// TODO: move this import when SearchBar is implemented on Fabric
 #import <React/RCTBridge.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
@@ -15,11 +14,11 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
-#import "RNSSearchBar.h"
 #endif
 #import <React/RCTFont.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
 #ifdef RN_FABRIC_ENABLED
@@ -561,9 +560,6 @@
         break;
       }
       case RNSScreenStackHeaderSubviewTypeSearchBar: {
-#ifdef RN_FABRIC_ENABLED
-        RCTLogWarn(@"SearchBar is not yet Fabric compatible in react-native-screens");
-#else
         if (subview.subviews == nil || [subview.subviews count] == 0) {
           RCTLogWarn(
               @"Failed to attach search bar to the header. We recommend using `useLayoutEffect` when managing "
@@ -580,8 +576,6 @@
           }
 #endif
         }
-
-#endif // RN_FABRIC_ENABLED
         break;
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {

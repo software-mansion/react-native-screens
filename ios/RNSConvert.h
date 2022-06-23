@@ -22,6 +22,9 @@
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
     (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance;
 
++ (UITextAutocapitalizationType)UITextAutocapitalizationTypeFromCppEquivalent:
+    (facebook::react::RNSSearchBarAutoCapitalize)autoCapitalize;
+
 @end
 
 #endif // RN_FABRIC_ENABLED

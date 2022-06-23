@@ -159,15 +159,15 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
+        mode="modal"
         detachInactiveScreens={true}
         screenOptions={{
-          presentation: "modal",
           animationEnabled: true,
           transparentCard: true,
           cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
           headerStyle: {backgroundColor: 'red'},
           gestureEnabled: true,
-          // cardOverlayEnabled: true,
+          cardOverlayEnabled: true,
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={SecondScreen} />
