@@ -884,8 +884,10 @@
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  // We should only do a snapshot of a screen that is on the top
-  if (screenChildComponent == _controller.visibleViewController.view) {
+  // We should only do a snapshot of a screen that is on the top.
+  // We also check _presentedModals since if you push 2 modals, second one is not a child of _controller
+  if (screenChildComponent == _controller.visibleViewController.view ||
+      screenChildComponent == [_presentedModals.lastObject view]) {
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
   }
 
