@@ -20,6 +20,7 @@
     "react-native": "^0.69.0",
     "react-native-codegen": "^0.0.13",
     "react-native-gesture-handler": "^2.5.0",
+    "react-native-reanimated": "3.0.0-rc.0",
     "react-native-safe-area-context": "^4.2.5",
     "react-native-screens": "link:../",
     "patch-package": "^6.4.7",
