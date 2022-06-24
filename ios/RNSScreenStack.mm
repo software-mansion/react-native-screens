@@ -142,6 +142,20 @@
 
 #pragma mark - Common
 
+- (void)emitOnFinishTransitioningEvent
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenStackEventEmitter>(_eventEmitter)
+        ->onFinishTransitioning(facebook::react::RNSScreenStackEventEmitter::OnFinishTransitioning{});
+  }
+#else
+  if (self.onFinishTransitioning) {
+    self.onFinishTransitioning(nil);
+  }
+#endif
+}
+
 - (void)navigationController:(UINavigationController *)navigationController
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
@@ -176,17 +190,15 @@
     // have tried to push another one during the transition
     _updatingModals = NO;
     [self updateContainer];
-    // TODO: implement onFinishTransitioning on Fabric
 #ifdef RN_FABRIC_ENABLED
+    [self emitOnFinishTransitioningEvent];
 #else
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
       // main queue. We do that because onDismiss event is also enqueued and we want for the transition
       // finish event to arrive later than onDismiss (see RNSScreen#notifyDismiss)
       dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.onFinishTransitioning) {
-          self.onFinishTransitioning(nil);
-        }
+        [self emitOnFinishTransitioningEvent];
       });
     }
 #endif
@@ -324,13 +336,7 @@
   __weak RNSScreenStackView *weakSelf = self;
 
   void (^afterTransitions)(void) = ^{
-  // TODO: Implement onFinishTransitioning on Fabric
-#ifdef RN_FABRIC_ENABLED
-#else
-    if (weakSelf.onFinishTransitioning) {
-      weakSelf.onFinishTransitioning(nil);
-    }
-#endif
+    [weakSelf emitOnFinishTransitioningEvent];
     weakSelf.updatingModals = NO;
     if (weakSelf.scheduleModalsUpdate) {
       // if modals update was requested during setModalViewControllers we set scheduleModalsUpdate
@@ -739,12 +745,7 @@
        didShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated
 {
-#ifdef RN_FABRIC_ENABLED
-#else
-  if (self.onFinishTransitioning) {
-    self.onFinishTransitioning(nil);
-  }
-#endif
+  [self emitOnFinishTransitioningEvent];
   [RNSScreenWindowTraits updateWindowTraits];
 }
 #endif
@@ -915,9 +916,15 @@
   _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
 }
 
-- (void)mountingTransactionWillMountWithMetadata:(facebook::react::MountingTransactionMetadata const &)metadata
+- (void)mountingTransactionDidMount:(facebook::react::MountingTransaction const &)transaction
 {
-  [self takeSnapshot];
+  for (auto mutation : transaction.getMutations()) {
+    if (mutation.type == facebook::react::ShadowViewMutation::Type::Delete &&
+        strcmp(mutation.parentShadowView.componentName, "RNSScreen") == 0) {
+      [self takeSnapshot];
+      return;
+    }
+  }
 }
 
 - (void)prepareForRecycle

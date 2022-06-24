@@ -731,7 +731,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RN_FABRIC_ENABLED
 #else
   [self hideHeaderIfNecessary];
-#endif
+#endif // RN_FABRIC_ENABLED
   // as per documentation of these methods
   _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
 
@@ -1113,7 +1113,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       RNSScreenStackHeaderConfig *config = ((RNSScreenStackHeaderConfig *)self.screenView.reactSubviews[0]);
 
       BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
+
+#ifdef RN_FABRIC_ENABLED
+      BOOL shouldHideHeader = !config.show;
+#else
       BOOL shouldHideHeader = config.hide;
+#endif
 
       if (wasSearchBarActive && shouldHideHeader) {
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
