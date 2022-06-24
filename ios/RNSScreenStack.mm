@@ -916,11 +916,13 @@
   _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
 }
 
-- (void)mountingTransactionDidMount:(facebook::react::MountingTransaction const &)transaction
+- (void)mountingTransactionWillMount:(facebook::react::MountingTransaction const &)transaction
+                withSurfaceTelemetry:(facebook::react::SurfaceTelemetry const &)surfaceTelemetry
 {
   for (auto mutation : transaction.getMutations()) {
-    if (mutation.type == facebook::react::ShadowViewMutation::Type::Delete &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreen") == 0) {
+    if (mutation.type == facebook::react::ShadowViewMutation::Type::Remove &&
+        mutation.parentShadowView.componentName != nil &&
+        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
       [self takeSnapshot];
       return;
     }
