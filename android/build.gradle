@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.4.10')}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.6.21')}"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.15.0"
     }
 }
@@ -31,6 +31,11 @@ if (isNewArchitectureEnabled()) {
 }
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+
+def reactNativeArchitectures() {
+    def value = project.getProperties().get("reactNativeArchitectures")
+    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
@@ -66,6 +71,9 @@ android {
                     targets "rnscreens_modules"
                 }
             }
+        }
+        ndk {
+            abiFilters (*reactNativeArchitectures())
         }
     }
     lintOptions {
