@@ -884,8 +884,10 @@
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  // We should only do a snapshot of a screen that is on the top
-  if (screenChildComponent == _controller.visibleViewController.view) {
+  // We should only do a snapshot of a screen that is on the top.
+  // We also check _presentedModals since if you push 2 modals, second one is not a child of _controller
+  if (screenChildComponent == _controller.visibleViewController.view ||
+      screenChildComponent == [_presentedModals.lastObject view]) {
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
   }
 
@@ -916,11 +918,13 @@
   _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
 }
 
-- (void)mountingTransactionDidMount:(facebook::react::MountingTransaction const &)transaction
+- (void)mountingTransactionWillMount:(facebook::react::MountingTransaction const &)transaction
+                withSurfaceTelemetry:(facebook::react::SurfaceTelemetry const &)surfaceTelemetry
 {
   for (auto mutation : transaction.getMutations()) {
-    if (mutation.type == facebook::react::ShadowViewMutation::Type::Delete &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreen") == 0) {
+    if (mutation.type == facebook::react::ShadowViewMutation::Type::Remove &&
+        mutation.parentShadowView.componentName != nil &&
+        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
       [self takeSnapshot];
       return;
     }

@@ -100,9 +100,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyDisappear;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
-#else
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 #endif
+
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 
 @end
 

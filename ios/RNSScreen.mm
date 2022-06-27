@@ -14,6 +14,7 @@
 #import <rnscreens/RNSScreenComponentDescriptor.h>
 #import "RCTFabricComponentsPlugins.h"
 #import "RNSConvert.h"
+#import "RNSScreenViewEvent.h"
 #else
 #import <React/RCTTouchHandler.h>
 #endif
@@ -445,6 +446,31 @@
   [_controller notifyFinishTransitioning];
 }
 
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+{
+#ifdef RN_FABRIC_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onTransitionProgress(facebook::react::RNSScreenEventEmitter::OnTransitionProgress{
+            .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
+  }
+  RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
+                                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                                   progress:progress
+                                                                    closing:closing
+                                                               goingForward:goingForward];
+  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+#else
+  if (self.onTransitionProgress) {
+    self.onTransitionProgress(@{
+      @"progress" : @(progress),
+      @"closing" : @(closing ? 1 : 0),
+      @"goingForward" : @(goingForward ? 1 : 0),
+    });
+  }
+#endif
+}
+
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
   // We need to call both "cancel" and "reset" here because RN's gesture recognizer
@@ -620,17 +646,6 @@
 #pragma mark - Paper specific
 #else
 
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
-{
-  if (self.onTransitionProgress) {
-    self.onTransitionProgress(@{
-      @"progress" : @(progress),
-      @"closing" : @(closing ? 1 : 0),
-      @"goingForward" : @(goingForward ? 1 : 0),
-    });
-  }
-}
-
 - (void)setPointerEvents:(RCTPointerEvents)pointerEvents
 {
   // pointer events settings are managed by the parent screen container, we ignore
@@ -689,11 +704,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   if (self = [super init]) {
     self.view = view;
+    _fakeView = [UIView new];
+    _shouldNotify = YES;
 #ifdef RN_FABRIC_ENABLED
     _initialView = (RNSScreenView *)view;
-#else
-    _shouldNotify = YES;
-    _fakeView = [UIView new];
 #endif
   }
   return self;
@@ -724,11 +738,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [RNSScreenWindowTraits updateWindowTraits];
   if (_shouldNotify) {
     _closing = NO;
-#ifdef RN_FABRIC_ENABLED
-#else
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
-#endif
   }
 }
 
@@ -741,7 +752,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // We check it by calculating the difference between the index of currently displayed screen
     // and the index of the target screen, which is the view of topViewController at this point.
     // If the value is lower than 1, it means we are dismissing a modal, or navigating forward, or going back with JS.
-    int selfIndex = [self getIndexOfView:self.view];
+    int selfIndex = [self getIndexOfView:self.screenView];
     int targetIndex = [self getIndexOfView:self.navigationController.topViewController.view];
     _dismissCount = selfIndex - targetIndex > 0 ? selfIndex - targetIndex : 1;
   } else {
@@ -763,11 +774,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (_shouldNotify) {
     _closing = YES;
-#ifdef RN_FABRIC_ENABLED
-#else
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
-#endif
   }
 }
 
@@ -778,10 +786,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // we are going forward or dismissing without swipe
     // or successfully swiped back
     [self.screenView notifyAppear];
-#ifdef RN_FABRIC_ENABLED
-#else
     [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
-#endif
   }
 
   _isSwiping = NO;
@@ -808,10 +813,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // same flow as in viewDidAppear
   if (!_isSwiping || _shouldNotify) {
     [self.screenView notifyDisappear];
-#ifdef RN_FABRIC_ENABLED
-#else
     [self notifyTransitionProgress:1.0 closing:YES goingForward:_goingForward];
-#endif
   }
 
   _isSwiping = NO;
@@ -859,7 +861,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   [super willMoveToParentViewController:parent];
   if (parent == nil) {
-    id responder = [self findFirstResponder:self.view];
+    id responder = [self findFirstResponder:self.screenView];
     if (responder != nil) {
       _previousFirstResponder = responder;
     }
@@ -878,6 +880,47 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   }
   return nil;
+}
+
+#pragma mark - transition progress related methods
+
+- (void)setupProgressNotification
+{
+  if (self.transitionCoordinator != nil) {
+    _fakeView.alpha = 0.0;
+    [self.transitionCoordinator
+        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          [[context containerView] addSubview:self->_fakeView];
+          self->_fakeView.alpha = 1.0;
+          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
+          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        }
+        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          [self->_animationTimer setPaused:YES];
+          [self->_animationTimer invalidate];
+          [self->_fakeView removeFromSuperview];
+        }];
+  }
+}
+
+- (void)handleAnimation
+{
+  if ([[_fakeView layer] presentationLayer] != nil) {
+    CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
+    if (_currentAlpha != fakeViewAlpha) {
+      _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
+      [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
+    }
+  }
+}
+
+- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
+{
+  if ([self.view isKindOfClass:[RNSScreenView class]]) {
+    // if the view is already snapshot, there is not sense in sending progress since on JS side
+    // the component is already not present
+    [(RNSScreenView *)self.view notifyTransitionProgress:progress closing:closing goingForward:goingForward];
+  }
 }
 
 #if !TARGET_OS_TV
@@ -1064,10 +1107,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (@available(iOS 13.0, *)) {
     NSUInteger currentIndex = [self.navigationController.viewControllers indexOfObject:self];
 
-    if (currentIndex > 0 && [self.view.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+    if (currentIndex > 0 && [self.screenView.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
       UINavigationItem *prevNavigationItem =
           [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
-      RNSScreenStackHeaderConfig *config = ((RNSScreenStackHeaderConfig *)self.view.reactSubviews[0]);
+      RNSScreenStackHeaderConfig *config = ((RNSScreenStackHeaderConfig *)self.screenView.reactSubviews[0]);
 
       BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
@@ -1102,44 +1145,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self traverseForScrollView:obj];
   }];
 }
-
-#pragma mark - transition progress related methods
-
-- (void)setupProgressNotification
-{
-  if (self.transitionCoordinator != nil) {
-    _fakeView.alpha = 0.0;
-    [self.transitionCoordinator
-        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [[context containerView] addSubview:self->_fakeView];
-          self->_fakeView.alpha = 1.0;
-          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        }
-        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self->_animationTimer setPaused:YES];
-          [self->_animationTimer invalidate];
-          [self->_fakeView removeFromSuperview];
-        }];
-  }
-}
-
-- (void)handleAnimation
-{
-  if ([[_fakeView layer] presentationLayer] != nil) {
-    CGFloat fakeViewAlpha = _fakeView.layer.presentationLayer.opacity;
-    if (_currentAlpha != fakeViewAlpha) {
-      _currentAlpha = fmax(0.0, fmin(1.0, fakeViewAlpha));
-      [self notifyTransitionProgress:_currentAlpha closing:_closing goingForward:_goingForward];
-    }
-  }
-}
-
-- (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
-{
-  [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
-}
-#endif // RN_FABRIC_ENABLED
+#endif
 
 @end
 

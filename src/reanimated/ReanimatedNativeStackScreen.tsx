@@ -14,6 +14,9 @@ const AnimatedScreen = Animated.createAnimatedComponent(
   (Screen as unknown) as React.ComponentClass
 );
 
+// @ts-expect-error nativeFabricUIManager is not yet included in the RN types
+const ENABLE_FABRIC = !!global?.nativeFabricUIManager;
+
 const ReanimatedNativeStackScreen = React.forwardRef<
   typeof AnimatedScreen,
   ScreenProps
@@ -39,6 +42,9 @@ const ReanimatedNativeStackScreen = React.forwardRef<
           // This should not be necessary, but is not properly managed by `react-native-reanimated`
           // @ts-ignore wrong type
           Platform.OS === 'android'
+            ? 'onTransitionProgress'
+            : // for some reason there is a difference in required event name between architectures
+            ENABLE_FABRIC
             ? 'onTransitionProgress'
             : 'topTransitionProgress',
         ]
