@@ -1078,7 +1078,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
     // we need to check whether reactSubviews array is empty, because on Fabric child nodes are unmounted first ->
     // reactSubviews array may be empty
-    if (currentIndex > 0 && [self.screenView.reactSubviews count] &&
+    if (currentIndex > 0 && [self.screenView.reactSubviews count] > 0 &&
         [self.screenView.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
       UINavigationItem *prevNavigationItem =
           [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
