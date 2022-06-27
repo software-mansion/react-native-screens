@@ -22,9 +22,7 @@
     "react-native-gesture-handler": "^2.5.0",
     "react-native-reanimated": "3.0.0-rc.0",
     "react-native-safe-area-context": "^4.0.1-rc.5",
-    "react-native-screens": "link:../",
-    "react-navigation": "^4.4.4",
-    "react-navigation-stack": "^2.10.4"
+    "react-native-screens": "link:../"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
