@@ -15,11 +15,11 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {useTransitionProgress} from 'react-native-screens';
-// import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
-// import Animated, {
-//   useAnimatedStyle,
-//   useDerivedValue,
-// } from 'react-native-reanimated';
+import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+} from 'react-native-reanimated';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
@@ -45,7 +45,8 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackAnimation: 'default',
+          stackAnimation: 'fade_from_bottom',
+          headerShown: false,
           // stackPresentation: 'transparentModal',
         }}>
         <Stack.Screen name="First" component={NestedFirst} />
@@ -62,32 +63,32 @@ export default function App(): JSX.Element {
 
 // checking if many components can call useProgress at the same time
 function SiblingView() {
-  // const reaProgress = useReanimatedTransitionProgress();
-  // const sv = useDerivedValue(
-  //   () =>
-  //     (reaProgress.progress.value < 0.5
-  //       ? reaProgress.progress.value * 50
-  //       : (1 - reaProgress.progress.value) * 50) + 50,
-  // );
-  // const reaStyle = useAnimatedStyle(() => {
-  //   return {
-  //     width: sv.value,
-  //     height: sv.value,
-  //     backgroundColor: 'blue',
-  //   };
-  // });
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
+  );
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
 
   const {progress} = useTransitionProgress();
 
   const opacity = progress.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [0.5, 0.0, 1.0],
+    outputRange: [1.0, 0.0, 1.0],
     extrapolate: 'clamp',
   });
 
   return (
      <>
-      {/* <Animated.View style={reaStyle} /> */}
+      <Animated.View style={reaStyle} />
       <RNAnimated.View
         style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}}
       />
@@ -101,26 +102,26 @@ function First({
   navigation: NativeStackNavigationProp<SimpleStackParams, 'First'>;
 }) {
   // using progress from both Animated and Reanimated context in the same Screen
-  // const reaProgress = useReanimatedTransitionProgress();
-  // const sv = useDerivedValue(
-  //   () =>
-  //     (reaProgress.progress.value < 0.5
-  //       ? reaProgress.progress.value * 50
-  //       : (1 - reaProgress.progress.value) * 50) + 50,
-  // );
-  // const reaStyle = useAnimatedStyle(() => {
-  //   return {
-  //     width: sv.value,
-  //     height: sv.value,
-  //     backgroundColor: 'blue',
-  //   };
-  // });
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
+  );
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
 
   const {progress} = useTransitionProgress();
 
   const opacity = progress.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [0.3, 0.0, 1.0],
+    outputRange: [1.0, 0.0, 1.0],
     extrapolate: 'clamp',
   });
 
@@ -134,7 +135,7 @@ function First({
         title="Tap me for third screen"
         onPress={() => navigation.push('Third')}
       />
-      {/* <Animated.View style={reaStyle} /> */}
+      <Animated.View style={reaStyle} />
       <SiblingView />
       <SiblingView />
       <RNAnimated.View
@@ -197,20 +198,20 @@ const Dialog = ({
 }): JSX.Element => {
   // using Animated with the progress
   const {progress} = useTransitionProgress();
-  // const reaProgress = useReanimatedTransitionProgress();
-  // const sv = useDerivedValue(
-  //   () =>
-  //     (reaProgress.progress.value < 0.5
-  //       ? reaProgress.progress.value * 50
-  //       : (1 - reaProgress.progress.value) * 50) + 50,
-  // );
-  // const reaStyle = useAnimatedStyle(() => {
-  //   return {
-  //     width: sv.value,
-  //     height: sv.value,
-  //     backgroundColor: 'blue',
-  //   };
-  // });
+  const reaProgress = useReanimatedTransitionProgress();
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
+  );
+  const reaStyle = useAnimatedStyle(() => {
+    return {
+      width: sv.value,
+      height: sv.value,
+      backgroundColor: 'blue',
+    };
+  });
 
   const val = progress.interpolate({
     inputRange: [0, 0.5, 1],
@@ -230,7 +231,7 @@ const Dialog = ({
             backgroundColor: 'blue',
           }}
         />
-        {/* <Animated.View style={reaStyle} /> */}
+        <Animated.View style={reaStyle} />
         <TouchableOpacity
           style={{...styles.button}}
           onPress={() => navigation.goBack()}>
