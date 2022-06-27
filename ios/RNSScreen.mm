@@ -1068,35 +1068,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-#ifdef RN_FABRIC_ENABLED
-#pragma mark - Fabric specific
-
-- (void)setViewToSnapshot:(UIView *)snapshot
-{
-  // modals of native stack seem not to support
-  // changing their view by just setting the view
-  if (_initialView.stackPresentation != RNSScreenStackPresentationPush) {
-    UIView *superView = self.view.superview;
-    [self.view removeFromSuperview];
-    self.view = snapshot;
-    [superView addSubview:self.view];
-  } else {
-    [self.view removeFromSuperview];
-    self.view = snapshot;
-  }
-}
-
-- (void)resetViewToScreen
-{
-  if (self.view != _initialView) {
-    [self.view removeFromSuperview];
-    self.view = _initialView;
-  }
-}
-
-#else
-#pragma mark - Paper specific
-
 - (void)hideHeaderIfNecessary
 {
 #if !TARGET_OS_TV
@@ -1130,6 +1101,35 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 #endif
 }
+
+#ifdef RN_FABRIC_ENABLED
+#pragma mark - Fabric specific
+
+- (void)setViewToSnapshot:(UIView *)snapshot
+{
+  // modals of native stack seem not to support
+  // changing their view by just setting the view
+  if (_initialView.stackPresentation != RNSScreenStackPresentationPush) {
+    UIView *superView = self.view.superview;
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+    [superView addSubview:self.view];
+  } else {
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+  }
+}
+
+- (void)resetViewToScreen
+{
+  if (self.view != _initialView) {
+    [self.view removeFromSuperview];
+    self.view = _initialView;
+  }
+}
+
+#else
+#pragma mark - Paper specific
 
 - (void)traverseForScrollView:(UIView *)view
 {
