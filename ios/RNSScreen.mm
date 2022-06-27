@@ -728,10 +728,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // The _isSwiping is still true, but we don't want to notify then
     _shouldNotify = NO;
   }
-#ifdef RN_FABRIC_ENABLED
-#else
+
   [self hideHeaderIfNecessary];
-#endif // RN_FABRIC_ENABLED
   // as per documentation of these methods
   _goingForward = [self isBeingPresented] || [self isMovingToParentViewController];
 
