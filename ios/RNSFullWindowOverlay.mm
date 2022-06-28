@@ -5,6 +5,8 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTFabricComponentsPlugins.h"
 #else
 #import <React/RCTTouchHandler.h>
 #endif // RN_FABRIC_ENABLED
