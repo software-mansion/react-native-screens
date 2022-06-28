@@ -131,15 +131,18 @@ Class<RCTComponentViewProtocol> RNSFullWindowOverlayCls(void)
 {
   return RNSFullWindowOverlay.class;
 }
-#endif
+#endif // RN_FABRIC_ENABLED
 
 @implementation RNSFullWindowOverlayManager
 
 RCT_EXPORT_MODULE()
 
+#ifdef RN_FABRIC_ENABLED
+#else
 - (UIView *)view
 {
   return [[RNSFullWindowOverlay alloc] initWithBridge:self.bridge];
 }
+#endif // RN_FABRIC_ENABLED
 
 @end
