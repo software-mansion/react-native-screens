@@ -5,6 +5,7 @@ import ScreenStack from './ScreenStack';
 import SearchBar from './SearchBar';
 import ScreenContainer from './ScreenContainer';
 import ScreenNavigationContainer from './ScreenNavigationContainer';
+import FullWindowOverlay from './FullWindowOverlay';
 
 export {
   Screen,
@@ -14,4 +15,5 @@ export {
   SearchBar,
   ScreenContainer,
   ScreenNavigationContainer,
+  FullWindowOverlay,
 };

@@ -152,7 +152,9 @@ const ScreensNativeModules = {
 
   get NativeFullWindowOverlay() {
     NativeFullWindowOverlay =
-      NativeFullWindowOverlay || requireNativeComponent('RNSFullWindowOverlay');
+      NativeFullWindowOverlay ||
+      FabricComponents.FullWindowOverlay ||
+      requireNativeComponent('RNSFullWindowOverlay');
     return NativeFullWindowOverlay;
   },
 };
