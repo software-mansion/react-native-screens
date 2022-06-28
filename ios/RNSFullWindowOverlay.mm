@@ -4,6 +4,7 @@
 
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTSurfaceTouchHandler.h>
+#import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #else
 #import <React/RCTTouchHandler.h>
 #endif // RN_FABRIC_ENABLED
@@ -106,6 +107,12 @@
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric Specific
 
++ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return facebook::react::concreteComponentDescriptorProvider<
+      facebook::react::RNSFullWindowOverlayComponentDescriptor>();
+}
+
 #else
 #pragma mark - Paper specific
 
@@ -118,6 +125,13 @@
 #endif // RN_FABRIC_ENABLED
 
 @end
+
+#ifdef RN_FABRIC_ENABLED
+Class<RCTComponentViewProtocol> RNSFullWindowOverlayCls(void)
+{
+  return RNSFullWindowOverlay.class;
+}
+#endif
 
 @implementation RNSFullWindowOverlayManager
 
