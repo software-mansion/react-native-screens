@@ -1,6 +1,11 @@
+#import <React/RCTViewManager.h>
+
+#ifdef RN_FABRIC_ENABLED
+#import <React/RCTViewComponentView.h>
+#else
 #import <React/RCTInvalidating.h>
 #import <React/RCTView.h>
-#import <React/RCTViewManager.h>
+#endif
 
 @interface RNSFullWindowOverlayManager : RCTViewManager
 
@@ -10,6 +15,11 @@
 
 @end
 
-@interface RNSFullWindowOverlay : RCTView <RCTInvalidating>
+@interface RNSFullWindowOverlay :
+#ifdef RN_FABRIC_ENABLED
+    RCTViewComponentView
+#else
+    RCTView <RCTInvalidating>
+#endif // RN_FABRIC_ENABLED
 
 @end
