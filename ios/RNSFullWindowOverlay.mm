@@ -66,12 +66,6 @@
   [self show];
 }
 
-- (void)reactSetFrame:(CGRect)frame
-{
-  _reactFrame = frame;
-  [_container setFrame:frame];
-}
-
 - (void)addSubview:(UIView *)view
 {
   [_container addSubview:view];
@@ -130,6 +124,12 @@
 
 #else
 #pragma mark - Paper specific
+
+- (void)reactSetFrame:(CGRect)frame
+{
+  _reactFrame = frame;
+  [_container setFrame:frame];
+}
 
 - (void)invalidate
 {
