@@ -109,6 +109,16 @@
 #ifdef RN_FABRIC_ENABLED
 #pragma mark - Fabric Specific
 
+// When the component unmounts we remove it from window's children,
+// so when the component gets recycled we need to add it back.
+- (void)maybeShow
+{
+  UIWindow *window = RCTSharedApplication().delegate.window;
+  if (![[window subviews] containsObject:self]) {
+    [window addSubview:_container];
+  }
+}
+
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return facebook::react::concreteComponentDescriptorProvider<
@@ -118,15 +128,26 @@
 - (void)prepareForRecycle
 {
   [_container removeFromSuperview];
-  _container = nil;
-
+  // Due to view recycling we don't really want to set _container = nil
+  // as it won't be instantiated when the component appears for the second time.
+  // We could consider nulling in here & using container (lazy getter) everywhere else.
+  // _container = nil;
   [super prepareForRecycle];
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [super mountChildComponentView:childComponentView index:index];
+  // When the component unmounts we remove it from window's children,
+  // so when the component gets recycled we need to add it back.
+  // As for now it is called here as we lack of method that is called
+  // just before component gets restored (from recycle pool).
+  [self maybeShow];
   [self addSubview:childComponentView];
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [childComponentView removeFromSuperview];
 }
 
 - (void)updateLayoutMetrics:(facebook::react::LayoutMetrics const &)layoutMetrics
