@@ -102,8 +102,6 @@
   if (_state != nullptr) {
     auto newState = facebook::react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
     _state->updateState(std::move(newState));
-    UINavigationController *navctr = _controller.navigationController;
-    [navctr.view setNeedsLayout];
   }
 #else
   [_bridge.uiManager setSize:self.bounds.size forView:self];
@@ -545,6 +543,7 @@
   _dismissed = NO;
   _state.reset();
   _touchHandler = nil;
+  _controller.lastViewFrame = CGRectZero;
 }
 
 - (void)updateProps:(facebook::react::Props::Shared const &)props
@@ -681,7 +680,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 @implementation RNSScreen {
   __weak id _previousFirstResponder;
-  CGRect _lastViewFrame;
   RNSScreenView *_initialView;
   UIView *_fakeView;
   CADisplayLink *_animationTimer;
@@ -789,6 +787,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
+  _lastViewFrame = CGRectZero;
 #ifdef RN_FABRIC_ENABLED
   [self resetViewToScreen];
 #endif
@@ -832,7 +831,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
 #ifdef RN_FABRIC_ENABLED
-    [self.screenView updateBounds];
+    if (!CGRectEqualToRect(_lastViewFrame, self.screenView.bounds)) {
+      [self.screenView updateBounds];
+      _lastViewFrame = self.screenView.bounds;
+    }
 #else
     if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
       _lastViewFrame = self.screenView.frame;

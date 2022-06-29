@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)resetViewToScreen;
 #endif
 
+@property (nonatomic) CGRect lastViewFrame;
+
 @end
 
 @interface RNSScreenView :
