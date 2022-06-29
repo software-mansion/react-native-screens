@@ -22,4 +22,9 @@
     RCTView <RCTInvalidating>
 #endif // RN_FABRIC_ENABLED
 
+#ifdef RN_FABRIC_ENABLED
+@property (nonatomic) facebook::react::LayoutMetrics oldLayoutMetrics;
+@property (nonatomic) facebook::react::LayoutMetrics newLayoutMetrics;
+#endif // RN_FABRIC_ENABLED
+
 @end

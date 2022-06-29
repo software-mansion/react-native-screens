@@ -3,6 +3,7 @@
 #import "RNSFullWindowOverlay.h"
 
 #ifdef RN_FABRIC_ENABLED
+#import <React/RCTConversions.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -120,6 +121,20 @@
   _container = nil;
 
   [super prepareForRecycle];
+}
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+  [super mountChildComponentView:childComponentView index:index];
+  [self addSubview:childComponentView];
+}
+
+- (void)updateLayoutMetrics:(facebook::react::LayoutMetrics const &)layoutMetrics
+           oldLayoutMetrics:(facebook::react::LayoutMetrics const &)oldLayoutMetrics
+{
+  CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
+  _reactFrame = frame;
+  [_container setFrame:frame];
 }
 
 #else
