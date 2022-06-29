@@ -112,6 +112,7 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
         }
         completion:^(BOOL finished) {
           fromViewController.view.transform = CGAffineTransformIdentity;
+          toViewController.view.transform = CGAffineTransformIdentity;
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
   } else if (_operation == UINavigationControllerOperationPop) {
@@ -123,9 +124,8 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
       fromViewController.view.transform = rightTransform;
     };
     void (^completionBlock)(BOOL) = ^(BOOL finished) {
-      if (transitionContext.transitionWasCancelled) {
-        toViewController.view.transform = CGAffineTransformIdentity;
-      }
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     };
 
@@ -158,6 +158,7 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
           toViewController.view.alpha = 1.0;
         }
         completion:^(BOOL finished) {
+          toViewController.view.alpha = 1.0;
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
   } else if (_operation == UINavigationControllerOperationPop) {
@@ -168,9 +169,8 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
           fromViewController.view.alpha = 0.0;
         }
         completion:^(BOOL finished) {
-          if (transitionContext.transitionWasCancelled) {
-            toViewController.view.transform = CGAffineTransformIdentity;
-          }
+          fromViewController.view.alpha = 1.0;
+
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
   }
@@ -193,6 +193,7 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
         }
         completion:^(BOOL finished) {
           fromViewController.view.transform = CGAffineTransformIdentity;
+          toViewController.view.transform = CGAffineTransformIdentity;
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
   } else if (_operation == UINavigationControllerOperationPop) {
@@ -204,9 +205,8 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
       fromViewController.view.transform = topBottomTransform;
     };
     void (^completionBlock)(BOOL) = ^(BOOL finished) {
-      if (transitionContext.transitionWasCancelled) {
-        toViewController.view.transform = CGAffineTransformIdentity;
-      }
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
     };
 
@@ -274,6 +274,10 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
           fromViewController.view.transform = topBottomTransform;
         }
         completion:^(BOOL finished) {
+          fromViewController.view.transform = CGAffineTransformIdentity;
+          toViewController.view.transform = CGAffineTransformIdentity;
+          fromViewController.view.alpha = 1.0;
+          toViewController.view.alpha = 1.0;
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         }];
     [UIView animateWithDuration:transitionDuration * RNSFadeCloseTransitionDurationProportion // defaults to 0.15 s

@@ -186,13 +186,15 @@
     // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenWindowTraits updateWindowTraits];
     [_presentedModals removeObject:presentationController.presentedViewController];
-    // we double check if there are no new controllers pending to be presented since someone could
-    // have tried to push another one during the transition
+
     _updatingModals = NO;
-    [self updateContainer];
 #ifdef RN_FABRIC_ENABLED
     [self emitOnFinishTransitioningEvent];
 #else
+    // we double check if there are no new controllers pending to be presented since someone could
+    // have tried to push another one during the transition.
+    // We don't do it on Fabric since update of container will be triggered from "unmount" method afterwards
+    [self updateContainer];
     if (self.onFinishTransitioning) {
       // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
       // main queue. We do that because onDismiss event is also enqueued and we want for the transition
@@ -885,9 +887,12 @@
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   // We should only do a snapshot of a screen that is on the top.
-  // We also check _presentedModals since if you push 2 modals, second one is not a child of _controller
-  if (screenChildComponent == _controller.visibleViewController.view ||
-      screenChildComponent == [_presentedModals.lastObject view]) {
+  // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
+  // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
+  // snapshot.
+  if (screenChildComponent.window != nil &&
+      ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
+       screenChildComponent == [_presentedModals.lastObject view])) {
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
   }
 

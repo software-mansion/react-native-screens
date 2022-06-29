@@ -46,7 +46,8 @@ export default function App(): JSX.Element {
       <Stack.Navigator
         screenOptions={{
           stackAnimation: 'fade_from_bottom',
-          headerShown: false,
+          headerShown: true,
+          customAnimationOnSwipe: true,
           // stackPresentation: 'transparentModal',
         }}>
         <Stack.Screen name="First" component={NestedFirst} />

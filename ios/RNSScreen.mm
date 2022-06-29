@@ -543,11 +543,6 @@
   // TODO: Make sure that there is no edge case when this should be uncommented
   // _controller=nil;
   _dismissed = NO;
-  // we don't reset the transform of view at the end of custom transitions,
-  // so in order not to add code to all transitions, we just reset it here.
-  // Maybe it would be better to do it in each animation since we could change other
-  // view props there too and they need to be reset due to view recycling.
-  self.transform = CGAffineTransformIdentity;
   _state.reset();
   _touchHandler = nil;
 }
