@@ -120,6 +120,14 @@
       facebook::react::RNSFullWindowOverlayComponentDescriptor>();
 }
 
+- (void)prepareForRecycle
+{
+  [_container removeFromSuperview];
+  _container = nil;
+
+  [super prepareForRecycle];
+}
+
 #else
 #pragma mark - Paper specific
 
