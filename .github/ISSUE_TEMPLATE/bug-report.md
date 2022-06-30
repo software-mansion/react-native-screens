@@ -45,6 +45,15 @@ Please list platforms that the issue is affecting.
 - [ ] Windows
 - [ ] tvOS
 
+## Architecture
+
+<!-- 
+Please check the appropriate boxes with architectures the issue is specific to. 
+ -->
+
+- [ ] Paper
+- [ ] Fabric
+
 ## Workflow
 
 <!-- 
