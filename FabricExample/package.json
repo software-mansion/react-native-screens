@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.6",
@@ -16,7 +17,10 @@
     "react-native": "0.69.0",
     "react-native-codegen": "^0.0.13",
     "react-native-safe-area-context": "^4.2.5",
-    "react-native-screens": "link:../"
+    "react-native-screens": "link:../",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0"
+
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
