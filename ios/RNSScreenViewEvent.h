@@ -1,3 +1,5 @@
+#ifdef RN_FABRIC_ENABLED
+
 #import <React/RCTBridge+Private.h>
 #import <React/RCTEventDispatcherProtocol.h>
 
@@ -10,3 +12,5 @@
                      goingForward:(int)goingForward;
 
 @end
+
+#endif // RN_FABRIC_ENABLED

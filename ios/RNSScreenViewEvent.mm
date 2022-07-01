@@ -1,3 +1,5 @@
+#ifdef RN_FABRIC_ENABLED
+
 #import "RNSScreenViewEvent.h"
 #import <React/RCTAssert.h>
 
@@ -57,3 +59,5 @@ RCT_NOT_IMPLEMENTED(-(instancetype)init)
 }
 
 @end
+
+#endif // RN_FABRIC_ENABLED
