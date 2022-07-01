@@ -34,9 +34,11 @@ jobs:
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
-      - name: Install pods
+      - name: Remove pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: rm -fr build Pods Podfile.lock
+      - name: Install pods
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: RCT_NEW_ARCH_ENABLED=1 pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
