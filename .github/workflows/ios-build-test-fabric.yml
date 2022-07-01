@@ -36,6 +36,7 @@ jobs:
         run: yarn
       - name: Install pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: rm -fr build Pods Podfile.lock
         run: RCT_NEW_ARCH_ENABLED=1 pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
