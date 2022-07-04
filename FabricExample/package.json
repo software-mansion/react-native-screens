@@ -37,8 +37,5 @@
   },
   "jest": {
     "preset": "react-native"
-  },
-  "codegenConfig": {
-    "libraries": []
   }
 }
