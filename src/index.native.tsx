@@ -249,8 +249,16 @@ class Screen extends React.Component<ScreenProps> {
         activityState,
         children,
         isNativeStack,
+        gestureResponseDistance,
         ...props
       } = rest;
+
+      const defaultedGestureResponseDistance = {
+        start: gestureResponseDistance?.start ?? -1,
+        end: gestureResponseDistance?.end ?? -1,
+        top: gestureResponseDistance?.top ?? -1,
+        bottom: gestureResponseDistance?.bottom ?? -1,
+      };
 
       if (active !== undefined && activityState === undefined) {
         console.warn(
@@ -276,6 +284,7 @@ class Screen extends React.Component<ScreenProps> {
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
+            gestureResponseDistance={defaultedGestureResponseDistance}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
             ref={handleRef}
