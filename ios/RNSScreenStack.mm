@@ -675,7 +675,7 @@
 
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
-  RNSScreenView *topScreen = ((RNSScreen *)_controller.viewControllers.lastObject).screenView;
+  RNSScreenView *topScreen = _reactSubviews.lastObject;
   float translation;
   float velocity;
   float distance;
