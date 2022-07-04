@@ -253,13 +253,6 @@ class Screen extends React.Component<ScreenProps> {
         ...props
       } = rest;
 
-      const defaultedGestureResponseDistance = {
-        start: gestureResponseDistance?.start ?? -1,
-        end: gestureResponseDistance?.end ?? -1,
-        top: gestureResponseDistance?.top ?? -1,
-        bottom: gestureResponseDistance?.bottom ?? -1,
-      };
-
       if (active !== undefined && activityState === undefined) {
         console.warn(
           'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
@@ -284,7 +277,12 @@ class Screen extends React.Component<ScreenProps> {
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
-            gestureResponseDistance={defaultedGestureResponseDistance}
+            gestureResponseDistance={{
+              start: gestureResponseDistance?.start ?? -1,
+              end: gestureResponseDistance?.end ?? -1,
+              top: gestureResponseDistance?.top ?? -1,
+              bottom: gestureResponseDistance?.bottom ?? -1,
+            }}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
             ref={handleRef}
