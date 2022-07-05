@@ -822,13 +822,17 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
+  return (
+      [gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
+      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]);
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  return [self isScrollViewPanGestureRecognizer:otherGestureRecognizer];
+  return (
+      [gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]] &&
+      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]);
 }
 
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
