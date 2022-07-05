@@ -4,6 +4,7 @@ import React from 'react';
 import {enableFreeze} from 'react-native-screens';
 import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
 
+import TestModalPresentation from './src/test-modal-presentation';
 import Test42 from './src/Test42';
 import Test111 from './src/Test111';
 import Test263 from './src/Test263';
@@ -84,7 +85,8 @@ enableFreeze(true);
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <Test42 />
+      {/* <Test42 /> */}
+      <TestModalPresentation />
     </ReanimatedScreenProvider>
   );
 }
