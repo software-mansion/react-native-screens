@@ -600,11 +600,6 @@
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
-  if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
-      _controller.viewControllers.count < 2) {
-    return NO;
-  }
-
 #if TARGET_OS_TV
   [self cancelTouchesInParent];
   return YES;
@@ -817,6 +812,19 @@
   }
   UIScrollView *scrollView = (UIScrollView *)gestureRecognizer.view;
   return scrollView.panGestureRecognizer == gestureRecognizer;
+}
+
+// RNSScreenStackView is a UIGestureRecognizerDelegate for two types of gesture recognizers:
+// RNSPanGestureRecognizer, RNSScreenEdgeGestureRecognizer
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveEvent:(UIEvent *)event
+{
+  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+
+  if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
+      _controller.viewControllers.count < 2) {
+    return NO;
+  }
+  return YES;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
