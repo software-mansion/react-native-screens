@@ -812,6 +812,8 @@
   return scrollView.panGestureRecognizer == gestureRecognizer;
 }
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_4) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_4
 // RNSScreenStackView is a UIGestureRecognizerDelegate for three types of gesture recognizers:
 // RNSPanGestureRecognizer, RNSScreenEdgeGestureRecognizer, _UIParallaxTransitionPanGestureRecognizer
 // Be careful when adding another type of gesture recognizer.
@@ -832,6 +834,7 @@
   // RNSScreenEdgeGestureRecognizer || _UIParallaxTransitionPanGestureRecognizer
   return YES;
 }
+#endif // check for 13.4 iOS version
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
