@@ -604,11 +604,10 @@
   [self cancelTouchesInParent];
   return YES;
 #else
-  if (topScreen.fullScreenSwipeEnabled) {
-    // we want only `RNSPanGestureRecognizer` to be able to recognize when
-    // `fullScreenSwipeEnabled` is set, and we are in the bounds set by user
-    if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
-        [self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
+  // RNSPanGestureRecognizer will receive events iff topScreen.fullScreenSwipeEnabled == YES;
+  // Events are filtered in gestureRecognizer:shouldReceiveEvent: method
+  if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
       _isFullWidthSwiping = YES;
       [self cancelTouchesInParent];
       return YES;
@@ -616,6 +615,7 @@
     return NO;
   }
 
+  // Now we're dealing with RNSScreenEdgeGestureRecognizer (or _UIParallaxTransitionPanGestureRecognizer)
   if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
@@ -634,10 +634,8 @@
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
       // it should only recognize with `customAnimationOnSwipe` set
       return NO;
-    } else if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
-      // it should only recognize with `fullScreenSwipeEnabled` set
-      return NO;
     }
+    // _UIParallaxTransitionPanGestureRecognizer (other...)
     [self cancelTouchesInParent];
     return YES;
   }
@@ -814,8 +812,9 @@
   return scrollView.panGestureRecognizer == gestureRecognizer;
 }
 
-// RNSScreenStackView is a UIGestureRecognizerDelegate for two types of gesture recognizers:
-// RNSPanGestureRecognizer, RNSScreenEdgeGestureRecognizer
+// RNSScreenStackView is a UIGestureRecognizerDelegate for three types of gesture recognizers:
+// RNSPanGestureRecognizer, RNSScreenEdgeGestureRecognizer, _UIParallaxTransitionPanGestureRecognizer
+// Be careful when adding another type of gesture recognizer.
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveEvent:(UIEvent *)event
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
@@ -824,6 +823,13 @@
       _controller.viewControllers.count < 2) {
     return NO;
   }
+
+  // We want to pass events to RNSPanGestureRecognizer iff full screen swipe is enabled.
+  if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
+    return topScreen.fullScreenSwipeEnabled;
+  }
+
+  // RNSScreenEdgeGestureRecognizer || _UIParallaxTransitionPanGestureRecognizer
   return YES;
 }
 
@@ -833,16 +839,13 @@
   if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
       [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
     RNSPanGestureRecognizer *panGestureRecognizer = (RNSPanGestureRecognizer *)gestureRecognizer;
-    BOOL isBackGesture =
-        [panGestureRecognizer translationInView:_controller.view].x > 0 && _controller.viewControllers.count > 1;
+    BOOL isBackGesture = [panGestureRecognizer translationInView:panGestureRecognizer.view].x > 0 &&
+        _controller.viewControllers.count > 1;
 
-    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
       return NO;
     }
 
-    if (isBackGesture) {
-      return NO;
-    }
     return YES;
   }
   return NO;
@@ -851,17 +854,9 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]] &&
-      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
-    RNSPanGestureRecognizer *panGestureRecognizer = (RNSPanGestureRecognizer *)gestureRecognizer;
-    BOOL isBackGesture =
-        [panGestureRecognizer translationInView:_controller.view].x > 0 && _controller.viewControllers.count > 1;
-
-    if (isBackGesture) {
-      return YES;
-    }
-  }
-  return NO;
+  return (
+      [gestureRecognizer isKindOfClass:[UIScreenEdgePanGestureRecognizer class]] &&
+      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]);
 }
 
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
