@@ -822,17 +822,38 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  return (
-      [gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
-      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]);
+  if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]] &&
+      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
+    RNSPanGestureRecognizer *panGestureRecognizer = (RNSPanGestureRecognizer *)gestureRecognizer;
+    BOOL isBackGesture =
+        [panGestureRecognizer translationInView:_controller.view].x > 0 && _controller.viewControllers.count > 1;
+
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+      return NO;
+    }
+
+    if (isBackGesture) {
+      return NO;
+    }
+    return YES;
+  }
+  return NO;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-  return (
-      [gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]] &&
-      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]);
+  if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]] &&
+      [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]) {
+    RNSPanGestureRecognizer *panGestureRecognizer = (RNSPanGestureRecognizer *)gestureRecognizer;
+    BOOL isBackGesture =
+        [panGestureRecognizer translationInView:_controller.view].x > 0 && _controller.viewControllers.count > 1;
+
+    if (isBackGesture) {
+      return YES;
+    }
+  }
+  return NO;
 }
 
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
