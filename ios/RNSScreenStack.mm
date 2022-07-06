@@ -18,6 +18,7 @@
 #import <React/RCTUIManagerUtils.h>
 #endif // RN_FABRIC_ENABLED
 
+#import <Availability.h>
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
@@ -605,7 +606,7 @@
   return YES;
 #else
   // RNSPanGestureRecognizer will receive events iff topScreen.fullScreenSwipeEnabled == YES;
-  // Events are filtered in gestureRecognizer:shouldReceiveEvent: method
+  // Events are filtered in gestureRecognizer:shouldReceivePressOrTouchEvent: method
   if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
     if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
       _isFullWidthSwiping = YES;
@@ -812,13 +813,11 @@
   return scrollView.panGestureRecognizer == gestureRecognizer;
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_4) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_4
+// Custom method for compatibility with iOS < 13.4
 // RNSScreenStackView is a UIGestureRecognizerDelegate for three types of gesture recognizers:
 // RNSPanGestureRecognizer, RNSScreenEdgeGestureRecognizer, _UIParallaxTransitionPanGestureRecognizer
 // Be careful when adding another type of gesture recognizer.
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-       shouldReceiveEvent:(UIEvent *)event API_AVAILABLE(ios(13.4))
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePressOrTouchEvent:(NSObject *)event
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
@@ -834,6 +833,24 @@
 
   // RNSScreenEdgeGestureRecognizer || _UIParallaxTransitionPanGestureRecognizer
   return YES;
+}
+
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && defined(__IPHONE_13_4) && \
+    __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_13_4
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+       shouldReceiveEvent:(UIEvent *)event API_AVAILABLE(ios(13.4))
+{
+  return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:event];
+}
+#else
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press;
+{
+  return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:press];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
+{
+  return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:touch];
 }
 #endif // check for 13.4 iOS version
 
