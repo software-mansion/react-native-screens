@@ -757,7 +757,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.14.0):
+  - RNScreens (3.14.1):
     - RCT-Folly (= 2021.06.28.00-v2)
     - RCTRequired
     - RCTTypeSafety
@@ -765,8 +765,8 @@ PODS:
     - React-Codegen
     - React-RCTFabric
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 3.14.0)
-  - RNScreens/common (3.14.0):
+    - RNScreens/common (= 3.14.1)
+  - RNScreens/common (3.14.1):
     - RCT-Folly (= 2021.06.28.00-v2)
     - RCTRequired
     - RCTTypeSafety
@@ -1008,7 +1008,7 @@ SPEC CHECKSUMS:
   ReactCommon: e30ec17dfb1d4c4f3419eac254350d6abca6d5a2
   RNGestureHandler: 28c0a447ceb87b96c4045c2f786f67958837f320
   RNReanimated: 94d4e56073c2989550dba1ce29d41a5fe9d74e7f
-  RNScreens: 38985c8ae6321eb650fa035429a574e010ccfa7f
+  RNScreens: 53cf515660c20820bf0ecc9795718c3484d6321f
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 7ab6e3ee4ce47d7b789d1cb520163833e515f452
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
