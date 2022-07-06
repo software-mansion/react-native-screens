@@ -800,6 +800,8 @@
   return [super hitTest:point withEvent:event];
 }
 
+#if !TARGET_OS_TV
+
 - (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
   // NOTE: This hack is required to restore native behavior of edge swipe (interactive pop gesture)
@@ -858,6 +860,8 @@
       [gestureRecognizer isKindOfClass:[UIScreenEdgePanGestureRecognizer class]] &&
       [self isScrollViewPanGestureRecognizer:otherGestureRecognizer]);
 }
+
+#endif // !TARGET_OS_TV
 
 - (void)insertReactSubview:(RNSScreenView *)subview atIndex:(NSInteger)atIndex
 {
