@@ -41,11 +41,6 @@ const isPlatformSupported =
 
 let ENABLE_SCREENS = isPlatformSupported;
 
-// @ts-expect-error nativeFabricUIManager is not yet included in the RN types
-const ENABLE_FABRIC = !!global?.nativeFabricUIManager;
-
-const FabricComponents = ENABLE_FABRIC ? require('./fabric') : {};
-
 function enableScreens(shouldEnableScreens = true): void {
   ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
@@ -94,16 +89,13 @@ let NativeFullWindowOverlay: React.ComponentType<View>;
 const ScreensNativeModules = {
   get NativeScreen() {
     NativeScreenValue =
-      NativeScreenValue ||
-      FabricComponents.Screen ||
-      requireNativeComponent('RNSScreen');
+      NativeScreenValue || requireNativeComponent('RNSScreen');
     return NativeScreenValue;
   },
 
   get NativeScreenContainer() {
     NativeScreenContainerValue =
       NativeScreenContainerValue ||
-      FabricComponents.ScreenContainer ||
       requireNativeComponent('RNSScreenContainer');
     return NativeScreenContainerValue;
   },
@@ -112,24 +104,20 @@ const ScreensNativeModules = {
     NativeScreenNavigationContainerValue =
       NativeScreenNavigationContainerValue ||
       (Platform.OS === 'ios'
-        ? FabricComponents.ScreenNavigationContainer ||
-          requireNativeComponent('RNSScreenNavigationContainer')
+        ? requireNativeComponent('RNSScreenNavigationContainer')
         : this.NativeScreenContainer);
     return NativeScreenNavigationContainerValue;
   },
 
   get NativeScreenStack() {
     NativeScreenStack =
-      NativeScreenStack ||
-      FabricComponents.ScreenStack ||
-      requireNativeComponent('RNSScreenStack');
+      NativeScreenStack || requireNativeComponent('RNSScreenStack');
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
     NativeScreenStackHeaderConfig =
       NativeScreenStackHeaderConfig ||
-      FabricComponents.ScreenStackHeaderConfig ||
       requireNativeComponent('RNSScreenStackHeaderConfig');
     return NativeScreenStackHeaderConfig;
   },
@@ -137,24 +125,18 @@ const ScreensNativeModules = {
   get NativeScreenStackHeaderSubview() {
     NativeScreenStackHeaderSubview =
       NativeScreenStackHeaderSubview ||
-      FabricComponents.ScreenStackHeaderSubview ||
       requireNativeComponent('RNSScreenStackHeaderSubview');
     return NativeScreenStackHeaderSubview;
   },
 
   get NativeSearchBar() {
-    NativeSearchBar =
-      NativeSearchBar ||
-      FabricComponents.SearchBar ||
-      requireNativeComponent('RNSSearchBar');
+    NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
     return NativeSearchBar;
   },
 
   get NativeFullWindowOverlay() {
     NativeFullWindowOverlay =
-      NativeFullWindowOverlay ||
-      FabricComponents.FullWindowOverlay ||
-      requireNativeComponent('RNSFullWindowOverlay');
+      NativeFullWindowOverlay || requireNativeComponent('RNSFullWindowOverlay');
     return NativeFullWindowOverlay;
   },
 };
@@ -261,13 +243,11 @@ class Screen extends React.Component<ScreenProps> {
       }
 
       const handleRef = (ref: ViewConfig) => {
-        if (!ENABLE_FABRIC) {
-          if (ref?.viewConfig?.validAttributes?.style) {
-            ref.viewConfig.validAttributes.style = {
-              ...ref.viewConfig.validAttributes.style,
-              display: false,
-            };
-          }
+        if (ref?.viewConfig?.validAttributes?.style) {
+          ref.viewConfig.validAttributes.style = {
+            ...ref.viewConfig.validAttributes.style,
+            display: false,
+          };
           this.setRef(ref);
         }
       };
