@@ -835,14 +835,12 @@
   return YES;
 }
 
-#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && defined(__IPHONE_13_4) && \
-    __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_13_4
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
        shouldReceiveEvent:(UIEvent *)event API_AVAILABLE(ios(13.4))
 {
   return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:event];
 }
-#else
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press;
 {
   return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:press];
@@ -852,7 +850,6 @@
 {
   return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:touch];
 }
-#endif // check for 13.4 iOS version
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
     shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
