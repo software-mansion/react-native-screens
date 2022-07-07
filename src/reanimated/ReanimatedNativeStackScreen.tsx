@@ -14,8 +14,10 @@ const AnimatedScreen = Animated.createAnimatedComponent(
   (Screen as unknown) as React.ComponentClass
 );
 
+// We use prop added to global by reanimated since it seems safer than the one from RN. See:
+// https://github.com/software-mansion/react-native-reanimated/blob/3fe8b35b05e82b2f2aefda1fb97799cf81e4b7bb/src/reanimated2/UpdateProps.ts#L46
 // @ts-expect-error nativeFabricUIManager is not yet included in the RN types
-const ENABLE_FABRIC = !!global?.nativeFabricUIManager;
+const ENABLE_FABRIC = !!global?._IS_FABRIC;
 
 const ReanimatedNativeStackScreen = React.forwardRef<
   typeof AnimatedScreen,

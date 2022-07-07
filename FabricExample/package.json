@@ -7,16 +7,20 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
     "react": "18.0.0",
-    "react-native": "0.69.0",
-    "react-native-codegen": "^0.0.13",
-    "react-native-safe-area-context": "^4.0.1-rc.5",
-    "react-native-screens": "link:../"
+    "react-native": "0.69.1",
+    "react-native-codegen": "0.69.1",
+    "react-native-safe-area-context": "^4.3.1",
+    "react-native-screens": "link:../",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0"
+
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -29,13 +33,9 @@
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.70.3",
     "prettier": "^2.5.1",
-    "react-native-gradle-plugin": "^0.0.3",
     "react-test-renderer": "18.0.0"
   },
   "jest": {
     "preset": "react-native"
-  },
-  "codegenConfig": {
-    "libraries": []
   }
 }
