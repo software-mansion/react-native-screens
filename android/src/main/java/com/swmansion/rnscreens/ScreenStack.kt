@@ -4,7 +4,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.View
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.events.EventDispatcher
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
@@ -67,10 +68,11 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun dispatchOnFinishTransitioning() {
-        (context as ReactContext)
-            .getNativeModule(UIManagerModule::class.java)
-            ?.eventDispatcher
-            ?.dispatchEvent(StackFinishTransitioningEvent(id))
+        val eventDispatcher: EventDispatcher? =
+            UIManagerHelper.getEventDispatcherForReactTag((context as ReactContext), id)
+        eventDispatcher?.dispatchEvent(
+            StackFinishTransitioningEvent(id)
+        )
     }
 
     override fun removeScreenAt(index: Int) {

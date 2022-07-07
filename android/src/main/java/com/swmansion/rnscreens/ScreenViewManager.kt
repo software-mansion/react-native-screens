@@ -162,7 +162,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setSwipeDirection(view: Screen?, value: String?) = Unit
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
-        val map: MutableMap<String, Any> = MapBuilder.of(
+        return MapBuilder.of(
             ScreenDismissedEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDismissed"),
             ScreenWillAppearEvent.EVENT_NAME,
@@ -173,14 +173,11 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
             MapBuilder.of("registrationName", "onWillDisappear"),
             ScreenDisappearEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onDisappear"),
-            StackFinishTransitioningEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onFinishTransitioning"),
+            HeaderBackButtonClickedEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
             ScreenTransitionProgressEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onTransitionProgress")
         )
-        // there is no `MapBuilder.of` with more than 7 items
-        map[HeaderBackButtonClickedEvent.EVENT_NAME] = MapBuilder.of("registrationName", "onHeaderBackButtonClicked")
-        return map
     }
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> {

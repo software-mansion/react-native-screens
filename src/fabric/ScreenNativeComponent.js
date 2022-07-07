@@ -84,10 +84,10 @@ export type NativeProps = $ReadOnly<{|
   swipeDirection?: WithDefault<SwipeDirection, 'horizontal'>,
   hideKeyboardOnSwipe?: boolean,
   activityState?: WithDefault<Float, -1.0>,
-  // TODO: implement these props on iOS
   navigationBarColor?: ColorValue,
   navigationBarHidden?: boolean,
   nativeBackButtonDismissalEnabled?: boolean,
+  onHeaderBackButtonClicked?: ?BubblingEventHandler<ScreenEvent>,
 |}>;
 
 type ComponentType = HostComponent<NativeProps>;
