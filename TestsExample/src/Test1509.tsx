@@ -48,7 +48,7 @@ function App() {
           component={First}
           options={
             {
-              // currently it only works when you also set this prop on the previos screen
+              // currently it only works when you also set this prop on the previous screen
               // swipeDirection: 'vertical',
             }
           }
