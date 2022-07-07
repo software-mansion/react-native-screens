@@ -831,9 +831,15 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveEvent:(UIEvent *)event
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+  RNSScreenView *topModal = (RNSScreenView *)_presentedModals.lastObject.view;
 
   if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
       _controller.viewControllers.count < 2) {
+    return NO;
+  }
+
+  BOOL isAttached = topModal.controller.presentingViewController != nil;
+  if (topModal.controller == topScreen.controller.presentedViewController && isAttached) {
     return NO;
   }
 
