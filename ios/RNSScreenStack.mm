@@ -18,7 +18,6 @@
 #import <React/RCTUIManagerUtils.h>
 #endif // RN_FABRIC_ENABLED
 
-#import <Availability.h>
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
@@ -835,8 +834,7 @@
   return YES;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
-       shouldReceiveEvent:(UIEvent *)event API_AVAILABLE(ios(13.4))
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveEvent:(UIEvent *)event
 {
   return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:event];
 }
