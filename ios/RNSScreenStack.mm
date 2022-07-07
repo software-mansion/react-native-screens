@@ -605,7 +605,7 @@
   return YES;
 #else
   // RNSPanGestureRecognizer will receive events iff topScreen.fullScreenSwipeEnabled == YES;
-  // Events are filtered in gestureRecognizer:shouldReceiveEvent: method
+  // Events are filtered in gestureRecognizer:shouldReceivePressOrTouchEvent: method
   if ([gestureRecognizer isKindOfClass:[RNSPanGestureRecognizer class]]) {
     if ([self isInGestureResponseDistance:gestureRecognizer topScreen:topScreen]) {
       _isFullWidthSwiping = YES;
@@ -814,10 +814,11 @@
   return scrollView.panGestureRecognizer == gestureRecognizer;
 }
 
+// Custom method for compatibility with iOS < 13.4
 // RNSScreenStackView is a UIGestureRecognizerDelegate for three types of gesture recognizers:
 // RNSPanGestureRecognizer, RNSScreenEdgeGestureRecognizer, _UIParallaxTransitionPanGestureRecognizer
 // Be careful when adding another type of gesture recognizer.
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveEvent:(UIEvent *)event
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePressOrTouchEvent:(NSObject *)event
 {
   RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
 
@@ -833,6 +834,16 @@
 
   // RNSScreenEdgeGestureRecognizer || _UIParallaxTransitionPanGestureRecognizer
   return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press;
+{
+  return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:press];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;
+{
+  return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:touch];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
