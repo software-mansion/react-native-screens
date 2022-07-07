@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Text, View, StyleSheet } from 'react-native';
+import { Button, Text, View } from 'react-native';
 
 
 export default function ScreenB({navigation}) {
@@ -10,7 +10,3 @@ export default function ScreenB({navigation}) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-});
