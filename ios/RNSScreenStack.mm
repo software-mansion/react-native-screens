@@ -834,11 +834,6 @@
   return YES;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveEvent:(UIEvent *)event
-{
-  return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:event];
-}
-
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press;
 {
   return [self gestureRecognizer:gestureRecognizer shouldReceivePressOrTouchEvent:press];
