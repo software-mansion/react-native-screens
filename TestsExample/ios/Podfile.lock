@@ -358,7 +358,7 @@ PODS:
     - React-perflogger (= 0.69.0)
   - RNGestureHandler (2.5.0):
     - React-Core
-  - RNReanimated (3.0.0-rc.0):
+  - RNReanimated (2.9.1):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec

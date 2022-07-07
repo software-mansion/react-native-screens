@@ -25,18 +25,36 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+
       - name: Use Node.js 14
         uses: actions/setup-node@v2
         with:
           node-version: 14
           cache: 'yarn'
           cache-dependency-path: 'FabricExample/yarn.lock'
+
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
+
       - name: Install pods
+        id: install_pods
+        continue-on-error: true
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: RCT_NEW_ARCH_ENABLED=1 pod install
+
+      - if: steps.install_pods.outcome == 'failure'
+        id: remove_pods
+        name: Remove pods
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: rm -fr build Pods Podfile.lock
+
+      - if: steps.remove_pods.outcome == 'success'
+        id: reinstall_pods
+        name: Reinstall pods
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: RCT_NEW_ARCH_ENABLED=1 pod install
+
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn ios
