@@ -4,7 +4,6 @@ import React from 'react';
 import {enableFreeze} from 'react-native-screens';
 import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
 
-import TestModalPresentation from './src/test-modal-presentation';
 import Test42 from './src/Test42';
 import Test111 from './src/Test111';
 import Test263 from './src/Test263';
@@ -79,6 +78,7 @@ import Test1260 from './src/Test1260';
 import Test1296 from './src/Test1296';
 import Test1299 from './src/Test1299';
 import Test1419 from './src/Test1419';
+import Test1476 from './src/Test1476';
 import Test1509 from './src/Test1509';
 
 enableFreeze(true);
@@ -86,8 +86,7 @@ enableFreeze(true);
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      {/* <Test42 /> */}
-      <TestModalPresentation />
+      <Test1476 />
     </ReanimatedScreenProvider>
   );
 }
