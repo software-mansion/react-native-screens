@@ -598,7 +598,7 @@
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+  RNSScreenView *topScreen = _reactSubviews.lastObject;
 
 #if TARGET_OS_TV
   [self cancelTouchesInParent];
@@ -820,7 +820,7 @@
 // Be careful when adding another type of gesture recognizer.
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePressOrTouchEvent:(NSObject *)event
 {
-  RNSScreenView *topScreen = (RNSScreenView *)_controller.viewControllers.lastObject.view;
+  RNSScreenView *topScreen = _reactSubviews.lastObject;
 
   if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
       _controller.viewControllers.count < 2) {
