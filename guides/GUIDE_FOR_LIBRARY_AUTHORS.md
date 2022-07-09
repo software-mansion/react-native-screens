@@ -343,6 +343,14 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `hintTextColor` - The search hint text color. (Android only)
 - `headerIconColor` - The search and close icon color shown in the header. (Android only)
 - `shouldShowHintSearchIcon` - Show the search hint icon when search bar is focused. (Android only)
+- `ref` - A React ref to imperatively modify search bar.
+
+Allowed imperative actions on search bar are:
+
+- `focus` - Function to focus on search bar. (iOS only)
+- `blur` - Function to remove focus from search bar. (iOS only)
+- `clearText` - Function to clear text in search bar. (iOS only)
+- `toggleCancelButton` - Function toggle cancel button display near search bar. (iOS only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
 
