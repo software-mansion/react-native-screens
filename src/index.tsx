@@ -97,7 +97,7 @@ export const ScreenStackHeaderCenterView = (
 ): JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderSearchBarView = (
-  props: React.PropsWithChildren<SearchBarProps>
+  props: React.PropsWithChildren<Omit<SearchBarProps, 'ref'>>
 ): JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> = View;

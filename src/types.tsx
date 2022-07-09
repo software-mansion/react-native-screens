@@ -7,6 +7,15 @@ import {
   TextInputFocusEventData,
 } from 'react-native';
 
+type SearchBarRefObject = React.RefObject<{
+  focus: () => void;
+  blur: () => void;
+  clearText: () => void;
+  toggleCancelButton: (flag: boolean) => void;
+}>;
+
+export type SearchBarRef = NonNullable<SearchBarRefObject['current']>;
+
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -430,6 +439,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
 }
 
 export interface SearchBarProps {
+  ref?: React.RefObject<SearchBarRef>;
+
   /**
    * The auto-capitalization behavior
    */

@@ -348,4 +348,40 @@ RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onFocus, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBlur, RCTBubblingEventBlock)
 
+RCT_EXPORT_METHOD(focus : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    UISearchController *searchBarController = searchBar.controller;
+    [searchBarController.searchBar becomeFirstResponder];
+  }];
+}
+
+RCT_EXPORT_METHOD(blur : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    UISearchController *searchBarController = searchBar.controller;
+    [searchBarController.searchBar resignFirstResponder];
+  }];
+}
+
+RCT_EXPORT_METHOD(clearText : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    UISearchController *searchBarController = searchBar.controller;
+    [searchBarController.searchBar setText:@""];
+  }];
+}
+
+RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL *)flag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    UISearchController *searchBarController = searchBar.controller;
+    [searchBarController.searchBar setShowsCancelButton:flag ? YES : NO animated:YES];
+  }];
+}
+
 @end

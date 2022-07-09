@@ -1,6 +1,8 @@
 import React from 'react';
 import {
   Animated,
+  findNodeHandle,
+  NativeModules,
   Image,
   ImageProps,
   Platform,
@@ -83,7 +85,12 @@ let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
   ViewProps & { type?: HeaderSubviewTypes }
 >>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
-let NativeSearchBar: React.ComponentType<SearchBarProps>;
+let NativeSearchBar: React.ComponentType<SearchBarProps> & {
+  focus: (reactTag: number | null) => void;
+  blur: (reactTag: number | null) => void;
+  clearText: (reactTag: number | null) => void;
+  toggleCancelButton: (reactTag: number | null, flag: boolean) => void;
+};
 let NativeFullWindowOverlay: React.ComponentType<View>;
 
 const ScreensNativeModules = {
@@ -353,6 +360,38 @@ const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 
+class SearchBar extends React.Component<SearchBarProps> {
+  blur() {
+    return NativeModules.RNSSearchBarManager.blur(findNodeHandle(this));
+  }
+
+  focus() {
+    return NativeModules.RNSSearchBarManager.focus(findNodeHandle(this));
+  }
+
+  toggleCancelButton(flag: boolean) {
+    return NativeModules.RNSSearchBarManager.toggleCancelButton(
+      findNodeHandle(this),
+      flag
+    );
+  }
+
+  clearText() {
+    return NativeModules.RNSSearchBarManager.clearText(findNodeHandle(this));
+  }
+
+  render() {
+    if (!isSearchBarAvailableForCurrentPlatform) {
+      console.warn(
+        'Importing SearchBar is only valid on iOS and Android devices.'
+      );
+      return View;
+    }
+
+    return <ScreensNativeModules.NativeSearchBar {...this.props} />;
+  }
+}
+
 const ScreenStackHeaderRightView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
@@ -428,6 +467,7 @@ module.exports = {
   ScreenContext,
   ScreenStack,
   InnerScreen,
+  SearchBar,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
@@ -446,16 +486,6 @@ module.exports = {
   },
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
-  },
-  get SearchBar() {
-    if (!isSearchBarAvailableForCurrentPlatform) {
-      console.warn(
-        'Importing SearchBar is only valid on iOS and Android devices.'
-      );
-      return View;
-    }
-
-    return ScreensNativeModules.NativeSearchBar;
   },
   get FullWindowOverlay() {
     if (Platform.OS !== 'ios') {
