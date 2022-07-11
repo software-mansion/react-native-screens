@@ -823,7 +823,7 @@
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
   if (![topScreen isKindOfClass:[RNSScreenView class]] || !topScreen.gestureEnabled ||
-      _controller.viewControllers.count < 2) {
+      _controller.viewControllers.count < 2 || [topScreen isModal]) {
     return NO;
   }
 

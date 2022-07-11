@@ -508,6 +508,11 @@
   }
 }
 
+- (BOOL)isModal
+{
+  return self.stackPresentation != RNSScreenStackPresentationPush;
+}
+
 #pragma mark - Fabric specific
 #ifdef RN_FABRIC_ENABLED
 
