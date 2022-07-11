@@ -508,6 +508,13 @@
   }
 }
 
+- (BOOL)isModal
+{
+  return !(
+      self.stackPresentation == RNSScreenStackPresentationPush ||
+      self.stackPresentation == RNSScreenStackPresentationFormSheet);
+}
+
 #pragma mark - Fabric specific
 #ifdef RN_FABRIC_ENABLED
 
