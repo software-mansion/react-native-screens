@@ -510,9 +510,7 @@
 
 - (BOOL)isModal
 {
-  return !(
-      self.stackPresentation == RNSScreenStackPresentationPush ||
-      self.stackPresentation == RNSScreenStackPresentationFormSheet);
+  return self.stackPresentation != RNSScreenStackPresentationPush;
 }
 
 #pragma mark - Fabric specific
