@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Text, View, StyleSheet} from 'react-native';
+import {Button, Text, View, StyleSheet, ScrollView} from 'react-native';
 import {NavigationContainer as NavigationContainerNative} from '@react-navigation/native';
 
 // remember to change prop names in ScreenGroup && ModalGroup
@@ -61,11 +61,10 @@ function ModalA(props: Props) {
         justifyContent: 'center',
       }}>
       <View style={{backgroundColor: 'white'}}>
-
-      <Text>ModalA, with opacity and backgroundColor</Text>
-        <Text>
-          At ModalA, we still can gesture swipe the screenB back to screenA,{' '}
-        </Text>
+        <Text>ModalA, with opacity and backgroundColor</Text>
+          <Text>
+            At ModalA, we still can gesture swipe the screenB back to screenA,{' '}
+          </Text>
         <Button title={'pop modal'} onPress={() => props.navigation.pop()} />
       </View>
     </View>
@@ -111,7 +110,7 @@ const ModalGroup = StackBuilder([
   {
     name: 'modalA',
     component: ModalA,
-    options: { animation: 'fade' },
+    // options: { stackAnimation: 'fade' },
   }], {
   headerShown: false,
 
@@ -122,6 +121,8 @@ const ModalGroup = StackBuilder([
   // props for react-native-screens/native-stack
   stackAnimation: 'fade_from_bottom',
   stackPresentation: 'containedTransparentModal',
+  fullScreenSwipeEnabled: true,
+  customAnimationOnSwipe: true,
 });
 
 export default function TestModalPresentation() {
