@@ -74,6 +74,14 @@ Screens are already integrated with the React Native's most popular navigation l
 | 3.0.0+  | 0.62.0+              |
 | 2.0.0+  | 0.60.0+              |
 
+### Support for Fabric
+[Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system. As of [version `3.14.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.14.0) of this project, Fabric is supported only for react-native 0.69+. Support for `0.68.x` has been dropped.
+
+| version | react-native version |
+| ------- | -------------------- |
+| 3.14.0+ | 0.69.0+              |
+
+
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
 Screens support is built into [react-navigation](https://github.com/react-navigation/react-navigation) starting from version [2.14.0](https://github.com/react-navigation/react-navigation/releases/tag/2.14.0) for all the different navigator types (stack, tab, drawer, etc).
