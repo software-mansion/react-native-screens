@@ -48,7 +48,7 @@ object ScreenWindowTraits {
 
     @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     internal fun setColor(screen: Screen, activity: Activity?, context: ReactContext?) {
-        if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        if (activity == null || context == null) {
             return
         }
         if (mDefaultStatusBarColor == null) {
