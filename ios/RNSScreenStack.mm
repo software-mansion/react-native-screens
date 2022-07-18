@@ -969,7 +969,7 @@
 - (void)mountingTransactionWillMount:(facebook::react::MountingTransaction const &)transaction
                 withSurfaceTelemetry:(facebook::react::SurfaceTelemetry const &)surfaceTelemetry
 {
-  for (auto mutation : transaction.getMutations()) {
+  for (auto &mutation : transaction.getMutations()) {
     if (mutation.type == facebook::react::ShadowViewMutation::Type::Remove &&
         mutation.parentShadowView.componentName != nil &&
         strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
