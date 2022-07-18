@@ -130,7 +130,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             return null
         }
 
-    @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     fun onUpdate() {
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
@@ -138,7 +137,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             return
         }
         val activity = screenFragment?.activity as AppCompatActivity? ?: return
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mDirection != null) {
+        if (mDirection != null) {
             if (mDirection == "rtl") {
                 toolbar.layoutDirection = LAYOUT_DIRECTION_RTL
             } else if (mDirection == "ltr") {
