@@ -744,7 +744,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewWillDisappear:(BOOL)animated
 {
   [super viewWillDisappear:animated];
-  if (!self.transitionCoordinator.isInteractive) {
+  // self.navigationController might be null when we are dismissing a modal
+  if (!self.transitionCoordinator.isInteractive && self.navigationController != nil) {
     // user might have long pressed ios 14 back button item,
     // so he can go back more than one screen and we need to dismiss more screens in JS stack then.
     // We check it by calculating the difference between the index of currently displayed screen
