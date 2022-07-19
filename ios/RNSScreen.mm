@@ -555,11 +555,11 @@
   // Let's assume the view has had _stackPresentation == <some modal stack presentation> set
   // before below line was executed. Then, when instantiated again (with the same modal presentation)
   // updateProps:oldProps: method would be called and setter for stack presentation would not be called.
-  // This is crucial as in that setter we register `self` as a delegate (UIAdaptivePresentationControllerDelegate) to
-  // presentation controller and this leads to buggy modal behaviour as we rely on
-  // UIAdaptivePresentationControllerDelegate callbacks. Restoring the default value and then comparing against it in
-  // updateProps:oldProps: allows for setter to be called, however if there was some additional logic to execute when
-  // stackPresentation is set to "push" the setter would not be triggered.
+  // This is crucial as in that setter we register `self.controller` as a delegate
+  // (UIAdaptivePresentationControllerDelegate) to presentation controller and this leads to buggy modal behaviour as we
+  // rely on UIAdaptivePresentationControllerDelegate callbacks. Restoring the default value and then comparing against
+  // it in updateProps:oldProps: allows for setter to be called, however if there was some additional logic to execute
+  // when stackPresentation is set to "push" the setter would not be triggered.
   _stackPresentation = RNSScreenStackPresentationPush;
 }
 
