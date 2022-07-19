@@ -614,9 +614,12 @@
   }
 #endif
 
-  if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
-    [self
-        setStackPresentation:[RNSConvert RNSScreenStackPresentationFromCppEquivalent:newScreenProps.stackPresentation]];
+  // Notice that we compare against _stackPresentation, not oldScreenProps.stackPresentation.
+  // See comment in prepareForRecycle method for explanation.
+  RNSScreenStackPresentation newStackPresentation =
+      [RNSConvert RNSScreenStackPresentationFromCppEquivalent:newScreenProps.stackPresentation];
+  if (newStackPresentation != _stackPresentation) {
+    [self setStackPresentation:newStackPresentation];
   }
 
   if (newScreenProps.stackAnimation != oldScreenProps.stackAnimation) {
