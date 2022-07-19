@@ -269,6 +269,10 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   transitionDuration?: number;
+  /**
+   * If this screen should use react-native-freeze. Defaults to true if freeze is enabled via `enableFreeze` or false otherwise.
+   */
+  freezeEnabled?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {

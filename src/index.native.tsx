@@ -163,8 +163,12 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
   return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
 }
 
-function MaybeFreeze({ freeze, children }: FreezeWrapperProps) {
-  if (ENABLE_FREEZE) {
+function MaybeFreeze({
+  enabled,
+  freeze,
+  children,
+}: FreezeWrapperProps & { enabled: boolean }) {
+  if (enabled) {
     return <DelayedFreeze freeze={freeze}>{children}</DelayedFreeze>;
   } else {
     return <>{children}</>;
@@ -216,7 +220,11 @@ class Screen extends React.Component<ScreenProps> {
   };
 
   render() {
-    const { enabled = ENABLE_SCREENS, ...rest } = this.props;
+    const {
+      enabled = ENABLE_SCREENS,
+      freezeEnabled = ENABLE_FREEZE,
+      ...rest
+    } = this.props;
 
     if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
@@ -253,7 +261,7 @@ class Screen extends React.Component<ScreenProps> {
       };
 
       return (
-        <MaybeFreeze freeze={activityState === 0}>
+        <MaybeFreeze enabled={freezeEnabled} freeze={activityState === 0}>
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
