@@ -2,7 +2,6 @@
 import React from 'react';
 
 import {enableFreeze} from 'react-native-screens';
-import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
 
 import Test42 from './src/Test42';
 import Test111 from './src/Test111';
@@ -86,9 +85,5 @@ import Test1539 from './src/Test1539';
 enableFreeze(true);
 
 export default function App() {
-  return (
-    <ReanimatedScreenProvider>
-      <Test42 />
-    </ReanimatedScreenProvider>
-  );
+  return <Test42 />;
 }

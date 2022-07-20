@@ -13,14 +13,14 @@ import {Button} from 'react-native';
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <ReanimatedScreenProvider>
+    <ReanimatedScreenProvider>
+      <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Root" component={RootScreen} />
           <Stack.Screen name="Second" component={SecondScreen} />
         </Stack.Navigator>
-      </ReanimatedScreenProvider>
-    </NavigationContainer>
+      </NavigationContainer>
+    </ReanimatedScreenProvider>
   );
 }
 

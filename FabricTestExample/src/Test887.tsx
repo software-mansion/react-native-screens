@@ -15,12 +15,15 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {useTransitionProgress} from 'react-native-screens';
-import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
+import {
+  useReanimatedTransitionProgress,
+  ReanimatedScreenProvider,
+} from 'react-native-screens/reanimated';
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,9 +33,9 @@ const NestedStack = createStackNavigator();
 function NestedFirst() {
   return (
     <NestedStack.Navigator>
-      <NestedStack.Screen name="NestedFirst" component={First}/>
+      <NestedStack.Screen name="NestedFirst" component={First} />
     </NestedStack.Navigator>
-  )
+  );
 }
 
 type SimpleStackParams = {
@@ -42,23 +45,25 @@ type SimpleStackParams = {
 };
 export default function App(): JSX.Element {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          stackAnimation: 'fade_from_bottom',
-          headerShown: true,
-          customAnimationOnSwipe: true,
-          // stackPresentation: 'transparentModal',
-        }}>
-        <Stack.Screen name="First" component={NestedFirst} />
-        <Stack.Screen name="Second" component={Second} />
-        <Stack.Screen
-          name="Third"
-          component={Dialog}
-          options={{stackPresentation: 'modal'}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ReanimatedScreenProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            stackAnimation: 'fade_from_bottom',
+            headerShown: true,
+            customAnimationOnSwipe: true,
+            // stackPresentation: 'transparentModal',
+          }}>
+          <Stack.Screen name="First" component={NestedFirst} />
+          <Stack.Screen name="Second" component={Second} />
+          <Stack.Screen
+            name="Third"
+            component={Dialog}
+            options={{stackPresentation: 'modal'}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ReanimatedScreenProvider>
   );
 }
 
@@ -88,7 +93,7 @@ function SiblingView() {
   });
 
   return (
-     <>
+    <>
       <Animated.View style={reaStyle} />
       <RNAnimated.View
         style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}}
