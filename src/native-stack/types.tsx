@@ -256,6 +256,13 @@ export type NativeStackNavigationOptions = {
    */
   homeIndicatorHidden?: boolean;
   /**
+   * The screen edges for which you want your gestures to take precedence over the system gestures on this screen. Defaults to `ScreenEdge.None`.
+   * `ScreenEdge` is an option set, so you can combine multiple edges via bitmasking. E.g.: `screenEdgesDeferringSystemGestures: ScreenEdge.Top | ScreenEdge.Bottom`.
+   *
+   * @platform ios
+   */
+  screenEdgesDeferringSystemGestures?: ScreenProps['screenEdgesDeferringSystemGestures'];
+  /**
    * Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
    *
    * @platform ios

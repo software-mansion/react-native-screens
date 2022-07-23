@@ -10,6 +10,7 @@
 + (void)updateStatusBarAppearance;
 + (void)enforceDesiredDeviceOrientation;
 + (void)updateHomeIndicatorAutoHidden;
++ (void)updateScreenEdgesDeferringSystemGestures;
 
 #if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle;

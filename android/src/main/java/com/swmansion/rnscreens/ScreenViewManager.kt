@@ -17,7 +17,6 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
-import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
@@ -156,6 +155,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setGestureResponseDistance(view: Screen?, value: ReadableMap?) = Unit
 
     override fun setHomeIndicatorHidden(view: Screen?, value: Boolean) = Unit
+
+    override fun setScreenEdgesDeferringSystemGestures(view: Screen?, value: Int?) = Unit
 
     override fun setPreventNativeDismiss(view: Screen?, value: Boolean) = Unit
 

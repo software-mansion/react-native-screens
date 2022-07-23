@@ -6,6 +6,7 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
 } from 'react-native';
+import { ScreenEdge } from './screenEdge';
 
 export type StackPresentationTypes =
   | 'push'
@@ -121,6 +122,13 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   homeIndicatorHidden?: boolean;
+  /**
+   * The screen edges for which you want your gestures to take precedence over the system gestures on this screen. Defaults to `ScreenEdge.None`.
+   * `ScreenEdge` is an option set, so you can combine multiple edges via bitmasking. E.g.: `screenEdgesDeferringSystemGestures: ScreenEdge.Top | ScreenEdge.Bottom`.
+   *
+   * @platform ios
+   */
+  screenEdgesDeferringSystemGestures?: ScreenEdge;
   /**
    * Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
    *

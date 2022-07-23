@@ -19,6 +19,7 @@ import Test619 from './src/Test619';
 import Test624 from './src/Test624';
 import Test640 from './src/Test640';
 import Test642 from './src/Test642';
+import Test643 from './src/Test643';
 import Test645 from './src/Test645';
 import Test648 from './src/Test648';
 import Test649 from './src/Test649';
@@ -87,7 +88,7 @@ enableFreeze(true);
 export default function App() {
   return (
     <ReanimatedScreenProvider>
-      <Test42 />
+      <Test643 />
     </ReanimatedScreenProvider>
   );
 }

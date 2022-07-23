@@ -68,6 +68,11 @@
 {
   return [self topViewController];
 }
+
+- (UIViewController *)childViewControllerForScreenEdgesDeferringSystemGestures
+{
+  return [self topViewController];
+}
 #endif
 
 @end

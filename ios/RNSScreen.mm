@@ -82,6 +82,7 @@
   _hasStatusBarHiddenSet = NO;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
+  _hasScreenEdgesDeferringSystemGesturesSet = NO;
 }
 
 - (UIViewController *)reactViewController
@@ -257,6 +258,13 @@
   _hasHomeIndicatorHiddenSet = YES;
   _homeIndicatorHidden = homeIndicatorHidden;
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
+}
+
+- (void)setScreenEdgesDeferringSystemGestures:(UIRectEdge)edges
+{
+  _hasScreenEdgesDeferringSystemGesturesSet = YES;
+  _screenEdgesDeferringSystemGestures = edges;
+  [RNSScreenWindowTraits updateScreenEdgesDeferringSystemGestures];
 }
 #endif
 
@@ -600,6 +608,11 @@
 
   if (newScreenProps.homeIndicatorHidden != oldScreenProps.homeIndicatorHidden) {
     [self setHomeIndicatorHidden:newScreenProps.homeIndicatorHidden];
+  }
+
+  if (newScreenProps.screenEdgesDeferringSystemGestures != oldScreenProps.screenEdgesDeferringSystemGestures) {
+    [self setScreenEdgesDeferringSystemGestures:[RCTConvert
+                                                    UIRectEdge:newScreenProps.screenEdgesDeferringSystemGestures]];
   }
 #endif
 
@@ -985,6 +998,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     case RNSWindowTraitHomeIndicatorHidden: {
       return self.screenView.hasHomeIndicatorHiddenSet;
     }
+    case RNSWindowTraitScreenEdgesDeferringSystemGestures: {
+      return self.screenView.hasScreenEdgesDeferringSystemGesturesSet;
+    }
     default: {
       RCTLogError(@"Unknown trait passed: %d", (int)trait);
     }
@@ -1044,6 +1060,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return self.screenView.homeIndicatorHidden;
 }
+
+- (UIViewController *)childViewControllerForScreenEdgesDeferringSystemGestures
+{
+  UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitScreenEdgesDeferringSystemGestures
+                                            includingModals:YES];
+  return vc == self ? nil : vc;
+}
+
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures
+{
+  return self.screenView.screenEdgesDeferringSystemGestures;
+}
+
 - (int)getParentChildrenCount
 {
   return (int)[[self.screenView.reactSuperview reactSubviews] count];
@@ -1182,6 +1211,7 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarAnimation, UIStatusBarAnimation)
 RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(screenEdgesDeferringSystemGestures, UIRectEdge)
 #endif
 
 - (UIView *)view
@@ -1284,6 +1314,27 @@ RCT_ENUM_CONVERTER(
     return UIInterfaceOrientationMaskLandscapeRight;
   }
   return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+
++ (UIRectEdge)UIRectEdge:(id)json
+{
+  UIRectEdge edge = UIRectEdgeNone;
+  NSInteger raw = [[self NSNumber:json] integerValue];
+
+  if (raw & UIRectEdgeTop) {
+    edge |= UIRectEdgeTop;
+  }
+  if (raw & UIRectEdgeLeft) {
+    edge |= UIRectEdgeLeft;
+  }
+  if (raw & UIRectEdgeBottom) {
+    edge |= UIRectEdgeBottom;
+  }
+  if (raw & UIRectEdgeRight) {
+    edge |= UIRectEdgeRight;
+  }
+
+  return edge;
 }
 #endif
 

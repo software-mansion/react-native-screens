@@ -35,6 +35,11 @@
 {
   return [self findActiveChildVC];
 }
+
+- (UIViewController *)childViewControllerForScreenEdgesDeferringSystemGestures
+{
+  return [self findActiveChildVC];
+}
 #endif
 
 - (UIViewController *)findActiveChildVC

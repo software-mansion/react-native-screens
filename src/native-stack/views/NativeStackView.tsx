@@ -153,6 +153,7 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
+    screenEdgesDeferringSystemGestures,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -222,6 +223,7 @@ const RouteView = ({
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       hideKeyboardOnSwipe={hideKeyboardOnSwipe}
       homeIndicatorHidden={homeIndicatorHidden}
+      screenEdgesDeferringSystemGestures={screenEdgesDeferringSystemGestures}
       gestureEnabled={isAndroid ? false : gestureEnabled}
       gestureResponseDistance={gestureResponseDistance}
       nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}

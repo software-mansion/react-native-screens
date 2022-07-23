@@ -37,6 +37,12 @@
   return childVC ?: [self reactNativeScreensChildViewControllerForHomeIndicatorAutoHidden];
 }
 
+- (UIViewController *)reactNativeScreensChildViewControllerForScreenEdgesDeferringSystemGestures
+{
+  UIViewController *childVC = [self findChildRNScreensViewController];
+  return childVC ?: [self reactNativeScreensChildViewControllerForScreenEdgesDeferringSystemGestures];
+}
+
 - (UIViewController *)findChildRNScreensViewController
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
@@ -71,6 +77,11 @@
     method_exchangeImplementations(
         class_getInstanceMethod(uiVCClass, @selector(childViewControllerForHomeIndicatorAutoHidden)),
         class_getInstanceMethod(uiVCClass, @selector(reactNativeScreensChildViewControllerForHomeIndicatorAutoHidden)));
+
+    method_exchangeImplementations(
+        class_getInstanceMethod(uiVCClass, @selector(childViewControllerForScreenEdgesDeferringSystemGestures)),
+        class_getInstanceMethod(
+            uiVCClass, @selector(reactNativeScreensChildViewControllerForScreenEdgesDeferringSystemGestures)));
   });
 }
 #endif
