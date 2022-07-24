@@ -42,6 +42,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
   bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
 #endif
+  [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 
   NSDictionary *initProps = [self prepareInitialProps];
   UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"FabricTestExample", initProps);
@@ -57,6 +58,12 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  return YES;
+}
+
+- (BOOL)applicationWillTerminate
+{
+  [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
   return YES;
 }
 
