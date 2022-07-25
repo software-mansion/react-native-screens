@@ -165,6 +165,7 @@ const RouteView = ({
     statusBarTranslucent,
     swipeDirection = 'horizontal',
     transitionDuration,
+    freezePreviousScreen,
   } = options;
 
   let {
@@ -238,6 +239,7 @@ const RouteView = ({
       statusBarTranslucent={statusBarTranslucent}
       swipeDirection={swipeDirection}
       transitionDuration={transitionDuration}
+      freezePreviousScreen={freezePreviousScreen}
       onHeaderBackButtonClicked={() => {
         navigation.dispatch({
           ...StackActions.pop(),
@@ -312,17 +314,21 @@ type Props = {
   state: StackNavigationState<ParamListBase>;
   navigation: NativeStackNavigationHelpers;
   descriptors: NativeStackDescriptorMap;
+  freezeInactiveScreens?: boolean;
 };
 
 function NativeStackViewInner({
   state,
   navigation,
   descriptors,
+  freezeInactiveScreens,
 }: Props): JSX.Element {
   const { key, routes } = state;
 
   return (
-    <ScreenStack style={styles.container}>
+    <ScreenStack
+      style={styles.container}
+      freezeInactiveScreens={freezeInactiveScreens}>
       {routes.map((route, index) => (
         <RouteView
           key={route.key}

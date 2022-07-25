@@ -176,13 +176,23 @@ function MaybeFreeze({
 }
 
 function ScreenStack(props: ScreenStackProps) {
-  if (ENABLE_FREEZE) {
-    const { children, ...rest } = props;
+  const { children, freezeInactiveScreens, ...rest } = props;
+  const freezeEnabledInStack = freezeInactiveScreens ?? ENABLE_FREEZE;
+  if (freezeEnabledInStack) {
     const size = React.Children.count(children);
-    // freezes all screens except the top one
-    const childrenWithFreeze = React.Children.map(children, (child, index) => (
-      <DelayedFreeze freeze={size - index > 1}>{child}</DelayedFreeze>
-    ));
+    // freezes all screens except the top one, unless freezePreviousScreen: false
+    const childrenWithFreeze = React.Children.map(children, (child, index) => {
+      const freezePreviousScreen =
+        // @ts-expect-error maybe there's a freezePreviousScreen prop used on the screen
+        child.props.descriptors[child.key].options?.freezePreviousScreen;
+      const freezeEnabled = freezePreviousScreen ?? freezeEnabledInStack;
+
+      return (
+        <MaybeFreeze enabled={freezeEnabled} freeze={size - index > 1}>
+          {child}
+        </MaybeFreeze>
+      );
+    });
     return (
       <ScreensNativeModules.NativeScreenStack {...rest}>
         {childrenWithFreeze}
@@ -222,7 +232,7 @@ class Screen extends React.Component<ScreenProps> {
   render() {
     const {
       enabled = ENABLE_SCREENS,
-      rerenderInactiveScreens = !ENABLE_FREEZE,
+      freezePreviousScreen = ENABLE_FREEZE,
       ...rest
     } = this.props;
 
@@ -262,7 +272,7 @@ class Screen extends React.Component<ScreenProps> {
 
       return (
         <MaybeFreeze
-          enabled={!rerenderInactiveScreens}
+          enabled={freezePreviousScreen}
           freeze={activityState === 0}>
           <AnimatedNativeScreen
             {...props}
