@@ -25,14 +25,18 @@ To make sure that there are no issues with screen orientation you should put fol
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     ... 
+#if !TARGET_OS_TV
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+#endif // !TARGET_OS_TV
     ...
     return YES:
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+#if !TARGET_OS_TV
     [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+#endif // !TARGET_OS_TV
 }
 ```
 
