@@ -78,9 +78,13 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Home" freezeInactiveScreens={true}>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen
+          name="Details"
+          component={DetailsScreen}
+          options={{freezePreviousScreen: true}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
