@@ -200,7 +200,7 @@ interface ViewConfig extends View {
   };
 }
 
-class Screen extends React.Component<ScreenProps> {
+class InnerScreen extends React.Component<ScreenProps> {
   private ref: React.ElementRef<typeof View> | null = null;
   private closing = new Animated.Value(0);
   private progress = new Animated.Value(0);
@@ -408,8 +408,17 @@ export type {
 };
 
 // context to be used when the user wants to use enhanced implementation
-// e.g. to use `react-native-reanimated` (see `reanimated` folder in repo)
-const ScreenContext = React.createContext(Screen);
+// e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
+const ScreenContext = React.createContext(InnerScreen);
+
+class Screen extends React.Component<ScreenProps> {
+  static contextType = ScreenContext;
+
+  render() {
+    const ScreenWrapper = this.context || InnerScreen;
+    return <ScreenWrapper {...this.props} />;
+  }
+}
 
 module.exports = {
   // these are classes so they are not evaluated until used
@@ -418,6 +427,7 @@ module.exports = {
   ScreenContainer,
   ScreenContext,
   ScreenStack,
+  InnerScreen,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
