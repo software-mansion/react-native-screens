@@ -270,9 +270,10 @@ export interface ScreenProps extends ViewProps {
    */
   transitionDuration?: number;
   /**
-   * If this screen should use react-native-freeze. Defaults to true if freeze is enabled via `enableFreeze` or false otherwise.
+   * Whether to use `react-freeze` to suspend rendering of hidden screens. Defaults to `true`.
+   * When `enableFreeze()` is run at the top of the application defaults to `false`.
    */
-  freezeEnabled?: boolean;
+  rerenderInactiveScreens?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {

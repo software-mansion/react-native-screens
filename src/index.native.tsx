@@ -222,7 +222,7 @@ class Screen extends React.Component<ScreenProps> {
   render() {
     const {
       enabled = ENABLE_SCREENS,
-      freezeEnabled = ENABLE_FREEZE,
+      rerenderInactiveScreens = !ENABLE_FREEZE,
       ...rest
     } = this.props;
 
@@ -261,7 +261,9 @@ class Screen extends React.Component<ScreenProps> {
       };
 
       return (
-        <MaybeFreeze enabled={freezeEnabled} freeze={activityState === 0}>
+        <MaybeFreeze
+          enabled={!rerenderInactiveScreens}
+          freeze={activityState === 0}>
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
