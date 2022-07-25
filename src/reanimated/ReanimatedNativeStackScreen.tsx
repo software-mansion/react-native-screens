@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import {
-  Screen,
+  InnerScreen,
   ScreenProps,
   TransitionProgressEventType,
 } from 'react-native-screens';
@@ -11,7 +11,7 @@ import Animated, { useEvent, useSharedValue } from 'react-native-reanimated';
 import ReanimatedTransitionProgressContext from './ReanimatedTransitionProgressContext';
 
 const AnimatedScreen = Animated.createAnimatedComponent(
-  (Screen as unknown) as React.ComponentClass
+  (InnerScreen as unknown) as React.ComponentClass
 );
 
 // We use prop added to global by reanimated since it seems safer than the one from RN. See:
