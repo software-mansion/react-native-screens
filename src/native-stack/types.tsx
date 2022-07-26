@@ -63,13 +63,9 @@ export type NativeStackNavigationHelpers = NavigationHelpers<
   NativeStackNavigationEventMap
 >;
 
-export type NativeStackNavigationConfig = {
-  /**
-   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
-   * When `enableFreeze()` is run defaults to `true`.
-   */
-  freezeInactiveScreens?: boolean;
-};
+// We want it to be an empty object beacuse navigator does not have any additional config
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
@@ -381,9 +377,9 @@ export type NativeStackNavigationOptions = {
   transitionDuration?: number;
   /**
    * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
-   * When `enableFreeze()` is run at the top of the application defaults to `true`.
+   * Defaults to `true` when `enableFreeze()` is run at the top of the application.
    */
-  freezePreviousScreen?: boolean;
+  freezeOnBlur?: boolean;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

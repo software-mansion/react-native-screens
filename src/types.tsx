@@ -271,9 +271,9 @@ export interface ScreenProps extends ViewProps {
   transitionDuration?: number;
   /**
    * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
-   * Only applicable when `enableFreeze()` is run or `freezeInactiveScreens` is set to `true`. Provided these conditions are met defaults to `true`.
+   * When `enableFreeze()` is run at the top of the application defaults to `true`.
    */
-  freezePreviousScreen?: boolean;
+  freezeOnBlur?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {
@@ -294,11 +294,6 @@ export interface ScreenStackProps extends ViewProps {
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
-   * When `enableFreeze()` is run defaults to `true`.
-   */
-  freezeInactiveScreens?: boolean;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {

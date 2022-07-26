@@ -176,30 +176,30 @@ function MaybeFreeze({
 }
 
 function ScreenStack(props: ScreenStackProps) {
-  const { children, freezeInactiveScreens, ...rest } = props;
-  const freezeEnabledInStack = freezeInactiveScreens ?? ENABLE_FREEZE;
-  if (freezeEnabledInStack) {
-    const size = React.Children.count(children);
-    // freezes all screens except the top one, unless freezePreviousScreen: false
-    const childrenWithFreeze = React.Children.map(children, (child, index) => {
-      const freezePreviousScreen =
-        // @ts-expect-error maybe there's a freezePreviousScreen prop used on the screen
-        child.props.descriptors[child.key].options?.freezePreviousScreen;
-      const freezeEnabled = freezePreviousScreen ?? freezeEnabledInStack;
+  const { children, ...rest } = props;
+  const size = React.Children.count(children);
+  // freezes all screens except the top one
+  const childrenMaybeWithFreeze = React.Children.map(
+    children,
+    (child, index) => {
+      // @ts-expect-error it's either SceneView in v6 or RouteView in v5
+      const { props, key } = child;
+      const descriptor = props?.descriptor ?? props?.descriptors?.[key];
+      const freezeEnabled = descriptor?.options?.freezeOnBlur ?? ENABLE_FREEZE;
 
       return (
         <MaybeFreeze enabled={freezeEnabled} freeze={size - index > 1}>
           {child}
         </MaybeFreeze>
       );
-    });
-    return (
-      <ScreensNativeModules.NativeScreenStack {...rest}>
-        {childrenWithFreeze}
-      </ScreensNativeModules.NativeScreenStack>
-    );
-  }
-  return <ScreensNativeModules.NativeScreenStack {...props} />;
+    }
+  );
+
+  return (
+    <ScreensNativeModules.NativeScreenStack {...rest}>
+      {childrenMaybeWithFreeze}
+    </ScreensNativeModules.NativeScreenStack>
+  );
 }
 
 // Incomplete type, all accessible properties available at:
@@ -232,7 +232,7 @@ class Screen extends React.Component<ScreenProps> {
   render() {
     const {
       enabled = ENABLE_SCREENS,
-      freezePreviousScreen = ENABLE_FREEZE,
+      freezeOnBlur = ENABLE_FREEZE,
       ...rest
     } = this.props;
 
@@ -271,9 +271,7 @@ class Screen extends React.Component<ScreenProps> {
       };
 
       return (
-        <MaybeFreeze
-          enabled={freezePreviousScreen}
-          freeze={activityState === 0}>
+        <MaybeFreeze enabled={freezeOnBlur} freeze={activityState === 0}>
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
