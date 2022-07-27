@@ -40,7 +40,7 @@ To make sure that there are no issues with screen orientation you should put fol
 }
 ```
 
-You can see example of these changes being introduced in our [example applications](https://github.com/software-mansion/react-native-screens/blob/main/TestsExample/ios/TestsExample/AppDelegate.mm)
+You can see example of these changes being introduced in our [example applications](https://github.com/software-mansion/react-native-screens/blob/main/TestsExample/ios/TestsExample/AppDelegate.mm).
 
 Other aspects of installation should be completely handled with auto-linking, just ensure you installed pods after adding this module.
 
