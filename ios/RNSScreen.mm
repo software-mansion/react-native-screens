@@ -622,8 +622,8 @@
   }
 
   if (newScreenProps.screenEdgesDeferringSystemGestures != oldScreenProps.screenEdgesDeferringSystemGestures) {
-    [self setScreenEdgesDeferringSystemGestures:[RCTConvert
-                                                    UIRectEdge:newScreenProps.screenEdgesDeferringSystemGestures]];
+    NSNumber *raw = [NSNumber numberWithInt:newScreenProps.screenEdgesDeferringSystemGestures];
+    [self setScreenEdgesDeferringSystemGestures:[RCTConvert UIRectEdge:raw]];
   }
 #endif
 

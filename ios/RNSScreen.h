@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 + (UIStatusBarAnimation)UIStatusBarAnimation:(id)json;
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
++ (UIRectEdge)UIRectEdge:(id)json;
 #endif
 
 @end
