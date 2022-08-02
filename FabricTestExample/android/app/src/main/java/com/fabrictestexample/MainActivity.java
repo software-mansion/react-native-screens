@@ -1,6 +1,7 @@
 package com.fabrictestexample;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -10,6 +11,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    Log.d("MainActivity", "onCreate");
     super.onCreate(null);
   }
 

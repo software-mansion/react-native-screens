@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -28,6 +29,11 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         performUpdatesNow()
     }
 
+    override fun invalidate() {
+        Log.d("ScreenStack", "invalidate")
+        super.invalidate()
+    }
+
     override val topScreen: Screen?
         get() = mTopScreen?.screen
     val rootScreen: Screen
@@ -49,11 +55,13 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun startViewTransition(view: View) {
+        Log.d("ScreenStack", "startViewTransition with view $view")
         super.startViewTransition(view)
         mRemovalTransitionStarted = true
     }
 
     override fun endViewTransition(view: View) {
+        Log.d("ScreenStack", "endViewTransition with view $view")
         super.endViewTransition(view)
         if (mRemovalTransitionStarted) {
             mRemovalTransitionStarted = false
@@ -62,12 +70,14 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     fun onViewAppearTransitionEnd() {
+        Log.d("ScreenStack", "onViewAppearTransitionEnd")
         if (!mRemovalTransitionStarted) {
             dispatchOnFinishTransitioning()
         }
     }
 
     private fun dispatchOnFinishTransitioning() {
+        Log.d("ScreenStack", "dispatchOnFinishTransitioning")
         val eventDispatcher: EventDispatcher? =
             UIManagerHelper.getEventDispatcherForReactTag((context as ReactContext), id)
         eventDispatcher?.dispatchEvent(
@@ -76,12 +86,14 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun removeScreenAt(index: Int) {
+        Log.d("ScreenStack", "removeScreenAt index $index")
         val toBeRemoved = getScreenAt(index)
         mDismissed.remove(toBeRemoved.fragment)
         super.removeScreenAt(index)
     }
 
     override fun removeAllScreens() {
+        Log.d("ScreenStack", "removeAllScreens")
         mDismissed.clear()
         super.removeAllScreens()
     }
@@ -91,6 +103,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun onUpdate() {
+        Log.d("ScreenStack", "onUpdate")
         // When going back from a nested stack with a single screen on it, we may hit an edge case
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
         // handle the case of newTop being NULL, which happens in several places below
@@ -263,6 +276,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     // that are making transitioning fragments appear one on another. See more info in the comment to
     // the linked class.
     override fun removeView(view: View) {
+        Log.d("ScreenStack", "removeView $view")
         // we set this property to reverse the order of drawing views
         // when we want to push new fragment on top of the previous one and their animations collide.
         // More information in:
@@ -275,6 +289,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun drawAndRelease() {
+        Log.d("ScreenStack", "drawAndRelease")
         // We make a copy of the drawingOps and use it to dispatch draws in order to be sure
         // that we do not modify the original list. There are cases when `op.draw` can call
         // `drawChild` which would modify the list through which we are iterating. See more:
@@ -288,6 +303,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun dispatchDraw(canvas: Canvas) {
+        Log.d("ScreenStack", "dispatchDraw")
         super.dispatchDraw(canvas)
 
         // check the view removal is completed (by comparing the previous children count)
@@ -302,11 +318,13 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
+        Log.d("ScreenStack", "drawChild $child")
         drawingOps.add(obtainDrawingOp().set(canvas, child, drawingTime))
         return true
     }
 
     private fun performDraw(op: DrawingOp) {
+        Log.d("ScreenStack", "performDraw")
         super.drawChild(op.canvas, op.child, op.drawingTime)
     }
 

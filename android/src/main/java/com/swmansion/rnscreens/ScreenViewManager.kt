@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
@@ -32,6 +33,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     }
 
     override fun createViewInstance(reactContext: ThemedReactContext): Screen {
+        Log.d("ScreenViewManager", "createViewInstance")
         return Screen(reactContext)
     }
 
