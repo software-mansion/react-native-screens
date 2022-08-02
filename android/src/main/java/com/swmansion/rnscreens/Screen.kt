@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -36,6 +37,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     private var mNativeBackButtonDismissalEnabled = true
 
     init {
+        Log.d("Screen", "ctor")
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
         // fact that TextView implementation is expected to be attached to window when layout happens.
@@ -47,6 +49,11 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         // Setting params this way is not the most elegant way to solve this problem but workarounds it
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
+    }
+
+    override fun invalidate() {
+        Log.d("Screen", "invalidate")
+        super.invalidate()
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -97,6 +104,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
      * container when transitioning is detected and turned off immediately after
      */
     fun setTransitioning(transitioning: Boolean) {
+        Log.d("Screen", "setTransitioning")
         if (mTransitioning == transitioning) {
             return
         }

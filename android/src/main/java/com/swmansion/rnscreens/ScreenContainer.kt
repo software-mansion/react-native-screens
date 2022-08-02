@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
@@ -44,7 +45,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
 
+    override fun invalidate() {
+        Log.d("ScreenContainer", "invalidate")
+        super.invalidate()
+    }
+
     override fun removeView(view: View) {
+        Log.d("ScreenContainer", "removeView $view")
         // The below block is a workaround for an issue with keyboard handling within fragments. Despite
         // Android handles input focus on the fragments that leave the screen, the keyboard stays open
         // in a number of cases. The issue can be best reproduced on Android 5 devices, before some
@@ -92,6 +99,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     fun addScreen(screen: Screen, index: Int) {
+        Log.d("ScreenContainer", "addScreen $screen at index $index")
         val fragment = adapt(screen)
         screen.fragment = fragment
         mScreenFragments.add(index, fragment)
@@ -100,12 +108,14 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     open fun removeScreenAt(index: Int) {
+        Log.d("ScreenContainer", "removeScreen at $index")
         mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
         onScreenChanged()
     }
 
     open fun removeAllScreens() {
+        Log.d("ScreenContainer", "removeAllScreens")
         for (screenFragment in mScreenFragments) {
             screenFragment.screen.container = null
         }
@@ -131,11 +141,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
 
     private fun setFragmentManager(fm: FragmentManager) {
+        Log.d("ScreenContainer", "setFragmentManager $fm")
         mFragmentManager = fm
         performUpdatesNow()
     }
 
     private fun setupFragmentManager() {
+        Log.d("ScreenContainer", "setupFragmentManager")
         var parent: ViewParent = this
         // We traverse view hierarchy up until we find screen parent or a root view
         while (!(parent is ReactRootView || parent is Screen) &&
@@ -171,6 +183,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     protected fun createTransaction(): FragmentTransaction {
+        Log.d("ScreenContainer", "createTransaction")
         val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
         val transaction = fragmentManager.beginTransaction()
         transaction.setReorderingAllowed(true)
@@ -178,10 +191,12 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun attachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
+        Log.d("ScreenContainer", "attachScreen (fragment) $screenFragment")
         transaction.add(id, screenFragment)
     }
 
     private fun detachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
+        Log.d("ScreenContainer", "detachScreen (fragment) $screenFragment")
         transaction.remove(screenFragment)
     }
 
@@ -194,6 +209,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     override fun onAttachedToWindow() {
+        Log.d("ScreenContainer", "onAttachedToWindow")
         super.onAttachedToWindow()
         mIsAttached = true
         setupFragmentManager()
@@ -201,6 +217,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     /** Removes fragments from fragment manager that are attached to this container  */
     private fun removeMyFragments(fragmentManager: FragmentManager) {
+        Log.d("ScreenContainer", "removeMyFragments with fragmentManager $fragmentManager")
         val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
         for (fragment in fragmentManager.fragments) {
@@ -218,6 +235,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     override fun onDetachedFromWindow() {
+        Log.d("ScreenContainer", "onDetachedFromWindow")
         // if there are pending transactions and this view is about to get detached we need to perform
         // them here as otherwise fragment manager will crash because it won't be able to find container
         // view. We also need to make sure all the fragments attached to the given container are removed
@@ -264,6 +282,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun onScreenChanged() {
+        Log.d("ScreenStack", "onScreenChanged")
         // we perform update in `onBeforeLayout` of `ScreensShadowNode` by adding an UIBlock
         // which is called after updating children of the ScreenContainer.
         // We do it there because `onUpdate` logic requires all changes of children to be already

@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactApplicationContext
@@ -26,24 +27,29 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
     }
 
     override fun createViewInstance(reactContext: ThemedReactContext): ScreenStack {
+        Log.d("ScreenStackViewManager", "createViewInstance")
         return ScreenStack(reactContext)
     }
 
     override fun addView(parent: ScreenStack, child: View, index: Int) {
+        Log.d("ScreenStackViewManager", "addView")
         require(child is Screen) { "Attempt attach child that is not of type RNScreen" }
         parent.addScreen(child, index)
     }
 
     override fun removeViewAt(parent: ScreenStack, index: Int) {
+        Log.d("ScreenStackViewManager", "removeViewAt")
         prepareOutTransition(parent.getScreenAt(index))
         parent.removeScreenAt(index)
     }
 
     private fun prepareOutTransition(screen: Screen?) {
+        Log.d("ScreenStackViewManager", "prepareOutTransition")
         startTransitionRecursive(screen)
     }
 
     private fun startTransitionRecursive(parent: ViewGroup?) {
+        Log.d("ScreenStackViewManager", "startTransitionRecursive with parent $parent")
         var i = 0
         parent?.let {
             val size = it.childCount
