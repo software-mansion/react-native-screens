@@ -79,9 +79,10 @@ import Test1299 from './src/Test1299';
 import Test1419 from './src/Test1419';
 import Test1473 from './src/Test1473';
 import Test1476 from './src/Test1476';
+import TestAndroid from './src/TestAndroid';
 
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <TestAndroid />;
 }
