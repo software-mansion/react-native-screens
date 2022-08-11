@@ -135,6 +135,17 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         performUpdatesNow()
     }
 
+    private fun resolveChildFragmentManagerOfReactRootView(fragmentManager: FragmentManager): FragmentManager? {
+        for (fragment in fragmentManager.fragments) {
+            return if (fragment.view is ReactRootView) {
+                fragment.childFragmentManager
+            } else {
+                resolveChildFragmentManagerOfReactRootView(fragment.childFragmentManager)
+            }
+        }
+        return null;
+    }
+
     private fun setupFragmentManager() {
         var parent: ViewParent = this
         // We traverse view hierarchy up until we find screen parent or a root view
