@@ -18,7 +18,31 @@ To learn about how to use `react-native-screens` with Fabric architecture, head 
 
 ### iOS
 
-Installation on iOS should be completely handled with auto-linking, if you have ensured pods are installed after adding this module, no other actions should be necessary.
+On iOS obtaining current device orientation [requires asking the system to generate orientation notifications](https://developer.apple.com/documentation/uikit/uidevice/1620053-orientation?language=objc). Our library uses them to enforce correct interface orientation when navigating between screens. 
+To make sure that there are no issues with screen orientation you should put following code in your `AppDelegate.m`:
+
+```objective-c
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    ... 
+#if !TARGET_OS_TV
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+#endif // !TARGET_OS_TV
+    ...
+    return YES:
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+#if !TARGET_OS_TV
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+#endif // !TARGET_OS_TV
+}
+```
+
+You can see example of these changes being introduced in our [example applications](https://github.com/software-mansion/react-native-screens/blob/main/TestsExample/ios/TestsExample/AppDelegate.mm).
+
+Other aspects of installation should be completely handled with auto-linking, just ensure you installed pods after adding this module.
 
 ### Android
 
