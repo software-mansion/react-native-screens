@@ -163,41 +163,26 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
   return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
 }
 
-function MaybeFreeze({
-  enabled,
-  freeze,
-  children,
-}: FreezeWrapperProps & { enabled: boolean }) {
-  if (enabled) {
-    return <DelayedFreeze freeze={freeze}>{children}</DelayedFreeze>;
-  } else {
-    return <>{children}</>;
-  }
-}
-
 function ScreenStack(props: ScreenStackProps) {
   const { children, ...rest } = props;
   const size = React.Children.count(children);
   // freezes all screens except the top one
-  const childrenMaybeWithFreeze = React.Children.map(
-    children,
-    (child, index) => {
-      // @ts-expect-error it's either SceneView in v6 or RouteView in v5
-      const { props, key } = child;
-      const descriptor = props?.descriptor ?? props?.descriptors?.[key];
-      const freezeEnabled = descriptor?.options?.freezeOnBlur ?? ENABLE_FREEZE;
+  const childrenWithFreeze = React.Children.map(children, (child, index) => {
+    // @ts-expect-error it's either SceneView in v6 or RouteView in v5
+    const { props, key } = child;
+    const descriptor = props?.descriptor ?? props?.descriptors?.[key];
+    const freezeEnabled = descriptor?.options?.freezeOnBlur ?? ENABLE_FREEZE;
 
-      return (
-        <MaybeFreeze enabled={freezeEnabled} freeze={size - index > 1}>
-          {child}
-        </MaybeFreeze>
-      );
-    }
-  );
+    return (
+      <DelayedFreeze freeze={freezeEnabled && size - index > 1}>
+        {child}
+      </DelayedFreeze>
+    );
+  });
 
   return (
     <ScreensNativeModules.NativeScreenStack {...rest}>
-      {childrenMaybeWithFreeze}
+      {childrenWithFreeze}
     </ScreensNativeModules.NativeScreenStack>
   );
 }
@@ -271,7 +256,7 @@ class Screen extends React.Component<ScreenProps> {
       };
 
       return (
-        <MaybeFreeze enabled={freezeOnBlur} freeze={activityState === 0}>
+        <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
@@ -313,7 +298,7 @@ class Screen extends React.Component<ScreenProps> {
               </TransitionProgressContext.Provider>
             )}
           </AnimatedNativeScreen>
-        </MaybeFreeze>
+        </DelayedFreeze>
       );
     } else {
       // same reason as above
