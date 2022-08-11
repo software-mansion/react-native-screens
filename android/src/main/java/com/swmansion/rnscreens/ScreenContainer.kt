@@ -135,7 +135,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         performUpdatesNow()
     }
 
-    private fun findReactRootViewChildVM(fragmentManager: FragmentManager): FragmentManager? {
+    private fun findReactRootViewChildVM(fragmentManager: FragmentManager): FragmentManager {
         for (fragment in fragmentManager.fragments) {
             return if (fragment.view is ReactRootView) {
                 fragment.childFragmentManager
@@ -143,7 +143,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
                 findReactRootViewChildVM(fragment.childFragmentManager)
             }
         }
-        return null;
+        return fragmentManager;
     }
 
     private fun setupFragmentManager() {
@@ -184,7 +184,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // whose root view is ReactRootView. As of now, we detect such case by checking whether any fragments are attached
         // to activity which hosts ReactRootView.
         if (context.supportFragmentManager.fragments.isNotEmpty()) {
-            setFragmentManager(findReactRootViewChildVM(context.supportFragmentManager)!!)
+            setFragmentManager(findReactRootViewChildVM(context.supportFragmentManager))
         } else {
             setFragmentManager(context.supportFragmentManager)
         }
