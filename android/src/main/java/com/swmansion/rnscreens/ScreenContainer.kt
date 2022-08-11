@@ -177,8 +177,17 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         while (context !is FragmentActivity && context is ContextWrapper) {
             context = context.baseContext
         }
+
         check(context is FragmentActivity) { "In order to use RNScreens components your app's activity need to extend ReactActivity" }
-        setFragmentManager(context.supportFragmentManager)
+
+        // In case React Native is loaded on a Fragment (not directly in activity) we need to find fragment manager
+        // whose root view is ReactRootView. As of now, we detect such case by checking whether any fragments are attached
+        // to activity which hosts ReactRootView.
+        if (context.supportFragmentManager.fragments.isNotEmpty()) {
+            setFragmentManager(resolveChildFragmentManagerOfReactRootView(context.supportFragmentManager)!!)
+        } else {
+            setFragmentManager(context.supportFragmentManager)
+        }
     }
 
     protected fun createTransaction(): FragmentTransaction {
