@@ -136,16 +136,24 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun findReactRootViewChildVM(fragmentManager: FragmentManager): FragmentManager {
-        for (fragment in fragmentManager.fragments) {
-            return if (fragment.view is ReactRootView) {
-                fragment.childFragmentManager
-            } else {
-                findReactRootViewChildVM(fragment.childFragmentManager)
+        fun _findReactRootViewChildVM(fragmentManager: FragmentManager): FragmentManager? {
+            for (fragment in fragmentManager.fragments) {
+                return if (fragment.view is ReactRootView) {
+                    fragment.childFragmentManager
+                } else {
+                    findReactRootViewChildVM(fragment.childFragmentManager)
+                }
             }
+            return null
         }
 
-        // In case there are no hosted fragments we just return passed fragment manager
-        return fragmentManager;
+        return if (fragmentManager.fragments.isEmpty()) {
+            fragmentManager
+        } else {
+            checkNotNull(_findReactRootViewChildVM(fragmentManager)) {
+                "Failed to resolve fragment manager for ScreenContainer"
+            }
+        }
     }
 
     private fun setupFragmentManager() {
