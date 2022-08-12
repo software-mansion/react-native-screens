@@ -141,7 +141,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
                 return if (fragment.view is ReactRootView) {
                     fragment.childFragmentManager
                 } else {
-                    findReactRootViewChildVM(fragment.childFragmentManager)
+                    _findReactRootViewChildVM(fragment.childFragmentManager)
                 }
             }
             return null
