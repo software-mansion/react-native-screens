@@ -35,6 +35,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
     private var mParentScreenFragment: ScreenFragment? = null
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         var i = 0
         val size = childCount
@@ -207,13 +208,12 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         transaction.remove(screenFragment)
     }
 
-    private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
-        return screenFragment.screen.activityState
-    }
+    private fun getActivityState(screenFragment: ScreenFragment): ActivityState?
+        = screenFragment.screen.activityState
 
-    open fun hasScreen(screenFragment: ScreenFragment?): Boolean {
-        return mScreenFragments.contains(screenFragment)
-    }
+
+    open fun hasScreen(screenFragment: ScreenFragment?): Boolean
+        = mScreenFragments.contains(screenFragment)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
