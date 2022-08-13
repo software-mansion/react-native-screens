@@ -74,8 +74,7 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     override fun onContainerUpdate() {
-        val headerConfig = screen.headerConfig
-        headerConfig?.onUpdate()
+        screen.headerConfig?.onUpdate()
     }
 
     override fun onViewAnimationEnd() {
