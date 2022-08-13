@@ -266,11 +266,9 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        var i = 0
         val size = childCount
-        while (i < size) {
+        for (i in 0 until size) {
             getChildAt(i).measure(widthMeasureSpec, heightMeasureSpec)
-            i++
         }
     }
 
