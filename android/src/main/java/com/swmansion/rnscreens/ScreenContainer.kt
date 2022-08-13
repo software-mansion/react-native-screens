@@ -312,7 +312,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     open fun onUpdate() {
         createTransaction().let {
             // detach screens that are no longer active
-            val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
+            val orphaned: MutableSet<Fragment> = HashSet(
+                requireNotNull(mFragmentManager) {
+                    "mFragmentManager is null when performing update in ScreenContainer"
+                }.fragments
+            )
             for (screenFragment in mScreenFragments) {
                 if (getActivityState(screenFragment) === ActivityState.INACTIVE &&
                     screenFragment.isAdded
