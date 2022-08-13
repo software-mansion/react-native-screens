@@ -135,13 +135,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         performUpdatesNow()
     }
 
-    private fun findReactRootViewChildVM(fragmentManager: FragmentManager): FragmentManager {
-        fun _findReactRootViewChildVM(fragmentManager: FragmentManager): FragmentManager? {
+    private fun findReactRootViewChildFM(fragmentManager: FragmentManager): FragmentManager {
+        fun _findReactRootViewChildFM(fragmentManager: FragmentManager): FragmentManager? {
             for (fragment in fragmentManager.fragments) {
                 return if (fragment.view is ReactRootView) {
                     fragment.childFragmentManager
                 } else {
-                    _findReactRootViewChildVM(fragment.childFragmentManager)
+                    _findReactRootViewChildFM(fragment.childFragmentManager)
                 }
             }
             return null
@@ -150,7 +150,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         return if (fragmentManager.fragments.isEmpty()) {
             fragmentManager
         } else {
-            checkNotNull(_findReactRootViewChildVM(fragmentManager)) {
+            checkNotNull(_findReactRootViewChildFM(fragmentManager)) {
                 "Failed to resolve fragment manager for ScreenContainer"
             }
         }
@@ -193,7 +193,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // In case React Native is loaded on a Fragment (not directly in activity) we need to find fragment manager
         // whose fragment's view is ReactRootView. As of now, we detect such case by checking whether any fragments are attached
         // to activity which hosts ReactRootView.
-        setFragmentManager(findReactRootViewChildVM(context.supportFragmentManager))
+        setFragmentManager(findReactRootViewChildFM(context.supportFragmentManager))
     }
 
     protected fun createTransaction(): FragmentTransaction {
