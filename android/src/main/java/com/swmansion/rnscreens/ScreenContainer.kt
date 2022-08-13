@@ -151,6 +151,8 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // In case React Native is loaded on a Fragment (not directly in activity) we need to find
         // fragment manager whose fragment's view is ReactRootView. As of now, we detect such case by
         // checking whether any fragments are attached to activity which hosts ReactRootView.
+        // See: https://github.com/software-mansion/react-native-screens/issues/1506 on why the cases
+        // must be treated separately.
         return if (context.supportFragmentManager.fragments.isEmpty()) {
             // We are in standard React Native application w/o custom native navigation based on fragments.
            context.supportFragmentManager
