@@ -51,11 +51,9 @@ class ScreenStackFragment : ScreenFragment {
 
     fun setToolbar(toolbar: Toolbar) {
         mAppBarLayout?.addView(toolbar)
-        val params = AppBarLayout.LayoutParams(
+        toolbar.layoutParams = AppBarLayout.LayoutParams(
             AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-        )
-        params.scrollFlags = 0
-        toolbar.layoutParams = params
+        ).apply { scrollFlags = 0 }
         mToolbar = toolbar
     }
 
