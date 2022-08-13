@@ -194,10 +194,9 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     protected fun createTransaction(): FragmentTransaction {
-        val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
-        val transaction = fragmentManager.beginTransaction()
-        transaction.setReorderingAllowed(true)
-        return transaction
+        return requireNotNull(mFragmentManager) { "mFragmentManager is null when creating transaction" }
+            .beginTransaction()
+            .setReorderingAllowed(true)
     }
 
     private fun attachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
