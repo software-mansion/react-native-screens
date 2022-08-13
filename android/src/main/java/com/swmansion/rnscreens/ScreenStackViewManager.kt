@@ -40,10 +40,9 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
     }
 
     private fun startTransitionRecursive(parent: ViewGroup?) {
-        var i = 0
         parent?.let {
             val size = it.childCount
-            while (i < size) {
+            for (i in 0 until size) {
                 val child = it.getChildAt(i)
                 child?.let { view -> it.startViewTransition(view) }
                 if (child is ScreenStackHeaderConfig) {
@@ -54,7 +53,6 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
                 if (child is ViewGroup) {
                     startTransitionRecursive(child)
                 }
-                i++
             }
         }
     }
