@@ -225,9 +225,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
         for (fragment in fragmentManager.fragments) {
-            if (fragment is ScreenFragment &&
-                fragment.screen.container === this
-            ) {
+            if (fragment is ScreenFragment && fragment.screen.container === this) {
                 transaction.remove(fragment)
                 hasFragments = true
             }
