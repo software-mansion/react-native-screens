@@ -117,9 +117,8 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     val screenCount: Int
         get() = mScreenFragments.size
 
-    fun getScreenAt(index: Int): Screen {
-        return mScreenFragments[index].screen
-    }
+    fun getScreenAt(index: Int): Screen = mScreenFragments[index].screen
+
 
     open val topScreen: Screen?
         get() {
