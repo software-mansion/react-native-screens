@@ -177,11 +177,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // If parent is of type Screen it means we are inside a nested fragment structure.
         // Otherwise we expect to connect directly with root view and get root fragment manager
         if (parent is Screen) {
-            val screenFragment = parent.fragment
-            checkNotNull(screenFragment) { "Parent Screen does not have its Fragment attached" }
-            mParentScreenFragment = screenFragment
-            screenFragment.registerChildScreenContainer(this)
-            setFragmentManager(screenFragment.childFragmentManager)
+            checkNotNull(parent.fragment?.let { screenFragment ->
+                mParentScreenFragment = screenFragment
+                screenFragment.registerChildScreenContainer(this)
+                setFragmentManager(screenFragment.childFragmentManager)
+            }) { "Parent Screen does not have its Fragment attached" }
         } else {
             // we expect top level view to be of type ReactRootView, this isn't really necessary but in
             // order to find root view we test if parent is null. This could potentially happen also when
