@@ -96,22 +96,24 @@ class ScreenStackFragment : ScreenFragment {
     ): View? {
         val view: ScreensCoordinatorLayout? =
             context?.let { ScreensCoordinatorLayout(it, this) }
-        val params = CoordinatorLayout.LayoutParams(
+
+        screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
-        )
-        params.behavior = if (mIsTranslucent) null else ScrollingViewBehavior()
-        screen.layoutParams = params
+        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
+
         view?.addView(recycleView(screen))
 
-        mAppBarLayout = context?.let { AppBarLayout(it) }
-        // By default AppBarLayout will have a background color set but since we cover the whole layout
-        // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
-        // role. On top of that it breaks screens animations when alfa offscreen compositing is off
-        // (which is the default)
-        mAppBarLayout?.setBackgroundColor(Color.TRANSPARENT)
-        mAppBarLayout?.layoutParams = AppBarLayout.LayoutParams(
-            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-        )
+        mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
+            // By default AppBarLayout will have a background color set but since we cover the whole layout
+            // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
+            // role. On top of that it breaks screens animations when alfa offscreen compositing is off
+            // (which is the default)
+            setBackgroundColor(Color.TRANSPARENT)
+            layoutParams = AppBarLayout.LayoutParams(
+                AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+
         view?.addView(mAppBarLayout)
         if (mShadowHidden) {
             mAppBarLayout?.targetElevation = 0f
