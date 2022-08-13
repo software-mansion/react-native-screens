@@ -178,7 +178,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // Otherwise we expect to connect directly with root view and get root fragment manager
         if (parent is Screen) {
             val screenFragment = parent.fragment
-            check(screenFragment != null) { "Parent Screen does not have its Fragment attached" }
+            checkNotNull(screenFragment) { "Parent Screen does not have its Fragment attached" }
             mParentScreenFragment = screenFragment
             screenFragment.registerChildScreenContainer(this)
             setFragmentManager(screenFragment.childFragmentManager)
