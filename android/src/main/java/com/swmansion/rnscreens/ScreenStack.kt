@@ -44,9 +44,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             throw IllegalStateException("Stack has no root screen set")
         }
 
-    override fun adapt(screen: Screen): ScreenStackFragment {
-        return ScreenStackFragment(screen)
-    }
+    override fun adapt(screen: Screen) = ScreenStackFragment(screen)
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
