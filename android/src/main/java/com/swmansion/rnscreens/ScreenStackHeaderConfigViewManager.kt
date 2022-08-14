@@ -21,13 +21,9 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
         mDelegate = RNSScreenStackHeaderConfigManagerDelegate<ScreenStackHeaderConfig, ScreenStackHeaderConfigViewManager>(this)
     }
 
-    override fun getName(): String {
-        return REACT_CLASS
-    }
+    override fun getName(): String = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext): ScreenStackHeaderConfig {
-        return ScreenStackHeaderConfig(reactContext)
-    }
+    override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStackHeaderConfig(reactContext)
 
     override fun addView(parent: ScreenStackHeaderConfig, child: View, index: Int) {
         if (child !is ScreenStackHeaderSubview) {
@@ -50,17 +46,11 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
         parent.removeConfigSubview(index)
     }
 
-    override fun getChildCount(parent: ScreenStackHeaderConfig): Int {
-        return parent.configSubviewsCount
-    }
+    override fun getChildCount(parent: ScreenStackHeaderConfig): Int = parent.configSubviewsCount
 
-    override fun getChildAt(parent: ScreenStackHeaderConfig, index: Int): View {
-        return parent.getConfigSubview(index)
-    }
+    override fun getChildAt(parent: ScreenStackHeaderConfig, index: Int): View = parent.getConfigSubview(index)
 
-    override fun needsCustomLayoutForChildren(): Boolean {
-        return true
-    }
+    override fun needsCustomLayoutForChildren() = true
 
     override fun onAfterUpdateTransaction(parent: ScreenStackHeaderConfig) {
         super.onAfterUpdateTransaction(parent)
@@ -149,9 +139,7 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
             .build()
     }
 
-    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> {
-        return mDelegate
-    }
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> = mDelegate
 
     companion object {
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"
