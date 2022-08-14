@@ -11,10 +11,7 @@ class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context)
     private var mReactHeight = 0
     var type = Type.RIGHT
 
-    val config: ScreenStackHeaderConfig?
-        get() {
-            return (parent as? CustomToolbar)?.config
-        }
+    val config: ScreenStackHeaderConfig? = (parent as? CustomToolbar)?.config
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY &&
@@ -32,9 +29,7 @@ class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context)
         setMeasuredDimension(mReactWidth, mReactHeight)
     }
 
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        // no-op
-    }
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) = Unit
 
     enum class Type {
         LEFT, CENTER, RIGHT, BACK, SEARCH_BAR
