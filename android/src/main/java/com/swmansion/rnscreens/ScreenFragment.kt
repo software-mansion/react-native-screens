@@ -233,13 +233,13 @@ open class ScreenFragment : Fragment {
                 val container: ScreenContainer<*>? = screen.container
                 val goingForward = if (container is ScreenStack) container.goingForward else false
                 val screenContext = screen.context as ReactContext
-                val eventDispatcher: EventDispatcher? =
-                    UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
-                eventDispatcher?.dispatchEvent(
-                    ScreenTransitionProgressEvent(
-                        screen.id, mProgress, closing, goingForward, coalescingKey
+                UIManagerHelper
+                    .getEventDispatcherForReactTag(screenContext, screen.id)
+                    ?.dispatchEvent(
+                        ScreenTransitionProgressEvent(
+                            screen.id, mProgress, closing, goingForward, coalescingKey
+                        )
                     )
-                )
             }
         }
     }
