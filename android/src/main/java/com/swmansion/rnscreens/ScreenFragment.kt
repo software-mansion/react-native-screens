@@ -170,25 +170,21 @@ open class ScreenFragment : Fragment {
 
     private fun dispatchOnWillAppear() {
         dispatchEvent(ScreenLifecycleEvent.WillAppear, this)
-
         dispatchTransitionProgress(0.0f, false)
     }
 
     private fun dispatchOnAppear() {
         dispatchEvent(ScreenLifecycleEvent.Appear, this)
-
         dispatchTransitionProgress(1.0f, false)
     }
 
     private fun dispatchOnWillDisappear() {
         dispatchEvent(ScreenLifecycleEvent.WillDisappear, this)
-
         dispatchTransitionProgress(0.0f, true)
     }
 
     private fun dispatchOnDisappear() {
         dispatchEvent(ScreenLifecycleEvent.Disappear, this)
-
         dispatchTransitionProgress(1.0f, true)
     }
 
@@ -212,12 +208,8 @@ open class ScreenFragment : Fragment {
     }
 
     private fun dispatchEventInChildContainers(event: ScreenLifecycleEvent) {
-        for (sc in mChildScreenContainers) {
-            if (sc.screenCount > 0) {
-                sc.topScreen?.let {
-                    sc.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
-                }
-            }
+        mChildScreenContainers.filter { it.screenCount > 0 }.forEach {
+            it.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
         }
     }
 
