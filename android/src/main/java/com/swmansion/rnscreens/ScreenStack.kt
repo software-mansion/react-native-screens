@@ -23,6 +23,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
     var goingForward = false
+
     fun dismiss(screenFragment: ScreenStackFragment) {
         mDismissed.add(screenFragment)
         performUpdatesNow()
@@ -30,16 +31,15 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     override val topScreen: Screen?
         get() = mTopScreen?.screen
+
     val rootScreen: Screen
         get() {
-            var i = 0
             val size = screenCount
-            while (i < size) {
+            for (i in 0 until size) {
                 val screen = getScreenAt(i)
                 if (!mDismissed.contains(screen.fragment)) {
                     return screen
                 }
-                i++
             }
             throw IllegalStateException("Stack has no root screen set")
         }
