@@ -245,9 +245,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun notifyContainerUpdate() {
-        for (screen in mStack) {
-            screen.onContainerUpdate()
-        }
+        mStack.forEach { it.onContainerUpdate() }
     }
 
     // below methods are taken from
