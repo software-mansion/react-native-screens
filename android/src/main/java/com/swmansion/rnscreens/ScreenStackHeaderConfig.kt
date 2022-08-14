@@ -102,16 +102,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val screen: Screen?
         get() = parent?.takeIf { it is Screen } as Screen?
     private val screenStack: ScreenStack?
-        get() {
-            val screen = screen
-            if (screen != null) {
-                val container = screen.container
-                if (container is ScreenStack) {
-                    return container
-                }
-            }
-            return null
-        }
+        get() = screen?.container?.takeIf { it is ScreenStack } as ScreenStack?
     val screenFragment: ScreenStackFragment?
         get() {
             val screen = parent
