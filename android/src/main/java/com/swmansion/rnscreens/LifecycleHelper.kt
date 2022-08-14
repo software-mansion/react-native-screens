@@ -43,8 +43,7 @@ class LifecycleHelper {
     }
 
     fun <T> unregister(view: T) where T : View, T : LifecycleObserver? {
-        val lifecycle = mViewToLifecycleMap[view]
-        lifecycle?.removeObserver(view)
+        mViewToLifecycleMap[view]?.removeObserver(view)
     }
 
     companion object {
