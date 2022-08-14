@@ -25,6 +25,7 @@ object ScreenWindowTraits {
     private var mDidSetStatusBarAppearance = false
     private var mDidSetNavigationBarAppearance = false
     private var mDefaultStatusBarColor: Int? = null
+
     internal fun applyDidSetOrientation() {
         mDidSetOrientation = true
     }
