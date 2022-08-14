@@ -80,9 +80,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         super.removeAllScreens()
     }
 
-    override fun hasScreen(screenFragment: ScreenFragment?): Boolean {
-        return super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
-    }
+    override fun hasScreen(screenFragment: ScreenFragment?): Boolean =
+        super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
 
     override fun onUpdate() {
         // When going back from a nested stack with a single screen on it, we may hit an edge case
