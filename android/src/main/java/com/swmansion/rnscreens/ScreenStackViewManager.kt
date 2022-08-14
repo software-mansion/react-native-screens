@@ -20,7 +20,7 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
         mDelegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
     }
 
-    override fun getName(): String = REACT_CLASS
+    override fun getName() = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStack(reactContext)
 
