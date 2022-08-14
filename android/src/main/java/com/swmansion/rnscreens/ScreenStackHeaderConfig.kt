@@ -283,9 +283,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
     }
 
-    fun getConfigSubview(index: Int): ScreenStackHeaderSubview {
-        return mConfigSubviews[index]
-    }
+    fun getConfigSubview(index: Int): ScreenStackHeaderSubview = mConfigSubviews[index]
 
     val configSubviewsCount: Int
         get() = mConfigSubviews.size
