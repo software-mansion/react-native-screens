@@ -305,16 +305,14 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     private val titleTextView: TextView?
         get() {
-            var i = 0
             val size = toolbar.childCount
-            while (i < size) {
+            for (i in 0 until size) {
                 val view = toolbar.getChildAt(i)
                 if (view is TextView) {
                     if (view.text == toolbar.title) {
                         return view
                     }
                 }
-                i++
             }
             return null
         }
