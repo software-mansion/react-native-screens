@@ -213,18 +213,23 @@ class ScreenStackFragment : ScreenFragment {
             // and also this is not necessary when going back since the lifecycle methods
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
-            val fakeAnimation = ScreensAnimation(mFragment)
-            fakeAnimation.duration = animation.duration
+            val fakeAnimation = ScreensAnimation(mFragment).apply { duration = animation.duration }
+
             if (animation is AnimationSet && !mFragment.isRemoving) {
-                animation.addAnimation(fakeAnimation)
-                animation.setAnimationListener(mAnimationListener)
-                super.startAnimation(animation)
+                animation.apply {
+                    addAnimation(fakeAnimation)
+                    setAnimationListener(mAnimationListener)
+                }.also {
+                    super.startAnimation(it)
+                }
             } else {
-                val set = AnimationSet(true)
-                set.addAnimation(animation)
-                set.addAnimation(fakeAnimation)
-                set.setAnimationListener(mAnimationListener)
-                super.startAnimation(set)
+                AnimationSet(true).apply {
+                    addAnimation(animation)
+                    addAnimation(fakeAnimation)
+                    setAnimationListener(mAnimationListener)
+                }.also {
+                    super.startAnimation(it)
+                }
             }
         }
 
