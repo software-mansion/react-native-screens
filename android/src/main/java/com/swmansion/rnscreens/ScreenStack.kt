@@ -71,8 +71,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun removeScreenAt(index: Int) {
-        val toBeRemoved = getScreenAt(index)
-        mDismissed.remove(toBeRemoved.fragment)
+        mDismissed.remove(getScreenAt(index).fragment)
         super.removeScreenAt(index)
     }
 
