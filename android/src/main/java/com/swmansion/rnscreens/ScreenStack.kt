@@ -308,6 +308,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         var canvas: Canvas? = null
         var child: View? = null
         var drawingTime: Long = 0
+
         operator fun set(canvas: Canvas?, child: View?, drawingTime: Long): DrawingOp {
             this.canvas = canvas
             this.child = child
@@ -324,18 +325,11 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     companion object {
-        private fun isTransparent(fragment: ScreenStackFragment): Boolean {
-            return (
-                fragment.screen.stackPresentation
-                    === Screen.StackPresentation.TRANSPARENT_MODAL
-                )
-        }
+        private fun isTransparent(fragment: ScreenStackFragment): Boolean =
+            fragment.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL
 
-        private fun needsDrawReordering(fragment: ScreenStackFragment): Boolean {
-            return (
-                fragment.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
-                    fragment.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
-                )
-        }
+        private fun needsDrawReordering(fragment: ScreenStackFragment): Boolean =
+            fragment.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+                fragment.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
     }
 }
