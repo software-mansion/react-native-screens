@@ -118,9 +118,11 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     fun onUpdate() {
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
+
         if (!mIsAttachedToWindow || !isTop || mDestroyed) {
             return
         }
+
         val activity = screenFragment?.activity as AppCompatActivity? ?: return
         if (mDirection != null) {
             if (mDirection == "rtl") {
@@ -143,15 +145,18 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }
+
         if (mIsHidden) {
             if (toolbar.parent != null) {
                 screenFragment?.removeToolbar()
             }
             return
         }
+
         if (toolbar.parent == null) {
             screenFragment?.setToolbar(toolbar)
         }
+
         if (mIsTopInsetEnabled) {
             headerTopInset.let {
                 toolbar.setPadding(0, it ?: 0, 0, 0)
@@ -161,6 +166,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                 toolbar.setPadding(0, 0, 0, 0)
             }
         }
+
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
         val actionBar = requireNotNull(activity.supportActionBar)
@@ -197,10 +203,12 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             // which would impact the position of custom header views rendered at the center.
             toolbar.contentInsetStartWithNavigation = 0
         }
+
         val titleTextView = titleTextView
         if (mTitleColor != 0) {
             toolbar.setTitleTextColor(mTitleColor)
         }
+
         if (titleTextView != null) {
             if (mTitleFontFamily != null || mTitleFontWeight > 0) {
                 val titleTypeface = ReactTypefaceUtils.applyStyles(
@@ -218,8 +226,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // color
         if (mTintColor != 0) {
-            val navigationIcon = toolbar.navigationIcon
-            navigationIcon?.setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP)
+            toolbar.navigationIcon?.setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP)
         }
 
         // subviews
@@ -228,6 +235,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                 toolbar.removeViewAt(i)
             }
         }
+
         var i = 0
         val size = mConfigSubviews.size
         while (i < size) {
