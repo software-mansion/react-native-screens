@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Build
@@ -101,12 +100,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     }
 
     private val screen: Screen?
-        get() {
-            val screen = parent
-            return if (screen is Screen) {
-                screen
-            } else null
-        }
+        get() = parent?.takeIf { it is Screen } as Screen?
     private val screenStack: ScreenStack?
         get() {
             val screen = screen
