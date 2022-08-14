@@ -152,13 +152,11 @@ open class ScreenFragment : Fragment {
     val childScreenContainers: List<ScreenContainer<*>>
         get() = mChildScreenContainers
 
-    private fun canDispatchEvent(event: ScreenLifecycleEvent): Boolean {
-        return when (event) {
-            ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
-            ScreenLifecycleEvent.Appear -> canDispatchAppear
-            ScreenLifecycleEvent.WillDisappear -> !canDispatchWillAppear
-            ScreenLifecycleEvent.Disappear -> !canDispatchAppear
-        }
+    private fun canDispatchEvent(event: ScreenLifecycleEvent): Boolean = when (event) {
+        ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
+        ScreenLifecycleEvent.Appear -> canDispatchAppear
+        ScreenLifecycleEvent.WillDisappear -> !canDispatchWillAppear
+        ScreenLifecycleEvent.Disappear -> !canDispatchAppear
     }
 
     private fun setLastEventDispatched(event: ScreenLifecycleEvent) {
