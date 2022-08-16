@@ -155,14 +155,18 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // must be treated separately.
         return if (context.supportFragmentManager.fragments.isEmpty()) {
             // We are in standard React Native application w/o custom native navigation based on fragments.
-           context.supportFragmentManager
+            context.supportFragmentManager
         } else {
             // We are in some custom setup & we want to use the closest fragment manager in hierarchy.
             // `findFragment` method throws IllegalStateException when it fails to resolve appropriate
             // fragment. It might happen when e.g. React Native is loaded directly in Activity
-            // but some custom fragments are still used. However such use case seems highly unlikely
-            // so, as for now, we let application crash.
-            FragmentManager.findFragment<Fragment>(rootView).childFragmentManager
+            // but some custom fragments are still used. Such use case seems highly unlikely
+            // so, as for now we fallback to activity's FragmentManager in hope for the best.
+            try {
+                FragmentManager.findFragment<Fragment>(rootView).childFragmentManager
+            } catch (ex: IllegalStateException) {
+                context.supportFragmentManager
+            }
         }
     }
 
@@ -177,11 +181,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // If parent is of type Screen it means we are inside a nested fragment structure.
         // Otherwise we expect to connect directly with root view and get root fragment manager
         if (parent is Screen) {
-            checkNotNull(parent.fragment?.let { screenFragment ->
-                mParentScreenFragment = screenFragment
-                screenFragment.registerChildScreenContainer(this)
-                setFragmentManager(screenFragment.childFragmentManager)
-            }) { "Parent Screen does not have its Fragment attached" }
+            checkNotNull(
+                parent.fragment?.let { screenFragment ->
+                    mParentScreenFragment = screenFragment
+                    screenFragment.registerChildScreenContainer(this)
+                    setFragmentManager(screenFragment.childFragmentManager)
+                }
+            ) { "Parent Screen does not have its Fragment attached" }
         } else {
             // we expect top level view to be of type ReactRootView, this isn't really necessary but in
             // order to find root view we test if parent is null. This could potentially happen also when
