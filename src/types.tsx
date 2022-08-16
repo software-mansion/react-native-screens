@@ -269,6 +269,11 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   transitionDuration?: number;
+  /**
+   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
+   * When `enableFreeze()` is run at the top of the application defaults to `true`.
+   */
+  freezeOnBlur?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {

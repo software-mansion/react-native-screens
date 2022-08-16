@@ -165,6 +165,7 @@ const RouteView = ({
     statusBarTranslucent,
     swipeDirection = 'horizontal',
     transitionDuration,
+    freezeOnBlur,
   } = options;
 
   let {
@@ -219,6 +220,7 @@ const RouteView = ({
       isNativeStack
       style={StyleSheet.absoluteFill}
       customAnimationOnSwipe={customAnimationOnSwipe}
+      freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       hideKeyboardOnSwipe={hideKeyboardOnSwipe}
       homeIndicatorHidden={homeIndicatorHidden}
