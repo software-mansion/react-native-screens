@@ -17,7 +17,7 @@
     "@react-navigation/stack": "^6.2.1",
     "nanoid": "^3.2.0",
     "react": "18.1.0",
-    "react-native": "0.69.0",
+    "react-native": "0.70.0-rc.3",
     "postinstall-postinstall": "^2.1.0",
     "react-native-gesture-handler": "^2.5.0",
     "react-native-reanimated": "2.9.1",
@@ -36,8 +36,8 @@
     "babel-jest": "^26.6.3",
     "eslint": "^7.32.0",
     "jest": "^26.6.3",
-    "metro-react-native-babel-preset": "^0.70.3",
-    "react-test-renderer": "18.0.0",
+    "metro-react-native-babel-preset": "^0.72.0",
+    "react-test-renderer": "18.1.0",
     "typescript": "^4.5.5"
   },
   "jest": {
