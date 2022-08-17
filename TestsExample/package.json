@@ -20,7 +20,7 @@
     "react-native": "0.70.0-rc.3",
     "postinstall-postinstall": "^2.1.0",
     "react-native-gesture-handler": "^2.5.0",
-    "react-native-reanimated": "software-mansion/react-native-reanimated#af31d7affb59d5f17fdf54990f82bb93398f285f",
+    "react-native-reanimated": "software-mansion/react-native-reanimated#c25c71f7b3e23a4c061748671d6bef6be8a31b87",
     "react-native-safe-area-context": "^4.0.1-rc.5",
     "@react-navigation/native-stack": "^6.7.0",
     "react-native-screens": "link:../"
