@@ -53,10 +53,6 @@ const App = (): JSX.Element => {
           <Stack.Screen
             name="First"
             component={First}
-            // options={{
-            //   stackPresentation: 'containedTransparentModal',
-            //   headerShown: false,
-            // }}
           />
         </Stack.Navigator>
       </NavigationContainer>
