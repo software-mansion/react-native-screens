@@ -161,11 +161,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             // `findFragment` method throws IllegalStateException when it fails to resolve appropriate
             // fragment. It might happen when e.g. React Native is loaded directly in Activity
             // but some custom fragments are still used. Such use case seems highly unlikely
-            // so, as for now we fallback to activity's FragmentManager in hope for the best.
+            // so, as for now we let application crash.
             try {
                 FragmentManager.findFragment<Fragment>(rootView).childFragmentManager
             } catch (ex: IllegalStateException) {
-                context.supportFragmentManager
+                throw IllegalStateException("Failed to find fragment for React Root View")
             }
         }
     }
