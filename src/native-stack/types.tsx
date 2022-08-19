@@ -375,6 +375,11 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   transitionDuration?: number;
+  /**
+   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
+   * Defaults to `true` when `enableFreeze()` is run at the top of the application.
+   */
+  freezeOnBlur?: boolean;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

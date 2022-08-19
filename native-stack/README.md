@@ -277,6 +277,12 @@ Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom
 
 The duration of `default` and `flip` transitions isn't customizable.
 
+### freezeOnBlur
+
+Whether inactive screens should be suspended from re-rendering.
+
+Defaults to `false`. When `enableFreeze()` is run at the top of the application defaults to `true`.
+
 #### `useTransitionProgress`
 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
