@@ -74,10 +74,10 @@ open class ScreenFragment : Fragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        screen.layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        )
         val wrapper = context?.let { ScreensFrameLayout(it) }?.apply {
-            screen.layoutParams = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-            )
             addView(recycleView(screen))
         }
         return wrapper
