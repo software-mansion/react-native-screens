@@ -6036,9 +6036,9 @@ react-native-codegen@^0.70.3:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
-react-native-gesture-handler@software-mansion/react-native-gesture-handler#@kkafar/fix-grep-in-podspec:
+react-native-gesture-handler@software-mansion/react-native-gesture-handler#@jpiasecki/bump-fabricexample-to-rn70:
   version "2.5.0"
-  resolved "https://codeload.github.com/software-mansion/react-native-gesture-handler/tar.gz/7a18a292a7f7d4cdd2ca61bf49140eb3b905ef53"
+  resolved "https://codeload.github.com/software-mansion/react-native-gesture-handler/tar.gz/035899f7f03f7cbfe0301ac47a44805f04b0076f"
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
