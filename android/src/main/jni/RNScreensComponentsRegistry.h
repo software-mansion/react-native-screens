@@ -21,8 +21,6 @@ class RNScreensComponentsRegistry
  private:
   friend HybridBase;
 
-  static std::shared_ptr<ComponentDescriptorProviderRegistry const> sharedProviderRegistry();
-
   const ComponentFactory *delegate_;
 
   static jni::local_ref<jhybriddata> initHybrid(
