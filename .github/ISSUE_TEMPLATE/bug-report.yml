@@ -55,7 +55,7 @@ body:
     attributes:
       label: Screens version
       description: What version of react-native-screens are you using?
-      placeholder: 3.15.0
+      placeholder: 3.16.0
     validations:
       required: true
 
