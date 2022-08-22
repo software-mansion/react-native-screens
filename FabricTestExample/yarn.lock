@@ -6160,7 +6160,7 @@ react-native-gradle-plugin@^0.70.2:
 
 react-native-reanimated@software-mansion/react-native-reanimated#@kkafar/patch-for-0.70:
   version "3.0.0-rc.1"
-  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/224c4ae9725190ce67266cdc2662362fa213495b"
+  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/b70a0114cb0bf342484c214787371a1c704fd45a"
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
