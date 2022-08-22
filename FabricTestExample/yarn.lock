@@ -6158,9 +6158,9 @@ react-native-gradle-plugin@^0.70.2:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.2.tgz#b5130f2c196e27c4c5912706503d69b8790f1937"
   integrity sha512-k7d+CVh0fs/VntA2WaKD58cFB2rtiSLBHYlciH18ncaT4N/B3A4qOGv9pSCEHfQikELm6vAf98KMbE3c8KnH1A==
 
-react-native-reanimated@software-mansion/react-native-reanimated#c71d21d047c880d2da91cdf6f69519cb984ba76c:
+react-native-reanimated@software-mansion/react-native-reanimated#@kkafar/patch-for-0.70:
   version "3.0.0-rc.1"
-  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/c71d21d047c880d2da91cdf6f69519cb984ba76c"
+  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/224c4ae9725190ce67266cdc2662362fa213495b"
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
