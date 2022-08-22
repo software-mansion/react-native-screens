@@ -20,7 +20,7 @@
     "react-native": "^0.70.0-rc.3",
     "react-native-codegen": "0.69.1",
     "react-native-gesture-handler": "software-mansion/react-native-gesture-handler#@jpiasecki/bump-fabricexample-to-rn70",
-    "react-native-reanimated": "software-mansion/react-native-reanimated#@kkafar/remove-symlink",
+    "react-native-reanimated": "software-mansion/react-native-reanimated#c71d21d047c880d2da91cdf6f69519cb984ba76c",
     "react-native-safe-area-context": "^4.3.1",
     "react-native-screens": "link:../",
     "patch-package": "^6.4.7",

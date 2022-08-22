@@ -6145,7 +6145,7 @@ react-native-codegen@^0.70.3:
 
 react-native-gesture-handler@software-mansion/react-native-gesture-handler#@jpiasecki/bump-fabricexample-to-rn70:
   version "2.5.0"
-  resolved "https://codeload.github.com/software-mansion/react-native-gesture-handler/tar.gz/035899f7f03f7cbfe0301ac47a44805f04b0076f"
+  resolved "https://codeload.github.com/software-mansion/react-native-gesture-handler/tar.gz/c583b73a9a163e2d20297b603dec1218d24f1e26"
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
@@ -6158,9 +6158,9 @@ react-native-gradle-plugin@^0.70.2:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.2.tgz#b5130f2c196e27c4c5912706503d69b8790f1937"
   integrity sha512-k7d+CVh0fs/VntA2WaKD58cFB2rtiSLBHYlciH18ncaT4N/B3A4qOGv9pSCEHfQikELm6vAf98KMbE3c8KnH1A==
 
-react-native-reanimated@software-mansion/react-native-reanimated#@kkafar/remove-symlink:
-  version "2.10.0"
-  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/728d4ba57124c1985a208b3ed331ba92177f1e13"
+react-native-reanimated@software-mansion/react-native-reanimated#c71d21d047c880d2da91cdf6f69519cb984ba76c:
+  version "3.0.0-rc.1"
+  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/c71d21d047c880d2da91cdf6f69519cb984ba76c"
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
