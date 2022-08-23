@@ -33,8 +33,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     val rootScreen: Screen
         get() {
-            val size = screenCount
-            for (i in 0 until size) {
+            for (i in 0 until screenCount) {
                 val screen = getScreenAt(i)
                 if (!mDismissed.contains(screen.fragment)) {
                     return screen

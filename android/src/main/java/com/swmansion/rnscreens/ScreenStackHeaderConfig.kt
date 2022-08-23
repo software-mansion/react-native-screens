@@ -100,9 +100,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     }
 
     private val screen: Screen?
-        get() = parent?.takeIf { it is Screen } as Screen?
+        get() = parent as? Screen
     private val screenStack: ScreenStack?
-        get() = screen?.container?.takeIf { it is ScreenStack } as ScreenStack?
+        get() = screen?.container as? ScreenStack
     val screenFragment: ScreenStackFragment?
         get() {
             val screen = parent
@@ -305,8 +305,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     private val titleTextView: TextView?
         get() {
-            val size = toolbar.childCount
-            for (i in 0 until size) {
+            for (i in 0 until toolbar.childCount) {
                 val view = toolbar.getChildAt(i)
                 if (view is TextView) {
                     if (view.text == toolbar.title) {

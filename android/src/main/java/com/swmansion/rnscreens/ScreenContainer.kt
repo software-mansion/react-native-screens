@@ -263,16 +263,14 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // children are not already detached, which may lead to calling `onDetachedFromWindow` on them
         // twice.
         // We also get the size earlier, because we will be removing child views in `for` loop.
-        val size = childCount
-        for (i in size - 1 downTo 0) {
+        for (i in childCount - 1 downTo 0) {
             removeViewAt(i)
         }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val size = childCount
-        for (i in 0 until size) {
+        for (i in 0 until childCount) {
             getChildAt(i).measure(widthMeasureSpec, heightMeasureSpec)
         }
     }
