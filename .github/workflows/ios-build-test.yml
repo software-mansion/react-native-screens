@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       WORKING_DIRECTORY: TestsExample
     concurrency:
