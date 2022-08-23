@@ -2,6 +2,11 @@ name: Test iOS e2e
 on:
   pull_request:
     paths:
+      - '.github/workflows/ios-e2e-test.yml'
+      - 'RNScreens.podspec'
+      - 'package.json'
+      - 'ios/**'
+      - 'common/**'
       - 'Example/**'
   push:
     branches:

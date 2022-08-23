@@ -2,6 +2,10 @@ name: Test Android e2e
 on:
   pull_request:
     paths:
+      - '.github/workflows/android-e2e-test.yml'
+      - 'package.json'
+      - 'android/**'
+      - 'common/**'
       - 'Example/**'
   push:
     branches:
