@@ -2,6 +2,10 @@ name: Test Android e2e
 on:
   pull_request:
     paths:
+      - '.github/workflows/android-e2e-test.yml'
+      - 'package.json'
+      - 'android/**'
+      - 'common/**'
       - 'Example/**'
   push:
     branches:
@@ -9,7 +13,7 @@ on:
   workflow_dispatch:
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: macos-12
     timeout-minutes: 40
     env:
       WORKING_DIRECTORY: Example

@@ -4,19 +4,20 @@ on:
     branches:
       - main
     paths:
+      - '.github/workflows/ios-build-test-fabric.yml'
+      - 'RNScreens.podspec'
+      - 'package.json'
       - 'ios/**'
       - 'common/**'
       - 'src/fabric/**'
       - 'FabricExample/**'
-      - 'package.json'
-      - 'RNScreens.podspec'
   push:
     branches:
       - main
   workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       WORKING_DIRECTORY: FabricExample
     concurrency:
