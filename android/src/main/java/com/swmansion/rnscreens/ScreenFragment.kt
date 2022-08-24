@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,6 +75,7 @@ open class ScreenFragment : Fragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("ScreenFragment", "onCreateView")
         val wrapper = context?.let { ScreensFrameLayout(it) }
 
         val params = FrameLayout.LayoutParams(
@@ -102,6 +104,7 @@ open class ScreenFragment : Fragment {
     }
 
     open fun onContainerUpdate() {
+        Log.d("ScreenFragment", "onContainerUpdate")
         updateWindowTraits()
     }
 
@@ -256,10 +259,12 @@ open class ScreenFragment : Fragment {
     }
 
     fun registerChildScreenContainer(screenContainer: ScreenContainer<*>) {
+        Log.d("ScreenFragment", "registerChildScreenContainer")
         mChildScreenContainers.add(screenContainer)
     }
 
     fun unregisterChildScreenContainer(screenContainer: ScreenContainer<*>) {
+        Log.d("ScreenFragment", "unregisterChildScreenContainer")
         mChildScreenContainers.remove(screenContainer)
     }
 

@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
@@ -14,19 +15,23 @@ class ScreenContainerViewManager : ViewGroupManager<ScreenContainer<*>>() {
     }
 
     override fun createViewInstance(reactContext: ThemedReactContext): ScreenContainer<ScreenFragment> {
+        Log.d("ScreenContViewManager", "createViewInstance")
         return ScreenContainer(reactContext)
     }
 
     override fun addView(parent: ScreenContainer<*>, child: View, index: Int) {
+        Log.d("ScreenContViewManager", "createViewInstance")
         require(child is Screen) { "Attempt attach child that is not of type RNScreens" }
         parent.addScreen(child, index)
     }
 
     override fun removeViewAt(parent: ScreenContainer<*>, index: Int) {
+        Log.d("ScreenContViewManager", "createViewInstance")
         parent.removeScreenAt(index)
     }
 
     override fun removeAllViews(parent: ScreenContainer<*>) {
+        Log.d("ScreenContViewManager", "createViewInstance")
         parent.removeAllScreens()
     }
 
