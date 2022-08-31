@@ -7,6 +7,7 @@ on:
       - 'android/**'
       - 'common/**'
       - 'Example/**'
+      - 'TestsExample/**'
   push:
     branches:
       - main

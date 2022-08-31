@@ -152,6 +152,11 @@ android {
                         "-DANDROID_STL=c++_shared"
                 }
             }
+            if (!enableSeparateBuildPerCPUArchitecture) {
+                ndk {
+                    abiFilters (*reactNativeArchitectures())
+                }
+            }
         }
     }
 
