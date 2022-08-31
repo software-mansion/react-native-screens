@@ -5,6 +5,9 @@ on:
       - main
     paths:
       - 'android/**'
+      - 'package.json'
+      - 'TestsExample/**'
+      - '.github/workflows/android-build-test.yml'
   push:
     branches:
       - main

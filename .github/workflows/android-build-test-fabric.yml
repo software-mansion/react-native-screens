@@ -9,6 +9,7 @@ on:
       - 'src/fabric/**'
       - 'FabricTestExample/**'
       - 'package.json'
+      - '.github/workflows/android-build-test-fabric.yml'
   push:
     branches:
       - main
