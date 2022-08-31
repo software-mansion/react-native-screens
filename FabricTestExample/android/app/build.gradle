@@ -152,11 +152,19 @@ android {
                         "-DANDROID_STL=c++_shared"
                 }
             }
+            if (!enableSeparateBuildPerCPUArchitecture) {
+                ndk {
+                    abiFilters (*reactNativeArchitectures())
+                }
+            }
         }
     }
 
     if (isNewArchitectureEnabled()) {
         // We configure the NDK build only if you decide to opt-in for the New Architecture.
+        println "REACT NATIVE ARCHITECTURES"
+        println reactNativeArchitectures()
+
         externalNativeBuild {
             cmake {
                 path "$projectDir/src/main/jni/CMakeLists.txt"
