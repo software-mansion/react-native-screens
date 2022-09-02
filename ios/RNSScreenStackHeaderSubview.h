@@ -20,13 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) UIView *reactSuperview;
 
-#ifdef RN_FABRIC_ENABLED
-#else
 @property (nonatomic, weak) RCTBridge *bridge;
 
+#ifdef RN_FABRIC_ENABLED
+#else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
-
-#endif
+#endif // RN_FABRIC_ENABLED
 
 @end
 
