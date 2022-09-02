@@ -31,10 +31,6 @@
 - (id<RCTImageCache>)imageCache;
 @end
 
-@interface RCTBridge (Private)
-+ (RCTBridge *)currentBridge;
-@end
-
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RN_FABRIC_ENABLED

@@ -10,6 +10,10 @@
 #import <React/RCTFabricComponentsPlugins.h>
 #endif
 
+@interface RCTBridge (Private)
++ (RCTBridge *)currentBridge;
+@end
+
 @implementation RNSScreenStackHeaderSubview
 
 #pragma mark - Common
@@ -94,6 +98,16 @@
 }
 
 #endif // RN_FABRIC_ENABLED
+
+- (RCTBridge *)bridge
+{
+#ifdef RN_FABRIC_ENABLED
+  return [RCTBridge currentBridge];
+#else
+  return _bridge;
+#endif // RN_FABRIC_ENABLED
+}
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager
