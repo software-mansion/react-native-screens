@@ -244,9 +244,6 @@
 
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
-#ifdef RN_FABRIC_ENABLED
-  @throw([NSException exceptionWithName:@"UNIMPLEMENTED" reason:@"Implement" userInfo:nil]);
-#else
   BOOL hasBackButtonImage = NO;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
@@ -313,7 +310,6 @@
       }
     }
   }
-#endif // RN_FABRIC_ENABLED
   return nil;
 }
 
