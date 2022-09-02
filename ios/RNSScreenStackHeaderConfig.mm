@@ -8,21 +8,19 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #else
 #import <React/RCTBridge.h>
-#import <React/RCTImageLoader.h>
-#import <React/RCTImageSource.h>
-#import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 #endif
 #import <React/RCTFont.h>
+#import <React/RCTImageLoader.h>
+#import <React/RCTImageSource.h>
+#import <React/RCTImageView.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
-#ifdef RN_FABRIC_ENABLED
-#else
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
@@ -32,7 +30,10 @@
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
 @end
-#endif
+
+@interface RCTBridge (Private)
++ (RCTBridge *)currentBridge;
+@end
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
