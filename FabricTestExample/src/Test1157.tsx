@@ -1,7 +1,11 @@
+/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import {Button, View, TouchableOpacity} from 'react-native';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
 
 function First({
   navigation,
@@ -25,7 +29,10 @@ function Second({
 }) {
   return (
     <View style={{flex: 1, backgroundColor: 'yellow'}}>
-      <Button title="Tap me for first screen" onPress={() => navigation.goBack()} />
+      <Button
+        title="Tap me for first screen"
+        onPress={() => navigation.goBack()}
+      />
     </View>
   );
 }
@@ -33,8 +40,17 @@ function Second({
 const Stack = createNativeStackNavigator();
 
 const ButtonWithBiggerChild = () => (
-  <TouchableOpacity style={{width: 30, height: 30, backgroundColor: 'red'}} onPress={() => console.log("hello")}>
-      <View style={{width: 30, height: 30, backgroundColor: 'yellow', marginLeft: -15}}/>
+  <TouchableOpacity
+    style={{width: 30, height: 30, backgroundColor: 'red'}}
+    onPress={() => console.log('hello')}>
+    <View
+      style={{
+        width: 30,
+        height: 30,
+        backgroundColor: 'yellow',
+        marginLeft: -15,
+      }}
+    />
   </TouchableOpacity>
 );
 
@@ -42,11 +58,23 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{stackPresentation: 'modal'}}>
-        <Stack.Screen name="First" component={First} 
-          options={{headerShown: true,
+        <Stack.Screen
+          name="First"
+          component={First}
+          options={{
+            headerShown: true,
             // headerLeft: () => <TouchableOpacity onPress={() => console.log("hello")} style={{width: 30, height: 30, backgroundColor: 'red', marginLeft: -15}}/>,
             headerLeft: () => <ButtonWithBiggerChild />,
-            headerRight: () => <TouchableOpacity onPress={() => console.log("there")} style={{width: 30, height: 30, backgroundColor: 'red', marginRight: -15}}/>,
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => console.log('there')}
+                style={{
+                  width: 30,
+                  height: 30,
+                  backgroundColor: 'red',
+                  marginRight: -15,
+                }}
+              />
             }}
         />
         <Stack.Screen
