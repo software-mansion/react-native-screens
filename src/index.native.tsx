@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
 import {
   Animated,
   Image,
   ImageProps,
   Platform,
   requireNativeComponent,
+  StyleProp,
   StyleSheet,
   UIManager,
   View,
   ViewProps,
+  ViewStyle,
 } from 'react-native';
 import { Freeze } from 'react-freeze';
 import { version } from 'react-native/package.json';
@@ -84,7 +86,9 @@ let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
 >>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 let NativeSearchBar: React.ComponentType<SearchBarProps>;
-let NativeFullWindowOverlay: React.ComponentType<View>;
+let NativeFullWindowOverlay: React.ComponentType<PropsWithChildren<{
+  style: StyleProp<ViewStyle>;
+}>>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -337,6 +341,19 @@ function ScreenContainer(props: ScreenContainerProps) {
   return <View {...rest} />;
 }
 
+function FullWindowOverlay(props: { children: ReactNode }) {
+  if (Platform.OS !== 'ios') {
+    console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
+    return <View {...props} />;
+  }
+  return (
+    <ScreensNativeModules.NativeFullWindowOverlay
+      style={{ position: 'absolute', width: '100%', height: '100%' }}>
+      {props.children}
+    </ScreensNativeModules.NativeFullWindowOverlay>
+  );
+}
+
 const styles = StyleSheet.create({
   headerSubview: {
     position: 'absolute',
@@ -431,6 +448,7 @@ module.exports = {
   ScreenContext,
   ScreenStack,
   InnerScreen,
+  FullWindowOverlay,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
@@ -459,14 +477,6 @@ module.exports = {
     }
 
     return ScreensNativeModules.NativeSearchBar;
-  },
-  get FullWindowOverlay() {
-    if (Platform.OS !== 'ios') {
-      console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
-      return View;
-    }
-
-    return ScreensNativeModules.NativeFullWindowOverlay;
   },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them
