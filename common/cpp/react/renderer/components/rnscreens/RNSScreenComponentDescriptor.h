@@ -7,14 +7,6 @@
 namespace facebook {
 namespace react {
     
-using RNSFullWindowOverlayComponentDescriptor = ConcreteComponentDescriptor<RNSFullWindowOverlayShadowNode>;
-using RNSScreenContainerComponentDescriptor = ConcreteComponentDescriptor<RNSScreenContainerShadowNode>;
-using RNSScreenNavigationContainerComponentDescriptor = ConcreteComponentDescriptor<RNSScreenNavigationContainerShadowNode>;
-using RNSScreenStackHeaderConfigComponentDescriptor = ConcreteComponentDescriptor<RNSScreenStackHeaderConfigShadowNode>;
-using RNSScreenStackHeaderSubviewComponentDescriptor = ConcreteComponentDescriptor<RNSScreenStackHeaderSubviewShadowNode>;
-using RNSScreenStackComponentDescriptor = ConcreteComponentDescriptor<RNSScreenStackShadowNode>;
-using RNSSearchBarComponentDescriptor = ConcreteComponentDescriptor<RNSSearchBarShadowNode>;
-
 class RNSScreenComponentDescriptor final
     : public ConcreteComponentDescriptor<RNSScreenShadowNode> {
  public:
