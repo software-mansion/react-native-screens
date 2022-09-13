@@ -5,26 +5,25 @@ set(RNS_GENERATED_DIR "/Users/kacperkafara/workspace/swm/kkafar@screens/android/
 set(RNS_GENERATED_JNI_DIR ${RNS_GENERATED_DIR}/source/codegen/jni)
 set(RNS_GENERATED_REACT_DIR ${RNS_GENERATED_JNI_DIR}/react/renderer/components/rnscreens)
 
-
 message(DEBUG "VARIABLES SET")
 message(DEBUG "RNS_GENERATED_DIR ${RNS_GENERATED_DIR}")
 message(DEBUG "RNS_GENERATED_JNI_DIR ${RNS_GENERATED_JNI_DIR}")
 message(DEBUG "RNS_GENERATED_REACT_DIR ${RNS_GENERATED_REACT_DIR}")
 message(DEBUG "PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR}")
 
-
-# include(${RNS_GENERATED_JNI_DIR}/CMakeLists.txt)
-
 add_compile_options(
-        -fexceptions
-        -frtti
-        -std=c++17
-        -Wall
-        -Wpedantic
-        -Wno-gnu-zero-variadic-macro-arguments)
+  -fexceptions
+  -frtti
+  -std=c++17
+  -Wall
+  -Wpedantic
+  -Wno-gnu-zero-variadic-macro-arguments
+)
 
 file(GLOB rnscreens_SRCS CONFIGURE_DEPENDS *.cpp react/renderer/components/rnscreens/*.cpp)
 file(GLOB rnscreens_codegen_SRCS CONFIGURE_DEPENDS ${RNS_GENERATED_JNI_DIR}/*.cpp ${RNS_GENERATED_REACT_DIR}/*cpp)
+
+message(DEBUG "SOURCES ${rnscreens_SRCS} ${rnscreens_codegen_SRCS}")
 
 add_library(
   react_codegen_rnscreens
