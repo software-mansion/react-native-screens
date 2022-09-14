@@ -5,12 +5,6 @@ set(RNS_GENERATED_DIR "/Users/kacperkafara/workspace/swm/kkafar@screens/android/
 set(RNS_GENERATED_JNI_DIR ${RNS_GENERATED_DIR}/source/codegen/jni)
 set(RNS_GENERATED_REACT_DIR ${RNS_GENERATED_JNI_DIR}/react/renderer/components/rnscreens)
 
-message(WARNING "VARIABLES SET")
-message(WARNING "RNS_GENERATED_DIR ${RNS_GENERATED_DIR}")
-message(WARNING "RNS_GENERATED_JNI_DIR ${RNS_GENERATED_JNI_DIR}")
-message(WARNING "RNS_GENERATED_REACT_DIR ${RNS_GENERATED_REACT_DIR}")
-message(WARNING "PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR}")
-
 add_compile_options(
   -fexceptions
   -frtti
@@ -23,7 +17,6 @@ add_compile_options(
 file(GLOB rnscreens_SRCS CONFIGURE_DEPENDS *.cpp react/renderer/components/rnscreens/*.cpp)
 file(GLOB rnscreens_codegen_SRCS CONFIGURE_DEPENDS ${RNS_GENERATED_JNI_DIR}/*.cpp ${RNS_GENERATED_REACT_DIR}/*cpp)
 
-message(WARNING "SOURCES ${rnscreens_SRCS} ${rnscreens_codegen_SRCS}")
 
 add_library(
   react_codegen_rnscreens
