@@ -32,6 +32,7 @@ class RNSScreenState final {
   const Size frameSize{};
 
 #ifdef ANDROID
+   __attribute__((visibility("default")))
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
