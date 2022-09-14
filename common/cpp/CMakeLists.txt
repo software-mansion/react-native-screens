@@ -62,7 +62,7 @@ target_compile_options(
 )
 
 target_include_directories(
-  ${CMAKE_PROJECT_NAME}
-  PUBLIC
-  "/Users/kacperkafara/workspace/swm/kkafar@screens/common/cpp"
+ ${CMAKE_PROJECT_NAME}
+ PUBLIC
+ "/Users/kacperkafara/workspace/swm/kkafar@screens/common/cpp"
 )
