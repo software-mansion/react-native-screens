@@ -173,6 +173,14 @@ export interface ScreenProps extends ViewProps {
    */
   onHeaderBackButtonClicked?: () => void;
   /**
+   * An internal callback called when screen is dismissed by gesture or by native header back button and `preventNativeDismiss` is set to `true`.
+   *
+   * @platform ios
+   */
+  onNativeDismissCancelled?: (
+    e: NativeSyntheticEvent<{ dismissCount: number }>
+  ) => void;
+  /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
   onTransitionProgress?: (

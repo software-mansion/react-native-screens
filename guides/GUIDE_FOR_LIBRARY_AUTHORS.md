@@ -106,6 +106,10 @@ A callback that gets called when the current screen is dismissed by hardware bac
 
 A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`.
 
+### `onNativeDismissCancelled` (iOS only)
+
+An internal callback called when screen is dismissed by gesture or by native header back button and `preventNativeDismiss` is set to `true`.
+
 ### `onWillAppear`
 
 A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
