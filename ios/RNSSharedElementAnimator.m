@@ -3,6 +3,25 @@
 
 #import <React/RCTUIManager.h>
 
+@implementation SharedElementConfig
+
+- (instancetype)initWithFromView:(UIView *)fromView
+                          toView:(UIView *)toView
+                   fromContainer:(UIView *)fromContainer
+                   fromViewFrame:(CGRect)fromViewFrame
+{
+  if (self = [super init]) {
+    _fromView = fromView;
+    _toView = toView;
+    _fromContainer = fromContainer;
+    _fromViewFrame = fromViewFrame;
+  }
+
+  return self;
+}
+
+@end
+
 @implementation RNSSharedElementAnimator
 
 static NSObject<RNSSharedElementTransitionsDelegate> *_delegate;
@@ -17,48 +36,71 @@ static NSObject<RNSSharedElementTransitionsDelegate> *_delegate;
   return _delegate;
 }
 
-+ (NSMutableArray<NSArray *> *)prepareSharedElementsArrayForVC:(UIViewController *)vc
++ (NSMutableArray<SharedElementConfig *> *)
+    getSharedElementsForCurrentTransition:(UIViewController *)currentViewController
+                     targetViewController:(UIViewController *)targetViewController
 {
-  NSMutableArray<NSArray *> *sharedElementsArray = [NSMutableArray new];
+  NSMutableArray<SharedElementConfig *> *sharedElementsArray = [NSMutableArray new];
+  RNSScreenView *screenView = (RNSScreenView *)currentViewController.view;
 
-  NSArray<__kindof UIViewController *> *viewControllers = vc.navigationController.viewControllers;
-  RNSScreenView *screenView = (RNSScreenView *)vc.view;
-
-  for (NSDictionary *sharedElementDict in screenView.sharedElements) {
-    UIView *fromView = [[screenView bridge].uiManager viewForNativeID:sharedElementDict[@"fromID"]
-                                                          withRootTag:[screenView rootTag]];
-    UIView *toView = [[screenView bridge].uiManager viewForNativeID:sharedElementDict[@"toID"]
-                                                        withRootTag:[screenView rootTag]];
-
-    if (fromView == nil || toView == nil) {
-      break;
+  RCTUIManager *uiManager = [screenView bridge].uiManager;
+  NSNumber *rootTag = screenView.rootTag;
+  for (NSString *key in [_delegate.sharedElementsIterationOrder reverseObjectEnumerator]) {
+    NSArray<SharedViewConfig *> *sharedViewConfigs = _delegate.sharedTransitionsItems[key];
+    UIView *fromView, *toView;
+    for (SharedViewConfig *sharedViewConfig in sharedViewConfigs) {
+      UIView *view = [uiManager viewForReactTag:sharedViewConfig.viewTag];
+      if (view == nil) {
+        view = [sharedViewConfig getView];
+      } else {
+        [sharedViewConfig setView:view];
+      }
+      UIViewController *viewViewController = view.reactViewController;
+      if (viewViewController == currentViewController) {
+        fromView = view;
+      }
+      if (viewViewController == targetViewController) {
+        toView = view;
+      }
     }
 
-    UIView *start;
-    UIView *end;
-    if ([viewControllers containsObject:vc]) {
-      // we are in previous vc and going forward
-      start = fromView;
-      end = toView;
-    } else {
-      // we are in next vc and going back
-      start = toView;
-      end = fromView;
+    BOOL isAnyNull = fromView == nil || toView == nil;
+    BOOL hasCorrectRootTag = [fromView rootTag] == rootTag && [toView rootTag] == rootTag;
+    if (isAnyNull || !hasCorrectRootTag) {
+      continue;
     }
 
-    // we reparent starting view and animate it, then reparent it back after the transition
-    UIView *endContainer = end.reactSuperview;
-    int endIndex = (int)[[endContainer reactSubviews] indexOfObject:end];
-    CGRect endFrame = end.frame;
-    [end removeFromSuperview];
-
-    start.hidden = YES;
-    if (start != nil && end != nil) {
-      [sharedElementsArray addObject:@[ start, end, endContainer, @(endIndex), @(endFrame) ]];
+    if (fromView != nil && toView != nil) {
+      SharedElementConfig *sharedElementConfig = [[SharedElementConfig alloc] initWithFromView:fromView
+                                                                                        toView:toView
+                                                                                 fromContainer:fromView.reactSuperview
+                                                                                 fromViewFrame:fromView.frame];
+      [sharedElementsArray addObject:sharedElementConfig];
     }
   }
 
+  // we reparent starting view and animate it, then reparent it back after the transition
+  for (SharedElementConfig *sharedElementConfig in [sharedElementsArray reverseObjectEnumerator]) {
+    UIView *start = sharedElementConfig.fromView;
+    UIView *end = sharedElementConfig.toView;
+    [_delegate makeSnapshot:start withViewController:sharedElementConfig.fromContainer];
+    [_delegate makeSnapshot:end withViewController:end.superview];
+
+    UIView *startContainer = start.reactSuperview;
+    int startIndex = (int)[[startContainer reactSubviews] indexOfObject:start];
+    [start removeFromSuperview];
+    end.hidden = YES;
+    sharedElementConfig.fromViewIndex = startIndex;
+  }
+
+  [_delegate afterPreparingCallback];
+
   return sharedElementsArray;
+}
+
++ (void)notifyAboutViewDidDisappear:(UIView *)screeen
+{
+  [_delegate notifyAboutViewDidDisappear:screeen];
 }
 
 @end
