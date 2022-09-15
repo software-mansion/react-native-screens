@@ -30,7 +30,7 @@ target_include_directories(
   react_codegen_rnscreens 
   PUBLIC 
   . 
-  ${RNS_COMMON_DIR}/react/renderer/components/rnscreens
+  ${RNS_COMMON_DIR}
   ${RNS_GENERATED_JNI_DIR}
   ${RNS_GENERATED_REACT_DIR}
 )
