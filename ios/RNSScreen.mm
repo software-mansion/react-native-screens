@@ -12,7 +12,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenComponentDescriptor.h>
-#import "RCTFabricComponentsPlugins.h"
+#import <React/RCTFabricComponentsPlugins.h>
 #import "RNSConvert.h"
 #import "RNSScreenViewEvent.h"
 #else

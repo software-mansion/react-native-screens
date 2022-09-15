@@ -96,6 +96,11 @@ export interface ScreenProps extends ViewProps {
    */
   isNativeStack?: boolean;
   /**
+   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
+   * When `enableFreeze()` is run at the top of the application defaults to `true`.
+   */
+  freezeOnBlur?: boolean;
+  /**
    * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
    * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
    * Defaults to `false`.
@@ -168,6 +173,14 @@ export interface ScreenProps extends ViewProps {
    */
   onHeaderBackButtonClicked?: () => void;
   /**
+   * An internal callback called when screen is dismissed by gesture or by native header back button and `preventNativeDismiss` is set to `true`.
+   *
+   * @platform ios
+   */
+  onNativeDismissCancelled?: (
+    e: NativeSyntheticEvent<{ dismissCount: number }>
+  ) => void;
+  /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
   onTransitionProgress?: (
@@ -181,6 +194,13 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
   onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * Boolean indicating whether to prevent current screen from being dismissed.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  preventNativeDismiss?: boolean;
   ref?: React.Ref<View>;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
@@ -269,11 +289,6 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   transitionDuration?: number;
-  /**
-   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
-   * When `enableFreeze()` is run at the top of the application defaults to `true`.
-   */
-  freezeOnBlur?: boolean;
 }
 
 export interface ScreenContainerProps extends ViewProps {

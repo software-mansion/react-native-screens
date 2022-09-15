@@ -5,7 +5,7 @@
 #import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#import "RCTFabricComponentsPlugins.h"
+#import <React/RCTFabricComponentsPlugins.h>
 #endif
 
 @implementation RNScreensViewController
