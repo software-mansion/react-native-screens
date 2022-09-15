@@ -3,7 +3,7 @@
 #include <ReactCommon/JavaTurboModule.h>
 #include <ReactCommon/TurboModule.h>
 #include <jsi/jsi.h>
-#include "react/renderer/components/rnscreens/RNSScreenComponentDescriptor.h"
+#include <react/renderer/components/rnscreens/RNSScreenComponentDescriptor.h>
 
 namespace facebook {
 namespace react {

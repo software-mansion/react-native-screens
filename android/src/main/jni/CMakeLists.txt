@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 set(CMAKE_VERBOSE_MAKEFILE on)
 
-set(RNS_ANDROID_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../android)
+set(RNS_ANDROID_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
+set(RNS_COMMON_DIR ${RNS_ANDROID_DIR}/../common/cpp)
 set(RNS_GENERATED_DIR ${RNS_ANDROID_DIR}/build/generated)
 set(RNS_GENERATED_JNI_DIR ${RNS_GENERATED_DIR}/source/codegen/jni)
 set(RNS_GENERATED_REACT_DIR ${RNS_GENERATED_JNI_DIR}/react/renderer/components/rnscreens)
@@ -15,7 +16,7 @@ add_compile_options(
   -Wno-gnu-zero-variadic-macro-arguments
 )
 
-file(GLOB rnscreens_SRCS CONFIGURE_DEPENDS *.cpp react/renderer/components/rnscreens/*.cpp)
+file(GLOB rnscreens_SRCS CONFIGURE_DEPENDS *.cpp ${RNS_COMMON_DIR}/react/renderer/components/rnscreens/*.cpp)
 file(GLOB rnscreens_codegen_SRCS CONFIGURE_DEPENDS ${RNS_GENERATED_REACT_DIR}/*cpp)
 
 add_library(
@@ -29,7 +30,7 @@ target_include_directories(
   react_codegen_rnscreens 
   PUBLIC 
   . 
-  react/renderer/components/rnscreens
+  ${RNS_COMMON_DIR}/react/renderer/components/rnscreens
   ${RNS_GENERATED_JNI_DIR}
   ${RNS_GENERATED_REACT_DIR}
 )

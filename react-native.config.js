@@ -12,7 +12,7 @@ module.exports = {
           "RNSSearchBarComponentDescriptor",
           'RNSScreenComponentDescriptor'
         ],
-        cmakeListsPath: "../common/cpp/CMakeLists.txt"
+        cmakeListsPath: "../android/src/main/jni/CMakeLists.txt"
       },
     },
   },
