@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 set(CMAKE_VERBOSE_MAKEFILE on)
 
-set(RNS_GENERATED_DIR "/Users/kacperkafara/workspace/swm/kkafar@screens/android/build/generated")
+set(RNS_ANDROID_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../android)
+set(RNS_GENERATED_DIR ${RNS_ANDROID_DIR}/build/generated)
 set(RNS_GENERATED_JNI_DIR ${RNS_GENERATED_DIR}/source/codegen/jni)
 set(RNS_GENERATED_REACT_DIR ${RNS_GENERATED_JNI_DIR}/react/renderer/components/rnscreens)
 
@@ -64,5 +65,5 @@ target_compile_options(
 target_include_directories(
  ${CMAKE_PROJECT_NAME}
  PUBLIC
- "/Users/kacperkafara/workspace/swm/kkafar@screens/common/cpp"
+ ${CMAKE_CURRENT_SOURCE_DIR}
 )
