@@ -39,7 +39,7 @@ Pod::Spec.new do |s|
     s.dependency "ReactCommon/turbomodule/core"
   
     s.subspec "common" do |ss|
-      ss.source_files         = "common/cpp/**/*.{cpp,h}"
+      ss.source_files         = "common/cpp/react/**/*.{cpp,h}"
       ss.header_dir           = "rnscreens"
       ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
     end
