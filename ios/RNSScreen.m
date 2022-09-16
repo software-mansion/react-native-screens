@@ -706,6 +706,7 @@
   _shouldNotify = YES;
 
   [self traverseForScrollView:self.view];
+  [RNSSharedElementAnimator notifyAboutViewDidDisappear:self.view];
 }
 
 - (void)traverseForScrollView:(UIView *)view
@@ -747,24 +748,26 @@
 {
   if (self.transitionCoordinator != nil) {
     _fakeView.alpha = 0.0;
-    NSMutableArray<NSArray *> *sharedElements = nil;
+    NSMutableArray<SharedElementConfig *> *sharedElements;
     if (_closing) {
-      sharedElements = [RNSSharedElementAnimator prepareSharedElementsArrayForVC:self];
+      UIViewController *targetViewController = [self.transitionCoordinator 
+        viewControllerForKey:UITransitionContextToViewControllerKey];
+      sharedElements = [RNSSharedElementAnimator getSharedElementsForCurrentTransition:self 
+                                                                  targetViewController:targetViewController];
+      [RNSScreen asignEndingValuesWithTransitionContext:self.transitionCoordinator
+                                         sharedElements:sharedElements
+                                           goingForward:_goingForward];
     }
 
     [self.transitionCoordinator
         animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
           [[context containerView] addSubview:self->_fakeView];
           self->_fakeView.alpha = 1.0;
-          if (self->_closing) {
-            for (NSArray *sharedElement in sharedElements) {
-              UIView *endingView = sharedElement[1];
-              // we add all views immediately, otherwise it won't work correctly
-              [[context containerView] addSubview:endingView];
+          if (self->_closing && sharedElements != nil) {
+            // right order is important, first parent then children, to keep right z-index order
+            for (SharedElementConfig *sharedElement in sharedElements) {
+              [[context containerView] addSubview:sharedElement.fromView];
             }
-            [RNSScreen asignEndingValuesWithTransitionContext:context
-                                               sharedElements:sharedElements
-                                                 goingForward:self->_goingForward];
           }
 
           self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
@@ -792,63 +795,53 @@
   [((RNSScreenView *)self.view) notifyTransitionProgress:progress closing:closing goingForward:goingForward];
 }
 
-+ (void)asignEndingValuesWithTransitionContext:(id<UIViewControllerTransitionCoordinatorContext> _Nonnull)context
-                                sharedElements:(NSMutableArray<NSArray *> *)sharedElements
++ (void)asignEndingValuesWithTransitionContext:(id<UIViewControllerTransitionCoordinator> _Nonnull)context
+                                sharedElements:(NSMutableArray<SharedElementConfig *> *)sharedElements
                                   goingForward:(BOOL)goingForward
 {
   UIViewController *toViewController = [context viewControllerForKey:UITransitionContextToViewControllerKey];
   [toViewController.view setNeedsLayout];
   [toViewController.view layoutIfNeeded];
-  UIViewController *fromViewController = [context viewControllerForKey:UITransitionContextFromViewControllerKey];
 
-  NSObject<RNSSharedElementTransitionsDelegate> *reaDelegate = [RNSSharedElementAnimator getDelegate];
-  // we find the lowest VCs since they are the ones from which the center should be converted
-  // to transition's container
-  UIViewController *lowestFromVC = fromViewController;
-  while ([[lowestFromVC childViewControllers] count] > 0) {
-    lowestFromVC = lowestFromVC.childViewControllers[lowestFromVC.childViewControllers.count - 1];
-  }
-  UIViewController *lowestToVC = toViewController;
-  while ([[lowestToVC childViewControllers] count] > 0) {
-    lowestToVC = lowestToVC.childViewControllers[lowestToVC.childViewControllers.count - 1];
-  }
-  for (NSArray *sharedElement in sharedElements) {
-    UIView *startingView = sharedElement[0];
-    UIView *endingViewParent = sharedElement[2];
-    UIView *endingView = sharedElement[1];
-
-    [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+  NSObject<RNSSharedElementTransitionsDelegate> *reanimatedDelegate = [RNSSharedElementAnimator getDelegate];
+  for (SharedElementConfig *sharedElement in sharedElements) {
+    UIView *startingView = sharedElement.fromView;
+    UIView *startingViewParent = sharedElement.fromContainer;
+    UIView *endingView = sharedElement.toView;
+  
+    [reanimatedDelegate reanimatedMockTransitionWithConverterView:[context containerView]
                                                   fromView:startingView
-                                         fromViewConverter:startingView.superview
+                                         fromViewConverter:startingViewParent
                                                     toView:endingView
-                                           toViewConverter:endingViewParent
+                                           toViewConverter:endingView.superview
                                             transitionType:@"sharedElementTransition"];
   }
-  [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
-                                                fromView:fromViewController.view
-                                       fromViewConverter:fromViewController.view
-                                                  toView:nil
-                                         toViewConverter:nil
-                                          transitionType:goingForward ? @"hiding" : @"exiting"];
-  [reaDelegate reanimatedMockTransitionWithConverterView:[context containerView]
-                                                fromView:toViewController.view
-                                       fromViewConverter:toViewController.view
-                                                  toView:nil
-                                         toViewConverter:nil
-                                          transitionType:goingForward ? @"entering" : @"reappearing"];
+// TODO: screen transition animation
+//  [reanimatedDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+//                                                fromView:fromViewController.view
+//                                       fromViewConverter:fromViewController.view
+//                                                  toView:nil
+//                                         toViewConverter:nil
+//                                          transitionType:goingForward ? @"hiding" : @"exiting"];
+//  [reanimatedDelegate reanimatedMockTransitionWithConverterView:[context containerView]
+//                                                fromView:toViewController.view
+//                                       fromViewConverter:toViewController.view
+//                                                  toView:nil
+//                                         toViewConverter:nil
+//                                          transitionType:goingForward ? @"entering" : @"reappearing"];
 }
 
-- (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<NSArray *> *)sharedElements
+- (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<SharedElementConfig *> *)sharedElements
 {
-  for (NSArray *sharedElement in sharedElements) {
-    UIView *endingView = sharedElement[1];
-    [endingView removeFromSuperview];
-    UIView *endingContainer = sharedElement[2];
-    int index = [sharedElement[3] intValue];
-    [endingContainer insertSubview:endingView atIndex:index];
-    endingView.frame = [sharedElement[4] CGRectValue];
-    UIView *startingView = sharedElement[0];
-    startingView.hidden = NO;
+  for (SharedElementConfig *sharedElement in sharedElements) {
+      UIView *startingView = sharedElement.fromView;
+      [startingView removeFromSuperview];
+      UIView *startContainer = sharedElement.fromContainer;
+      int index = sharedElement.fromViewIndex;
+      [startContainer insertSubview:startingView atIndex:index];
+      startingView.frame = sharedElement.fromViewFrame;
+      UIView *endingView = sharedElement.toView;
+      endingView.hidden = NO;
   }
 
   [self->_animationTimer setPaused:YES];
