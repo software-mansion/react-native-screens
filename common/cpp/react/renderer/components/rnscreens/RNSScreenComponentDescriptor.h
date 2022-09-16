@@ -6,7 +6,7 @@
 
 namespace facebook {
 namespace react {
-    
+
 class RNSScreenComponentDescriptor final
     : public ConcreteComponentDescriptor<RNSScreenShadowNode> {
  public:
