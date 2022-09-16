@@ -62,6 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) BOOL hideKeyboardOnSwipe;
 @property (nonatomic, copy) NSArray<NSDictionary *> *sharedElements;
+@property (weak, nonatomic) RCTBridge *bridge;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic) BOOL preventNativeDismiss;
 @property (nonatomic, retain) RNSScreen *controller;
