@@ -13,7 +13,7 @@
 namespace facebook {
 namespace react {
 
-class RNSScreenState final {
+class JSI_EXPORT RNSScreenState final {
  public:
   using Shared = std::shared_ptr<const RNSScreenState>;
 
@@ -32,7 +32,6 @@ class RNSScreenState final {
   const Size frameSize{};
 
 #ifdef ANDROID
-   __attribute__((visibility("default")))
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const {
     return MapBufferBuilder::EMPTY();
