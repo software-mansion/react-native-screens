@@ -1,11 +1,11 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
+#import <React/RCTFabricComponentsPlugins.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
-#import <React/RCTFabricComponentsPlugins.h>
 #else
 #import <React/RCTBridge.h>
 #import <React/RCTImageLoader.h>
@@ -241,6 +241,24 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
++ (NSMutableDictionary *)backButtonTitleAttributesWithConfig:(RNSScreenStackHeaderConfig *)config
+{
+  NSMutableDictionary *attrs = [NSMutableDictionary new];
+  NSNumber *size = config.backTitleFontSize ?: @17;
+  if (config.backTitleFontFamily) {
+    attrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                          withFamily:config.backTitleFontFamily
+                                                size:size
+                                              weight:nil
+                                               style:nil
+                                             variant:nil
+                                     scaleMultiplier:1.0];
+  } else {
+    attrs[NSFontAttributeName] = [UIFont systemFontOfSize:[size floatValue]];
+  }
+  return attrs;
+}
+
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
 #ifdef RN_FABRIC_ENABLED
@@ -404,6 +422,10 @@
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
+  if (config.backTitleFontFamily || config.backTitleFontSize) {
+    appearance.backButtonAppearance.normal.titleTextAttributes = [self backButtonTitleAttributesWithConfig:config];
+  }
+
 #ifdef RN_FABRIC_ENABLED
   [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
 #else
@@ -460,34 +482,32 @@
   }
 
   navitem.title = config.title;
+
 #if !TARGET_OS_TV
-  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
-      config.disableBackButtonMenu) {
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
-                                                                                style:UIBarButtonItemStylePlain
-                                                                               target:nil
-                                                                               action:nil];
+  if (config.backTitle) {
+    prevItem.backButtonTitle = config.backTitle;
+  }
 
-    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
+  if (@available(iOS 14.0, *)) {
+    if (config.disableBackButtonMenu) {
+      RNSUIBarButtonItem *backBarButtonItem =
+          [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
+                                              style:UIBarButtonItemStylePlain
+                                             target:nil
+                                             action:nil];
 
-    prevItem.backBarButtonItem = backBarButtonItem;
-    if (config.backTitleFontFamily || config.backTitleFontSize) {
-      NSMutableDictionary *attrs = [NSMutableDictionary new];
-      NSNumber *size = config.backTitleFontSize ?: @17;
-      if (config.backTitleFontFamily) {
-        attrs[NSFontAttributeName] = [RCTFont updateFont:nil
-                                              withFamily:config.backTitleFontFamily
-                                                    size:size
-                                                  weight:nil
-                                                   style:nil
-                                                 variant:nil
-                                         scaleMultiplier:1.0];
-      } else {
-        attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
-      }
-      [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
+      [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+      prevItem.backBarButtonItem = backBarButtonItem;
+      // We do not need to set styles for the button here because styles will be configured in
+      // + (UINavigationBarAppearance *)buildAppearance:withConfig:
+    } else {
+      prevItem.backBarButtonItem = nil;
     }
-  } else {
+  } else
+#endif
+  {
     prevItem.backBarButtonItem = nil;
   }
 
@@ -529,6 +549,18 @@
     } else if (navctr.navigationBar.backIndicatorImage) {
       navctr.navigationBar.backIndicatorImage = nil;
       navctr.navigationBar.backIndicatorTransitionMaskImage = nil;
+    }
+
+    // Only set the back back button style if older than iOS 13. If running iOS 13 or later,
+    // the style is adjusted with + (UINavigationBarAppearance *)buildAppearance:withConfig:
+    if (config.backTitleFontFamily || config.backTitleFontSize) {
+      RNSUIBarButtonItem *backBarButtonItem =
+          [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
+                                              style:UIBarButtonItemStylePlain
+                                             target:nil
+                                             action:nil];
+      [self setTitleAttibutes:[self backButtonTitleAttributesWithConfig:config] forButton:backBarButtonItem];
+      prevItem.backBarButtonItem = backBarButtonItem;
     }
 #endif
   }
