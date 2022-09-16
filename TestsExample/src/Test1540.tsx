@@ -48,6 +48,10 @@ const App = () => {
         <Stack.Screen
           name="Screen With a Ridiculously Long Title and then some"
           component={HomeScreen}
+          options={{
+            headerShown: false,
+            headerTitle: 'Home',
+          }}
         />
         <Stack.Screen
           name="Second Screen"
