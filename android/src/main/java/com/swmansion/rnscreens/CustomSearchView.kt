@@ -22,7 +22,9 @@ class CustomSearchView(context: Context, fragment: Fragment) : SearchView(contex
                 isIconified = true
             }
         }
+
     private val backPressOverrider = FragmentBackPressOverrider(fragment, mOnBackPressedCallback)
+
     var overrideBackAction: Boolean
         set(value) {
             backPressOverrider.overrideBackAction = value

@@ -17,7 +17,6 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
-import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
@@ -27,13 +26,9 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         mDelegate = RNSScreenManagerDelegate<Screen, ScreenViewManager>(this)
     }
 
-    override fun getName(): String {
-        return REACT_CLASS
-    }
+    override fun getName() = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext): Screen {
-        return Screen(reactContext)
-    }
+    override fun createViewInstance(reactContext: ThemedReactContext) = Screen(reactContext)
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())
@@ -180,9 +175,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         )
     }
 
-    protected override fun getDelegate(): ViewManagerDelegate<Screen> {
-        return mDelegate
-    }
+    protected override fun getDelegate(): ViewManagerDelegate<Screen> = mDelegate
 
     companion object {
         const val REACT_CLASS = "RNSScreen"

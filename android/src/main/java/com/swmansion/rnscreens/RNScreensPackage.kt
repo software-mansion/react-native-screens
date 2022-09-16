@@ -15,7 +15,7 @@ class RNScreensPackage : ReactPackage {
             // This should no longer be needed if RN's autolink mechanism has Fabric support
             SoLoader.loadLibrary("rnscreens_modules")
         }
-        return emptyList<NativeModule>()
+        return emptyList()
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext) =
