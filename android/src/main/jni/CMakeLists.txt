@@ -17,7 +17,7 @@ add_compile_options(
 )
 
 file(GLOB rnscreens_SRCS CONFIGURE_DEPENDS *.cpp ${RNS_COMMON_DIR}/react/renderer/components/rnscreens/*.cpp)
-file(GLOB rnscreens_codegen_SRCS CONFIGURE_DEPENDS ${RNS_GENERATED_REACT_DIR}/*cpp)
+file(GLOB rnscreens_codegen_SRCS CONFIGURE_DEPENDS ${RNS_GENERATED_REACT_DIR}/*.cpp)
 
 add_library(
   react_codegen_rnscreens
