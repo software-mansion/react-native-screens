@@ -4,11 +4,10 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(LIB_LITERAL rnscreens)
 set(LIB_TARGET_NAME react_codegen_${LIB_LITERAL})
 
-set(RNS_ANDROID_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
-set(RNS_COMMON_DIR ${RNS_ANDROID_DIR}/../common/cpp)
-set(RNS_GENERATED_DIR ${RNS_ANDROID_DIR}/build/generated)
-set(RNS_GENERATED_JNI_DIR ${RNS_GENERATED_DIR}/source/codegen/jni)
-set(RNS_GENERATED_REACT_DIR ${RNS_GENERATED_JNI_DIR}/react/renderer/components/rnscreens)
+set(LIB_ANDROID_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
+set(LIB_COMMON_DIR ${LIB_ANDROID_DIR}/../common/cpp)
+set(LIB_ANDROID_GENERATED_JNI_DIR ${LIB_ANDROID_DIR}/build/generated/source/codegen/jni)
+set(LIB_ANDROID_GENERATED_COMPONENTS_DIR ${LIB_ANDROID_GENERATED_JNI_DIR}/react/renderer/components/${LIB_LITERAL})
 
 add_compile_options(
   -fexceptions
@@ -19,23 +18,23 @@ add_compile_options(
   -Wno-gnu-zero-variadic-macro-arguments
 )
 
-file(GLOB rnscreens_SRCS CONFIGURE_DEPENDS *.cpp ${RNS_COMMON_DIR}/react/renderer/components/rnscreens/*.cpp)
-file(GLOB rnscreens_codegen_SRCS CONFIGURE_DEPENDS ${RNS_GENERATED_REACT_DIR}/*.cpp)
+file(GLOB LIB_CUSTOM_SRCS CONFIGURE_DEPENDS *.cpp ${LIB_COMMON_DIR}/react/renderer/components/${LIB_LITERAL}/*.cpp)
+file(GLOB LIB_CODEGEN_SRCS CONFIGURE_DEPENDS ${LIB_ANDROID_GENERATED_COMPONENTS_DIR}/*.cpp)
 
 add_library(
   ${LIB_TARGET_NAME}
   SHARED 
-  ${rnscreens_SRCS}
-  ${rnscreens_codegen_SRCS}
+  ${LIB_CUSTOM_SRCS}
+  ${LIB_CODEGEN_SRCS}
 )
 
 target_include_directories(
   ${LIB_TARGET_NAME}
   PUBLIC 
   . 
-  ${RNS_COMMON_DIR}
-  ${RNS_GENERATED_JNI_DIR}
-  ${RNS_GENERATED_REACT_DIR}
+  ${LIB_COMMON_DIR}
+  ${LIB_ANDROID_GENERATED_JNI_DIR}
+  ${LIB_ANDROID_GENERATED_COMPONENTS_DIR}
 )
 
 target_link_libraries(
