@@ -48,7 +48,7 @@ def shouldUseCommonInterfaceFromReanimated() {
         def json = new JsonSlurper().parseText(inputFile.text)
         def reanimatedVersion = json.version as String
         def (major, minor, patch) = reanimatedVersion.tokenize('.')
-        return Integer.parseInt(major) == 2 && Integer.parseInt(minor) >= 3
+        return Integer.parseInt(major) >= 3 || (Integer.parseInt(major) >= 2 && Integer.parseInt(minor) >= 3)
     } else {
         return false
     }
@@ -126,15 +126,14 @@ android {
                     "build/generated/source/codegen/java"
                 ]
             }
+            // Include "common/" only when it's not provided by Reanimated to mitigate
+            // multiple definitions of the same class preventing build
+            if (!shouldUseCommonInterfaceFromReanimated()) {
+                srcDirs += [
+                    'common/src/main/java'
+                ]
+            }
 
-        }
-    }
-
-    sourceSets {
-        // Include "common/" only when it's not provided by Reanimated to mitigate
-        // multiple definitions of the same class preventing build
-        if (!shouldUseCommonInterfaceFromReanimated()) {
-            main.java.srcDirs += 'common/src/main/java'
         }
     }
 }
