@@ -6,11 +6,13 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.os.Build
-import android.view.View
 import android.view.ViewParent
-import android.view.WindowManager
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
@@ -21,6 +23,7 @@ object ScreenWindowTraits {
     // https://github.com/facebook/react-native/blob/master/ReactAndroid/src/main/java/com/facebook/react/modules/statusbar/StatusBarModule.java
     private var mDidSetOrientation = false
     private var mDidSetStatusBarAppearance = false
+    private var mDidSetNavigationBarAppearance = false
     private var mDefaultStatusBarColor: Int? = null
     internal fun applyDidSetOrientation() {
         mDidSetOrientation = true
@@ -28,6 +31,10 @@ object ScreenWindowTraits {
 
     internal fun applyDidSetStatusBarAppearance() {
         mDidSetStatusBarAppearance = true
+    }
+
+    internal fun applyDidSetNavigationBarAppearance() {
+        mDidSetNavigationBarAppearance = true
     }
 
     internal fun setOrientation(screen: Screen, activity: Activity?) {
@@ -41,7 +48,7 @@ object ScreenWindowTraits {
 
     @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     internal fun setColor(screen: Screen, activity: Activity?, context: ReactContext?) {
-        if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        if (activity == null || context == null) {
             return
         }
         if (mDefaultStatusBarColor == null) {
@@ -55,12 +62,12 @@ object ScreenWindowTraits {
         UiThreadUtil.runOnUiThread(
             object : GuardedRunnable(context) {
                 override fun runGuarded() {
-                    activity
-                        .window
-                        .addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-                    val curColor = activity.window.statusBarColor
+                    val window = activity.window
+                    val curColor: Int = window.statusBarColor
                     val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), curColor, color)
-                    colorAnimation.addUpdateListener { animator -> activity.window.statusBarColor = (animator.animatedValue as Int) }
+                    colorAnimation.addUpdateListener { animator ->
+                        window.statusBarColor = animator.animatedValue as Int
+                    }
                     if (animated) {
                         colorAnimation.setDuration(300).startDelay = 0
                     } else {
@@ -72,23 +79,18 @@ object ScreenWindowTraits {
     }
 
     internal fun setStyle(screen: Screen, activity: Activity?, context: ReactContext?) {
-        if (activity == null || context == null) {
+        if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return
         }
         val screenForStyle = findScreenForTrait(screen, WindowTraits.STYLE)
         val style = screenForStyle?.statusBarStyle ?: "light"
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            UiThreadUtil.runOnUiThread {
-                val decorView = activity.window.decorView
-                var systemUiVisibilityFlags = decorView.systemUiVisibility
-                systemUiVisibilityFlags = if ("dark" == style) {
-                    systemUiVisibilityFlags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                } else {
-                    systemUiVisibilityFlags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-                }
-                decorView.systemUiVisibility = systemUiVisibilityFlags
-            }
+        UiThreadUtil.runOnUiThread {
+            val decorView = activity.window.decorView
+            val window = activity.window
+            val controller = WindowInsetsControllerCompat(window, decorView)
+
+            controller.isAppearanceLightStatusBars = style == "dark"
         }
     }
 
@@ -110,8 +112,8 @@ object ScreenWindowTraits {
                     // and consume all the top insets so no padding will be added under the status bar.
                     val decorView = activity.window.decorView
                     if (translucent) {
-                        decorView.setOnApplyWindowInsetsListener { v, insets ->
-                            val defaultInsets = v.onApplyWindowInsets(insets)
+                        ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
+                            val defaultInsets = ViewCompat.onApplyWindowInsets(v, insets)
                             defaultInsets.replaceSystemWindowInsets(
                                 defaultInsets.systemWindowInsetLeft,
                                 0,
@@ -120,7 +122,7 @@ object ScreenWindowTraits {
                             )
                         }
                     } else {
-                        decorView.setOnApplyWindowInsetsListener(null)
+                        ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
                     }
                     ViewCompat.requestApplyInsets(decorView)
                 }
@@ -133,14 +135,59 @@ object ScreenWindowTraits {
         }
         val screenForHidden = findScreenForTrait(screen, WindowTraits.HIDDEN)
         val hidden = screenForHidden?.isStatusBarHidden ?: false
+        val window = activity.window
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+
         UiThreadUtil.runOnUiThread {
             if (hidden) {
-                activity.window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-                activity.window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
+                controller.hide(WindowInsetsCompat.Type.statusBars())
             } else {
-                activity.window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN)
-                activity.window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                controller.show(WindowInsetsCompat.Type.statusBars())
             }
+        }
+    }
+
+    // Methods concerning navigationBar management were taken from `react-native-navigation`'s repo:
+    // https://github.com/wix/react-native-navigation/blob/9bb70d81700692141a2c505c081c2d86c7f9c66e/lib/android/app/src/main/java/com/reactnativenavigation/utils/SystemUiUtils.kt
+    internal fun setNavigationBarColor(screen: Screen, activity: Activity?) {
+        if (activity == null) {
+            return
+        }
+
+        val window = activity.window
+
+        val screenForNavBarColor = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_COLOR)
+        val color = screenForNavBarColor?.navigationBarColor ?: window.navigationBarColor
+
+        UiThreadUtil.runOnUiThread {
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars =
+                isColorLight(color)
+        }
+        window.navigationBarColor = color
+    }
+
+    internal fun setNavigationBarHidden(screen: Screen, activity: Activity?) {
+        if (activity == null) {
+            return
+        }
+
+        val window = activity.window
+
+        val screenForNavBarHidden = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_HIDDEN)
+        val hidden = screenForNavBarHidden?.isNavigationBarHidden ?: false
+
+        WindowCompat.setDecorFitsSystemWindows(window, hidden)
+        if (hidden) {
+            WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+                controller.hide(WindowInsetsCompat.Type.navigationBars())
+                controller.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            WindowInsetsControllerCompat(
+                window,
+                window.decorView
+            ).show(WindowInsetsCompat.Type.navigationBars())
         }
     }
 
@@ -153,6 +200,10 @@ object ScreenWindowTraits {
             setStyle(screen, activity, context)
             setTranslucent(screen, activity, context)
             setHidden(screen, activity)
+        }
+        if (mDidSetNavigationBarAppearance) {
+            setNavigationBarColor(screen, activity)
+            setNavigationBarHidden(screen, activity)
         }
     }
 
@@ -211,6 +262,14 @@ object ScreenWindowTraits {
             WindowTraits.TRANSLUCENT -> screen.isStatusBarTranslucent != null
             WindowTraits.HIDDEN -> screen.isStatusBarHidden != null
             WindowTraits.ANIMATED -> screen.isStatusBarAnimated != null
+            WindowTraits.NAVIGATION_BAR_COLOR -> screen.navigationBarColor != null
+            WindowTraits.NAVIGATION_BAR_HIDDEN -> screen.isNavigationBarHidden != null
         }
+    }
+
+    private fun isColorLight(color: Int): Boolean {
+        val darkness: Double =
+            1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255
+        return darkness < 0.5
     }
 }

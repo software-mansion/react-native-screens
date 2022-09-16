@@ -47,6 +47,7 @@ export type BlurEffectTypes =
   | 'systemThickMaterialDark'
   | 'systemChromeMaterialDark';
 export type ScreenReplaceTypes = 'push' | 'pop';
+export type SwipeDirectionTypes = 'vertical' | 'horizontal';
 export type ScreenOrientationTypes =
   | 'default'
   | 'all'
@@ -69,6 +70,13 @@ export type TransitionProgressEventType = {
   goingForward: number;
 };
 
+export type GestureResponseDistanceType = {
+  start?: number;
+  end?: number;
+  top?: number;
+  bottom?: number;
+};
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
@@ -88,6 +96,11 @@ export interface ScreenProps extends ViewProps {
    */
   isNativeStack?: boolean;
   /**
+   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
+   * When `enableFreeze()` is run at the top of the application defaults to `true`.
+   */
+  freezeOnBlur?: boolean;
+  /**
    * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
    * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
    * Defaults to `false`.
@@ -102,11 +115,23 @@ export interface ScreenProps extends ViewProps {
    */
   gestureEnabled?: boolean;
   /**
+   * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+   *
+   * @platform ios
+   */
+  gestureResponseDistance?: GestureResponseDistanceType;
+  /**
    * Whether the home indicator should be hidden on this screen. Defaults to `false`.
    *
    * @platform ios
    */
   homeIndicatorHidden?: boolean;
+  /**
+   * Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  hideKeyboardOnSwipe?: boolean;
   /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
    * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
@@ -115,6 +140,18 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   nativeBackButtonDismissalEnabled?: boolean;
+  /**
+   * Sets the navigation bar color. Defaults to initial status bar color.
+   *
+   * @platform android
+   */
+  navigationBarColor?: string;
+  /**
+   * Sets the visibility of the navigation bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  navigationBarHidden?: boolean;
   /**
    * A callback that gets called when the current screen appears.
    */
@@ -136,6 +173,14 @@ export interface ScreenProps extends ViewProps {
    */
   onHeaderBackButtonClicked?: () => void;
   /**
+   * An internal callback called when screen is dismissed by gesture or by native header back button and `preventNativeDismiss` is set to `true`.
+   *
+   * @platform ios
+   */
+  onNativeDismissCancelled?: (
+    e: NativeSyntheticEvent<{ dismissCount: number }>
+  ) => void;
+  /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
   onTransitionProgress?: (
@@ -149,6 +194,13 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
    */
   onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * Boolean indicating whether to prevent current screen from being dismissed.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  preventNativeDismiss?: boolean;
   ref?: React.Ref<View>;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
@@ -221,6 +273,23 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   statusBarTranslucent?: boolean;
+  /**
+   * Sets the direction in which you should swipe to dismiss the screen.
+   * When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+   * The following values are supported:
+   * - `vertical` – dismiss screen vertically
+   * - `horizontal` – dismiss screen horizontally (default)
+   *
+   * @platform ios
+   */
+  swipeDirection?: SwipeDirectionTypes;
+  /**
+   * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+   * The duration of `default` and `flip` transitions isn't customizable.
+   *
+   * @platform ios
+   */
+  transitionDuration?: number;
 }
 
 export interface ScreenContainerProps extends ViewProps {
@@ -397,6 +466,12 @@ export interface SearchBarProps {
    */
   barTintColor?: string;
   /**
+   * The color for the cursor caret and cancel button text.
+   *
+   * @platform ios
+   */
+  tintColor?: string;
+  /**
    * The text to be used instead of default `Cancel` button text
    *
    * @platform ios
@@ -448,17 +523,17 @@ export interface SearchBarProps {
   onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 
   /**
-   * A callback that gets called when search bar has received focus
-   */
-  onClose?: () => void;
-  /**
-   * A callback that gets called when search bar is opened
+   * A callback that gets called when search bar is closed
    *
    * @platform android
    */
+  onClose?: () => void;
+  /**
+   * A callback that gets called when search bar has received focus
+   */
   onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when search bar is closed
+   * A callback that gets called when search bar is opened
    *
    * @platform android
    */

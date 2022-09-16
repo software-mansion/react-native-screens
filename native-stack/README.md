@@ -87,6 +87,19 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`.
 
+#### `gestureResponseDistance` (iOS only)
+
+Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage: 
+
+```tsx
+gestureResponseDistance: {
+  start: 200,
+  end: 250,
+  top: 100,
+  bottom: 150,
+}
+```
+
 #### `headerBackTitle`
 
 Title string used by the back button on iOS. Defaults to the previous scene's `headerTitle`.
@@ -182,6 +195,10 @@ A Boolean to that lets you opt out of insetting the header. You may want to * se
 
 Boolean indicating whether the navigation bar is translucent.
 
+####  `hideKeyboardOnSwipe` (iOS only)
+
+Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
+
 #### `homeIndicatorHidden` (iOS only)
 
 Whether the home indicator should be hidden on this screen. Defaults to `false`.
@@ -192,6 +209,14 @@ Boolean indicating whether, when the Android default back button is clicked, the
 Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
 
 Defaults to `false`.
+
+#### `navigationBarColor` (Android only)
+
+Sets the navigation bar color. Defaults to initial status bar color.
+
+#### `navigationBarHidden` (Android only)
+
+Sets the visibility of the navigation bar. Defaults to `false`.
 
 #### `replaceAnimation`
 
@@ -234,9 +259,29 @@ Defaults to `push`.
 
 Using `containedModal` and `containedTransparentModal` with other types of modals in one native stack navigator is not recommended and can result in a freeze or a crash of the application.
 
+#### `swipeDirection` (iOS only)
+
+Sets the direction in which you should swipe to dismiss the screen. The following values are supported:
+- `vertical` – dismiss screen vertically
+- `horizontal` – dismiss screen horizontally (default)
+
+When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+
 #### `title`
 
 A string that can be used as a fallback for `headerTitle`.
+
+#### `transitionDuration` (iOS only)
+
+Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+
+The duration of `default` and `flip` transitions isn't customizable.
+
+### freezeOnBlur
+
+Whether inactive screens should be suspended from re-rendering.
+
+Defaults to `false`. When `enableFreeze()` is run at the top of the application defaults to `true`.
 
 #### `useTransitionProgress`
 
@@ -357,11 +402,9 @@ Defaults to `auto`.
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
-### Search bar (iOS only)
+### Search bar
 
 The search bar is just a `searchBar` property that can be specified in the navigator's `screenOptions` or an individual screen's `options`. Search bars are rarely static so normally it is controlled by passing an object to `searchBar` navigation option in the component's body.
-
-Search bar is only supported on iOS.
 
 Example: 
 
@@ -400,6 +443,10 @@ When set to `true` focuses search bar automatically when screen is appearing. De
 The search field background color.
 
 By default bar tint color is translucent.
+
+#### `tintColor` (iOS only)
+
+The color for the cursor caret and cancel button text.
 
 #### `cancelButtonText` (iOS only)
 

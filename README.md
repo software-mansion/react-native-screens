@@ -2,6 +2,10 @@
 
 This project aims to expose native navigation container components to React Native. It is not designed to be used as a standalone library but rather as a dependency of a [full-featured navigation library](https://github.com/react-navigation/react-navigation).
 
+## Fabric
+
+To learn about how to use `react-native-screens` with Fabric architecture, head over to [Fabric README](README-Fabric.md). Instructions on how to run Fabric Example within this repo can be found in the [FabricExample README](FabricExample/README.md).
+
 ## Supported platforms
 
 - [x] iOS
@@ -14,7 +18,31 @@ This project aims to expose native navigation container components to React Nati
 
 ### iOS
 
-Installation on iOS should be completely handled with auto-linking, if you have ensured pods are installed after adding this module, no other actions should be necessary
+On iOS obtaining current device orientation [requires asking the system to generate orientation notifications](https://developer.apple.com/documentation/uikit/uidevice/1620053-orientation?language=objc). Our library uses them to enforce correct interface orientation when navigating between screens. 
+To make sure that there are no issues with screen orientation you should put following code in your `AppDelegate.m`:
+
+```objective-c
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    ... 
+#if !TARGET_OS_TV
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+#endif // !TARGET_OS_TV
+    ...
+    return YES:
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+#if !TARGET_OS_TV
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+#endif // !TARGET_OS_TV
+}
+```
+
+You can see example of these changes being introduced in our [example applications](https://github.com/software-mansion/react-native-screens/blob/main/TestsExample/ios/TestsExample/AppDelegate.mm).
+
+Other aspects of installation should be completely handled with auto-linking, just ensure you installed pods after adding this module.
 
 ### Android
 
@@ -67,8 +95,17 @@ Screens are already integrated with the React Native's most popular navigation l
 
 | version | react-native version |
 | ------- | -------------------- |
+| 3.14.0+ | 0.64.0+              |
 | 3.0.0+  | 0.62.0+              |
 | 2.0.0+  | 0.60.0+              |
+
+### Support for Fabric
+[Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system. As of [version `3.14.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.14.0) of this project, Fabric is supported only for react-native 0.69+. Support for `0.68.x` has been dropped.
+
+| version | react-native version |
+| ------- | -------------------- |
+| 3.14.0+ | 0.69.0+              |
+
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
@@ -158,6 +195,7 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 | [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                         | [related PRs](https://github.com/software-mansion/react-native-screens/issues/773#issuecomment-783469792)           |
 | [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843) | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
 | [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)     | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
+| [`onScroll` and `onMomentumScrollEnd` of previous screen triggered in bottom tabs](https://github.com/software-mansion/react-native-screens/issues/1183)     | [explanation](https://github.com/software-mansion/react-native-screens/issues/1183#issuecomment-949313111) |
 
 ## Contributing
 
@@ -169,7 +207,7 @@ React native screens library is licensed under [The MIT License](LICENSE).
 
 ## Credits
 
-This project has been build and is maintained thanks to the support from [Shopify](https://shopify.com), [Expo.io](https://expo.io) and [Software Mansion](https://swmansion.com)
+This project has been build and is maintained thanks to the support from [Shopify](https://shopify.com), [Expo.io](https://expo.io), and [Software Mansion](https://swmansion.com).
 
 [![shopify](https://avatars1.githubusercontent.com/u/8085?v=3&s=100 'Shopify.com')](https://shopify.com)
 [![expo](https://avatars2.githubusercontent.com/u/12504344?v=3&s=100 'Expo.io')](https://expo.io)

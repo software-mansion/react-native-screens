@@ -2,6 +2,10 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
+fabric_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+
+folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32'
+
 Pod::Spec.new do |s|
   s.name         = "RNScreens"
   s.version      = package["version"]
@@ -16,10 +20,34 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => "9.0", :tvos => "11.0" }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m}"
-  s.requires_arc = true
-
-  s.dependency "React-Core"
-  s.dependency "React-RCTImage"
+  if fabric_enabled
+    s.pod_target_xcconfig = {
+      'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost" "$(PODS_ROOT)/boost-for-react-native"  "$(PODS_ROOT)/RCT-Folly"',
+      "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
+    }
+    s.platforms       = { ios: '11.0', tvos: '11.0' }
+    s.compiler_flags  = folly_compiler_flags + ' ' + '-DRN_FABRIC_ENABLED'
+    s.source_files    = 'ios/**/*.{h,m,mm,cpp}'
+    s.requires_arc    = true
+  
+    s.dependency "React"
+    s.dependency "React-RCTFabric"
+    s.dependency "React-Codegen"
+    s.dependency "RCT-Folly"
+    s.dependency "RCTRequired"
+    s.dependency "RCTTypeSafety"
+    s.dependency "ReactCommon/turbomodule/core"
+  
+    s.subspec "common" do |ss|
+      ss.source_files         = "common/cpp/**/*.{cpp,h}"
+      ss.header_dir           = "rnscreens"
+      ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
+    end
+  else 
+    s.source_files = "ios/**/*.{h,m,mm}"
+    s.requires_arc = true
+  
+    s.dependency "React-Core"
+    s.dependency "React-RCTImage"
+  end
 end
-

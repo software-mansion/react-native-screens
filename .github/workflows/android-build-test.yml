@@ -5,6 +5,9 @@ on:
       - main
     paths:
       - 'android/**'
+      - 'package.json'
+      - 'TestsExample/**'
+      - '.github/workflows/android-build-test.yml'
   push:
     branches:
       - main
@@ -25,6 +28,7 @@ jobs:
         with:
           node-version: 14
           cache: 'yarn'
+          cache-dependency-path: 'TestsExample/yarn.lock'
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn

@@ -12,8 +12,9 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
-import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
+import com.facebook.react.uimanager.events.EventDispatcher
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
@@ -204,10 +205,10 @@ open class ScreenFragment : Fragment {
                     ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(it.id)
                     ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(it.id)
                 }
-                (it.context as ReactContext)
-                    .getNativeModule(UIManagerModule::class.java)
-                    ?.eventDispatcher
-                    ?.dispatchEvent(lifecycleEvent)
+                val screenContext = screen.context as ReactContext
+                val eventDispatcher: EventDispatcher? =
+                    UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
+                eventDispatcher?.dispatchEvent(lifecycleEvent)
                 fragment.dispatchEventInChildContainers(event)
             }
         }
@@ -224,10 +225,10 @@ open class ScreenFragment : Fragment {
     }
 
     fun dispatchHeaderBackButtonClickedEvent() {
-        (screen.context as ReactContext)
-            .getNativeModule(UIManagerModule::class.java)
-            ?.eventDispatcher
-            ?.dispatchEvent(HeaderBackButtonClickedEvent(screen.id))
+        val screenContext = screen.context as ReactContext
+        val eventDispatcher: EventDispatcher? =
+            UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
+        eventDispatcher?.dispatchEvent(HeaderBackButtonClickedEvent(screen.id))
     }
 
     fun dispatchTransitionProgress(alpha: Float, closing: Boolean) {
@@ -242,14 +243,14 @@ open class ScreenFragment : Fragment {
                 val coalescingKey = (if (mProgress == 0.0f) 1 else if (mProgress == 1.0f) 2 else 3).toShort()
                 val container: ScreenContainer<*>? = screen.container
                 val goingForward = if (container is ScreenStack) container.goingForward else false
-                (screen.context as ReactContext)
-                    .getNativeModule(UIManagerModule::class.java)
-                    ?.eventDispatcher
-                    ?.dispatchEvent(
-                        ScreenTransitionProgressEvent(
-                            screen.id, mProgress, closing, goingForward, coalescingKey
-                        )
+                val screenContext = screen.context as ReactContext
+                val eventDispatcher: EventDispatcher? =
+                    UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
+                eventDispatcher?.dispatchEvent(
+                    ScreenTransitionProgressEvent(
+                        screen.id, mProgress, closing, goingForward, coalescingKey
                     )
+                )
             }
         }
     }
@@ -302,11 +303,11 @@ open class ScreenFragment : Fragment {
         val container = screen.container
         if (container == null || !container.hasScreen(this)) {
             // we only send dismissed even when the screen has been removed from its container
-            if (screen.context is ReactContext) {
-                (screen.context as ReactContext)
-                    .getNativeModule(UIManagerModule::class.java)
-                    ?.eventDispatcher
-                    ?.dispatchEvent(ScreenDismissedEvent(screen.id))
+            val screenContext = screen.context
+            if (screenContext is ReactContext) {
+                val eventDispatcher: EventDispatcher? =
+                    UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
+                eventDispatcher?.dispatchEvent(ScreenDismissedEvent(screen.id))
             }
         }
         mChildScreenContainers.clear()

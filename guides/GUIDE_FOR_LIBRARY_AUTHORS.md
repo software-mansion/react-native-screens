@@ -40,6 +40,12 @@ Below is the list of additional properties that can be used for `Screen` compone
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
 
+### freezeOnBlur
+
+Whether inactive screens should be suspended from re-rendering.
+
+Defaults to `false`. When `enableFreeze()` is run at the top of the application defaults to `true`.
+
 ### `fullScreenSwipeEnabled` (iOS only)
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
@@ -47,6 +53,23 @@ Boolean indicating whether the swipe gesture should work on whole screen. Swipin
 ### `gestureEnabled` (iOS only)
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.
+
+#### `gestureResponseDistance` (iOS only)
+
+Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage:
+
+```tsx
+gestureResponseDistance: {
+  start: 200,
+  end: 250,
+  top: 100,
+  bottom: 150,
+}
+```
+
+### `hideKeyboardOnSwipe` (iOS only)
+
+Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
 
 ### `homeIndicatorHidden` (iOS only)
 
@@ -58,6 +81,14 @@ Boolean indicating whether, when the Android default back button is clicked, the
 Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
 
 Defaults to `false`.
+
+### `navigationBarColor` (Android only)
+
+Sets the navigation bar color. Defaults to initial status bar color.
+
+### `navigationBarHidden` (Android only)
+
+Sets the visibility of the navigation bar. Defaults to `false`.
 
 ### `onAppear`
 
@@ -75,6 +106,10 @@ A callback that gets called when the current screen is dismissed by hardware bac
 
 A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`.
 
+### `onNativeDismissCancelled` (iOS only)
+
+An internal callback called when screen is dismissed by gesture or by native header back button and `preventNativeDismiss` is set to `true`.
+
 ### `onWillAppear`
 
 A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
@@ -83,13 +118,18 @@ A callback that gets called when the current screen will appear. This is called 
 
 A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
 
+### `preventNativeDismiss` (iOS only)
+
+Boolean indicating whether to prevent current screen from being dismissed. Defaults to `false`.
+
 ### `replaceAnimation`
 
 Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
+
 - `push` – performs push animation
 - `pop` – performs pop animation (default)
 
-#### `screenOrientation`
+### `screenOrientation`
 
 Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
 
@@ -133,6 +173,7 @@ Defines how the method that should be used to present the given screen. It is a 
 Using `containedModal` and `containedTransparentModal` with other types of modals in one native stack navigator is not recommended and can result in a freeze or a crash of the application.
 
 For iOS:
+
 - `modal` will use [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc) on iOS 13 and later, and will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc) on iOS 12 and earlier.
 - `fullScreenModal` will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc)
 - `formSheet` will use [`UIModalPresentationFormSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationformsheet?language=objc)
@@ -146,69 +187,88 @@ For Android:
 
 `transparentModal`, `containedTransparentModal` will use `Screen.StackPresentation.TRANSPARENT_MODAL`.
 
-#### `statusBarAnimation`
+### `statusBarAnimation`
 
 Sets the status bar animation (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. Possible values: `fade`, `none`, `slide`. On Android, this prop considers the transition of changing status bar color (see https://reactnative.dev/docs/statusbar#animated). There will be no animation if `none` provided.
 
 Defaults to `fade` on iOS and `none` on Android.
 
-#### `statusBarColor` (Android only)
+### `statusBarColor` (Android only)
 
 Sets the status bar color (similar to the `StatusBar` component). Defaults to initial status bar color.
 
-#### `statusBarHidden`
+### `statusBarHidden`
 
 When set to true, the status bar for this screen is hidden. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file.
 
 Defaults to `false`.
 
-#### `statusBarStyle`
+### `statusBarStyle`
 
 Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
 
 Defaults to `auto`.
 
-#### `statusBarTranslucent` (Android only)
+### `statusBarTranslucent` (Android only)
 
 Sets the translucency of the status bar (similar to the `StatusBar` component). Defaults to `false`.
 
-#### `useTransitionProgress`
+### `swipeDirection` (iOS only)
+
+Sets the direction in which you should swipe to dismiss the screen. The following values are supported:
+
+- `vertical` – dismiss screen vertically
+- `horizontal` – dismiss screen horizontally (default)
+
+When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+
+### `transitionDuration` (iOS only)
+
+Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+
+The duration of `default` and `flip` transitions isn't customizable.
+
+### `useTransitionProgress`
 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
+
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
 - `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
 
 ```jsx
-import {Animated} from 'react-native';
-import {useTransitionProgress} from 'react-native-screens';
+import { Animated } from 'react-native';
+import { useTransitionProgress } from 'react-native-screens';
 
 function Home() {
-  const {progress} = useTransitionProgress();
+  const { progress } = useTransitionProgress();
 
   const opacity = progress.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [1.0, 0.0 ,1.0],
+    outputRange: [1.0, 0.0, 1.0],
     extrapolate: 'clamp',
   });
 
   return (
-    <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+    <Animated.View
+      style={{ opacity, height: 50, width: '100%', backgroundColor: 'green' }}
+    />
   );
 }
 ```
 
-#### `useReanimatedTransitionProgress`
+### `useReanimatedTransitionProgress`
 
 A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
+
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
-- `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
+- `closing` - `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
 
 In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
 
 ```jsx
-import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
+import { ReanimatedScreenProvider } from 'react-native-screens/reanimated';
 
 export default function App() {
   return (
@@ -222,12 +282,20 @@ export default function App() {
 Then you can use `useReanimatedTransitionProgress` to get the shared values:
 
 ```jsx
-import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
-import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
+import { useReanimatedTransitionProgress } from 'react-native-screens/reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+} from 'react-native-reanimated';
 
 function Home() {
   const reaProgress = useReanimatedTransitionProgress();
-  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50
+  );
   const reaStyle = useAnimatedStyle(() => {
     return {
       width: sv.value,
@@ -236,9 +304,7 @@ function Home() {
     };
   });
 
-  return (
-    <Animated.View style={reaStyle} />
-  );
+  return <Animated.View style={reaStyle} />;
 }
 ```
 
@@ -251,13 +317,14 @@ Along with this component's properties that can be used to customize header beha
 - `ScreenStackHeaderCenterView` – the children will render in the center of the native navigation bar.
 - `ScreenStackHeaderRightView` – the children will render on the right-hand side of the navigation bar (or on the left-hand side in case LTR locales are set on the user's device).
 - `ScreenStackHeaderLeftView` – the children will render on the left-hand side of the navigation bar (or on the right-hand side in case LTR locales are set on the user's device).
-- `ScreenStackHeaderSearchBarView` - used for rendering  `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
+- `ScreenStackHeaderSearchBarView` - used for rendering `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
 
 To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
 
 - `autoCapitalize` - Controls whether the text is automatically auto-capitalized as it is entered by the user. Can be one of these: `none`, `words`, `sentences`, `characters`. Defaults to `sentences` on iOS and `'none'` on Android.
 - `autoFocus` - If `true` automatically focuses search bar when screen is appearing. (Android only)
 - `barTintColor` - The search field background color. By default bar tint color is translucent.
+- `tintColor` - The color for the cursor caret and cancel button text. (iOS only)
 - `cancelButtonText` - The text to be used instead of default `Cancel` button text. (iOS only)
 - `disableBackButtonOverride` - Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true`. (Android only)
 - `hideNavigationBar` - Boolean indicating whether to hide the navigation bar during searching. Defaults to `true`. (iOS only)
@@ -278,7 +345,6 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `shouldShowHintSearchIcon` - Show the search hint icon when search bar is focused. (Android only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
-
 
 ### `backButtonInCustomView`
 
@@ -312,7 +378,7 @@ Pass `ScreenStackHeaderBackButtonImage`, `ScreenStackHeaderRightView`, `ScreenSt
 
 Controls whether the stack should be in `rtl` or `ltr` form.
 
-#### `disableBackButtonMenu` (iOS only)
+### `disableBackButtonMenu` (iOS only)
 
 Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 

@@ -4,7 +4,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.View
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.uimanager.util.ReactFindViewUtil
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
@@ -16,7 +17,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private val mStack = ArrayList<ScreenStackFragment>()
     private val mDismissed: MutableSet<ScreenStackFragment> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
-    private val drawingOps: MutableList<DrawingOp> = ArrayList()
+    private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var mTopScreen: ScreenStackFragment? = null
     private var mRemovalTransitionStarted = false
     private var isDetachingCurrentScreen = false
@@ -68,10 +69,11 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun dispatchOnFinishTransitioning() {
-        (context as ReactContext)
-            .getNativeModule(UIManagerModule::class.java)
-            ?.eventDispatcher
-            ?.dispatchEvent(StackFinishTransitioningEvent(id))
+        val eventDispatcher: EventDispatcher? =
+            UIManagerHelper.getEventDispatcherForReactTag((context as ReactContext), id)
+        eventDispatcher?.dispatchEvent(
+            StackFinishTransitioningEvent(id)
+        )
     }
 
     override fun removeScreenAt(index: Int) {
@@ -298,12 +300,16 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun drawAndRelease() {
-        for (i in drawingOps.indices) {
-            val op = drawingOps[i]
+        // We make a copy of the drawingOps and use it to dispatch draws in order to be sure
+        // that we do not modify the original list. There are cases when `op.draw` can call
+        // `drawChild` which would modify the list through which we are iterating. See more:
+        // https://github.com/software-mansion/react-native-screens/pull/1406
+        val drawingOpsCopy = drawingOps
+        drawingOps = ArrayList()
+        for (op in drawingOpsCopy) {
             op.draw()
             drawingOpPool.add(op)
         }
-        drawingOps.clear()
     }
 
     override fun dispatchDraw(canvas: Canvas) {

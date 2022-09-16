@@ -3,13 +3,24 @@ package com.swmansion.rnscreens
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.ViewManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenStackManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenStackManagerInterface
+import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 
 @ReactModule(name = ScreenStackViewManager.REACT_CLASS)
-class ScreenStackViewManager : ViewGroupManager<ScreenStack>() {
+class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackManagerInterface<ScreenStack> {
+    private val mDelegate: ViewManagerDelegate<ScreenStack>
+
+    init {
+        mDelegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
+    }
+
     override fun getName(): String {
         return REACT_CLASS
     }
@@ -66,6 +77,17 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>() {
 
     override fun needsCustomLayoutForChildren(): Boolean {
         return true
+    }
+
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenStack> {
+        return mDelegate
+    }
+
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
+        return MapBuilder.of(
+            StackFinishTransitioningEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onFinishTransitioning"),
+        )
     }
 
     companion object {

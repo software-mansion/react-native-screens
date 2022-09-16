@@ -159,9 +159,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        mode="modal"
         detachInactiveScreens={true}
         screenOptions={{
+          presentation: "modal",
           animationEnabled: true,
           transparentCard: true,
           cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,

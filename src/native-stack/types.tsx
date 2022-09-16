@@ -97,6 +97,11 @@ export type NativeStackNavigationOptions = {
    */
   disableBackButtonMenu?: boolean;
   /**
+   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
+   * Defaults to `true` when `enableFreeze()` is run at the top of the application.
+   */
+  freezeOnBlur?: boolean;
+  /**
    * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
    * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
    * Defaults to `false`.
@@ -111,6 +116,12 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   gestureEnabled?: boolean;
+  /**
+   * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
+   *
+   * @platform ios
+   */
+  gestureResponseDistance?: ScreenProps['gestureResponseDistance'];
   /**
    * Title to display in the back button.
    * Only supported on iOS.
@@ -250,6 +261,12 @@ export type NativeStackNavigationOptions = {
    */
   homeIndicatorHidden?: boolean;
   /**
+   * Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
+   *
+   * @platform ios
+   */
+  hideKeyboardOnSwipe?: boolean;
+  /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
    * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
    * Defaults to `false`.
@@ -257,6 +274,18 @@ export type NativeStackNavigationOptions = {
    * @platform android
    */
   nativeBackButtonDismissalEnabled?: boolean;
+  /**
+   * Sets the navigation bar color. Defaults to initial status bar color.
+   *
+   * @platform android
+   */
+  navigationBarColor?: string;
+  /**
+   * Sets the visibility of the navigation bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  navigationBarHidden?: boolean;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
@@ -333,9 +362,25 @@ export type NativeStackNavigationOptions = {
    */
   statusBarTranslucent?: boolean;
   /**
+   * Sets the direction in which you should swipe to dismiss the screen.
+   * When using `vertical` option, options `fullScreenSwipeEnabled: true`, `customAnimationOnSwipe: true` and `stackAnimation: 'slide_from_bottom'` are set by default.
+   * The following values are supported:
+   * - `vertical` – dismiss screen vertically
+   * - `horizontal` – dismiss screen horizontally (default)
+   * @platform ios
+   */
+  swipeDirection?: ScreenProps['swipeDirection'];
+  /**
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;
+  /**
+   * Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom`, `fade` and `simple_push` transitions on iOS. Defaults to `350`.
+   * The duration of `default` and `flip` transitions isn't customizable.
+   *
+   * @platform ios
+   */
+  transitionDuration?: number;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<
