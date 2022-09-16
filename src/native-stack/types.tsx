@@ -97,6 +97,11 @@ export type NativeStackNavigationOptions = {
    */
   disableBackButtonMenu?: boolean;
   /**
+   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
+   * Defaults to `true` when `enableFreeze()` is run at the top of the application.
+   */
+  freezeOnBlur?: boolean;
+  /**
    * Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default.
    * It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer.
    * Defaults to `false`.
@@ -375,11 +380,6 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   transitionDuration?: number;
-  /**
-   * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
-   * Defaults to `true` when `enableFreeze()` is run at the top of the application.
-   */
-  freezeOnBlur?: boolean;
 };
 
 export type NativeStackNavigatorProps = DefaultNavigatorOptions<

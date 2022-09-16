@@ -17,13 +17,9 @@ class ScreenStackHeaderSubviewManager : ViewGroupManager<ScreenStackHeaderSubvie
         mDelegate = RNSScreenStackHeaderSubviewManagerDelegate<ScreenStackHeaderSubview, ScreenStackHeaderSubviewManager>(this)
     }
 
-    override fun getName(): String {
-        return REACT_CLASS
-    }
+    override fun getName() = REACT_CLASS
 
-    override fun createViewInstance(context: ThemedReactContext): ScreenStackHeaderSubview {
-        return ScreenStackHeaderSubview(context)
-    }
+    override fun createViewInstance(context: ThemedReactContext) = ScreenStackHeaderSubview(context)
 
     @ReactProp(name = "type")
     override fun setType(view: ScreenStackHeaderSubview, type: String?) {
@@ -37,9 +33,7 @@ class ScreenStackHeaderSubviewManager : ViewGroupManager<ScreenStackHeaderSubvie
         }
     }
 
-    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderSubview> {
-        return mDelegate
-    }
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderSubview> = mDelegate
 
     companion object {
         const val REACT_CLASS = "RNSScreenStackHeaderSubview"
