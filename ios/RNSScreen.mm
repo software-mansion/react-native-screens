@@ -1194,12 +1194,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     UIView *startingViewParent = sharedElement.fromContainer;
     UIView *endingView = sharedElement.toView;
   
-    [reanimatedDelegate reanimatedMockTransitionWithConverterView:[context containerView]
-                                                  fromView:startingView
-                                         fromViewConverter:startingViewParent
-                                                    toView:endingView
-                                           toViewConverter:endingView.superview
-                                            transitionType:@"sharedElementTransition"];
+    [reanimatedDelegate runTransitionWithConverterView:[context containerView]
+                                              fromView:startingView
+                                     fromViewConverter:startingViewParent
+                                                toView:endingView
+                                       toViewConverter:endingView.superview
+                                        transitionType:@"sharedElementTransition"];
   }
 // TODO: screen transition animation
 //  [reanimatedDelegate reanimatedMockTransitionWithConverterView:[context containerView]

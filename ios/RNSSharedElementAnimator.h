@@ -31,12 +31,12 @@
 @property NSMutableArray<NSString *> *sharedElementsIterationOrder;
 
 - (void)afterPreparingCallback;
-- (void)reanimatedMockTransitionWithConverterView:(UIView *)converter
-                                         fromView:(UIView *)fromView
-                                fromViewConverter:(UIView *)startingViewConverter
-                                           toView:(UIView *)toView
-                                  toViewConverter:(UIView *)toViewConverter
-                                   transitionType:(NSString *)transitionType;
+- (void)runTransitionWithConverterView:(UIView *)converter
+                              fromView:(UIView *)fromView
+                     fromViewConverter:(UIView *)startingViewConverter
+                                toView:(UIView *)toView
+                       toViewConverter:(UIView *)toViewConverter
+                        transitionType:(NSString *)transitionType;
 - (void)notifyAboutViewDidDisappear:(UIView *)screeen;
 - (void)makeSnapshot:(UIView *)view withViewController:(UIView *)viewController;
 
