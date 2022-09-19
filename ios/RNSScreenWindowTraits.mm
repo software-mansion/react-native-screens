@@ -4,6 +4,25 @@
 
 @implementation RNSScreenWindowTraits
 
+- (instancetype)init
+{
+#if !TARGET_OS_TV
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+  });
+#endif
+  return self;
+}
+
+- (void)dealloc
+{
+#if !TARGET_OS_TV
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+  });
+#endif
+}
+
 #if !TARGET_OS_TV
 + (void)assertViewControllerBasedStatusBarAppearenceSet
 {
