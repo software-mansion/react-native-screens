@@ -7,9 +7,6 @@ import com.facebook.soloader.SoLoader;
 
 @DoNotStrip
 public class RNScreensComponentsRegistry {
-  static {
-    SoLoader.loadLibrary("rnscreens_modules");
-  }
 
   @DoNotStrip private final HybridData mHybridData;
 

@@ -55,23 +55,6 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
-        if (isNewArchitectureEnabled()) {
-            var appProject = rootProject.allprojects.find {it.plugins.hasPlugin('com.android.application')}
-            externalNativeBuild {
-                ndkBuild {
-                    arguments "APP_PLATFORM=android-21",
-                            "APP_STL=c++_shared",
-                            "NDK_TOOLCHAIN_VERSION=clang",
-                            "GENERATED_SRC_DIR=${appProject.buildDir}/generated/source",
-                            "PROJECT_BUILD_DIR=${appProject.buildDir}",
-                            "REACT_ANDROID_DIR=${appProject.rootDir}/../node_modules/react-native/ReactAndroid",
-                            "REACT_ANDROID_BUILD_DIR=${appProject.rootDir}/../node_modules/react-native/ReactAndroid/build"
-                    cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
-                    cppFlags "-std=c++17"
-                    targets "rnscreens_modules"
-                }
-            }
-        }
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
@@ -82,13 +65,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-    if (isNewArchitectureEnabled()) {
-        externalNativeBuild {
-            ndkBuild {
-                path "src/main/jni/Android.mk"
-            }
-        }
     }
     packagingOptions {
         // For some reason gradle only complains about the duplicated version of libreact_render libraries
@@ -138,14 +114,4 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation "androidx.core:core-ktx:1.5.0"
-}
-
-if (isNewArchitectureEnabled()) {
-    react {
-        reactRoot = rootProject.file("../node_modules/react-native/")
-        jsRootDir = file("../src/fabric/")
-        codegenDir = rootProject.file("../node_modules/react-native-codegen/")
-        libraryName = "rnscreens"
-        codegenJavaPackageName = "com.swmansion.rnscreens"
-    }
 }
