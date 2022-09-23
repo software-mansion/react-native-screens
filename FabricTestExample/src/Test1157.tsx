@@ -74,7 +74,7 @@ export default function App() {
                   backgroundColor: 'red',
                   marginRight: -15,
                 }}
-              />
+              />)
             }}
         />
         <Stack.Screen
