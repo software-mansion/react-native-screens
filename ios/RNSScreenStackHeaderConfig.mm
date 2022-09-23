@@ -459,7 +459,6 @@
     return;
   }
 
-//  navitem.title = config.title;
 #if !TARGET_OS_TV
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
       config.disableBackButtonMenu) {
