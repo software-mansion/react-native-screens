@@ -1,19 +1,6 @@
-/**
- * @flow strict-local
- * @format
- */
-/* eslint-disable */
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ViewProps } from 'react-native/Libraries/Components/View/ViewPropTypes';
-import type { HostComponent } from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
+import type { ViewProps } from 'react-native';
 
-type NativeProps = $ReadOnly<{|
-  ...ViewProps,
-|}>;
+interface NativeProps extends ViewProps {};
 
-type ComponentType = HostComponent<NativeProps>;
-
-export default (codegenNativeComponent<NativeProps>(
-  'RNSScreenContainer',
-  {}
-): ComponentType);
+export default codegenNativeComponent<NativeProps>('RNSScreenContainer', {});
