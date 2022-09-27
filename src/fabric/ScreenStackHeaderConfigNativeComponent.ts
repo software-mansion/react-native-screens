@@ -1,14 +1,5 @@
-/**
- * @flow strict-local
- * @format
- */
-/* eslint-disable */
-import * as React from 'react';
-
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ViewProps } from 'react-native/Libraries/Components/View/ViewPropTypes';
-import type { HostComponent } from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
-import type { ColorValue } from 'react-native/Libraries/StyleSheet/StyleSheet';
+import type { ViewProps, ColorValue } from 'react-native';
 import type {
   Int32,
   WithDefault,
@@ -16,8 +7,7 @@ import type {
 
 type DirectionType = 'rtl' | 'ltr';
 
-export type NativeProps = $ReadOnly<{|
-  ...ViewProps,
+export interface NativeProps extends ViewProps {
   backgroundColor?: ColorValue,
   backTitle?: string,
   backTitleFontFamily?: string,
@@ -44,11 +34,9 @@ export type NativeProps = $ReadOnly<{|
   backButtonInCustomView?: boolean,
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean,
-|}>;
+};
 
-type ComponentType = HostComponent<NativeProps>;
-
-export default (codegenNativeComponent<NativeProps>(
+export default codegenNativeComponent<NativeProps>(
   'RNSScreenStackHeaderConfig',
   {}
-): ComponentType);
+);
