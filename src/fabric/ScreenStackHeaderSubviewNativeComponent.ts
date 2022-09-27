@@ -11,7 +11,7 @@ export type HeaderSubviewTypes =
   | 'searchBar';
 
 export interface NativeProps extends ViewProps {
-  type?: WithDefault<HeaderSubviewTypes, 'left'>,
+  type?: WithDefault<HeaderSubviewTypes, 'left'>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreenStackHeaderSubview', {});

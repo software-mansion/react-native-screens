@@ -11,20 +11,20 @@ import type {
 type ScreenEvent = Readonly<{}>;
 
 type ScreenDismissedEvent = Readonly<{
-  dismissCount: Int32,
+  dismissCount: Int32;
 }>;
 
 type TransitionProgressEvent = Readonly<{
-  progress: Double,
-  closing: Int32,
-  goingForward: Int32,
+  progress: Double;
+  closing: Int32;
+  goingForward: Int32;
 }>;
 
 type GestureResponseDistanceType = Readonly<{
-  start: Float,
-  end: Float,
-  top: Float,
-  bottom: Float,
+  start: Float;
+  end: Float;
+  top: Float;
+  bottom: Float;
 }>;
 
 type StackPresentation =

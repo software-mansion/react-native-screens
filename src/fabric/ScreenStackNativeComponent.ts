@@ -5,7 +5,7 @@ import type { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTyp
 type FinishTransitioningEvent = Readonly<{}>;
 
 interface NativeProps extends ViewProps {
-  onFinishTransitioning?: DirectEventHandler<FinishTransitioningEvent>,
+  onFinishTransitioning?: DirectEventHandler<FinishTransitioningEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreenStack', {});
