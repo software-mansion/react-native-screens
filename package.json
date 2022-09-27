@@ -71,7 +71,7 @@
     "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^26.0.8",
     "@types/react": "^16.9.44",
-    "@types/react-native": "^0.63.2",
+    "@types/react-native": "^0.70.0",
     "@types/react-test-renderer": "^16.9.2",
     "@typescript-eslint/eslint-plugin": "^3.7.1",
     "@typescript-eslint/parser": "^3.7.1",
