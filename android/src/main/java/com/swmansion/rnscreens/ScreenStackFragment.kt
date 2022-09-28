@@ -2,10 +2,9 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
@@ -204,26 +203,32 @@ class ScreenStackFragment : ScreenFragment {
 
     private class ScreensCoordinatorLayout(context: Context, private val mFragment: ScreenStackFragment) : CoordinatorLayout(context) {
 
+        fun getStatusBarHeight(): Int {
+            var result = 0
+            val resourceId =
+                Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android")
+            if (resourceId > 0) {
+                result = Resources.getSystem().getDimensionPixelSize(resourceId)
+            }
+            return result
+        }
+        
         override fun onAttachedToWindow() {
             super.onAttachedToWindow()
             if (mFragment.shouldPerformSET) {
                 val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView as ViewGroup
                 rootView.addView(mFragment.transitionContainer)
+                val transitionLayoutParams = mFragment.transitionContainer.layoutParams as MarginLayoutParams
+                transitionLayoutParams.topMargin = getStatusBarHeight()
             }
         }
 
         override fun onDetachedFromWindow() {
             super.onDetachedFromWindow()
-//            // removal of view has to be postponed on after the end of animation.
-//            // More information and used code here:
-//            // https://stackoverflow.com/questions/33242776/android-viewgroup-crash-attempt-to-read-from-field-int-android-view-view-mview
-//            Handler(Looper.getMainLooper()).post {
-                val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView
-                if (mFragment.transitionContainer.parent == rootView) {
-                    (rootView as ViewGroup).removeView(
-                        mFragment.transitionContainer)
-                }
-//            }
+            val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView as ViewGroup
+            if (mFragment.transitionContainer.parent == rootView) {
+                rootView.removeView(mFragment.transitionContainer)
+            }
         }
 
         private val mAnimationListener: Animation.AnimationListener = object : Animation.AnimationListener {
@@ -232,19 +237,6 @@ class ScreenStackFragment : ScreenFragment {
                 val activity = mFragment.tryGetActivity()
                 if (mFragment.shouldPerformSET && activity != null && mFragment.transitionContainer.parent != null) {
                     val delegate = SharedElementAnimatorClass.getDelegate()
-//                    var statusBarHeight = 0
-//                    val resourceId = Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android");
-//                    if (resourceId > 0) {
-//                      statusBarHeight = Resources.getSystem().getDimensionPixelSize(resourceId);
-//                    }
-                    val transitionContainer = mFragment.transitionContainer
-//                    (transitionContainer as ReanimatedCoordinatorLayout).mleko()
-//                    mFragment.transitionContainer.setPadding(
-//                        transitionContainer.paddingLeft,
-//                        statusBarHeight, // TODO: backup value
-//                        transitionContainer.paddingRight,
-//                        transitionContainer.paddingBottom
-//                    )
                     mFragment.sharedElements.forEach { pair ->
                         val fromView = pair.first
                         val toView = pair.second
@@ -262,13 +254,6 @@ class ScreenStackFragment : ScreenFragment {
 
             override fun onAnimationEnd(animation: Animation) {
                 mFragment.onViewAnimationEnd()
-//                val transitionContainer = mFragment.transitionContainer
-//                mFragment.transitionContainer.setPadding(
-//                    transitionContainer.paddingLeft,
-//                    0, // TODO: restore value from backup
-//                    transitionContainer.paddingRight,
-//                    transitionContainer.paddingBottom
-//                )
                 if (mFragment.shouldPerformSET && mFragment.transitionContainer.parent != null) {
                     mFragment.sharedElements.forEach { pair ->
                         val fromView = pair.first
@@ -284,8 +269,8 @@ class ScreenStackFragment : ScreenFragment {
                 }
             }
 
-                override fun onAnimationRepeat(animation: Animation) {}
-            }
+            override fun onAnimationRepeat(animation: Animation) {}
+        }
 
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for
