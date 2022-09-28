@@ -5,12 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.os.Looper
+import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.Transformation
@@ -20,7 +16,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
-import android.os.Looper
 
 class ScreenStackFragment : ScreenFragment {
     private var mAppBarLayout: AppBarLayout? = null
@@ -28,8 +23,9 @@ class ScreenStackFragment : ScreenFragment {
     private var mShadowHidden = false
     private var mIsTranslucent = false
     val parentViews: MutableList<ViewGroup> = mutableListOf()
-    val transitionContainer: CoordinatorLayout = CoordinatorLayout(screen.context)
+    val transitionContainer: CoordinatorLayout = ReanimatedCoordinatorLayout(screen.context)
     var shouldPerformSET = false
+    var sharedElements: List<Pair<View, View>> = ArrayList()
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -191,50 +187,99 @@ class ScreenStackFragment : ScreenFragment {
         container.dismiss(this)
     }
 
+    private class ReanimatedCoordinatorLayout(context: Context) : CoordinatorLayout(context) {
+        override fun onMeasureChild(
+            child: View?, parentWidthMeasureSpec: Int, widthUsed: Int,
+            parentHeightMeasureSpec: Int, heightUsed: Int
+        ) {
+            /* we want to prevent `measure` on shared element transition item
+               because it breaks the first couple frames of animation */
+        }
+
+        override fun onLayoutChild(child: View, layoutDirection: Int) {
+            /* we want to prevent `layout` on shared element transition item
+               because it breaks the first couple frames of animation */
+        }
+    }
+
     private class ScreensCoordinatorLayout(context: Context, private val mFragment: ScreenStackFragment) : CoordinatorLayout(context) {
+
+        override fun onAttachedToWindow() {
+            super.onAttachedToWindow()
+            if (mFragment.shouldPerformSET) {
+                val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView as ViewGroup
+                rootView.addView(mFragment.transitionContainer)
+            }
+        }
+
+        override fun onDetachedFromWindow() {
+            super.onDetachedFromWindow()
+//            // removal of view has to be postponed on after the end of animation.
+//            // More information and used code here:
+//            // https://stackoverflow.com/questions/33242776/android-viewgroup-crash-attempt-to-read-from-field-int-android-view-view-mview
+//            Handler(Looper.getMainLooper()).post {
+                val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView
+                if (mFragment.transitionContainer.parent == rootView) {
+                    (rootView as ViewGroup).removeView(
+                        mFragment.transitionContainer)
+                }
+//            }
+        }
+
         private val mAnimationListener: Animation.AnimationListener = object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
                 mFragment.onViewAnimationStart()
                 val activity = mFragment.tryGetActivity()
-                if (mFragment.shouldPerformSET && activity != null && mFragment.transitionContainer.parent == null) {
-                    (mFragment.tryGetActivity()?.window?.decorView?.rootView as ViewGroup).addView(mFragment.transitionContainer)
-//                    mFragment.screen.container?.addView(mFragment.transitionContainer)
-                    mFragment.screen.sharedElementViews?.forEach { pair ->
-                        val view1 = pair.first
-                        val view2 = pair.second
-
-                        view1.visibility = View.INVISIBLE
-                        val parent = view2.parent as ViewGroup
-                        parent.removeView(view2)
-                        mFragment.parentViews.add(parent)
-                        mFragment.transitionContainer.addView(view2)
-                        SharedElementAnimatorClass.getDelegate()
-                            ?.runTransition(view1, view2)
+                if (mFragment.shouldPerformSET && activity != null && mFragment.transitionContainer.parent != null) {
+                    val delegate = SharedElementAnimatorClass.getDelegate()
+//                    var statusBarHeight = 0
+//                    val resourceId = Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android");
+//                    if (resourceId > 0) {
+//                      statusBarHeight = Resources.getSystem().getDimensionPixelSize(resourceId);
+//                    }
+                    val transitionContainer = mFragment.transitionContainer
+//                    (transitionContainer as ReanimatedCoordinatorLayout).mleko()
+//                    mFragment.transitionContainer.setPadding(
+//                        transitionContainer.paddingLeft,
+//                        statusBarHeight, // TODO: backup value
+//                        transitionContainer.paddingRight,
+//                        transitionContainer.paddingBottom
+//                    )
+                    mFragment.sharedElements.forEach { pair ->
+                        val fromView = pair.first
+                        val toView = pair.second
+                        delegate?.makeSnapshot(fromView)
+                        delegate?.makeSnapshot(toView)
+                        fromView.visibility = View.INVISIBLE
+                        val toViewParent = toView.parent as ViewGroup
+                        toViewParent.removeView(toView)
+                        mFragment.parentViews.add(toViewParent)
+                        mFragment.transitionContainer.addView(toView)
+                        delegate?.runTransition(fromView, toView)
                     }
                 }
             }
 
             override fun onAnimationEnd(animation: Animation) {
                 mFragment.onViewAnimationEnd()
+//                val transitionContainer = mFragment.transitionContainer
+//                mFragment.transitionContainer.setPadding(
+//                    transitionContainer.paddingLeft,
+//                    0, // TODO: restore value from backup
+//                    transitionContainer.paddingRight,
+//                    transitionContainer.paddingBottom
+//                )
                 if (mFragment.shouldPerformSET && mFragment.transitionContainer.parent != null) {
-                        mFragment.screen.sharedElementViews?.forEachIndexed { index, pair ->
-                            val view1 = pair.first
-                            val view2 = pair.second
-                        view1.visibility = View.VISIBLE
-                        mFragment.transitionContainer.removeView(view2)
-                        mFragment.parentViews[0].addView(view2)
+                    mFragment.sharedElements.forEach { pair ->
+                        val fromView = pair.first
+                        val toView = pair.second
+                        fromView.visibility = View.VISIBLE
+                        mFragment.transitionContainer.removeView(toView)
+                        mFragment.parentViews[0].addView(toView)
                         mFragment.parentViews.removeAt(0)
                     }
-                    // removal of view has to be postponed on after the end of animation.
-                    // More information and used code here:
-                    // https://stackoverflow.com/questions/33242776/android-viewgroup-crash-attempt-to-read-from-field-int-android-view-view-mview
-                    Handler(Looper.getMainLooper()).post {
-                        val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView
-                        if (mFragment.transitionContainer.parent == rootView) {
-                            (rootView as ViewGroup).removeView(
-                                mFragment.transitionContainer)
-                        }
-                    }
+                    val delegate = SharedElementAnimatorClass.getDelegate()
+                    delegate?.onNativeAnimationEnd(mFragment.screen)
                     mFragment.shouldPerformSET = false
                 }
             }

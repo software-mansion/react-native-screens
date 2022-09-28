@@ -37,8 +37,6 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     private var mNavigationBarHidden: Boolean? = null
     var isStatusBarAnimated: Boolean? = null
     private var mNativeBackButtonDismissalEnabled = true
-    private var mSharedElements : ReadableArray? = null
-    private var mSharedElementViews : MutableList<Pair<View, View>>? = null
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -245,20 +243,6 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         set(enableNativeBackButtonDismissal) {
             mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
         }
-
-    var sharedElements: ReadableArray?
-        get() = mSharedElements
-        set(sharedElements) {
-            mSharedElements = sharedElements
-        }
-
-    var sharedElementViews: MutableList<Pair<View, View>>?
-        get() = mSharedElementViews
-        set(sharedElementViews) {
-            mSharedElementViews = sharedElementViews
-        }
-
-
 
     enum class StackPresentation {
         PUSH, MODAL, TRANSPARENT_MODAL
