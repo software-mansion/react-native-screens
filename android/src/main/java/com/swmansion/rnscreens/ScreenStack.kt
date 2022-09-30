@@ -244,8 +244,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private fun getSharedElementsForCurrentTransition(
         currentFragment: ScreenStackFragment,
         targetFragment: ScreenStackFragment
-    ): List<Pair<View, View>> {
-        val sharedElements = ArrayList<Pair<View, View>>()
+    ): List<SharedTransitionConfig> {
+        val sharedElements = ArrayList<SharedTransitionConfig>()
         val uiManager = UIManagerHelper.getUIManager(
             context as ReactContext?,
             UIManagerType.DEFAULT
@@ -272,30 +272,14 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                     viewConfig.parentScreen = targetFragment.screen
                 }
             }}
-            fromView?.let{ view1 -> toView?.let{ view2 -> sharedElements.add(Pair(view1, view2)) }}
+            fromView?.let {
+                fromView_ -> toView?.let {
+                    toView_ -> sharedElements.add(
+                        SharedTransitionConfig(fromView_, toView_, fromView_.parent)
+                    )
+                }
+            }
         }}
-//        delegate?.sharedTransitionItems?.forEach { item -> run {
-//            var fromView: View? = null
-//            var toView: View? = null
-//            val transitionGroup = item.value
-//            transitionGroup.forEach { viewConfig -> run {
-//                val view: View? = try {
-//                    uiManager?.resolveView(viewConfig.viewTag)
-//                } catch (e: Exception) {
-//                    viewConfig.view
-//                }
-//                viewConfig.view = view
-//                if (isInSubtreeOf(view, currentFragment.screen, viewConfig.parentScreen)) {
-//                    fromView = view
-//                    viewConfig.parentScreen = currentFragment.screen
-//                }
-//                else if (isInSubtreeOf(view, targetFragment.screen, viewConfig.parentScreen)) {
-//                    toView = view
-//                    viewConfig.parentScreen = targetFragment.screen
-//                }
-//            }}
-//            fromView?.let{ view1 -> toView?.let{ view2 -> sharedElements.add(Pair(view1, view2)) }}
-//        }}
 
         return sharedElements
     }

@@ -16,6 +16,7 @@ import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 
+
 class ScreenStackFragment : ScreenFragment {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
@@ -24,7 +25,7 @@ class ScreenStackFragment : ScreenFragment {
     val parentViews: MutableList<ViewGroup> = mutableListOf()
     val transitionContainer: CoordinatorLayout = ReanimatedCoordinatorLayout(screen.context)
     var shouldPerformSET = false
-    var sharedElements: List<Pair<View, View>> = ArrayList()
+    var sharedElements: List<SharedTransitionConfig> = ArrayList()
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -202,7 +203,6 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     private class ScreensCoordinatorLayout(context: Context, private val mFragment: ScreenStackFragment) : CoordinatorLayout(context) {
-
         fun getStatusBarHeight(): Int {
             var result = 0
             val resourceId =
@@ -212,7 +212,7 @@ class ScreenStackFragment : ScreenFragment {
             }
             return result
         }
-        
+
         override fun onAttachedToWindow() {
             super.onAttachedToWindow()
             if (mFragment.shouldPerformSET) {
@@ -237,17 +237,30 @@ class ScreenStackFragment : ScreenFragment {
                 val activity = mFragment.tryGetActivity()
                 if (mFragment.shouldPerformSET && activity != null && mFragment.transitionContainer.parent != null) {
                     val delegate = SharedElementAnimatorClass.getDelegate()
-                    mFragment.sharedElements.forEach { pair ->
-                        val fromView = pair.first
-                        val toView = pair.second
-                        delegate?.makeSnapshot(fromView)
-                        delegate?.makeSnapshot(toView)
-                        fromView.visibility = View.INVISIBLE
-                        val toViewParent = toView.parent as ViewGroup
-                        toViewParent.removeView(toView)
-                        mFragment.parentViews.add(toViewParent)
-                        mFragment.transitionContainer.addView(toView)
-                        delegate?.runTransition(fromView, toView)
+                    mFragment.sharedElements.forEach { sharedTransitionConfig ->
+                        delegate?.makeSnapshot(sharedTransitionConfig.fromView)
+                        delegate?.makeSnapshot(sharedTransitionConfig.toView)
+                    }
+                    mFragment.sharedElements.forEach { sharedTransitionConfig ->
+                        val fromView = sharedTransitionConfig.fromView
+                        val toView = sharedTransitionConfig.toView
+                        toView.visibility = View.INVISIBLE
+
+                        if (fromView.parent != null) {
+                            val fromViewParent = fromView.parent as ViewGroup
+                            sharedTransitionConfig.fromViewParent = fromViewParent
+                            fromViewParent.removeView(fromView)
+                        } else {
+                            sharedTransitionConfig.fromViewParent = null
+                        }
+
+                        mFragment.transitionContainer.addView(fromView)
+                    }
+                    mFragment.sharedElements.forEach { sharedTransitionConfig ->
+                        delegate?.runTransition(
+                            sharedTransitionConfig.fromView,
+                            sharedTransitionConfig.toView
+                        )
                     }
                 }
             }
@@ -255,16 +268,22 @@ class ScreenStackFragment : ScreenFragment {
             override fun onAnimationEnd(animation: Animation) {
                 mFragment.onViewAnimationEnd()
                 if (mFragment.shouldPerformSET && mFragment.transitionContainer.parent != null) {
-                    mFragment.sharedElements.forEach { pair ->
-                        val fromView = pair.first
-                        val toView = pair.second
-                        fromView.visibility = View.VISIBLE
-                        mFragment.transitionContainer.removeView(toView)
-                        mFragment.parentViews[0].addView(toView)
-                        mFragment.parentViews.removeAt(0)
+                    val toRemove = ArrayList<View>()
+                    mFragment.sharedElements.forEach { sharedTransitionConfig ->
+                        val fromView = sharedTransitionConfig.fromView
+                        val toView = sharedTransitionConfig.toView
+                        toView.visibility = View.VISIBLE
+
+                        mFragment.transitionContainer.removeView(fromView)
+                        if (sharedTransitionConfig.fromViewParent != null) {
+                            val parent = sharedTransitionConfig.fromViewParent as ViewGroup
+                            parent.addView(fromView)
+                            sharedTransitionConfig.fromViewParent = null
+                        }
+                        toRemove.add(fromView)
                     }
                     val delegate = SharedElementAnimatorClass.getDelegate()
-                    delegate?.onNativeAnimationEnd(mFragment.screen)
+                    delegate?.onNativeAnimationEnd(mFragment.screen, toRemove)
                     mFragment.shouldPerformSET = false
                 }
             }
@@ -283,7 +302,7 @@ class ScreenStackFragment : ScreenFragment {
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
             val fakeAnimation = ScreensAnimation(mFragment)
-            animation.duration = 2000
+            animation.duration = 300
             fakeAnimation.duration = animation.duration
             if (animation is AnimationSet && !mFragment.isRemoving) {
                 animation.addAnimation(fakeAnimation)
