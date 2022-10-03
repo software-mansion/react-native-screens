@@ -40,6 +40,12 @@ Below is the list of additional properties that can be used for `Screen` compone
 
 Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
 
+### freezeOnBlur
+
+Whether inactive screens should be suspended from re-rendering.
+
+Defaults to `false`. When `enableFreeze()` is run at the top of the application defaults to `true`.
+
 ### `fullScreenSwipeEnabled` (iOS only)
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
@@ -50,7 +56,7 @@ When set to `false` the back swipe gesture will be disabled. The default value i
 
 #### `gestureResponseDistance` (iOS only)
 
-Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage: 
+Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage:
 
 ```tsx
 gestureResponseDistance: {
@@ -61,7 +67,7 @@ gestureResponseDistance: {
 }
 ```
 
-###  `hideKeyboardOnSwipe` (iOS only)
+### `hideKeyboardOnSwipe` (iOS only)
 
 Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
 
@@ -100,6 +106,10 @@ A callback that gets called when the current screen is dismissed by hardware bac
 
 A callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`.
 
+### `onNativeDismissCancelled` (iOS only)
+
+An internal callback called when screen is dismissed by gesture or by native header back button and `preventNativeDismiss` is set to `true`.
+
 ### `onWillAppear`
 
 A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
@@ -108,9 +118,14 @@ A callback that gets called when the current screen will appear. This is called 
 
 A callback that gets called when the current screen will disappear. This is called as soon as the transition begins.
 
+### `preventNativeDismiss` (iOS only)
+
+Boolean indicating whether to prevent current screen from being dismissed. Defaults to `false`.
+
 ### `replaceAnimation`
 
 Allows for the customization of the type of animation to use when this screen replaces another screen at the top of the stack. The following values are currently supported:
+
 - `push` – performs push animation
 - `pop` – performs pop animation (default)
 
@@ -158,6 +173,7 @@ Defines how the method that should be used to present the given screen. It is a 
 Using `containedModal` and `containedTransparentModal` with other types of modals in one native stack navigator is not recommended and can result in a freeze or a crash of the application.
 
 For iOS:
+
 - `modal` will use [`UIModalPresentationAutomatic`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationautomatic?language=objc) on iOS 13 and later, and will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc) on iOS 12 and earlier.
 - `fullScreenModal` will use [`UIModalPresentationFullScreen`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationfullscreen?language=objc)
 - `formSheet` will use [`UIModalPresentationFormSheet`](https://developer.apple.com/documentation/uikit/uimodalpresentationstyle/uimodalpresentationformsheet?language=objc)
@@ -200,6 +216,7 @@ Sets the translucency of the status bar (similar to the `StatusBar` component). 
 ### `swipeDirection` (iOS only)
 
 Sets the direction in which you should swipe to dismiss the screen. The following values are supported:
+
 - `vertical` – dismiss screen vertically
 - `horizontal` – dismiss screen horizontally (default)
 
@@ -211,34 +228,31 @@ Changes the duration (in milliseconds) of `slide_from_bottom`, `fade_from_bottom
 
 The duration of `default` and `flip` transitions isn't customizable.
 
-### freezeOnBlur
-
-Whether inactive screens should be suspended from re-rendering.
-
-Defaults to `false`. When `enableFreeze()` is run at the top of the application defaults to `true`.
-
 ### `useTransitionProgress`
 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
+
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
 - `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
 
 ```jsx
-import {Animated} from 'react-native';
-import {useTransitionProgress} from 'react-native-screens';
+import { Animated } from 'react-native';
+import { useTransitionProgress } from 'react-native-screens';
 
 function Home() {
-  const {progress} = useTransitionProgress();
+  const { progress } = useTransitionProgress();
 
   const opacity = progress.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [1.0, 0.0 ,1.0],
+    outputRange: [1.0, 0.0, 1.0],
     extrapolate: 'clamp',
   });
 
   return (
-    <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+    <Animated.View
+      style={{ opacity, height: 50, width: '100%', backgroundColor: 'green' }}
+    />
   );
 }
 ```
@@ -246,14 +260,15 @@ function Home() {
 ### `useReanimatedTransitionProgress`
 
 A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
+
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
-- `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
+- `closing` - `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
 
 In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
 
 ```jsx
-import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
+import { ReanimatedScreenProvider } from 'react-native-screens/reanimated';
 
 export default function App() {
   return (
@@ -267,12 +282,20 @@ export default function App() {
 Then you can use `useReanimatedTransitionProgress` to get the shared values:
 
 ```jsx
-import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
-import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
+import { useReanimatedTransitionProgress } from 'react-native-screens/reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+} from 'react-native-reanimated';
 
 function Home() {
   const reaProgress = useReanimatedTransitionProgress();
-  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50
+  );
   const reaStyle = useAnimatedStyle(() => {
     return {
       width: sv.value,
@@ -281,9 +304,7 @@ function Home() {
     };
   });
 
-  return (
-    <Animated.View style={reaStyle} />
-  );
+  return <Animated.View style={reaStyle} />;
 }
 ```
 
@@ -296,7 +317,7 @@ Along with this component's properties that can be used to customize header beha
 - `ScreenStackHeaderCenterView` – the children will render in the center of the native navigation bar.
 - `ScreenStackHeaderRightView` – the children will render on the right-hand side of the navigation bar (or on the left-hand side in case LTR locales are set on the user's device).
 - `ScreenStackHeaderLeftView` – the children will render on the left-hand side of the navigation bar (or on the right-hand side in case LTR locales are set on the user's device).
-- `ScreenStackHeaderSearchBarView` - used for rendering  `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
+- `ScreenStackHeaderSearchBarView` - used for rendering `<SearchBar>` component. It will appear in the bottom of the native navigation bar on iOS and as search icon on Android.
 
 To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` component provided as a child. `<SearchBar>` component that comes from react-native-screens supports various properties:
 
@@ -324,7 +345,6 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `shouldShowHintSearchIcon` - Show the search hint icon when search bar is focused. (Android only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
-
 
 ### `backButtonInCustomView`
 

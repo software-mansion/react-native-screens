@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ThemedReactContext
@@ -21,13 +20,9 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
         mDelegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
     }
 
-    override fun getName(): String {
-        return REACT_CLASS
-    }
+    override fun getName() = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext): ScreenStack {
-        return ScreenStack(reactContext)
-    }
+    override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStack(reactContext)
 
     override fun addView(parent: ScreenStack, child: View, index: Int) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreen" }
@@ -44,10 +39,8 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
     }
 
     private fun startTransitionRecursive(parent: ViewGroup?) {
-        var i = 0
         parent?.let {
-            val size = it.childCount
-            while (i < size) {
+            for (i in 0 until it.childCount) {
                 val child = it.getChildAt(i)
                 child?.let { view -> it.startViewTransition(view) }
                 if (child is ScreenStackHeaderConfig) {
@@ -58,37 +51,23 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
                 if (child is ViewGroup) {
                     startTransitionRecursive(child)
                 }
-                i++
             }
         }
     }
 
-    override fun getChildCount(parent: ScreenStack): Int {
-        return parent.screenCount
-    }
+    override fun getChildCount(parent: ScreenStack) = parent.screenCount
 
-    override fun getChildAt(parent: ScreenStack, index: Int): View {
-        return parent.getScreenAt(index)
-    }
+    override fun getChildAt(parent: ScreenStack, index: Int): View = parent.getScreenAt(index)
 
-    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode {
-        return ScreensShadowNode(context)
-    }
+    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreensShadowNode(context)
 
-    override fun needsCustomLayoutForChildren(): Boolean {
-        return true
-    }
+    override fun needsCustomLayoutForChildren() = true
 
-    protected override fun getDelegate(): ViewManagerDelegate<ScreenStack> {
-        return mDelegate
-    }
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenStack> = mDelegate
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
-        return MapBuilder.of(
-            StackFinishTransitioningEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onFinishTransitioning"),
-        )
-    }
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
+        StackFinishTransitioningEvent.EVENT_NAME to mutableMapOf("registrationName" to "onFinishTransitioning")
+    )
 
     companion object {
         const val REACT_CLASS = "RNSScreenStack"

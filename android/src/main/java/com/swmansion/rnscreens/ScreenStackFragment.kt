@@ -51,11 +51,9 @@ class ScreenStackFragment : ScreenFragment {
 
     fun setToolbar(toolbar: Toolbar) {
         mAppBarLayout?.addView(toolbar)
-        val params = AppBarLayout.LayoutParams(
+        toolbar.layoutParams = AppBarLayout.LayoutParams(
             AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-        )
-        params.scrollFlags = 0
-        toolbar.layoutParams = params
+        ).apply { scrollFlags = 0 }
         mToolbar = toolbar
     }
 
@@ -76,8 +74,7 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     override fun onContainerUpdate() {
-        val headerConfig = screen.headerConfig
-        headerConfig?.onUpdate()
+        screen.headerConfig?.onUpdate()
     }
 
     override fun onViewAnimationEnd() {
@@ -99,22 +96,24 @@ class ScreenStackFragment : ScreenFragment {
     ): View? {
         val view: ScreensCoordinatorLayout? =
             context?.let { ScreensCoordinatorLayout(it, this) }
-        val params = CoordinatorLayout.LayoutParams(
+
+        screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
-        )
-        params.behavior = if (mIsTranslucent) null else ScrollingViewBehavior()
-        screen.layoutParams = params
+        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
+
         view?.addView(recycleView(screen))
 
-        mAppBarLayout = context?.let { AppBarLayout(it) }
-        // By default AppBarLayout will have a background color set but since we cover the whole layout
-        // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
-        // role. On top of that it breaks screens animations when alfa offscreen compositing is off
-        // (which is the default)
-        mAppBarLayout?.setBackgroundColor(Color.TRANSPARENT)
-        mAppBarLayout?.layoutParams = AppBarLayout.LayoutParams(
-            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-        )
+        mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
+            // By default AppBarLayout will have a background color set but since we cover the whole layout
+            // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
+            // role. On top of that it breaks screens animations when alfa offscreen compositing is off
+            // (which is the default)
+            setBackgroundColor(Color.TRANSPARENT)
+            layoutParams = AppBarLayout.LayoutParams(
+                AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+
         view?.addView(mAppBarLayout)
         if (mShadowHidden) {
             mAppBarLayout?.targetElevation = 0f
@@ -157,9 +156,10 @@ class ScreenStackFragment : ScreenFragment {
                 searchView = newSearchView
                 onSearchViewCreate?.invoke(newSearchView)
             }
-            val item = menu.add("")
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            item.actionView = searchView
+            menu.add("").apply {
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                actionView = searchView
+            }
         }
     }
 
@@ -213,18 +213,23 @@ class ScreenStackFragment : ScreenFragment {
             // and also this is not necessary when going back since the lifecycle methods
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
-            val fakeAnimation = ScreensAnimation(mFragment)
-            fakeAnimation.duration = animation.duration
+            val fakeAnimation = ScreensAnimation(mFragment).apply { duration = animation.duration }
+
             if (animation is AnimationSet && !mFragment.isRemoving) {
-                animation.addAnimation(fakeAnimation)
-                animation.setAnimationListener(mAnimationListener)
-                super.startAnimation(animation)
+                animation.apply {
+                    addAnimation(fakeAnimation)
+                    setAnimationListener(mAnimationListener)
+                }.also {
+                    super.startAnimation(it)
+                }
             } else {
-                val set = AnimationSet(true)
-                set.addAnimation(animation)
-                set.addAnimation(fakeAnimation)
-                set.setAnimationListener(mAnimationListener)
-                super.startAnimation(set)
+                AnimationSet(true).apply {
+                    addAnimation(animation)
+                    addAnimation(fakeAnimation)
+                    setAnimationListener(mAnimationListener)
+                }.also {
+                    super.startAnimation(it)
+                }
             }
         }
 

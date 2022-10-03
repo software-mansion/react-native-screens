@@ -132,12 +132,11 @@
     "lib/"
   ],
   "codegenConfig": {
-    "libraries": [
-      {
-        "name": "rnscreens",
-        "type": "components",
-        "jsSrcsDir": "./src/fabric"
-      }
-    ]
+    "name": "rnscreens",
+    "type": "components",
+    "jsSrcsDir": "./src/fabric",
+    "android": {
+      "javaPackageName": "com.swmansion.rnscreens"
+    }
   }
 }

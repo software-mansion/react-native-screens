@@ -35,6 +35,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         }
     }
     private var mParentScreenFragment: ScreenFragment? = null
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         var i = 0
         val size = childCount
@@ -116,19 +117,10 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     val screenCount: Int
         get() = mScreenFragments.size
 
-    fun getScreenAt(index: Int): Screen {
-        return mScreenFragments[index].screen
-    }
+    fun getScreenAt(index: Int): Screen = mScreenFragments[index].screen
 
     open val topScreen: Screen?
-        get() {
-            for (screenFragment in mScreenFragments) {
-                if (getActivityState(screenFragment) === ActivityState.ON_TOP) {
-                    return screenFragment.screen
-                }
-            }
-            return null
-        }
+        get() = mScreenFragments.firstOrNull { getActivityState(it) === ActivityState.ON_TOP }?.screen
 
     private fun setFragmentManager(fm: FragmentManager) {
         mFragmentManager = fm
@@ -200,10 +192,9 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     protected fun createTransaction(): FragmentTransaction {
-        val fragmentManager = requireNotNull(mFragmentManager, { "mFragmentManager is null when creating transaction" })
-        val transaction = fragmentManager.beginTransaction()
-        transaction.setReorderingAllowed(true)
-        return transaction
+        return requireNotNull(mFragmentManager) { "mFragmentManager is null when creating transaction" }
+            .beginTransaction()
+            .setReorderingAllowed(true)
     }
 
     private fun attachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
@@ -214,13 +205,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         transaction.remove(screenFragment)
     }
 
-    private fun getActivityState(screenFragment: ScreenFragment): ActivityState? {
-        return screenFragment.screen.activityState
-    }
+    private fun getActivityState(screenFragment: ScreenFragment): ActivityState? =
+        screenFragment.screen.activityState
 
-    open fun hasScreen(screenFragment: ScreenFragment?): Boolean {
-        return mScreenFragments.contains(screenFragment)
-    }
+    open fun hasScreen(screenFragment: ScreenFragment?): Boolean =
+        mScreenFragments.contains(screenFragment)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -233,9 +222,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         val transaction = fragmentManager.beginTransaction()
         var hasFragments = false
         for (fragment in fragmentManager.fragments) {
-            if (fragment is ScreenFragment &&
-                fragment.screen.container === this
-            ) {
+            if (fragment is ScreenFragment && fragment.screen.container === this) {
                 transaction.remove(fragment)
                 hasFragments = true
             }
@@ -276,19 +263,15 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         // children are not already detached, which may lead to calling `onDetachedFromWindow` on them
         // twice.
         // We also get the size earlier, because we will be removing child views in `for` loop.
-        val size = childCount
-        for (i in size - 1 downTo 0) {
+        for (i in childCount - 1 downTo 0) {
             removeViewAt(i)
         }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        var i = 0
-        val size = childCount
-        while (i < size) {
+        for (i in 0 until childCount) {
             getChildAt(i).measure(widthMeasureSpec, heightMeasureSpec)
-            i++
         }
     }
 
@@ -332,7 +315,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     open fun onUpdate() {
         createTransaction().let {
             // detach screens that are no longer active
-            val orphaned: MutableSet<Fragment> = HashSet(requireNotNull(mFragmentManager, { "mFragmentManager is null when performing update in ScreenContainer" }).fragments)
+            val orphaned: MutableSet<Fragment> = HashSet(
+                requireNotNull(mFragmentManager) {
+                    "mFragmentManager is null when performing update in ScreenContainer"
+                }.fragments
+            )
             for (screenFragment in mScreenFragments) {
                 if (getActivityState(screenFragment) === ActivityState.INACTIVE &&
                     screenFragment.isAdded
