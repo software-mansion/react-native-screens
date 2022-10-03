@@ -22,7 +22,7 @@ export default function getDefaultHeaderHeight(
       statusBarHeight = 0;
     }
 
-    if (Platform.isPad || Platform.isTVOS) {
+    if (Platform.isPad || Platform.isTV) {
       headerHeight = isFromSheetModal ? formSheetModalHeight : 50;
     } else {
       if (isLandscape) {
