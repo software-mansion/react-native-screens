@@ -74,10 +74,9 @@ export const NativeScreenNavigationContainer: React.ComponentType<ScreenContaine
 
 export const ScreenStack: React.ComponentType<ScreenStackProps> = View;
 
-// @ts-ignore TODO: make this type work correctly
-export const FullWindowOverlay: React.ComponentType<{
+export const FullWindowOverlay = View as React.ComponentType<{
   children: ReactNode;
-}> = View;
+}>;
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps
