@@ -62,6 +62,8 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
                 child?.let { view ->
                     if (shouldStartViewTransition(view)) {
                         it.startViewTransition(view)
+                    } else {
+                        sharedElementAnimatorDelegate?.makeSnapshot(view)
                     }
                 }
                 if (child is ScreenStackHeaderConfig) {

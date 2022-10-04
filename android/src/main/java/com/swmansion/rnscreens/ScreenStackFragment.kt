@@ -24,6 +24,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mIsTranslucent = false
     val transitionContainer: CoordinatorLayout = ReanimatedCoordinatorLayout(screen.context)
     var shouldPerformSET = false
+    var isActiveTransition = false
     var sharedElements: List<SharedTransitionConfig> = ArrayList()
 
     var searchView: CustomSearchView? = null
@@ -234,7 +235,12 @@ class ScreenStackFragment : ScreenFragment {
             override fun onAnimationStart(animation: Animation) {
                 mFragment.onViewAnimationStart()
                 val activity = mFragment.tryGetActivity()
-                if (mFragment.shouldPerformSET && activity != null && mFragment.transitionContainer.parent != null) {
+                if (
+                    (mFragment.shouldPerformSET && activity != null
+                    && mFragment.transitionContainer.parent != null)
+                    && !mFragment.isActiveTransition
+                ) {
+                    mFragment.isActiveTransition = true
                     val delegate = SharedElementAnimatorClass.getDelegate()
                     mFragment.sharedElements.forEach { sharedTransitionConfig ->
                         delegate?.makeSnapshot(sharedTransitionConfig.toView)
@@ -274,6 +280,7 @@ class ScreenStackFragment : ScreenFragment {
                     val delegate = SharedElementAnimatorClass.getDelegate()
                     delegate?.onNativeAnimationEnd(mFragment.screen, toRemove)
                     mFragment.shouldPerformSET = false
+                    mFragment.isActiveTransition = false
                 }
             }
 
