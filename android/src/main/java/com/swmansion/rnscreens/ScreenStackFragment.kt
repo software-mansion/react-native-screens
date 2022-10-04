@@ -237,7 +237,6 @@ class ScreenStackFragment : ScreenFragment {
                 if (mFragment.shouldPerformSET && activity != null && mFragment.transitionContainer.parent != null) {
                     val delegate = SharedElementAnimatorClass.getDelegate()
                     mFragment.sharedElements.forEach { sharedTransitionConfig ->
-                        delegate?.makeSnapshot(sharedTransitionConfig.fromView)
                         delegate?.makeSnapshot(sharedTransitionConfig.toView)
                     }
                     mFragment.sharedElements.forEach { sharedTransitionConfig ->

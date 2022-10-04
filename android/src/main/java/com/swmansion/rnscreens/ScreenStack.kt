@@ -259,12 +259,15 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             var toView: View? = null
             var fromViewParent: View? = null
             transitionGroup?.forEach { viewConfig -> run {
-                val view: View? = try {
-                    uiManager?.resolveView(viewConfig.viewTag)
+                var isInViewTree = true
+                var view: View?
+                try {
+                    view = uiManager?.resolveView(viewConfig.viewTag)
+                    viewConfig.view = view
                 } catch (e: Exception) {
-                    viewConfig.view
+                    view = viewConfig.view
+                    isInViewTree = false
                 }
-                viewConfig.view = view
                 if (view?.parent != null) {
                     viewConfig.parent = view.parent as View
                 }
@@ -275,6 +278,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                         view.parent as View
                     } else {
                         viewConfig.parent
+                    }
+                    if (isInViewTree) {
+                        delegate.makeSnapshot(view)
                     }
                 }
                 else if (isInSubtreeOf(view, targetFragment.screen, viewConfig.parentScreen)) {
