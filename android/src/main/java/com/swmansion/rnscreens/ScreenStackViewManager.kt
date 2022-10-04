@@ -12,10 +12,12 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackManagerInterface
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
+import com.swmansion.common.SharedElementAnimatorDelegate
 
 @ReactModule(name = ScreenStackViewManager.REACT_CLASS)
 class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackManagerInterface<ScreenStack> {
     private val mDelegate: ViewManagerDelegate<ScreenStack>
+    private var sharedElementAnimatorDelegate: SharedElementAnimatorDelegate? = null
 
     init {
         mDelegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
@@ -43,13 +45,25 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
         startTransitionRecursive(screen)
     }
 
+    private fun shouldStartViewTransition(view: View): Boolean {
+        if (sharedElementAnimatorDelegate == null) {
+            sharedElementAnimatorDelegate = SharedElementAnimatorClass.getDelegate()
+        }
+        return sharedElementAnimatorDelegate?.isTagUnderTransition(view.id)?.not()
+            ?: run { true }
+    }
+
     private fun startTransitionRecursive(parent: ViewGroup?) {
         var i = 0
         parent?.let {
             val size = it.childCount
             while (i < size) {
                 val child = it.getChildAt(i)
-                child?.let { view -> it.startViewTransition(view) }
+                child?.let { view ->
+                    if (shouldStartViewTransition(view)) {
+                        it.startViewTransition(view)
+                    }
+                }
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig

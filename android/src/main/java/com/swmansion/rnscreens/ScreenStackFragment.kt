@@ -22,7 +22,6 @@ class ScreenStackFragment : ScreenFragment {
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
-    val parentViews: MutableList<ViewGroup> = mutableListOf()
     val transitionContainer: CoordinatorLayout = ReanimatedCoordinatorLayout(screen.context)
     var shouldPerformSET = false
     var sharedElements: List<SharedTransitionConfig> = ArrayList()
@@ -246,14 +245,8 @@ class ScreenStackFragment : ScreenFragment {
                         val toView = sharedTransitionConfig.toView
                         toView.visibility = View.INVISIBLE
 
-                        if (fromView.parent != null) {
-                            val fromViewParent = fromView.parent as ViewGroup
-                            sharedTransitionConfig.fromViewParent = fromViewParent
-                            fromViewParent.removeView(fromView)
-                        } else {
-                            sharedTransitionConfig.fromViewParent = null
-                        }
-
+                        val fromViewParent = sharedTransitionConfig.fromViewParent as ViewGroup
+                        fromViewParent.removeView(fromView)
                         mFragment.transitionContainer.addView(fromView)
                     }
                     mFragment.sharedElements.forEach { sharedTransitionConfig ->
@@ -275,11 +268,8 @@ class ScreenStackFragment : ScreenFragment {
                         toView.visibility = View.VISIBLE
 
                         mFragment.transitionContainer.removeView(fromView)
-                        if (sharedTransitionConfig.fromViewParent != null) {
-                            val parent = sharedTransitionConfig.fromViewParent as ViewGroup
-                            parent.addView(fromView)
-                            sharedTransitionConfig.fromViewParent = null
-                        }
+                        val parent = sharedTransitionConfig.fromViewParent as ViewGroup
+                        parent.addView(fromView)
                         toRemove.add(fromView)
                     }
                     val delegate = SharedElementAnimatorClass.getDelegate()
@@ -302,7 +292,7 @@ class ScreenStackFragment : ScreenFragment {
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
             val fakeAnimation = ScreensAnimation(mFragment)
-            animation.duration = 300
+            animation.duration = 2000
             fakeAnimation.duration = animation.duration
             if (animation is AnimationSet && !mFragment.isRemoving) {
                 animation.addAnimation(fakeAnimation)

@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.view.View
+import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.common.UIManagerType
@@ -256,6 +257,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             val transitionGroup = sharedTransitionItems?.get(key)
             var fromView: View? = null
             var toView: View? = null
+            var fromViewParent: View? = null
             transitionGroup?.forEach { viewConfig -> run {
                 val view: View? = try {
                     uiManager?.resolveView(viewConfig.viewTag)
@@ -263,20 +265,31 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                     viewConfig.view
                 }
                 viewConfig.view = view
+                if (view?.parent != null) {
+                    viewConfig.parent = view.parent as View
+                }
                 if (isInSubtreeOf(view, currentFragment.screen, viewConfig.parentScreen)) {
                     fromView = view
                     viewConfig.parentScreen = currentFragment.screen
+                    fromViewParent = if (view?.parent != null) {
+                        view.parent as View
+                    } else {
+                        viewConfig.parent
+                    }
                 }
                 else if (isInSubtreeOf(view, targetFragment.screen, viewConfig.parentScreen)) {
                     toView = view
                     viewConfig.parentScreen = targetFragment.screen
                 }
             }}
+
             fromView?.let {
                 fromView_ -> toView?.let {
-                    toView_ -> sharedElements.add(
-                        SharedTransitionConfig(fromView_, toView_, fromView_.parent)
-                    )
+                    toView_ -> fromViewParent?.let {
+                        fromViewParent_ -> sharedElements.add(
+                            SharedTransitionConfig(fromView_, toView_, fromViewParent_)
+                        )
+                    }
                 }
             }
         }}

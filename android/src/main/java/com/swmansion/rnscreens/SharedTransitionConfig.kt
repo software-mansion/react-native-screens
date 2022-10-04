@@ -6,5 +6,5 @@ import android.view.ViewParent
 class SharedTransitionConfig(
     var fromView: View,
     var toView: View,
-    var fromViewParent: ViewParent?
+    var fromViewParent: View,
 )
