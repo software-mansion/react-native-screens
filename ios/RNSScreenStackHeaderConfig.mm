@@ -477,9 +477,10 @@
     navctr.navigationBar.semanticContentAttribute = config.direction;
   }
 
-  navitem.title = config.title;
-
   if (shouldHide) {
+    // set title of nav item anyway because this title will show up in back buttons and menus of
+    // screens that have their header shown
+    navitem.title = config.title;
     return;
   }
 
