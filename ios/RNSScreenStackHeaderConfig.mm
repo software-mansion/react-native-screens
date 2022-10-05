@@ -619,6 +619,10 @@
     }
   }
 
+  // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
+  // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
+  navitem.title = config.title;
+
   if (animated && vc.transitionCoordinator != nil &&
       vc.transitionCoordinator.presentationStyle == UIModalPresentationNone && !wasHidden) {
     // when there is an ongoing transition we may need to update navbar setting in animation block
