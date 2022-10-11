@@ -2,6 +2,7 @@
 
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTViewComponentView.h>
+#import <React/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #endif
 
 #import <React/RCTBridge.h>
@@ -10,7 +11,7 @@
 
 @interface RNSSearchBar :
 #ifdef RN_FABRIC_ENABLED
-    RCTViewComponentView <UISearchBarDelegate>
+    RCTViewComponentView <UISearchBarDelegate, RCTRNSSearchBarViewProtocol>
 #else
     UIView <UISearchBarDelegate>
 #endif

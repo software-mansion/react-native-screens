@@ -12,7 +12,6 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSConvert.h"
 #endif
 
