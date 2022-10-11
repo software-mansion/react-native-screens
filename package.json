@@ -38,6 +38,7 @@
     "ios/",
     "windows/",
     "RNScreens.podspec",
+    "react-native.config.js",
     "README.md",
     "!**/__tests__",
     "!android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.kt"
