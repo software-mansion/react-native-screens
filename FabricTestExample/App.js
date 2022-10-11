@@ -85,5 +85,5 @@ import Test1476 from './src/Test1476';
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <Test1097 />;
 }
