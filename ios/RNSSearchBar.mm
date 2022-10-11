@@ -307,6 +307,32 @@
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSSearchBarComponentDescriptor>();
 }
 
+- (void)blur
+{
+  NSLog(@"RNSSearchBar blur method called");
+}
+
+- (void)focus
+{
+  NSLog(@"RNSSearchBar focus method called");
+}
+
+- (void)clearText
+{
+  NSLog(@"RNSSearchBar clearText method called");
+}
+
+- (void)toggleCancelButton:(BOOL)flag
+{
+  NSLog(@"RNSSearchBar toggleCancelButton method called");
+}
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  NSLog(@"RNSSearchBar handleCommand method called");
+  RCTRNSSearchBarHandleCommand(self, commandName, args);
+}
+
 #else
 #endif // RN_FABRIC_ENABLED
 
