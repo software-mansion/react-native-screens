@@ -309,7 +309,7 @@
 }
 
 #else
-#endif
+#endif // RN_FABRIC_ENABLED
 
 @end
 
