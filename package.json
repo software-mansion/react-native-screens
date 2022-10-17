@@ -26,7 +26,6 @@
     "common/",
     "lib/",
     "native-stack/",
-    "createNativeStackNavigator/",
     "reanimated/",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",

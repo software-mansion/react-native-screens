@@ -4,7 +4,6 @@
     "paths": {
       "react-native-screens": ["./src"],
       "react-native-screens/native-stack": ["./src/native-stack/index.tsx"],
-      "react-native-screens/createNativeStackNavigator": ["./src/createNativeStackNavigator.tsx"],
       "react-native-screens/reanimated": ["src/reanimated/index.tsx"]
     },
     "allowUnreachableCode": false,
