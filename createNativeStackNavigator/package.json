@@ -1,6 +1,0 @@
-{
-  "main": "../lib/commonjs/createNativeStackNavigator",
-  "module": "../lib/module/createNativeStackNavigator",
-  "react-native": "../src/createNativeStackNavigator",
-  "types": "../lib/typescript/createNativeStackNavigator.d.ts"
-}
