@@ -65,7 +65,7 @@
     "react-native": "*"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.0",
+    "@babel/core": "^7.12.9",
     "@react-native-community/bob": "^0.17.1",
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
