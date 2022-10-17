@@ -7,13 +7,13 @@
 
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
+#import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenComponentDescriptor.h>
-#import <React/RCTFabricComponentsPlugins.h>
 #import "RNSConvert.h"
 #import "RNSScreenViewEvent.h"
 #else
@@ -905,9 +905,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _fakeView.alpha = 0.0;
     NSMutableArray<SharedElementConfig *> *sharedElements;
     if (_closing) {
-      UIViewController *targetViewController = [self.transitionCoordinator 
-        viewControllerForKey:UITransitionContextToViewControllerKey];
-      sharedElements = [RNSSharedElementAnimator getSharedElementsForCurrentTransition:self 
+      UIViewController *targetViewController =
+          [self.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+      sharedElements = [RNSSharedElementAnimator getSharedElementsForCurrentTransition:self
                                                                   targetViewController:targetViewController];
       [RNSScreen asignEndingValuesWithTransitionContext:self.transitionCoordinator
                                          sharedElements:sharedElements
@@ -1193,40 +1193,40 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     UIView *startingView = sharedElement.fromView;
     UIView *startingViewParent = sharedElement.fromContainer;
     UIView *endingView = sharedElement.toView;
-  
+
     [reanimatedDelegate runTransitionWithConverterView:[context containerView]
-                                                  fromView:startingView
-                                         fromViewConverter:startingViewParent
-                                                    toView:endingView
-                                           toViewConverter:endingView.superview
-                                            transitionType:@"sharedElementTransition"];
+                                              fromView:startingView
+                                     fromViewConverter:startingViewParent
+                                                toView:endingView
+                                       toViewConverter:endingView.superview
+                                        transitionType:@"sharedElementTransition"];
   }
-// TODO: screen transition animation
-//  [reanimatedDelegate runTransitionWithConverterView:[context containerView]
-//                                                fromView:fromViewController.view
-//                                       fromViewConverter:fromViewController.view
-//                                                  toView:nil
-//                                         toViewConverter:nil
-//                                          transitionType:goingForward ? @"hiding" : @"exiting"];
-//  [reanimatedDelegate runTransitionWithConverterView:[context containerView]
-//                                                fromView:toViewController.view
-//                                       fromViewConverter:toViewController.view
-//                                                  toView:nil
-//                                         toViewConverter:nil
-//                                          transitionType:goingForward ? @"entering" : @"reappearing"];
+  // TODO: screen transition animation
+  //  [reanimatedDelegate runTransitionWithConverterView:[context containerView]
+  //                                                fromView:fromViewController.view
+  //                                       fromViewConverter:fromViewController.view
+  //                                                  toView:nil
+  //                                         toViewConverter:nil
+  //                                          transitionType:goingForward ? @"hiding" : @"exiting"];
+  //  [reanimatedDelegate runTransitionWithConverterView:[context containerView]
+  //                                                fromView:toViewController.view
+  //                                       fromViewConverter:toViewController.view
+  //                                                  toView:nil
+  //                                         toViewConverter:nil
+  //                                          transitionType:goingForward ? @"entering" : @"reappearing"];
 }
 
 - (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<SharedElementConfig *> *)sharedElements
 {
   for (SharedElementConfig *sharedElement in sharedElements) {
-      UIView *startingView = sharedElement.fromView;
-      [startingView removeFromSuperview];
-      UIView *startContainer = sharedElement.fromContainer;
-      int index = sharedElement.fromViewIndex;
-      [startContainer insertSubview:startingView atIndex:index];
-      startingView.frame = sharedElement.fromViewFrame;
-      UIView *endingView = sharedElement.toView;
-      endingView.hidden = NO;
+    UIView *startingView = sharedElement.fromView;
+    [startingView removeFromSuperview];
+    UIView *startContainer = sharedElement.fromContainer;
+    int index = sharedElement.fromViewIndex;
+    [startContainer insertSubview:startingView atIndex:index];
+    startingView.frame = sharedElement.fromViewFrame;
+    UIView *endingView = sharedElement.toView;
+    endingView.hidden = NO;
   }
 
   [self->_animationTimer setPaused:YES];

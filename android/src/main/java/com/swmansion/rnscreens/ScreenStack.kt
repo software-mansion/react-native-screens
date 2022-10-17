@@ -6,9 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.facebook.react.uimanager.common.UIManagerType
-import com.facebook.react.uimanager.events.EventDispatcher
-import com.facebook.react.uimanager.util.ReactFindViewUtil
 import com.swmansion.reanimated.sharedElementTransition.SharedViewConfig
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
@@ -28,6 +25,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
     var goingForward = false
+
     fun dismiss(screenFragment: ScreenStackFragment) {
         mDismissed.add(screenFragment)
         performUpdatesNow()
@@ -35,23 +33,19 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
     override val topScreen: Screen?
         get() = mTopScreen?.screen
+
     val rootScreen: Screen
         get() {
-            var i = 0
-            val size = screenCount
-            while (i < size) {
+            for (i in 0 until screenCount) {
                 val screen = getScreenAt(i)
                 if (!mDismissed.contains(screen.fragment)) {
                     return screen
                 }
-                i++
             }
             throw IllegalStateException("Stack has no root screen set")
         }
 
-    override fun adapt(screen: Screen): ScreenStackFragment {
-        return ScreenStackFragment(screen)
-    }
+    override fun adapt(screen: Screen) = ScreenStackFragment(screen)
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
@@ -73,16 +67,13 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun dispatchOnFinishTransitioning() {
-        val eventDispatcher: EventDispatcher? =
-            UIManagerHelper.getEventDispatcherForReactTag((context as ReactContext), id)
-        eventDispatcher?.dispatchEvent(
-            StackFinishTransitioningEvent(id)
-        )
+        UIManagerHelper
+            .getEventDispatcherForReactTag((context as ReactContext), id)
+            ?.dispatchEvent(StackFinishTransitioningEvent(id))
     }
 
     override fun removeScreenAt(index: Int) {
-        val toBeRemoved = getScreenAt(index)
-        mDismissed.remove(toBeRemoved.fragment)
+        mDismissed.remove(getScreenAt(index).fragment)
         super.removeScreenAt(index)
     }
 
@@ -91,9 +82,8 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         super.removeAllScreens()
     }
 
-    override fun hasScreen(screenFragment: ScreenFragment?): Boolean {
-        return super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
-    }
+    override fun hasScreen(screenFragment: ScreenFragment?): Boolean =
+        super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
 
     override fun onUpdate() {
         // When going back from a nested stack with a single screen on it, we may hit an edge case
@@ -336,9 +326,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun notifyContainerUpdate() {
-        for (screen in mStack) {
-            screen.onContainerUpdate()
-        }
+        mStack.forEach { it.onContainerUpdate() }
     }
 
     // below methods are taken from
@@ -394,16 +382,14 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         super.drawChild(op.canvas, op.child, op.drawingTime)
     }
 
-    private fun obtainDrawingOp(): DrawingOp {
-        return if (drawingOpPool.isEmpty()) {
-            DrawingOp()
-        } else drawingOpPool.removeAt(drawingOpPool.size - 1)
-    }
+    private fun obtainDrawingOp(): DrawingOp =
+        if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.size - 1)
 
     private inner class DrawingOp {
         var canvas: Canvas? = null
         var child: View? = null
         var drawingTime: Long = 0
+
         operator fun set(canvas: Canvas?, child: View?, drawingTime: Long): DrawingOp {
             this.canvas = canvas
             this.child = child
@@ -420,18 +406,11 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     companion object {
-        private fun isTransparent(fragment: ScreenStackFragment): Boolean {
-            return (
-                fragment.screen.stackPresentation
-                    === Screen.StackPresentation.TRANSPARENT_MODAL
-                )
-        }
+        private fun isTransparent(fragment: ScreenStackFragment): Boolean =
+            fragment.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL
 
-        private fun needsDrawReordering(fragment: ScreenStackFragment): Boolean {
-            return (
-                fragment.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
-                    fragment.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
-                )
-        }
+        private fun needsDrawReordering(fragment: ScreenStackFragment): Boolean =
+            fragment.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+                fragment.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
     }
 }

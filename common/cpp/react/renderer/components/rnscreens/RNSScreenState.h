@@ -13,7 +13,7 @@
 namespace facebook {
 namespace react {
 
-class RNSScreenState final {
+class JSI_EXPORT RNSScreenState final {
  public:
   using Shared = std::shared_ptr<const RNSScreenState>;
 
