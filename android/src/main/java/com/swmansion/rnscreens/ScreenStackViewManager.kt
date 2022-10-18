@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ThemedReactContext
@@ -19,7 +20,7 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
     private var sharedElementAnimatorDelegate: SharedElementAnimatorDelegate? = null
 
     init {
-        mDelegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
+        mDelegate = RNSScreenStackManagerDelegate(this)
     }
 
     override fun getName() = REACT_CLASS

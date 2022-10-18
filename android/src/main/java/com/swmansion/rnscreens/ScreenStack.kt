@@ -3,13 +3,12 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.view.View
-import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.reanimated.sharedElementTransition.SharedViewConfig
+import com.facebook.react.uimanager.events.EventDispatcher
+import com.swmansion.common.SharedTransitionConfig
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
@@ -137,7 +136,11 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             if (mTopScreen != null) {
                 // we want shared element transitions only after first appearance of stack
                 if (mTopScreen != null && newTop != null) {
-                    newTop.sharedElements = getSharedElementsForCurrentTransition(mTopScreen!!, newTop)
+                    val delegate = SharedElementAnimatorClass.getDelegate()
+                    newTop.sharedElements = delegate?.getSharedElementsForCurrentTransition(
+                        mTopScreen!!.screen,
+                        newTop.screen
+                    ) as List<SharedTransitionConfig>
                     newTop.shouldPerformSET = true
                 }
             }
@@ -230,77 +233,6 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
             it.commitNowAllowingStateLoss()
         }
-    }
-
-    private fun getSharedElementsForCurrentTransition(
-        currentFragment: ScreenStackFragment,
-        targetFragment: ScreenStackFragment
-    ): List<SharedTransitionConfig> {
-        val sharedElements = ArrayList<SharedTransitionConfig>()
-        val uiManager = UIManagerHelper.getUIManager(
-            context as ReactContext?,
-            UIManagerType.DEFAULT
-        )
-        val delegate = SharedElementAnimatorClass.getDelegate()
-        val sharedTransitionItems = delegate?.sharedTransitionItems
-        delegate?.sharedElementsIterationOrder?.reversed()?.forEach { key -> run {
-            val transitionGroup = sharedTransitionItems?.get(key)
-            var fromView: View? = null
-            var toView: View? = null
-            var fromViewParent: View? = null
-            transitionGroup?.forEach { viewConfig -> run {
-                var isInViewTree = true
-                var view: View?
-                try {
-                    view = uiManager?.resolveView(viewConfig.viewTag)
-                    viewConfig.view = view
-                } catch (e: Exception) {
-                    view = viewConfig.view
-                    isInViewTree = false
-                }
-                if (view?.parent != null) {
-                    viewConfig.parent = view.parent as View
-                }
-                if (isInSubtreeOf(view, currentFragment.screen, viewConfig.parentScreen)) {
-                    fromView = view
-                    viewConfig.parentScreen = currentFragment.screen
-                    fromViewParent = if (view?.parent != null) {
-                        view.parent as View
-                    } else {
-                        viewConfig.parent
-                    }
-                    if (isInViewTree) {
-                        delegate.makeSnapshot(view)
-                    }
-                }
-                else if (isInSubtreeOf(view, targetFragment.screen, viewConfig.parentScreen)) {
-                    toView = view
-                    viewConfig.parentScreen = targetFragment.screen
-                }
-            }}
-
-            fromView?.let {
-                fromView_ -> toView?.let {
-                    toView_ -> fromViewParent?.let {
-                        fromViewParent_ -> sharedElements.add(
-                            SharedTransitionConfig(fromView_, toView_, fromViewParent_)
-                        )
-                    }
-                }
-            }
-        }}
-
-        return sharedElements
-    }
-
-    private fun isInSubtreeOf(child: View?, root: View?, parentScreen: View?) : Boolean {
-        if (root == null || child == null) {
-            return false
-        }
-        if (child.parent == null && parentScreen != null && root == parentScreen) {
-            return true
-        }
-        return (child.parent == root) || isInSubtreeOf(child.parent as? View, root, null)
     }
 
     // only top visible screen should be accessible
