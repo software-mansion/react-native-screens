@@ -166,10 +166,6 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
-    entering,
-    hiding,
-    reappearing,
-    exiting,
   } = options;
 
   let {
@@ -221,10 +217,6 @@ const RouteView = ({
     <Screen
       key={route.key}
       enabled
-      entering={entering}
-      hiding={hiding}
-      reappearing={reappearing}
-      exiting={exiting}
       isNativeStack
       style={StyleSheet.absoluteFill}
       customAnimationOnSwipe={customAnimationOnSwipe}

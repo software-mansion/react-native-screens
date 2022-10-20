@@ -48,18 +48,18 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             if (stack != null && stack.rootScreen == it.screen) {
                 val parentFragment = it.parentFragment
                 if (parentFragment is ScreenStackFragment) {
-//                    if (parentFragment.screen.nativeBackButtonDismissalEnabled) {
+                    if (parentFragment.screen.nativeBackButtonDismissalEnabled) {
                         parentFragment.dismiss()
-//                    } else {
-//                        parentFragment.dispatchHeaderBackButtonClickedEvent()
-//                    }
+                    } else {
+                        parentFragment.dispatchHeaderBackButtonClickedEvent()
+                    }
                 }
             } else {
-//                if (it.screen.nativeBackButtonDismissalEnabled) {
+                if (it.screen.nativeBackButtonDismissalEnabled) {
                     it.dismiss()
-//                } else {
-//                    it.dispatchHeaderBackButtonClickedEvent()
-//                }
+                } else {
+                    it.dispatchHeaderBackButtonClickedEvent()
+                }
             }
         }
     }
