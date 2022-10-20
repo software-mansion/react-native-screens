@@ -10,7 +10,6 @@ interface SharedElementAnimatorDelegate {
     fun runTransition(before: View?, after: View?)
     fun onNativeAnimationEnd(screen: View?, toRemove: List<View?>?)
     fun makeSnapshot(view: View?)
-    fun getSharedTransitionItems(): Map<String?, List<SharedViewConfig?>?>?
     fun getSharedElementsIterationOrder(): List<String?>?
     fun isTagUnderTransition(viewTag: Int): Boolean
     fun getSharedElementsForCurrentTransition(

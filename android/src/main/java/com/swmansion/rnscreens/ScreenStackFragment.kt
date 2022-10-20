@@ -15,16 +15,19 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.swmansion.common.ScreenStackFragmentCommon
 import com.swmansion.common.SharedTransitionConfig
+import com.swmansion.rnscreens.sharedElementTransition.SharedElementAnimatorClass
 
 
-class ScreenStackFragment : ScreenFragment {
+class ScreenStackFragment : ScreenFragment, ScreenStackFragmentCommon {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
-    val transitionContainer: CoordinatorLayout = ReanimatedCoordinatorLayout(screen.context)
-    var shouldPerformSET = false
+    private val transitionContainer: CoordinatorLayout =
+        SharedElementAnimatorClass.getTransitionContainer(screen.context)
+    var mShouldPerformSET = false
     var isActiveTransition = false
     var sharedElements: List<SharedTransitionConfig> = ArrayList()
 
@@ -79,9 +82,37 @@ class ScreenStackFragment : ScreenFragment {
         screen.headerConfig?.onUpdate()
     }
 
+    override fun getFragmentSharedElements(): List<SharedTransitionConfig> {
+        return sharedElements
+    }
+
     override fun onViewAnimationEnd() {
         super.onViewAnimationEnd()
         notifyViewAppearTransitionEnd()
+    }
+
+    override fun getIsActiveTransition(): Boolean {
+        return isActiveTransition
+    }
+
+    override fun setIsActiveTransition(state: Boolean) {
+        isActiveTransition = state
+    }
+
+    override fun getShouldPerformSET(): Boolean {
+        return mShouldPerformSET
+    }
+
+    override fun setShouldPerformSET(state: Boolean) {
+        mShouldPerformSET = state
+    }
+
+    override fun getFragmentScreen(): View {
+        return screen
+    }
+
+    override fun getFragmentTransitionContainer(): CoordinatorLayout {
+        return transitionContainer
     }
 
     private fun notifyViewAppearTransitionEnd() {
@@ -96,8 +127,9 @@ class ScreenStackFragment : ScreenFragment {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: ScreensCoordinatorLayout? =
-            context?.let { ScreensCoordinatorLayout(it, this) }
+        val view = context?.let {
+            SharedElementAnimatorClass.getAnimationCoordinatorLayout(it, this)
+        }
 
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
@@ -186,160 +218,5 @@ class ScreenStackFragment : ScreenFragment {
         val container: ScreenContainer<*>? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         container.dismiss(this)
-    }
-
-    private class ReanimatedCoordinatorLayout(context: Context) : CoordinatorLayout(context) {
-        override fun onMeasureChild(
-            child: View?, parentWidthMeasureSpec: Int, widthUsed: Int,
-            parentHeightMeasureSpec: Int, heightUsed: Int
-        ) {
-            /* we want to prevent `measure` on shared element transition item
-               because it breaks the first couple frames of animation */
-        }
-
-        override fun onLayoutChild(child: View, layoutDirection: Int) {
-            /* we want to prevent `layout` on shared element transition item
-               because it breaks the first couple frames of animation */
-        }
-    }
-
-    private class ScreensCoordinatorLayout(context: Context, private val mFragment: ScreenStackFragment) : CoordinatorLayout(context) {
-        fun getStatusBarHeight(): Int {
-            var result = 0
-            val resourceId =
-                Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                result = Resources.getSystem().getDimensionPixelSize(resourceId)
-            }
-            return result
-        }
-
-        override fun onAttachedToWindow() {
-            super.onAttachedToWindow()
-            if (mFragment.shouldPerformSET) {
-                val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView as ViewGroup
-                rootView.addView(mFragment.transitionContainer)
-                val transitionLayoutParams = mFragment.transitionContainer.layoutParams as MarginLayoutParams
-                transitionLayoutParams.topMargin = getStatusBarHeight()
-            }
-        }
-
-        override fun onDetachedFromWindow() {
-            super.onDetachedFromWindow()
-            val rootView = mFragment.tryGetActivity()?.window?.decorView?.rootView as ViewGroup
-            if (mFragment.transitionContainer.parent == rootView) {
-                rootView.removeView(mFragment.transitionContainer)
-            }
-        }
-
-        private val mAnimationListener: Animation.AnimationListener = object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-                mFragment.onViewAnimationStart()
-                val activity = mFragment.tryGetActivity()
-                if (
-                    (mFragment.shouldPerformSET && activity != null
-                    && mFragment.transitionContainer.parent != null)
-                    && !mFragment.isActiveTransition
-                ) {
-                    mFragment.isActiveTransition = true
-                    val delegate = SharedElementAnimatorClass.getDelegate()
-                    mFragment.sharedElements.forEach { sharedTransitionConfig ->
-                        delegate?.makeSnapshot(sharedTransitionConfig.toView)
-                    }
-                    mFragment.sharedElements.forEach { sharedTransitionConfig ->
-                        val fromView = sharedTransitionConfig.fromView
-                        val toView = sharedTransitionConfig.toView
-                        toView.visibility = View.INVISIBLE
-
-                        val fromViewParent = sharedTransitionConfig.fromViewParent as ViewGroup
-                        fromViewParent.removeView(fromView)
-                        mFragment.transitionContainer.addView(fromView)
-                    }
-                    mFragment.sharedElements.forEach { sharedTransitionConfig ->
-                        delegate?.runTransition(
-                            sharedTransitionConfig.fromView,
-                            sharedTransitionConfig.toView
-                        )
-                    }
-                }
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                mFragment.onViewAnimationEnd()
-                if (mFragment.shouldPerformSET && mFragment.transitionContainer.parent != null) {
-                    val toRemove = ArrayList<View>()
-                    mFragment.sharedElements.forEach { sharedTransitionConfig ->
-                        val fromView = sharedTransitionConfig.fromView
-                        val toView = sharedTransitionConfig.toView
-                        toView.visibility = View.VISIBLE
-
-                        mFragment.transitionContainer.removeView(fromView)
-                        val parent = sharedTransitionConfig.fromViewParent as ViewGroup
-                        parent.addView(fromView)
-                        toRemove.add(fromView)
-                    }
-                    val delegate = SharedElementAnimatorClass.getDelegate()
-                    delegate?.onNativeAnimationEnd(mFragment.screen, toRemove)
-                    mFragment.shouldPerformSET = false
-                    mFragment.isActiveTransition = false
-                }
-            }
-
-            override fun onAnimationRepeat(animation: Animation) {}
-        }
-
-        override fun startAnimation(animation: Animation) {
-            // For some reason View##onAnimationEnd doesn't get called for
-            // exit transitions so we explicitly attach animation listener.
-            // We also have some animations that are an AnimationSet, so we don't wrap them
-            // in another set since it causes some visual glitches when going forward.
-            // We also set the listener only when going forward, since when going back,
-            // there is already a listener for dismiss action added, which would be overridden
-            // and also this is not necessary when going back since the lifecycle methods
-            // are correctly dispatched then.
-            // We also add fakeAnimation to the set of animations, which sends the progress of animation
-            val fakeAnimation = ScreensAnimation(mFragment)
-            animation.duration = 2000
-            fakeAnimation.duration = animation.duration
-            // val fakeAnimation = ScreensAnimation(mFragment).apply { duration = animation.duration }
-
-            if (animation is AnimationSet && !mFragment.isRemoving) {
-                animation.apply {
-                    addAnimation(fakeAnimation)
-                    setAnimationListener(mAnimationListener)
-                }.also {
-                    super.startAnimation(it)
-                }
-            } else {
-                AnimationSet(true).apply {
-                    addAnimation(animation)
-                    addAnimation(fakeAnimation)
-                    setAnimationListener(mAnimationListener)
-                }.also {
-                    super.startAnimation(it)
-                }
-            }
-        }
-
-        /**
-         * This method implements a workaround for RN's autoFocus functionality. Because of the way
-         * autoFocus is implemented it dismisses soft keyboard in fragment transition
-         * due to change of visibility of the view at the start of the transition. Here we override the
-         * call to `clearFocus` when the visibility of view is `INVISIBLE` since `clearFocus` triggers the
-         * hiding of the keyboard in `ReactEditText.java`.
-         */
-        override fun clearFocus() {
-            if (visibility != INVISIBLE) {
-                super.clearFocus()
-            }
-        }
-    }
-
-    private class ScreensAnimation(private val mFragment: ScreenFragment) : Animation() {
-        override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
-            super.applyTransformation(interpolatedTime, t)
-            // interpolated time should be the progress of the current transition
-            mFragment.dispatchTransitionProgress(interpolatedTime, !mFragment.isResumed)
-        }
     }
 }

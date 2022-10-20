@@ -4,6 +4,8 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
+import com.facebook.soloader.SoLoader
+import com.swmansion.rnscreens.sharedElementTransition.SharedElementAnimatorClass
 
 class RNScreensPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {

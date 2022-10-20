@@ -5,15 +5,12 @@ import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
-import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.uimanager.UIManagerModule
-import com.facebook.react.uimanager.util.ReactFindViewUtil
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(context) {
