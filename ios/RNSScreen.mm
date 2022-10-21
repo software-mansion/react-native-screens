@@ -832,7 +832,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
   [self traverseForScrollView:self.screenView];
 #endif
-  [RNSSharedElementAnimator notifyAboutViewDidDisappear:self.view];
+  NSObject<RNSSharedElementTransitionsDelegate> *delegate = [RNSSharedElementAnimator getDelegate];
+  [delegate onNativeAnimationEnd:self.view];
 }
 
 - (void)viewDidLayoutSubviews
