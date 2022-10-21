@@ -6,8 +6,8 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.module.annotations.ReactModule
 import com.swmansion.common.SharedElementAnimator
-import com.swmansion.common.ScreenStackFragmentCommon
 import com.swmansion.common.SharedElementAnimatorDelegate
+import com.swmansion.rnscreens.ScreenStackFragment
 
 @ReactModule(name = SharedElementAnimatorClass.MODULE_NAME)
 class SharedElementAnimatorClass(reactContext: ReactApplicationContext?)
@@ -21,15 +21,11 @@ class SharedElementAnimatorClass(reactContext: ReactApplicationContext?)
             return mDelegate
         }
 
-        fun getTransitionContainer(context: Context) : CoordinatorLayout {
-            return mDelegate.getTransitionContainer(context)
-        }
-
         fun getAnimationCoordinatorLayout(
             context: Context,
-            fragment: ScreenStackFragmentCommon
+            fragment: ScreenStackFragment
         ) : CoordinatorLayout {
-            return mDelegate.getAnimationCoordinatorLayout(context, fragment)
+            return mDelegate.makeAnimationCoordinatorLayout(context, fragment)
         }
     }
 

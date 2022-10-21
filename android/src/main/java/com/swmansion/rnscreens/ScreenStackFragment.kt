@@ -6,9 +6,6 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationSet
-import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -16,20 +13,13 @@ import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.swmansion.common.ScreenStackFragmentCommon
-import com.swmansion.common.SharedTransitionConfig
 import com.swmansion.rnscreens.sharedElementTransition.SharedElementAnimatorClass
-
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentCommon {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
-    private val transitionContainer: CoordinatorLayout =
-        SharedElementAnimatorClass.getTransitionContainer(screen.context)
-    var mShouldPerformSET = false
-    var isActiveTransition = false
-    var sharedElements: List<SharedTransitionConfig> = ArrayList()
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -82,37 +72,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentCommon {
         screen.headerConfig?.onUpdate()
     }
 
-    override fun getFragmentSharedElements(): List<SharedTransitionConfig> {
-        return sharedElements
-    }
-
     override fun onViewAnimationEnd() {
         super.onViewAnimationEnd()
         notifyViewAppearTransitionEnd()
     }
 
-    override fun getIsActiveTransition(): Boolean {
-        return isActiveTransition
-    }
-
-    override fun setIsActiveTransition(state: Boolean) {
-        isActiveTransition = state
-    }
-
-    override fun getShouldPerformSET(): Boolean {
-        return mShouldPerformSET
-    }
-
-    override fun setShouldPerformSET(state: Boolean) {
-        mShouldPerformSET = state
-    }
-
     override fun getFragmentScreen(): View {
         return screen
-    }
-
-    override fun getFragmentTransitionContainer(): CoordinatorLayout {
-        return transitionContainer
     }
 
     private fun notifyViewAppearTransitionEnd() {

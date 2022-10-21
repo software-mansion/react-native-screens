@@ -3,7 +3,6 @@ package com.swmansion.rnscreens.sharedElementTransition
 import android.content.Context
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
-import android.view.animation.Transformation
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import com.swmansion.common.ScreenStackFragmentCommon
@@ -66,13 +65,5 @@ class ScreensCoordinatorLayout(
         if (visibility != INVISIBLE) {
             super.clearFocus()
         }
-    }
-}
-
-private class ScreensAnimation(private val mFragment: ScreenStackFragmentCommon) : Animation() {
-    override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
-        super.applyTransformation(interpolatedTime, t)
-        // interpolated time should be the progress of the current transition
-        mFragment.dispatchTransitionProgress(interpolatedTime, !(mFragment as Fragment).isResumed)
     }
 }

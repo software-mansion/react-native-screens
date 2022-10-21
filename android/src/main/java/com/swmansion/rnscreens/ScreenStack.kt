@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.common.SharedTransitionConfig
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.sharedElementTransition.SharedElementAnimatorClass
@@ -133,16 +132,13 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
 
         createTransaction().let {
             // animation logic start
-            if (mTopScreen != null) {
-                // we want shared element transitions only after first appearance of stack
-                if (mTopScreen != null && newTop != null) {
-                    val delegate = SharedElementAnimatorClass.getDelegate()
-                    newTop.sharedElements = delegate?.getSharedElementsForCurrentTransition(
-                        mTopScreen!!.screen,
-                        newTop.screen
-                    ) as List<SharedTransitionConfig>
-                    newTop.mShouldPerformSET = true
-                }
+            // we want shared element transitions only after first appearance of stack
+            if (mTopScreen != null && newTop != null) {
+                val delegate = SharedElementAnimatorClass.getDelegate()
+                delegate.onScreenTransitionCreate(
+                    mTopScreen!!.screen,
+                    newTop.screen
+                )
             }
 
             if (stackAnimation != null) {

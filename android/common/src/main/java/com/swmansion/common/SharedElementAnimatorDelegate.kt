@@ -1,19 +1,22 @@
 package com.swmansion.common
 
+import android.content.Context
 import android.view.View
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 
 /*
-common part with react-native-reanimated for Shared Element Transition
- */
-
+  Common part with react-native-screens for Shared Element Transition
+*/
 interface SharedElementAnimatorDelegate {
-    fun runTransition(before: View?, after: View?)
+    fun shouldStartDefaultTransitionForView(view: View?): Boolean
     fun onNativeAnimationEnd(screen: View?, toRemove: List<View?>?)
-    fun makeSnapshot(view: View?)
-    fun getSharedElementsIterationOrder(): List<String?>?
-    fun isTagUnderTransition(viewTag: Int): Boolean
-    fun getSharedElementsForCurrentTransition(
-        currentScreen: android.view.View?,
-        targetScreen: android.view.View?
-    ): List<SharedTransitionConfig?>?
+    fun onScreenTransitionCreate(
+        currentScreen: View?,
+        targetScreen: View?
+    )
+
+    fun makeAnimationCoordinatorLayout(
+        context: Context,
+        mFragment: ScreenStackFragmentCommon
+    ): CoordinatorLayout
 }
