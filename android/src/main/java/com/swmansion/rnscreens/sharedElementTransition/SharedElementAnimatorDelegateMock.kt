@@ -5,6 +5,7 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.swmansion.common.ScreenStackFragmentCommon
 import com.swmansion.common.SharedElementAnimatorDelegate
+import com.swmansion.rnscreens.ScreenStackFragment
 
 /*
     Mock implementation for Shared Element Transition Delegate. Used if Reanimated is not installed.
@@ -28,6 +29,6 @@ class SharedElementAnimatorDelegateMock :
         context: Context,
         mFragment: ScreenStackFragmentCommon
     ): CoordinatorLayout {
-        return ScreensCoordinatorLayout(context, mFragment)
+        return ScreensCoordinatorLayout(context, mFragment as ScreenStackFragment)
     }
 }

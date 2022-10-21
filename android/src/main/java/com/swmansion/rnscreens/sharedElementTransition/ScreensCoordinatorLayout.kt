@@ -5,11 +5,11 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import com.swmansion.common.ScreenStackFragmentCommon
+import com.swmansion.rnscreens.ScreenStackFragment
 
 class ScreensCoordinatorLayout(
     context: Context,
-    private val mFragment: ScreenStackFragmentCommon
+    private val mFragment: ScreenStackFragment
 ) : CoordinatorLayout(context) {
     private val mAnimationListener: Animation.AnimationListener =
         object : Animation.AnimationListener {
