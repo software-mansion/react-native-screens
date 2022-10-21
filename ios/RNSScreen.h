@@ -37,6 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setViewToSnapshot:(UIView *)snapshot;
 - (void)resetViewToScreen;
 #endif
+@property UIView *fakeView;
+@property BOOL closing;
+@property CADisplayLink *animationTimer;
+@property BOOL goingForward;
 
 @end
 

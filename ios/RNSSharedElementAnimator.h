@@ -1,5 +1,4 @@
 @interface SharedViewConfig : NSObject
-;
 
 - (void)setView:(UIView *)view;
 - (UIView *)getView;
@@ -10,7 +9,6 @@
 @end
 
 @interface SharedElementConfig : NSObject
-;
 
 @property UIView *fromView;
 @property UIView *toView;
@@ -39,6 +37,8 @@
                         transitionType:(NSString *)transitionType;
 - (void)notifyAboutViewDidDisappear:(UIView *)screeen;
 - (void)makeSnapshot:(UIView *)view withViewController:(UIView *)viewController;
+
+- (void)onScreenTransitionCreate:(id)screen;
 
 @end
 

@@ -703,11 +703,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   __weak id _previousFirstResponder;
   CGRect _lastViewFrame;
   RNSScreenView *_initialView;
-  UIView *_fakeView;
-  CADisplayLink *_animationTimer;
   CGFloat _currentAlpha;
-  BOOL _closing;
-  BOOL _goingForward;
   int _dismissCount;
   BOOL _isSwiping;
   BOOL _shouldNotify;
@@ -901,37 +897,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)setupProgressNotification
 {
-  if (self.transitionCoordinator != nil) {
-    _fakeView.alpha = 0.0;
-    NSMutableArray<SharedElementConfig *> *sharedElements;
-    if (_closing) {
-      UIViewController *targetViewController =
-          [self.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
-      sharedElements = [RNSSharedElementAnimator getSharedElementsForCurrentTransition:self
-                                                                  targetViewController:targetViewController];
-      [RNSScreen asignEndingValuesWithTransitionContext:self.transitionCoordinator
-                                         sharedElements:sharedElements
-                                           goingForward:_goingForward];
-    }
-
-    [self.transitionCoordinator
-        animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [[context containerView] addSubview:self->_fakeView];
-          self->_fakeView.alpha = 1.0;
-          if (self->_closing && sharedElements != nil) {
-            // right order is important, first parent then children, to keep right z-index order
-            for (SharedElementConfig *sharedElement in sharedElements) {
-              [[context containerView] addSubview:sharedElement.fromView];
-            }
-          }
-
-          self->_animationTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleAnimation)];
-          [self->_animationTimer addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        }
-        completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          [self cleanupAfterTransitionWithSharedElements:sharedElements];
-        }];
-  }
+  NSObject<RNSSharedElementTransitionsDelegate> *delegate = [RNSSharedElementAnimator getDelegate];
+  [delegate onScreenTransitionCreate:self];
 }
 
 - (void)handleAnimation
@@ -1180,60 +1147,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 }
 #endif
 
-+ (void)asignEndingValuesWithTransitionContext:(id<UIViewControllerTransitionCoordinator> _Nonnull)context
-                                sharedElements:(NSMutableArray<SharedElementConfig *> *)sharedElements
-                                  goingForward:(BOOL)goingForward
-{
-  UIViewController *toViewController = [context viewControllerForKey:UITransitionContextToViewControllerKey];
-  [toViewController.view setNeedsLayout];
-  [toViewController.view layoutIfNeeded];
-
-  NSObject<RNSSharedElementTransitionsDelegate> *reanimatedDelegate = [RNSSharedElementAnimator getDelegate];
-  for (SharedElementConfig *sharedElement in sharedElements) {
-    UIView *startingView = sharedElement.fromView;
-    UIView *startingViewParent = sharedElement.fromContainer;
-    UIView *endingView = sharedElement.toView;
-
-    [reanimatedDelegate runTransitionWithConverterView:[context containerView]
-                                              fromView:startingView
-                                     fromViewConverter:startingViewParent
-                                                toView:endingView
-                                       toViewConverter:endingView.superview
-                                        transitionType:@"sharedElementTransition"];
-  }
-  // TODO: screen transition animation
-  //  [reanimatedDelegate runTransitionWithConverterView:[context containerView]
-  //                                                fromView:fromViewController.view
-  //                                       fromViewConverter:fromViewController.view
-  //                                                  toView:nil
-  //                                         toViewConverter:nil
-  //                                          transitionType:goingForward ? @"hiding" : @"exiting"];
-  //  [reanimatedDelegate runTransitionWithConverterView:[context containerView]
-  //                                                fromView:toViewController.view
-  //                                       fromViewConverter:toViewController.view
-  //                                                  toView:nil
-  //                                         toViewConverter:nil
-  //                                          transitionType:goingForward ? @"entering" : @"reappearing"];
-}
-
-- (void)cleanupAfterTransitionWithSharedElements:(NSMutableArray<SharedElementConfig *> *)sharedElements
-{
-  for (SharedElementConfig *sharedElement in sharedElements) {
-    UIView *startingView = sharedElement.fromView;
-    [startingView removeFromSuperview];
-    UIView *startContainer = sharedElement.fromContainer;
-    int index = sharedElement.fromViewIndex;
-    [startContainer insertSubview:startingView atIndex:index];
-    startingView.frame = sharedElement.fromViewFrame;
-    UIView *endingView = sharedElement.toView;
-    endingView.hidden = NO;
-  }
-
-  [self->_animationTimer setPaused:YES];
-  [self->_animationTimer invalidate];
-  [_fakeView removeFromSuperview];
-}
-
 @end
 
 @implementation RNSScreenManager
@@ -1305,7 +1218,6 @@ RCT_ENUM_CONVERTER(
       @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
       @"slide_from_right" : @(RNSScreenStackAnimationDefault),
       @"slide_from_left" : @(RNSScreenStackAnimationDefault),
-      @"reanimated" : @(RNSScreenStackAnimationReanimated),
     }),
     RNSScreenStackAnimationDefault,
     integerValue)
