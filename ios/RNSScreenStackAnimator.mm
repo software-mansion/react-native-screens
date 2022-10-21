@@ -41,11 +41,6 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
     return 0;
   }
 
-  if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationReanimated) {
-    return 0.3;
-  }
-
-
   if (screen != nil && screen.transitionDuration != nil && [screen.transitionDuration floatValue] >= 0) {
     float durationInSeconds = [screen.transitionDuration floatValue] / 1000.0;
     return durationInSeconds;
@@ -295,26 +290,6 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
   }
 }
 
-- (void)animateNoAnimationWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
-                                           toVC:(UIViewController *)toViewController
-                                         fromVC:(UIViewController *)fromViewController
-{
-  toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
-
-  if (_operation == UINavigationControllerOperationPush) {
-    [[transitionContext containerView] addSubview:toViewController.view];
-  } else if (_operation == UINavigationControllerOperationPop) {
-    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
-  }
-
-  [UIView animateWithDuration:[self transitionDuration:transitionContext]
-      animations:^{
-      }
-      completion:^(BOOL finished) {
-        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-      }];
-}
-
 + (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
 {
   return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
@@ -336,9 +311,6 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
     return;
   } else if (animation == RNSScreenStackAnimationFadeFromBottom) {
     [self animateFadeFromBottomWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
-    return;
-  } else if (animation == RNSScreenStackAnimationReanimated) {
-    [self animateNoAnimationWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
     return;
   }
   // simple_push is the default custom animation
