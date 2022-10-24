@@ -6,14 +6,14 @@
 
 @implementation RNSSharedElementAnimator
 
-static NSObject<RNSSharedElementTransitionsDelegate> *_delegate;
+static NSObject<RNSSharedElementAnimatorDelegate> *_delegate;
 
-+ (void)setDelegate:(NSObject<RNSSharedElementTransitionsDelegate> *)delegate
++ (void)setDelegate:(NSObject<RNSSharedElementAnimatorDelegate> *)delegate
 {
   _delegate = delegate;
 }
 
-+ (NSObject<RNSSharedElementTransitionsDelegate> *)getDelegate
++ (NSObject<RNSSharedElementAnimatorDelegate> *)getDelegate
 {
   if (_delegate == nil) {
     _delegate = [RNSSharedElementAnimatorDelegateMock alloc];

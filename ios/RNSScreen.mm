@@ -832,7 +832,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
   [self traverseForScrollView:self.screenView];
 #endif
-  NSObject<RNSSharedElementTransitionsDelegate> *delegate = [RNSSharedElementAnimator getDelegate];
+  NSObject<RNSSharedElementAnimatorDelegate> *delegate = [RNSSharedElementAnimator getDelegate];
   [delegate onNativeAnimationEnd:self.view];
 }
 
@@ -898,7 +898,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)setupProgressNotification
 {
-  NSObject<RNSSharedElementTransitionsDelegate> *delegate = [RNSSharedElementAnimator getDelegate];
+  NSObject<RNSSharedElementAnimatorDelegate> *delegate = [RNSSharedElementAnimator getDelegate];
   [delegate onScreenTransitionCreate:self];
 }
 
