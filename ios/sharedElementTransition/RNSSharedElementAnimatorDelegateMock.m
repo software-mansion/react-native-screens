@@ -27,4 +27,8 @@
 {
 }
 
+- (void)onScreenRemoving:(UIView *)screen
+{
+}
+
 @end

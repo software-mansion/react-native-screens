@@ -23,6 +23,7 @@
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSSharedElementAnimator.h"
 
 @interface RNSScreenStackView () <
     UINavigationControllerDelegate,
@@ -886,6 +887,9 @@
 
 - (void)removeReactSubview:(RNSScreenView *)subview
 {
+  NSObject<RNSSharedElementAnimatorDelegate> *delegate = [RNSSharedElementAnimator getDelegate];
+  [delegate onScreenRemoving:(UIView *)subview];
+
   subview.reactSuperview = nil;
   [_reactSubviews removeObject:subview];
 }

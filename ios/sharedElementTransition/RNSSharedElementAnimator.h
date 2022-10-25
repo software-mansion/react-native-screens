@@ -2,6 +2,7 @@
 
 - (void)onScreenTransitionCreate:(id)screen;
 - (void)onNativeAnimationEnd:(UIView *)screen;
+- (void)onScreenRemoving:(UIView *)screen;
 
 @end
 
