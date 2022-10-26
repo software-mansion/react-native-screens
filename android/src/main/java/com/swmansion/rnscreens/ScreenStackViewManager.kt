@@ -10,8 +10,8 @@ import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackManagerInterface
-import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.common.SharedElementAnimatorDelegate
+import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.sharedElementTransition.SharedElementAnimatorClass
 
 @ReactModule(name = ScreenStackViewManager.REACT_CLASS)
@@ -38,13 +38,14 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
     }
 
     private fun prepareOutTransition(screen: Screen?) {
+        if (sharedElementAnimatorDelegate == null) {
+            sharedElementAnimatorDelegate = SharedElementAnimatorClass.getDelegate()
+        }
+        sharedElementAnimatorDelegate?.onScreenRemoving(screen)
         startTransitionRecursive(screen)
     }
 
     private fun shouldStartViewTransition(view: View): Boolean {
-        if (sharedElementAnimatorDelegate == null) {
-            sharedElementAnimatorDelegate = SharedElementAnimatorClass.getDelegate()
-        }
         return sharedElementAnimatorDelegate?.shouldStartDefaultTransitionForView(view)
             ?: run { true }
     }
