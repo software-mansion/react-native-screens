@@ -76,6 +76,9 @@
     "@types/react-test-renderer": "^16.9.2",
     "@typescript-eslint/eslint-plugin": "^3.7.1",
     "@typescript-eslint/parser": "^3.7.1",
+    "@react-native-community/cli": "^9.0.0",
+    "@react-native-community/cli-platform-android": "^9.0.0",
+    "@react-native-community/cli-platform-ios": "^9.0.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.2.2",
     "clang-format": "^1.5.0",
@@ -107,6 +110,11 @@
     "react-test-renderer": "^16.13.1",
     "release-it": "^13.5.2",
     "typescript": "^3.9.7"
+  },
+  "resolutions": {
+    "@react-native-community/cli-platform-android": "^9.0.0",
+    "@react-native-community/cli": "^9.0.0",
+    "@react-native-community/cli-platform-ios": "^9.0.0"
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
