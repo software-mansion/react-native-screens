@@ -14,15 +14,15 @@
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/drawer": "^6.4.1",
     "@react-navigation/native": "^6.0.10",
+    "@react-navigation/native-stack": "^6.7.0",
     "@react-navigation/stack": "^6.2.1",
     "nanoid": "^3.2.0",
+    "postinstall-postinstall": "^2.1.0",
     "react": "18.1.0",
     "react-native": "0.70.0",
-    "postinstall-postinstall": "^2.1.0",
     "react-native-gesture-handler": "^2.6.0",
-    "react-native-reanimated": "software-mansion/react-native-reanimated#80240aed4b53d0cc9ab69e88d97ce61929876e0d",
+    "react-native-reanimated": "software-mansion/react-native-reanimated#202e91e57bd353ffb2dc836ddd40545bb5370b5b",
     "react-native-safe-area-context": "^4.3.1",
-    "@react-navigation/native-stack": "^6.7.0",
     "react-native-screens": "link:../"
   },
   "devDependencies": {
