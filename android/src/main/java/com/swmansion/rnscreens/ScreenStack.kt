@@ -8,7 +8,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import com.swmansion.rnscreens.sharedElementTransition.SharedElementAnimatorClass
-import java.util.*
+import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 

@@ -10,8 +10,8 @@ import com.swmansion.common.SharedElementAnimatorDelegate
 import com.swmansion.rnscreens.ScreenStackFragment
 
 @ReactModule(name = SharedElementAnimatorClass.MODULE_NAME)
-class SharedElementAnimatorClass(reactContext: ReactApplicationContext?)
-    : ReactContextBaseJavaModule(reactContext), SharedElementAnimator {
+class SharedElementAnimatorClass(reactContext: ReactApplicationContext?) :
+    ReactContextBaseJavaModule(reactContext), SharedElementAnimator {
 
     companion object {
         const val MODULE_NAME = "SharedElementAnimatorClass"
@@ -24,7 +24,7 @@ class SharedElementAnimatorClass(reactContext: ReactApplicationContext?)
         fun getAnimationCoordinatorLayout(
             context: Context,
             fragment: ScreenStackFragment
-        ) : CoordinatorLayout {
+        ): CoordinatorLayout {
             return mDelegate.makeAnimationCoordinatorLayout(context, fragment)
         }
     }
@@ -38,5 +38,4 @@ class SharedElementAnimatorClass(reactContext: ReactApplicationContext?)
             mDelegate = delegate
         }
     }
-
 }
