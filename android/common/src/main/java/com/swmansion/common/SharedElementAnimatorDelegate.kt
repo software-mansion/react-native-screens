@@ -14,7 +14,7 @@ interface SharedElementAnimatorDelegate {
         currentScreen: View?,
         targetScreen: View?
     )
-
+    fun onScreenRemoving(view: View?)
     fun makeAnimationCoordinatorLayout(
         context: Context,
         mFragment: ScreenStackFragmentCommon

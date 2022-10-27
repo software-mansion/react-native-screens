@@ -33,9 +33,10 @@ class SharedElementAnimatorClass(reactContext: ReactApplicationContext?)
         return MODULE_NAME
     }
 
-    override fun setDelegate(delegate: SharedElementAnimatorDelegate) {
-        // Should be called by Reanimated during native module initialization
-        mDelegate = delegate
+    override fun setDelegate(delegate: SharedElementAnimatorDelegate?) {
+        if (delegate != null) {
+            mDelegate = delegate
+        }
     }
 
 }

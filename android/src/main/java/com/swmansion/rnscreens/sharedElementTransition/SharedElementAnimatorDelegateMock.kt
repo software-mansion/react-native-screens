@@ -25,7 +25,7 @@ class SharedElementAnimatorDelegateMock :
         targetScreen: View?
     ) {}
 
-    override fun onScreenRemoving(screen: View?) {}
+    override fun onScreenRemoving(view: View?) {}
 
     override fun makeAnimationCoordinatorLayout(
         context: Context,
