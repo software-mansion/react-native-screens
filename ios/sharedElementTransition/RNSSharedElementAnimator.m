@@ -1,4 +1,6 @@
+#if __cplusplus
 #import <RNScreens/RNSScreen.h>
+#endif // __cplusplus
 #import <RNScreens/RNSSharedElementAnimator.h>
 #import <RNScreens/RNSSharedElementAnimatorDelegateMock.h>
 

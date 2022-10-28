@@ -1,10 +1,13 @@
+#if __cplusplus
 #import <RNScreens/RNSScreen.h>
+#endif // __cplusplus
 #import <RNScreens/RNSSharedElementAnimatorDelegateMock.h>
 
 @implementation RNSSharedElementAnimatorDelegateMock
 
 - (void)onScreenTransitionCreate:(id)screen_
 {
+#if __cplusplus
   RNSScreen *screen = screen_;
   if (screen.transitionCoordinator != nil) {
     screen.fakeView.alpha = 0.0;
@@ -21,6 +24,7 @@
           [screen.fakeView removeFromSuperview];
         }];
   }
+#endif // __cplusplus
 }
 
 - (void)onNativeAnimationEnd:(UIView *)screeen
