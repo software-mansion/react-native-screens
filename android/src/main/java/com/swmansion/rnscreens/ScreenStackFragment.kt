@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -109,13 +108,13 @@ class ScreenStackFragment : ScreenFragment {
             // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
             // role. On top of that it breaks screens animations when alfa offscreen compositing is off
             // (which is the default)
-            setBackgroundColor(Color.TRANSPARENT)
             layoutParams = AppBarLayout.LayoutParams(
                 AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
             )
 
+            touchscreenBlocksFocus = false
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                setKeyboardNavigationCluster(true)
+                isKeyboardNavigationCluster = false
             }
         }
 

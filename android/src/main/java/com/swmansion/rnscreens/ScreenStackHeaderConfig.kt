@@ -394,5 +394,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             toolbar.setBackgroundColor(tv.data)
         }
         toolbar.clipChildren = false
+        toolbar.touchscreenBlocksFocus = false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            toolbar.isKeyboardNavigationCluster = false
+        }
     }
 }
