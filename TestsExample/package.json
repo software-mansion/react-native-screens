@@ -21,7 +21,7 @@
     "react": "18.1.0",
     "react-native": "0.70.0",
     "react-native-gesture-handler": "^2.6.0",
-    "react-native-reanimated": "software-mansion/react-native-reanimated#202e91e57bd353ffb2dc836ddd40545bb5370b5b",
+    "react-native-reanimated": "software-mansion/react-native-reanimated#@piaskowyk/shared-element-transition",
     "react-native-safe-area-context": "^4.3.1",
     "react-native-screens": "link:../"
   },
