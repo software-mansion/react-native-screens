@@ -14,7 +14,7 @@
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
     "react": "18.1.0",
-    "react-native": "0.70.0",
+    "react-native": "0.70.5",
     "react-native-codegen": "0.69.1",
     "react-native-safe-area-context": "^4.3.1",
     "react-native-screens": "link:../",
@@ -31,7 +31,7 @@
     "babel-preset-expo": "^9.0.2",
     "eslint": "^7.32.0",
     "jest": "^26.6.3",
-    "metro-react-native-babel-preset": "^0.72.1",
+    "metro-react-native-babel-preset": "^0.72.3",
     "prettier": "^2.5.1",
     "react-test-renderer": "18.1.0"
   },
