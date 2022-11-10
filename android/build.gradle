@@ -134,7 +134,9 @@ dependencies {
     }
     if (shouldUseCommonInterfaceFromReanimated()) {
         // Include Reanimated as dependency to load the common interface
-        implementation project(':react-native-reanimated')
+        implementation(project(':react-native-reanimated')) {
+            exclude group:'com.facebook.fbjni' // resolves "Duplicate class com.facebook.jni.CppException"
+        }
     }
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.fragment:fragment:1.2.1'
