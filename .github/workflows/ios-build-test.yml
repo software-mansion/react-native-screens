@@ -35,6 +35,18 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
       - name: Install pods
+        id: install_pods
+        continue-on-error: true
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: pod install
+      - if: steps.install_pods.outcome == 'failure'
+        id: update_hermes
+        name: Update hermes
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: pod update hermes-engine --no-repo-update
+      - if: steps.update_hermes == 'success'
+        id: reinstall_pods
+        name: Reinstall pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
       - name: Build app
