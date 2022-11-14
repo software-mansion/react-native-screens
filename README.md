@@ -178,6 +178,10 @@ To take advantage of the native stack navigator primitive for React Navigation t
 - for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/main/native-stack)
 - for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/main/createNativeStackNavigator)
 
+## `FullWindowOverlay`
+
+Native `iOS` component for rendering views straight under the `Window`. Based on `RCTPerfMonitor`. You should treat it as a wrapper, providing full-screen, transparent view which receives no props and should ideally render one child `View`, being the root of its view hierarchy. For the example usage, see https://github.com/software-mansion/react-native-screens/blob/main/TestsExample/src/Test1096.tsx
+
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
 React-native-navigation library already uses native containers for rendering navigation scenes so wrapping these scenes with `<ScreenContainer>` or `<Screen>` component does not provide any benefits. Yet if you would like to build a component that uses screens primitives under the hood (for example a view pager component) it is safe to use `<ScreenContainer>` and `<Screen>` components for that as these work out of the box when rendered on react-native-navigation scenes.

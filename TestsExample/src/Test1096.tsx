@@ -34,9 +34,11 @@ function Home({
           />
         </View>
       </Modal>
-      <FullWindowOverlay style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center'}}>
-        <View style={styles.box} />
-        <Button title="click me" onPress={() => console.warn('clicked')} />
+      <FullWindowOverlay>
+        <View style={{flex: 1, justifyContent: 'center'}} pointerEvents="box-none">
+          <View style={styles.box} />
+          <Button title="click me" onPress={() => console.warn('clicked')} />
+        </View >
       </FullWindowOverlay>
     </View>
   );
