@@ -39,16 +39,16 @@ jobs:
         continue-on-error: true
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
-      # - if: steps.install_pods.outcome == 'failure'
-      #   id: update_hermes
-      #   name: Update hermes
-      #   working-directory: ${{ env.WORKING_DIRECTORY }}/ios
-      #   run: pod update hermes-engine --no-repo-update
-      # - if: steps.update_hermes == 'success'
-      #   id: reinstall_pods
-      #   name: Reinstall pods
-      #   working-directory: ${{ env.WORKING_DIRECTORY }}/ios
-      #   run: pod install
+      - if: steps.install_pods.outcome == 'failure'
+        id: remove_pods
+        name: Remove pods
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: rm -fr build Pods Podfile.lock 
+      - if: steps.remove_pods.outcome == 'success'
+        id: reinstall_pods
+        name: Reinstall pods
+        working-directory: ${{ env.WORKING_DIRECTORY }}/ios
+        run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn ios
