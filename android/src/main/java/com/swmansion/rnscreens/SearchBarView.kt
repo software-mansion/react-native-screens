@@ -21,6 +21,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     var shouldOverrideBackButton: Boolean = true
     var autoFocus: Boolean = false
     var shouldShowHintSearchIcon: Boolean = true
+    var shouldClearOnSubmit: Boolean = false
 
     private var mSearchViewFormatter: SearchViewFormatter? = null
 
@@ -53,7 +54,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             mSearchViewFormatter?.setHeaderIconColor(headerIconColor)
             mSearchViewFormatter?.setHintTextColor(hintTextColor)
             mSearchViewFormatter?.setPlaceholder(placeholder, shouldShowHintSearchIcon)
-            searchView.overrideBackAction = shouldOverrideBackButton
+            searchView?.overrideBackAction = shouldOverrideBackButton
         }
     }
 
@@ -116,6 +117,9 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         val event = Arguments.createMap()
         event.putString("text", newText)
         sendEvent("onSearchButtonPress", event)
+        if (shouldClearOnSubmit) {
+            mSearchViewFormatter?.clearText()
+        }
     }
 
     private fun sendEvent(eventName: String, eventContent: WritableMap?) {

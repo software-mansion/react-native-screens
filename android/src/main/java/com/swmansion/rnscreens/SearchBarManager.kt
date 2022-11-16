@@ -70,6 +70,13 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
         }
     }
 
+    @ReactProp(name = "shouldClearOnSubmit")
+    fun setPlaceholder(view: SearchBarView, shouldClearOnSubmit: Boolean?) {
+        if (shouldClearOnSubmit != null) {
+            view.shouldClearOnSubmit = shouldClearOnSubmit
+        }
+    }
+
     @ReactProp(name = "textColor", customType = "Color")
     fun setTextColor(view: SearchBarView, color: Int?) {
         view.textColor = color

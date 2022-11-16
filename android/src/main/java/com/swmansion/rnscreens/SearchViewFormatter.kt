@@ -10,6 +10,7 @@ import androidx.appcompat.widget.SearchView
 class SearchViewFormatter(var searchView: SearchView) {
     private var mDefaultTextColor: Int? = null
     private var mDefaultTintBackground: Drawable? = null
+    private var mDefaultText: String = ""
 
     private val searchEditText
         get() = searchView.findViewById<View>(R.id.search_src_text) as? EditText
@@ -63,5 +64,9 @@ class SearchViewFormatter(var searchView: SearchView) {
         } else {
             searchEditText?.hint = placeholder
         }
+    }
+
+    fun clearText() {
+        searchEditText?.setText(mDefaultText)
     }
 }
