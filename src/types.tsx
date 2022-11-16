@@ -570,4 +570,11 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean;
+  /**
+   * Clear the search input when search button is pressed.
+   *
+   * @plaform android
+   * @default false
+   */
+  shouldClearOnSubmit?: boolean;
 }
