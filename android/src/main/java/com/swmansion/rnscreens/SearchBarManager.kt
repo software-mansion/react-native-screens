@@ -71,7 +71,7 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
     }
 
     @ReactProp(name = "shouldClearOnSubmit")
-    fun setPlaceholder(view: SearchBarView, shouldClearOnSubmit: Boolean?) {
+    fun setShouldClearOnSubmit(view: SearchBarView, shouldClearOnSubmit: Boolean?) {
         if (shouldClearOnSubmit != null) {
             view.shouldClearOnSubmit = shouldClearOnSubmit
         }
