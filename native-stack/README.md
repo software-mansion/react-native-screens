@@ -548,6 +548,12 @@ The search and close icon color shown in the header. (Android only)
 
 Show the search hint icon when search bar is focused. (Android only)
 
+#### `shouldClearOnSubmit`
+
+Clear the search input when the search button is pressed. (Android only)
+
+Defaults to false.
+
 ### Events
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:
