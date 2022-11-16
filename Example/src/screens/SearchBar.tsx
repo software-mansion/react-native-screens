@@ -49,6 +49,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     'sentences'
   );
   const [inputType, setInputType] = useState<InputType>('text');
+  const [shouldClearOnSubmit, setShouldClearOnSubmit] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -63,6 +64,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         autoCapitalize,
         placeholder,
         inputType,
+        shouldClearOnSubmit,
         onChangeText: (event) => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
           toast.push({
@@ -109,6 +111,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     hideNavigationBar,
     autoCapitalize,
     inputType,
+    shouldClearOnSubmit,
   ]);
 
   return (
@@ -172,6 +175,11 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         label="Show search hint icon"
         value={shouldShowHintSearchIcon}
         onValueChange={setShouldShowHintSearchIcon}
+      />
+      <SettingsSwitch
+        label="Clear on submit"
+        value={shouldClearOnSubmit}
+        onValueChange={setShouldClearOnSubmit}
       />
       <Text style={styles.heading}>Other</Text>
       <Button
