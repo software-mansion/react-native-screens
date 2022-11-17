@@ -8,6 +8,7 @@ import type {
   Double,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type ScreenEvent = Readonly<{}>;
 
 type ScreenDismissedEvent = Readonly<{
