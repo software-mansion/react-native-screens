@@ -45,14 +45,6 @@
 #endif
 }
 
-#if !TARGET_OS_TV
-// See:
-// 1. https://github.com/software-mansion/react-native-screens/pull/1543
-// 2. https://github.com/software-mansion/react-native-screens/pull/1596
-// This line aims to ensure that device orientation notifications are enabled
-static RNSScreenWindowTraits *orientationNotificationLifecycle = [RNSScreenWindowTraits new];
-#endif
-
 #ifdef RN_FABRIC_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -1205,6 +1197,29 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 #endif
+
+#if !TARGET_OS_TV
+// See:
+// 1. https://github.com/software-mansion/react-native-screens/pull/1543
+// 2. https://github.com/software-mansion/react-native-screens/pull/1596
+// This class is instatiated from React Native's internals during application startup
+- (instancetype)init
+{
+  if (self = [super init]) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    });
+  }
+  return self;
+}
+
+- (void)dealloc
+{
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
+  });
+}
+#endif // !TARGET_OS_TV
 
 - (UIView *)view
 {

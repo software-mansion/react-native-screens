@@ -4,30 +4,6 @@
 
 @implementation RNSScreenWindowTraits
 
-// See:
-// 1. https://github.com/software-mansion/react-native-screens/pull/1543
-// 2. https://github.com/software-mansion/react-native-screens/pull/1596
-// This class is instatiated from RNSScreen when static variables are initialized
-// (in the beginning of runtime)
-- (instancetype)init
-{
-#if !TARGET_OS_TV
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-  });
-#endif
-  return self;
-}
-
-- (void)dealloc
-{
-#if !TARGET_OS_TV
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-  });
-#endif
-}
-
 #if !TARGET_OS_TV
 + (void)assertViewControllerBasedStatusBarAppearenceSet
 {
