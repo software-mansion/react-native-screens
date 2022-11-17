@@ -45,7 +45,13 @@
 #endif
 }
 
+#if !TARGET_OS_TV
+// See:
+// 1. https://github.com/software-mansion/react-native-screens/pull/1543
+// 2. https://github.com/software-mansion/react-native-screens/pull/1596
+// This line aims to ensure that device orientation notifications are enabled
 static RNSScreenWindowTraits *orientationNotificationLifecycle = [RNSScreenWindowTraits new];
+#endif
 
 #ifdef RN_FABRIC_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
