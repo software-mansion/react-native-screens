@@ -34,7 +34,7 @@ export interface NativeProps extends ViewProps {
   backButtonInCustomView?: boolean;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean;
-};
+}
 
 export default codegenNativeComponent<NativeProps>(
   'RNSScreenStackHeaderConfig',

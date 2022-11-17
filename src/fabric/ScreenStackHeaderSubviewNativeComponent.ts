@@ -14,4 +14,7 @@ export interface NativeProps extends ViewProps {
   type?: WithDefault<HeaderSubviewTypes, 'left'>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSScreenStackHeaderSubview', {});
+export default codegenNativeComponent<NativeProps>(
+  'RNSScreenStackHeaderSubview',
+  {}
+);
