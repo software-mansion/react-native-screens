@@ -4,6 +4,11 @@
 
 @implementation RNSScreenWindowTraits
 
+// See:
+// 1. https://github.com/software-mansion/react-native-screens/pull/1543
+// 2. https://github.com/software-mansion/react-native-screens/pull/1596
+// This class is instatiated from RNSScreen when static variables are initialized
+// (in the beginning of runtime)
 - (instancetype)init
 {
 #if !TARGET_OS_TV
