@@ -53,3 +53,5 @@ lib/
 # CMake cache
 .cxx/
 
+android/.settings
+
