@@ -18,31 +18,7 @@ To learn about how to use `react-native-screens` with Fabric architecture, head 
 
 ### iOS
 
-On iOS obtaining current device orientation [requires asking the system to generate orientation notifications](https://developer.apple.com/documentation/uikit/uidevice/1620053-orientation?language=objc). Our library uses them to enforce correct interface orientation when navigating between screens. 
-To make sure that there are no issues with screen orientation you should put following code in your `AppDelegate.m`:
-
-```objective-c
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    ... 
-#if !TARGET_OS_TV
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-#endif // !TARGET_OS_TV
-    ...
-    return YES:
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-#if !TARGET_OS_TV
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-#endif // !TARGET_OS_TV
-}
-```
-
-You can see example of these changes being introduced in our [example applications](https://github.com/software-mansion/react-native-screens/blob/main/TestsExample/ios/TestsExample/AppDelegate.mm).
-
-Other aspects of installation should be completely handled with auto-linking, just ensure you installed pods after adding this module.
+Installation on iOS is completely handled with auto-linking, if you have ensured pods are installed after adding this module, no other actions are necessary.
 
 ### Android
 
@@ -92,6 +68,7 @@ buildscript {
 ```
 
 **Disclaimer**: `react-native-screens` requires Kotlin `1.3.50` or higher.
+
 </details>
 
 ### Windows
@@ -111,16 +88,16 @@ Screens are already integrated with the React Native's most popular navigation l
 | 2.0.0+  | 0.60.0+              |
 
 ### Support for Fabric
-[Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system. 
 
-* As of [version `3.18.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.18.0) of this project, Fabric is supported only for react-native 0.70+. Support for lower versions has been dropped.
-* As of [version `3.14.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.14.0) of this project, Fabric is supported only for react-native 0.69+. Support for lower versions has been dropped.
+[Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system.
+
+- As of [version `3.18.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.18.0) of this project, Fabric is supported only for react-native 0.70+. Support for lower versions has been dropped.
+- As of [version `3.14.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.14.0) of this project, Fabric is supported only for react-native 0.69+. Support for lower versions has been dropped.
 
 | version | react-native version |
 | ------- | -------------------- |
 | 3.18.0+ | 0.70.0+              |
 | 3.14.0+ | 0.69.0+              |
-
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
@@ -209,12 +186,12 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 
 ### Other problems
 
-| Problem                                                                                                                                      | Solution                                                                                                    |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                         | [related PRs](https://github.com/software-mansion/react-native-screens/issues/773#issuecomment-783469792)           |
-| [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843) | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
-| [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)     | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
-| [`onScroll` and `onMomentumScrollEnd` of previous screen triggered in bottom tabs](https://github.com/software-mansion/react-native-screens/issues/1183)     | [explanation](https://github.com/software-mansion/react-native-screens/issues/1183#issuecomment-949313111) |
+| Problem                                                                                                                                                  | Solution                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                                     | [related PRs](https://github.com/software-mansion/react-native-screens/issues/773#issuecomment-783469792)   |
+| [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843)             | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
+| [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)                 | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
+| [`onScroll` and `onMomentumScrollEnd` of previous screen triggered in bottom tabs](https://github.com/software-mansion/react-native-screens/issues/1183) | [explanation](https://github.com/software-mansion/react-native-screens/issues/1183#issuecomment-949313111)  |
 
 ## Contributing
 
