@@ -462,7 +462,21 @@
 #if !TARGET_OS_TV
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
       config.disableBackButtonMenu) {
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
+    NSMutableDictionary *attrs = [NSMutableDictionary new];
+
+    NSString *backTitle = config.backTitle;
+
+    // Fix for github.com/react-navigation/react-navigation/issues/11015
+    // This makes it possible to hide back title but use back button menu as normal.
+    // When an whitespace only back title is passed
+    if ([[config.backTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+      // set the title of the previous screen to the back button title
+      backTitle = prevItem.title;
+      // but make it invisible with a transparent color.
+      attrs[NSForegroundColorAttributeName] = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+    }
+
+    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:backTitle ?: prevItem.title
                                                                                 style:UIBarButtonItemStylePlain
                                                                                target:nil
                                                                                action:nil];
@@ -471,7 +485,6 @@
 
     prevItem.backBarButtonItem = backBarButtonItem;
     if (config.backTitleFontFamily || config.backTitleFontSize) {
-      NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
       if (config.backTitleFontFamily) {
         attrs[NSFontAttributeName] = [RCTFont updateFont:nil
@@ -484,8 +497,9 @@
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
-      [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
     }
+
+    [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
   } else {
     prevItem.backBarButtonItem = nil;
   }
