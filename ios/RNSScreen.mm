@@ -534,6 +534,16 @@
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+#ifdef RN_FABRIC_ENABLED
+    // During view recycling of header this property isn't properly resetted on Fabric.
+    // Because of that when the header object is reused it has invalid state.
+    // This can't be handled in prepareForRecycle in StackHeaderConfig because the method is called
+    // after the view is unmounted from the view hierarchy, thus we can't access it's view controller / navctr.
+    // See: https://github.com/software-mansion/react-native-screens/pull/1646
+    if (@available(iOS 14.0, *)) {
+      self.controller.navigationItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+    }
+#endif
     _config = nil;
   }
   [_reactSubviews removeObject:childComponentView];
