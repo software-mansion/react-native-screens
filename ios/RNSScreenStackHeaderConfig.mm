@@ -460,23 +460,17 @@
   }
 
 #if !TARGET_OS_TV
-  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
-      config.disableBackButtonMenu) {
-    NSMutableDictionary *attrs = [NSMutableDictionary new];
-
-    NSString *backTitle = config.backTitle;
-
-    // Fix for github.com/react-navigation/react-navigation/issues/11015
-    // This makes it possible to hide back title but use back button menu as normal.
-    // When an whitespace only back title is passed
-    if ([[config.backTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
-      // set the title of the previous screen to the back button title
-      backTitle = prevItem.title;
-      // but make it invisible with a transparent color.
-      attrs[NSForegroundColorAttributeName] = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+  // Fix for github.com/react-navigation/react-navigation/issues/11015
+  // It allows to hide back button title and use back button menu as normal.
+  // When an whitespace only back title is passed set back button mode to minimal:
+  if ([[config.backTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+    if (@available(iOS 14.0, *)) { // This syntax vvv and back button menu are available since iOS 14.
+      navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
     }
-
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:backTitle ?: prevItem.title
+  } else if (
+      config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
+      config.disableBackButtonMenu) {
+    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
                                                                                 style:UIBarButtonItemStylePlain
                                                                                target:nil
                                                                                action:nil];
@@ -485,6 +479,7 @@
 
     prevItem.backBarButtonItem = backBarButtonItem;
     if (config.backTitleFontFamily || config.backTitleFontSize) {
+      NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
       if (config.backTitleFontFamily) {
         attrs[NSFontAttributeName] = [RCTFont updateFont:nil
@@ -497,9 +492,8 @@
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
+      [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
     }
-
-    [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
   } else {
     prevItem.backBarButtonItem = nil;
   }
