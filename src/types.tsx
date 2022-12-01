@@ -80,6 +80,10 @@ export type GestureResponseDistanceType = {
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
+  /**
+   *
+   */
+  allowedDetent?: 'medium' | 'large' | 'both';
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
@@ -87,10 +91,6 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   customAnimationOnSwipe?: boolean;
-  /**
-   *
-   */
-  detentSize?: 'medium' | 'large' | 'both';
   /**
    * All children screens should have the same value of their "enabled" prop as their container.
    */

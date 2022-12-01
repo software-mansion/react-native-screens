@@ -69,6 +69,10 @@ export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
+   *
+   */
+  allowedDetent?: 'large' | 'medium' | 'both';
+  /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
    */
@@ -90,10 +94,6 @@ export type NativeStackNavigationOptions = {
   /**
    * Whether the stack should be in rtl or ltr form.
    */
-  /**
-   *
-   */
-  detentSize?: 'large' | 'medium' | 'both';
   direction?: 'rtl' | 'ltr';
   /**
    * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.

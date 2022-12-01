@@ -22,10 +22,12 @@ export default function App(): JSX.Element {
           headerHideBackButton: false
         }}>
         <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} />
+        <Stack.Screen name="Second" component={Second} options={{
+          fullScreenSwipeEnabled: true,
+        }} />
         <Stack.Screen name="ModalScreen" component={ModalScreen} options={{
           stackPresentation: 'formSheet',
-          detentSize: 'both'
+          allowedDetent: 'medium'
         }}/>
       </Stack.Navigator>
     </NavigationContainer>
