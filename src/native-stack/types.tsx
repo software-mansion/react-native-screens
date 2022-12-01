@@ -15,6 +15,7 @@ import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
+  FormSheetDetentTypes,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -69,9 +70,9 @@ export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
-   *
+   * TODO
    */
-  allowedDetent?: 'large' | 'medium' | 'both';
+  allowedDetent?: FormSheetDetentTypes;
   /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
@@ -270,6 +271,10 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   hideKeyboardOnSwipe?: boolean;
+  /**
+   * TODO
+   */
+  largestUndimmedDetent?: 'large ';
   /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
    * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.

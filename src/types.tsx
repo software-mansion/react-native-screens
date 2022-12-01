@@ -77,13 +77,15 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
+export type FormSheetDetentTypes = 'medium' | 'large' | 'both';
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
   /**
-   *
+   * TODO
    */
-  allowedDetent?: 'medium' | 'large' | 'both';
+  allowedDetent?: FormSheetDetentTypes;
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
