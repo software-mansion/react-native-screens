@@ -88,6 +88,10 @@ export interface ScreenProps extends ViewProps {
    */
   customAnimationOnSwipe?: boolean;
   /**
+   *
+   */
+  detentSize?: 'medium' | 'large' | 'both';
+  /**
    * All children screens should have the same value of their "enabled" prop as their container.
    */
   enabled?: boolean;

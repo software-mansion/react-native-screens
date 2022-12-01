@@ -90,6 +90,10 @@ export type NativeStackNavigationOptions = {
   /**
    * Whether the stack should be in rtl or ltr form.
    */
+  /**
+   *
+   */
+  detentSize?: 'large' | 'medium' | 'both';
   direction?: 'rtl' | 'ltr';
   /**
    * Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.

@@ -153,6 +153,7 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
+    detentSize = 'large',
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -220,6 +221,7 @@ const RouteView = ({
       isNativeStack
       style={StyleSheet.absoluteFill}
       customAnimationOnSwipe={customAnimationOnSwipe}
+      detentSize={detentSize}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       hideKeyboardOnSwipe={hideKeyboardOnSwipe}
