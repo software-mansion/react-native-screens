@@ -157,33 +157,6 @@
     // Documented here:
     // https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
     _controller.presentationController.delegate = self;
-
-    if (@available(iOS 15.0, *)) {
-      if (stackPresentation == RNSScreenStackPresentationFormSheet && _controller.sheetPresentationController != nil) {
-        _controller.sheetPresentationController.preferredCornerRadius = 80.0;
-        _controller.sheetPresentationController.prefersGrabberVisible = _formSheetGrabberVisible;
-
-        if (_largestUndimmedDetent == RNSScreenDetentTypeMedium) {
-          _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
-              UISheetPresentationControllerDetentIdentifierMedium;
-        } else if (_largestUndimmedDetent == RNSScreenDetentTypeLarge) {
-          _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
-              UISheetPresentationControllerDetentIdentifierLarge;
-        } else if (_largestUndimmedDetent == RNSScreenDetentTypeBoth) {
-          _controller.sheetPresentationController.largestUndimmedDetentIdentifier = nil;
-        }
-
-        if (_allowedDetent == RNSScreenDetentTypeMedium) {
-          _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
-        } else if (_allowedDetent == RNSScreenDetentTypeLarge) {
-          _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
-        } else {
-          _controller.sheetPresentationController.detents =
-              @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent ];
-        }
-      }
-    }
-
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
 #ifdef RN_FABRIC_ENABLED
     // TODO: on Fabric, same controllers can be used as modals and then recycled and used a push which would result in
@@ -556,6 +529,34 @@
   return self.stackPresentation != RNSScreenStackPresentationPush;
 }
 
+- (void)updatePresentationStyle
+{
+  if (@available(iOS 15.0, *)) {
+    if (_stackPresentation == RNSScreenStackPresentationFormSheet && _controller.sheetPresentationController != nil) {
+      _controller.sheetPresentationController.prefersGrabberVisible = _formSheetGrabberVisible;
+
+      if (_largestUndimmedDetent == RNSScreenDetentTypeMedium) {
+        _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
+            UISheetPresentationControllerDetentIdentifierMedium;
+      } else if (_largestUndimmedDetent == RNSScreenDetentTypeLarge) {
+        _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
+            UISheetPresentationControllerDetentIdentifierLarge;
+      } else if (_largestUndimmedDetent == RNSScreenDetentTypeBoth) {
+        _controller.sheetPresentationController.largestUndimmedDetentIdentifier = nil;
+      }
+
+      if (_allowedDetent == RNSScreenDetentTypeMedium) {
+        _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
+      } else if (_allowedDetent == RNSScreenDetentTypeLarge) {
+        _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
+      } else {
+        _controller.sheetPresentationController.detents =
+            @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent ];
+      }
+    }
+  }
+}
+
 #pragma mark - Fabric specific
 #ifdef RN_FABRIC_ENABLED
 
@@ -702,6 +703,12 @@
 
 #pragma mark - Paper specific
 #else
+
+- (void)didSetProps:(NSArray<NSString *> *)changedProps
+{
+  [super didSetProps:changedProps];
+  [self updatePresentationStyle];
+}
 
 - (void)setPointerEvents:(RCTPointerEvents)pointerEvents
 {

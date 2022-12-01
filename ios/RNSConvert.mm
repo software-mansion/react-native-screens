@@ -89,6 +89,9 @@
   }
 }
 
+//+ (RNSScreenDetentType)RNSScreenDetentTypeFromCppEquivalent:
+//    (facebook::react::RNSScreen)
+
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
     (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance
 {
