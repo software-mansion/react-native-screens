@@ -57,7 +57,7 @@
 
   return self;
 }
-#endif
+#endif // RN_FABRIC_ENABLED
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
@@ -146,6 +146,7 @@
       // ignored, we only need to keep in mind not to set presentation delegate
       break;
   }
+
   // There is a bug in UIKit which causes retain loop when presentationController is accessed for a
   // controller that is not going to be presented modally. We therefore need to avoid setting the
   // delegate for screens presented using push. This also means that when controller is updated from
@@ -156,6 +157,24 @@
     // Documented here:
     // https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
     _controller.presentationController.delegate = self;
+
+    if (@available(iOS 15.0, *)) {
+      if (_controller.sheetPresentationController != nil) {
+        _controller.sheetPresentationController.prefersGrabberVisible = true;
+        _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
+            UISheetPresentationControllerDetentIdentifierMedium;
+
+        if (_detentSize == RNSScreenDetentTypeMedium) {
+          _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
+        } else if (_detentSize == RNSScreenDetentTypeLarge) {
+          _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
+        } else {
+          _controller.sheetPresentationController.detents =
+              @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent ];
+        }
+      }
+    }
+
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
 #ifdef RN_FABRIC_ENABLED
     // TODO: on Fabric, same controllers can be used as modals and then recycled and used a push which would result in
@@ -1171,6 +1190,7 @@ RCT_EXPORT_MODULE()
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(detentSize, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
@@ -1298,6 +1318,16 @@ RCT_ENUM_CONVERTER(
       @"dark" : @(RNSStatusBarStyleDark),
     }),
     RNSStatusBarStyleAuto,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    RNSScreenDetentType,
+    (@{
+      @"large" : @(RNSScreenDetentTypeLarge),
+      @"medium" : @(RNSScreenDetentTypeMedium),
+      @"both" : @(RNSScreenDetentTypeBoth),
+    }),
+    RNSScreenDetentTypeLarge,
     integerValue)
 
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json
