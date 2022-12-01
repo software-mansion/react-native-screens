@@ -28,7 +28,8 @@ export default function App(): JSX.Element {
         <Stack.Screen name="ModalScreen" component={ModalScreen} options={{
           stackPresentation: 'formSheet',
           allowedDetent: 'both',
-          largestUndimmedDetent: 'both'
+          largestUndimmedDetent: 'medium',
+          formSheetGrabberVisible: false,
         }}/>
       </Stack.Navigator>
     </NavigationContainer>

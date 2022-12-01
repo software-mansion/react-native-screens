@@ -296,6 +296,10 @@ export type NativeStackNavigationOptions = {
    */
   navigationBarHidden?: boolean;
   /**
+   * TODO
+   */
+  formSheetGrabberVisible?: boolean;
+  /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
    * - "push" – the new screen will perform push animation.

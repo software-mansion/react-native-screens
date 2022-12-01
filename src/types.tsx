@@ -205,6 +205,10 @@ export interface ScreenProps extends ViewProps {
    */
   onWillDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
+   * TODO
+   */
+  formSheetGrabberVisible?: boolean;
+  /**
    * Boolean indicating whether to prevent current screen from being dismissed.
    * Defaults to `false`.
    *

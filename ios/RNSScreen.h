@@ -60,6 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 @property (nonatomic) RNSScreenDetentType allowedDetent;
 @property (nonatomic) RNSScreenDetentType largestUndimmedDetent;
+@property (nonatomic) BOOL formSheetGrabberVisible;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
