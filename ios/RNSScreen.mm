@@ -540,9 +540,9 @@
     // This can't be handled in prepareForRecycle in StackHeaderConfig because the method is called
     // after the view is unmounted from the view hierarchy, thus we can't access it's view controller / navctr.
     // See: https://github.com/software-mansion/react-native-screens/pull/1646
-    if (@available(iOS 14.0, *)) {
-      self.controller.navigationItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
-    }
+//    if (@available(iOS 14.0, *)) {
+//      self.controller.navigationItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+//    }
 #endif
     _config = nil;
   }
