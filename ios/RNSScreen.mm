@@ -161,8 +161,16 @@
     if (@available(iOS 15.0, *)) {
       if (stackPresentation == RNSScreenStackPresentationFormSheet && _controller.sheetPresentationController != nil) {
         _controller.sheetPresentationController.prefersGrabberVisible = false;
-        //        _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
-        //            UISheetPresentationControllerDetentIdentifierLarge;
+
+        if (_largestUndimmedDetent == RNSScreenDetentTypeMedium) {
+          _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
+              UISheetPresentationControllerDetentIdentifierMedium;
+        } else if (_largestUndimmedDetent == RNSScreenDetentTypeLarge) {
+          _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
+              UISheetPresentationControllerDetentIdentifierLarge;
+        } else if (_largestUndimmedDetent == RNSScreenDetentTypeBoth) {
+          _controller.sheetPresentationController.largestUndimmedDetentIdentifier = nil;
+        }
 
         if (_allowedDetent == RNSScreenDetentTypeMedium) {
           _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
@@ -1191,6 +1199,7 @@ RCT_EXPORT_MODULE()
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(allowedDetent, RNSScreenDetentType);
+RCT_EXPORT_VIEW_PROPERTY(largestUndimmedDetent, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)

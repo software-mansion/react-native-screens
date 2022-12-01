@@ -145,6 +145,10 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
+  /**
+   * TODO
+   */
+  largestUndimmedDetent?: FormSheetDetentTypes;
   nativeBackButtonDismissalEnabled?: boolean;
   /**
    * Sets the navigation bar color. Defaults to initial status bar color.
