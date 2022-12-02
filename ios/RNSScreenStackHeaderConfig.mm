@@ -464,9 +464,13 @@
   // It allows to hide back button title and use back button menu as normal.
   // Back button display mode and back button menu are available since iOS 14.
   if (@available(iOS 14.0, *)) {
+    // Make sure to set display mode to default.
+    // This line resets back button display mode - especially needed on the Fabric architecture.
     navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+
     NSString *trimmedBackTitle =
         [config.backTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
     // When an whitespace only back title is passed set back button mode to minimal.
     if (config.backTitle != nil && [trimmedBackTitle length] == 0) {
       navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
