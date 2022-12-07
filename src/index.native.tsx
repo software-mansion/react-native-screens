@@ -34,6 +34,7 @@ import {
   isSearchBarAvailableForCurrentPlatform,
   executeNativeBackPress,
 } from './utils';
+import { ScreenEdge } from './screenEdge';
 
 // web implementation is taken from `index.tsx`
 const isPlatformSupported =
@@ -447,6 +448,7 @@ module.exports = {
   ScreenContainer,
   ScreenContext,
   ScreenStack,
+  ScreenEdge,
   InnerScreen,
   FullWindowOverlay,
 

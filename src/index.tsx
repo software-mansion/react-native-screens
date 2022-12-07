@@ -15,6 +15,7 @@ export {
   isSearchBarAvailableForCurrentPlatform,
   executeNativeBackPress,
 } from './utils';
+export { ScreenEdge } from './screenEdge';
 
 let ENABLE_SCREENS = true;
 

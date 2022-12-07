@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (RNSStatusBarStyle)RNSStatusBarStyle:(id)json;
 + (UIStatusBarAnimation)UIStatusBarAnimation:(id)json;
 + (UIInterfaceOrientationMask)UIInterfaceOrientationMask:(id)json;
++ (UIRectEdge)UIRectEdge:(id)json;
 #endif
 
 @end
@@ -53,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL hasStatusBarStyleSet;
 @property (nonatomic) BOOL hasStatusBarAnimationSet;
 @property (nonatomic) BOOL hasHomeIndicatorHiddenSet;
+@property (nonatomic) BOOL hasScreenEdgesDeferringSystemGesturesSet;
 @property (nonatomic) BOOL hasOrientationSet;
 @property (nonatomic) RNSScreenStackAnimation stackAnimation;
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
@@ -74,6 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIInterfaceOrientationMask screenOrientation;
 @property (nonatomic) BOOL statusBarHidden;
 @property (nonatomic) BOOL homeIndicatorHidden;
+@property (nonatomic) UIRectEdge screenEdgesDeferringSystemGestures;
 #endif
 
 #ifdef RN_FABRIC_ENABLED

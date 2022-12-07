@@ -203,6 +203,10 @@ Whether the keyboard should hide when swiping to the previous screen. Defaults t
 
 Whether the home indicator should be hidden on this screen. Defaults to `false`.
 
+### `screenEdgesDeferringSystemGestures` (iOS only)
+
+The screen edges for which you want your gestures to take precedence over the system gestures on this screen. Defaults to `ScreenEdge.None`. `ScreenEdge` is an option set, so you can combine multiple edges via bitmasking. E.g.: `screenEdgesDeferringSystemGestures: ScreenEdge.Top | ScreenEdge.Bottom`.
+
 #### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.

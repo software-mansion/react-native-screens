@@ -152,6 +152,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setHomeIndicatorHidden(view: Screen?, value: Boolean) = Unit
 
+    override fun setScreenEdgesDeferringSystemGestures(view: Screen?, value: Int?) = Unit
+
     override fun setPreventNativeDismiss(view: Screen?, value: Boolean) = Unit
 
     override fun setSwipeDirection(view: Screen?, value: String?) = Unit

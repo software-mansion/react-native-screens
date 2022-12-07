@@ -32,6 +32,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "homeIndicatorHidden":
         mViewManager.setHomeIndicatorHidden(view, value == null ? false : (boolean) value);
         break;
+      case "screenEdgesDeferringSystemGestures":
+        mViewManager.setScreenEdgesDeferringSystemGestures(view, value == null ? 0 : ((Double) value).intValue());
+        break;
       case "preventNativeDismiss":
         mViewManager.setPreventNativeDismiss(view, value == null ? false : (boolean) value);
         break;

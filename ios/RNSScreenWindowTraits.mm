@@ -62,6 +62,27 @@
 #endif
 }
 
++ (void)updateScreenEdgesDeferringSystemGestures
+{
+#if !TARGET_OS_TV
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13, *)) {
+    UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+    if (firstWindow != nil) {
+      [[firstWindow rootViewController] setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
+    }
+  } else
+#endif
+  {
+    if (@available(iOS 11.0, *)) {
+      [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
+    }
+  }
+#endif
+}
+
 #if !TARGET_OS_TV
 + (UIStatusBarStyle)statusBarStyleForRNSStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
@@ -186,6 +207,7 @@
   [RNSScreenWindowTraits updateStatusBarAppearance];
   [RNSScreenWindowTraits enforceDesiredDeviceOrientation];
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
+  [RNSScreenWindowTraits updateScreenEdgesDeferringSystemGestures];
 }
 
 #if !TARGET_OS_TV
