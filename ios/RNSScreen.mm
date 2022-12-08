@@ -546,15 +546,19 @@
             UISheetPresentationControllerDetentIdentifierLarge;
       } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
         _controller.sheetPresentationController.largestUndimmedDetentIdentifier = nil;
+      } else {
+        RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
       }
 
       if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
         _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
       } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
         _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
-      } else {
+      } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
         _controller.sheetPresentationController.detents =
             @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent ];
+      } else {
+        RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
       }
     }
   }
