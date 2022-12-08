@@ -23,6 +23,18 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
+      case "sheetAllowedDetents":
+        mViewManager.setSheetAllowedDetents(view, (String) value);
+        break;
+      case "sheetLargestUndimmedDetent":
+        mViewManager.setSheetLargestUndimmedDetent(view, (String) value);
+        break;
+      case "isSheetGrabberVisible":
+        mViewManager.setIsSheetGrabberVisible(view, value == null ? false : (boolean) value);
+        break;
+      case "sheetCornerRadius":
+        mViewManager.setSheetCornerRadius(view, value == null ? -1f : ((Double) value).floatValue());
+        break;
       case "customAnimationOnSwipe":
         mViewManager.setCustomAnimationOnSwipe(view, value == null ? false : (boolean) value);
         break;
