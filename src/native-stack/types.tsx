@@ -70,10 +70,6 @@ export type NativeStackNavigationConfig = {};
 
 export type NativeStackNavigationOptions = {
   /**
-   * TODO
-   */
-  sheetAllowedDetents?: SheetDetentTypes;
-  /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
    */
@@ -272,10 +268,6 @@ export type NativeStackNavigationOptions = {
    */
   hideKeyboardOnSwipe?: boolean;
   /**
-   * TODO
-   */
-  sheetLargestUndimmedDetent?: SheetDetentTypes;
-  /**
    * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
    * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
    * Defaults to `false`.
@@ -296,7 +288,11 @@ export type NativeStackNavigationOptions = {
    */
   navigationBarHidden?: boolean;
   /**
-   * TODO
+   * Boolean indicating whether the sheet shows a grabber at the top.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `false`.
+   *
+   * @platform ios
    */
   isSheetGrabberVisible?: boolean;
   /**
@@ -324,9 +320,36 @@ export type NativeStackNavigationOptions = {
    */
   searchBar?: SearchBarProps;
   /**
-   * TODO
+   * Describes heights where a sheet can rest.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `large`.
+   *
+   * @platform ios
+   */
+  sheetAllowedDetents?: SheetDetentTypes;
+  /**
+   * The corner radius that the sheet will try to render with.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * If left unset system default is used.
+   *
+   * @platform ios
    */
   sheetCornerRadius?: number;
+  /**
+   * The largest sheet detent for which a view underneath won't be dimmed.
+   * Works only when `stackPresentation` is se tto `formSheet`.
+   *
+   * If this prop is set to:
+   *
+   * - `large` - the view underneath won't be dimmed at any detent level
+   * - `medium` - the view underneath will be dimmed only when detent level is `large`
+   * - `all` - the view underneath will be dimmed for any detent level
+   *
+   * Defaults to `all`.
+   *
+   * @platform ios
+   */
+  sheetLargestUndimmedDetent?: SheetDetentTypes;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

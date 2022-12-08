@@ -142,7 +142,8 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   /**
-   * Boolean indicating whether the sheet shows a grabber at the top. Work only when `stackPresentation` is set to `formSheet`.
+   * Boolean indicating whether the sheet shows a grabber at the top.
+   * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `false`.
    *
    * @platform ios
@@ -232,21 +233,24 @@ export interface ScreenProps extends ViewProps {
    */
   screenOrientation?: ScreenOrientationTypes;
   /**
-   * Describes heights where a sheet can rest. Works only when `stackPresentation` is set to `formSheet`.
+   * Describes heights where a sheet can rest.
+   * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `large`.
    *
    * @platform ios
    */
   sheetAllowedDetents?: SheetDetentTypes;
   /**
-   * The corner radius that the sheet will try to render with. Works only when `stackPresentation` is set to `formSheet`.
+   * The corner radius that the sheet will try to render with.
+   * Works only when `stackPresentation` is set to `formSheet`.
    * If left unset system default is used.
    *
    * @platform ios
    */
   sheetCornerRadius?: number;
   /**
-   * The largest sheet detent for which a view underneath won't be dimmed. Works only when `stackPresentation` is se tto `formSheet`.
+   * The largest sheet detent for which a view underneath won't be dimmed.
+   * Works only when `stackPresentation` is se tto `formSheet`.
    *
    * If this prop is set to:
    *
