@@ -85,7 +85,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * TODO
    */
-  allowedDetent?: FormSheetDetentTypes;
+  sheetAllowedDetents?: FormSheetDetentTypes;
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
@@ -148,7 +148,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * TODO
    */
-  largestUndimmedDetent?: FormSheetDetentTypes;
+  sheetLargestUndimmedDetent?: FormSheetDetentTypes;
   nativeBackButtonDismissalEnabled?: boolean;
   /**
    * Sets the navigation bar color. Defaults to initial status bar color.
@@ -207,7 +207,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * TODO
    */
-  formSheetGrabberVisible?: boolean;
+  isSheetGrabberVisible?: boolean;
   /**
    * Boolean indicating whether to prevent current screen from being dismissed.
    * Defaults to `false`.

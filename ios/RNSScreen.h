@@ -58,9 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
-@property (nonatomic) RNSScreenDetentType allowedDetent;
-@property (nonatomic) RNSScreenDetentType largestUndimmedDetent;
-@property (nonatomic) BOOL formSheetGrabberVisible;
+
+// Props controlling UISheetPresentationController
+@property (nonatomic) RNSScreenDetentType sheetAllowedDetents;
+@property (nonatomic) RNSScreenDetentType sheetLargestUndimmedDetent;
+@property (nonatomic) BOOL isSheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;

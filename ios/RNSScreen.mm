@@ -533,24 +533,24 @@
 {
   if (@available(iOS 15.0, *)) {
     if (_stackPresentation == RNSScreenStackPresentationFormSheet && _controller.sheetPresentationController != nil) {
-      _controller.sheetPresentationController.prefersGrabberVisible = _formSheetGrabberVisible;
+      _controller.sheetPresentationController.prefersGrabberVisible = _isSheetGrabberVisible;
 
       _controller.sheetPresentationController.preferredCornerRadius =
           _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
 
-      if (_largestUndimmedDetent == RNSScreenDetentTypeMedium) {
+      if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
         _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
             UISheetPresentationControllerDetentIdentifierMedium;
-      } else if (_largestUndimmedDetent == RNSScreenDetentTypeLarge) {
+      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
         _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
             UISheetPresentationControllerDetentIdentifierLarge;
-      } else if (_largestUndimmedDetent == RNSScreenDetentTypeBoth) {
+      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeBoth) {
         _controller.sheetPresentationController.largestUndimmedDetentIdentifier = nil;
       }
 
-      if (_allowedDetent == RNSScreenDetentTypeMedium) {
+      if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
         _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
-      } else if (_allowedDetent == RNSScreenDetentTypeLarge) {
+      } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
         _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
       } else {
         _controller.sheetPresentationController.detents =
@@ -1224,10 +1224,6 @@ RCT_EXPORT_MODULE()
 // we want to handle the case when activityState is nil
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(allowedDetent, RNSScreenDetentType);
-RCT_EXPORT_VIEW_PROPERTY(largestUndimmedDetent, RNSScreenDetentType);
-RCT_EXPORT_VIEW_PROPERTY(formSheetGrabberVisible, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
@@ -1238,6 +1234,11 @@ RCT_EXPORT_VIEW_PROPERTY(stackPresentation, RNSScreenStackPresentation)
 RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
+
+RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, RNSScreenDetentType);
+RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, RNSScreenDetentType);
+RCT_EXPORT_VIEW_PROPERTY(isSheetGrabberVisible, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);

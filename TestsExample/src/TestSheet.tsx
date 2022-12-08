@@ -27,10 +27,10 @@ export default function App(): JSX.Element {
         }} />
         <Stack.Screen name="ModalScreen" component={ModalScreen} options={{
           stackPresentation: 'formSheet',
-          allowedDetent: 'both',
-          largestUndimmedDetent: 'medium',
-          formSheetGrabberVisible: false,
-          sheetCornerRadius: 0,
+          sheetAllowedDetents: 'both',
+          sheetLargestUndimmedDetent: 'medium',
+          isSheetGrabberVisible: false,
+          sheetCornerRadius: 200,
         }}/>
       </Stack.Navigator>
     </NavigationContainer>
