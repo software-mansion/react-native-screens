@@ -156,6 +156,7 @@ const RouteView = ({
     allowedDetent = 'large',
     largestUndimmedDetent = 'both',
     formSheetGrabberVisible = false,
+    sheetCornerRadius = -1.0,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -225,6 +226,7 @@ const RouteView = ({
       allowedDetent={allowedDetent}
       largestUndimmedDetent={largestUndimmedDetent}
       formSheetGrabberVisible={formSheetGrabberVisible}
+      sheetCornerRadius={sheetCornerRadius}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}

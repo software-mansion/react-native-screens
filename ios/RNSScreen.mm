@@ -535,6 +535,9 @@
     if (_stackPresentation == RNSScreenStackPresentationFormSheet && _controller.sheetPresentationController != nil) {
       _controller.sheetPresentationController.prefersGrabberVisible = _formSheetGrabberVisible;
 
+      _controller.sheetPresentationController.preferredCornerRadius =
+          _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
+
       if (_largestUndimmedDetent == RNSScreenDetentTypeMedium) {
         _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
             UISheetPresentationControllerDetentIdentifierMedium;
@@ -1224,6 +1227,7 @@ RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(allowedDetent, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(largestUndimmedDetent, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(formSheetGrabberVisible, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)

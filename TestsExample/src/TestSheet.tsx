@@ -30,6 +30,7 @@ export default function App(): JSX.Element {
           allowedDetent: 'both',
           largestUndimmedDetent: 'medium',
           formSheetGrabberVisible: false,
+          sheetCornerRadius: 0,
         }}/>
       </Stack.Navigator>
     </NavigationContainer>
