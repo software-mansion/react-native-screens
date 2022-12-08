@@ -544,7 +544,7 @@
       } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
         _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
             UISheetPresentationControllerDetentIdentifierLarge;
-      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeBoth) {
+      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
         _controller.sheetPresentationController.largestUndimmedDetentIdentifier = nil;
       }
 
