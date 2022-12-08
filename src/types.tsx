@@ -77,7 +77,7 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
-export type FormSheetDetentTypes = 'medium' | 'large' | 'both';
+export type FormSheetDetentTypes = 'medium' | 'large' | 'all';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;

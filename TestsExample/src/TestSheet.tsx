@@ -27,7 +27,7 @@ export default function App(): JSX.Element {
         }} />
         <Stack.Screen name="ModalScreen" component={ModalScreen} options={{
           stackPresentation: 'formSheet',
-          sheetAllowedDetents: 'both',
+          sheetAllowedDetents: 'all',
           sheetLargestUndimmedDetent: 'medium',
           isSheetGrabberVisible: false,
           sheetCornerRadius: 200,

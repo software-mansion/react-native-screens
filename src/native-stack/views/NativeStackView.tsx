@@ -154,7 +154,7 @@ const RouteView = ({
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
     sheetAllowedDetents = 'large',
-    sheetLargestUndimmedDetent = 'both',
+    sheetLargestUndimmedDetent = 'all',
     isSheetGrabberVisible: formSheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     nativeBackButtonDismissalEnabled = false,

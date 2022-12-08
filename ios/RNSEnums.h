@@ -61,5 +61,5 @@ typedef NS_ENUM(NSInteger, RNSScreenStackHeaderSubviewType) {
 typedef NS_ENUM(NSInteger, RNSScreenDetentType) {
   RNSScreenDetentTypeMedium,
   RNSScreenDetentTypeLarge,
-  RNSScreenDetentTypeBoth,
+  RNSScreenDetentTypeAll,
 };
