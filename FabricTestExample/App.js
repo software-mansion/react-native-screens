@@ -80,9 +80,10 @@ import Test1391 from './src/Test1391';
 import Test1419 from './src/Test1419';
 import Test1473 from './src/Test1473';
 import Test1476 from './src/Test1476';
+import TestSheet from './src/TestSheet';
 
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <TestSheet />;
 }
