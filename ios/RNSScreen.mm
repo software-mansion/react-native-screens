@@ -169,21 +169,6 @@
   _stackPresentation = stackPresentation;
 }
 
-//- (void)setLargestUndimmedDetent:(RNSScreenDetentType)largestUndimmedDetent
-//{
-//  if (@available(ios 15.0, *)) {
-//    if (_largestUndimmedDetent == RNSScreenDetentTypeMedium) {
-//      _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
-//          UISheetPresentationControllerDetentIdentifierMedium;
-//    } else if (_largestUndimmedDetent == RNSScreenDetentTypeLarge) {
-//      _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
-//          UISheetPresentationControllerDetentIdentifierLarge;
-//    } else if (_largestUndimmedDetent == RNSScreenDetentTypeBoth) {
-//      _controller.sheetPresentationController.largestUndimmedDetentIdentifier = nil;
-//    }
-//  }
-//}
-
 - (void)setStackAnimation:(RNSScreenStackAnimation)stackAnimation
 {
   _stackAnimation = stackAnimation;
