@@ -135,13 +135,6 @@ export interface ScreenProps extends ViewProps {
    */
   hideKeyboardOnSwipe?: boolean;
   /**
-   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
-   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
-   * Defaults to `false`.
-   *
-   * @platform android
-   */
-  /**
    * Boolean indicating whether the sheet shows a grabber at the top.
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `false`.
@@ -149,6 +142,13 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   isSheetGrabberVisible?: boolean;
+  /**
+   * Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
+   * Unfortunately the same behavior is not available on iOS since the behavior of native back button cannot be changed there.
+   * Defaults to `false`.
+   *
+   * @platform android
+   */
   nativeBackButtonDismissalEnabled?: boolean;
   /**
    * Sets the navigation bar color. Defaults to initial status bar color.
@@ -250,7 +250,7 @@ export interface ScreenProps extends ViewProps {
   sheetCornerRadius?: number;
   /**
    * The largest sheet detent for which a view underneath won't be dimmed.
-   * Works only when `stackPresentation` is se tto `formSheet`.
+   * Works only when `stackPresentation` is set to `formSheet`.
    *
    * If this prop is set to:
    *

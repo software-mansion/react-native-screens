@@ -203,6 +203,12 @@ Whether the keyboard should hide when swiping to the previous screen. Defaults t
 
 Whether the home indicator should be hidden on this screen. Defaults to `false`.
 
+#### `isSheetGrabberVisible` (iOS only)
+
+Boolean indicating whether the sheet shows a grabber at the top.
+Works only when `stackPresentation` is set to `formSheet`.
+Defaults to `false`.
+
 #### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
@@ -226,6 +232,33 @@ The following values are currently supported:
   - `pop` – the new screen will perform pop animation.
 
 Defaults to `pop`.
+
+#### `sheetAllowedDetents` (iOS only)
+
+Describes heights where a sheet can rest. 
+Works only when `stackPresentation` is set to `formSheet`.
+
+Defaults to `large`.
+
+#### `sheetCornerRadius (iOS only)
+
+The corner radius that the sheet will try to render with.
+Works only when `stackPresentation` is set to `formSheet`.
+
+Defaults to system default.
+
+#### `sheetLargestUndimmedDetent` (iOS only)
+
+ The largest sheet detent for which a view underneath won't be dimmed.
+ Works only when `stackPresentation` is set to `formSheet`.
+
+ If this prop is set to:
+
+ - `large` - the view underneath won't be dimmed at any detent level
+ - `medium` - the view underneath will be dimmed only when detent level is `large`
+ - `all` - the view underneath will be dimmed for any detent level
+
+ Defaults to `all`.
 
 #### `stackAnimation`
 
