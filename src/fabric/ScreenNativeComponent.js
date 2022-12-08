@@ -56,6 +56,8 @@ type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
 
+type SheetDetentTypes = 'large' | 'medium' | 'all';
+
 export type NativeProps = $ReadOnly<{|
   ...ViewProps,
   onAppear?: ?BubblingEventHandler<ScreenEvent>,
@@ -65,6 +67,10 @@ export type NativeProps = $ReadOnly<{|
   onWillAppear?: ?BubblingEventHandler<ScreenEvent>,
   onWillDisappear?: ?BubblingEventHandler<ScreenEvent>,
   onTransitionProgress?: ?BubblingEventHandler<TransitionProgressEvent>,
+  sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>,
+  sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>,
+  isSheetGrabberVisible?: WithDefault<boolean, false>,
+  sheetCornerRadius?: WithDefault<Float, -1.0>,
   customAnimationOnSwipe?: boolean,
   fullScreenSwipeEnabled?: boolean,
   homeIndicatorHidden?: boolean,

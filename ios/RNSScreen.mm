@@ -661,6 +661,18 @@
   }
 #endif
 
+  [self setIsSheetGrabberVisible:newScreenProps.isSheetGrabberVisible];
+  [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
+
+  if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
+    [self setSheetAllowedDetents:[RNSConvert RNSScreenDetentTypeFromAllowedDetents:newScreenProps.sheetAllowedDetents]];
+  }
+
+  if (newScreenProps.sheetLargestUndimmedDetent != oldScreenProps.sheetLargestUndimmedDetent) {
+    [self setSheetLargestUndimmedDetent:
+              [RNSConvert RNSScreenDetentTypeFromLargestUndimmedDetent:newScreenProps.sheetLargestUndimmedDetent]];
+  }
+
   // Notice that we compare against _stackPresentation, not oldScreenProps.stackPresentation.
   // See comment in prepareForRecycle method for explanation.
   RNSScreenStackPresentation newStackPresentation =
@@ -668,6 +680,9 @@
   if (newStackPresentation != _stackPresentation) {
     [self setStackPresentation:newStackPresentation];
   }
+
+  // This must be called after setter for stackPresentation
+  [self updatePresentationStyle];
 
   if (newScreenProps.stackAnimation != oldScreenProps.stackAnimation) {
     [self setStackAnimation:[RNSConvert RNSScreenStackAnimationFromCppEquivalent:newScreenProps.stackAnimation]];

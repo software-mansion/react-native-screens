@@ -77,7 +77,7 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
-export type FormSheetDetentTypes = 'medium' | 'large' | 'all';
+export type SheetDetentTypes = 'medium' | 'large' | 'all';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
@@ -85,7 +85,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * TODO
    */
-  sheetAllowedDetents?: FormSheetDetentTypes;
+  sheetAllowedDetents?: SheetDetentTypes;
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
@@ -148,7 +148,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * TODO
    */
-  sheetLargestUndimmedDetent?: FormSheetDetentTypes;
+  sheetLargestUndimmedDetent?: SheetDetentTypes;
   nativeBackButtonDismissalEnabled?: boolean;
   /**
    * Sets the navigation bar color. Defaults to initial status bar color.
