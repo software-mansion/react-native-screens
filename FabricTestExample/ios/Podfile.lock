@@ -73,7 +73,7 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
-  - hermes-engine (0.70.0)
+  - hermes-engine (0.70.5)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.1100)
   - RCT-Folly (2021.07.22.00):
@@ -728,7 +728,7 @@ PODS:
     - React-Codegen
     - React-RCTFabric
     - ReactCommon/turbomodule/core
-  - RNReanimated (3.0.0-rc.2):
+  - RNReanimated (3.0.0-rc.8):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -971,7 +971,7 @@ SPEC CHECKSUMS:
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
-  hermes-engine: 8e84f1284180801c1a1b241f443ba64f931ff561
+  hermes-engine: 7fe5fc6ef707b7fdcb161b63898ec500e285653d
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
@@ -1007,7 +1007,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 7401c4a40f8728fd89df4a56104541b760876117
   ReactCommon: c9246996e73bf75a2c6c3ff15f1e16707cdc2da9
   RNGestureHandler: 182b4e135cc4fec4988687e2f123e302dc6b4b71
-  RNReanimated: a91b2ed2ac39b96a6a024ab55a6b546b1ec10f84
+  RNReanimated: 5fe97ed1710f9d0c90bd97b275c4ba6b58fa9b45
   RNScreens: 208223c783496e6d0aa92ffdf307f61d58756fc1
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: eca980a5771bf114c41a754098cd85e6e0d90ed7
