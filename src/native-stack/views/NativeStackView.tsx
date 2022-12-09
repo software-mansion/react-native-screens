@@ -157,6 +157,7 @@ const RouteView = ({
     sheetLargestUndimmedDetent = 'all',
     isSheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
+    sheetExpandsWhenScrolledToEdge = true,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -227,6 +228,7 @@ const RouteView = ({
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
       isSheetGrabberVisible={isSheetGrabberVisible}
       sheetCornerRadius={sheetCornerRadius}
+      sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}

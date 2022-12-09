@@ -64,6 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScreenDetentType sheetLargestUndimmedDetent;
 @property (nonatomic) BOOL isSheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
+@property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;

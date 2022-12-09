@@ -328,6 +328,12 @@ export type NativeStackNavigationOptions = {
    */
   sheetAllowedDetents?: SheetDetentTypes;
   /**
+   * Whether the sheet should expand to larger detent when scrolling.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `true`.
+   */
+  sheetExpandsWhenScrolledToEdge?: boolean;
+  /**
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
    * If left unset system default is used.

@@ -82,6 +82,7 @@
   _hasStatusBarHiddenSet = NO;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
+  _sheetExpandsWhenScrolledToEdge = YES;
 }
 
 - (UIViewController *)reactViewController
@@ -525,6 +526,8 @@
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   if (@available(iOS 15.0, *)) {
     if (_stackPresentation == RNSScreenStackPresentationFormSheet && _controller.sheetPresentationController != nil) {
+      _controller.sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge =
+          _sheetExpandsWhenScrolledToEdge;
       _controller.sheetPresentationController.prefersGrabberVisible = _isSheetGrabberVisible;
 
       _controller.sheetPresentationController.preferredCornerRadius =
@@ -1251,6 +1254,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(isSheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
+RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);

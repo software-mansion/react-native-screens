@@ -156,6 +156,13 @@ Works only when `stackPresentation` is set to `formSheet`.
 
 Defaults to `large`.
 
+### `sheetExpandsWhenScrolledToEdge` (iOS only)
+
+Whether the sheet should expand to larger detent when scrolling.
+Works only when `stackPresentation` is set to `formSheet`.
+
+Defaults to `true`.
+
 ### `sheetCornerRadius (iOS only)
 
 The corner radius that the sheet will try to render with.
