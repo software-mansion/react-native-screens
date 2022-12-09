@@ -35,6 +35,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "sheetCornerRadius":
         mViewManager.setSheetCornerRadius(view, value == null ? -1f : ((Double) value).floatValue());
         break;
+      case "sheetExpandsWhenScrolledToEdge":
+        mViewManager.setSheetExpandsWhenScrolledToEdge(view, value == null ? false : (boolean) value);
+        break;
       case "customAnimationOnSwipe":
         mViewManager.setCustomAnimationOnSwipe(view, value == null ? false : (boolean) value);
         break;
