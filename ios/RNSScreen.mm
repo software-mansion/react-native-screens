@@ -514,6 +514,11 @@
   return self.stackPresentation != RNSScreenStackPresentationPush;
 }
 
+/**
+ * Updates settings for sheet presentation controller.
+ * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
+ * guarantee that values of all related props had been updated earlier.
+ */
 - (void)updatePresentationStyle
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
