@@ -516,6 +516,8 @@
 
 - (void)updatePresentationStyle
 {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   if (@available(iOS 15.0, *)) {
     if (_stackPresentation == RNSScreenStackPresentationFormSheet && _controller.sheetPresentationController != nil) {
       _controller.sheetPresentationController.prefersGrabberVisible = _isSheetGrabberVisible;
@@ -547,6 +549,7 @@
       }
     }
   }
+#endif // Check for max allowed iOS version
 }
 
 #pragma mark - Fabric specific
