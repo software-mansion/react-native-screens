@@ -525,32 +525,39 @@
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   if (@available(iOS 15.0, *)) {
-    if (_stackPresentation == RNSScreenStackPresentationFormSheet && _controller.sheetPresentationController != nil) {
-      _controller.sheetPresentationController.prefersScrollingExpandsWhenScrolledToEdge =
-          _sheetExpandsWhenScrolledToEdge;
-      _controller.sheetPresentationController.prefersGrabberVisible = _isSheetGrabberVisible;
-
-      _controller.sheetPresentationController.preferredCornerRadius =
+    UISheetPresentationController *sheet = _controller.sheetPresentationController;
+    if (_stackPresentation == RNSScreenStackPresentationFormSheet && sheet != nil) {
+      sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
+      sheet.prefersGrabberVisible = _isSheetGrabberVisible;
+      sheet.preferredCornerRadius =
           _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
 
       if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
-        _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
-            UISheetPresentationControllerDetentIdentifierMedium;
+        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
       } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
-        _controller.sheetPresentationController.largestUndimmedDetentIdentifier =
-            UISheetPresentationControllerDetentIdentifierLarge;
+        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
       } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
-        _controller.sheetPresentationController.largestUndimmedDetentIdentifier = nil;
+        sheet.largestUndimmedDetentIdentifier = nil;
       } else {
         RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
       }
 
       if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
-        _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
+        sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
+        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
+          [sheet animateChanges:^{
+            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
+          }];
+        }
       } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
-        _controller.sheetPresentationController.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
+        sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
+        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
+          [sheet animateChanges:^{
+            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
+          }];
+        }
       } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
-        _controller.sheetPresentationController.detents =
+        sheet.detents =
             @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent ];
       } else {
         RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
