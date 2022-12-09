@@ -71,6 +71,7 @@ export type NativeProps = $ReadOnly<{|
   sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>,
   isSheetGrabberVisible?: WithDefault<boolean, false>,
   sheetCornerRadius?: WithDefault<Float, -1.0>,
+  sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>,
   customAnimationOnSwipe?: boolean,
   fullScreenSwipeEnabled?: boolean,
   homeIndicatorHidden?: boolean,

@@ -515,6 +515,7 @@
   return self.stackPresentation != RNSScreenStackPresentationPush;
 }
 
+#if !TARGET_OS_TV
 /**
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
@@ -566,6 +567,7 @@
   }
 #endif // Check for max allowed iOS version
 }
+#endif // !TARGET_OS_TV
 
 #pragma mark - Fabric specific
 #ifdef RN_FABRIC_ENABLED
@@ -666,10 +668,10 @@
   if (newScreenProps.homeIndicatorHidden != oldScreenProps.homeIndicatorHidden) {
     [self setHomeIndicatorHidden:newScreenProps.homeIndicatorHidden];
   }
-#endif
 
   [self setIsSheetGrabberVisible:newScreenProps.isSheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
+  [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
     [self setSheetAllowedDetents:[RNSConvert RNSScreenDetentTypeFromAllowedDetents:newScreenProps.sheetAllowedDetents]];
@@ -679,6 +681,7 @@
     [self setSheetLargestUndimmedDetent:
               [RNSConvert RNSScreenDetentTypeFromLargestUndimmedDetent:newScreenProps.sheetLargestUndimmedDetent]];
   }
+#endif // !TARGET_OS_TV
 
   // Notice that we compare against _stackPresentation, not oldScreenProps.stackPresentation.
   // See comment in prepareForRecycle method for explanation.
@@ -688,8 +691,10 @@
     [self setStackPresentation:newStackPresentation];
   }
 
+#if !TARGET_OS_TV
   // This must be called after setter for stackPresentation
   [self updatePresentationStyle];
+#endif // !TARGET_OS_TV
 
   if (newScreenProps.stackAnimation != oldScreenProps.stackAnimation) {
     [self setStackAnimation:[RNSConvert RNSScreenStackAnimationFromCppEquivalent:newScreenProps.stackAnimation]];
@@ -732,7 +737,9 @@
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
+#if !TARGET_OS_TV
   [self updatePresentationStyle];
+#endif // !TARGET_OS_TV
 }
 
 - (void)setPointerEvents:(RCTPointerEvents)pointerEvents
