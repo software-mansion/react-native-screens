@@ -60,6 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
+@property (nonatomic) BOOL hidden;
 @property (nonatomic) BOOL hideKeyboardOnSwipe;
 @property (nonatomic) BOOL customAnimationOnSwipe;
 @property (nonatomic) BOOL preventNativeDismiss;
