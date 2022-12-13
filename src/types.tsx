@@ -115,6 +115,17 @@ export interface ScreenProps extends ViewProps {
    */
   gestureEnabled?: boolean;
   /**
+   * If a screen is marked `hidden`, the resources will be retained, but it will not be rendered
+   * in the stack. This is to support iOS picture-in-picture, where you have a video overlay originating
+   * on a screen, and even when popping the screen off the stack the resources need to be retained
+   * (not garbage collected), so that the video can continue playing. Additionally, this allows the
+   * screen to be "un-hidden" (visually, pushed back onto the stack) when the user taps on the overlay video.
+   * Only supported on iOS.
+   *
+   * @platform ios
+   */
+  hidden?: boolean;
+  /**
    * Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`.
    *
    * @platform ios
