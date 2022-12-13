@@ -76,13 +76,6 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         }
     }
 
-    /*
-    @ReactProp(name = "hidden", defaultBoolean = true)
-    override fun setGestureEnabled(view: Screen, hidden: Boolean) {
-        view.isHidden = hidden
-    }
-    */
-
     @ReactProp(name = "gestureEnabled", defaultBoolean = true)
     override fun setGestureEnabled(view: Screen, gestureEnabled: Boolean) {
         view.isGestureEnabled = gestureEnabled
