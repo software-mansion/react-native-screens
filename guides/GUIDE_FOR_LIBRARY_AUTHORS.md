@@ -154,6 +154,12 @@ Defaults to `default` on iOS.
 Describes heights where a sheet can rest. 
 Works only when `stackPresentation` is set to `formSheet`.
 
+Available values:
+
+- `large` - only large detent level will be allowed
+- `medium` - only medium detent level will be allowed
+- `all` - all detent levels will be allowed
+
 Defaults to `large`.
 
 ### `sheetExpandsWhenScrolledToEdge` (iOS only)
@@ -167,6 +173,8 @@ Defaults to `true`.
 
 The corner radius that the sheet will try to render with.
 Works only when `stackPresentation` is set to `formSheet`.
+
+If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
 
 Defaults to system default.
 

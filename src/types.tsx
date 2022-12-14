@@ -237,6 +237,12 @@ export interface ScreenProps extends ViewProps {
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `large`.
    *
+   * Available values:
+   *
+   * - `large` - only large detent level will be allowed
+   * - `medium` - only medium detent level will be allowed
+   * - `all` - all detent levels will be allowed
+   *
    * @platform ios
    */
   sheetAllowedDetents?: SheetDetentTypes;
@@ -249,6 +255,9 @@ export interface ScreenProps extends ViewProps {
   /**
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * If set to non-negative value it will try to render sheet with provided radius, else ti will apply system default.
+   *
    * If left unset system default is used.
    *
    * @platform ios
