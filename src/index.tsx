@@ -48,7 +48,6 @@ export class NativeScreen extends React.Component<ScreenProps> {
       }
       return (
         <View
-          // @ts-expect-error: hidden exists on web, but not in React Native
           hidden={activityState === 0}
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
           {...rest}
