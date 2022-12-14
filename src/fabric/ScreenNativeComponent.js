@@ -69,7 +69,7 @@ export type NativeProps = $ReadOnly<{|
   onTransitionProgress?: ?BubblingEventHandler<TransitionProgressEvent>,
   sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>,
   sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>,
-  isSheetGrabberVisible?: WithDefault<boolean, false>,
+  sheetGrabberVisible?: WithDefault<boolean, false>,
   sheetCornerRadius?: WithDefault<Float, -1.0>,
   sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>,
   customAnimationOnSwipe?: boolean,

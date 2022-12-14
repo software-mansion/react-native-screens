@@ -155,7 +155,7 @@ const RouteView = ({
     homeIndicatorHidden,
     sheetAllowedDetents = 'large',
     sheetLargestUndimmedDetent = 'all',
-    isSheetGrabberVisible = false,
+    sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     sheetExpandsWhenScrolledToEdge = true,
     nativeBackButtonDismissalEnabled = false,
@@ -226,7 +226,7 @@ const RouteView = ({
       style={StyleSheet.absoluteFill}
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
-      isSheetGrabberVisible={isSheetGrabberVisible}
+      sheetGrabberVisible={sheetGrabberVisible}
       sheetCornerRadius={sheetCornerRadius}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
       customAnimationOnSwipe={customAnimationOnSwipe}

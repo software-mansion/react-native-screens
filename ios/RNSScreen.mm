@@ -529,7 +529,7 @@
     UISheetPresentationController *sheet = _controller.sheetPresentationController;
     if (_stackPresentation == RNSScreenStackPresentationFormSheet && sheet != nil) {
       sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
-      sheet.prefersGrabberVisible = _isSheetGrabberVisible;
+      sheet.prefersGrabberVisible = _sheetGrabberVisible;
       sheet.preferredCornerRadius =
           _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
 
@@ -669,7 +669,7 @@
     [self setHomeIndicatorHidden:newScreenProps.homeIndicatorHidden];
   }
 
-  [self setIsSheetGrabberVisible:newScreenProps.isSheetGrabberVisible];
+  [self setSheetGrabberVisible:newScreenProps.sheetGrabberVisible];
   [self setSheetCornerRadius:newScreenProps.sheetCornerRadius];
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
 
@@ -1281,7 +1281,7 @@ RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 
 RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, RNSScreenDetentType);
-RCT_EXPORT_VIEW_PROPERTY(isSheetGrabberVisible, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #endif

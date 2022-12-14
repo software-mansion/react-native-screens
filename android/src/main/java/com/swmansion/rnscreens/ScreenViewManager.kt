@@ -160,7 +160,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) = Unit
 
-    override fun setIsSheetGrabberVisible(view: Screen?, value: Boolean) = Unit
+    override fun setSheetGrabberVisible(view: Screen?, value: Boolean) = Unit
 
     override fun setSheetCornerRadius(view: Screen?, value: Float) = Unit
 

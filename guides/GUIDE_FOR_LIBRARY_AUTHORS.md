@@ -75,12 +75,6 @@ Whether the keyboard should hide when swiping to the previous screen. Defaults t
 
 Whether the home indicator should be hidden on this screen. Defaults to `false`.
 
-### `isSheetGrabberVisible` (iOS only)
-
-Boolean indicating whether the sheet shows a grabber at the top.
-Works only when `stackPresentation` is set to `formSheet`.
-Defaults to `false`.
-
 ### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.
@@ -177,6 +171,12 @@ Works only when `stackPresentation` is set to `formSheet`.
 If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
 
 Defaults to system default.
+
+### `sheetGrabberVisible` (iOS only)
+
+Boolean indicating whether the sheet shows a grabber at the top.
+Works only when `stackPresentation` is set to `formSheet`.
+Defaults to `false`.
 
 ### `sheetLargestUndimmedDetent` (iOS only)
 

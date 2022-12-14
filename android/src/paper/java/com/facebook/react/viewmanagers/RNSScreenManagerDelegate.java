@@ -29,8 +29,8 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "sheetLargestUndimmedDetent":
         mViewManager.setSheetLargestUndimmedDetent(view, (String) value);
         break;
-      case "isSheetGrabberVisible":
-        mViewManager.setIsSheetGrabberVisible(view, value == null ? false : (boolean) value);
+      case "sheetGrabberVisible":
+        mViewManager.setSheetGrabberVisible(view, value == null ? false : (boolean) value);
         break;
       case "sheetCornerRadius":
         mViewManager.setSheetCornerRadius(view, value == null ? -1f : ((Double) value).floatValue());

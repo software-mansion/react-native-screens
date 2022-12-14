@@ -16,7 +16,7 @@ export default function App(): JSX.Element {
     stackPresentation: 'formSheet',
     sheetAllowedDetents: 'all',
     sheetLargestUndimmedDetent: 'medium',
-    isSheetGrabberVisible: false,
+    sheetGrabberVisible: false,
     sheetCornerRadius: -1,
     sheetExpandsWhenScrolledToEdge: true
   }
@@ -43,7 +43,7 @@ export default function App(): JSX.Element {
           ...initialScreenOptions
         }}/>
 
-      </Stack.Navigator>
+      /Stack.Navigator>
     </NavigationContainer>
   );
 }
@@ -161,7 +161,7 @@ function SheetScreen({
         onPress={() => {
           setIsGrabberVisible(!isGrabberVisible);
           navigation.setOptions({
-            isSheetGrabberVisible: !isGrabberVisible
+            sheetGrabberVisible: !isGrabberVisible
           })
         }}
       />

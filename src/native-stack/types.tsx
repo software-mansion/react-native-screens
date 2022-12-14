@@ -288,14 +288,6 @@ export type NativeStackNavigationOptions = {
    */
   navigationBarHidden?: boolean;
   /**
-   * Boolean indicating whether the sheet shows a grabber at the top.
-   * Works only when `stackPresentation` is set to `formSheet`.
-   * Defaults to `false`.
-   *
-   * @platform ios
-   */
-  isSheetGrabberVisible?: boolean;
-  /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
    * - "push" – the new screen will perform push animation.
@@ -350,6 +342,14 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   sheetCornerRadius?: number;
+  /**
+   * Boolean indicating whether the sheet shows a grabber at the top.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  sheetGrabberVisible?: boolean;
   /**
    * The largest sheet detent for which a view underneath won't be dimmed.
    * Works only when `stackPresentation` is se tto `formSheet`.

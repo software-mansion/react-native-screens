@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Props controlling UISheetPresentationController
 @property (nonatomic) RNSScreenDetentType sheetAllowedDetents;
 @property (nonatomic) RNSScreenDetentType sheetLargestUndimmedDetent;
-@property (nonatomic) BOOL isSheetGrabberVisible;
+@property (nonatomic) BOOL sheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif
