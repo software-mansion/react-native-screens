@@ -485,8 +485,33 @@
   }
 
 #if !TARGET_OS_TV
-  if (config.backTitle) {
-    prevItem.backButtonTitle = config.backTitle;
+  // Fix for github.com/react-navigation/react-navigation/issues/11015
+  // It allows to hide back button title and use back button menu as normal.
+  // Back button display mode and back button menu are available since iOS 14.
+  if (@available(iOS 14.0, *)) {
+    // Make sure to set display mode to default.
+    // This line resets back button display mode - especially needed on the Fabric architecture.
+    navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+
+    if (config.backTitle) {
+      NSString *trimmedBackTitle =
+          [config.backTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+      if ([trimmedBackTitle length] == 0) {
+        // When an whitespace only back title is passed set back button mode to minimal.
+        navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
+
+        // we DO NOT want to set prevItem.backButtonTitle if we're just hiding the title because
+        // it messes up the back button menu
+      } else if (config.backTitle) {
+        // otherwise set title as we normally would
+        prevItem.backButtonTitle = config.backTitle;
+      }
+    }
+  } else {
+    if (config.backTitle) {
+      prevItem.backButtonTitle = config.backTitle;
+    }
   }
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
