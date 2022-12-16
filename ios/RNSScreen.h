@@ -58,6 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) RNSScreenStackPresentation stackPresentation;
 @property (nonatomic) RNSScreenSwipeDirection swipeDirection;
 @property (nonatomic) RNSScreenReplaceAnimation replaceAnimation;
+
 @property (nonatomic, retain) NSNumber *transitionDuration;
 @property (nonatomic, readonly) BOOL dismissed;
 @property (nonatomic) BOOL hideKeyboardOnSwipe;
@@ -74,6 +75,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UIInterfaceOrientationMask screenOrientation;
 @property (nonatomic) BOOL statusBarHidden;
 @property (nonatomic) BOOL homeIndicatorHidden;
+
+// Props controlling UISheetPresentationController
+@property (nonatomic) RNSScreenDetentType sheetAllowedDetents;
+@property (nonatomic) RNSScreenDetentType sheetLargestUndimmedDetent;
+@property (nonatomic) BOOL sheetGrabberVisible;
+@property (nonatomic) CGFloat sheetCornerRadius;
+@property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif
 
 #ifdef RN_FABRIC_ENABLED

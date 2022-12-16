@@ -18,31 +18,7 @@ To learn about how to use `react-native-screens` with Fabric architecture, head 
 
 ### iOS
 
-On iOS obtaining current device orientation [requires asking the system to generate orientation notifications](https://developer.apple.com/documentation/uikit/uidevice/1620053-orientation?language=objc). Our library uses them to enforce correct interface orientation when navigating between screens. 
-To make sure that there are no issues with screen orientation you should put following code in your `AppDelegate.m`:
-
-```objective-c
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    ... 
-#if !TARGET_OS_TV
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-#endif // !TARGET_OS_TV
-    ...
-    return YES:
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-#if !TARGET_OS_TV
-    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-#endif // !TARGET_OS_TV
-}
-```
-
-You can see example of these changes being introduced in our [example applications](https://github.com/software-mansion/react-native-screens/blob/main/TestsExample/ios/TestsExample/AppDelegate.mm).
-
-Other aspects of installation should be completely handled with auto-linking, just ensure you installed pods after adding this module.
+Installation on iOS is completely handled with auto-linking, if you have ensured pods are installed after adding this module, no other actions are necessary.
 
 ### Android
 
@@ -51,13 +27,24 @@ On Android the View state is not persisted consistently across Activity restarts
 For most people using an app built from the react-native template, that means editing `MainActivity.java`, likely located in `android/app/src/main/java/<your package name>/MainActivity.java`
 
 You should add this code, which specifically discards any Activity state persisted during the Activity restart process, to avoid inconsistencies that lead to crashes.
+Please note that the override code should not be placed inside `MainActivityDelegate`, but rather directly in `MainActivity`.
 
 ```java
 import android.os.Bundle;
 
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(null);
+public class MainActivity extends ReactActivity {
+
+    //...code
+
+    //react-native-screens override
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(null);
+    }
+
+    public static class MainActivityDelegate extends ReactActivityDelegate {
+        //...code
+    }
 }
 ```
 
@@ -81,6 +68,7 @@ buildscript {
 ```
 
 **Disclaimer**: `react-native-screens` requires Kotlin `1.3.50` or higher.
+
 </details>
 
 ### Windows
@@ -100,16 +88,16 @@ Screens are already integrated with the React Native's most popular navigation l
 | 2.0.0+  | 0.60.0+              |
 
 ### Support for Fabric
-[Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system. 
 
-* As of [version `3.18.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.18.0) of this project, Fabric is supported only for react-native 0.70+. Support for lower versions has been dropped.
-* As of [version `3.14.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.14.0) of this project, Fabric is supported only for react-native 0.69+. Support for lower versions has been dropped.
+[Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system.
+
+- As of [version `3.18.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.18.0) of this project, Fabric is supported only for react-native 0.70+. Support for lower versions has been dropped.
+- As of [version `3.14.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.14.0) of this project, Fabric is supported only for react-native 0.69+. Support for lower versions has been dropped.
 
 | version | react-native version |
 | ------- | -------------------- |
 | 3.18.0+ | 0.70.0+              |
 | 3.14.0+ | 0.69.0+              |
-
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
@@ -167,6 +155,10 @@ To take advantage of the native stack navigator primitive for React Navigation t
 - for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/main/native-stack)
 - for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/main/createNativeStackNavigator)
 
+## `FullWindowOverlay`
+
+Native `iOS` component for rendering views straight under the `Window`. Based on `RCTPerfMonitor`. You should treat it as a wrapper, providing full-screen, transparent view which receives no props and should ideally render one child `View`, being the root of its view hierarchy. For the example usage, see https://github.com/software-mansion/react-native-screens/blob/main/TestsExample/src/Test1096.tsx
+
 ## Interop with [react-native-navigation](https://github.com/wix/react-native-navigation)
 
 React-native-navigation library already uses native containers for rendering navigation scenes so wrapping these scenes with `<ScreenContainer>` or `<Screen>` component does not provide any benefits. Yet if you would like to build a component that uses screens primitives under the hood (for example a view pager component) it is safe to use `<ScreenContainer>` and `<Screen>` components for that as these work out of the box when rendered on react-native-navigation scenes.
@@ -194,12 +186,12 @@ Use `ScrollView` with prop `contentInsetAdjustmentBehavior=“automatic”` as a
 
 ### Other problems
 
-| Problem                                                                                                                                      | Solution                                                                                                    |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                         | [related PRs](https://github.com/software-mansion/react-native-screens/issues/773#issuecomment-783469792)           |
-| [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843) | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
-| [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)     | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
-| [`onScroll` and `onMomentumScrollEnd` of previous screen triggered in bottom tabs](https://github.com/software-mansion/react-native-screens/issues/1183)     | [explanation](https://github.com/software-mansion/react-native-screens/issues/1183#issuecomment-949313111) |
+| Problem                                                                                                                                                  | Solution                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [SVG component becomes transparent when goBack](https://github.com/software-mansion/react-native-screens/issues/773)                                     | [related PRs](https://github.com/software-mansion/react-native-screens/issues/773#issuecomment-783469792)   |
+| [Memory leak while moving from one screen to another in the same stack](https://github.com/software-mansion/react-native-screens/issues/843)             | [explanation](https://github.com/software-mansion/react-native-screens/issues/843#issuecomment-832034119)   |
+| [LargeHeader stays small after pop/goBack/swipe gesture on iOS 14+](https://github.com/software-mansion/react-native-screens/issues/649)                 | [potential fix](https://github.com/software-mansion/react-native-screens/issues/649#issuecomment-712199895) |
+| [`onScroll` and `onMomentumScrollEnd` of previous screen triggered in bottom tabs](https://github.com/software-mansion/react-native-screens/issues/1183) | [explanation](https://github.com/software-mansion/react-native-screens/issues/1183#issuecomment-949313111)  |
 
 ## Contributing
 

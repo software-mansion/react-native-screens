@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Animated, View, ViewProps, ImageProps, Image } from 'react-native';
 import {
   ScreenProps,
@@ -74,7 +74,9 @@ export const NativeScreenNavigationContainer: React.ComponentType<ScreenContaine
 
 export const ScreenStack: React.ComponentType<ScreenStackProps> = View;
 
-export const FullWindowOverlay = View;
+export const FullWindowOverlay = View as React.ComponentType<{
+  children: ReactNode;
+}>;
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps
