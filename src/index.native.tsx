@@ -440,7 +440,7 @@ class Screen extends React.Component<ScreenProps> {
   }
 }
 
-module.exports = {
+export {
   // these are classes so they are not evaluated until used
   // so no need to use getters for them
   Screen,
@@ -449,7 +449,19 @@ module.exports = {
   ScreenStack,
   InnerScreen,
   FullWindowOverlay,
+};
 
+// since these are hard-coded as getters and not exported, declare them for typings generation
+export declare const NativeScreen: React.ComponentType<ScreenProps>;
+export declare const NativeScreenContainer: React.ComponentType<ScreenContainerProps>;
+export declare const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps>;
+export declare const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
+export declare const ScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
+  ViewProps & { type?: HeaderSubviewTypes }
+>>;
+export declare const SearchBar: View | React.ComponentType<SearchBarProps>;
+
+Object.defineProperties(module.exports, Object.getOwnPropertyDescriptors({
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
   },
@@ -478,6 +490,9 @@ module.exports = {
 
     return ScreensNativeModules.NativeSearchBar;
   },
+}));
+
+export {
   // these are functions and will not be evaluated until used
   // so no need to use getters for them
   ScreenStackHeaderBackButtonImage,
