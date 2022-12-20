@@ -42,8 +42,7 @@ export default function App(): JSX.Element {
         <Stack.Screen name="SheetScreenWithScrollView" component={SheetScreenWithScrollView} options={{
           ...initialScreenOptions
         }}/>
-
-      /Stack.Navigator>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

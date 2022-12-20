@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL sheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
-#endif
+#endif // !TARGET_OS_TV
 
 #ifdef RN_FABRIC_ENABLED
 // we recreate the behavior of `reactSetFrame` on new architecture
@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
-#endif
+#endif // RN_FABRIC_ENABLED
 
 - (void)notifyFinishTransitioning;
 
