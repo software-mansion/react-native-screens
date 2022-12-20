@@ -1316,6 +1316,11 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
 
++ (BOOL)requiresMainQueueSetup
+{
+  return NO;
+}
+
 @end
 
 @implementation RCTConvert (RNSScreen)
