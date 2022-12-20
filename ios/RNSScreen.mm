@@ -1316,6 +1316,14 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
 
++ (BOOL)requiresMainQueueSetup
+{
+  // Returning NO here despite the fact some initialization in -init method dispatches tasks
+  // on main queue, because the comments in RN source code states that modules which return YES
+  // here will be constructed ahead-of-time -- and this is not required in our case.
+  return NO;
+}
+
 @end
 
 @implementation RCTConvert (RNSScreen)
