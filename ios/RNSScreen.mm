@@ -82,7 +82,9 @@
   _hasStatusBarHiddenSet = NO;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
+#if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
+#endif // !TARGET_OS_TV
 }
 
 - (UIViewController *)reactViewController
