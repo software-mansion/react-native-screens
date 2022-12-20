@@ -2,6 +2,7 @@
 #import <React/RCTViewManager.h>
 
 #import "RNSEnums.h"
+#import "RNSListenerContainer.h"
 #import "RNSScreenContainer.h"
 
 #if RN_FABRIC_ENABLED
@@ -37,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setViewToSnapshot:(UIView *)snapshot;
 - (void)resetViewToScreen;
 #endif
-
+@property (nonatomic) RNSListenerContainer *listenerContainer;
 @end
 
 @interface RNSScreenView :
@@ -112,6 +113,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 - (BOOL)isModal;
+@property (nonatomic) RNSListenerContainer *listenerContainer;
 
 @end
 

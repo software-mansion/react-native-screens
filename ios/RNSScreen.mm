@@ -83,6 +83,7 @@
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
   _sheetExpandsWhenScrolledToEdge = YES;
+  _listenerContainer = [RNSListenerContainer new];
 }
 
 - (UIViewController *)reactViewController
@@ -352,6 +353,7 @@
     self.onWillDisappear(nil);
   }
 #endif
+  [_listenerContainer notifyListeners:@"notifyWillDisappear" data:nil component:self];
 }
 
 - (void)notifyAppear
@@ -806,6 +808,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _initialView = (RNSScreenView *)view;
 #endif
   }
+  _listenerContainer = [RNSListenerContainer new];
   return self;
 }
 
