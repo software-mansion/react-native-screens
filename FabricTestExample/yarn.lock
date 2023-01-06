@@ -6129,13 +6129,13 @@ react-native-gradle-plugin@^0.71.12:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.12.tgz#7f0000b3d9593288183a13889fd6225d0ab506b8"
   integrity sha512-ILujN0C+cX5QHmm22MXbHqZR619OzV/VThLHFhe7qnzZWpPh8O4KSvbtezoYMiBbmowAfy8SQpohwlN3nv6wZQ==
 
-react-native-reanimated@3.0.0-rc.8:
-  version "3.0.0-rc.8"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.0.0-rc.8.tgz#99ef62960f8670185f958d3a8e2692d10349e9b3"
-  integrity sha512-OE9HUSfKqYfKeTlDExd2ltZXXeL4cvPcTzKGeDLxlmm2kCgbwV8bX1gNanDZ1FlURGD2lhGvDyHAA2pQvJ0wVg==
+react-native-reanimated@software-mansion/react-native-reanimated#cda4627c3337c33674f05f755b7485165c6caca9:
+  version "3.0.0-rc.9"
+  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/cda4627c3337c33674f05f755b7485165c6caca9"
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
+    convert-source-map "^1.7.0"
     invariant "^2.2.4"
     lodash.isequal "^4.5.0"
     setimmediate "^1.0.5"
