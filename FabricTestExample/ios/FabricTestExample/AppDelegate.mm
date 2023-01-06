@@ -6,10 +6,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-#if !TARGET_OS_TV
-  [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-#endif // !TARGET_OS_TV
-
   self.moduleName = @"FabricTestExample";
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
@@ -21,13 +17,6 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
-}
-
-- (void)applicationWillTerminate
-{
-#if !TARGET_OS_TV
-  [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
-#endif // !TARGET_OS_TV
 }
 
 /// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.

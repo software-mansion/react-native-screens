@@ -98,7 +98,8 @@ const MaybeNestedStack = ({
         contentStyle,
       ]}
       // @ts-ignore Wrong props passed to View
-      stackPresentation={stackPresentation}>
+      stackPresentation={stackPresentation}
+    >
       {children}
     </Container>
   );
@@ -153,6 +154,11 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
+    sheetAllowedDetents = 'large',
+    sheetLargestUndimmedDetent = 'all',
+    sheetGrabberVisible = false,
+    sheetCornerRadius = -1.0,
+    sheetExpandsWhenScrolledToEdge = true,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -219,6 +225,11 @@ const RouteView = ({
       enabled
       isNativeStack
       style={StyleSheet.absoluteFill}
+      sheetAllowedDetents={sheetAllowedDetents}
+      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      sheetGrabberVisible={sheetGrabberVisible}
+      sheetCornerRadius={sheetCornerRadius}
+      sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
@@ -293,16 +304,19 @@ const RouteView = ({
           source: route.key,
           target: stateKey,
         });
-      }}>
+      }}
+    >
       <HeaderHeightContext.Provider
         value={
           isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
-        }>
+        }
+      >
         <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
         <MaybeNestedStack
           options={options}
           route={route}
-          stackPresentation={stackPresentation}>
+          stackPresentation={stackPresentation}
+        >
           {renderScene()}
         </MaybeNestedStack>
       </HeaderHeightContext.Provider>

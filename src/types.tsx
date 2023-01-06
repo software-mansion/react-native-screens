@@ -77,6 +77,8 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
+export type SheetDetentTypes = 'medium' | 'large' | 'all';
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
@@ -222,6 +224,60 @@ export interface ScreenProps extends ViewProps {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenOrientationTypes;
+  /**
+   * Describes heights where a sheet can rest.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `large`.
+   *
+   * Available values:
+   *
+   * - `large` - only large detent level will be allowed
+   * - `medium` - only medium detent level will be allowed
+   * - `all` - all detent levels will be allowed
+   *
+   * @platform ios
+   */
+  sheetAllowedDetents?: SheetDetentTypes;
+  /**
+   * Whether the sheet should expand to larger detent when scrolling.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `true`.
+   */
+  sheetExpandsWhenScrolledToEdge?: boolean;
+  /**
+   * The corner radius that the sheet will try to render with.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * If set to non-negative value it will try to render sheet with provided radius, else ti will apply system default.
+   *
+   * If left unset system default is used.
+   *
+   * @platform ios
+   */
+  sheetCornerRadius?: number;
+  /**
+   * Boolean indicating whether the sheet shows a grabber at the top.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  sheetGrabberVisible?: boolean;
+  /**
+   * The largest sheet detent for which a view underneath won't be dimmed.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * If this prop is set to:
+   *
+   * - `large` - the view underneath won't be dimmed at any detent level
+   * - `medium` - the view underneath will be dimmed only when detent level is `large`
+   * - `all` - the view underneath will be dimmed for any detent level
+   *
+   * Defaults to `all`.
+   *
+   * @platform ios
+   */
+  sheetLargestUndimmedDetent?: SheetDetentTypes;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

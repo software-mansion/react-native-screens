@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
 import {
   Animated,
   Image,
   ImageProps,
   Platform,
   requireNativeComponent,
+  StyleProp,
   StyleSheet,
   UIManager,
   View,
   ViewProps,
+  ViewStyle,
 } from 'react-native';
 import { Freeze } from 'react-freeze';
 import { version } from 'react-native/package.json';
@@ -79,12 +81,16 @@ let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenNavigationContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenStack: React.ComponentType<ScreenStackProps>;
 let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
-let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
-  ViewProps & { type?: HeaderSubviewTypes }
->>;
+let NativeScreenStackHeaderSubview: React.ComponentType<
+  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
+>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 let NativeSearchBar: React.ComponentType<SearchBarProps>;
-let NativeFullWindowOverlay: React.ComponentType<View>;
+let NativeFullWindowOverlay: React.ComponentType<
+  PropsWithChildren<{
+    style: StyleProp<ViewStyle>;
+  }>
+>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -284,7 +290,8 @@ class InnerScreen extends React.Component<ScreenProps> {
                     ],
                     { useNativeDriver: true }
                   )
-            }>
+            }
+          >
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (
@@ -293,7 +300,8 @@ class InnerScreen extends React.Component<ScreenProps> {
                   progress: this.progress,
                   closing: this.closing,
                   goingForward: this.goingForward,
-                }}>
+                }}
+              >
                 {children}
               </TransitionProgressContext.Provider>
             )}
@@ -337,6 +345,20 @@ function ScreenContainer(props: ScreenContainerProps) {
   return <View {...rest} />;
 }
 
+function FullWindowOverlay(props: { children: ReactNode }) {
+  if (Platform.OS !== 'ios') {
+    console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
+    return <View {...props} />;
+  }
+  return (
+    <ScreensNativeModules.NativeFullWindowOverlay
+      style={{ position: 'absolute', width: '100%', height: '100%' }}
+    >
+      {props.children}
+    </ScreensNativeModules.NativeFullWindowOverlay>
+  );
+}
+
 const styles = StyleSheet.create({
   headerSubview: {
     position: 'absolute',
@@ -351,7 +373,8 @@ const styles = StyleSheet.create({
 const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
-    style={styles.headerSubview}>
+    style={styles.headerSubview}
+  >
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
@@ -431,6 +454,7 @@ module.exports = {
   ScreenContext,
   ScreenStack,
   InnerScreen,
+  FullWindowOverlay,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
@@ -459,14 +483,6 @@ module.exports = {
     }
 
     return ScreensNativeModules.NativeSearchBar;
-  },
-  get FullWindowOverlay() {
-    if (Platform.OS !== 'ios') {
-      console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
-      return View;
-    }
-
-    return ScreensNativeModules.NativeFullWindowOverlay;
   },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them
