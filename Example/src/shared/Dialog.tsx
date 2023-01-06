@@ -18,7 +18,8 @@ export const Dialog = (): JSX.Element => {
         <Text style={styles.heading}>Hey! Sign up for our newsletter!</Text>
         <TouchableOpacity
           style={{ ...styles.button }}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.buttonText}>Please no.</Text>
         </TouchableOpacity>
       </View>

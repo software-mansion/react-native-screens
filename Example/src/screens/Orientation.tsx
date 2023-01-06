@@ -23,9 +23,8 @@ interface FirstScreenProps {
 }
 
 const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
-  const [screenOrientation, setScreenOrientation] = useState<ScreenOrientation>(
-    'default'
-  );
+  const [screenOrientation, setScreenOrientation] =
+    useState<ScreenOrientation>('default');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -79,7 +78,8 @@ const App = (): JSX.Element => (
     screenOptions={{
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-    }}>
+    }}
+  >
     <Stack.Screen
       name="First"
       component={FirstScreen}

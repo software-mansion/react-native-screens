@@ -152,7 +152,8 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
             left: startValue,
             width: endValue - startValue,
             height: bottomValue - topValue,
-          }}>
+          }}
+        >
           <Text style={styles.heading}>Swipe here!</Text>
           <Text>
             This view presents where you can currently swipe while using the
@@ -171,7 +172,8 @@ const App = (): JSX.Element => (
     screenOptions={{
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-    }}>
+    }}
+  >
     <Stack.Screen
       name="Main"
       component={MainScreen}

@@ -47,7 +47,8 @@ class DetailsScreen extends React.Component<{
           ...styles.container,
           backgroundColor:
             colors[Math.floor(Math.random() * Math.floor(colors.length))],
-        }}>
+        }}
+      >
         <Text style={styles.text}>Details Screen</Text>
         <Button
           title="Go to Details... again"
