@@ -149,8 +149,7 @@ const ChatsScreen = ({
         nativeBackButtonDismissalEnabled: true,
         headerTopInsetEnabled: false,
         headerHideBackButton: true,
-      }}
-    >
+      }}>
       <NestedStack.Screen name="Privacy" component={PrivacyScreen} />
       <NestedStack.Screen name="Options" component={OptionsScreen} />
     </NestedStack.Navigator>
@@ -260,12 +259,10 @@ const App = (): JSX.Element => {
         screenOptions={{
           direction: I18nManager.isRTL ? 'rtl' : 'ltr',
           nativeBackButtonDismissalEnabled: true,
-        }}
-      >
+        }}>
         <Stack.Screen
           name="Main"
-          options={{ title: 'Events', headerHideBackButton: true }}
-        >
+          options={{ title: 'Events', headerHideBackButton: true }}>
           {({ navigation }) => (
             <MainScreen
               navigation={navigation}

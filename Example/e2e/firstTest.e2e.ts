@@ -60,7 +60,7 @@ describe('Example', () => {
 
   it('should have examples buttons', async () => {
     const exampleNames = Object.keys(SCREENS).filter(
-      (name) => SCREENS[name].type === 'example'
+      name => SCREENS[name].type === 'example'
     );
     for (const name of exampleNames) {
       await expect(element(by.id(`root-screen-example-${name}`))).toBeVisible();

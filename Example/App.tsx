@@ -133,8 +133,8 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
       Examples
     </Text>
     {Object.keys(SCREENS)
-      .filter((name) => SCREENS[name].type === 'example')
-      .map((name) => (
+      .filter(name => SCREENS[name].type === 'example')
+      .map(name => (
         <ListItem
           key={name}
           testID={`root-screen-example-${name}`}
@@ -144,8 +144,8 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
       ))}
     <Text style={styles.label}>Playgrounds</Text>
     {Object.keys(SCREENS)
-      .filter((name) => SCREENS[name].type === 'playground')
-      .map((name) => (
+      .filter(name => SCREENS[name].type === 'playground')
+      .map(name => (
         <ListItem
           key={name}
           testID={`root-screen-playground-${name}`}
@@ -161,14 +161,13 @@ const ExampleApp = (): JSX.Element => (
     <Stack.Navigator
       screenOptions={{
         direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-      }}
-    >
+      }}>
       <Stack.Screen
         name="Main"
         options={{ title: '📱 React Native Screens Examples' }}
         component={MainScreen}
       />
-      {Object.keys(SCREENS).map((name) => (
+      {Object.keys(SCREENS).map(name => (
         <Stack.Screen
           key={name}
           name={name}

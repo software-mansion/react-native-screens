@@ -32,8 +32,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   return (
     <ScrollView
       style={{ ...styles.container, backgroundColor: 'thistle' }}
-      testID="stack-presentation-root-scroll-view"
-    >
+      testID="stack-presentation-root-scroll-view">
       <Button
         title="push"
         onPress={() => navigation.navigate('Push')}
@@ -118,8 +117,7 @@ const FullScreenModalScreen = ({
   <View style={{ flex: 1 }}>
     <ImageBackground
       style={styles.image}
-      source={require('../assets/trees.jpg')}
-    >
+      source={require('../assets/trees.jpg')}>
       <Button
         testID="stack-presentation-fullscreen-modal-go-back-button"
         title="Go back"
@@ -136,8 +134,7 @@ const App = (): JSX.Element => (
     screenOptions={{
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-    }}
-  >
+    }}>
     <Stack.Screen
       name="Main"
       component={MainScreen}
