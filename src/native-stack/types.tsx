@@ -437,11 +437,10 @@ export type NativeStackNavigationOptions = {
   transitionDuration?: number;
 };
 
-export type NativeStackNavigatorProps = DefaultNavigatorOptions<
-  NativeStackNavigationOptions
-> &
-  StackRouterOptions &
-  NativeStackNavigationConfig;
+export type NativeStackNavigatorProps =
+  DefaultNavigatorOptions<NativeStackNavigationOptions> &
+    StackRouterOptions &
+    NativeStackNavigationConfig;
 
 export type NativeStackDescriptor = Descriptor<
   ParamListBase,

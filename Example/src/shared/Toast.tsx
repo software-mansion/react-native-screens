@@ -38,7 +38,8 @@ const Toast = ({
   return (
     <TouchableOpacity
       style={{ ...styles.container, ...style }}
-      onPress={() => remove(id)}>
+      onPress={() => remove(id)}
+    >
       <View style={{ ...styles.alert, backgroundColor }}>
         <Text style={styles.text}>
           {`${index + 1}. `}

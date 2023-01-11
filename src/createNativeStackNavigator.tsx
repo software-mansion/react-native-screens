@@ -400,7 +400,8 @@ function StackView({
   return (
     <ScreenStack
       style={styles.scenes}
-      onFinishTransitioning={() => onFinishTransitioning(navigation)}>
+      onFinishTransitioning={() => onFinishTransitioning(navigation)}
+    >
       {routes.map((route, index) => {
         const descriptor = descriptors[route.key];
         const { getComponent, options } = descriptor;
@@ -501,7 +502,8 @@ function StackView({
                 e.nativeEvent.dismissCount,
                 routeNavigationProp
               )
-            }>
+            }
+          >
             {isHeaderInPush &&
               renderHeaderConfig(index, route, descriptor, navigationConfig)}
             <MaybeNestedStack

@@ -65,15 +65,12 @@ export default function HeaderConfig({
     isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
   });
 
-  const [
-    backTitleFontFamily,
-    largeTitleFontFamily,
-    titleFontFamily,
-  ] = processFonts([
-    headerBackTitleStyle.fontFamily,
-    headerLargeTitleStyle.fontFamily,
-    headerTitleStyle.fontFamily,
-  ]);
+  const [backTitleFontFamily, largeTitleFontFamily, titleFontFamily] =
+    processFonts([
+      headerBackTitleStyle.fontFamily,
+      headerLargeTitleStyle.fontFamily,
+      headerTitleStyle.fontFamily,
+    ]);
 
   // We want to clear clearSubscription only when components unmounts or search bar changes
   React.useEffect(() => clearSubscription, [searchBar]);
@@ -141,7 +138,8 @@ export default function HeaderConfig({
       topInsetEnabled={headerTopInsetEnabled}
       translucent={headerTranslucent === true}
       onAttached={handleAttached}
-      onDetached={handleDetached}>
+      onDetached={handleDetached}
+    >
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>
           {headerRight({ tintColor })}

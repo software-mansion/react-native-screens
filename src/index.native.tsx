@@ -81,14 +81,16 @@ let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenNavigationContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenStack: React.ComponentType<ScreenStackProps>;
 let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
-let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
-  ViewProps & { type?: HeaderSubviewTypes }
->>;
+let NativeScreenStackHeaderSubview: React.ComponentType<
+  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
+>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 let NativeSearchBar: React.ComponentType<SearchBarProps>;
-let NativeFullWindowOverlay: React.ComponentType<PropsWithChildren<{
-  style: StyleProp<ViewStyle>;
-}>>;
+let NativeFullWindowOverlay: React.ComponentType<
+  PropsWithChildren<{
+    style: StyleProp<ViewStyle>;
+  }>
+>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -288,7 +290,8 @@ class InnerScreen extends React.Component<ScreenProps> {
                     ],
                     { useNativeDriver: true }
                   )
-            }>
+            }
+          >
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (
@@ -297,7 +300,8 @@ class InnerScreen extends React.Component<ScreenProps> {
                   progress: this.progress,
                   closing: this.closing,
                   goingForward: this.goingForward,
-                }}>
+                }}
+              >
                 {children}
               </TransitionProgressContext.Provider>
             )}
@@ -348,7 +352,8 @@ function FullWindowOverlay(props: { children: ReactNode }) {
   }
   return (
     <ScreensNativeModules.NativeFullWindowOverlay
-      style={{ position: 'absolute', width: '100%', height: '100%' }}>
+      style={{ position: 'absolute', width: '100%', height: '100%' }}
+    >
       {props.children}
     </ScreensNativeModules.NativeFullWindowOverlay>
   );
@@ -368,7 +373,8 @@ const styles = StyleSheet.create({
 const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
-    style={styles.headerSubview}>
+    style={styles.headerSubview}
+  >
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );

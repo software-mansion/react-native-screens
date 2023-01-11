@@ -73,7 +73,8 @@ const createStack = (letter: string) => {
         headerRight: () => (
           <Text testID="bottom-tabs-header-right-id">{letter}</Text>
         ),
-      }}>
+      }}
+    >
       <Stack.Screen name="Details" component={DetailsScreen} />
     </Stack.Navigator>
   );

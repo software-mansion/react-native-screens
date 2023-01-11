@@ -68,9 +68,11 @@ export const ScreenContext = React.createContext(Screen);
 
 export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
-export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> = View;
+export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> =
+  View;
 
-export const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps> = View;
+export const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps> =
+  View;
 
 export const ScreenStack: React.ComponentType<ScreenStackProps> = View;
 
@@ -102,13 +104,14 @@ export const ScreenStackHeaderSearchBarView = (
   props: React.PropsWithChildren<SearchBarProps>
 ): JSX.Element => <View {...props} />;
 
-export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> = View;
+export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
+  View;
 
 // @ts-expect-error: search bar props have no common props with View
 export const SearchBar: React.ComponentType<SearchBarProps> = View;
 
-export const ScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
-  ViewProps & { type?: HeaderSubviewTypes }
->> = View;
+export const ScreenStackHeaderSubview: React.ComponentType<
+  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
+> = View;
 
 export const shouldUseActivityState = true;

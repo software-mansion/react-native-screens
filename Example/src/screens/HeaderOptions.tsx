@@ -87,7 +87,8 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
-      style={styles.container}>
+      style={styles.container}
+    >
       <SettingsInput
         label="Header title"
         value={headerTitle}
@@ -142,7 +143,8 @@ const App = (): JSX.Element => (
     screenOptions={{
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-    }}>
+    }}
+  >
     <Stack.Screen
       name="Main"
       options={{

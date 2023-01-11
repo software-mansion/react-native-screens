@@ -1,0 +1,21 @@
+diff --git a/node_modules/react-native-safe-area-context/android/build.gradle b/node_modules/react-native-safe-area-context/android/build.gradle
+index 7b5b358..970ef51 100644
+--- a/node_modules/react-native-safe-area-context/android/build.gradle
++++ b/node_modules/react-native-safe-area-context/android/build.gradle
+@@ -99,10 +99,11 @@ repositories {
+ def kotlin_version = getExtOrDefault('kotlinVersion', project.properties['RNSAC_kotlinVersion'])
+ 
+ dependencies {
+-    if (isNewArchitectureEnabled()) {
+-        implementation project(":ReactAndroid")
+-    } else {
+-        implementation 'com.facebook.react:react-native:+'
+-    }
++    // if (isNewArchitectureEnabled()) {
++    //     implementation project(":ReactAndroid")
++    // } else {
++    //     implementation 'com.facebook.react:react-native:+'
++    // }
++    implementation 'com.facebook.react:react-native:+'
+     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+ }

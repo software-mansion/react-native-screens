@@ -30,9 +30,8 @@ interface FirstScreenProps {
 const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
   const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>('auto');
   const [statusBarHidden, setStatusBarHidden] = useState(false);
-  const [statusBarAnimation, setStatusBarAnimation] = useState<
-    StatusBarAnimation
-  >('fade');
+  const [statusBarAnimation, setStatusBarAnimation] =
+    useState<StatusBarAnimation>('fade');
   const [statusBarTranslucent, setStatusBarTranslucent] = useState(true);
   const [statusBarColor, setStatusBarColor] = useState('gray');
 
@@ -117,7 +116,8 @@ const App = (): JSX.Element => (
       },
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-    }}>
+    }}
+  >
     <Stack.Screen
       name="First"
       component={FirstScreen}

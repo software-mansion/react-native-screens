@@ -161,7 +161,8 @@ const ExampleApp = (): JSX.Element => (
     <Stack.Navigator
       screenOptions={{
         direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-      }}>
+      }}
+    >
       <Stack.Screen
         name="Main"
         options={{ title: '📱 React Native Screens Examples' }}

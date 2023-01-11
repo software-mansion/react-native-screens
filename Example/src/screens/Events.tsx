@@ -149,7 +149,8 @@ const ChatsScreen = ({
         nativeBackButtonDismissalEnabled: true,
         headerTopInsetEnabled: false,
         headerHideBackButton: true,
-      }}>
+      }}
+    >
       <NestedStack.Screen name="Privacy" component={PrivacyScreen} />
       <NestedStack.Screen name="Options" component={OptionsScreen} />
     </NestedStack.Navigator>
@@ -250,9 +251,8 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const NestedStack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => {
-  const [stackAnimation, setStackAnimation] = useState<StackAnimation>(
-    'default'
-  );
+  const [stackAnimation, setStackAnimation] =
+    useState<StackAnimation>('default');
 
   return (
     <ToastProvider>
@@ -260,10 +260,12 @@ const App = (): JSX.Element => {
         screenOptions={{
           direction: I18nManager.isRTL ? 'rtl' : 'ltr',
           nativeBackButtonDismissalEnabled: true,
-        }}>
+        }}
+      >
         <Stack.Screen
           name="Main"
-          options={{ title: 'Events', headerHideBackButton: true }}>
+          options={{ title: 'Events', headerHideBackButton: true }}
+        >
           {({ navigation }) => (
             <MainScreen
               navigation={navigation}

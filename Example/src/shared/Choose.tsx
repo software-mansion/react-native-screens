@@ -10,12 +10,14 @@ export const Choose = (): JSX.Element => {
       <View style={styles.row}>
         <TouchableOpacity
           style={{ ...styles.button, backgroundColor: 'dodgerblue' }}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.buttonText}>Blue pill</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{ ...styles.button, backgroundColor: 'crimson' }}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.buttonText}>Red pill</Text>
         </TouchableOpacity>
       </View>
