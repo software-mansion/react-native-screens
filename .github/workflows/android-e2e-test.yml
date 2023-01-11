@@ -22,18 +22,18 @@ jobs:
       group: android-e2e-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: Use Node.js 14
-        uses: actions/setup-node@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
           cache: 'yarn'
       - name: Install root node dependencies
-        run: yarn
+        run: yarn install
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn
+        run: yarn install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
@@ -44,7 +44,7 @@ jobs:
           api-level: 29
           avd-name: e2e_emulator
           script: yarn test-e2e-android
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: ${{ failure() }}
         with:
           name: android-fail-screen-shoots
