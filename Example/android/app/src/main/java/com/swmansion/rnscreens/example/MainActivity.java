@@ -34,12 +34,12 @@ public class MainActivity extends ReactActivity {
     @Override
     protected ReactRootView createRootView() {
       // @kkafar: commented out, as we do not use Fabric here & I need to run RNGH v1 for some time
-
-      // ReactRootView reactRootView = new ReactRootView(getContext());
+      ReactRootView reactRootView = new ReactRootView(getContext());
       // // If you opted-in for the New Architecture, we enable the Fabric Renderer.
-      // reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
-      // return reactRootView;
-      return new RNGestureHandlerEnabledRootView(MainActivity.this);
+      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+      return reactRootView;
+
+      // return new RNGestureHandlerEnabledRootView(MainActivity.this);
     }
 
     @Override

@@ -87,5 +87,9 @@ module.exports = {
       device: 'emulator',
       app: 'android.release',
     },
+    'android.release': {
+      device: 'emulator',
+      app: 'android.release',
+    },
   },
 };
