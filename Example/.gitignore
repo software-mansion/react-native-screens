@@ -63,3 +63,7 @@ buck-out/
 
 # Android cpatures
 /android/captures
+
+# Detox
+artifacts/
+
