@@ -12,7 +12,7 @@ describe('Events', () => {
 
   it('should Events playground exist', async () => {
     await expect(element(by.id('root-screen-playground-Events'))).toBeVisible();
-    element(by.id('root-screen-playground-Events')).tap();
+    await element(by.id('root-screen-playground-Events')).tap();
   });
 
   it('should run transitionStart & transitionEnd opening events', async () => {
