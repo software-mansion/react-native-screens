@@ -736,7 +736,7 @@ PODS:
     - React-jsi (= 0.71.0-rc.5)
     - React-logger (= 0.71.0-rc.5)
     - React-perflogger (= 0.71.0-rc.5)
-  - RNGestureHandler (2.8.0):
+  - RNGestureHandler (2.9.0):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
@@ -970,7 +970,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: a7c83b31436843459a1961bfd74b96033dc77234
+  boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 4033b8009f703d05ee38b5569963b749d96875f2
@@ -989,7 +989,7 @@ SPEC CHECKSUMS:
   hermes-engine: a5d6597b0258a8a6fd737e4b40eeac47278610c4
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
-  RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
+  RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: db10a146f8028aa1711be3657ad74cc0fc2864d3
   RCTTypeSafety: a57d946bde79fa2f0ee2c9551542022d884b54d4
   React: 521e46386cd839eac23ef90e434c50b9b057fc72
@@ -1021,7 +1021,7 @@ SPEC CHECKSUMS:
   React-rncore: f055d019d869fb6951302b4178dafacf01cef47e
   React-runtimeexecutor: b7dcd6b5cdef671b6177cae517a68e37437989e1
   ReactCommon: 22ec04726eb397686d75debf5ea97c09b6abab83
-  RNGestureHandler: ceea17b82fea276bb0743a28b53a394a6edf5b18
+  RNGestureHandler: 9d2ebd17a9fef618d9720e3d95ff5e6607acf8d4
   RNReanimated: 305563f23832912dcbc6ec052ffa7e342980093a
   RNScreens: 208223c783496e6d0aa92ffdf307f61d58756fc1
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608

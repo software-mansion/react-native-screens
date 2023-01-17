@@ -19,7 +19,7 @@
     "react": "18.2.0",
     "react-native": "0.71.0-rc.5",
     "react-native-codegen": "^0.71.3",
-    "react-native-gesture-handler": "software-mansion/react-native-gesture-handler#f6df763638b1b41cd2aaa1cf08d2b396e55676e3",
+    "react-native-gesture-handler": "2.9.0",
     "react-native-reanimated": "software-mansion/react-native-reanimated#cda4627c3337c33674f05f755b7485165c6caca9",
     "react-native-safe-area-context": "^4.4.1",
     "react-native-screens": "link:../",
