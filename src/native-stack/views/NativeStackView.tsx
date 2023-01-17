@@ -154,11 +154,6 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetAllowedDetents = 'large',
-    sheetLargestUndimmedDetent = 'all',
-    sheetGrabberVisible = false,
-    sheetCornerRadius = -1.0,
-    sheetExpandsWhenScrolledToEdge = true,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -225,11 +220,6 @@ const RouteView = ({
       enabled
       isNativeStack
       style={StyleSheet.absoluteFill}
-      sheetAllowedDetents={sheetAllowedDetents}
-      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
-      sheetGrabberVisible={sheetGrabberVisible}
-      sheetCornerRadius={sheetCornerRadius}
-      sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
