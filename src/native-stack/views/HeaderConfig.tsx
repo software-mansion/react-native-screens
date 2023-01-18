@@ -73,6 +73,7 @@ export default function HeaderConfig({
     ]);
 
   // We want to clear clearSubscription only when components unmounts or search bar changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => clearSubscription, [searchBar]);
 
   const processedSearchBarOptions = React.useMemo(() => {

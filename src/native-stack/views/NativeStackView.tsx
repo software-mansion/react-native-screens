@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
+// eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
 import {
