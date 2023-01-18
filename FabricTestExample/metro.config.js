@@ -12,7 +12,6 @@ const modules = [
   '@react-navigation/stack',
   'react-navigation',
   'react-native-reanimated',
-  'react-navigation-stack',
   'react-native-safe-area-context',
   ...Object.keys(pack.peerDependencies),
 ];
