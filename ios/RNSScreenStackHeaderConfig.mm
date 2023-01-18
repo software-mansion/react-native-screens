@@ -409,7 +409,7 @@
 #endif // RN_FABRIC_ENABLED
   return appearance;
 }
-#endif
+#endif // Check for >= iOS 13.0
 
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
