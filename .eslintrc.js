@@ -22,7 +22,11 @@ module.exports = {
       'react-native-screens/createNativeStackNavigator',
       'react-native-screens/reanimated',
     ],
-    'import/ignore': ['node_modules/react-native/index\\.js$'],
+    'import/ignore': [
+      'node_modules/react-native/index\\.js$', 
+      'react-native/Libraries/Utilities/codegenNativeComponent.*',
+      'react-native/Libraries/Types/CodegenTypes.*'
+    ],
     'import/resolver': {
       node: {
         paths: ['src'],

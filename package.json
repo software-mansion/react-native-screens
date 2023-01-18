@@ -14,7 +14,8 @@
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "npm login && release-it",
-    "prepare": "bob build && husky install"
+    "prepare": "bob build && husky install",
+    "postinstall": "patch-package"
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -71,11 +72,10 @@
     "@react-navigation/native": "^5.8.0",
     "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^26.0.8",
-    "@types/react": "^16.9.44",
-    "@types/react-native": "^0.63.2",
+    "@types/react": "^18.0.24",
     "@types/react-test-renderer": "^16.9.2",
-    "@typescript-eslint/eslint-plugin": "^3.7.1",
-    "@typescript-eslint/parser": "^3.7.1",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
     "@react-native-community/cli": "^9.0.0",
     "@react-native-community/cli-platform-android": "^9.0.0",
     "@react-native-community/cli-platform-ios": "^9.0.0",
@@ -99,22 +99,24 @@
     "lint-staged": "^11.1.2",
     "metro-react-native-babel-preset": "^0.61.0",
     "prettier": "^2.0.4",
-    "react": "^16.13.1",
+    "react": "18.2.0",
     "react-dom": "^16.13.1",
-    "react-native": "^0.63.2",
+    "react-native": "0.71.0",
     "react-native-reanimated": "^2.2.0",
-    "react-native-safe-area-context": "^4.0.1-rc.5",
+    "react-native-safe-area-context": "^4.4.1",
     "react-native-windows": "^0.64.8",
     "react-navigation": "^4.4.3",
     "react-navigation-stack": "^2.9.0",
     "react-test-renderer": "^16.13.1",
     "release-it": "^13.5.2",
-    "typescript": "^3.9.7"
+    "patch-package": "6.5.1",
+    "typescript": "4.8.4"
   },
   "resolutions": {
     "@react-native-community/cli-platform-android": "^9.0.0",
     "@react-native-community/cli": "^9.0.0",
-    "@react-native-community/cli-platform-ios": "^9.0.0"
+    "@react-native-community/cli-platform-ios": "^9.0.0",
+    "@types/react": "^18.0.24"
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",
