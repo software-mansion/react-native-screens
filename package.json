@@ -14,7 +14,8 @@
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "npm login && release-it",
-    "prepare": "bob build && husky install"
+    "prepare": "bob build && husky install",
+    "postinstall": "patch-package"
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -68,8 +69,8 @@
   "devDependencies": {
     "@babel/core": "^7.11.0",
     "@react-native-community/bob": "^0.17.1",
-    "@react-navigation/native": "^6.1.2",
-    "@react-navigation/stack": "^6.3.11",
+    "@react-navigation/native": "^5.8.0",
+    "@react-navigation/stack": "^5.10.0",
     "@types/jest": "^26.0.8",
     "@types/react": "^18.0.24",
     "@types/react-test-renderer": "^16.9.2",
@@ -108,6 +109,7 @@
     "react-navigation-stack": "^2.9.0",
     "react-test-renderer": "^16.13.1",
     "release-it": "^13.5.2",
+    "patch-package": "6.5.1",
     "typescript": "4.8.4"
   },
   "resolutions": {
