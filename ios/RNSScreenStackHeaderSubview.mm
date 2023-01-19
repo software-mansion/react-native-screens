@@ -44,14 +44,8 @@
 {
   const auto &newHeaderSubviewProps =
       *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(props);
-  const auto &oldHeaderSubviewProps =
-      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(oldProps);
 
   [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
-  //  if (newHeaderSubviewProps.type != oldHeaderSubviewProps.type) {
-  //    [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
-  //  }
-
   [super updateProps:props oldProps:oldProps];
 }
 
