@@ -10,6 +10,10 @@
 #import <React/RCTFabricComponentsPlugins.h>
 #endif
 
+@interface RCTBridge (Private)
++ (RCTBridge *)currentBridge;
+@end
+
 @implementation RNSScreenStackHeaderSubview
 
 #pragma mark - Common
@@ -40,13 +44,8 @@
 {
   const auto &newHeaderSubviewProps =
       *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(props);
-  const auto &oldHeaderSubviewProps =
-      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(_props);
 
-  if (newHeaderSubviewProps.type != oldHeaderSubviewProps.type) {
-    _type = [RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type];
-  }
-
+  [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -94,6 +93,16 @@
 }
 
 #endif // RN_FABRIC_ENABLED
+
+- (RCTBridge *)bridge
+{
+#ifdef RN_FABRIC_ENABLED
+  return [RCTBridge currentBridge];
+#else
+  return _bridge;
+#endif // RN_FABRIC_ENABLED
+}
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager

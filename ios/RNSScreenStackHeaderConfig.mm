@@ -7,22 +7,20 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #else
-#import <React/RCTBridge.h>
-#import <React/RCTImageLoader.h>
-#import <React/RCTImageSource.h>
-#import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 #endif
+#import <React/RCTBridge.h>
 #import <React/RCTFont.h>
+#import <React/RCTImageLoader.h>
+#import <React/RCTImageSource.h>
+#import <React/RCTImageView.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
-#ifdef RN_FABRIC_ENABLED
-#else
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
@@ -32,7 +30,6 @@
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
 @end
-#endif
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
@@ -243,9 +240,6 @@
 
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
-#ifdef RN_FABRIC_ENABLED
-  @throw([NSException exceptionWithName:@"UNIMPLEMENTED" reason:@"Implement" userInfo:nil]);
-#else
   BOOL hasBackButtonImage = NO;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
@@ -312,7 +306,6 @@
       }
     }
   }
-#endif // RN_FABRIC_ENABLED
   return nil;
 }
 
@@ -404,19 +397,15 @@
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
-#ifdef RN_FABRIC_ENABLED
-  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
-#else
   UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
     [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
   }
-#endif // RN_FABRIC_ENABLED
   return appearance;
 }
-#endif
+#endif // Check for >= iOS 13.0
 
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
@@ -594,9 +583,6 @@
         break;
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
-#ifdef RN_FABRIC_ENABLED
-        RCTLogWarn(@"Back button subview is not yet Fabric compatible in react-native-screens");
-#endif
         break;
       }
     }
@@ -717,8 +703,6 @@
 - (void)updateProps:(facebook::react::Props::Shared const &)props
            oldProps:(facebook::react::Props::Shared const &)oldProps
 {
-  [super updateProps:props oldProps:oldProps];
-
   const auto &oldScreenProps =
       *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(props);
@@ -782,6 +766,8 @@
 
   _initialPropsSet = YES;
   _props = std::static_pointer_cast<facebook::react::RNSScreenStackHeaderConfigProps const>(props);
+
+  [super updateProps:props oldProps:oldProps];
 }
 
 #else
