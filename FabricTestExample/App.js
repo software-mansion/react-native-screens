@@ -86,5 +86,5 @@ import Test1649 from './src/Test1649';
 enableFreeze(true);
 
 export default function App() {
-  return <Test1157 />;
+  return <Test42 />;
 }
