@@ -397,16 +397,12 @@
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
-#ifdef RN_FABRIC_ENABLED
-  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
-#else
   UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
     [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
   }
-#endif // RN_FABRIC_ENABLED
   return appearance;
 }
 #endif // Check for >= iOS 13.0
@@ -710,8 +706,6 @@
 - (void)updateProps:(facebook::react::Props::Shared const &)props
            oldProps:(facebook::react::Props::Shared const &)oldProps
 {
-  [super updateProps:props oldProps:oldProps];
-
   const auto &oldScreenProps =
       *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
   const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(props);
@@ -775,6 +769,8 @@
 
   _initialPropsSet = YES;
   _props = std::static_pointer_cast<facebook::react::RNSScreenStackHeaderConfigProps const>(props);
+
+  [super updateProps:props oldProps:oldProps];
 }
 
 #else
