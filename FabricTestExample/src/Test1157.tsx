@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import {Button, View, TouchableOpacity} from 'react-native';
@@ -39,20 +40,28 @@ function Second({
 
 const Stack = createNativeStackNavigator();
 
-const ButtonWithBiggerChild = () => (
-  <TouchableOpacity
-    style={{width: 30, height: 30, backgroundColor: 'red'}}
-    onPress={() => console.log('hello')}>
-    <View
-      style={{
-        width: 30,
-        height: 30,
-        backgroundColor: 'yellow',
-        marginLeft: -15,
-      }}
-    />
-  </TouchableOpacity>
-);
+function ButtonWithBiggerChild(props: {
+  tintColor?: string | undefined;
+  onClickText?: string | undefined;
+  backgroundColor?: string | undefined;
+}): JSX.Element {
+  const {onClickText = 'Hello there General Kenobi', backgroundColor = 'red'} =
+    props;
+  return (
+    <TouchableOpacity
+      style={{width: 30, height: 30, backgroundColor: 'red'}}
+      onPress={() => console.log(onClickText)}>
+      <View
+        style={{
+          width: 30,
+          height: 30,
+          backgroundColor: backgroundColor,
+          marginLeft: -15,
+        }}
+      />
+    </TouchableOpacity>
+  );
+}
 
 export default function App() {
   return (
@@ -62,9 +71,14 @@ export default function App() {
           name="First"
           component={First}
           options={{
+            backButtonInCustomView: true,
             headerShown: true,
-            // headerLeft: () => <TouchableOpacity onPress={() => console.log("hello")} style={{width: 30, height: 30, backgroundColor: 'red', marginLeft: -15}}/>,
-            headerLeft: () => <ButtonWithBiggerChild />,
+            headerLeft: () => (
+              <ButtonWithBiggerChild
+                onClickText={'Hello'}
+                backgroundColor={'yellow'}
+              />
+            ),
             headerRight: () => (
               <TouchableOpacity
                 onPress={() => console.log('there')}
@@ -74,14 +88,25 @@ export default function App() {
                   backgroundColor: 'red',
                   marginRight: -15,
                 }}
-              />)
-            }}
+              />
+            ),
+          }}
         />
         <Stack.Screen
           name="Second"
           component={Second}
           options={{
-            headerLeft: () => <TouchableOpacity onPress={() => console.log("hello")} style={{width: 50, height: 50, backgroundColor: 'red', marginLeft: -15}}/>
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => console.log('General Kenobi')}
+                style={{
+                  width: 50,
+                  height: 50,
+                  backgroundColor: 'red',
+                  marginLeft: -15,
+                }}
+              />
+            ),
           }}
         />
       </Stack.Navigator>
