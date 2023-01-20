@@ -255,68 +255,9 @@ namespace rct = facebook::react;
       hasBackButtonImage = YES;
 #ifdef RN_FABRIC_ENABLED
       RCTImageComponentView *imageView = subview.subviews[0];
-      if (imageView.image == nil) {
-        auto const imageProps = *std::static_pointer_cast<const rct::ImageProps>(imageView.props);
-        rct::ImageSource cppImageSource = imageProps.sources.at(0);
-        NSLog(@"[HeaderConfig] imageSource: %s", cppImageSource.uri.c_str());
-        auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
-        auto imageScale = cppImageSource.scale;
-        NSURLRequest *request =
-            [NSURLRequest requestWithURL:[NSURL URLWithString:RCTNSStringFromStringNilIfEmpty(cppImageSource.uri)]];
-        RCTImageSource *imageSource = [[RCTImageSource alloc] initWithURLRequest:request
-                                                                            size:imageSize
-                                                                           scale:imageScale];
-        [imageView reactSetFrame:CGRectMake(
-                                     imageView.frame.origin.x,
-                                     imageView.frame.origin.y,
-                                     imageSource.size.width,
-                                     imageSource.size.height)];
-      }
-
-      UIImage *image = imageView.image;
-      if (image == nil) {
-        auto const imageProps = *std::static_pointer_cast<const rct::ImageProps>(imageView.props);
-        rct::ImageSource cppImageSource = imageProps.sources.at(0);
-        NSLog(@"[HeaderConfig] imageSource: %s", cppImageSource.uri.c_str());
-        auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
-        auto imageScale = cppImageSource.scale;
-        NSURLRequest *request =
-            [NSURLRequest requestWithURL:[NSURL URLWithString:RCTNSStringFromStringNilIfEmpty(cppImageSource.uri)]];
-        RCTImageSource *imageSource = [[RCTImageSource alloc] initWithURLRequest:request
-                                                                            size:imageSize
-                                                                           scale:imageScale];
-        RCTImageLoader *imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
-
-        image = [imageLoader.imageCache imageForUrl:imageSource.request.URL.absoluteString
-                                               size:imageSource.size
-                                              scale:imageSource.scale
-                                         resizeMode:resizeModeFromCppEquiv(imageProps.resizeMode)];
-      }
-      if (image == nil) {
-        // This will be triggered if the image is not in the cache yet. What we do is we wait until
-        // the end of transition and run header config updates again. We could potentially wait for
-        // image on load to trigger, but that would require even more private method hacking.
-        if (vc.transitionCoordinator) {
-          [vc.transitionCoordinator
-              animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-                // nothing, we just want completion
-              }
-              completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-          // in order for new back button image to be loaded we need to trigger another change
-          // in back button props that'd make UIKit redraw the button. Otherwise the changes are
-          // not reflected. Here we change back button visibility which is then immediately restored
-#if !TARGET_OS_TV
-                vc.navigationItem.hidesBackButton = YES;
-#endif
-                [config updateViewControllerIfNeeded];
-              }];
-        }
-        return [UIImage new];
-      } else {
-        return image;
-      }
 #else
       RCTImageView *imageView = subview.subviews[0];
+#endif // RN_FABRIC_ENABLED
       if (imageView.image == nil) {
         // This is yet another workaround for loading custom back icon. It turns out that under
         // certain circumstances image attribute can be null despite the app running in production
@@ -325,14 +266,16 @@ namespace rct = facebook::react;
         // does not populate the frame of the image view before the loading start. The latter result
         // in the image attribute not being updated. We manually set frame to the size of an image
         // in order to trigger proper reload that'd update the image attribute.
-        RCTImageSource *source = imageView.imageSources[0];
+        RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
         [imageView reactSetFrame:CGRectMake(
                                      imageView.frame.origin.x,
                                      imageView.frame.origin.y,
-                                     source.size.width,
-                                     source.size.height)];
+                                     imageSource.size.width,
+                                     imageSource.size.height)];
       }
+
       UIImage *image = imageView.image;
+
       // IMPORTANT!!!
       // image can be nil in DEV MODE ONLY
       //
@@ -346,12 +289,19 @@ namespace rct = facebook::react;
       if (image == nil) {
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
-        RCTImageSource *source = imageView.imageSources[0];
-        RCTImageLoader *imageloader = [subview.bridge moduleForClass:[RCTImageLoader class]];
-        image = [imageloader.imageCache imageForUrl:source.request.URL.absoluteString
-                                               size:source.size
-                                              scale:source.scale
-                                         resizeMode:imageView.resizeMode];
+        RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
+        RCTImageLoader *imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
+
+        image = [imageLoader.imageCache
+            imageForUrl:imageSource.request.URL.absoluteString
+                   size:imageSource.size
+                  scale:imageSource.scale
+#ifdef RN_FABRIC_ENABLED
+             resizeMode:resizeModeFromCppEquiv(
+                            std::static_pointer_cast<const rct::ImageProps>(imageView.props)->resizeMode)];
+#else
+             resizeMode:imageView.resizeMode];
+#endif // RN_FABRIC_ENABLED
       }
       if (image == nil) {
         // This will be triggered if the image is not in the cache yet. What we do is we wait until
@@ -376,7 +326,6 @@ namespace rct = facebook::react;
       } else {
         return image;
       }
-#endif // RN_FABRIC_ENABLED
     }
   }
   return nil;
@@ -758,6 +707,23 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
   }
 }
 
+/**
+ * Fabric implementation of helper method for +loadBackButtonImageInViewController:withConfig:
+ * There is corresponding Paper implementation (with different parameter type) in Paper specific section.
+ */
++ (RCTImageSource *)imageSourceFromImageView:(RCTImageComponentView *)view
+{
+  auto const imageProps = *std::static_pointer_cast<const rct::ImageProps>(view.props);
+  rct::ImageSource cppImageSource = imageProps.sources.at(0);
+  auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
+  NSURLRequest *request =
+      [NSURLRequest requestWithURL:[NSURL URLWithString:RCTNSStringFromStringNilIfEmpty(cppImageSource.uri)]];
+  RCTImageSource *imageSource = [[RCTImageSource alloc] initWithURLRequest:request
+                                                                      size:imageSize
+                                                                     scale:cppImageSource.scale];
+  return imageSource;
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 - (void)prepareForRecycle
@@ -869,6 +835,15 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
   if ([changedProps containsObject:@"translucent"]) {
     [self layoutNavigationControllerView];
   }
+}
+
+/**
+ * Paper implementation of helper method for +loadBackButtonImageInViewController:withConfig:
+ * There is corresponding Fabric implementation (with different parameter type) in Fabric specific section.
+ */
++ (RCTImageSource *)imageSourceFromImageView:(RCTImageView *)view
+{
+  return view.imageSources[0];
 }
 
 #endif
