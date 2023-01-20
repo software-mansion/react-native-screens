@@ -1,12 +1,16 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTImageComponentView.h>
 #import <React/UIView+React.h>
+#import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #else
+#import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
@@ -15,17 +19,22 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
-#import <React/RCTImageView.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
+#ifdef RN_FABRIC_ENABLED
+namespace rct = facebook::react;
+#endif // RN_FABRIC_ENABLED
+
+#ifndef RN_FABRIC_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
 - (UIImage *)image;
 @end
+#endif // !RN_FABRIC_ENABLED
 
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
@@ -43,7 +52,7 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackHeaderConfigProps>();
+    static const auto defaultProps = std::make_shared<const rct::RNSScreenStackHeaderConfigProps>();
     _props = defaultProps;
     self.hidden = YES;
     _show = YES;
@@ -244,7 +253,11 @@
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
       hasBackButtonImage = YES;
+#ifdef RN_FABRIC_ENABLED
+      RCTImageComponentView *imageView = subview.subviews[0];
+#else
       RCTImageView *imageView = subview.subviews[0];
+#endif // RN_FABRIC_ENABLED
       if (imageView.image == nil) {
         // This is yet another workaround for loading custom back icon. It turns out that under
         // certain circumstances image attribute can be null despite the app running in production
@@ -253,14 +266,16 @@
         // does not populate the frame of the image view before the loading start. The latter result
         // in the image attribute not being updated. We manually set frame to the size of an image
         // in order to trigger proper reload that'd update the image attribute.
-        RCTImageSource *source = imageView.imageSources[0];
+        RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
         [imageView reactSetFrame:CGRectMake(
                                      imageView.frame.origin.x,
                                      imageView.frame.origin.y,
-                                     source.size.width,
-                                     source.size.height)];
+                                     imageSource.size.width,
+                                     imageSource.size.height)];
       }
+
       UIImage *image = imageView.image;
+
       // IMPORTANT!!!
       // image can be nil in DEV MODE ONLY
       //
@@ -274,12 +289,19 @@
       if (image == nil) {
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
-        RCTImageSource *source = imageView.imageSources[0];
-        RCTImageLoader *imageloader = [subview.bridge moduleForClass:[RCTImageLoader class]];
-        image = [imageloader.imageCache imageForUrl:source.request.URL.absoluteString
-                                               size:source.size
-                                              scale:source.scale
-                                         resizeMode:imageView.resizeMode];
+        RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
+        RCTImageLoader *imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
+
+        image = [imageLoader.imageCache
+            imageForUrl:imageSource.request.URL.absoluteString
+                   size:imageSource.size
+                  scale:imageSource.scale
+#ifdef RN_FABRIC_ENABLED
+             resizeMode:resizeModeFromCppEquiv(
+                            std::static_pointer_cast<const rct::ImageProps>(imageView.props)->resizeMode)];
+#else
+             resizeMode:imageView.resizeMode];
+#endif // RN_FABRIC_ENABLED
       }
       if (image == nil) {
         // This will be triggered if the image is not in the cache yet. What we do is we wait until
@@ -669,6 +691,39 @@
   [childComponentView removeFromSuperview];
 }
 
+static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
+{
+  switch (resizeMode) {
+    case rct::ImageResizeMode::Cover:
+      return RCTResizeModeCover;
+    case rct::ImageResizeMode::Contain:
+      return RCTResizeModeContain;
+    case rct::ImageResizeMode::Stretch:
+      return RCTResizeModeStretch;
+    case rct::ImageResizeMode::Center:
+      return RCTResizeModeCenter;
+    case rct::ImageResizeMode::Repeat:
+      return RCTResizeModeRepeat;
+  }
+}
+
+/**
+ * Fabric implementation of helper method for +loadBackButtonImageInViewController:withConfig:
+ * There is corresponding Paper implementation (with different parameter type) in Paper specific section.
+ */
++ (RCTImageSource *)imageSourceFromImageView:(RCTImageComponentView *)view
+{
+  auto const imageProps = *std::static_pointer_cast<const rct::ImageProps>(view.props);
+  rct::ImageSource cppImageSource = imageProps.sources.at(0);
+  auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
+  NSURLRequest *request =
+      [NSURLRequest requestWithURL:[NSURL URLWithString:RCTNSStringFromStringNilIfEmpty(cppImageSource.uri)]];
+  RCTImageSource *imageSource = [[RCTImageSource alloc] initWithURLRequest:request
+                                                                      size:imageSize
+                                                                     scale:cppImageSource.scale];
+  return imageSource;
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 - (void)prepareForRecycle
@@ -677,10 +732,9 @@
   _initialPropsSet = NO;
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (rct::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<
-      facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
+  return rct::concreteComponentDescriptorProvider<rct::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value
@@ -690,22 +744,20 @@
   return nil;
 }
 
-- (UISemanticContentAttribute)getDirectionPropValue:(facebook::react::RNSScreenStackHeaderConfigDirection)direction
+- (UISemanticContentAttribute)getDirectionPropValue:(rct::RNSScreenStackHeaderConfigDirection)direction
 {
   switch (direction) {
-    case facebook::react::RNSScreenStackHeaderConfigDirection::Rtl:
+    case rct::RNSScreenStackHeaderConfigDirection::Rtl:
       return UISemanticContentAttributeForceRightToLeft;
-    case facebook::react::RNSScreenStackHeaderConfigDirection::Ltr:
+    case rct::RNSScreenStackHeaderConfigDirection::Ltr:
       return UISemanticContentAttributeForceLeftToRight;
   }
 }
 
-- (void)updateProps:(facebook::react::Props::Shared const &)props
-           oldProps:(facebook::react::Props::Shared const &)oldProps
+- (void)updateProps:(rct::Props::Shared const &)props oldProps:(rct::Props::Shared const &)oldProps
 {
-  const auto &oldScreenProps =
-      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const rct::RNSScreenStackHeaderConfigProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const rct::RNSScreenStackHeaderConfigProps>(props);
 
   BOOL needsNavigationControllerLayout = !_initialPropsSet;
 
@@ -765,7 +817,7 @@
   }
 
   _initialPropsSet = YES;
-  _props = std::static_pointer_cast<facebook::react::RNSScreenStackHeaderConfigProps const>(props);
+  _props = std::static_pointer_cast<rct::RNSScreenStackHeaderConfigProps const>(props);
 
   [super updateProps:props oldProps:oldProps];
 }
@@ -783,6 +835,15 @@
   if ([changedProps containsObject:@"translucent"]) {
     [self layoutNavigationControllerView];
   }
+}
+
+/**
+ * Paper implementation of helper method for +loadBackButtonImageInViewController:withConfig:
+ * There is corresponding Fabric implementation (with different parameter type) in Fabric specific section.
+ */
++ (RCTImageSource *)imageSourceFromImageView:(RCTImageView *)view
+{
+  return view.imageSources[0];
 }
 
 #endif
