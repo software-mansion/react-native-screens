@@ -3,6 +3,7 @@
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTImageComponentView.h>
 #import <React/UIView+React.h>
+#import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -22,6 +23,11 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
+
+// Just a convenience alias. For some weird reason aliasing:
+// namespace rct = facebook::react;
+// won't compile (with error: "Expected alias name")...
+namespace fb = facebook;
 
 #ifndef RN_FABRIC_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
@@ -242,6 +248,22 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
+static RCTResizeMode resizeModeFromCppEquiv(fb::react::ImageResizeMode resizeMode)
+{
+  switch (resizeMode) {
+    case fb::react::ImageResizeMode::Cover:
+      return RCTResizeModeCover;
+    case fb::react::ImageResizeMode::Contain:
+      return RCTResizeModeContain;
+    case fb::react::ImageResizeMode::Stretch:
+      return RCTResizeModeStretch;
+    case fb::react::ImageResizeMode::Center:
+      return RCTResizeModeCenter;
+    case fb::react::ImageResizeMode::Repeat:
+      return RCTResizeModeRepeat;
+  }
+}
+
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   BOOL hasBackButtonImage = NO;
@@ -250,8 +272,62 @@
       hasBackButtonImage = YES;
 #ifdef RN_FABRIC_ENABLED
       RCTImageComponentView *imageView = subview.subviews[0];
+      if (imageView.image == nil) {
+        auto const imageProps = *std::static_pointer_cast<const facebook::react::ImageProps>(imageView.props);
+        facebook::react::ImageSource cppImageSource = imageProps.sources.at(0);
+        NSLog(@"[HeaderConfig] imageSource: %s", cppImageSource.uri.c_str());
+        auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
+        auto imageScale = cppImageSource.scale;
+        NSURLRequest *request =
+            [NSURLRequest requestWithURL:[NSURL URLWithString:RCTNSStringFromStringNilIfEmpty(cppImageSource.uri)]];
+        RCTImageSource *imageSource = [[RCTImageSource alloc] initWithURLRequest:request
+                                                                            size:imageSize
+                                                                           scale:imageScale];
+        [imageView reactSetFrame:CGRectMake(
+                                     imageView.frame.origin.x,
+                                     imageView.frame.origin.y,
+                                     imageSource.size.width,
+                                     imageSource.size.height)];
+      }
+
       UIImage *image = imageView.image;
       if (image == nil) {
+        auto const imageProps = *std::static_pointer_cast<const facebook::react::ImageProps>(imageView.props);
+        facebook::react::ImageSource cppImageSource = imageProps.sources.at(0);
+        NSLog(@"[HeaderConfig] imageSource: %s", cppImageSource.uri.c_str());
+        auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
+        auto imageScale = cppImageSource.scale;
+        NSURLRequest *request =
+            [NSURLRequest requestWithURL:[NSURL URLWithString:RCTNSStringFromStringNilIfEmpty(cppImageSource.uri)]];
+        RCTImageSource *imageSource = [[RCTImageSource alloc] initWithURLRequest:request
+                                                                            size:imageSize
+                                                                           scale:imageScale];
+        RCTImageLoader *imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
+
+        image = [imageLoader.imageCache imageForUrl:imageSource.request.URL.absoluteString
+                                               size:imageSource.size
+                                              scale:imageSource.scale
+                                         resizeMode:resizeModeFromCppEquiv(imageProps.resizeMode)];
+      }
+      if (image == nil) {
+        // This will be triggered if the image is not in the cache yet. What we do is we wait until
+        // the end of transition and run header config updates again. We could potentially wait for
+        // image on load to trigger, but that would require even more private method hacking.
+        if (vc.transitionCoordinator) {
+          [vc.transitionCoordinator
+              animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+                // nothing, we just want completion
+              }
+              completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
+          // in order for new back button image to be loaded we need to trigger another change
+          // in back button props that'd make UIKit redraw the button. Otherwise the changes are
+          // not reflected. Here we change back button visibility which is then immediately restored
+#if !TARGET_OS_TV
+                vc.navigationItem.hidesBackButton = YES;
+#endif
+                [config updateViewControllerIfNeeded];
+              }];
+        }
         return [UIImage new];
       } else {
         return image;
