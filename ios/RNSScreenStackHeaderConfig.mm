@@ -243,22 +243,6 @@
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
-static RCTResizeMode resizeModeFromCppEquiv(facebook::react::ImageResizeMode resizeMode)
-{
-  switch (resizeMode) {
-    case facebook::react::ImageResizeMode::Cover:
-      return RCTResizeModeCover;
-    case facebook::react::ImageResizeMode::Contain:
-      return RCTResizeModeContain;
-    case facebook::react::ImageResizeMode::Stretch:
-      return RCTResizeModeStretch;
-    case facebook::react::ImageResizeMode::Center:
-      return RCTResizeModeCenter;
-    case facebook::react::ImageResizeMode::Repeat:
-      return RCTResizeModeRepeat;
-  }
-}
-
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
   BOOL hasBackButtonImage = NO;
@@ -752,6 +736,22 @@ static RCTResizeMode resizeModeFromCppEquiv(facebook::react::ImageResizeMode res
 {
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+}
+
+static RCTResizeMode resizeModeFromCppEquiv(facebook::react::ImageResizeMode resizeMode)
+{
+  switch (resizeMode) {
+    case facebook::react::ImageResizeMode::Cover:
+      return RCTResizeModeCover;
+    case facebook::react::ImageResizeMode::Contain:
+      return RCTResizeModeContain;
+    case facebook::react::ImageResizeMode::Stretch:
+      return RCTResizeModeStretch;
+    case facebook::react::ImageResizeMode::Center:
+      return RCTResizeModeCenter;
+    case facebook::react::ImageResizeMode::Repeat:
+      return RCTResizeModeRepeat;
+  }
 }
 
 #pragma mark - RCTComponentViewProtocol
