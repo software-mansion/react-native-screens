@@ -6,7 +6,7 @@
 
 - (UIImage *)image
 {
-  return self._imageView.image;
+  return _imageView.image;
 }
 
 @end
