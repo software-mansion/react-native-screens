@@ -1,12 +1,15 @@
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTImageComponentView.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #else
+#import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
@@ -15,17 +18,18 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
-#import <React/RCTImageView.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
+#ifndef RN_FABRIC_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
 - (UIImage *)image;
 @end
+#end // !RN_FABRIC_ENABLED
 
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
@@ -244,6 +248,15 @@
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
       hasBackButtonImage = YES;
+#ifdef RN_FABRIC_ENABLED
+      RCTImageComponentView *imageView = subview.subviews[0];
+      UIImage *image = imageView.image;
+      if (image == nill) {
+        return [UIImage new];
+      } else {
+        return image;
+      }
+#else
       RCTImageView *imageView = subview.subviews[0];
       if (imageView.image == nil) {
         // This is yet another workaround for loading custom back icon. It turns out that under
@@ -304,6 +317,7 @@
       } else {
         return image;
       }
+#endif // RN_FABRIC_ENABLED
     }
   }
   return nil;
