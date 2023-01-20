@@ -29,7 +29,7 @@
 @interface RCTImageView (Private)
 - (UIImage *)image;
 @end
-#end // !RN_FABRIC_ENABLED
+#endif // !RN_FABRIC_ENABLED
 
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
