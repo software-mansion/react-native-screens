@@ -24,6 +24,10 @@
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
+#ifdef RN_FABRIC_ENABLED
+namespace rct = facebook::react;
+#endif // RN_FABRIC_ENABLED
+
 #ifndef RN_FABRIC_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
@@ -48,7 +52,7 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackHeaderConfigProps>();
+    static const auto defaultProps = std::make_shared<const rct::RNSScreenStackHeaderConfigProps>();
     _props = defaultProps;
     self.hidden = YES;
     _show = YES;
@@ -252,8 +256,8 @@
 #ifdef RN_FABRIC_ENABLED
       RCTImageComponentView *imageView = subview.subviews[0];
       if (imageView.image == nil) {
-        auto const imageProps = *std::static_pointer_cast<const facebook::react::ImageProps>(imageView.props);
-        facebook::react::ImageSource cppImageSource = imageProps.sources.at(0);
+        auto const imageProps = *std::static_pointer_cast<const rct::ImageProps>(imageView.props);
+        rct::ImageSource cppImageSource = imageProps.sources.at(0);
         NSLog(@"[HeaderConfig] imageSource: %s", cppImageSource.uri.c_str());
         auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
         auto imageScale = cppImageSource.scale;
@@ -271,8 +275,8 @@
 
       UIImage *image = imageView.image;
       if (image == nil) {
-        auto const imageProps = *std::static_pointer_cast<const facebook::react::ImageProps>(imageView.props);
-        facebook::react::ImageSource cppImageSource = imageProps.sources.at(0);
+        auto const imageProps = *std::static_pointer_cast<const rct::ImageProps>(imageView.props);
+        rct::ImageSource cppImageSource = imageProps.sources.at(0);
         NSLog(@"[HeaderConfig] imageSource: %s", cppImageSource.uri.c_str());
         auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
         auto imageScale = cppImageSource.scale;
@@ -738,18 +742,18 @@
   [childComponentView removeFromSuperview];
 }
 
-static RCTResizeMode resizeModeFromCppEquiv(facebook::react::ImageResizeMode resizeMode)
+static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
 {
   switch (resizeMode) {
-    case facebook::react::ImageResizeMode::Cover:
+    case rct::ImageResizeMode::Cover:
       return RCTResizeModeCover;
-    case facebook::react::ImageResizeMode::Contain:
+    case rct::ImageResizeMode::Contain:
       return RCTResizeModeContain;
-    case facebook::react::ImageResizeMode::Stretch:
+    case rct::ImageResizeMode::Stretch:
       return RCTResizeModeStretch;
-    case facebook::react::ImageResizeMode::Center:
+    case rct::ImageResizeMode::Center:
       return RCTResizeModeCenter;
-    case facebook::react::ImageResizeMode::Repeat:
+    case rct::ImageResizeMode::Repeat:
       return RCTResizeModeRepeat;
   }
 }
@@ -762,10 +766,9 @@ static RCTResizeMode resizeModeFromCppEquiv(facebook::react::ImageResizeMode res
   _initialPropsSet = NO;
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (rct::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<
-      facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
+  return rct::concreteComponentDescriptorProvider<rct::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value
@@ -775,22 +778,20 @@ static RCTResizeMode resizeModeFromCppEquiv(facebook::react::ImageResizeMode res
   return nil;
 }
 
-- (UISemanticContentAttribute)getDirectionPropValue:(facebook::react::RNSScreenStackHeaderConfigDirection)direction
+- (UISemanticContentAttribute)getDirectionPropValue:(rct::RNSScreenStackHeaderConfigDirection)direction
 {
   switch (direction) {
-    case facebook::react::RNSScreenStackHeaderConfigDirection::Rtl:
+    case rct::RNSScreenStackHeaderConfigDirection::Rtl:
       return UISemanticContentAttributeForceRightToLeft;
-    case facebook::react::RNSScreenStackHeaderConfigDirection::Ltr:
+    case rct::RNSScreenStackHeaderConfigDirection::Ltr:
       return UISemanticContentAttributeForceLeftToRight;
   }
 }
 
-- (void)updateProps:(facebook::react::Props::Shared const &)props
-           oldProps:(facebook::react::Props::Shared const &)oldProps
+- (void)updateProps:(rct::Props::Shared const &)props oldProps:(rct::Props::Shared const &)oldProps
 {
-  const auto &oldScreenProps =
-      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const rct::RNSScreenStackHeaderConfigProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const rct::RNSScreenStackHeaderConfigProps>(props);
 
   BOOL needsNavigationControllerLayout = !_initialPropsSet;
 
@@ -850,7 +851,7 @@ static RCTResizeMode resizeModeFromCppEquiv(facebook::react::ImageResizeMode res
   }
 
   _initialPropsSet = YES;
-  _props = std::static_pointer_cast<facebook::react::RNSScreenStackHeaderConfigProps const>(props);
+  _props = std::static_pointer_cast<rct::RNSScreenStackHeaderConfigProps const>(props);
 
   [super updateProps:props oldProps:oldProps];
 }
