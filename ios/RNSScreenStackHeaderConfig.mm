@@ -24,11 +24,6 @@
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
-// Just a convenience alias. For some weird reason aliasing:
-// namespace rct = facebook::react;
-// won't compile (with error: "Expected alias name")...
-namespace fb = facebook;
-
 #ifndef RN_FABRIC_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
@@ -248,18 +243,18 @@ namespace fb = facebook;
   [button setTitleTextAttributes:attrs forState:UIControlStateFocused];
 }
 
-static RCTResizeMode resizeModeFromCppEquiv(fb::react::ImageResizeMode resizeMode)
+static RCTResizeMode resizeModeFromCppEquiv(facebook::react::ImageResizeMode resizeMode)
 {
   switch (resizeMode) {
-    case fb::react::ImageResizeMode::Cover:
+    case facebook::react::ImageResizeMode::Cover:
       return RCTResizeModeCover;
-    case fb::react::ImageResizeMode::Contain:
+    case facebook::react::ImageResizeMode::Contain:
       return RCTResizeModeContain;
-    case fb::react::ImageResizeMode::Stretch:
+    case facebook::react::ImageResizeMode::Stretch:
       return RCTResizeModeStretch;
-    case fb::react::ImageResizeMode::Center:
+    case facebook::react::ImageResizeMode::Center:
       return RCTResizeModeCenter;
-    case fb::react::ImageResizeMode::Repeat:
+    case facebook::react::ImageResizeMode::Repeat:
       return RCTResizeModeRepeat;
   }
 }
