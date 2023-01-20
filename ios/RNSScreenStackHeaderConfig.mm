@@ -251,7 +251,7 @@
 #ifdef RN_FABRIC_ENABLED
       RCTImageComponentView *imageView = subview.subviews[0];
       UIImage *image = imageView.image;
-      if (image == nill) {
+      if (image == nil) {
         return [UIImage new];
       } else {
         return image;
