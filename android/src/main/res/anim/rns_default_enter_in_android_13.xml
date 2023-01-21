@@ -9,7 +9,7 @@
         android:fillEnabled="true"
         android:fillBefore="true"
         android:fillAfter="true"
-        android:interpolator="@interpolator/linear"
+        android:interpolator="@android:anim/linear_interpolator"
         android:startOffset="50"
         android:duration="83" />
 
@@ -19,7 +19,7 @@
         android:fillEnabled="true"
         android:fillBefore="true"
         android:fillAfter="true"
-        android:interpolator="@interpolator/fast_out_extra_slow_in"
+        android:interpolator="@android:interpolator/fast_out_extra_slow_in"
         android:duration="450" />
 
     <extend
@@ -31,7 +31,7 @@
         android:toExtendTop="0"
         android:toExtendRight="0"
         android:toExtendBottom="0"
-        android:interpolator="@interpolator/fast_out_extra_slow_in"
+        android:interpolator="@android:interpolator/fast_out_extra_slow_in"
         android:startOffset="0"
         android:duration="450" />
 </set>
