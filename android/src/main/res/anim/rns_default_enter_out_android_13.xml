@@ -9,7 +9,7 @@
         android:fillEnabled="true"
         android:fillBefore="true"
         android:fillAfter="true"
-        android:interpolator="@android:interpolator/standard_accelerate"
+        android:interpolator="@anim/rns_standard_accelerate_interpolator"
         android:startOffset="0"
         android:duration="450" />
 
