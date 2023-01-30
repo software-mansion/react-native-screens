@@ -84,9 +84,11 @@ import Test1509 from './src/Test1509';
 import Test1539 from './src/Test1539';
 import Test1646 from './src/Test1646';
 import Test1649 from './src/Test1649';
+import Test1695 from './src/Test1695';
 
 enableFreeze(true);
 
 export default function App() {
   return <Test42 />;
 }
+
