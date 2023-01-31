@@ -5,6 +5,7 @@ describe('Events', () => {
     // await device.reloadReactNative();
     await device.launchApp({ newInstance: true });
 
+    
     await waitFor(element(by.id('root-screen-playground-Events')))
       .toBeVisible()
       .whileElement(by.id('root-screen-examples-scrollview'))
