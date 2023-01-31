@@ -6,7 +6,7 @@
 #import <React/RCTComponent.h>
 #import <React/RCTUIManager.h>
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -33,7 +33,7 @@
   return self;
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)init
 {
   if (self = [super init]) {
@@ -54,7 +54,7 @@
 
 - (void)emitOnFocusEvent
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onFocus(facebook::react::RNSSearchBarEventEmitter::OnFocus{});
@@ -68,7 +68,7 @@
 
 - (void)emitOnBlurEvent
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onBlur(facebook::react::RNSSearchBarEventEmitter::OnBlur{});
@@ -82,7 +82,7 @@
 
 - (void)emitOnSearchButtonPressEventWithText:(NSString *)text
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchButtonPress(
@@ -99,7 +99,7 @@
 
 - (void)emitOnCancelButtonPressEvent
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onCancelButtonPress(facebook::react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
@@ -113,7 +113,7 @@
 
 - (void)emitOnChangeTextEventWithText:(NSString *)text
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onChangeText(facebook::react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
@@ -259,7 +259,7 @@
 
 #pragma mark-- Fabric specific
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (void)updateProps:(facebook::react::Props::Shared const &)props
            oldProps:(facebook::react::Props::Shared const &)oldProps
 {
@@ -313,7 +313,7 @@
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
 {
   return RNSSearchBar.class;
@@ -324,7 +324,7 @@ Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
 
 RCT_EXPORT_MODULE()
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {

@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #endif
 
@@ -9,7 +9,7 @@
 #import <React/RCTViewManager.h>
 
 @interface RNSSearchBar :
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView <UISearchBarDelegate>
 #else
     UIView <UISearchBarDelegate>
@@ -19,7 +19,7 @@
 
 @property (nonatomic, retain) UISearchController *controller;
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #else
 @property (nonatomic, copy) RCTBubblingEventBlock onChangeText;
 @property (nonatomic, copy) RCTBubblingEventBlock onCancelButtonPress;

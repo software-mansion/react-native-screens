@@ -1,4 +1,4 @@
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
 
@@ -33,4 +33,4 @@
 
 @end
 
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED

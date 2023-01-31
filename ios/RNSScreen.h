@@ -4,7 +4,7 @@
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
 
-#if RN_FABRIC_ENABLED
+#if RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #else
 #import <React/RCTView.h>
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (void)setViewToSnapshot:(UIView *)snapshot;
 - (void)resetViewToScreen;
 #endif
@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface RNSScreenView :
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView
 #else
     RCTView
@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif // !TARGET_OS_TV
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 // we recreate the behavior of `reactSetFrame` on new architecture
 @property (nonatomic) facebook::react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) facebook::react::LayoutMetrics newLayoutMetrics;
@@ -97,11 +97,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;
 - (void)notifyAppear;

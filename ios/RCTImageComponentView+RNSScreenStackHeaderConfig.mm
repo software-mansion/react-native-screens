@@ -1,4 +1,4 @@
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 
 #include "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 
@@ -11,4 +11,4 @@
 
 @end
 
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
