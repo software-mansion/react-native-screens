@@ -41,9 +41,10 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
-          api-level: 29
+          api-level: 33
           avd-name: e2e_emulator
           script: yarn test-e2e-android
+          channel: dev
       - uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:
