@@ -441,7 +441,7 @@ class Screen extends React.Component<ScreenProps> {
   static contextType = ScreenContext;
 
   render() {
-    const ScreenWrapper = this.context || InnerScreen;
+    const ScreenWrapper = (this.context || InnerScreen) as React.ElementType;
     return <ScreenWrapper {...this.props} />;
   }
 }

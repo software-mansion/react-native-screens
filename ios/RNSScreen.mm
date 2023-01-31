@@ -693,11 +693,6 @@
     [self setStackPresentation:newStackPresentation];
   }
 
-#if !TARGET_OS_TV
-  // This must be called after setter for stackPresentation
-  [self updatePresentationStyle];
-#endif // !TARGET_OS_TV
-
   if (newScreenProps.stackAnimation != oldScreenProps.stackAnimation) {
     [self setStackAnimation:[RNSConvert RNSScreenStackAnimationFromCppEquivalent:newScreenProps.stackAnimation]];
   }
@@ -731,6 +726,13 @@
   // pass the dimensions to ui view manager to take into account when laying out
   // subviews
   // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
+}
+
+- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
+{
+#if !TARGET_OS_TV
+  [self updatePresentationStyle];
+#endif // !TARGET_OS_TV
 }
 
 #pragma mark - Paper specific
