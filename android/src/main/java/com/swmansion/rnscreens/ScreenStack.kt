@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.graphics.Canvas
-import android.os.Build
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -135,11 +134,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             if (stackAnimation != null) {
                 if (shouldUseOpenAnimation) {
                     when (stackAnimation) {
-                        StackAnimation.DEFAULT -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            it.setCustomAnimations(R.anim.rns_default_enter_in_android_13, R.anim.rns_default_enter_out_android_13)
-                        } else {
-                            it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
-                        }
+                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
                         StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
                         StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
@@ -151,11 +146,7 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
                     }
                 } else {
                     when (stackAnimation) {
-                        StackAnimation.DEFAULT -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            it.setCustomAnimations(R.anim.rns_default_exit_in_android_13, R.anim.rns_default_exit_out_android_13)
-                        } else {
-                            it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
-                        }
+                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
                         StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
                         StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
                         StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
