@@ -85,6 +85,7 @@ import Test1509 from './src/Test1509';
 import Test1539 from './src/Test1539';
 import Test1646 from './src/Test1646';
 import Test1649 from './src/Test1649';
+import Test1678 from './src/Test1678';
 import Test1683 from './src/Test1683';
 import Test1726 from './src/Test1726';
 import Test1791 from './src/Test1791';
