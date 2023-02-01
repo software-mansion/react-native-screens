@@ -48,6 +48,7 @@ jobs:
           api-level: 31
           target: default
           avd-name: e2e_emulator
+          arch: x86_64
           script: yarn test-e2e-android
       - uses: actions/upload-artifact@v3
         if: ${{ failure() }}
