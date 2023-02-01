@@ -127,8 +127,7 @@ const App = (): JSX.Element => {
       screenOptions={{
         headerHideBackButton: true,
         direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-      }}
-    >
+      }}>
       <Stack.Screen name="Main" options={{ title: 'Animations' }}>
         {({ navigation }) => (
           <MainScreen
@@ -142,8 +141,7 @@ const App = (): JSX.Element => {
         name="Push"
         options={{
           replaceAnimation: 'push',
-        }}
-      >
+        }}>
         {({ navigation }) => (
           <ReplaceScreen
             navigation={navigation}
@@ -155,8 +153,7 @@ const App = (): JSX.Element => {
         name="Pop"
         options={{
           replaceAnimation: 'pop',
-        }}
-      >
+        }}>
         {({ navigation }) => (
           <ReplaceScreen
             navigation={navigation}
@@ -168,8 +165,7 @@ const App = (): JSX.Element => {
         name="Modal"
         options={{
           stackPresentation: 'modal',
-        }}
-      >
+        }}>
         {({ navigation }) => (
           <NavigateScreen
             navigation={navigation}

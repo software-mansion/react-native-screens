@@ -116,8 +116,7 @@ const App = (): JSX.Element => (
       },
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-    }}
-  >
+    }}>
     <Stack.Screen
       name="First"
       component={FirstScreen}

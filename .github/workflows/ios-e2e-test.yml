@@ -16,7 +16,7 @@ on:
 jobs:
   test:
     runs-on: macos-12
-    timeout-minutes: 40
+    timeout-minutes: 60
     env:
       WORKING_DIRECTORY: Example
     concurrency:
@@ -24,11 +24,11 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: checkout
-        uses: actions/checkout@v2
-      - name: Use Node.js 14
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
           cache: 'yarn'
       - name: Get Xcode version
         run: xcodebuild -version
@@ -48,7 +48,7 @@ jobs:
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: ${{ failure() }}
         with:
           name: ios-fail-screen-shoots

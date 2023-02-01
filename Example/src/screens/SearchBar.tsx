@@ -60,7 +60,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         autoCapitalize,
         placeholder,
         inputType,
-        onChangeText: (event) => setSearch(event.nativeEvent.text),
+        onChangeText: event => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
           toast.push({
             message: '[iOS] Cancel button pressed',
@@ -112,8 +112,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
     <ScrollView
       style={styles.container}
       contentInsetAdjustmentBehavior="automatic"
-      keyboardDismissMode="on-drag"
-    >
+      keyboardDismissMode="on-drag">
       <SettingsInput
         label="Placeholder"
         value={placeholder}
@@ -210,7 +209,7 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
     navigation.setOptions({
       searchBar: {
         placeholder: 'Interesting places...',
-        onChangeText: (event) => setSearch(event.nativeEvent.text),
+        onChangeText: event => setSearch(event.nativeEvent.text),
         obscureBackground: false,
         autoCapitalize: 'none',
         hideWhenScrolling: false,
@@ -221,13 +220,10 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
-      keyboardDismissMode="on-drag"
-    >
+      keyboardDismissMode="on-drag">
       {places
-        .filter(
-          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1
-        )
-        .map((place) => (
+        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+        .map(place => (
           <ListItem
             key={place}
             title={place}
@@ -246,8 +242,7 @@ const App = (): JSX.Element => (
       screenOptions={{
         headerHideBackButton: true,
         direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-      }}
-    >
+      }}>
       <Stack.Screen
         name="Main"
         component={MainScreen}
