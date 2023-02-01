@@ -46,7 +46,7 @@ jobs:
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: 31
-          target: default
+          target: google_apis
           avd-name: e2e_emulator
           arch: x86_64
           script: yarn test-e2e-android

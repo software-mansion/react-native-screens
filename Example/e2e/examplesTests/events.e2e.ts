@@ -2,10 +2,9 @@ import { device, expect, element, by } from 'detox';
 
 describe('Events', () => {
   beforeEach(async () => {
-    // await device.reloadReactNative();
-    await device.launchApp({ newInstance: true });
+    await device.reloadReactNative();
+    // await device.launchApp({ newInstance: true });
 
-    
     await waitFor(element(by.id('root-screen-playground-Events')))
       .toBeVisible()
       .whileElement(by.id('root-screen-examples-scrollview'))
