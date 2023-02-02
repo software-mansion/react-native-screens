@@ -1,9 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {View, StyleSheet, Button, useColorScheme} from 'react-native';
 import {
   NavigationContainer,
   DarkTheme,
   DefaultTheme,
-  LightTheme,
   Theme,
 } from '@react-navigation/native';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -14,6 +14,7 @@ const RootStack = createNativeStackNavigator();
 
 const ThemeContext = createContext({
   theme: DefaultTheme,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setTheme: (theme: Theme) => {},
 });
 
@@ -48,7 +49,7 @@ const Navigator = () => {
           options={{
             // headerSearchBarOptions: {},
             searchBar: {},
-            // statusBarStyle: 'dark',
+            // statusBarStyle: 'light',
           }}
         />
       </RootStack.Navigator>
