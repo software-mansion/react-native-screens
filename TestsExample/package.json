@@ -16,6 +16,7 @@
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.7.0",
     "@react-navigation/stack": "^6.2.1",
+    "jotai": "^2.0.0",
     "nanoid": "^3.2.0",
     "postinstall-postinstall": "^2.1.0",
     "react": "18.2.0",
