@@ -125,7 +125,6 @@ const MaybeNestedStack = ({
       </ScreenStack>
     );
   }
-
   return content;
 };
 
@@ -220,6 +219,8 @@ const RouteView = ({
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const Screen = React.useContext(ScreenContext);
 
+  const { dark } = useTheme();
+
   return (
     <Screen
       key={route.key}
@@ -248,7 +249,7 @@ const RouteView = ({
       statusBarAnimation={statusBarAnimation}
       statusBarColor={statusBarColor}
       statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle}
+      statusBarStyle={statusBarStyle ?? (dark ? 'light' : 'dark')}
       statusBarTranslucent={statusBarTranslucent}
       swipeDirection={swipeDirection}
       transitionDuration={transitionDuration}
