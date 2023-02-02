@@ -18,6 +18,9 @@
   RNSScreen *_controller;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
+#if TARGET_OS_TV
+  UITapGestureRecognizer *_menuButtonRecognizer;
+#endif
 }
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
@@ -35,6 +38,11 @@
     _hasStatusBarHiddenSet = NO;
     _hasOrientationSet = NO;
     _hasHomeIndicatorHiddenSet = NO;
+#if TARGET_OS_TV
+    _menuButtonRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(notifyMenuButton:)];
+    [_menuButtonRecognizer setAllowedPressTypes:@[[NSNumber numberWithInt: UIPressTypeMenu]]];
+    [self addGestureRecognizer:_menuButtonRecognizer];
+#endif
   }
 
   return self;
@@ -299,6 +307,19 @@
     });
   }
 }
+
+#if TARGET_OS_TV
+- (void)notifyMenuButton:(UITapGestureRecognizer *)recognizer
+{
+  if (self.onMenuButton) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      if (self.onMenuButton) {
+        self.onMenuButton(nil);
+      }
+    });
+  }
+}
+#endif
 
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
@@ -803,6 +824,9 @@ RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
+#if TARGET_OS_TV
+RCT_EXPORT_VIEW_PROPERTY(onMenuButton, RCTDirectEventBlock);
+#endif
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)

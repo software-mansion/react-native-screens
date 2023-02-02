@@ -89,6 +89,10 @@ typedef NS_ENUM(NSInteger, RNSWindowTrait) {
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 
+#if TARGET_OS_TV
+@property (nonatomic, copy) RCTDirectEventBlock onMenuButton;
+#endif
+
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
 @property (nonatomic, retain) UIViewController *controller;
 @property (nonatomic, readonly) BOOL dismissed;
