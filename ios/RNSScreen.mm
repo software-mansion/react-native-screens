@@ -4,7 +4,7 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreenWindowTraits.h"
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
@@ -25,7 +25,7 @@
 #import "RNSScreenStackHeaderConfig.h"
 
 @interface RNSScreenView ()
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
 #else
     <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
@@ -34,7 +34,7 @@
 
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
@@ -45,7 +45,7 @@
 #endif
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -57,7 +57,7 @@
 
   return self;
 }
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
@@ -92,7 +92,7 @@
   return _controller;
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
@@ -101,7 +101,7 @@
 
 - (void)updateBounds
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
     auto newState = facebook::react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
     _state->updateState(std::move(newState));
@@ -161,7 +161,7 @@
     // https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
     _controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     // TODO: on Fabric, same controllers can be used as modals and then recycled and used a push which would result in
     // this error. It would be good to check if it doesn't leak in such case.
 #else
@@ -280,7 +280,7 @@
 
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
@@ -302,7 +302,7 @@
 
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
@@ -319,7 +319,7 @@
 
 - (void)notifyWillAppear
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
@@ -342,7 +342,7 @@
   if (_hideKeyboardOnSwipe) {
     [self endEditing:YES];
   }
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
@@ -358,7 +358,7 @@
 
 - (void)notifyAppear
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
@@ -378,7 +378,7 @@
 
 - (void)notifyDisappear
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
@@ -394,7 +394,7 @@
 
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #define RNS_EXPECTED_VIEW RCTRootComponentView
 #else
 #define RNS_EXPECTED_VIEW RCTRootView
@@ -415,7 +415,7 @@
   // root application window.
   if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
     if (_touchHandler == nil) {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
       _touchHandler = [RCTSurfaceTouchHandler new];
 #else
       _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
@@ -427,7 +427,7 @@
   }
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (RCTSurfaceTouchHandler *)touchHandler
 #else
 - (RCTTouchHandler *)touchHandler
@@ -452,7 +452,7 @@
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onTransitionProgress(facebook::react::RNSScreenEventEmitter::OnTransitionProgress{
@@ -487,7 +487,7 @@
   // pulling down starting at some touchable item. Without "reset" the touchable
   // will never go back from highlighted state even when the modal start sliding
   // down.
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   [_touchHandler setEnabled:NO];
   [_touchHandler setEnabled:YES];
 #else
@@ -572,7 +572,7 @@
 #endif // !TARGET_OS_TV
 
 #pragma mark - Fabric specific
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
@@ -775,7 +775,7 @@
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return RNSScreenView.class;
@@ -806,7 +806,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     self.view = view;
     _fakeView = [UIView new];
     _shouldNotify = YES;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
   }
@@ -895,7 +895,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   [self resetViewToScreen];
 #endif
   if (self.parentViewController == nil && self.presentingViewController == nil) {
@@ -917,7 +917,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   _isSwiping = NO;
   _shouldNotify = YES;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #else
   [self traverseForScrollView:self.screenView];
 #endif
@@ -937,7 +937,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
   if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
 #else
     if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
@@ -1159,7 +1159,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 // when we want to check props of ScreenView, we need to get them from _initialView
 - (RNSScreenView *)screenView
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   return _initialView;
 #else
   return (RNSScreenView *)self.view;
@@ -1186,7 +1186,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
       BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
       BOOL shouldHideHeader = !config.show;
 #else
       BOOL shouldHideHeader = config.hide;
@@ -1203,7 +1203,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)setViewToSnapshot:(UIView *)snapshot
