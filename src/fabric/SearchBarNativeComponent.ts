@@ -18,6 +18,8 @@ type ChangeTextEvent = Readonly<{
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
+type SearchBarTheme = 'default' | 'black';
+
 interface NativeProps extends ViewProps {
   onFocus?: BubblingEventHandler<SearchBarEvent> | null;
   onBlur?: BubblingEventHandler<SearchBarEvent> | null;
@@ -34,6 +36,7 @@ interface NativeProps extends ViewProps {
   barTintColor?: ColorValue;
   tintColor?: ColorValue;
   textColor?: ColorValue;
+  theme?: WithDefault<SearchBarTheme, 'default'>;
 
   // Android only
   disableBackButtonOverride?: boolean;
