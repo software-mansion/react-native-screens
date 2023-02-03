@@ -48,7 +48,10 @@ const Navigator = () => {
           component={HomeScreen}
           options={{
             // headerSearchBarOptions: {},
-            searchBar: {},
+            searchBar: {
+              textColor: 'rgb(255, 0, 0)',
+              style: 'black'
+            },
             // statusBarStyle: 'light',
           }}
         />
