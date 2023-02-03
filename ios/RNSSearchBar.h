@@ -8,6 +8,14 @@
 #import <React/RCTComponent.h>
 #import <React/RCTViewManager.h>
 
+#import "RNSEnums.h"
+
+@interface RCTConvert (RNSSearchBar)
+
++ (RNSSearchBarTheme)RNSSearchBarTheme:(id)json;
+
+@end
+
 @interface RNSSearchBar :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView <UISearchBarDelegate>
