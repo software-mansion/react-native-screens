@@ -187,14 +187,17 @@
 
 - (void)setTheme:(RNSSearchBarTheme)theme
 {
+  //  [_controller.searchBar setTranslucent:NO];
+  //  [_controller.searchBar.searchTextField setTokenBackgroundColor:[UIColor colorWithRed:0 green:1.0 blue:0 alpha:1]];
+  [_controller.searchBar setSearchBarStyle:UISearchBarStyleDefault];
   switch (theme) {
     case RNSSearchBarThemeDefault:
       [_controller.searchBar setBarStyle:UIBarStyleDefault];
-      [_controller.searchBar setSearchBarStyle:UISearchBarStyleDefault];
+      //      [_controller.searchBar setSearchBarStyle:UISearchBarStyleDefault];
       break;
     case RNSSearchBarThemeBlack:
       [_controller.searchBar setBarStyle:UIBarStyleBlack];
-      [_controller.searchBar setSearchBarStyle:UISearchBarStyleMinimal];
+      //      [_controller.searchBar setSearchBarStyle:UISearchBarStyleMinimal];
       break;
     default:
       RCTLogWarn(@"Unhandled SearchBarStyle type: %ld", theme);
