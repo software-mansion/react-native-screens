@@ -39,7 +39,8 @@ const HomeScreen = () => {
       <Button
         title="Toggle SearchBar theme"
         onPress={() => {
-          const newTheme = sbThemeContext.theme === 'black' ? 'default' : 'black';
+          const newTheme =
+            sbThemeContext.theme === 'black' ? 'default' : 'black';
           console.log(`SearchBar theme set to ${newTheme}`);
           sbThemeContext.setTheme(newTheme);
         }}
