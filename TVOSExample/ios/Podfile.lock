@@ -280,7 +280,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.12.0):
+  - RNScreens (3.18.2):
     - React-Core
     - React-RCTImage
   - RNVectorIcons (7.1.0):
@@ -403,7 +403,7 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 7fd7485ebdd1572a8faf2a24509ed2c37f8db77f
-  FBReactNativeSpec: 482e83654f2bc7c5cf65093d264f10b6de4e0841
+  FBReactNativeSpec: b14063f5b971fb1187e933c73f0e3863770fd2c6
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 587385d66e6bbb5632ade820568adf71edb60545
@@ -432,10 +432,10 @@ SPEC CHECKSUMS:
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: 2890fc5c407cd71da99851e92bef5a571334b7a4
-  RNScreens: 2559f98b0835103cbef3b26ba77fa61d4bb37ae7
+  RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
   Yoga: e6fb09105c0264e3ad22605d6b6fa2776e169518
 
 PODFILE CHECKSUM: 9f477710a7cea20324393d01a0d8c4694d8cefbe
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

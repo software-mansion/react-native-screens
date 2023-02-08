@@ -1,4 +1,4 @@
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <React/UIView+React.h>
@@ -16,7 +16,7 @@
 #import <React/RCTTouchHandler.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
@@ -29,7 +29,7 @@
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
     UIViewControllerTransitioningDelegate
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     ,
     RCTMountingTransactionObserving
 #endif
@@ -95,12 +95,12 @@
   BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   UIView *_snapshot;
 #endif
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -111,7 +111,7 @@
 
   return self;
 }
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
@@ -144,7 +144,7 @@
 
 - (void)emitOnFinishTransitioningEvent
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSScreenStackEventEmitter>(_eventEmitter)
         ->onFinishTransitioning(facebook::react::RNSScreenStackEventEmitter::OnFinishTransitioning{});
@@ -161,7 +161,7 @@
                     animated:(BOOL)animated
 {
   UIView *view = viewController.view;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (![view isKindOfClass:[RNSScreenView class]]) {
     // if the current view is a snapshot, config was already removed so we don't trigger the method
     return;
@@ -188,7 +188,7 @@
     [_presentedModals removeObject:presentationController.presentedViewController];
 
     _updatingModals = NO;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     [self emitOnFinishTransitioningEvent];
 #else
     // we double check if there are no new controllers pending to be presented since someone could
@@ -215,7 +215,7 @@
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
 #else
@@ -231,7 +231,7 @@
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   BOOL isScreenReadyForShowing = self.window;
 #else
   BOOL isScreenReadyForShowing = self.window && _hasLayout;
@@ -452,7 +452,7 @@
   }
 
   UIViewController *top = controllers.lastObject;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   UIViewController *previousTop = _controller.topViewController;
 #else
   UIViewController *previousTop = _controller.viewControllers.lastObject;
@@ -474,7 +474,7 @@
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
         auto screenController = (RNSScreen *)top;
         [screenController resetViewToScreen];
 #endif
@@ -495,7 +495,7 @@
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
       auto screenController = (RNSScreen *)top;
       [screenController resetViewToScreen];
 #endif
@@ -542,7 +542,7 @@
 
 - (void)dismissOnReload
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if ([_controller.visibleViewController isKindOfClass:[RNSScreen class]]) {
     [(RNSScreen *)_controller.visibleViewController resetViewToScreen];
   }
@@ -585,7 +585,7 @@
   while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
     parent = parent.superview;
   if (parent != nil) {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     RCTSurfaceTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
 #else
     RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
@@ -901,7 +901,7 @@
   });
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -1013,11 +1013,11 @@
   [_controller removeFromParentViewController];
 }
 
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 {
   return RNSScreenStackView.class;
@@ -1032,7 +1032,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {
@@ -1043,7 +1043,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
   [_stacks addPointer:(__bridge void *)view];
   return view;
 }
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)invalidate
 {

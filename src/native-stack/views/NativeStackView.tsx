@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
+// eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
 import {
@@ -98,7 +99,8 @@ const MaybeNestedStack = ({
         contentStyle,
       ]}
       // @ts-ignore Wrong props passed to View
-      stackPresentation={stackPresentation}>
+      stackPresentation={stackPresentation}
+    >
       {children}
     </Container>
   );
@@ -123,7 +125,6 @@ const MaybeNestedStack = ({
       </ScreenStack>
     );
   }
-
   return content;
 };
 
@@ -153,6 +154,11 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
+    sheetAllowedDetents = 'large',
+    sheetLargestUndimmedDetent = 'all',
+    sheetGrabberVisible = false,
+    sheetCornerRadius = -1.0,
+    sheetExpandsWhenScrolledToEdge = true,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -213,12 +219,19 @@ const RouteView = ({
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const Screen = React.useContext(ScreenContext);
 
+  const { dark } = useTheme();
+
   return (
     <Screen
       key={route.key}
       enabled
       isNativeStack
       style={StyleSheet.absoluteFill}
+      sheetAllowedDetents={sheetAllowedDetents}
+      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      sheetGrabberVisible={sheetGrabberVisible}
+      sheetCornerRadius={sheetCornerRadius}
+      sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
@@ -236,7 +249,7 @@ const RouteView = ({
       statusBarAnimation={statusBarAnimation}
       statusBarColor={statusBarColor}
       statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle}
+      statusBarStyle={statusBarStyle ?? (dark ? 'light' : 'dark')}
       statusBarTranslucent={statusBarTranslucent}
       swipeDirection={swipeDirection}
       transitionDuration={transitionDuration}
@@ -293,16 +306,19 @@ const RouteView = ({
           source: route.key,
           target: stateKey,
         });
-      }}>
+      }}
+    >
       <HeaderHeightContext.Provider
         value={
           isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
-        }>
+        }
+      >
         <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
         <MaybeNestedStack
           options={options}
           route={route}
-          stackPresentation={stackPresentation}>
+          stackPresentation={stackPresentation}
+        >
           {renderScene()}
         </MaybeNestedStack>
       </HeaderHeightContext.Provider>

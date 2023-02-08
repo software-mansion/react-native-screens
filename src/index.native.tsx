@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
 import {
   Animated,
   findNodeHandle,
@@ -7,10 +7,12 @@ import {
   ImageProps,
   Platform,
   requireNativeComponent,
+  StyleProp,
   StyleSheet,
   UIManager,
   View,
   ViewProps,
+  ViewStyle,
 } from 'react-native';
 import { Freeze } from 'react-freeze';
 import { version } from 'react-native/package.json';
@@ -81,9 +83,9 @@ let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenNavigationContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenStack: React.ComponentType<ScreenStackProps>;
 let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
-let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
-  ViewProps & { type?: HeaderSubviewTypes }
->>;
+let NativeScreenStackHeaderSubview: React.ComponentType<
+  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
+>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 let NativeSearchBar: React.ComponentType<SearchBarProps> & {
   focus: (reactTag: number | null) => void;
@@ -91,7 +93,11 @@ let NativeSearchBar: React.ComponentType<SearchBarProps> & {
   clearText: (reactTag: number | null) => void;
   toggleCancelButton: (reactTag: number | null, flag: boolean) => void;
 };
-let NativeFullWindowOverlay: React.ComponentType<View>;
+let NativeFullWindowOverlay: React.ComponentType<
+  PropsWithChildren<{
+    style: StyleProp<ViewStyle>;
+  }>
+>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
@@ -291,7 +297,8 @@ class InnerScreen extends React.Component<ScreenProps> {
                     ],
                     { useNativeDriver: true }
                   )
-            }>
+            }
+          >
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (
@@ -300,7 +307,8 @@ class InnerScreen extends React.Component<ScreenProps> {
                   progress: this.progress,
                   closing: this.closing,
                   goingForward: this.goingForward,
-                }}>
+                }}
+              >
                 {children}
               </TransitionProgressContext.Provider>
             )}
@@ -344,6 +352,20 @@ function ScreenContainer(props: ScreenContainerProps) {
   return <View {...rest} />;
 }
 
+function FullWindowOverlay(props: { children: ReactNode }) {
+  if (Platform.OS !== 'ios') {
+    console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
+    return <View {...props} />;
+  }
+  return (
+    <ScreensNativeModules.NativeFullWindowOverlay
+      style={{ position: 'absolute', width: '100%', height: '100%' }}
+    >
+      {props.children}
+    </ScreensNativeModules.NativeFullWindowOverlay>
+  );
+}
+
 const styles = StyleSheet.create({
   headerSubview: {
     position: 'absolute',
@@ -358,29 +380,32 @@ const styles = StyleSheet.create({
 const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
-    style={styles.headerSubview}>
+    style={styles.headerSubview}
+  >
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 
 class SearchBar extends React.Component<SearchBarProps> {
   blur() {
-    return NativeModules.RNSSearchBarManager.blur(findNodeHandle(this));
+    return NativeModules.RNSSearchBarManager.blur(findNodeHandle(this as any));
   }
 
   focus() {
-    return NativeModules.RNSSearchBarManager.focus(findNodeHandle(this));
+    return NativeModules.RNSSearchBarManager.focus(findNodeHandle(this as any));
   }
 
   toggleCancelButton(flag: boolean) {
     return NativeModules.RNSSearchBarManager.toggleCancelButton(
-      findNodeHandle(this),
+      findNodeHandle(this as any),
       flag
     );
   }
 
   clearText() {
-    return NativeModules.RNSSearchBarManager.clearText(findNodeHandle(this));
+    return NativeModules.RNSSearchBarManager.clearText(
+      findNodeHandle(this as any)
+    );
   }
 
   render() {
@@ -388,7 +413,7 @@ class SearchBar extends React.Component<SearchBarProps> {
       console.warn(
         'Importing SearchBar is only valid on iOS and Android devices.'
       );
-      return View;
+      return View as any as ReactNode;
     }
 
     return <ScreensNativeModules.NativeSearchBar {...this.props} />;
@@ -457,7 +482,7 @@ class Screen extends React.Component<ScreenProps> {
   static contextType = ScreenContext;
 
   render() {
-    const ScreenWrapper = this.context || InnerScreen;
+    const ScreenWrapper = (this.context || InnerScreen) as React.ElementType;
     return <ScreenWrapper {...this.props} />;
   }
 }
@@ -471,6 +496,7 @@ module.exports = {
   ScreenStack,
   InnerScreen,
   SearchBar,
+  FullWindowOverlay,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
@@ -490,14 +516,16 @@ module.exports = {
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
-  get FullWindowOverlay() {
-    if (Platform.OS !== 'ios') {
-      console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
-      return View;
-    }
+  // get SearchBar() {
+  //   if (!isSearchBarAvailableForCurrentPlatform) {
+  //     console.warn(
+  //       'Importing SearchBar is only valid on iOS and Android devices.'
+  //     );
+  //     return View;
+  //   }
 
-    return ScreensNativeModules.NativeFullWindowOverlay;
-  },
+  //   return ScreensNativeModules.NativeSearchBar;
+  // },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them
   ScreenStackHeaderBackButtonImage,

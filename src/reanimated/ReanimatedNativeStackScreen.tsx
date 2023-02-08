@@ -11,7 +11,7 @@ import Animated, { useEvent, useSharedValue } from 'react-native-reanimated';
 import ReanimatedTransitionProgressContext from './ReanimatedTransitionProgressContext';
 
 const AnimatedScreen = Animated.createAnimatedComponent(
-  (InnerScreen as unknown) as React.ComponentClass
+  InnerScreen as unknown as React.ComponentClass
 );
 
 // We use prop added to global by reanimated since it seems safer than the one from RN. See:
@@ -51,13 +51,15 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : 'topTransitionProgress',
         ]
       )}
-      {...rest}>
+      {...rest}
+    >
       <ReanimatedTransitionProgressContext.Provider
         value={{
           progress: progress,
           closing: closing,
           goingForward: goingForward,
-        }}>
+        }}
+      >
         {children}
       </ReanimatedTransitionProgressContext.Provider>
     </AnimatedScreen>

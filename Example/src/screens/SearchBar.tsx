@@ -36,18 +36,15 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [placeholder, setPlaceholder] = useState('Search for something...');
   const [barTintColor, setBarTintColor] = useState<BarTintColor>('white');
   const [hintTextColor, setHintTextColor] = useState<BarTintColor>('orange');
-  const [headerIconColor, setHeaderIconColor] = useState<BarTintColor>(
-    'orange'
-  );
-  const [shouldShowHintSearchIcon, setShouldShowHintSearchIcon] = useState(
-    true
-  );
+  const [headerIconColor, setHeaderIconColor] =
+    useState<BarTintColor>('orange');
+  const [shouldShowHintSearchIcon, setShouldShowHintSearchIcon] =
+    useState(true);
   const [hideWhenScrolling, setHideWhenScrolling] = useState(false);
   const [obscureBackground, setObscureBackground] = useState(false);
   const [hideNavigationBar, setHideNavigationBar] = useState(false);
-  const [autoCapitalize, setAutoCapitalize] = useState<AutoCapitalize>(
-    'sentences'
-  );
+  const [autoCapitalize, setAutoCapitalize] =
+    useState<AutoCapitalize>('sentences');
   const [inputType, setInputType] = useState<InputType>('text');
   const searchBarRef = useRef<SearchBarRef>(null);
 
@@ -65,7 +62,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         autoCapitalize,
         placeholder,
         inputType,
-        onChangeText: (event) => setSearch(event.nativeEvent.text),
+        onChangeText: event => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
           toast.push({
             message: '[iOS] Cancel button pressed',
@@ -229,7 +226,7 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
     navigation.setOptions({
       searchBar: {
         placeholder: 'Interesting places...',
-        onChangeText: (event) => setSearch(event.nativeEvent.text),
+        onChangeText: event => setSearch(event.nativeEvent.text),
         obscureBackground: false,
         autoCapitalize: 'none',
         hideWhenScrolling: false,
@@ -242,10 +239,8 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
       contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag">
       {places
-        .filter(
-          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1
-        )
-        .map((place) => (
+        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+        .map(place => (
           <ListItem
             key={place}
             title={place}

@@ -18,7 +18,7 @@ interface ToastProps {
   remove: (_: string) => void;
 }
 
-const DISAPPEAR_AFTER = 10 * 1000; // 10 x 1000 ms -> 10 s
+const DISAPPEAR_AFTER = 30 * 1000; // 10 x 1000 ms -> 10 s
 
 const Toast = ({
   index,
@@ -71,15 +71,12 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState(initialState);
 
   const remove = (id: string) => {
-    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
+    setToasts(prevToasts => prevToasts.filter(toast => toast.id !== id));
   };
 
   const push = ({ backgroundColor, message }: Omit<IToast, 'id'>): void => {
     const id = nanoid();
-    setToasts((prevToasts) => [
-      ...prevToasts,
-      { id, backgroundColor, message },
-    ]);
+    setToasts(prevToasts => [...prevToasts, { id, backgroundColor, message }]);
   };
 
   return (

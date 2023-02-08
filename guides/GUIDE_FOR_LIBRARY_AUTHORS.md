@@ -143,6 +143,53 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+### `sheetAllowedDetents` (iOS only)
+
+Describes heights where a sheet can rest. 
+Works only when `stackPresentation` is set to `formSheet`.
+
+Available values:
+
+- `large` - only large detent level will be allowed
+- `medium` - only medium detent level will be allowed
+- `all` - all detent levels will be allowed
+
+Defaults to `large`.
+
+### `sheetExpandsWhenScrolledToEdge` (iOS only)
+
+Whether the sheet should expand to larger detent when scrolling.
+Works only when `stackPresentation` is set to `formSheet`.
+
+Defaults to `true`.
+
+### `sheetCornerRadius (iOS only)
+
+The corner radius that the sheet will try to render with.
+Works only when `stackPresentation` is set to `formSheet`.
+
+If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
+
+Defaults to system default.
+
+### `sheetGrabberVisible` (iOS only)
+
+Boolean indicating whether the sheet shows a grabber at the top.
+Works only when `stackPresentation` is set to `formSheet`.
+Defaults to `false`.
+
+### `sheetLargestUndimmedDetent` (iOS only)
+
+ The largest sheet detent for which a view underneath won't be dimmed.
+ Works only when `stackPresentation` is set to `formSheet`.
+
+ If this prop is set to:
+
+ - `large` - the view underneath won't be dimmed at any detent level
+ - `medium` - the view underneath will be dimmed only when detent level is `large`
+ - `all` - the view underneath will be dimmed for any detent level
+
+ Defaults to `all`.
 
 ### `stackAnimation`
 
