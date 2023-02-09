@@ -256,6 +256,30 @@
 }
 #endif // !TARGET_OS_TV
 
+- (void)blur
+{
+  NSLog(@"RNSSearchBar blur method called");
+  [_controller.searchBar resignFirstResponder];
+}
+
+- (void)focus
+{
+  NSLog(@"RNSSearchBar focus method called");
+  [_controller.searchBar becomeFirstResponder];
+}
+
+- (void)clearText
+{
+  NSLog(@"RNSSearchBar clearText method called");
+  [_controller.searchBar setText:@""];
+}
+
+- (void)toggleCancelButton:(BOOL)flag
+{
+  NSLog(@"RNSSearchBar toggleCancelButton method called");
+  [_controller.searchBar setShowsCancelButton:flag ? YES : NO animated:YES];
+}
+
 #pragma mark-- Fabric specific
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -305,26 +329,6 @@
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSSearchBarComponentDescriptor>();
-}
-
-- (void)blur
-{
-  NSLog(@"RNSSearchBar blur method called");
-}
-
-- (void)focus
-{
-  NSLog(@"RNSSearchBar focus method called");
-}
-
-- (void)clearText
-{
-  NSLog(@"RNSSearchBar clearText method called");
-}
-
-- (void)toggleCancelButton:(BOOL)flag
-{
-  NSLog(@"RNSSearchBar toggleCancelButton method called");
 }
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
@@ -377,8 +381,9 @@ RCT_EXPORT_METHOD(focus : (NSNumber *_Nonnull)reactTag)
 {
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
-    UISearchController *searchBarController = searchBar.controller;
-    [searchBarController.searchBar becomeFirstResponder];
+    [searchBar focus];
+    //    UISearchController *searchBarController = searchBar.controller;
+    //    [searchBarController.searchBar becomeFirstResponder];
   }];
 }
 
@@ -386,8 +391,9 @@ RCT_EXPORT_METHOD(blur : (NSNumber *_Nonnull)reactTag)
 {
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
-    UISearchController *searchBarController = searchBar.controller;
-    [searchBarController.searchBar resignFirstResponder];
+    [searchBar blur];
+    //    UISearchController *searchBarController = searchBar.controller;
+    //    [searchBarController.searchBar resignFirstResponder];
   }];
 }
 
@@ -395,8 +401,9 @@ RCT_EXPORT_METHOD(clearText : (NSNumber *_Nonnull)reactTag)
 {
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
-    UISearchController *searchBarController = searchBar.controller;
-    [searchBarController.searchBar setText:@""];
+    [searchBar clearText];
+    //    UISearchController *searchBarController = searchBar.controller;
+    //    [searchBarController.searchBar setText:@""];
   }];
 }
 
@@ -404,8 +411,9 @@ RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL
 {
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
-    UISearchController *searchBarController = searchBar.controller;
-    [searchBarController.searchBar setShowsCancelButton:flag ? YES : NO animated:YES];
+    [searchBar toggleCancelButton:flag];
+    //    UISearchController *searchBarController = searchBar.controller;
+    //    [searchBarController.searchBar setShowsCancelButton:flag ? YES : NO animated:YES];
   }];
 }
 
