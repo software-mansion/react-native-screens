@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 
 type SearchBarRefObject = React.RefObject<{
-  focus: () => void;
-  blur: () => void;
-  clearText: () => void;
-  toggleCancelButton: (flag: boolean) => void;
+  focus: (viewTag: number | null) => void;
+  blur: (viewTag: number | null) => void;
+  clearText: (viewTag: number | null) => void;
+  toggleCancelButton: (vewTag: number | null, flag: boolean) => void;
 }>;
 
 export type SearchBarRef = NonNullable<SearchBarRefObject['current']>;

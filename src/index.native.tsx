@@ -1,4 +1,5 @@
-import React, { PropsWithChildren, ReactNode } from 'react';
+/* eslint-disable @typescript-eslint/no-var-requires */
+import React, { PropsWithChildren, ReactNode, useImperativeHandle, useRef } from 'react';
 import {
   Animated,
   findNodeHandle,
@@ -31,6 +32,7 @@ import {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
+  SearchBarRef,
 } from './types';
 import {
   isSearchBarAvailableForCurrentPlatform,
@@ -93,6 +95,14 @@ let NativeSearchBar: React.ComponentType<SearchBarProps> & {
   clearText: (reactTag: number | null) => void;
   toggleCancelButton: (reactTag: number | null, flag: boolean) => void;
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+let NativeSearchBarCommands: {
+  focus: (viewTag: number | null) => void;
+  blur: (viewTag: number | null) => void;
+  clearText: (viewTag: number | null) => void;
+  toggleCancelButton: (viewTag: number | null, flag: boolean) => void;
+};
+
 let NativeFullWindowOverlay: React.ComponentType<
   PropsWithChildren<{
     style: StyleProp<ViewStyle>;
@@ -101,15 +111,18 @@ let NativeFullWindowOverlay: React.ComponentType<
 
 const ScreensNativeModules = {
   get NativeScreen() {
-    NativeScreenValue =
-      NativeScreenValue || requireNativeComponent('RNSScreen');
+    // NativeScreenValue =
+    //   NativeScreenValue || requireNativeComponent('RNSScreen');
+    NativeScreenValue = NativeScreenValue || require('./fabric/ScreenNativeComponent').default;
     return NativeScreenValue;
   },
 
   get NativeScreenContainer() {
+    // NativeScreenContainerValue =
+    //   NativeScreenContainerValue ||
+    //   requireNativeComponent('RNSScreenContainer');
     NativeScreenContainerValue =
-      NativeScreenContainerValue ||
-      requireNativeComponent('RNSScreenContainer');
+      NativeScreenContainerValue || require('./fabric/ScreenContainerNativeComponent').default;
     return NativeScreenContainerValue;
   },
 
@@ -143,8 +156,16 @@ const ScreensNativeModules = {
   },
 
   get NativeSearchBar() {
-    NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
+    console.log('Resolving NativeSearchBar');
+    // NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
+    NativeSearchBar = NativeSearchBar || require('./fabric/SearchBarNativeComponent').default;
     return NativeSearchBar;
+  },
+  get NativeSearchBarCommands() {
+    console.log('Resolving NativeSearchBarCommands');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    NativeSearchBarCommands = NativeSearchBarCommands || require('./fabric/SearchBarNativeComponent').Commands;
+    return NativeSearchBarCommands;
   },
 
   get NativeFullWindowOverlay() {
@@ -386,26 +407,73 @@ const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 
+// eslint-disable-next-line react/display-name
+// const SearchBarX = React.forwardRef((props: SearchBarProps, ref: unknown): JSX.Element => {
+//   const nativeRef = useRef(null);
+//   useImperativeHandle(ref, () => {
+//     return {
+//       blur() {
+
+//       },
+//       focus() {
+
+//       },
+//       toggleCancelButton(flag: boolean) {
+
+//       },
+//       clearText() {
+
+//       },
+//     }
+//   }, []);
+
+//   if (!isSearchBarAvailableForCurrentPlatform) {
+//     console.warn(
+//       'Importing SearchBar is only valid on iOS and Android devices.'
+//     );
+//     return <View></View>;
+//   }
+
+//   return <ScreensNativeModules.NativeSearchBar {...props} ref={nativeRef} />;
+// });
+
 class SearchBar extends React.Component<SearchBarProps> {
+  nativeSearchBarRef: React.RefObject<{
+    focus: (reactTag: number | null) => void;
+    blur: (reactTag: number | null) => void;
+    clearText: (reactTag: number | null) => void;
+    toggleCancelButton: (reactTag: number | null, flag: boolean) => void;
+  }>;
+
+  constructor(props: SearchBarProps) {
+    super(props)
+    this.nativeSearchBarRef = React.createRef();
+  }
+
   blur() {
-    return NativeModules.RNSSearchBarManager.blur(findNodeHandle(this as any));
+    // return NativeModules.RNSSearchBarManager.blur(findNodeHandle(this as any));
+    console.log('SearchBar.blur', ScreensNativeModules.NativeSearchBarCommands);
+    return ScreensNativeModules.NativeSearchBarCommands.blur(this.nativeSearchBarRef.current);
   }
 
   focus() {
-    return NativeModules.RNSSearchBarManager.focus(findNodeHandle(this as any));
+    // return NativeModules.RNSSearchBarManager.focus(findNodeHandle(this));
+    return ScreensNativeModules.NativeSearchBarCommands.focus(this.nativeSearchBarRef.current);
   }
 
   toggleCancelButton(flag: boolean) {
-    return NativeModules.RNSSearchBarManager.toggleCancelButton(
-      findNodeHandle(this as any),
-      flag
-    );
+    return ScreensNativeModules.NativeSearchBarCommands.toggleCancelButton(this.nativeSearchBarRef.current, flag);
+    // return NativeModules.RNSSearchBarManager.toggleCancelButton(
+    //   findNodeHandle(this),
+    //   flag
+    // );
   }
 
   clearText() {
-    return NativeModules.RNSSearchBarManager.clearText(
-      findNodeHandle(this as any)
-    );
+    return ScreensNativeModules.NativeSearchBarCommands.clearText(this.nativeSearchBarRef.current);
+    // return NativeModules.RNSSearchBarManager.clearText(
+    //   findNodeHandle(this)
+    // );
   }
 
   render() {
@@ -416,7 +484,7 @@ class SearchBar extends React.Component<SearchBarProps> {
       return View as any as ReactNode;
     }
 
-    return <ScreensNativeModules.NativeSearchBar {...this.props} />;
+    return <ScreensNativeModules.NativeSearchBar {...this.props} ref={this.nativeSearchBarRef} />;
   }
 }
 
@@ -526,6 +594,9 @@ module.exports = {
 
   //   return ScreensNativeModules.NativeSearchBar;
   // },
+  get SearchBarCommands() {
+    return ScreensNativeModules.NativeSearchBarCommands;
+  },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them
   ScreenStackHeaderBackButtonImage,
