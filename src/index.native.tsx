@@ -84,7 +84,7 @@ let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigPr
 let NativeScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 >;
-let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
+let AnimatedNativeScreen: React.ComponentType<ScreenProps & ScreenPropsExt1686>;
 let NativeSearchBar: React.ComponentType<SearchBarProps>;
 let NativeFullWindowOverlay: React.ComponentType<
   PropsWithChildren<{
@@ -205,7 +205,17 @@ interface ViewConfig extends View {
   };
 }
 
-class InnerScreen extends React.Component<ScreenProps> {
+type SheetDetentTypes = 'medium' | 'large' | 'all';
+
+type ScreenPropsExt1686 = {
+  sheetAllowedDetents: SheetDetentTypes;
+  sheetLargestUndimmedDetent: SheetDetentTypes;
+  sheetGrabberVisible: boolean;
+  sheetCornerRadius: number;
+  sheetExpandsWhenScrolledToEdge: boolean;
+};
+
+class InnerScreen extends React.Component<ScreenProps & ScreenPropsExt1686> {
   private ref: React.ElementRef<typeof View> | null = null;
   private closing = new Animated.Value(0);
   private progress = new Animated.Value(0);
@@ -241,6 +251,11 @@ class InnerScreen extends React.Component<ScreenProps> {
         children,
         isNativeStack,
         gestureResponseDistance,
+        sheetAllowedDetents = 'large',
+        sheetLargestUndimmedDetent = 'all',
+        sheetGrabberVisible = false,
+        sheetCornerRadius = -1.0,
+        sheetExpandsWhenScrolledToEdge = true,
         ...props
       } = rest;
 
@@ -272,6 +287,11 @@ class InnerScreen extends React.Component<ScreenProps> {
               top: gestureResponseDistance?.top ?? -1,
               bottom: gestureResponseDistance?.bottom ?? -1,
             }}
+            sheetAllowedDetents={sheetAllowedDetents}
+            sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+            sheetGrabberVisible={sheetGrabberVisible}
+            sheetCornerRadius={sheetCornerRadius}
+            sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
             ref={handleRef}
