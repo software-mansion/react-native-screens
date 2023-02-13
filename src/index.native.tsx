@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { PropsWithChildren, ReactNode, useImperativeHandle, useRef } from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
 import {
   Animated,
-  findNodeHandle,
-  NativeModules,
   Image,
   ImageProps,
   Platform,
