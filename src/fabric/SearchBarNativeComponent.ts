@@ -53,7 +53,10 @@ interface NativeCommands {
   blur: (viewRef: React.ElementRef<ComponentType>) => void;
   focus: (viewRef: React.ElementRef<ComponentType>) => void;
   clearText: (viewRef: React.ElementRef<ComponentType>) => void;
-  toggleCancelButton: (viewRef: React.ElementRef<ComponentType>, flag: boolean) => void;
+  toggleCancelButton: (
+    viewRef: React.ElementRef<ComponentType>,
+    flag: boolean
+  ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
