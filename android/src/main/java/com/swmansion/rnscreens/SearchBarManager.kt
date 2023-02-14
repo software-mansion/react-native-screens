@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -88,6 +90,29 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
     @ReactProp(name = "shouldShowHintSearchIcon")
     fun setShouldShowHintSearchIcon(view: SearchBarView, shouldShowHintSearchIcon: Boolean?) {
         view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
+    }
+
+    override fun receiveCommand(root: SearchBarView, commandId: String?, args: ReadableArray?) {
+        Log.d("SearchBarManager", "receiveCommand ${commandId}")
+        super.receiveCommand(root, commandId, args)
+        when (commandId) {
+            "focus" -> {
+                Log.d("SearchBarManager", "focus")
+                root.focusFromJSRequest()
+            }
+            "blur" -> {
+                Log.d("SearchBarManager", "blur")
+                root.blurFromJSRequest()
+            }
+            "clearText" -> {
+                Log.d("SearchBarManager", "clearText")
+                root.clearTextFromJSRequest()
+            }
+            "toggleCancelButton" -> {
+                Log.d("SearchBarManager", "toggleCancelButton")
+                root.toggleCancelButtonFromJSRequest(false)
+            }
+        }
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
