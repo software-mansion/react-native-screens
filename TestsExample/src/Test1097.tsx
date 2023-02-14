@@ -103,6 +103,18 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
             }}
           />
         ))}
+      <Button
+        title="Tap me for second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
+      <Button
+        title="Tap me for third screen"
+        onPress={() => navigation.navigate('Third')}
+      />
+      <Button
+        title="Tap me for ref"
+        onPress={() => (searchBarRef.current as any).focus()}
+      />
     </ScrollView>
   );
 }
@@ -175,6 +187,14 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
       <Button
         title="Hide cancel button"
         onPress={() => (searchBarRef.current as any).toggleCancelButton(false)}
+      />
+      <Button
+        title="Tap me for the first screen"
+        onPress={() => navigation.navigate('First')}
+      />
+      <Button
+        title="Focus search bar"
+        onPress={() => (searchBarRef.current as any).focus()}
       />
     </ScrollView>
   )
