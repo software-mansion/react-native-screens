@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
@@ -93,25 +92,12 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
     }
 
     override fun receiveCommand(root: SearchBarView, commandId: String?, args: ReadableArray?) {
-        Log.d("SearchBarManager", "receiveCommand ${commandId}")
-        super.receiveCommand(root, commandId, args)
         when (commandId) {
-            "focus" -> {
-                Log.d("SearchBarManager", "focus")
-                root.focusFromJSRequest()
-            }
-            "blur" -> {
-                Log.d("SearchBarManager", "blur")
-                root.blurFromJSRequest()
-            }
-            "clearText" -> {
-                Log.d("SearchBarManager", "clearText")
-                root.clearTextFromJSRequest()
-            }
-            "toggleCancelButton" -> {
-                Log.d("SearchBarManager", "toggleCancelButton")
-                root.toggleCancelButtonFromJSRequest(false)
-            }
+            "focus" -> root.focusFromJSRequest()
+            "blur" -> root.blurFromJSRequest()
+            "clearText" -> root.clearTextFromJSRequest()
+            "toggleCancelButton" -> root.toggleCancelButtonFromJSRequest(false)
+            else -> throw JSApplicationIllegalArgumentException("Unsupported native command received: $commandId")
         }
     }
 

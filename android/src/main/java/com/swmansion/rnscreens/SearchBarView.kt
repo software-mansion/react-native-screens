@@ -135,9 +135,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         screenStackFragment?.searchView?.clearFocus()
     }
 
-    fun toggleCancelButtonFromJSRequest(flag: Boolean) {
-
-    }
+    fun toggleCancelButtonFromJSRequest(flag: Boolean) = Unit
 
     enum class SearchBarAutoCapitalize {
         NONE, WORDS, SENTENCES, CHARACTERS
