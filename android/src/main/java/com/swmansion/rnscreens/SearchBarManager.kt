@@ -93,10 +93,10 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
 
     override fun receiveCommand(root: SearchBarView, commandId: String?, args: ReadableArray?) {
         when (commandId) {
-            "focus" -> root.focusFromJSRequest()
-            "blur" -> root.blurFromJSRequest()
-            "clearText" -> root.clearTextFromJSRequest()
-            "toggleCancelButton" -> root.toggleCancelButtonFromJSRequest(false) // just a dummy argument
+            "focus" -> root.handleFocusJsRequest()
+            "blur" -> root.handleBlurJsRequest()
+            "clearText" -> root.handleClearTextJsRequest()
+            "toggleCancelButton" -> root.handleToggleCancelButtonJsRequest(false) // just a dummy argument
             else -> throw JSApplicationIllegalArgumentException("Unsupported native command received: $commandId")
         }
     }
