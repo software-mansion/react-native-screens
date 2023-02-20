@@ -258,26 +258,22 @@
 
 - (void)blur
 {
-  NSLog(@"RNSSearchBar blur method called");
   [_controller.searchBar resignFirstResponder];
 }
 
 - (void)focus
 {
-  NSLog(@"RNSSearchBar focus method called");
   [_controller.searchBar becomeFirstResponder];
 }
 
 - (void)clearText
 {
-  NSLog(@"RNSSearchBar clearText method called");
   [_controller.searchBar setText:@""];
 }
 
 - (void)toggleCancelButton:(BOOL)flag
 {
-  NSLog(@"RNSSearchBar toggleCancelButton method called");
-  [_controller.searchBar setShowsCancelButton:flag ? YES : NO animated:YES];
+  [_controller.searchBar setShowsCancelButton:flag animated:YES];
 }
 
 #pragma mark-- Fabric specific
@@ -333,7 +329,6 @@
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
 {
-  NSLog(@"RNSSearchBar handleCommand method called");
   RCTRNSSearchBarHandleCommand(self, commandName, args);
 }
 
@@ -382,8 +377,6 @@ RCT_EXPORT_METHOD(focus : (NSNumber *_Nonnull)reactTag)
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
     [searchBar focus];
-    //    UISearchController *searchBarController = searchBar.controller;
-    //    [searchBarController.searchBar becomeFirstResponder];
   }];
 }
 
@@ -392,8 +385,6 @@ RCT_EXPORT_METHOD(blur : (NSNumber *_Nonnull)reactTag)
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
     [searchBar blur];
-    //    UISearchController *searchBarController = searchBar.controller;
-    //    [searchBarController.searchBar resignFirstResponder];
   }];
 }
 
@@ -402,8 +393,6 @@ RCT_EXPORT_METHOD(clearText : (NSNumber *_Nonnull)reactTag)
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
     [searchBar clearText];
-    //    UISearchController *searchBarController = searchBar.controller;
-    //    [searchBarController.searchBar setText:@""];
   }];
 }
 
@@ -412,8 +401,6 @@ RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
     [searchBar toggleCancelButton:flag];
-    //    UISearchController *searchBarController = searchBar.controller;
-    //    [searchBarController.searchBar setShowsCancelButton:flag ? YES : NO animated:YES];
   }];
 }
 
