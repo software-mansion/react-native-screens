@@ -30,6 +30,7 @@ import {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
+  SearchBarRef,
 } from './types';
 import {
   isSearchBarAvailableForCurrentPlatform,
@@ -102,13 +103,9 @@ let NativeScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 >;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
-let NativeSearchBar: React.ComponentType<SearchBarProps> & {
-  focus: (reactTag: number | null) => void;
-  blur: (reactTag: number | null) => void;
-  clearText: (reactTag: number | null) => void;
-  toggleCancelButton: (reactTag: number | null, flag: boolean) => void;
-};
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+let NativeSearchBar: React.ComponentType<SearchBarProps> &
+  typeof NativeSearchBarCommands;
 let NativeSearchBarCommands: SearchBarCommandsType;
 
 let NativeFullWindowOverlay: React.ComponentType<
@@ -167,14 +164,12 @@ const ScreensNativeModules = {
 
   get NativeSearchBar() {
     console.log('Resolving NativeSearchBar');
-    // NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
     NativeSearchBar =
       NativeSearchBar || require('./fabric/SearchBarNativeComponent').default;
     return NativeSearchBar;
   },
   get NativeSearchBarCommands() {
     console.log('Resolving NativeSearchBarCommands');
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     NativeSearchBarCommands =
       NativeSearchBarCommands ||
       require('./fabric/SearchBarNativeComponent').Commands;
@@ -421,9 +416,7 @@ const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
 );
 
 class SearchBar extends React.Component<SearchBarProps> {
-  nativeSearchBarRef: React.RefObject<
-    typeof ScreensNativeModules.NativeSearchBar
-  >;
+  nativeSearchBarRef: React.RefObject<SearchBarRef>;
 
   constructor(props: SearchBarProps) {
     super(props);
