@@ -602,15 +602,15 @@ A React ref to imperatively modify search bar.
 
 #### Imperative actions
 
-##### `focus` (iOS only)
+##### `focus`
 
 Focus on search bar.
 
-##### `blur` (iOS only)
+##### `blur`
 
 Remove focus from search bar.
 
-##### `clearText` (iOS only)
+##### `clearText`
 
 Clear text in search bar.
 
