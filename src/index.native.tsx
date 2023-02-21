@@ -424,8 +424,6 @@ class SearchBar extends React.Component<SearchBarProps> {
   }
 
   blur() {
-    // return NativeModules.RNSSearchBarManager.blur(findNodeHandle(this as any));
-    console.log('SearchBar.blur', ScreensNativeModules.NativeSearchBarCommands);
     if (this.nativeSearchBarRef.current) {
       ScreensNativeModules.NativeSearchBarCommands.blur(
         this.nativeSearchBarRef.current
@@ -434,7 +432,6 @@ class SearchBar extends React.Component<SearchBarProps> {
   }
 
   focus() {
-    // return NativeModules.RNSSearchBarManager.focus(findNodeHandle(this));
     if (this.nativeSearchBarRef.current) {
       ScreensNativeModules.NativeSearchBarCommands.focus(
         this.nativeSearchBarRef.current
