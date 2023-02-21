@@ -116,17 +116,12 @@ let NativeFullWindowOverlay: React.ComponentType<
 
 const ScreensNativeModules = {
   get NativeScreen() {
-    // NativeScreenValue =
-    //   NativeScreenValue || requireNativeComponent('RNSScreen');
     NativeScreenValue =
       NativeScreenValue || require('./fabric/ScreenNativeComponent').default;
     return NativeScreenValue;
   },
 
   get NativeScreenContainer() {
-    // NativeScreenContainerValue =
-    //   NativeScreenContainerValue ||
-    //   requireNativeComponent('RNSScreenContainer');
     NativeScreenContainerValue =
       NativeScreenContainerValue ||
       require('./fabric/ScreenContainerNativeComponent').default;
@@ -163,13 +158,11 @@ const ScreensNativeModules = {
   },
 
   get NativeSearchBar() {
-    console.log('Resolving NativeSearchBar');
     NativeSearchBar =
       NativeSearchBar || require('./fabric/SearchBarNativeComponent').default;
     return NativeSearchBar;
   },
   get NativeSearchBarCommands() {
-    console.log('Resolving NativeSearchBarCommands');
     NativeSearchBarCommands =
       NativeSearchBarCommands ||
       require('./fabric/SearchBarNativeComponent').Commands;
@@ -569,16 +562,6 @@ module.exports = {
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
-  // get SearchBar() {
-  //   if (!isSearchBarAvailableForCurrentPlatform) {
-  //     console.warn(
-  //       'Importing SearchBar is only valid on iOS and Android devices.'
-  //     );
-  //     return View;
-  //   }
-
-  //   return ScreensNativeModules.NativeSearchBar;
-  // },
   get SearchBarCommands() {
     return ScreensNativeModules.NativeSearchBarCommands;
   },
