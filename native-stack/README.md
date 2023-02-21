@@ -598,25 +598,12 @@ Show the search hint icon when search bar is focused. (Android only)
 
 #### `ref`
 
-A React ref to imperatively modify search bar.
+A React ref to imperatively modify search bar. Supported actions:
 
-#### Imperative actions
-
-##### `focus`
-
-Focus on search bar.
-
-##### `blur`
-
-Remove focus from search bar.
-
-##### `clearText`
-
-Clear text in search bar.
-
-##### `toggleCancelButton` (iOS only)
-
-Toggle cancel button display near search bar.
+*  `focus` - focus on search bar
+*  `blur` - remove focus from search bar
+*  `clearText` - clear text in search bar
+*  `toggleCancelButton` (iOS only) - toggle cancel button display near search bar.
 
 ### Events
 
