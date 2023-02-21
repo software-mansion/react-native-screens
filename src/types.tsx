@@ -11,7 +11,7 @@ type SearchBarRefObject = React.RefObject<{
   focus: () => void;
   blur: () => void;
   clearText: () => void;
-  toggleCancelButton: (flag: boolean) => void;
+  toggleCancelButton: (show: boolean) => void;
 }>;
 
 export type SearchBarRef = NonNullable<SearchBarRefObject['current']>;
