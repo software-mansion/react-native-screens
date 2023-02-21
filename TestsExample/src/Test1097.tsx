@@ -10,7 +10,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from 'react-native-screens/native-stack';
-import {SearchBarProps, SearchBarRef} from 'react-native-screens';
+import {SearchBarProps, SearchBarCommands} from 'react-native-screens';
 
 const AppStack = createNativeStackNavigator();
 
@@ -31,7 +31,7 @@ export default function App(): JSX.Element {
 }
 
 function First({navigation}: NativeStackScreenProps<ParamListBase>) {
-  const searchBarRef = React.useRef<SearchBarRef>();
+  const searchBarRef = React.useRef<SearchBarCommands>();
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -135,7 +135,7 @@ function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
 }
 
 function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
-  const searchBarRef = React.useRef<SearchBarRef>();
+  const searchBarRef = React.useRef<SearchBarCommands>();
 
   const searchBarProps: SearchBarProps = {
     // @ts-ignore

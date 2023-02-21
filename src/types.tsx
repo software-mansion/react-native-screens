@@ -7,14 +7,12 @@ import {
   TextInputFocusEventData,
 } from 'react-native';
 
-type SearchBarRefObject = React.RefObject<{
+export type SearchBarCommands = {
   focus: () => void;
   blur: () => void;
   clearText: () => void;
   toggleCancelButton: (show: boolean) => void;
-}>;
-
-export type SearchBarRef = NonNullable<SearchBarRefObject['current']>;
+};
 
 export type StackPresentationTypes =
   | 'push'
@@ -525,7 +523,7 @@ export interface SearchBarProps {
    * * `clearText` - removes any text present in the search bar input field
    * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
    */
-  ref?: React.RefObject<SearchBarRef>;
+  ref?: React.RefObject<SearchBarCommands>;
 
   /**
    * The auto-capitalization behavior

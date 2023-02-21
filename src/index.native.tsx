@@ -30,7 +30,7 @@ import {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-  SearchBarRef,
+  SearchBarCommands,
 } from './types';
 import {
   isSearchBarAvailableForCurrentPlatform,
@@ -416,7 +416,7 @@ const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
 );
 
 class SearchBar extends React.Component<SearchBarProps> {
-  nativeSearchBarRef: React.RefObject<SearchBarRef>;
+  nativeSearchBarRef: React.RefObject<SearchBarCommands>;
 
   constructor(props: SearchBarProps) {
     super(props);
