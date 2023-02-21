@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { I18nManager, ScrollView, Text, StyleSheet } from 'react-native';
-import { SearchBarRef, SearchBarProps } from 'react-native-screens';
+import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -46,7 +46,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [autoCapitalize, setAutoCapitalize] =
     useState<AutoCapitalize>('sentences');
   const [inputType, setInputType] = useState<InputType>('text');
-  const searchBarRef = useRef<SearchBarRef>(null);
+  const searchBarRef = useRef<SearchBarCommands>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
