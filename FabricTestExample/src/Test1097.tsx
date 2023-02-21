@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as React from 'react';
-import {Button, NativeSyntheticEvent, ScrollView, View} from 'react-native';
+import {Button, NativeSyntheticEvent, ScrollView} from 'react-native';
 import {
   NavigationContainer,
   NavigationProp,
@@ -10,7 +10,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from 'react-native-screens/native-stack';
-import {SearchBarProps} from 'react-native-screens';
+import {SearchBarProps, SearchBarCommands} from 'react-native-screens';
 
 const AppStack = createNativeStackNavigator();
 
@@ -31,7 +31,7 @@ export default function App(): JSX.Element {
 }
 
 function First({navigation}: NativeStackScreenProps<ParamListBase>) {
-  const searchBarRef = React.useRef();
+  const searchBarRef = React.useRef<SearchBarCommands>();
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -88,7 +88,7 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
       />
       <Button
         title="Tap me for ref"
-        onPress={() => (searchBarRef.current as any).focus()}
+        onPress={() => searchBarRef.current?.focus()}
       />
       {items
         .filter(
@@ -111,6 +111,10 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
         title="Tap me for third screen"
         onPress={() => navigation.navigate('Third')}
       />
+      <Button
+        title="Tap me for ref"
+        onPress={() => searchBarRef.current?.focus()}
+      />
     </ScrollView>
   );
 }
@@ -131,7 +135,7 @@ function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
 }
 
 function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
-  const searchBarRef = React.useRef();
+  const searchBarRef = React.useRef<SearchBarCommands>();
 
   const searchBarProps: SearchBarProps = {
     // @ts-ignore
@@ -166,23 +170,23 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
       />
       <Button
         title="Focus search bar"
-        onPress={() => (searchBarRef.current as any).focus()}
+        onPress={() => searchBarRef.current?.focus()}
       />
       <Button 
         title="Remove focus from search bar"
-        onPress={() => (searchBarRef.current as any).blur()}
+        onPress={() => searchBarRef.current?.blur()}
       />
       <Button
         title="Clear text in search bar"
-        onPress={() => (searchBarRef.current as any).clearText()}
+        onPress={() => searchBarRef.current?.clearText()}
       />
       <Button
         title="Show cancel button"
-        onPress={() => (searchBarRef.current as any).toggleCancelButton(true)}
+        onPress={() => searchBarRef.current?.toggleCancelButton(true)}
       />
       <Button
         title="Hide cancel button"
-        onPress={() => (searchBarRef.current as any).toggleCancelButton(false)}
+        onPress={() => searchBarRef.current?.toggleCancelButton(false)}
       />
       <Button
         title="Tap me for the first screen"
@@ -190,7 +194,7 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
       />
       <Button
         title="Focus search bar"
-        onPress={() => (searchBarRef.current as any).focus()}
+        onPress={() => searchBarRef.current?.focus()}
       />
     </ScrollView>
   )
