@@ -18,7 +18,7 @@ interface ToastProps {
   remove: (_: string) => void;
 }
 
-const DISAPPEAR_AFTER = 30 * 1000; // 10 x 1000 ms -> 10 s
+const DISAPPEAR_AFTER = 40 * 1000; // 40 x 1000 ms -> 40 s
 
 const Toast = ({
   index,

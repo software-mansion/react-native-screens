@@ -6,7 +6,7 @@ source 'https://cdn.cocoapods.org/'
 
 target 'TVOSExample' do
 
-  platform :ios, '11.0'
+  platform :ios, '12.0'
 
   config = use_native_modules!
 
@@ -16,7 +16,7 @@ target 'TVOSExample' do
     :hermes_enabled => false
   )
 
-  pod 'RNScreens', :path => '../../'
+  # pod 'RNScreens', :path => '../../'
 
   target 'TVOSExampleTests' do
     inherit! :complete
@@ -34,7 +34,7 @@ target 'TVOSExample-tvOS' do
   # Hermes not yet available on tvOS
   use_react_native!(:path => config["reactNativePath"])
 
-  pod 'RNScreens', :path => '../../'
+  # pod 'RNScreens', :path => '../../'
 
   target 'TVOSExample-tvOSTests' do
     inherit! :complete

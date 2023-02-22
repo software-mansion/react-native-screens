@@ -17,7 +17,7 @@
     "@react-navigation/stack": "^6.2.1",
     "nanoid": "^3.2.0",
     "react": "18.2.0",
-    "react-native": "0.71.2",
+    "react-native": "0.71.3",
     "postinstall-postinstall": "^2.1.0",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-reanimated": "3.0.0-rc.10",
