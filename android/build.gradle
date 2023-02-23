@@ -1,4 +1,10 @@
 buildscript {
+    ext {
+        rnsDefaultTargetSdkVersion = 31
+        rnsDefaultCompileSdkVersion = 31
+        rnsDefaultMinSdkVersion = 21
+        rnsDefaultKotlinVersion = '1.6.21'
+    }
     ext.safeExtGet = {prop, fallback ->
         rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
     }
@@ -8,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.6.21')}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.15.0"
     }
 }
@@ -37,8 +43,45 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+def findAndroidResourceDir() {
+    def resDirCandidate = file("${project.projectDir}/src/main/res")
+    if (resDirCandidate.isDirectory()) {
+        return file(resDirCandidate)
+    }
+    return null;
+}
+
+task manageV33Animations {
+    // This task is executed during configuration phase on purpose
+    def resDir = findAndroidResourceDir()
+    def animDir = file("${project.projectDir}/versioned-res/anim-v33")
+
+    if (resDir == null) {
+        println "[RNScreens] Failed to locate Android resource directory"
+        return
+    }
+
+    if (!animDir.isDirectory()) {
+        println "[RNScreens] Failed to locate directory with animation resources for Android 13+"
+        return
+    }
+
+    def targetDir = file{"${resDir}/anim-v33"}
+
+    def compileSdkVersion = project.ext.safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
+
+    if (compileSdkVersion >= 33) {
+        copy {
+            from animDir
+            into targetDir
+        }
+    } else if (targetDir.isDirectory()) {
+        delete targetDir
+    }
+}
+
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 28)
+    compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
 
     // Used to override the NDK path/version on internal CI or by allowing
     // users to customize the NDK path/version from their root project (e.g. for M1 support)
@@ -50,8 +93,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 21)
-        targetSdkVersion safeExtGet('targetSdkVersion', 22)
+        minSdkVersion safeExtGet('minSdkVersion', rnsDefaultMinSdkVersion)
+        targetSdkVersion safeExtGet('targetSdkVersion', rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
