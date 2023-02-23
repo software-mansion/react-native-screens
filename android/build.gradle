@@ -37,6 +37,49 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+int resolveTargetSdkVersion() {
+//    return safeExtGet('targetSdkVersion', 22)
+    return 31
+}
+
+def findAndroidResourceDir() {
+    def resDirCandidate = file("${project.projectDir}/src/main/res")
+    if (resDirCandidate.isDirectory()) {
+        return file(resDirCandidate)
+    }
+    return null;
+}
+
+task manageV33Animations {
+    // This task is executed during configuration phase on purpose
+    def resDir = findAndroidResourceDir()
+    def animDir = file("${project.projectDir}/versioned-res/anim-v33")
+
+    if (resDir == null) {
+        println "[RNScreens] Failed to locate resource directory"
+        return
+    }
+
+    if (!animDir.isDirectory()) {
+        println "[RNScreens] Failed to locate directory with animation resources for Android 13+"
+        return
+    }
+
+    def targetSdkVersion = resolveTargetSdkVersion()
+
+    if (targetSdkVersion >= 33) {
+        copy {
+            from animDir
+            into resDir
+        }
+    } else {
+        def copiedAnimations = file("${resDir}/anim-v33")
+        if (copiedAnimations.isDirectory()) {
+            delete copiedAnimations
+        }
+    }
+}
+
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
 
