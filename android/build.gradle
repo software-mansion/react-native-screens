@@ -1,4 +1,10 @@
 buildscript {
+    ext {
+        rnsDefaultTargetSdkVersion = 31
+        rnsDefaultCompileSdkVersion = 31
+        rnsDefaultMinSdkVersion = 21
+        rnsDefaultKotlinVersion = '1.6.21'
+    }
     ext.safeExtGet = {prop, fallback ->
         rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
     }
@@ -8,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', '1.6.21')}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:5.15.0"
     }
 }
@@ -66,22 +72,20 @@ task manageV33Animations {
 
     def targetDir = file{"${resDir}/anim-v33"}
 
-    def targetSdkVersion = resolveTargetSdkVersion()
+    def compileSdkVersion = project.ext.safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
 
-    if (targetSdkVersion >= 33) {
+    if (compileSdkVersion >= 33) {
         copy {
             from animDir
             into targetDir
         }
-    } else {
-        if (targetDir.isDirectory()) {
-            delete targetDir
-        }
+    } else if (targetDir.isDirectory()) {
+        delete targetDir
     }
 }
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 28)
+    compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
 
     // Used to override the NDK path/version on internal CI or by allowing
     // users to customize the NDK path/version from their root project (e.g. for M1 support)
@@ -93,8 +97,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 21)
-        targetSdkVersion safeExtGet('targetSdkVersion', 22)
+        minSdkVersion safeExtGet('minSdkVersion', rnsDefaultMinSdkVersion)
+        targetSdkVersion safeExtGet('targetSdkVersion', rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
