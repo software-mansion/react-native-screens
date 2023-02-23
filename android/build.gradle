@@ -38,8 +38,7 @@ def reactNativeArchitectures() {
 }
 
 int resolveTargetSdkVersion() {
-//    return safeExtGet('targetSdkVersion', 22)
-    return 31
+    return project.ext.safeExtGet('targetSdkVersion', 22)
 }
 
 def findAndroidResourceDir() {
