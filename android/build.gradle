@@ -64,17 +64,18 @@ task manageV33Animations {
         return
     }
 
+    def targetDir = file{"${resDir}/anim-v33"}
+
     def targetSdkVersion = resolveTargetSdkVersion()
 
     if (targetSdkVersion >= 33) {
         copy {
             from animDir
-            into resDir
+            into targetDir
         }
     } else {
-        def copiedAnimations = file("${resDir}/anim-v33")
-        if (copiedAnimations.isDirectory()) {
-            delete copiedAnimations
+        if (targetDir.isDirectory()) {
+            delete targetDir
         }
     }
 }
