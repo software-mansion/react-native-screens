@@ -44,7 +44,7 @@ def reactNativeArchitectures() {
 }
 
 int resolveTargetSdkVersion() {
-    return project.ext.safeExtGet('targetSdkVersion', 22)
+    return project.ext.safeExtGet('targetSdkVersion', rnsDefaultTargetSdkVersion)
 }
 
 def findAndroidResourceDir() {
@@ -61,7 +61,7 @@ task manageV33Animations {
     def animDir = file("${project.projectDir}/versioned-res/anim-v33")
 
     if (resDir == null) {
-        println "[RNScreens] Failed to locate resource directory"
+        println "[RNScreens] Failed to locate Android resource directory"
         return
     }
 
