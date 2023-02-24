@@ -1,10 +1,11 @@
 /* eslint-disable */
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ViewProps, ColorValue } from 'react-native';
+import type { ViewProps, ColorValue, HostComponent } from 'react-native';
 import type {
   WithDefault,
   BubblingEventHandler,
 } from 'react-native/Libraries/Types/CodegenTypes';
+import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
 type SearchBarEvent = Readonly<{}>;
 
@@ -45,5 +46,21 @@ interface NativeProps extends ViewProps {
   headerIconColor?: ColorValue;
   shouldShowHintSearchIcon?: WithDefault<boolean, true>;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+interface NativeCommands {
+  blur: (viewRef: React.ElementRef<ComponentType>) => void;
+  focus: (viewRef: React.ElementRef<ComponentType>) => void;
+  clearText: (viewRef: React.ElementRef<ComponentType>) => void;
+  toggleCancelButton: (
+    viewRef: React.ElementRef<ComponentType>,
+    flag: boolean
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['blur', 'focus', 'clearText', 'toggleCancelButton'],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSSearchBar', {});

@@ -123,6 +123,20 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             ?.receiveEvent(id, eventName, eventContent)
     }
 
+    fun handleClearTextJsRequest() {
+        screenStackFragment?.searchView?.clearText();
+    }
+
+    fun handleFocusJsRequest() {
+        screenStackFragment?.searchView?.focus();
+    }
+
+    fun handleBlurJsRequest() {
+        screenStackFragment?.searchView?.clearFocus()
+    }
+
+    fun handleToggleCancelButtonJsRequest(flag: Boolean) = Unit
+
     enum class SearchBarAutoCapitalize {
         NONE, WORDS, SENTENCES, CHARACTERS
     }

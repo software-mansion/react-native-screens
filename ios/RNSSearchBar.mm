@@ -12,7 +12,6 @@
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSConvert.h"
 #endif
 
@@ -257,6 +256,28 @@
 }
 #endif // !TARGET_OS_TV
 
+- (void)blur
+{
+  [_controller.searchBar resignFirstResponder];
+}
+
+- (void)focus
+{
+  [_controller.searchBar becomeFirstResponder];
+}
+
+- (void)clearText
+{
+  [_controller.searchBar setText:@""];
+}
+
+- (void)toggleCancelButton:(BOOL)flag
+{
+#if !TARGET_OS_TV
+  [_controller.searchBar setShowsCancelButton:flag animated:YES];
+#endif
+}
+
 #pragma mark-- Fabric specific
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -308,8 +329,13 @@
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSSearchBarComponentDescriptor>();
 }
 
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSSearchBarHandleCommand(self, commandName, args);
+}
+
 #else
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
@@ -347,5 +373,41 @@ RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onFocus, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBlur, RCTBubblingEventBlock)
+
+#ifndef RCT_NEW_ARCH_ENABLED
+
+RCT_EXPORT_METHOD(focus : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar focus];
+  }];
+}
+
+RCT_EXPORT_METHOD(blur : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar blur];
+  }];
+}
+
+RCT_EXPORT_METHOD(clearText : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar clearText];
+  }];
+}
+
+RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL *)flag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar toggleCancelButton:flag];
+  }];
+}
+
+#endif /* !RCT_NEW_ARCH_ENABLED */
 
 @end

@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { I18nManager, ScrollView, Text, StyleSheet } from 'react-native';
-import { SearchBarProps } from 'react-native-screens';
+import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -46,10 +46,12 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [autoCapitalize, setAutoCapitalize] =
     useState<AutoCapitalize>('sentences');
   const [inputType, setInputType] = useState<InputType>('text');
+  const searchBarRef = useRef<SearchBarCommands>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       searchBar: {
+        ref: searchBarRef,
         barTintColor,
         hintTextColor,
         headerIconColor,
@@ -169,6 +171,21 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         label="Show search hint icon"
         value={shouldShowHintSearchIcon}
         onValueChange={setShouldShowHintSearchIcon}
+      />
+      <Text style={styles.heading}>Imperative actions</Text>
+      <Button onPress={() => searchBarRef.current?.blur()} title="Blur" />
+      <Button onPress={() => searchBarRef.current?.focus()} title="Focus" />
+      <Button
+        onPress={() => searchBarRef.current?.clearText()}
+        title="Clear Text"
+      />
+      <Button
+        onPress={() => searchBarRef.current?.toggleCancelButton(true)}
+        title="Show cancel"
+      />
+      <Button
+        onPress={() => searchBarRef.current?.toggleCancelButton(false)}
+        title="Hide cancel"
       />
       <Text style={styles.heading}>Other</Text>
       <Button

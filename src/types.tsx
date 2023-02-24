@@ -7,6 +7,13 @@ import {
   TextInputFocusEventData,
 } from 'react-native';
 
+export type SearchBarCommands = {
+  focus: () => void;
+  blur: () => void;
+  clearText: () => void;
+  toggleCancelButton: (show: boolean) => void;
+};
+
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -506,6 +513,18 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
 }
 
 export interface SearchBarProps {
+  /**
+   * Reference to imperatively modify search bar.
+   *
+   * Currently supported operations are:
+   *
+   * * `focus` - focuses the search bar
+   * * `blur` - removes focus from the search bar
+   * * `clearText` - removes any text present in the search bar input field
+   * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
+   */
+  ref?: React.RefObject<SearchBarCommands>;
+
   /**
    * The auto-capitalization behavior
    */

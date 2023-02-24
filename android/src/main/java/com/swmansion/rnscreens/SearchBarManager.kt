@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
@@ -88,6 +89,16 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
     @ReactProp(name = "shouldShowHintSearchIcon")
     fun setShouldShowHintSearchIcon(view: SearchBarView, shouldShowHintSearchIcon: Boolean?) {
         view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
+    }
+
+    override fun receiveCommand(root: SearchBarView, commandId: String?, args: ReadableArray?) {
+        when (commandId) {
+            "focus" -> root.handleFocusJsRequest()
+            "blur" -> root.handleBlurJsRequest()
+            "clearText" -> root.handleClearTextJsRequest()
+            "toggleCancelButton" -> root.handleToggleCancelButtonJsRequest(false) // just a dummy argument
+            else -> throw JSApplicationIllegalArgumentException("Unsupported native command received: $commandId")
+        }
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {

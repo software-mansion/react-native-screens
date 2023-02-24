@@ -58,6 +58,7 @@ import Test1072 from './src/Test1072';
 import Test1084 from './src/Test1084';
 import Test1091 from './src/Test1091';
 import Test1096 from './src/Test1096';
+import Test1097 from './src/Test1097';
 import Test1153 from './src/Test1153';
 import Test1157 from './src/Test1157';
 import Test1162 from './src/Test1162';

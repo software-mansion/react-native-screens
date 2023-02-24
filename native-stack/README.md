@@ -596,6 +596,15 @@ The search and close icon color shown in the header. (Android only)
 
 Show the search hint icon when search bar is focused. (Android only)
 
+#### `ref`
+
+A React ref to imperatively modify search bar. Supported actions:
+
+*  `focus` - focus on search bar
+*  `blur` - remove focus from search bar
+*  `clearText` - clear text in search bar
+*  `toggleCancelButton` (iOS only) - toggle cancel button display near search bar.
+
 ### Events
 
 The navigator can [emit events](https://reactnavigation.org/docs/navigation-events) on certain actions. Supported events are:

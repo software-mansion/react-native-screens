@@ -2,6 +2,7 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
+#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #endif
 
 #import <React/RCTBridge.h>
@@ -10,7 +11,7 @@
 
 @interface RNSSearchBar :
 #ifdef RCT_NEW_ARCH_ENABLED
-    RCTViewComponentView <UISearchBarDelegate>
+    RCTViewComponentView <UISearchBarDelegate, RCTRNSSearchBarViewProtocol>
 #else
     UIView <UISearchBarDelegate>
 #endif
