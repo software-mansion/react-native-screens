@@ -273,7 +273,9 @@
 
 - (void)toggleCancelButton:(BOOL)flag
 {
+#if !TARGET_OS_TV
   [_controller.searchBar setShowsCancelButton:flag animated:YES];
+#endif
 }
 
 #pragma mark-- Fabric specific
