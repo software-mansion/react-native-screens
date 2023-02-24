@@ -84,12 +84,12 @@ android {
         java {
             if (isNewArchitectureEnabled()) {
                 srcDirs += [
-                        "src/fabric/java",
+                    "src/fabric/java",
                 ]
             } else {
                 srcDirs += [
-                        "src/paper/java",
-                        "build/generated/source/codegen/java"
+                    "src/paper/java",
+                    "build/generated/source/codegen/java"
                 ]
             }
 
