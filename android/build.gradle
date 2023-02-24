@@ -51,34 +51,34 @@ def findAndroidResourceDir() {
     return null;
 }
 
-task manageV33Animations {
-    // This task is executed during configuration phase on purpose
-    def resDir = findAndroidResourceDir()
-    def animDir = file("${project.projectDir}/versioned-res/anim-v33")
-
-    if (resDir == null) {
-        println "[RNScreens] Failed to locate Android resource directory"
-        return
-    }
-
-    if (!animDir.isDirectory()) {
-        println "[RNScreens] Failed to locate directory with animation resources for Android 13+"
-        return
-    }
-
-    def targetDir = file{"${resDir}/anim-v33"}
-
-    def compileSdkVersion = project.ext.safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
-
-    if (compileSdkVersion >= 33) {
-        copy {
-            from animDir
-            into targetDir
-        }
-    } else if (targetDir.isDirectory()) {
-        delete targetDir
-    }
-}
+//task manageV33Animations {
+//    // This task is executed during configuration phase on purpose
+//    def resDir = findAndroidResourceDir()
+//    def animDir = file("${project.projectDir}/versioned-res/anim-v33")
+//
+//    if (resDir == null) {
+//        println "[RNScreens] Failed to locate Android resource directory"
+//        return
+//    }
+//
+//    if (!animDir.isDirectory()) {
+//        println "[RNScreens] Failed to locate directory with animation resources for Android 13+"
+//        return
+//    }
+//
+//    def targetDir = file{"${resDir}/anim-v33"}
+//
+//    def compileSdkVersion = project.ext.safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
+//
+//    if (compileSdkVersion >= 33) {
+//        copy {
+//            from animDir
+//            into targetDir
+//        }
+//    } else if (targetDir.isDirectory()) {
+//        delete targetDir
+//    }
+//}
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
@@ -120,15 +120,24 @@ android {
         java {
             if (isNewArchitectureEnabled()) {
                 srcDirs += [
-                    "src/fabric/java",
+                        "src/fabric/java",
                 ]
             } else {
                 srcDirs += [
-                    "src/paper/java",
-                    "build/generated/source/codegen/java"
+                        "src/paper/java",
+                        "build/generated/source/codegen/java"
                 ]
             }
 
+        }
+        res {
+            if (safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion) >= 33) {
+                println "Setting srcDirs for 33"
+                srcDirs = ['src/main/res/base', 'src/main/res/v33']
+            } else {
+                println "Setting srcDirs for < 33"
+                srcDirs = ['src/main/res/base']
+            }
         }
     }
 }
