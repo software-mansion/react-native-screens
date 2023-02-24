@@ -416,37 +416,39 @@ class SearchBar extends React.Component<SearchBarProps> {
     this.nativeSearchBarRef = React.createRef();
   }
 
-  blur() {
-    if (this.nativeSearchBarRef.current) {
-      ScreensNativeModules.NativeSearchBarCommands.blur(
-        this.nativeSearchBarRef.current
+  _callMethodWithRef(method: (ref: SearchBarCommands) => void) {
+    const ref = this.nativeSearchBarRef.current;
+    if (ref) {
+      method(ref);
+    } else {
+      console.warn(
+        'Reference to native search bar component has not been updated yet'
       );
     }
+  }
+
+  blur() {
+    this._callMethodWithRef((ref) =>
+      ScreensNativeModules.NativeSearchBarCommands.blur(ref)
+    );
   }
 
   focus() {
-    if (this.nativeSearchBarRef.current) {
-      ScreensNativeModules.NativeSearchBarCommands.focus(
-        this.nativeSearchBarRef.current
-      );
-    }
+    this._callMethodWithRef((ref) =>
+      ScreensNativeModules.NativeSearchBarCommands.focus(ref)
+    );
   }
 
   toggleCancelButton(flag: boolean) {
-    if (this.nativeSearchBarRef.current) {
-      ScreensNativeModules.NativeSearchBarCommands.toggleCancelButton(
-        this.nativeSearchBarRef.current,
-        flag
-      );
-    }
+    this._callMethodWithRef((ref) =>
+      ScreensNativeModules.NativeSearchBarCommands.toggleCancelButton(ref, flag)
+    );
   }
 
   clearText() {
-    if (this.nativeSearchBarRef.current) {
-      ScreensNativeModules.NativeSearchBarCommands.clearText(
-        this.nativeSearchBarRef.current
-      );
-    }
+    this._callMethodWithRef((ref) =>
+      ScreensNativeModules.NativeSearchBarCommands.clearText(ref)
+    );
   }
 
   render() {
