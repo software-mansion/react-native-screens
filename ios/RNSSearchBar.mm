@@ -374,6 +374,8 @@ RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onFocus, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBlur, RCTBubblingEventBlock)
 
+#ifndef RCT_NEW_ARCH_ENABLED
+
 RCT_EXPORT_METHOD(focus : (NSNumber *_Nonnull)reactTag)
 {
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
@@ -405,5 +407,7 @@ RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL
     [searchBar toggleCancelButton:flag];
   }];
 }
+
+#endif /* !RCT_NEW_ARCH_ENABLED */
 
 @end
