@@ -486,7 +486,9 @@ namespace rct = facebook::react;
     if (config.backTitle != nil && [trimmedBackTitle length] == 0) {
       navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
     }
-  } else if (
+  }
+  
+  if (
       config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
       config.disableBackButtonMenu) {
     RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
