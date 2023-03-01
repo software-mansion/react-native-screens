@@ -228,7 +228,7 @@ open class ScreenFragment : Fragment {
                  - progress is 0 -> key 1
                  - progress is 1 -> key 2
                  - progress is between 0 and 1 -> key 3
-             */
+                */
                 val coalescingKey = (if (mProgress == 0.0f) 1 else if (mProgress == 1.0f) 2 else 3).toShort()
                 val container: ScreenContainer<*>? = screen.container
                 val goingForward = if (container is ScreenStack) container.goingForward else false
