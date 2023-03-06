@@ -1,23 +1,34 @@
 #ifndef RNSUtils_h
 #define RNSUtils_h
 
-struct Layout {
-  int width;
-  int height;
-};
+#import "../RNSEnums.h"
 
 int getDefaultHeaderHeight(
-    Layout layout,
+    int layoutWidth,
+    int layoutHeight,
     int topInset,
-    RNSStackPresentation stackPresentation) {
-  int headerHeight = 64;
+    RNSScreenStackPresentation stackPresentation)
+{
+  const int formSheetModalHeight{56};
+  int headerHeight{64};
   int statusBarHeight = topInset;
 
-  const bool isLandscape = layout.width > layout.height;
-  //  const bool isFormSheetModal = stackPresentation
+  const bool isLandscape = layoutWidth > layoutHeight;
+  const bool isFormSheetModal =
+      stackPresentation == RNSScreenStackPresentationModal || stackPresentation == RNSScreenStackPresentationFormSheet;
 
-  if (!isLandscape) {
+  if (!isLandscape && isFormSheetModal) {
     statusBarHeight = 0;
+  }
+
+  // check for isPad is TV
+  UIUserInterfaceIdiom interfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+  if (interfaceIdiom == UIUserInterfaceIdiomPad || UIUserInterfaceIdiomTV) {
+    headerHeight = isFormSheetModal ? formSheetModalHeight : 50;
+  } else if (isLandscape) {
+    headerHeight = 32;
+  } else {
+    headerHeight = isFormSheetModal ? formSheetModalHeight : 44;
   }
 
   return headerHeight + statusBarHeight;
