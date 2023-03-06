@@ -516,6 +516,12 @@ Boolean indicating whether to hide the search bar when scrolling.
 
 Defaults to `true`.
 
+#### `removeTitle` (iOS only)
+
+Boolean indicating whether to hide the title.
+
+Defaults to `false`.
+
 #### `inputType` (Android only)
 
 This prop is used to change type of the input and keyboard. Default value is `'text'`.
