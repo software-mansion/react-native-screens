@@ -395,4 +395,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
         toolbar.clipChildren = false
     }
+
+    companion object {
+        @JvmStatic
+        fun getDefaultHeaderHeight(width: Int, height: Int, topInset: Int, stackPresentation: Screen.StackPresentation): Int =
+            56 + topInset
+    }
 }
