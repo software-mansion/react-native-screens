@@ -49,6 +49,7 @@
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
+  _removeTitle = NO;
 }
 
 - (void)emitOnFocusEvent
@@ -141,6 +142,11 @@
 - (void)setHideWhenScrolling:(BOOL)hideWhenScrolling
 {
   _hideWhenScrolling = hideWhenScrolling;
+}
+
+- (void)setRemoveTitle:(BOOL)removeTitle
+{
+  _removeTitle = removeTitle;
 }
 
 - (void)setAutoCapitalize:(UITextAutocapitalizationType)autoCapitalize
@@ -361,6 +367,7 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_VIEW_PROPERTY(obscureBackground, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideNavigationBar, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideWhenScrolling, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(removeTitle, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(autoCapitalize, UITextAutocapitalizationType)
 RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)

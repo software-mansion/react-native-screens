@@ -645,4 +645,11 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean;
+   /**
+     * Places the search bar in the title
+     *
+     * @plaform ios
+     * @default false
+     */
+   removeTitle?:boolean;
 }

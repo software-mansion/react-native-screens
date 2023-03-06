@@ -17,6 +17,7 @@
 #endif
 
 @property (nonatomic) BOOL hideWhenScrolling;
+@property (nonatomic) BOOL removeTitle;
 
 @property (nonatomic, retain) UISearchController *controller;
 
