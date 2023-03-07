@@ -53,14 +53,6 @@
                       animated:(BOOL)animated
                     withConfig:(RNSScreenStackHeaderConfig *)config;
 
-+ (int)getDefaultHeaderHeightWithWidth:(int)layoutWidth
-                                height:(int)layoutHeight
-                              topInset:(int)topInset
-                     stackPresentation:(RNSScreenStackPresentation)stackPresentation;
-
-// static int getDefaultHeaderHeight(int layoutWidth, int layoutHeight, int topInset, RNSScreenStackPresentation
-// stackPresentation);
-
 @end
 
 @interface RNSScreenStackHeaderConfigManager : RCTViewManager
