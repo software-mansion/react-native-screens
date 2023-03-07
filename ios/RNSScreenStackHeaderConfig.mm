@@ -662,6 +662,36 @@ namespace rct = facebook::react;
   [self updateViewControllerIfNeeded];
 }
 
++ (int)getDefaultHeaderHeightWithWidth:(int)layoutWidth
+                                height:(int)layoutHeight
+                              topInset:(int)topInset
+                     stackPresentation:(RNSScreenStackPresentation)stackPresentation
+{
+  const int formSheetModalHeight{56};
+  int headerHeight{64};
+  int statusBarHeight = topInset;
+
+  const bool isLandscape = layoutWidth > layoutHeight;
+  const bool isFormSheetModal =
+      stackPresentation == RNSScreenStackPresentationModal || stackPresentation == RNSScreenStackPresentationFormSheet;
+
+  if (!isLandscape && isFormSheetModal) {
+    statusBarHeight = 0;
+  }
+
+  // check for isPad is TV
+  UIUserInterfaceIdiom interfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+  if (interfaceIdiom == UIUserInterfaceIdiomPad || interfaceIdiom == UIUserInterfaceIdiomTV) {
+    headerHeight = isFormSheetModal ? formSheetModalHeight : 50;
+  } else if (isLandscape) {
+    headerHeight = 32;
+  } else {
+    headerHeight = isFormSheetModal ? formSheetModalHeight : 44;
+  }
+
+  return headerHeight + statusBarHeight;
+}
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
