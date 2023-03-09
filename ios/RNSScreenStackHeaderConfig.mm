@@ -54,10 +54,9 @@ namespace rct = facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const rct::RNSScreenStackHeaderConfigProps>();
     _props = defaultProps;
-    self.hidden = YES;
     _show = YES;
     _translucent = NO;
-    _reactSubviews = [NSMutableArray new];
+    [self initProps];
   }
   return self;
 }
@@ -65,13 +64,18 @@ namespace rct = facebook::react;
 - (instancetype)init
 {
   if (self = [super init]) {
-    self.hidden = YES;
     _translucent = YES;
-    _reactSubviews = [NSMutableArray new];
+    [self initProps];
   }
   return self;
 }
 #endif
+
+- (void)initProps
+{
+  self.hidden = YES;
+  _reactSubviews = [NSMutableArray new];
+}
 
 - (UIView *)reactSuperview
 {
@@ -495,8 +499,8 @@ namespace rct = facebook::react;
                                                                                action:nil];
 
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
-
     prevItem.backBarButtonItem = backBarButtonItem;
+
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
