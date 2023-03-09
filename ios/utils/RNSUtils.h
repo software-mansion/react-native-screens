@@ -15,8 +15,6 @@ class RNSUtils final {
     int statusBarHeight = topInset;
 
     UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
-    // to jest risky, bo mogą być case'y w których dostaniemy nulle...
-    // więc mamy mniejsze reliability niż w kodzie JS"owym.
     if (@available(iOS 13.0, *)) {
       const auto orientation =
           [[[[[UIApplication sharedApplication] delegate] window] windowScene] interfaceOrientation];
