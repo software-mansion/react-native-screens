@@ -500,7 +500,7 @@ namespace rct = facebook::react;
   if (@available(iOS 14.0, *)) {
     // Make sure to set display mode to default.
     // This line resets back button display mode - especially needed on the Fabric architecture.
-    navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+    prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
 
     // When an whitespace only back title is passed set back button mode to minimal.
     if (!config.isBackButtonTitleVisible) {
@@ -535,7 +535,8 @@ namespace rct = facebook::react;
     if (config.isBackButtonTitleVisible) {
       prevItem.backBarButtonItem = backBarButtonItem;
     }
-    //    prevItem.titl
+
+    prevItem.backButtonTitle = backTitle;
 
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
