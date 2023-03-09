@@ -214,7 +214,7 @@ function renderHeaderConfig(
   const headerOptions: ScreenStackHeaderConfigProps = {
     backButtonInCustomView,
     backButtonTitleVisible: headerBackTitleVisible,
-    backTitle: headerBackTitleVisible === false ? '' : headerBackTitle,
+    backTitle: headerBackTitle,
     backTitleFontFamily: headerBackTitleStyle?.fontFamily,
     backTitleFontSize: headerBackTitleStyle?.fontSize,
     color: headerTintColor,
