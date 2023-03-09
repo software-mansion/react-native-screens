@@ -9,6 +9,12 @@
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSSearchBar.h"
 
+@interface NSString (RNSStringUtil)
+
++ (BOOL)RNSisBlank:(NSString *)string;
+
+@end
+
 @interface RNSScreenStackHeaderConfig :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView

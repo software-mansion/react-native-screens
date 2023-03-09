@@ -40,6 +40,18 @@ namespace rct = facebook::react;
 - (id<RCTImageCache>)imageCache;
 @end
 
+@implementation NSString (RNSStringUtil)
+
++ (BOOL)RNSisBlank:(NSString *)string
+{
+  if (string == nil) {
+    return YES;
+  }
+  return [[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0;
+}
+
+@end
+
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -476,6 +488,12 @@ namespace rct = facebook::react;
   }
 
 #if !TARGET_OS_TV
+  const auto isBackTitleBlank = [NSString RNSisBlank:config.backTitle] == YES;
+
+  NSLog(@"isBackButtonTitleVisible: %d\n", config.isBackButtonTitleVisible);
+  NSLog(@"isBackTitleBlank: %d\n", isBackTitleBlank);
+  NSLog(@"backTitle: %@\n", config.backTitle);
+
   // Fix for github.com/react-navigation/react-navigation/issues/11015
   // It allows to hide back button title and use back button menu as normal.
   // Back button display mode and back button menu are available since iOS 14.
@@ -484,30 +502,40 @@ namespace rct = facebook::react;
     // This line resets back button display mode - especially needed on the Fabric architecture.
     navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
 
-    NSString *trimmedBackTitle =
-        [config.backTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-
     // When an whitespace only back title is passed set back button mode to minimal.
-    if (config.backTitle != nil && [trimmedBackTitle length] == 0) {
-      navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
+    if (!config.isBackButtonTitleVisible) {
+      NSLog(@"Setting UINavigationItemBackButtonDisplayModeMinimal\n");
+      //      navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
+      prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
     }
   }
 
-  //  if ([NSString RNSisBlank:config.backTitle] == YES) {
-  //    if (@available(iOS 14.0, tvOS 14.0, *)) {
-  //      navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
-  //    }
-  //  }
-
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
       config.disableBackButtonMenu) {
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
+    NSString *backTitle = nil;
+    if (config.backButtonTitleVisible && !isBackTitleBlank) {
+      backTitle = config.backTitle;
+    }
+    if (config.backButtonTitleVisible && isBackTitleBlank) {
+      backTitle = prevItem.title;
+    }
+    if (!config.isBackButtonTitleVisible && !isBackTitleBlank) {
+      backTitle = config.backTitle;
+    }
+    if (!config.isBackButtonTitleVisible && isBackTitleBlank) {
+      backTitle = prevItem.title;
+    }
+    NSLog(@"FINAL backTitle: %@\n", backTitle);
+    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:backTitle
                                                                                 style:UIBarButtonItemStylePlain
                                                                                target:nil
                                                                                action:nil];
 
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
-    prevItem.backBarButtonItem = backBarButtonItem;
+    if (config.isBackButtonTitleVisible) {
+      prevItem.backBarButtonItem = backBarButtonItem;
+    }
+    //    prevItem.titl
 
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
