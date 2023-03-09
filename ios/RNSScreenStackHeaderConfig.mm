@@ -492,6 +492,12 @@ namespace rct = facebook::react;
     }
   }
 
+  //  if ([NSString RNSisBlank:config.backTitle] == YES) {
+  //    if (@available(iOS 14.0, tvOS 14.0, *)) {
+  //      navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
+  //    }
+  //  }
+
   if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
       config.disableBackButtonMenu) {
     RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
