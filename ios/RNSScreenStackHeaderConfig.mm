@@ -75,6 +75,7 @@ namespace rct = facebook::react;
 {
   self.hidden = YES;
   _reactSubviews = [NSMutableArray new];
+  _backButtonTitleVisible = YES;
 }
 
 - (UIView *)reactSuperview
