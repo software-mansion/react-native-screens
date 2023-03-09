@@ -16,8 +16,9 @@ class RNSUtils final {
 
     UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
     if (@available(iOS 13.0, *)) {
-      const auto orientation =
-          [[[[[UIApplication sharedApplication] delegate] window] windowScene] interfaceOrientation];
+      orientation = [[[[[UIApplication sharedApplication] delegate] window] windowScene] interfaceOrientation];
+    } else {
+      orientation = [[UIApplication sharedApplication] statusBarOrientation];
     }
     const bool isLandscape = UIInterfaceOrientationIsLandscape(orientation);
 
