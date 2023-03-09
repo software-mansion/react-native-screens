@@ -105,6 +105,7 @@ export default function HeaderConfig({
       backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
       backTitleFontFamily={backTitleFontFamily}
       backTitleFontSize={headerBackTitleStyle.fontSize}
+      backButtonTitleVisible={headerBackTitleVisible}
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
       direction={direction}

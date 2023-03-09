@@ -33,6 +33,7 @@
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;
+@property (nonatomic, getter=isBackButtonTitleVisible) BOOL backButtonTitleVisible;
 @property (nonatomic, retain) UIColor *backgroundColor;
 @property (nonatomic, retain) UIColor *color;
 @property (nonatomic) BOOL largeTitle;

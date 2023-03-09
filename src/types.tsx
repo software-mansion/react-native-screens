@@ -380,6 +380,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backButtonInCustomView?: boolean;
   /**
+   * @TODO
+   */
+  backButtonTitleVisible?: boolean;
+  /**
    * Controls the color of the navigation header.
    */
   backgroundColor?: string;
