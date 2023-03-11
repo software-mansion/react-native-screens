@@ -12,6 +12,7 @@ export interface NativeProps extends ViewProps {
   backTitle?: string;
   backTitleFontFamily?: string;
   backTitleFontSize?: Int32;
+  backTitleVisible?: WithDefault<boolean, 'true'>;
   color?: ColorValue;
   direction?: WithDefault<DirectionType, 'ltr'>;
   hidden?: boolean;
