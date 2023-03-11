@@ -488,55 +488,22 @@ namespace rct = facebook::react;
   }
 
 #if !TARGET_OS_TV
+
   const auto isBackTitleBlank = [NSString RNSisBlank:config.backTitle] == YES;
 
   NSLog(@"isBackButtonTitleVisible: %d\n", config.isBackButtonTitleVisible);
   NSLog(@"isBackTitleBlank: %d\n", isBackTitleBlank);
   NSLog(@"backTitle: %@\n", config.backTitle);
+  NSLog(@"disableBackButtonMenu: %d\n", config.disableBackButtonMenu);
 
-  // Fix for github.com/react-navigation/react-navigation/issues/11015
-  // It allows to hide back button title and use back button menu as normal.
-  // Back button display mode and back button menu are available since iOS 14.
-  if (@available(iOS 14.0, *)) {
-    // Make sure to set display mode to default.
-    // This line resets back button display mode - especially needed on the Fabric architecture.
-    prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+  if (config.isBackButtonTitleVisible) {
+    NSString *finalBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
 
-    // When an whitespace only back title is passed set back button mode to minimal.
-    if (!config.isBackButtonTitleVisible) {
-      NSLog(@"Setting UINavigationItemBackButtonDisplayModeMinimal\n");
-      //      navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
-      prevItem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
-    }
-  }
-
-  if (config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
-      config.disableBackButtonMenu) {
-    NSString *backTitle = nil;
-    if (config.backButtonTitleVisible && !isBackTitleBlank) {
-      backTitle = config.backTitle;
-    }
-    if (config.backButtonTitleVisible && isBackTitleBlank) {
-      backTitle = prevItem.title;
-    }
-    if (!config.isBackButtonTitleVisible && !isBackTitleBlank) {
-      backTitle = config.backTitle;
-    }
-    if (!config.isBackButtonTitleVisible && isBackTitleBlank) {
-      backTitle = prevItem.title;
-    }
-    NSLog(@"FINAL backTitle: %@\n", backTitle);
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:backTitle
+    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:finalBackTitle
                                                                                 style:UIBarButtonItemStylePlain
                                                                                target:nil
                                                                                action:nil];
-
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
-    if (config.isBackButtonTitleVisible) {
-      prevItem.backBarButtonItem = backBarButtonItem;
-    }
-
-    prevItem.backButtonTitle = backTitle;
 
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
@@ -552,10 +519,21 @@ namespace rct = facebook::react;
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
-      [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
+      [self setTitleAttibutes:attrs forButton:backBarButtonItem];
     }
+
+    prevItem.backBarButtonItem = backBarButtonItem;
   } else {
-    prevItem.backBarButtonItem = nil;
+    // back button title should be not visible next to back button,
+    // but it should still appear in back menu (if one is enabled)
+
+    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:nil
+                                                                                style:UIBarButtonItemStylePlain
+                                                                               target:nil
+                                                                               action:nil];
+    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
+    prevItem.backBarButtonItem = backBarButtonItem;
+    prevItem.backButtonTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
   }
 
   if (@available(iOS 11.0, *)) {
