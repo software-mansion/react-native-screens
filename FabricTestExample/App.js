@@ -84,6 +84,7 @@ import Test1476 from './src/Test1476';
 import Test1646 from './src/Test1646';
 import Test1649 from './src/Test1649';
 import Test1683 from './src/Test1683';
+import Test1726 from './src/Test1726';
 
 enableFreeze(true);
 
