@@ -380,10 +380,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backButtonInCustomView?: boolean;
   /**
-   * @TODO
-   */
-  backButtonTitleVisible?: boolean;
-  /**
    * Controls the color of the navigation header.
    */
   backgroundColor?: string;
@@ -402,6 +398,10 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @platform ios
    */
   backTitleFontSize?: number;
+  /**
+   * @TODO
+   */
+  backTitleVisible?: boolean;
   /**
    * Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
    * @platform ios

@@ -87,7 +87,7 @@ namespace rct = facebook::react;
 {
   self.hidden = YES;
   _reactSubviews = [NSMutableArray new];
-  _backButtonTitleVisible = YES;
+  _backTitleVisible = YES;
 }
 
 - (UIView *)reactSuperview
@@ -496,7 +496,7 @@ namespace rct = facebook::react;
                                                                              action:nil];
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-  if (config.isBackButtonTitleVisible) {
+  if (config.isBackTitleVisible) {
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
@@ -881,7 +881,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
-RCT_EXPORT_VIEW_PROPERTY(backButtonTitleVisible, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(backTitleVisible, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(blurEffect, UIBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)
