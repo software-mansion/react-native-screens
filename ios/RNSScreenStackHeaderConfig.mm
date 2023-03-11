@@ -489,16 +489,14 @@ namespace rct = facebook::react;
 
 #if !TARGET_OS_TV
   const auto isBackTitleBlank = [NSString RNSisBlank:config.backTitle] == YES;
+  NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+  RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:nil
+                                                                             action:nil];
+  [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
   if (config.isBackButtonTitleVisible) {
-    NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
-
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
-                                                                                style:UIBarButtonItemStylePlain
-                                                                               target:nil
-                                                                               action:nil];
-    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
-
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
@@ -515,21 +513,16 @@ namespace rct = facebook::react;
       }
       [self setTitleAttibutes:attrs forButton:backBarButtonItem];
     }
-
-    prevItem.backBarButtonItem = backBarButtonItem;
   } else {
     // back button title should be not visible next to back button,
     // but it should still appear in back menu (if one is enabled)
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:nil
-                                                                                style:UIBarButtonItemStylePlain
-                                                                               target:nil
-                                                                               action:nil];
-    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
-    prevItem.backBarButtonItem = backBarButtonItem;
 
-    // When backBarButtonItem's title is null, back menu will use this value
-    prevItem.backButtonTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+    // When backBarButtonItem's title is null, back menu will use value
+    // of backButtonTitle
+    [backBarButtonItem setTitle:nil];
+    prevItem.backButtonTitle = resolvedBackTitle;
   }
+  prevItem.backBarButtonItem = backBarButtonItem;
 
   if (@available(iOS 11.0, *)) {
     if (config.largeTitle) {
