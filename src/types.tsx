@@ -399,7 +399,8 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backTitleFontSize?: number;
   /**
-   * @TODO
+   * Whether the back button title should be visible or not. Defaults to `true`.
+   * @platform ios
    */
   backTitleVisible?: boolean;
   /**
