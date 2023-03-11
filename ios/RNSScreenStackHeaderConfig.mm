@@ -488,18 +488,12 @@ namespace rct = facebook::react;
   }
 
 #if !TARGET_OS_TV
-
   const auto isBackTitleBlank = [NSString RNSisBlank:config.backTitle] == YES;
 
-  NSLog(@"isBackButtonTitleVisible: %d\n", config.isBackButtonTitleVisible);
-  NSLog(@"isBackTitleBlank: %d\n", isBackTitleBlank);
-  NSLog(@"backTitle: %@\n", config.backTitle);
-  NSLog(@"disableBackButtonMenu: %d\n", config.disableBackButtonMenu);
-
   if (config.isBackButtonTitleVisible) {
-    NSString *finalBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+    NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
 
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:finalBackTitle
+    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
                                                                                 style:UIBarButtonItemStylePlain
                                                                                target:nil
                                                                                action:nil];
@@ -526,13 +520,14 @@ namespace rct = facebook::react;
   } else {
     // back button title should be not visible next to back button,
     // but it should still appear in back menu (if one is enabled)
-
     RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:nil
                                                                                 style:UIBarButtonItemStylePlain
                                                                                target:nil
                                                                                action:nil];
     [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
     prevItem.backBarButtonItem = backBarButtonItem;
+
+    // When backBarButtonItem's title is null, back menu will use this value
     prevItem.backButtonTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
   }
 
