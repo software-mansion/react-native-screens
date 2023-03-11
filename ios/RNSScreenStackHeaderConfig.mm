@@ -810,6 +810,8 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
     _direction = [self getDirectionPropValue:newScreenProps.direction];
   }
 
+  _backTitleVisible = newScreenProps.backTitleVisible;
+
   // We cannot compare SharedColor because it is shared value.
   // We could compare color value, but it is more performant to just assign new value
   _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
