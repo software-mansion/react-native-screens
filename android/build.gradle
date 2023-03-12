@@ -46,6 +46,8 @@ def reactNativeArchitectures() {
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
 
+    namespace "com.swmansion.rnscreens"
+
     // Used to override the NDK path/version on internal CI or by allowing
     // users to customize the NDK path/version from their root project (e.g. for M1 support)
     if (rootProject.hasProperty("ndkPath")) {
