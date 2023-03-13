@@ -597,13 +597,13 @@ namespace rct = facebook::react;
 #if !TARGET_OS_TV
           if (@available(iOS 11.0, *)) {
             RNSSearchBar *searchBar = subview.subviews[0];
-            if(searchBar.removeTitle) {
+            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+
+            if(searchBar.hideTitle) {
               [navitem.searchController.searchBar sizeToFit];
               navitem.titleView = searchBar.controller.searchBar;
-              searchBar.controller.hidesNavigationBarDuringPresentation = false;
             } else {
               navitem.searchController = searchBar.controller;
-              navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
             }
           }
 #endif

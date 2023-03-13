@@ -516,7 +516,7 @@ Boolean indicating whether to hide the search bar when scrolling.
 
 Defaults to `true`.
 
-#### `removeTitle` (iOS only)
+#### `hideTitle` (iOS only)
 
 Boolean indicating whether to hide the title.
 
