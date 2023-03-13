@@ -162,6 +162,10 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
         logNotAvailable("backTitleFontSize")
     }
 
+    override fun setBackTitleVisible(view: ScreenStackHeaderConfig?, value: Boolean) {
+        logNotAvailable("backTitleVisible")
+    }
+
     override fun setLargeTitle(view: ScreenStackHeaderConfig?, value: Boolean) {
         logNotAvailable("largeTitle")
     }

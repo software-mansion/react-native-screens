@@ -1,5 +1,6 @@
 import {NavigationContainer, useRoute} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+// import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import * as React from 'react';
 import {Button, View} from 'react-native';
 
@@ -11,6 +12,8 @@ export default function App() {
       <Stack.Navigator
         screenOptions={{
           headerBackTitleVisible: false,
+          // headerBackTitle: 'NavHeader',
+          // disableBackButtonMenu: true,
         }}>
         <Stack.Screen
           name="Screen"
@@ -28,6 +31,10 @@ function Screen({navigation}: any) {
 
   // React.useEffect(() => {
   //   navigation.setOptions({headerBackTitleVisible: count % 2 === 0});
+  // }, [count, navigation]);
+
+  // React.useEffect(() => {
+  //   navigation.setOptions({headerBackTitle: `Custom ${count}`})
   // }, [count, navigation]);
 
   return (

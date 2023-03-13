@@ -421,6 +421,10 @@ Allows for customizing font family to be used for back button title on iOS.
 
 Allows for customizing font size to be used for back button title on iOS.
 
+### `backTitleVisible (iOS only)
+
+Whether the back button title should be visible. Defaults to `true`.
+
 ### `blurEffect` (iOS only)
 
 Blur effect to be applied to the header. Works with `backgroundColor`'s alpha < 1.

@@ -40,6 +40,18 @@ namespace rct = facebook::react;
 - (id<RCTImageCache>)imageCache;
 @end
 
+@implementation NSString (RNSStringUtil)
+
++ (BOOL)RNSisBlank:(NSString *)string
+{
+  if (string == nil) {
+    return YES;
+  }
+  return [[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0;
+}
+
+@end
+
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -54,10 +66,9 @@ namespace rct = facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const rct::RNSScreenStackHeaderConfigProps>();
     _props = defaultProps;
-    self.hidden = YES;
     _show = YES;
     _translucent = NO;
-    _reactSubviews = [NSMutableArray new];
+    [self initProps];
   }
   return self;
 }
@@ -65,13 +76,19 @@ namespace rct = facebook::react;
 - (instancetype)init
 {
   if (self = [super init]) {
-    self.hidden = YES;
     _translucent = YES;
-    _reactSubviews = [NSMutableArray new];
+    [self initProps];
   }
   return self;
 }
 #endif
+
+- (void)initProps
+{
+  self.hidden = YES;
+  _reactSubviews = [NSMutableArray new];
+  _backTitleVisible = YES;
+}
 
 - (UIView *)reactSuperview
 {
@@ -471,32 +488,15 @@ namespace rct = facebook::react;
   }
 
 #if !TARGET_OS_TV
-  // Fix for github.com/react-navigation/react-navigation/issues/11015
-  // It allows to hide back button title and use back button menu as normal.
-  // Back button display mode and back button menu are available since iOS 14.
-  if (@available(iOS 14.0, *)) {
-    // Make sure to set display mode to default.
-    // This line resets back button display mode - especially needed on the Fabric architecture.
-    navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+  const auto isBackTitleBlank = [NSString RNSisBlank:config.backTitle] == YES;
+  NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+  RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:nil
+                                                                             action:nil];
+  [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-    NSString *trimmedBackTitle =
-        [config.backTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-
-    // When an whitespace only back title is passed set back button mode to minimal.
-    if (config.backTitle != nil && [trimmedBackTitle length] == 0) {
-      navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
-    }
-  } else if (
-      config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
-      config.disableBackButtonMenu) {
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
-                                                                                style:UIBarButtonItemStylePlain
-                                                                               target:nil
-                                                                               action:nil];
-
-    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
-
-    prevItem.backBarButtonItem = backBarButtonItem;
+  if (config.isBackTitleVisible) {
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
@@ -511,11 +511,18 @@ namespace rct = facebook::react;
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
-      [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
+      [self setTitleAttibutes:attrs forButton:backBarButtonItem];
     }
   } else {
-    prevItem.backBarButtonItem = nil;
+    // back button title should be not visible next to back button,
+    // but it should still appear in back menu (if one is enabled)
+
+    // When backBarButtonItem's title is null, back menu will use value
+    // of backButtonTitle
+    [backBarButtonItem setTitle:nil];
+    prevItem.backButtonTitle = resolvedBackTitle;
   }
+  prevItem.backBarButtonItem = backBarButtonItem;
 
   if (@available(iOS 11.0, *)) {
     if (config.largeTitle) {
@@ -803,6 +810,8 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
     _direction = [self getDirectionPropValue:newScreenProps.direction];
   }
 
+  _backTitleVisible = newScreenProps.backTitleVisible;
+
   // We cannot compare SharedColor because it is shared value.
   // We could compare color value, but it is more performant to just assign new value
   _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
@@ -874,6 +883,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(backTitleVisible, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(blurEffect, UIBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)

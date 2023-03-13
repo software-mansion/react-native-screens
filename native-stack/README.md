@@ -102,7 +102,7 @@ gestureResponseDistance: {
 
 #### `headerBackTitle`
 
-Title string used by the back button on iOS. Defaults to the previous scene's `headerTitle`.
+Title string used by the back button on iOS. Defaults to the previous scene's `headerTitle` when not set or set to whitespace only value.
 
 #### `headerBackTitleStyle`
 

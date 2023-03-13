@@ -399,6 +399,11 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backTitleFontSize?: number;
   /**
+   * Whether the back button title should be visible or not. Defaults to `true`.
+   * @platform ios
+   */
+  backTitleVisible?: boolean;
+  /**
    * Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
    * @platform ios
    */

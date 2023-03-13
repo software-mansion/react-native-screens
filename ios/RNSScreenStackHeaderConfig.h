@@ -9,6 +9,12 @@
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSSearchBar.h"
 
+@interface NSString (RNSStringUtil)
+
++ (BOOL)RNSisBlank:(NSString *)string;
+
+@end
+
 @interface RNSScreenStackHeaderConfig :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView
@@ -33,6 +39,7 @@
 @property (nonatomic, retain) NSString *backTitle;
 @property (nonatomic, retain) NSString *backTitleFontFamily;
 @property (nonatomic, retain) NSNumber *backTitleFontSize;
+@property (nonatomic, getter=isBackTitleVisible) BOOL backTitleVisible;
 @property (nonatomic, retain) UIColor *backgroundColor;
 @property (nonatomic, retain) UIColor *color;
 @property (nonatomic) BOOL largeTitle;

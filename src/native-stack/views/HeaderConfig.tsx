@@ -102,9 +102,10 @@ export default function HeaderConfig({
       backgroundColor={
         headerStyle.backgroundColor ? headerStyle.backgroundColor : colors.card
       }
-      backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
+      backTitle={headerBackTitle}
       backTitleFontFamily={backTitleFontFamily}
       backTitleFontSize={headerBackTitleStyle.fontSize}
+      backTitleVisible={headerBackTitleVisible}
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
       direction={direction}
