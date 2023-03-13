@@ -651,5 +651,5 @@ export interface SearchBarProps {
      * @plaform ios
      * @default false
      */
-   removeTitle?:boolean;
+   hideTitle?:boolean;
 }
