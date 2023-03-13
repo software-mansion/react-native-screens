@@ -602,6 +602,7 @@ namespace rct = facebook::react;
             if (searchBar.hideTitle) {
               [navitem.searchController.searchBar sizeToFit];
               navitem.titleView = searchBar.controller.searchBar;
+              searchBar.controller.hidesNavigationBarDuringPresentation = false;
             } else {
               navitem.searchController = searchBar.controller;
             }
