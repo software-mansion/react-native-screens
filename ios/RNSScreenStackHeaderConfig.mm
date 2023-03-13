@@ -599,7 +599,7 @@ namespace rct = facebook::react;
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 
-            if(searchBar.hideTitle) {
+            if (searchBar.hideTitle) {
               [navitem.searchController.searchBar sizeToFit];
               navitem.titleView = searchBar.controller.searchBar;
             } else {
