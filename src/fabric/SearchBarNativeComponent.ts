@@ -61,7 +61,13 @@ interface NativeCommands {
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['blur', 'focus', 'clearText', 'toggleCancelButton'],
+  supportedCommands: [
+    'blur',
+    'focus',
+    'clearText',
+    'toggleCancelButton',
+    'setText',
+  ],
 });
 
 export default codegenNativeComponent<NativeProps>('RNSSearchBar', {});
