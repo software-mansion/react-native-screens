@@ -152,6 +152,13 @@
     UIInterfaceOrientation currentDeviceOrientation =
         [RNSScreenWindowTraits interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
     UIInterfaceOrientation currentInterfaceOrientation = [RNSScreenWindowTraits interfaceOrientation];
+    NSLog(
+        @"[RNSScreenWindowTraits] REFERENCE Up: %ld, Left: %ld, Rigth: %ld, Unknown: %ld\n",
+        UIInterfaceOrientationPortrait,
+        UIInterfaceOrientationLandscapeLeft,
+        UIInterfaceOrientationLandscapeRight,
+        UIInterfaceOrientationUnknown);
+    NSLog(@"[RNSScreenWindowTraits] currentInterfaceOrientation: %ld\n", currentInterfaceOrientation);
     UIInterfaceOrientation newOrientation = UIInterfaceOrientationUnknown;
     if ([RNSScreenWindowTraits maskFromOrientation:currentDeviceOrientation] & orientationMask) {
       if (!([RNSScreenWindowTraits maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
@@ -173,7 +180,12 @@
         // if the device orientation is not in the mask, but interface orientation is in the mask, do nothing
       }
     }
+    NSLog(@"[RNSScreenWindowTraits] newOrientation: %ld\n", newOrientation);
     if (newOrientation != UIInterfaceOrientationUnknown) {
+      NSLog(
+          @"[RNSScreenWindowTraits] Attempting to change orientation from %ld to %ld\n",
+          currentInterfaceOrientation,
+          newOrientation);
       if (@available(iOS 16.0, *)) {
         NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
         UIWindowScene *scene = (UIWindowScene *)array[0];
