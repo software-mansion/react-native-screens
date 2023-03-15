@@ -146,19 +146,19 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
-    onChangeText: (e: NativeSyntheticEvent<{text: string}>) => console.warn(`Text changed to ${e.nativeEvent.text}`),
+    onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
+      console.warn(`Text changed to ${e.nativeEvent.text}`),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),
     onFocus: () => console.warn('onFocus event'),
     onBlur: () => console.warn('onBlur event'),
-  }
+  };
 
   React.useEffect(() => {
     navigation.setOptions({
-      searchBar: searchBarProps
-    })
+      searchBar: searchBarProps,
+    });
   }, [navigation]);
-
 
   return (
     <ScrollView
@@ -172,7 +172,7 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
         title="Focus search bar"
         onPress={() => searchBarRef.current?.focus()}
       />
-      <Button 
+      <Button
         title="Remove focus from search bar"
         onPress={() => searchBarRef.current?.blur()}
       />
@@ -189,6 +189,10 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
         onPress={() => searchBarRef.current?.toggleCancelButton(false)}
       />
       <Button
+        title="Set 'sometext' text"
+        onPress={() => searchBarRef.current?.setText('sometext')}
+      />
+      <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('First')}
       />
@@ -197,5 +201,5 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
         onPress={() => searchBarRef.current?.focus()}
       />
     </ScrollView>
-  )
+  );
 }
