@@ -12,6 +12,7 @@ export type SearchBarCommands = {
   blur: () => void;
   clearText: () => void;
   toggleCancelButton: (show: boolean) => void;
+  setText: (text: string) => void;
 };
 
 export type StackPresentationTypes =
