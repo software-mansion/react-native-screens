@@ -97,6 +97,7 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
             "blur" -> root.handleBlurJsRequest()
             "clearText" -> root.handleClearTextJsRequest()
             "toggleCancelButton" -> root.handleToggleCancelButtonJsRequest(false) // just a dummy argument
+            "setText" -> root.handleSetTextJsRequest(args?.getString(0))
             else -> throw JSApplicationIllegalArgumentException("Unsupported native command received: $commandId")
         }
     }

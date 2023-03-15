@@ -137,6 +137,10 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     fun handleToggleCancelButtonJsRequest(flag: Boolean) = Unit
 
+    fun handleSetTextJsRequest(text: String?) {
+        text?.let { screenStackFragment?.searchView?.setText(it) }
+    }
+
     enum class SearchBarAutoCapitalize {
         NONE, WORDS, SENTENCES, CHARACTERS
     }
