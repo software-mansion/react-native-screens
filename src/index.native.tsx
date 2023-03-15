@@ -455,6 +455,12 @@ class SearchBar extends React.Component<SearchBarProps> {
     );
   }
 
+  setText(text: string) {
+    this._callMethodWithRef((ref) =>
+      ScreensNativeModules.NativeSearchBarCommands.setText(ref, text)
+    );
+  }
+
   render() {
     if (!isSearchBarAvailableForCurrentPlatform) {
       console.warn(
