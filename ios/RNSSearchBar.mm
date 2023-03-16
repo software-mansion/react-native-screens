@@ -278,6 +278,11 @@
 #endif
 }
 
+- (void)setText:(NSString *)text
+{
+  [_controller.searchBar setText:text];
+}
+
 #pragma mark-- Fabric specific
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -405,6 +410,14 @@ RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
     [searchBar toggleCancelButton:flag];
+  }];
+}
+
+RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar setText:text];
   }];
 }
 

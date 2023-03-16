@@ -90,6 +90,10 @@ type SearchBarCommandsType = {
     viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>,
     flag: boolean
   ) => void;
+  setText: (
+    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>,
+    text: string
+  ) => void;
 };
 
 // We initialize these lazily so that importing the module doesn't throw error when not linked
@@ -448,6 +452,12 @@ class SearchBar extends React.Component<SearchBarProps> {
   clearText() {
     this._callMethodWithRef((ref) =>
       ScreensNativeModules.NativeSearchBarCommands.clearText(ref)
+    );
+  }
+
+  setText(text: string) {
+    this._callMethodWithRef((ref) =>
+      ScreensNativeModules.NativeSearchBarCommands.setText(ref, text)
     );
   }
 
