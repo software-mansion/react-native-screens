@@ -149,6 +149,7 @@
     {
       orientationMask = UIApplication.sharedApplication.keyWindow.rootViewController.supportedInterfaceOrientations;
     }
+
     UIInterfaceOrientation currentDeviceOrientation =
         [RNSScreenWindowTraits interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
     UIInterfaceOrientation currentInterfaceOrientation = [RNSScreenWindowTraits interfaceOrientation];
@@ -159,6 +160,7 @@
         UIInterfaceOrientationLandscapeRight,
         UIInterfaceOrientationUnknown);
     NSLog(@"[RNSScreenWindowTraits] currentInterfaceOrientation: %ld\n", currentInterfaceOrientation);
+    NSLog(@"[RNSScreenWindowTraits] currentDeviceOrientation: %ld\n", currentDeviceOrientation);
     UIInterfaceOrientation newOrientation = UIInterfaceOrientationUnknown;
     if ([RNSScreenWindowTraits maskFromOrientation:currentDeviceOrientation] & orientationMask) {
       if (!([RNSScreenWindowTraits maskFromOrientation:currentInterfaceOrientation] & orientationMask)) {
@@ -226,19 +228,38 @@
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
+  if (@available(iOS 16.0, *)) {
+    NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
+    UIWindowScene *scene = (UIWindowScene *)array[0];
+    if (scene != nil) {
+      NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 16.0 returning %ld\n", scene.interfaceOrientation);
+      return scene.interfaceOrientation;
+    } else {
+      NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 16.0 returning %ld\n", UIInterfaceOrientationUnknown);
+      return UIInterfaceOrientationUnknown;
+    }
+    //    return scene == nil ? UIInterfaceOrientationUnknown : scene.interfaceOrientation;
+  } else
+
+      if (@available(iOS 13.0, *)) {
     UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
     if (firstWindow == nil) {
+      NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 13.0 returning %ld\n", UIInterfaceOrientationUnknown);
       return UIInterfaceOrientationUnknown;
     }
     UIWindowScene *windowScene = firstWindow.windowScene;
     if (windowScene == nil) {
+      NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 13.0 returning %ld\n", UIInterfaceOrientationUnknown);
       return UIInterfaceOrientationUnknown;
     }
+    NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 13.0 returning %ld\n", windowScene.interfaceOrientation);
     return windowScene.interfaceOrientation;
   } else
 #endif
   {
+    NSLog(
+        @"[RNSScreenWindowTraits#interfaceOrientation] default returning %ld\n",
+        UIApplication.sharedApplication.statusBarOrientation);
     return UIApplication.sharedApplication.statusBarOrientation;
   }
 }
