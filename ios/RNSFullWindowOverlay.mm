@@ -15,6 +15,15 @@
 
 @implementation RNSFullWindowOverlayContainer
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  self = [super initWithFrame:frame];
+  if (self) {
+    self.accessibilityViewIsModal = YES;
+  }
+  return self;
+}
+
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
   for (UIView *view in [self subviews]) {
@@ -127,6 +136,9 @@
       [_touchHandler detachFromView:_container];
     }
   } else {
+    if (_container != nil) {
+      UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, _container);
+    }
     if (_touchHandler == nil) {
 #ifdef RCT_NEW_ARCH_ENABLED
       _touchHandler = [RCTSurfaceTouchHandler new];
