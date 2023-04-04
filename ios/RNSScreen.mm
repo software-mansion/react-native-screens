@@ -1268,6 +1268,8 @@ RCT_EXPORT_VIEW_PROPERTY(stackAnimation, RNSScreenStackAnimation)
 RCT_EXPORT_VIEW_PROPERTY(swipeDirection, RNSScreenSwipeDirection)
 RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 
+RCT_EXPORT_VIEW_PROPERTY(reanimatedTransition, BOOL)
+
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);

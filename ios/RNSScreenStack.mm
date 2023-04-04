@@ -18,6 +18,7 @@
 #import <React/RCTUIManagerUtils.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSReanimatedDelegate.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
@@ -560,6 +561,7 @@
                                                fromViewController:(UIViewController *)fromVC
                                                  toViewController:(UIViewController *)toVC
 {
+  return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   RNSScreenView *screen;
   if (operation == UINavigationControllerOperationPush) {
     screen = ((RNSScreen *)toVC).screenView;
@@ -668,6 +670,18 @@
 
 - (void)handleSwipe:(UIPanGestureRecognizer *)gestureRecognizer
 {
+  if (gestureRecognizer.state == UIGestureRecognizerStateBegan && _reactSubviews.lastObject.reanimatedTransition) {
+    _interactionController = [UIPercentDrivenInteractiveTransition new];
+    [RNSReanimatedDelegate
+        onTransitionStartWithController:_interactionController
+                      gestureRecognizer:gestureRecognizer
+                              sourceTag:_reactSubviews.lastObject.reactTag
+                              targetTag:[_reactSubviews objectAtIndex:(_reactSubviews.count - 1)].reactTag];
+    return;
+  }
+  if (_reactSubviews.lastObject.reanimatedTransition) {
+    return; // reanimated takes care of it now
+  }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
   float translation;
   float velocity;
@@ -727,6 +741,35 @@
                          interactionControllerForAnimationController:
                              (id<UIViewControllerAnimatedTransitioning>)animationController
 {
+  //    if ([(RNSScreenStackAnimator *)animationController operation] == UINavigationControllerOperationPush) {
+  //        if (_reactSubviews.lastObject.reanimatedTransition) {
+  //            _interactionController = [UIPercentDrivenInteractiveTransition new];
+  //            NSNumber *sourceTag = [_reactSubviews objectAtIndex:(_reactSubviews.count - 2)].reactTag;
+  //            NSNumber *targetTag = _reactSubviews.lastObject.reactTag;
+  //            [RNSReanimatedDelegate onTransitionStartWithController:_interactionController gestureRecognizer:nil
+  //            sourceTag:sourceTag targetTag:targetTag];
+  //        }
+  //    } else {
+  //        // it can be either dismissal from JS with navigation or native with header back button
+  //        // so we cannot use _reactSubviews since they differ in those cases
+  //        if (((RNSScreenView *)_controller.topViewController.view).reanimatedTransition) {
+  //            _interactionController = [UIPercentDrivenInteractiveTransition new];
+  //            NSNumber *sourceTag = ((RNSScreenView *)_controller.topViewController.view).reactTag;
+  //            NSNumber *targetTag = ((RNSScreenView *)[_controller.viewControllers lastObject]).reactTag;
+  //            [RNSReanimatedDelegate onTransitionStartWithController:_interactionController gestureRecognizer:nil
+  //            sourceTag:sourceTag targetTag:targetTag];
+  //        }
+  //    }
+  RNSScreenView *sourceView = [_controller.transitionCoordinator viewForKey:UITransitionContextFromViewKey];
+  RNSScreenView *targetView = [_controller.transitionCoordinator viewForKey:UITransitionContextToViewKey];
+  if (_interactionController == nil && sourceView.reanimatedTransition) {
+    _interactionController = [UIPercentDrivenInteractiveTransition new];
+    [RNSReanimatedDelegate
+        onTransitionStartWithController:_interactionController
+                      gestureRecognizer:nil
+                              sourceTag:sourceView.reactTag
+                              targetTag:((RNSScreenStackAnimator *)animationController).targetView.reactTag];
+  }
   return _interactionController;
 }
 
