@@ -374,13 +374,9 @@ namespace rct = facebook::react;
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  // TODO: implement blurEffect on Fabric
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
   }
-#endif
 
   if (config.hideShadow) {
     appearance.shadowColor = nil;
@@ -761,6 +757,75 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
   }
 }
 
+- (UIBlurEffectStyle)getBlurEffectPropValue:(rct::RNSScreenStackHeaderConfigBlurEffect)blurEffect
+{
+#if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    switch (blurEffect) {
+      case rct::RNSScreenStackHeaderConfigBlurEffect::ExtraLight:
+        return UIBlurEffectStyleExtraLight;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::Light:
+        return UIBlurEffectStyleLight;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::Dark:
+        return UIBlurEffectStyleDark;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::Regular:
+        return UIBlurEffectStyleRegular;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::Prominent:
+        return UIBlurEffectStyleProminent;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterial:
+        return UIBlurEffectStyleSystemUltraThinMaterial;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterial:
+        return UIBlurEffectStyleSystemThinMaterial;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemMaterial:
+        return UIBlurEffectStyleSystemMaterial;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterial:
+        return UIBlurEffectStyleSystemThickMaterial;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterial:
+        return UIBlurEffectStyleSystemChromeMaterial;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterialLight:
+        return UIBlurEffectStyleSystemUltraThinMaterialLight;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterialLight:
+        return UIBlurEffectStyleSystemThinMaterialLight;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemMaterialLight:
+        return UIBlurEffectStyleSystemMaterialLight;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterialLight:
+        return UIBlurEffectStyleSystemThickMaterialLight;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterialLight:
+        return UIBlurEffectStyleSystemChromeMaterialLight;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterialDark:
+        return UIBlurEffectStyleSystemUltraThinMaterialDark;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterialDark:
+        return UIBlurEffectStyleSystemThinMaterialDark;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemMaterialDark:
+        return UIBlurEffectStyleSystemMaterialDark;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterialDark:
+        return UIBlurEffectStyleSystemThickMaterialDark;
+      case rct::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterialDark:
+        return UIBlurEffectStyleSystemChromeMaterialDark;
+    }
+  }
+#endif
+
+  if (@available(iOS 10.0, *)) {
+    if (blurEffect == rct::RNSScreenStackHeaderConfigBlurEffect::Regular) {
+      return UIBlurEffectStyleRegular;
+    }
+    if (blurEffect == rct::RNSScreenStackHeaderConfigBlurEffect::Prominent) {
+      return UIBlurEffectStyleProminent;
+    }
+  }
+
+  if (blurEffect == rct::RNSScreenStackHeaderConfigBlurEffect::Light) {
+    return UIBlurEffectStyleLight;
+  }
+  if (blurEffect == rct::RNSScreenStackHeaderConfigBlurEffect::Dark) {
+    return UIBlurEffectStyleDark;
+  }
+
+  return UIBlurEffectStyleExtraLight;
+}
+
 - (void)updateProps:(rct::Props::Shared const &)props oldProps:(rct::Props::Shared const &)oldProps
 {
   const auto &oldScreenProps = *std::static_pointer_cast<const rct::RNSScreenStackHeaderConfigProps>(_props);
@@ -808,6 +873,10 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
 
   if (newScreenProps.direction != oldScreenProps.direction) {
     _direction = [self getDirectionPropValue:newScreenProps.direction];
+  }
+
+  if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
+    _blurEffect = [self getBlurEffectPropValue:newScreenProps.blurEffect];
   }
 
   _backTitleVisible = newScreenProps.backTitleVisible;

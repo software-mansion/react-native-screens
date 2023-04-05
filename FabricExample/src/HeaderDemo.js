@@ -13,6 +13,31 @@ import {SettingsNumberInput} from './shared/SettingsNumberInput';
 
 const COLORS_FOR_PICKER = [PRIMARY, SECONDARY, WHITE, BLACK];
 
+const NONE_EFFECT = '-';
+const HEADER_BLUR_EFFECTS = [
+  NONE_EFFECT,
+  'extraLight',
+  'light',
+  'dark',
+  'regular',
+  'prominent',
+  'systemUltraThinMaterial',
+  'systemThinMaterial',
+  'systemMaterial',
+  'systemThickMaterial',
+  'systemChromeMaterial',
+  'systemUltraThinMaterialLight',
+  'systemThinMaterialLight',
+  'systemMaterialLight',
+  'systemThickMaterialLight',
+  'systemChromeMaterialLight',
+  'systemUltraThinMaterialDark',
+  'systemThinMaterialDark',
+  'systemMaterialDark',
+  'systemThickMaterialDark',
+  'systemChromeMaterialDark',
+];
+
 export default function HeaderDemo({navigation}) {
   const [headerTitle, setHeaderTitle] = useState('Settings');
   // const [backButtonVisible, setBackButtonVisible] = useState(true);
@@ -26,6 +51,7 @@ export default function HeaderDemo({navigation}) {
   const [headerColor, setHeaderColor] = useState(WHITE);
   const [fontSize, setFontSize] = useState();
   const [largeFontSize, setLargeFontSize] = useState();
+  const [headerBlurEffect, setHeaderBlurEffect] = useState(NONE_EFFECT);
 
   const square = props => <Square {...props} color="green" size={20} />;
 
@@ -49,6 +75,8 @@ export default function HeaderDemo({navigation}) {
       headerLargeTitleStyle: {
         fontSize: largeFontSize,
       },
+      headerBlurEffect:
+        headerBlurEffect === NONE_EFFECT ? undefined : headerBlurEffect,
       headerTitleStyle: {
         fontSize,
       },
@@ -68,6 +96,7 @@ export default function HeaderDemo({navigation}) {
     headerColor,
     fontSize,
     largeFontSize,
+    headerBlurEffect,
   ]);
 
   return (
@@ -132,6 +161,12 @@ export default function HeaderDemo({navigation}) {
         label="Header back title"
         value={headerBackTitle}
         onValueChange={setHeaderBackTitle}
+      />
+      <SettingsPicker
+        label="Header blur effect"
+        value={headerBlurEffect ?? NONE_EFFECT}
+        items={HEADER_BLUR_EFFECTS}
+        onValueChange={setHeaderBlurEffect}
       />
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </ScrollView>

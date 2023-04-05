@@ -6,6 +6,27 @@ import type {
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 type DirectionType = 'rtl' | 'ltr';
+type BlurEffectTypes =
+  | 'extraLight'
+  | 'light'
+  | 'dark'
+  | 'regular'
+  | 'prominent'
+  | 'systemUltraThinMaterial'
+  | 'systemThinMaterial'
+  | 'systemMaterial'
+  | 'systemThickMaterial'
+  | 'systemChromeMaterial'
+  | 'systemUltraThinMaterialLight'
+  | 'systemThinMaterialLight'
+  | 'systemMaterialLight'
+  | 'systemThickMaterialLight'
+  | 'systemChromeMaterialLight'
+  | 'systemUltraThinMaterialDark'
+  | 'systemThinMaterialDark'
+  | 'systemMaterialDark'
+  | 'systemThickMaterialDark'
+  | 'systemChromeMaterialDark';
 
 export interface NativeProps extends ViewProps {
   backgroundColor?: ColorValue;
@@ -13,6 +34,7 @@ export interface NativeProps extends ViewProps {
   backTitleFontFamily?: string;
   backTitleFontSize?: Int32;
   backTitleVisible?: WithDefault<boolean, 'true'>;
+  blurEffect?: WithDefault<BlurEffectTypes, 'extraLight'>;
   color?: ColorValue;
   direction?: WithDefault<DirectionType, 'ltr'>;
   hidden?: boolean;
