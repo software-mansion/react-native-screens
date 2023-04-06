@@ -875,9 +875,7 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
     _direction = [self getDirectionPropValue:newScreenProps.direction];
   }
 
-  if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
-    _blurEffect = [self getBlurEffectPropValue:newScreenProps.blurEffect];
-  }
+  _blurEffect = [self getBlurEffectPropValue:newScreenProps.blurEffect];
 
   _backTitleVisible = newScreenProps.backTitleVisible;
 
