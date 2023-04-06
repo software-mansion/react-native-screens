@@ -561,7 +561,6 @@
                                                fromViewController:(UIViewController *)fromVC
                                                  toViewController:(UIViewController *)toVC
 {
-  return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   RNSScreenView *screen;
   if (operation == UINavigationControllerOperationPush) {
     screen = ((RNSScreen *)toVC).screenView;
@@ -570,8 +569,10 @@
   }
   if (screen != nil &&
       // we need to return the animator when full width swiping even if the animation is not custom,
-      // otherwise the screen will be just popped immediately due to no animation
-      (_isFullWidthSwiping || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+      // otherwise the screen will be just popped immediately due to no animation.
+      // Transition can be also handled by reanimated and then we need to init the animator
+      (_isFullWidthSwiping || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation] ||
+       screen.reanimatedTransition)) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -672,11 +673,15 @@
 {
   if (gestureRecognizer.state == UIGestureRecognizerStateBegan && _reactSubviews.lastObject.reanimatedTransition) {
     _interactionController = [UIPercentDrivenInteractiveTransition new];
+    [_controller popViewControllerAnimated:YES];
     [RNSReanimatedDelegate
         onTransitionStartWithController:_interactionController
                       gestureRecognizer:gestureRecognizer
                               sourceTag:_reactSubviews.lastObject.reactTag
-                              targetTag:[_reactSubviews objectAtIndex:(_reactSubviews.count - 1)].reactTag];
+                              targetTag:[_reactSubviews objectAtIndex:(_reactSubviews.count - 1)].reactTag
+                             completion:^{
+                               self->_interactionController = nil;
+                             }];
     return;
   }
   if (_reactSubviews.lastObject.reanimatedTransition) {
@@ -741,34 +746,17 @@
                          interactionControllerForAnimationController:
                              (id<UIViewControllerAnimatedTransitioning>)animationController
 {
-  //    if ([(RNSScreenStackAnimator *)animationController operation] == UINavigationControllerOperationPush) {
-  //        if (_reactSubviews.lastObject.reanimatedTransition) {
-  //            _interactionController = [UIPercentDrivenInteractiveTransition new];
-  //            NSNumber *sourceTag = [_reactSubviews objectAtIndex:(_reactSubviews.count - 2)].reactTag;
-  //            NSNumber *targetTag = _reactSubviews.lastObject.reactTag;
-  //            [RNSReanimatedDelegate onTransitionStartWithController:_interactionController gestureRecognizer:nil
-  //            sourceTag:sourceTag targetTag:targetTag];
-  //        }
-  //    } else {
-  //        // it can be either dismissal from JS with navigation or native with header back button
-  //        // so we cannot use _reactSubviews since they differ in those cases
-  //        if (((RNSScreenView *)_controller.topViewController.view).reanimatedTransition) {
-  //            _interactionController = [UIPercentDrivenInteractiveTransition new];
-  //            NSNumber *sourceTag = ((RNSScreenView *)_controller.topViewController.view).reactTag;
-  //            NSNumber *targetTag = ((RNSScreenView *)[_controller.viewControllers lastObject]).reactTag;
-  //            [RNSReanimatedDelegate onTransitionStartWithController:_interactionController gestureRecognizer:nil
-  //            sourceTag:sourceTag targetTag:targetTag];
-  //        }
-  //    }
   RNSScreenView *sourceView = [_controller.transitionCoordinator viewForKey:UITransitionContextFromViewKey];
   RNSScreenView *targetView = [_controller.transitionCoordinator viewForKey:UITransitionContextToViewKey];
   if (_interactionController == nil && sourceView.reanimatedTransition) {
     _interactionController = [UIPercentDrivenInteractiveTransition new];
-    [RNSReanimatedDelegate
-        onTransitionStartWithController:_interactionController
-                      gestureRecognizer:nil
-                              sourceTag:sourceView.reactTag
-                              targetTag:((RNSScreenStackAnimator *)animationController).targetView.reactTag];
+    [RNSReanimatedDelegate onTransitionStartWithController:_interactionController
+                                         gestureRecognizer:nil
+                                                 sourceTag:sourceView.reactTag
+                                                 targetTag:targetView.reactTag
+                                                completion:^{
+                                                  self->_interactionController = nil;
+                                                }];
   }
   return _interactionController;
 }

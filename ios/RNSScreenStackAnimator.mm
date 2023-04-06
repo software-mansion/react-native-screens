@@ -28,16 +28,12 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
 {
   RNSScreenView *screen;
   if (_operation == UINavigationControllerOperationPush) {
-    UIViewController *toViewController =
-        [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    screen = ((RNSScreen *)toViewController).screenView;
+    screen = (RNSScreenView *)[transitionContext viewForKey:UITransitionContextToViewKey];
   } else if (_operation == UINavigationControllerOperationPop) {
-    UIViewController *fromViewController =
-        [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    screen = ((RNSScreen *)fromViewController).screenView;
+    screen = (RNSScreenView *)[transitionContext viewForKey:UITransitionContextFromViewKey];
   }
 
-  if (screen != nil && screen.stackAnimation == RNSScreenStackAnimationNone) {
+  if (screen != nil && (screen.stackAnimation == RNSScreenStackAnimationNone || screen.reanimatedTransition)) {
     return 0;
   }
 
@@ -64,7 +60,10 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
   }
 
   if (screen != nil) {
-    if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
+    if (screen.reanimatedTransition) {
+      // there will be no animation because reanimated should take care of it
+      [self animateWithNoAnimation:transitionContext toVC:toViewController fromVC:fromViewController];
+    } else if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
       // we are swiping with full width gesture
       if (screen.customAnimationOnSwipe) {
         [self animateTransitionWithStackAnimation:screen.stackAnimation
@@ -83,6 +82,30 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
                                            toVC:toViewController
                                          fromVC:fromViewController];
     }
+  }
+}
+
+- (void)animateWithNoAnimation:(id<UIViewControllerContextTransitioning>)transitionContext
+                          toVC:(UIViewController *)toViewController
+                        fromVC:(UIViewController *)fromViewController
+{
+  if (_operation == UINavigationControllerOperationPush) {
+    [[transitionContext containerView] addSubview:toViewController.view];
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+        }
+        completion:^(BOOL finished) {
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  } else if (_operation == UINavigationControllerOperationPop) {
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+        }
+        completion:^(BOOL finished) {
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
   }
 }
 
