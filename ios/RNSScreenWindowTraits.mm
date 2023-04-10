@@ -174,8 +174,27 @@
       }
     }
     if (newOrientation != UIInterfaceOrientationUnknown) {
-      [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
-      [UIViewController attemptRotationToDeviceOrientation];
+      if (@available(iOS 16.0, *)) {
+       NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
+       UIWindowScene *scene = (UIWindowScene *)array[0];
+       UIWindowSceneGeometryPreferencesIOS *geometryPreferences =
+           [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask];
+       [scene requestGeometryUpdateWithPreferences:geometryPreferences
+                                      errorHandler:^(NSError *_Nonnull error){
+                                      }];
+
+       // `attemptRotationToDeviceOrientation` is deprecated for modern OS versions
+       // so we need to use `setNeedsUpdateOfSupportedInterfaceOrientations`
+       UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+       while (topController.presentedViewController) {
+         topController = topController.presentedViewController;
+       }
+
+       [topController setNeedsUpdateOfSupportedInterfaceOrientations];
+     } else {
+       [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
+       [UIViewController attemptRotationToDeviceOrientation];
+     }
     }
   });
 #endif
@@ -195,18 +214,34 @@
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-    if (firstWindow == nil) {
-      return UIInterfaceOrientationUnknown;
-    }
-    UIWindowScene *windowScene = firstWindow.windowScene;
-    if (windowScene == nil) {
-      return UIInterfaceOrientationUnknown;
-    }
-    return windowScene.interfaceOrientation;
-  } else
-#endif
+    if (@available(iOS 16.0, *)) {
+        NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
+        UIWindowScene *scene = (UIWindowScene *)array[0];
+        if (scene != nil) {
+          NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 16.0 returning %ld\n", scene.interfaceOrientation);
+          return scene.interfaceOrientation;
+        } else {
+          NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 16.0 returning %ld\n", UIInterfaceOrientationUnknown);
+          return UIInterfaceOrientationUnknown;
+        }
+        //    return scene == nil ? UIInterfaceOrientationUnknown : scene.interfaceOrientation;
+      } else
+
+          if (@available(iOS 13.0, *)) {
+        UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
+        if (firstWindow == nil) {
+          NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 13.0 returning %ld\n", UIInterfaceOrientationUnknown);
+          return UIInterfaceOrientationUnknown;
+        }
+        UIWindowScene *windowScene = firstWindow.windowScene;
+        if (windowScene == nil) {
+          NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 13.0 returning %ld\n", UIInterfaceOrientationUnknown);
+          return UIInterfaceOrientationUnknown;
+        }
+        NSLog(@"[RNSScreenWindowTraits#interfaceOrientation] 13.0 returning %ld\n", windowScene.interfaceOrientation);
+        return windowScene.interfaceOrientation;
+      } else
+    #endif
   {
     return UIApplication.sharedApplication.statusBarOrientation;
   }
