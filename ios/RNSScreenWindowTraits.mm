@@ -174,8 +174,27 @@
       }
     }
     if (newOrientation != UIInterfaceOrientationUnknown) {
-      [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
-      [UIViewController attemptRotationToDeviceOrientation];
+      if (@available(iOS 16.0, *)) {
+        NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
+        UIWindowScene *scene = (UIWindowScene *)array[0];
+        UIWindowSceneGeometryPreferencesIOS *geometryPreferences =
+            [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask];
+        [scene requestGeometryUpdateWithPreferences:geometryPreferences
+                                       errorHandler:^(NSError *_Nonnull error){
+                                       }];
+
+        // `attemptRotationToDeviceOrientation` is deprecated for modern OS versions
+        // so we need to use `setNeedsUpdateOfSupportedInterfaceOrientations`
+        UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+        while (topController.presentedViewController) {
+          topController = topController.presentedViewController;
+        }
+
+        [topController setNeedsUpdateOfSupportedInterfaceOrientations];
+      } else {
+        [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
+        [UIViewController attemptRotationToDeviceOrientation];
+      }
     }
   });
 #endif
