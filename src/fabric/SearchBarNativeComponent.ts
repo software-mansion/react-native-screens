@@ -5,6 +5,7 @@ import type {
   WithDefault,
   BubblingEventHandler,
 } from 'react-native/Libraries/Types/CodegenTypes';
+import { SearchBarStyle, BarStyle } from 'src/types';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
 type SearchBarEvent = Readonly<{}>;
@@ -31,6 +32,8 @@ interface NativeProps extends ViewProps {
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;
   cancelButtonText?: string;
+  barStyle?: WithDefault<BarStyle, 'default'>;
+  searchBarStyle?: WithDefault<SearchBarStyle, 'default'>;
   // TODO: implement these on iOS
   barTintColor?: ColorValue;
   tintColor?: ColorValue;

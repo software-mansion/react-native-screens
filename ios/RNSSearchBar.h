@@ -9,6 +9,14 @@
 #import <React/RCTComponent.h>
 #import <React/RCTViewManager.h>
 
+@interface RCTConvert (RNSSearchBar)
+
+// Defined in RCTConvert itself
+//+ (UIBarStyle)UIBarStyle:(id)json;
++ (UISearchBarStyle)UISearchBarStyle:(id)json;
+
+@end
+
 @interface RNSSearchBar :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView <UISearchBarDelegate, RCTRNSSearchBarViewProtocol>
