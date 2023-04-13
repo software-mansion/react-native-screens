@@ -204,6 +204,7 @@
           topController = topController.presentedViewController;
         }
 
+        NSLog(@"[RNSScreenWindowTraits] updating orientation on %@ controller\n", topController);
         [topController setNeedsUpdateOfSupportedInterfaceOrientations];
       } else {
         [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];

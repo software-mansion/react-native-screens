@@ -809,6 +809,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
+    NSLog(@"RNSScreen CTOR %@ with view %@\n", self, self.view);
   }
   return self;
 }
@@ -839,6 +840,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size
+       withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+  NSLog(@"RNSScreenView %@ will transition to size (%lf,%lf)\n", self.view, size.width, size.height);
+  [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
