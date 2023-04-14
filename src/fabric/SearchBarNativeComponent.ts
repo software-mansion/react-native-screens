@@ -5,7 +5,6 @@ import type {
   WithDefault,
   BubblingEventHandler,
 } from 'react-native/Libraries/Types/CodegenTypes';
-import { SearchBarStyle, BarStyle } from 'src/types';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
 type SearchBarEvent = Readonly<{}>;
@@ -19,6 +18,10 @@ type ChangeTextEvent = Readonly<{
 }>;
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
+
+type BarStyle = 'default' | 'black';
+
+type SearchBarStyle = 'default' | 'prominent' | 'minimal';
 
 interface NativeProps extends ViewProps {
   onFocus?: BubblingEventHandler<SearchBarEvent> | null;
