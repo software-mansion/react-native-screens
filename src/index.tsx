@@ -104,8 +104,9 @@ export const ScreenStackHeaderSearchBarView = (
   props: React.PropsWithChildren<Omit<SearchBarProps, 'ref'>>
 ): JSX.Element => <View {...props} />;
 
-export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
-  View;
+export const ScreenStackHeaderConfig = (
+  props: React.PropsWithChildren<ScreenStackHeaderConfigProps>
+): JSX.Element => <View {...props} />;
 
 // @ts-expect-error: search bar props have no common props with View
 export const SearchBar: React.ComponentType<SearchBarProps> = View;
