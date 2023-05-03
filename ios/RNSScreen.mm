@@ -939,11 +939,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
-#else
-    if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
-      _lastViewFrame = self.screenView.frame;
-      [((RNSScreenView *)self.viewIfLoaded) updateBounds];
-    }
 #endif
   }
 }
