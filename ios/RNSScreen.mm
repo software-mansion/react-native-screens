@@ -1038,10 +1038,17 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
     // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
-    return !includingModals
-        ? nil
-        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
-            ?: lastViewController;
+    if (!includingModals) {
+      return nil;
+    } else {
+      auto theVC = [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals];
+
+      if (theVC != nil) {
+        return theVC;
+      } else {
+        return lastViewController;
+      }
+    }
   }
 
   UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
