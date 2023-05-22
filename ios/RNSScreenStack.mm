@@ -567,9 +567,11 @@
     screen = ((RNSScreen *)fromVC).screenView;
   }
   if (screen != nil &&
-      // we need to return the animator when full width swiping even if the animation is not custom,
+      // when preventing the native dismiss with back button, we have to return the animator.
+      // Also, we need to return the animator when full width swiping even if the animation is not custom,
       // otherwise the screen will be just popped immediately due to no animation
-      (_isFullWidthSwiping || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+      ((operation == UINavigationControllerOperationPop && screen.preventNativeDismiss) || _isFullWidthSwiping ||
+       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -727,6 +729,17 @@
                          interactionControllerForAnimationController:
                              (id<UIViewControllerAnimatedTransitioning>)animationController
 {
+  RNSScreenView *sourceView = [_controller.transitionCoordinator viewForKey:UITransitionContextFromViewKey];
+  // we can intercept clicking back button here, we check reactSuperview since this method also fires when
+  // going back from JS
+  if (_interactionController == nil && sourceView.reactSuperview && sourceView.preventNativeDismiss) {
+    _interactionController = [UIPercentDrivenInteractiveTransition new];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+      [self->_interactionController cancelInteractiveTransition];
+      self->_interactionController = nil;
+      [sourceView notifyDismissCancelledWithDismissCount:1];
+    });
+  }
   return _interactionController;
 }
 
