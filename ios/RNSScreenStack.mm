@@ -730,14 +730,18 @@
                              (id<UIViewControllerAnimatedTransitioning>)animationController
 {
   RNSScreenView *sourceView = [_controller.transitionCoordinator viewForKey:UITransitionContextFromViewKey];
+  RNSScreenView *targetView = [_controller.transitionCoordinator viewForKey:UITransitionContextToViewKey];
   // we can intercept clicking back button here, we check reactSuperview since this method also fires when
-  // going back from JS
   if (_interactionController == nil && sourceView.reactSuperview && sourceView.preventNativeDismiss) {
     _interactionController = [UIPercentDrivenInteractiveTransition new];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
       [self->_interactionController cancelInteractiveTransition];
       self->_interactionController = nil;
-      [sourceView notifyDismissCancelledWithDismissCount:1];
+      int sourceIndex = (int)[[self reactSubviews] indexOfObject:sourceView];
+      int targetIndex = (int)[[self reactSubviews] indexOfObject:targetView];
+      int dismissCount = sourceIndex - targetIndex > 0 ? sourceIndex - targetIndex : 1;
+      [self updateContainer];
+      [sourceView notifyDismissCancelledWithDismissCount:dismissCount];
     });
   }
   return _interactionController;
