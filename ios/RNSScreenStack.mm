@@ -739,7 +739,8 @@
       self->_interactionController = nil;
       int sourceIndex = (int)[[self reactSubviews] indexOfObject:sourceView];
       int targetIndex = (int)[[self reactSubviews] indexOfObject:targetView];
-      int dismissCount = sourceIndex - targetIndex > 0 ? sourceIndex - targetIndex : 1;
+      int indexDiff = sourceIndex - targetIndex;
+      int dismissCount = indexDiff > 0 ? indexDiff : 1;
       [self updateContainer];
       [sourceView notifyDismissCancelledWithDismissCount:dismissCount];
     });
