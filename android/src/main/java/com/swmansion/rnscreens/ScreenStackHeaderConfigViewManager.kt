@@ -11,6 +11,15 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerInterface
+import com.swmansion.rnscreens.events.HeaderAttachedEvent
+import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
+import com.swmansion.rnscreens.events.HeaderDetachedEvent
+import com.swmansion.rnscreens.events.ScreenAppearEvent
+import com.swmansion.rnscreens.events.ScreenDisappearEvent
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
+import com.swmansion.rnscreens.events.ScreenWillAppearEvent
+import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import javax.annotation.Nonnull
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
@@ -133,10 +142,12 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
-        return MapBuilder.builder<String, Any>()
-            .put("onAttached", MapBuilder.of("registrationName", "onAttached"))
-            .put("onDetached", MapBuilder.of("registrationName", "onDetached"))
-            .build()
+        return MapBuilder.of(
+            HeaderAttachedEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onAttached"),
+            HeaderDetachedEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onDetached"),
+        )
     }
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> = mDelegate
