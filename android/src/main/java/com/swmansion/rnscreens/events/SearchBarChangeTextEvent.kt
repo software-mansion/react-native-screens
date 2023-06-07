@@ -4,8 +4,9 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.RCTEventEmitter
 
-class SearchBarChangeTextEvent(viewId: Int,
-                               private val text: String?,
+class SearchBarChangeTextEvent(
+    viewId: Int,
+    private val text: String?,
 ) : Event<ScreenAppearEvent>(viewId) {
     override fun getEventName(): String {
         return EVENT_NAME

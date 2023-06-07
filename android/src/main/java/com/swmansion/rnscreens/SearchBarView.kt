@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.text.InputType
 import androidx.appcompat.widget.SearchView
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
@@ -128,11 +127,11 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     }
 
     fun handleClearTextJsRequest() {
-        screenStackFragment?.searchView?.clearText();
+        screenStackFragment?.searchView?.clearText()
     }
 
     fun handleFocusJsRequest() {
-        screenStackFragment?.searchView?.focus();
+        screenStackFragment?.searchView?.focus()
     }
 
     fun handleBlurJsRequest() {

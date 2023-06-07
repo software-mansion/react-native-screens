@@ -12,14 +12,7 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderConfigManagerInterface
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
-import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
-import com.swmansion.rnscreens.events.ScreenAppearEvent
-import com.swmansion.rnscreens.events.ScreenDisappearEvent
-import com.swmansion.rnscreens.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
-import com.swmansion.rnscreens.events.ScreenWillAppearEvent
-import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import javax.annotation.Nonnull
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
