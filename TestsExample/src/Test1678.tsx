@@ -1,15 +1,18 @@
 import * as React from 'react';
 import { Button, Text } from 'react-native';
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import {atom, useAtom} from "jotai";
+// import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+// import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { atom, useAtom } from "jotai";
+import { Screen, ScreenStack } from 'react-native-screens';
+import { NavigationContainer } from '@react-navigation/native';
 
-const RootNavigator = createNativeStackNavigator()
+const Stack = createNativeStackNavigator()
 
-const authAtom = atom(null)
+const loggedInAtom = atom(false)
 
-const Onboarding = () => {
-  const navigation = useNavigation();
+const Onboarding = ({ navigation }) => {
+  const [_, setLoggedIn] = useAtom(loggedInAtom);
 
   return (
     <>
@@ -17,10 +20,11 @@ const Onboarding = () => {
         Onboarding
       </Text>
       <Button title="Open Modal" onPress={() => {
-        navigation.navigate("Modal");
+        navigation.navigate('Modal')
+        // navigation(true)
       }} />
     </>
-    )
+  )
 }
 
 const AppScreen = () => {
@@ -28,49 +32,70 @@ const AppScreen = () => {
 }
 
 const Modal = () => {
-  // const [, setToken] = React.useState(true);
-  const [, setToken] = useAtom(authAtom)
+  const [, setLoggedIn] = useAtom(loggedInAtom)
   return (
     <>
       <Text>
         Modal
       </Text>
       <Button title="Log In" onPress={() => {
-        setToken(true);
+        setLoggedIn(true);
       }} />
     </>
-    )
+  )
 }
 
-export default function App() {
-  // const [token] = React.useState(false);
-  const [token, setToken] = useAtom(authAtom);
+export function App2() {
+  const [isLoggedIn, setLoggedIn] = useAtom(loggedInAtom);
+
   return (
     <NavigationContainer>
-      <RootNavigator.Navigator>
-        {!token ?
-          <RootNavigator.Screen
-            name="Onboarding"
-            component={Onboarding}
-            />
-        :
-          <RootNavigator.Screen
-          name="App"
-          component={AppScreen}
-          />
+      <Stack.Navigator>
+        {isLoggedIn ? (<Stack.Screen name='App' key='App-key' component={AppScreen} />)
+          : (<Stack.Screen name='Onboarding' key='Onboarding-key' component={Onboarding} />)
         }
-        {/* <RootNavigator.Group
-        screenOptions={{presentation: "modal"}}
-        > */}
-          <RootNavigator.Screen
-            name="Modal"
-            options={{
-              presentation: 'modal'
-            }}
-            component={Modal}
-            />
-        {/* </RootNavigator.Group> */}
-      </RootNavigator.Navigator>
+        <Stack.Screen name='Modal' key='Modal-key' component={Modal} options={{
+          stackPresentation: 'modal'
+        }} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
+};
+
+export function App() {
+  // const [token] = React.useState(false);
+  const [token, _] = useAtom(loggedInAtom);
+  const [isModalOpen, setModalOpen] = React.useState(false);
+  const children = [];
+  if (token) {
+    children.push((<Screen
+      key="AppScreen">
+      <AppScreen />
+    </Screen>));
+  } else {
+    children.push((<Screen
+      key="Onboarding"
+    >
+      <Onboarding navigation={setModalOpen} />
+    </Screen>));
+  }
+
+  if (isModalOpen) {
+    children.push((<Screen
+      key="Modal"
+      stackPresentation='modal'
+    >
+      <Modal />
+    </Screen>))
+  }
+  return (
+    <ScreenStack style={{
+      flex: 1,
+      marginTop: 200
+    }}>
+      {children}
+    </ScreenStack>
+  );
 }
+
+export default App2;

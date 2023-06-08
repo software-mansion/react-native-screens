@@ -838,6 +838,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _initialView = (RNSScreenView *)view;
 #endif
   }
+  NSLog(@"Creating RNScreen %@\n", self);
   return self;
 }
 
@@ -1062,10 +1063,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
-    //
-    //    if (self == lastViewController) {
-    //      return nil;
-    //    }
 
     // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
     // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
@@ -1076,6 +1073,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     //        ? nil
     //        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
     //            ?: lastViewController;
+
     if (!includingModals) {
       return nil;
     } else {
