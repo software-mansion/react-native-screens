@@ -64,4 +64,10 @@ class SearchViewFormatter(var searchView: SearchView) {
             searchEditText?.hint = placeholder
         }
     }
+
+    fun updateSearchTextLayoutDirection(layoutDirection: Int?) {
+        layoutDirection?.let {
+            searchTextPlate?.layoutDirection = it
+        }
+    }
 }

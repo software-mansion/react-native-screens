@@ -26,15 +26,17 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     private var mAreListenersSet: Boolean = false
 
-    private val screenStackFragment: ScreenStackFragment?
+    private val config: ScreenStackHeaderConfig?
         get() {
             val currentParent = parent
             if (currentParent is ScreenStackHeaderSubview) {
-                return currentParent.config?.screenFragment
+                return currentParent.config
             }
             return null
         }
 
+    private val screenStackFragment: ScreenStackFragment?
+        get() = config?.screenFragment
     fun onUpdate() {
         setSearchViewProps()
     }
@@ -53,6 +55,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             mSearchViewFormatter?.setHeaderIconColor(headerIconColor)
             mSearchViewFormatter?.setHintTextColor(hintTextColor)
             mSearchViewFormatter?.setPlaceholder(placeholder, shouldShowHintSearchIcon)
+            mSearchViewFormatter?.updateSearchTextLayoutDirection(config?.toolbar?.layoutDirection)
             searchView.overrideBackAction = shouldOverrideBackButton
         }
     }

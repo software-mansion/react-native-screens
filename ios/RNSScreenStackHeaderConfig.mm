@@ -606,6 +606,10 @@ namespace rct = facebook::react;
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+            BOOL isRTL = config.direction == UISemanticContentAttributeForceRightToLeft;
+            NSTextAlignment searchBarTextFieldAlignment = isRTL ? NSTextAlignmentRight : NSTextAlignmentLeft;
+            navitem.searchController.searchBar.semanticContentAttribute = config.direction;
+            navitem.searchController.searchBar.searchTextField.textAlignment = searchBarTextFieldAlignment;
           }
 #endif
         }
