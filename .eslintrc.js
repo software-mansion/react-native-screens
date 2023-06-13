@@ -19,7 +19,6 @@ module.exports = {
     'import/core-modules': [
       'react-native-screens',
       'react-native-screens/native-stack',
-      'react-native-screens/createNativeStackNavigator',
       'react-native-screens/reanimated',
     ],
     'import/ignore': [
