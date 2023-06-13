@@ -20,7 +20,6 @@ import HeaderOptions from './src/screens/HeaderOptions';
 import StatusBarExample from './src/screens/StatusBar';
 import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
-import StackReactNavigation4 from './src/screens/StackReactNavigation4';
 import Modals from './src/screens/Modals';
 import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
@@ -61,12 +60,6 @@ const SCREENS: Record<
   Modals: {
     title: 'Modals',
     component: Modals,
-    type: 'example',
-  },
-  StackReactNavigation4: {
-    title: 'Stack react-navigation v4',
-    // @ts-ignore react-navigation v4 AppNavigator type
-    component: StackReactNavigation4,
     type: 'example',
   },
   HeaderOptions: {
