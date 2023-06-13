@@ -1,8 +1,7 @@
 #pragma once
 
 #include <react/renderer/graphics/Float.h>
-#include <react/renderer/graphics/Geometry.h>
-#include <react/renderer/graphics/conversions.h>
+#include <react/renderer/core/graphicsConversions.h>
 
 #ifdef ANDROID
 #include <folly/dynamic.h>
