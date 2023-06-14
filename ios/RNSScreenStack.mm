@@ -140,6 +140,21 @@
   [_controller setViewControllers:@[ [UIViewController new] ]];
 }
 
+#pragma mark - helper methods
+
+- (BOOL)shouldCancelDismissFromView:(RNSScreenView *)fromView toView:(RNSScreenView *)toView
+{
+  int fromIndex = (int)[_reactSubviews indexOfObject:fromView];
+  int toIndex = (int)[_reactSubviews indexOfObject:toView];
+  for (int i = fromIndex; i > toIndex; i--) {
+    if (_reactSubviews[i].preventNativeDismiss) {
+      return YES;
+      break;
+    }
+  }
+  return NO;
+}
+
 #pragma mark - Common
 
 - (void)emitOnFinishTransitioningEvent
@@ -566,10 +581,14 @@
   } else if (operation == UINavigationControllerOperationPop) {
     screen = ((RNSScreen *)fromVC).screenView;
   }
+  BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:(RNSScreenView *)fromVC.view
+                                                        toView:(RNSScreenView *)toVC.view];
   if (screen != nil &&
-      // we need to return the animator when full width swiping even if the animation is not custom,
+      // when preventing the native dismiss with back button, we have to return the animator.
+      // Also, we need to return the animator when full width swiping even if the animation is not custom,
       // otherwise the screen will be just popped immediately due to no animation
-      (_isFullWidthSwiping || [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+      ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
+       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -727,6 +746,26 @@
                          interactionControllerForAnimationController:
                              (id<UIViewControllerAnimatedTransitioning>)animationController
 {
+  RNSScreenView *fromView = [_controller.transitionCoordinator viewForKey:UITransitionContextFromViewKey];
+  RNSScreenView *toView = [_controller.transitionCoordinator viewForKey:UITransitionContextToViewKey];
+  // we can intercept clicking back button here, we check reactSuperview since this method also fires when
+  // navigating back from JS
+  if (_interactionController == nil && fromView.reactSuperview) {
+    BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:fromView toView:toView];
+    if (shouldCancelDismiss) {
+      _interactionController = [UIPercentDrivenInteractiveTransition new];
+      dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self->_interactionController cancelInteractiveTransition];
+        self->_interactionController = nil;
+        int fromIndex = (int)[self->_reactSubviews indexOfObject:fromView];
+        int toIndex = (int)[self->_reactSubviews indexOfObject:toView];
+        int indexDiff = fromIndex - toIndex;
+        int dismissCount = indexDiff > 0 ? indexDiff : 1;
+        [self updateContainer];
+        [fromView notifyDismissCancelledWithDismissCount:dismissCount];
+      });
+    }
+  }
   return _interactionController;
 }
 
