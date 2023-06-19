@@ -174,6 +174,8 @@
       }
     }
     if (newOrientation != UIInterfaceOrientationUnknown) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
       if (@available(iOS 16.0, *)) {
         NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
         UIWindowScene *scene = (UIWindowScene *)array[0];
@@ -191,13 +193,15 @@
         }
 
         [topController setNeedsUpdateOfSupportedInterfaceOrientations];
-      } else {
+      } else
+#endif // Check for iOS 16
+      {
         [[UIDevice currentDevice] setValue:@(newOrientation) forKey:@"orientation"];
         [UIViewController attemptRotationToDeviceOrientation];
       }
     }
   });
-#endif
+#endif // !TARGET_TV_OS
 }
 
 + (void)updateWindowTraits
