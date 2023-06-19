@@ -292,7 +292,13 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
-        drawingOps.add(obtainDrawingOp().set(canvas, child, drawingTime))
+        drawingOps.add(
+            obtainDrawingOp().apply {
+                this.canvas = canvas
+                this.child = child
+                this.drawingTime = drawingTime
+            }
+        )
         return true
     }
 
@@ -307,13 +313,6 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
         var canvas: Canvas? = null
         var child: View? = null
         var drawingTime: Long = 0
-
-        operator fun set(canvas: Canvas?, child: View?, drawingTime: Long): DrawingOp {
-            this.canvas = canvas
-            this.child = child
-            this.drawingTime = drawingTime
-            return this
-        }
 
         fun draw() {
             performDraw(this)
