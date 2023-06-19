@@ -303,7 +303,9 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun performDraw(op: DrawingOp) {
-        super.drawChild(op.canvas, op.child, op.drawingTime)
+        // Canvas parameter can not be null here https://developer.android.com/reference/android/view/ViewGroup#drawChild(android.graphics.Canvas,%20android.view.View,%20long)
+        // So if we are passing null here, we would crash anyway
+        super.drawChild(op.canvas!!, op.child, op.drawingTime)
     }
 
     private fun obtainDrawingOp(): DrawingOp =
