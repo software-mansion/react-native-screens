@@ -111,6 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
+- (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 
 @end

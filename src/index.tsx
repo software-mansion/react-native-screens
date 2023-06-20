@@ -13,6 +13,7 @@ export * from './types';
 export { default as useTransitionProgress } from './useTransitionProgress';
 export {
   isSearchBarAvailableForCurrentPlatform,
+  isNewBackTitleImplementation,
   executeNativeBackPress,
 } from './utils';
 

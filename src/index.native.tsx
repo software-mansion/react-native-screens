@@ -34,6 +34,7 @@ import {
 } from './types';
 import {
   isSearchBarAvailableForCurrentPlatform,
+  isNewBackTitleImplementation,
   executeNativeBackPress,
 } from './utils';
 
@@ -592,5 +593,6 @@ module.exports = {
   useTransitionProgress,
 
   isSearchBarAvailableForCurrentPlatform,
+  isNewBackTitleImplementation,
   executeNativeBackPress,
 };
