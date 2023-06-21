@@ -72,6 +72,10 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type HeaderChangeEventType = {
+  newHeight: number;
+};
+
 export type TransitionProgressEventType = {
   progress: number;
   closing: number;
@@ -171,6 +175,12 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called when the current screen disappears.
    */
   onDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when the header height has changed;
+   */
+  onHeaderHeightChange?: (
+    e: NativeSyntheticEvent<HeaderChangeEventType>
+  ) => void;
   /**
    * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.

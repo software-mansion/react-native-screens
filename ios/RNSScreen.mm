@@ -392,6 +392,26 @@
 #endif
 }
 
+- (void)notifyHeaderHeightChange:(int)newHeight
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onHeaderHeightChange(facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.newHeight = newHeight});
+  }
+  RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onHeaderHeightChange"
+                                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                                  newHeight:newHeight];
+  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+#else
+  if (self.onHeaderHeightChange) {
+    self.onHeaderHeightChange(@{
+      @"newHeight" : @(newHeight),
+    });
+  }
+#endif
+}
+
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -959,8 +979,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   } else {
     statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
   }
-
-  NSLog(@"%f", navbarHeight + statusBarHeight);
+  NSLog(@"%f", navbarHeight);
+  [self.screenView notifyHeaderHeightChange:(navbarHeight)];
 }
 
 - (void)notifyFinishTransitioning
@@ -1285,6 +1305,7 @@ RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onHeaderHeightChange, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);

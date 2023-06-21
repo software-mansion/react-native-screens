@@ -93,6 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
+@property (nonatomic, copy) RCTDirectEventBlock onHeaderHeightChange;
 @property (nonatomic, copy) RCTDirectEventBlock onWillAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
@@ -106,6 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyWillDisappear;
 - (void)notifyAppear;
 - (void)notifyDisappear;
+- (void)notifyHeaderHeightChange:(int)newHeight;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 #endif

@@ -292,6 +292,9 @@ const RouteView = ({
           target: route.key,
         });
       }}
+      onHeaderHeightChange={(e) => {
+        console.log('Changed!', e.nativeEvent.newHeight);
+      }}
       onDismissed={(e) => {
         navigation.emit({
           type: 'dismiss',
