@@ -21,7 +21,6 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
-#import "RNSNavigationHeightObserver.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -75,7 +74,6 @@
   _controller = [[RNSScreen alloc] initWithView:self];
   _stackPresentation = RNSScreenStackPresentationPush;
   _stackAnimation = RNSScreenStackAnimationDefault;
-  _heightObserver = [[NavigationHeightObserver alloc] init];
   _gestureEnabled = YES;
   _replaceAnimation = RNSScreenReplaceAnimationPop;
   _dismissed = NO;
@@ -112,9 +110,6 @@
   }
 #else
   [_bridge.uiManager setSize:self.bounds.size forView:self];
-  if (!_heightObserver.isObserving) {
-    [_heightObserver startObserving:(ObservedNavigationController *)_controller.navigationController];
-  }
 #endif
 }
 
@@ -941,6 +936,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
+  [self detectHeaderHeightChange];
+
   if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
@@ -951,6 +948,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
 #endif
   }
+}
+
+- (void)detectHeaderHeightChange
+{
+  CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
+  CGFloat statusBarHeight;
+  if (@available(iOS 13.0, *)) {
+    statusBarHeight = self.view.window.windowScene.statusBarManager.statusBarFrame.size.height;
+  } else {
+    statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+  }
+
+  NSLog(@"%f", navbarHeight + statusBarHeight);
 }
 
 - (void)notifyFinishTransitioning

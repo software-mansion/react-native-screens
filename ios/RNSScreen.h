@@ -2,7 +2,6 @@
 #import <React/RCTViewManager.h>
 
 #import "RNSEnums.h"
-#import "RNSNavigationHeightObserver.h"
 #import "RNSScreenContainer.h"
 
 #if RCT_NEW_ARCH_ENABLED
@@ -69,7 +68,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSDictionary *gestureResponseDistance;
 @property (nonatomic) int activityState;
 @property (weak, nonatomic) UIView<RNSScreenContainerDelegate> *reactSuperview;
-@property (strong, nonatomic) NavigationHeightObserver *heightObserver;
 
 #if !TARGET_OS_TV
 @property (nonatomic) RNSStatusBarStyle statusBarStyle;
