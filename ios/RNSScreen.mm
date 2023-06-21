@@ -21,6 +21,7 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
+#import "RNSNavigationHeightObserver.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -74,6 +75,7 @@
   _controller = [[RNSScreen alloc] initWithView:self];
   _stackPresentation = RNSScreenStackPresentationPush;
   _stackAnimation = RNSScreenStackAnimationDefault;
+  _heightObserver = [[NavigationHeightObserver alloc] init];
   _gestureEnabled = YES;
   _replaceAnimation = RNSScreenReplaceAnimationPop;
   _dismissed = NO;
@@ -110,6 +112,9 @@
   }
 #else
   [_bridge.uiManager setSize:self.bounds.size forView:self];
+  if (!_heightObserver.isObserving) {
+    [_heightObserver startObserving:(ObservedNavigationController *)_controller.navigationController];
+  }
 #endif
 }
 

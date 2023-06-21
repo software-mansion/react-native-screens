@@ -48,6 +48,7 @@ export default function App() {
             fullScreenSwipeEnabled: true,
             stackAnimation: 'fade_from_bottom',
             customAnimationOnSwipe: true,
+            headerLargeTitle: true,
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />
