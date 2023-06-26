@@ -905,6 +905,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // we are going forward or dismissing without swipe
     // or successfully swiped back
     [self.screenView notifyAppear];
+    [self recalculateHeaderHeight];
     [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
   }
 
@@ -956,7 +957,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
-  [self detectHeaderHeightChange];
+  [self recalculateHeaderHeight];
 
   if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -970,17 +971,22 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
-- (void)detectHeaderHeightChange
+- (void)recalculateHeaderHeight
 {
   CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
-  CGFloat statusBarHeight;
+  CGSize statusBarSize;
   if (@available(iOS 13.0, *)) {
-    statusBarHeight = self.view.window.windowScene.statusBarManager.statusBarFrame.size.height;
+    statusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
   } else {
-    statusBarHeight = [[UIApplication sharedApplication] statusBarFrame].size.height;
+    statusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
   }
-  NSLog(@"%f", navbarHeight);
-  [self.screenView notifyHeaderHeightChange:(navbarHeight)];
+
+  // Unfortunately, UIKit doesn't matter about switching width and height options on screen rotation.
+  // We should check if user has rotated its screen, so we're choosing the minimum value between the
+  // width and height.
+  CGFloat statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);
+  CGFloat summarizedHeight = navbarHeight + statusBarHeight;
+  [self.screenView notifyHeaderHeightChange:(summarizedHeight)];
 }
 
 - (void)notifyFinishTransitioning

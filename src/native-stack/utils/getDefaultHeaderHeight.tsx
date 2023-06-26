@@ -33,5 +33,6 @@ export default function getDefaultHeaderHeight(
     }
   }
 
+  console.log(headerHeight + statusBarHeight);
   return headerHeight + statusBarHeight;
 }
