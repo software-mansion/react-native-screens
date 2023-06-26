@@ -952,7 +952,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [self traverseForScrollView:self.screenView];
 #endif
 
-  if (!_goingForward) {
+  // TODO: Describe:
+  // 1. Why navigation controller has to be used here
+  // 2. What use case does the following code handle
+  UINavigationController *navigationController = self.navigationController;
+  BOOL isGoingForward =
+      [navigationController isBeingDismissed] || [navigationController isMovingFromParentViewController];
+  if (!isGoingForward) {
     self.screenView.controller = nil;
   }
 }
