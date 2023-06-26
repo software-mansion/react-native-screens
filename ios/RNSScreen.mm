@@ -904,10 +904,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
-
-  if (!_goingForward) {
-    self.screenView.controller = nil;
-  }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -955,6 +951,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
   [self traverseForScrollView:self.screenView];
 #endif
+
+  if (!_goingForward) {
+    self.screenView.controller = nil;
+  }
 }
 
 - (void)viewDidLayoutSubviews
