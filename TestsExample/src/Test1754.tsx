@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import React, {Button, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {
@@ -64,7 +65,7 @@ function Second(props: NavigationProps) {
   return (
     // <View>
     //   <Button title="Navigate to the first screen" onPress={handlePress} />
-    <ScrollView contentInsetAdjustmentBehavior='automatic'>
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
       {[...Array(100).keys()].map(i => (
         <ListElement key={i} id={i} />
       ))}
