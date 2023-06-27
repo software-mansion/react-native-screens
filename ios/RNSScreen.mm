@@ -594,6 +594,11 @@
 }
 #endif // !TARGET_OS_TV
 
+- (void)releaseViewController
+{
+  _controller = nil;
+}
+
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
@@ -797,7 +802,7 @@
 
 - (void)invalidate
 {
-  _controller = nil;
+  [self releaseViewController];
 }
 #endif
 
@@ -952,14 +957,16 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [self traverseForScrollView:self.screenView];
 #endif
 
-  // TODO: Describe:
-  // 1. Why navigation controller has to be used here
-  // 2. What use case does the following code handle
+  // See: https://github.com/software-mansion/react-native-screens/pull/1797
+  // In brownfield appliactions there are some flows in which React Native mechanisms
+  // of invalidating the views are not called, resulting in memory leak on our side,
+  // as RNSScreenView holds strong reference to a RNSScreen, thus they both can not be
+  // released.
   UINavigationController *navigationController = self.navigationController;
   BOOL isGoingForward =
       [navigationController isBeingDismissed] || [navigationController isMovingFromParentViewController];
-  if (!isGoingForward) {
-    self.screenView.controller = nil;
+  if (!isGoingForward || !_goingForward) {
+    [self.screenView releaseViewController];
   }
 }
 
