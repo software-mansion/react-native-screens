@@ -19,6 +19,10 @@ type ChangeTextEvent = Readonly<{
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
+type BarStyle = 'default' | 'black';
+
+type SearchBarStyle = 'default' | 'prominent' | 'minimal';
+
 interface NativeProps extends ViewProps {
   onFocus?: BubblingEventHandler<SearchBarEvent> | null;
   onBlur?: BubblingEventHandler<SearchBarEvent> | null;
@@ -31,6 +35,8 @@ interface NativeProps extends ViewProps {
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;
   cancelButtonText?: string;
+  barStyle?: WithDefault<BarStyle, 'default'>;
+  searchBarStyle?: WithDefault<SearchBarStyle, 'default'>;
   // TODO: implement these on iOS
   barTintColor?: ColorValue;
   tintColor?: ColorValue;

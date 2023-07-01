@@ -179,6 +179,16 @@
 #endif
 }
 
+- (void)setBarStyle:(UIBarStyle)style
+{
+  [_controller.searchBar setBarStyle:style];
+}
+
+- (void)setSearchBarStyle:(UISearchBarStyle)style
+{
+  [_controller.searchBar setSearchBarStyle:style];
+}
+
 - (void)setCancelButtonText:(NSString *)text
 {
   [_controller.searchBar setValue:text forKey:@"cancelButtonText"];
@@ -372,6 +382,8 @@ RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
+RCT_EXPORT_VIEW_PROPERTY(barStyle, UIBarStyle)
+RCT_EXPORT_VIEW_PROPERTY(searchBarStyle, UISearchBarStyle)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)
@@ -422,5 +434,29 @@ RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text
 }
 
 #endif /* !RCT_NEW_ARCH_ENABLED */
+
+@end
+
+@implementation RCTConvert (RNSSearchBar)
+
+// Defined in RCTConvert itself
+// RCT_ENUM_CONVERTER(
+//    UIBarStyle,
+//    (@{
+//      @"default" : @(UIBarStyleDefault),
+//      @"black" : @(UIBarStyleBlack),
+//    }),
+//    UIBarStyleDefault,
+//    integerValue)
+
+RCT_ENUM_CONVERTER(
+    UISearchBarStyle,
+    (@{
+      @"default" : @(UISearchBarStyleDefault),
+      @"prominent" : @(UISearchBarStyleProminent),
+      @"minimal" : @(UISearchBarStyleMinimal),
+    }),
+    UISearchBarStyleDefault,
+    integerValue)
 
 @end

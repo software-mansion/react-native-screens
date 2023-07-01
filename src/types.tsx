@@ -87,6 +87,10 @@ export type GestureResponseDistanceType = {
 
 export type SheetDetentTypes = 'medium' | 'large' | 'all';
 
+export type BarStyle = 'default' | 'black';
+
+export type SearchBarStyle = 'default' | 'prominent' | 'minimal';
+
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
   activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
@@ -546,6 +550,8 @@ export interface SearchBarProps {
    * The search field background color
    */
   barTintColor?: string;
+  barStyle?: BarStyle;
+  searchBarStyle?: SearchBarStyle;
   /**
    * The color for the cursor caret and cancel button text.
    *
