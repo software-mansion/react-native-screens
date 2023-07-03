@@ -399,10 +399,6 @@
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onHeaderHeightChange(facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.newHeight = newHeight});
   }
-  RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onHeaderHeightChange"
-                                                                   reactTag:[NSNumber numberWithInt:self.tag]
-                                                                  newHeight:newHeight];
-  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
