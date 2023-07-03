@@ -42,7 +42,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
       - name: Run emulator and tests
-        uses: reactivecircus/android-emulator-runner@v2.27.0
+        uses: reactivecircus/android-emulator-runner@v2.28.0
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: 31

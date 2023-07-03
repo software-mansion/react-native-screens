@@ -23,10 +23,6 @@ const SCREENS: Record<
     title: 'Modals',
     type: 'example',
   },
-  StackReactNavigation4: {
-    title: 'Stack react-navigation v4',
-    type: 'example',
-  },
   HeaderOptions: {
     title: 'Header Options',
     type: 'playground',
