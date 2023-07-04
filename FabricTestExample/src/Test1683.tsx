@@ -18,7 +18,14 @@ const ThemeContext = createContext({
   setTheme: (theme: Theme) => {},
 });
 
+const SearchBarContext = createContext({
+  theme: 'default',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setTheme: (theme: 'default' | 'black') => {},
+});
+
 const HomeScreen = () => {
+  const sbThemeContext = useContext(SearchBarContext);
   const {theme, setTheme} = useContext(ThemeContext);
   return (
     <View style={styles.container}>
@@ -29,26 +36,42 @@ const HomeScreen = () => {
           setTheme(theme === DefaultTheme ? DarkTheme : DefaultTheme);
         }}
       />
+      <Button
+        title="Toggle SearchBar theme"
+        onPress={() => {
+          const newTheme =
+            sbThemeContext.theme === 'black' ? 'default' : 'black';
+          console.log(`SearchBar theme set to ${newTheme}`);
+          sbThemeContext.setTheme(newTheme);
+        }}
+      />
     </View>
   );
 };
 
 const Navigator = () => {
+  const sbThemeContext = useContext(SearchBarContext);
   const {theme} = useContext(ThemeContext);
   // const scheme = useColorScheme();
   return (
     <NavigationContainer
       // theme={scheme === 'dark' ? DarkTheme : DefaultTheme}
-      theme={theme}
-      // theme={DarkTheme}
-    >
+      theme={theme}>
       <RootStack.Navigator>
         <RootStack.Screen
           name="Home"
           component={HomeScreen}
           options={{
+            searchBar: {
+              textColor: 'rgb(255, 0, 0)',
+              theme: sbThemeContext.theme,
+              // barTintColor: 'rgb(0, 255, 0)',
+              // tintColor: 'rgb(0, 255, 0)',
+            },
             // headerSearchBarOptions: {},
-            searchBar: {},
+            // searchBar: {
+            //   style: 'default',
+            // },
             // statusBarStyle: 'light',
           }}
         />
@@ -59,9 +82,12 @@ const Navigator = () => {
 
 export default function App() {
   const [theme, setTheme] = useState(DefaultTheme);
+  const [sbTheme, setSbTheme] = useState('default');
   return (
     <ThemeContext.Provider value={{theme: theme, setTheme: setTheme}}>
-      <Navigator />
+      <SearchBarContext.Provider value={{theme: sbTheme, setTheme: setSbTheme}}>
+        <Navigator />
+      </SearchBarContext.Provider>
     </ThemeContext.Provider>
   );
 }

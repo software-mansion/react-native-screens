@@ -143,4 +143,16 @@
 
 @end
 
+namespace rct = facebook::react;
+
+RNSSearchBarTheme RNSSearchBarThemeFromCppEquivalent(rct::RNSSearchBarTheme style)
+{
+  switch (style) {
+    case rct::RNSSearchBarTheme::Default:
+      return RNSSearchBarThemeDefault;
+    case rct::RNSSearchBarTheme::Black:
+      return RNSSearchBarThemeBlack;
+  }
+}
+
 #endif // RCT_NEW_ARCH_ENABLED

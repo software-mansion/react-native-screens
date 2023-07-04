@@ -33,4 +33,6 @@
 
 @end
 
+auto RNSSearchBarThemeFromCppEquivalent(facebook::react::RNSSearchBarTheme style) -> RNSSearchBarTheme;
+
 #endif // RCT_NEW_ARCH_ENABLED

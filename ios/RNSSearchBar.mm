@@ -184,6 +184,25 @@
   [_controller.searchBar setValue:text forKey:@"cancelButtonText"];
 }
 
+- (void)setTheme:(RNSSearchBarTheme)theme
+{
+  //  [_controller.searchBar setTranslucent:NO];
+  //  [_controller.searchBar.searchTextField setTokenBackgroundColor:[UIColor colorWithRed:0 green:1.0 blue:0 alpha:1]];
+  [_controller.searchBar setSearchBarStyle:UISearchBarStyleDefault];
+  switch (theme) {
+    case RNSSearchBarThemeDefault:
+      [_controller.searchBar setBarStyle:UIBarStyleDefault];
+      //      [_controller.searchBar setSearchBarStyle:UISearchBarStyleDefault];
+      break;
+    case RNSSearchBarThemeBlack:
+      [_controller.searchBar setBarStyle:UIBarStyleBlack];
+      //      [_controller.searchBar setSearchBarStyle:UISearchBarStyleMinimal];
+      break;
+    default:
+      RCTLogWarn(@"Unhandled SearchBarStyle type: %ld", theme);
+  }
+}
+
 - (void)hideCancelButton
 {
 #if !TARGET_OS_TV
@@ -326,6 +345,13 @@
     [self setTextColor:RCTUIColorFromSharedColor(newScreenProps.textColor)];
   }
 
+  //  if (oldScreenProps.style != newScreenProps.style) {
+  [self setTheme:RNSSearchBarThemeFromCppEquivalent(newScreenProps.theme)];
+  //  }
+
+  //  [[_controller searchBar] setBarStyle:UIBarStyleBlack];
+  //  _props = newScreenProps;
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -372,6 +398,7 @@ RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
+RCT_EXPORT_VIEW_PROPERTY(theme, RNSSearchBarStyle);
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)
@@ -422,5 +449,15 @@ RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text
 }
 
 #endif /* !RCT_NEW_ARCH_ENABLED */
+
+@end
+
+@implementation RCTConvert (RNSSearchBar)
+
+RCT_ENUM_CONVERTER(
+    RNSSearchBarTheme,
+    (@{@"default" : @(RNSSearchBarThemeDefault), @"black" : @(RNSSearchBarThemeBlack)}),
+    RNSSearchBarThemeDefault,
+    integerValue)
 
 @end
