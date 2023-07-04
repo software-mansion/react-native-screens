@@ -245,22 +245,19 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     private fun recalculateHeaderHeight() {
         val typedValue = TypedValue()
         val resolveAttributeByValue = context.theme.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
-        var actionBarHeight = 56 // Default action bar height
 
-        // Check if it's possible to get an attribute from theme context.
+        // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
-        if (resolveAttributeByValue) {
-            val parsedActionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, resources.displayMetrics)
-            actionBarHeight = parsedActionBarHeight.convertToDp(context)
-        }
+        val actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, resources.displayMetrics).takeIf { resolveAttributeByValue }
+            ?.convertToDp(context)
+            ?: 56 // Default action bar height
 
         val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
             .takeIf { it > 0 }
             ?.let { (context.resources::getDimensionPixelSize)(it) }?.convertToDp(context)
-            ?: 0
+            ?: 24 // Default status bar height
 
         val summarizedHeight = actionBarHeight + statusBarHeight
-        println("Summarized Status Bar Height: $summarizedHeight")
 
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderHeightChangeEvent(id, summarizedHeight))
