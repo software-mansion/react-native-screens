@@ -901,7 +901,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // we are going forward or dismissing without swipe
     // or successfully swiped back
     [self.screenView notifyAppear];
-    [self recalculateHeaderHeight];
     [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
   }
 
@@ -953,8 +952,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
-  [self recalculateHeaderHeight];
-
   if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
@@ -977,7 +974,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     statusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
   }
 
-  // Unfortunately, UIKit doesn't matter about switching width and height options on screen rotation.
+  // Unfortunately, UIKit doesn't care about switching width and height options on screen rotation.
   // We should check if user has rotated its screen, so we're choosing the minimum value between the
   // width and height.
   CGFloat statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);

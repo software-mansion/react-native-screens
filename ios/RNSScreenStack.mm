@@ -59,6 +59,13 @@
   return [self topViewController];
 }
 
+- (void)viewDidLayoutSubviews
+{
+  if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
+    [(RNSScreen *)self.topViewController recalculateHeaderHeight];
+  }
+}
+
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
   return [self topViewController].supportedInterfaceOrientations;

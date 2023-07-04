@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (void)notifyFinishTransitioning;
+- (void)recalculateHeaderHeight;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)setViewToSnapshot:(UIView *)snapshot;

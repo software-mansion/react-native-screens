@@ -32,6 +32,7 @@ import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
+import { useState } from 'react';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -209,13 +210,16 @@ const RouteView = ({
     ? headerShown
     : stackPresentation === 'push' && headerShown !== false;
 
-  const dimensions = useSafeAreaFrame();
-  const topInset = useSafeAreaInsets().top;
-  const headerHeight = getDefaultHeaderHeight(
-    dimensions,
-    topInset,
-    stackPresentation
-  );
+  // TODO: Change headerHeight to 0 after debugging height
+  const [headerHeight, setHeaderHeight] = useState(20);
+
+  // const dimensions = useSafeAreaFrame();
+  // const topInset = useSafeAreaInsets().top;
+  // const headerHeight = getDefaultHeaderHeight(
+  //   dimensions,
+  //   topInset,
+  //   stackPresentation
+  // );
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const Screen = React.useContext(ScreenContext);
 
@@ -294,6 +298,7 @@ const RouteView = ({
       }}
       onHeaderHeightChange={(e) => {
         console.log('Changed!', e.nativeEvent.newHeight);
+        setHeaderHeight(e.nativeEvent.newHeight);
       }}
       onDismissed={(e) => {
         navigation.emit({
