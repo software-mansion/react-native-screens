@@ -1,16 +1,20 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
+import android.util.TypedValue
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
+import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(context) {
@@ -63,6 +67,8 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         if (changed) {
             val width = r - l
             val height = b - t
+
+            recalculateHeaderHeight()
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 updateScreenSizeFabric(width, height)
             } else {
@@ -236,6 +242,30 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
         }
 
+    private fun recalculateHeaderHeight() {
+        val typedValue = TypedValue()
+        val resolveAttributeByValue = context.theme.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+        var actionBarHeight = 56 // Default action bar height
+
+        // Check if it's possible to get an attribute from theme context.
+        // Otherwise, the default value will be returned.
+        if (resolveAttributeByValue) {
+            val parsedActionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, resources.displayMetrics)
+            actionBarHeight = parsedActionBarHeight.convertToDp(context)
+        }
+
+        val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+            .takeIf { it > 0 }
+            ?.let { (context.resources::getDimensionPixelSize)(it) }?.convertToDp(context)
+            ?: 0
+
+        val summarizedHeight = actionBarHeight + statusBarHeight
+        println("Summarized Status Bar Height: $summarizedHeight")
+
+        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+            ?.dispatchEvent(HeaderHeightChangeEvent(id, summarizedHeight))
+    }
+
     enum class StackPresentation {
         PUSH, MODAL, TRANSPARENT_MODAL
     }
@@ -254,5 +284,12 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
+    }
+
+    private fun Int.convertToDp(context: Context): Int {
+        val resources = context.resources
+        val metrics = resources.displayMetrics
+        val dp = this / (metrics.densityDpi / 160f)
+        return dp.toInt()
     }
 }
