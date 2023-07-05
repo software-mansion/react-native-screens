@@ -422,7 +422,7 @@ Allows for customizing font family to be used for back button title on iOS.
 
 Allows for customizing font size to be used for back button title on iOS.
 
-### `backTitleVisible (iOS only)
+### `backTitleVisible` (iOS only)
 
 Whether the back button title should be visible. Defaults to `true`.
 
