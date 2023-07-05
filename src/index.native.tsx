@@ -325,6 +325,9 @@ class InnerScreen extends React.Component<ScreenProps> {
                     { useNativeDriver: true }
                   )
             }
+            onSwipeCanceled={() => {
+              // NOOP
+            }}
           >
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children

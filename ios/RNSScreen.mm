@@ -392,6 +392,20 @@
 #endif
 }
 
+- (void)notifySwipeCanceled
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onSwipeCanceled(facebook::react::RNSScreenEventEmitter::OnSwipeCanceled{});
+  }
+#else
+  if (self.onSwipeCanceled) {
+    self.onSwipeCanceled(nil);
+  }
+#endif
+}
+
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -886,6 +900,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // or successfully swiped back
     [self.screenView notifyAppear];
     [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
+  } else {
+    [self.screenView notifySwipeDismiss];
   }
 
   _isSwiping = NO;
@@ -1275,6 +1291,7 @@ RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onSwipeDismiss, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
