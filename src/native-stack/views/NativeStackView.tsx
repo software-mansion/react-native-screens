@@ -18,10 +18,6 @@ import {
   NavigationState,
   PartialState,
 } from '@react-navigation/native';
-import {
-  useSafeAreaFrame,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 
 import {
   NativeStackDescriptorMap,
@@ -30,7 +26,6 @@ import {
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
-import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import { useState } from 'react';
 
@@ -60,11 +55,13 @@ const MaybeNestedStack = ({
   options,
   route,
   stackPresentation,
+  headerHeight,
   children,
 }: {
   options: NativeStackNavigationOptions;
   route: Route<string>;
   stackPresentation: StackPresentationTypes;
+  headerHeight: number;
   children: React.ReactNode;
 }) => {
   const { colors } = useTheme();
@@ -74,7 +71,7 @@ const MaybeNestedStack = ({
 
   const isHeaderInModal = isAndroid
     ? false
-    : stackPresentation !== 'push' && headerShown === true;
+    : stackPresentation !== 'push' && headerShown;
 
   const headerShownPreviousRef = React.useRef(headerShown);
 
@@ -104,14 +101,6 @@ const MaybeNestedStack = ({
     >
       {children}
     </Container>
-  );
-
-  const topInset = useSafeAreaInsets().top;
-  const dimensions = useSafeAreaFrame();
-  const headerHeight = getDefaultHeaderHeight(
-    dimensions,
-    topInset,
-    stackPresentation
   );
 
   if (isHeaderInModal) {
@@ -297,7 +286,6 @@ const RouteView = ({
         });
       }}
       onHeaderHeightChange={(e) => {
-        console.log('Changed!', e.nativeEvent.newHeight);
         setHeaderHeight(e.nativeEvent.newHeight);
       }}
       onDismissed={(e) => {
@@ -326,6 +314,7 @@ const RouteView = ({
           options={options}
           route={route}
           stackPresentation={stackPresentation}
+          headerHeight={headerHeight}
         >
           {renderScene()}
         </MaybeNestedStack>
