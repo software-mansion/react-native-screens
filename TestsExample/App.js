@@ -89,9 +89,10 @@ import Test1683 from './src/Test1683';
 import Test1726 from './src/Test1726';
 import Test1791 from './src/Test1791';
 import Test1802 from './src/Test1802';
+import Test1802b from './src/Test1802b';
 
 enableFreeze(true);
 
 export default function App() {
-  return <Test1802 />;
+  return <Test42 />;
 }
