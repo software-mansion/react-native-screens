@@ -533,6 +533,11 @@
   return self.stackPresentation != RNSScreenStackPresentationPush;
 }
 
+- (BOOL)isPresentedAsNativeModal
+{
+  return self.controller.parentViewController == nil && self.controller.presentingViewController != nil;
+}
+
 #if !TARGET_OS_TV
 /**
  * Updates settings for sheet presentation controller.
@@ -950,9 +955,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // screen size
   BOOL isDisplayedWithinUINavController =
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
-  BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
-  if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
+  if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
 #else
@@ -962,24 +966,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
 #endif
   }
-}
-
-- (void)recalculateHeaderHeight
-{
-  CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
-  CGSize statusBarSize;
-  if (@available(iOS 13.0, *)) {
-    statusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
-  } else {
-    statusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
-  }
-
-  // Unfortunately, UIKit doesn't care about switching width and height options on screen rotation.
-  // We should check if user has rotated its screen, so we're choosing the minimum value between the
-  // width and height.
-  CGFloat statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);
-  CGFloat summarizedHeight = navbarHeight + statusBarHeight;
-  [self.screenView notifyHeaderHeightChange:(summarizedHeight)];
 }
 
 - (void)notifyFinishTransitioning

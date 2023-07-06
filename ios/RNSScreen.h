@@ -32,7 +32,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (void)notifyFinishTransitioning;
-- (void)recalculateHeaderHeight;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)setViewToSnapshot:(UIView *)snapshot;
@@ -102,13 +101,13 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;
+- (void)notifyHeaderHeightChange:(int)newHeight;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;
 - (void)notifyAppear;
 - (void)notifyDisappear;
-- (void)notifyHeaderHeightChange:(int)newHeight;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 #endif
@@ -116,6 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
+- (BOOL)isPresentedAsNativeModal;
 
 @end
 

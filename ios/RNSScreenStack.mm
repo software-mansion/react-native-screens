@@ -18,6 +18,7 @@
 #import <React/RCTUIManagerUtils.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
+#import "RNSScreen+RNSScreenHeaderHeight.h"
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
@@ -62,7 +63,7 @@
 - (void)viewDidLayoutSubviews
 {
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
-    [(RNSScreen *)self.topViewController recalculateHeaderHeight];
+    [(RNSScreen *)self.topViewController recalculateHeaderHeightIsModal:NO];
   }
 }
 
