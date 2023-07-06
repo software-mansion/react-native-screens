@@ -261,6 +261,16 @@ class InnerScreen extends React.Component<ScreenProps> {
       ...rest
     } = this.props;
 
+    // To maintain default behaviour of formSheet stack presentation style & and to have resonable
+    // defaults for new medium-detent iOS API we need to set defaults here
+    const {
+      sheetAllowedDetents = 'large',
+      sheetLargestUndimmedDetent = 'all',
+      sheetGrabberVisible = false,
+      sheetCornerRadius = -1.0,
+      sheetExpandsWhenScrolledToEdge = true,
+    } = rest;
+
     if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
@@ -300,6 +310,11 @@ class InnerScreen extends React.Component<ScreenProps> {
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
+            sheetAllowedDetents={sheetAllowedDetents}
+            sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+            sheetGrabberVisible={sheetGrabberVisible}
+            sheetCornerRadius={sheetCornerRadius}
+            sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,
