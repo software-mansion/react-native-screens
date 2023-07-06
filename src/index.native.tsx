@@ -254,10 +254,16 @@ class InnerScreen extends React.Component<ScreenProps> {
     this.props.onComponentRef?.(ref);
   };
 
+  // Setting resonable defaults for medium detents
   render() {
     const {
       enabled = ENABLE_SCREENS,
       freezeOnBlur = ENABLE_FREEZE,
+      sheetAllowedDetents = 'large',
+      sheetLargestUndimmedDetent = 'all',
+      sheetGrabberVisible = false,
+      sheetCornerRadius = -1.0,
+      sheetExpandsWhenScrolledToEdge = true,
       ...rest
     } = this.props;
 
@@ -300,6 +306,11 @@ class InnerScreen extends React.Component<ScreenProps> {
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
+            sheetAllowedDetents={sheetAllowedDetents}
+            sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+            sheetGrabberVisible={sheetGrabberVisible}
+            sheetCornerRadius={sheetCornerRadius}
+            sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,
