@@ -66,7 +66,7 @@ namespace rct = facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const rct::RNSScreenStackHeaderConfigProps>();
     _props = defaultProps;
-    _show = YES;
+    _show = NO;
     _translucent = NO;
     [self initProps];
   }
@@ -605,7 +605,8 @@ namespace rct = facebook::react;
           if (@available(iOS 11.0, *)) {
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
-            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+            //            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+            navitem.hidesSearchBarWhenScrolling = true;
           }
 #endif
         }

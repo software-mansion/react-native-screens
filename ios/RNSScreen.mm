@@ -8,6 +8,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
+#import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -26,7 +27,7 @@
 
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
-    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
+    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, UIScrollViewDelegate>
 #else
     <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 #endif
@@ -581,11 +582,34 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [super mountChildComponentView:childComponentView index:index];
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = childComponentView;
     ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
   }
+  if ([childComponentView isKindOfClass:[RCTViewComponentView class]]) {
+    // If the scroll view is present:
+    if (_reactSubviews.count > 0 && [_reactSubviews[0] isKindOfClass:[RCTScrollViewComponentView class]]) {
+      NSLog(@"FOUND THE SCROLL VIEW");
+    }
+  }
+  if ([childComponentView isKindOfClass:[RCTScrollViewComponentView class]]) {
+    //    if ((RNSScreenStackHeaderConfig *)self.config != nil) {
+    //    }
+    RCTScrollViewComponentView *scrollView = childComponentView;
+    if (scrollView.scrollViewDelegateSplitter != nil) {
+      [scrollView.scrollViewDelegateSplitter addDelegate:self];
+    } else {
+      NSLog(@"ScrollView's delegate is nil");
+    }
+
+    [[_reactSubviews lastObject] mountChildComponentView:childComponentView index:0];
+    //    index = index - 1;
+    //    [self unmountChildComponentView:_reactSubviews.lastObject index:index];
+    //    [_reactSubviews removeLastObject];
+    //    NSLog(@"FOUND THE SCROLL VIEW (BEFORE RCTViewComponentView)");
+    return;
+  }
+  [super mountChildComponentView:childComponentView index:index];
   [_reactSubviews insertObject:childComponentView atIndex:index];
 }
 
@@ -596,6 +620,11 @@
   }
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];
+}
+
+- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
+{
+  [self.controller.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
 #pragma mark - RCTComponentViewProtocol

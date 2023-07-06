@@ -92,5 +92,5 @@ import Test1791 from './src/Test1791';
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <Test1097 />;
 }

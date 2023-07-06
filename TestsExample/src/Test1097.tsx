@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import {Button, NativeSyntheticEvent, ScrollView} from 'react-native';
 import {
@@ -19,8 +19,8 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <AppStack.Navigator
         screenOptions={{
-          headerLargeTitle: true,
-          headerTranslucent: true,
+          // headerLargeTitle: true,
+          // headerTranslucent: true,
         }}>
         <AppStack.Screen name="First" component={First} />
         <AppStack.Screen name="Second" component={Second} />
