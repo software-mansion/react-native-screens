@@ -901,7 +901,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self.screenView notifyAppear];
     [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
   } else {
-    [self.screenView notifySwipeDismiss];
+    [self.screenView notifySwipeCanceled];
   }
 
   _isSwiping = NO;
@@ -1291,7 +1291,7 @@ RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onSwipeDismiss, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onSwipeCanceled, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
