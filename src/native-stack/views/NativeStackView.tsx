@@ -307,6 +307,12 @@ const RouteView = ({
           target: stateKey,
         });
       }}
+      onGestureCancel={() => {
+        navigation.emit({
+          type: 'gestureCancel',
+          target: route.key,
+        });
+      }}
     >
       <HeaderHeightContext.Provider
         value={

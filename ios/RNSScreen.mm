@@ -392,16 +392,16 @@
 #endif
 }
 
-- (void)notifySwipeCanceled
+- (void)notifyGestureCancel
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onSwipeCanceled(facebook::react::RNSScreenEventEmitter::OnSwipeCanceled{});
+        ->onGestureCancel(facebook::react::RNSScreenEventEmitter::OnGestureCancel{});
   }
 #else
-  if (self.onSwipeCanceled) {
-    self.onSwipeCanceled(nil);
+  if (self.onGestureCancel) {
+    self.onGestureCancel(nil);
   }
 #endif
 }
@@ -901,7 +901,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self.screenView notifyAppear];
     [self notifyTransitionProgress:1.0 closing:NO goingForward:_goingForward];
   } else {
-    [self.screenView notifySwipeCanceled];
+    [self.screenView notifyGestureCancel];
   }
 
   _isSwiping = NO;
@@ -1291,7 +1291,7 @@ RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
-RCT_EXPORT_VIEW_PROPERTY(onSwipeCanceled, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
