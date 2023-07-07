@@ -42,20 +42,20 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
   const [search, setSearch] = React.useState('');
 
   const searchBarOptions: SearchBarProps = {
-    // @ts-ignore
-    ref: searchBarRef,
-    barTintColor: 'powderblue',
-    hideWhenScrolling: true,
-    obscureBackground: false,
-    hideNavigationBar: false,
-    autoCapitalize: 'sentences',
-    placeholder: 'Some text',
-    onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
-      setSearch(e.nativeEvent.text),
-    onCancelButtonPress: () => console.warn('Cancel button pressed'),
-    onSearchButtonPress: () => console.warn('Search button pressed'),
-    onFocus: () => console.warn('onFocus event'),
-    onBlur: () => console.warn('onBlur event'),
+    // // @ts-ignore
+    // ref: searchBarRef,
+    // barTintColor: 'powderblue',
+    // hideWhenScrolling: true,
+    // obscureBackground: false,
+    // hideNavigationBar: false,
+    // autoCapitalize: 'sentences',
+    // placeholder: 'Some text',
+    // onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
+    //   setSearch(e.nativeEvent.text),
+    // onCancelButtonPress: () => console.warn('Cancel button pressed'),
+    // onSearchButtonPress: () => console.warn('Search button pressed'),
+    // onFocus: () => console.warn('onFocus event'),
+    // onBlur: () => console.warn('onBlur event'),
   };
 
   const items = [
