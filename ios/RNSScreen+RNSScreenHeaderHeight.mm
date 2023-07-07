@@ -11,6 +11,14 @@
   }
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+  //    [super viewDidDisappear:animated];
+  if (self.screenView.isPresentedAsNativeModal) {
+    [self recalculateHeaderHeightIsModal:YES];
+  }
+}
+
 - (CGFloat)getCalculatedHeaderHeight:(BOOL)isModal
 {
   CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
@@ -27,6 +35,7 @@
 - (void)recalculateHeaderHeightIsModal:(BOOL)isModal
 {
   if (self.isTransparentModal) {
+    [self.screenView notifyHeaderHeightChange:0];
     return;
   }
 

@@ -286,6 +286,7 @@ const RouteView = ({
         });
       }}
       onHeaderHeightChange={(e) => {
+        console.log('Changed! ', e.nativeEvent.newHeight);
         setHeaderHeight(e.nativeEvent.newHeight);
       }}
       onDismissed={(e) => {
