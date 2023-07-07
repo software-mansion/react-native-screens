@@ -1,7 +1,10 @@
 import * as React from 'react';
 import {Button, View} from 'react-native';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +45,10 @@ function Second({
 }) {
   return (
     <View style={{flex: 1, backgroundColor: 'yellow'}}>
-      <Button title="Tap me for first screen" onPress={() => navigation.goBack()} />
+      <Button
+        title="Tap me for first screen"
+        onPress={() => navigation.goBack()}
+      />
     </View>
   );
 }

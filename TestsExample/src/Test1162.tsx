@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import {Button, View} from 'react-native';
 import {
@@ -80,7 +81,7 @@ function First({
 function TabScreen() {
   return (
     <View style={{backgroundColor: '#CCC', flex: 1, paddingTop: 200}}>
-      <View style={{backgroundColor: '#EEE', flex: 1}}></View>
+      <View style={{backgroundColor: '#EEE', flex: 1}} />
     </View>
   );
 }
@@ -101,7 +102,7 @@ function Second({
       <View style={{backgroundColor: '#333', flex: 1}}>
         <Button
           title="Change translucent"
-          onPress={() => setIsTranslucent((prev) => !prev)}
+          onPress={() => setIsTranslucent(prev => !prev)}
         />
       </View>
     </View>

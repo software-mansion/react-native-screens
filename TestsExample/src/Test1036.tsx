@@ -16,9 +16,9 @@ const App = () => {
         screenOptions={{
           headerTitle: 'Title',
           searchBar: {
-            onCancelButtonPress: ()=>{
-              console.log('cancel button press')
-            }
+            onCancelButtonPress: () => {
+              console.log('cancel button press');
+            },
           },
         }}>
         <Stack.Screen name="Screen" component={Screen} />

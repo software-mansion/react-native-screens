@@ -6,7 +6,7 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { ScrollView } from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 

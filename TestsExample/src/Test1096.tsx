@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import { Button, StyleSheet, View, Modal } from 'react-native';
+import {Button, StyleSheet, View, Modal} from 'react-native';
 import {FullWindowOverlay} from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 
 function Home({
   navigation,
@@ -25,8 +25,7 @@ function Home({
       <Modal
         animationType="slide"
         visible={isShowModal}
-        presentationStyle="pageSheet"
-      >
+        presentationStyle="pageSheet">
         <View style={styles.container}>
           <Button
             title="dismiss rn modal"
@@ -35,10 +34,12 @@ function Home({
         </View>
       </Modal>
       <FullWindowOverlay>
-        <View style={{flex: 1, justifyContent: 'center'}} pointerEvents="box-none">
+        <View
+          style={{flex: 1, justifyContent: 'center'}}
+          pointerEvents="box-none">
           <View style={styles.box} />
           <Button title="click me" onPress={() => console.warn('clicked')} />
-        </View >
+        </View>
       </FullWindowOverlay>
     </View>
   );
@@ -66,7 +67,7 @@ export default function App() {
         <NativeStack.Screen
           name="Modal"
           component={ModalScreen}
-          options={{ stackPresentation: 'modal' }}
+          options={{stackPresentation: 'modal'}}
         />
       </NativeStack.Navigator>
     </NavigationContainer>

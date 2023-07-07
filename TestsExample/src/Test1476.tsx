@@ -62,68 +62,89 @@ function ModalA(props: Props) {
       }}>
       <View style={{backgroundColor: 'white'}}>
         <Text>ModalA, with opacity and backgroundColor</Text>
-          <Text>
-            At ModalA, we still can gesture swipe the screenB back to screenA,{' '}
-          </Text>
+        <Text>
+          At ModalA, we still can gesture swipe the screenB back to screenA,{' '}
+        </Text>
         <Button title={'pop modal'} onPress={() => props.navigation.pop()} />
       </View>
     </View>
   );
 }
 
-const StackBuilder = (configs: any, groupOptions?: NativeStackNavigationOptions) => {
+const StackBuilder = (
+  configs: any,
+  groupOptions?: NativeStackNavigationOptions,
+) => {
   return () => (
     <NativeStack.Group screenOptions={groupOptions}>
       {configs.map(config => {
-        const { options, ...anyConfig } = config;
-        const { statusBarStyle, statusBarAnimation, statusBarHidden, ...anyOption } = options || {};
-        return <NativeStack.Screen key={config.name} {...anyConfig} options={anyOption} />;
+        const {options, ...anyConfig} = config;
+        const {
+          statusBarStyle,
+          statusBarAnimation,
+          statusBarHidden,
+          ...anyOption
+        } = options || {};
+        return (
+          <NativeStack.Screen
+            key={config.name}
+            {...anyConfig}
+            options={anyOption}
+          />
+        );
       })}
     </NativeStack.Group>
   );
 };
 
-const ScreenGroup = StackBuilder([
+const ScreenGroup = StackBuilder(
+  [
+    {
+      name: 'screenA',
+      component: ScreenA,
+    },
+    {
+      name: 'screenB',
+      component: ScreenB,
+    },
+  ],
   {
-    name: 'screenA',
-    component: ScreenA,
+    // headerShadowVisible: false,
+    headerTintColor: 'black',
+    headerBackTitleVisible: false,
+    gestureEnabled: true,
+    contentStyle: {backgroundColor: 'white'},
+
+    // prop for @react-navigation/native-stack
+    // fullScreenGestureEnabled: true,
+
+    // prop for react-native-screens/native-stack
+    fullScreenSwipeEnabled: true,
   },
+);
+
+const ModalGroup = StackBuilder(
+  [
+    {
+      name: 'modalA',
+      component: ModalA,
+      // options: { stackAnimation: 'fade' },
+    },
+  ],
   {
-    name: 'screenB',
-    component: ScreenB,
-  }], {
-  // headerShadowVisible: false,
-  headerTintColor: 'black',
-  headerBackTitleVisible: false,
-  gestureEnabled: true,
-  contentStyle: { backgroundColor: 'white' },
+    headerShown: false,
 
-  // prop for @react-navigation/native-stack
-  // fullScreenGestureEnabled: true,
+    // props for @react-navigation/native-stack
+    // animation: 'fade_from_bottom',
+    // presentation: 'containedTransparentModal',
 
-  // prop for react-native-screens/native-stack
-  fullScreenSwipeEnabled: true,
-});
-
-
-const ModalGroup = StackBuilder([
-  {
-    name: 'modalA',
-    component: ModalA,
-    // options: { stackAnimation: 'fade' },
-  }], {
-  headerShown: false,
-
-  // props for @react-navigation/native-stack
-  // animation: 'fade_from_bottom',
-  // presentation: 'containedTransparentModal',
-
-  // props for react-native-screens/native-stack
-  stackAnimation: 'fade_from_bottom',
-  stackPresentation: 'containedTransparentModal',
-  fullScreenSwipeEnabled: true,
-  customAnimationOnSwipe: true,
-});
+    // props for react-native-screens/native-stack
+    stackAnimation: 'fade_from_bottom',
+    stackPresentation: 'containedTransparentModal',
+    fullScreenSwipeEnabled: true,
+    customAnimationOnSwipe: true,
+  },
+);
 
 export default function TestModalPresentation() {
   return (

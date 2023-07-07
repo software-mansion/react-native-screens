@@ -1,28 +1,31 @@
 import * as React from 'react';
-import { View, StyleSheet, Button } from 'react-native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import {View, StyleSheet, Button} from 'react-native';
+import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 
 export const Modal1 = React.memo(() => {
-  return <View style={{ flexGrow: 1, backgroundColor: 'red', opacity: 0.7 }} />;
+  return <View style={{flexGrow: 1, backgroundColor: 'red', opacity: 0.7}} />;
 });
 
 export const Modal2 = React.memo(() => {
-  return (
-    <View style={{ flexGrow: 1, backgroundColor: 'blue', opacity: 0.7 }} />
-  );
+  return <View style={{flexGrow: 1, backgroundColor: 'blue', opacity: 0.7}} />;
 });
 export const MainScreen = React.memo(() => {
   const navigation = useNavigation();
   return (
-    <View
-      style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button title={'Open modal 1'} onPress={() => {
-        navigation.navigate('modalScreen-1')
-      }}/>
-      <Button title={'Open modal 2'} onPress={() => {
-        navigation.navigate('modalScreen-2')
-      }}/>
+    <View style={{flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Button
+        title={'Open modal 1'}
+        onPress={() => {
+          navigation.navigate('modalScreen-1');
+        }}
+      />
+      <Button
+        title={'Open modal 2'}
+        onPress={() => {
+          navigation.navigate('modalScreen-2');
+        }}
+      />
     </View>
   );
 });
@@ -39,13 +42,13 @@ export default function App() {
             key={'modalScreen-1'}
             name={'modalScreen-1'}
             component={Modal1}
-            options={{ stackPresentation: 'modal', headerShown: false }}
+            options={{stackPresentation: 'modal', headerShown: false}}
           />
           <Stack.Screen
             key={'modalScreen-2'}
             name={'modalScreen-2'}
             component={Modal2}
-            options={{ stackPresentation: 'modal', headerShown: false }}
+            options={{stackPresentation: 'modal', headerShown: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>

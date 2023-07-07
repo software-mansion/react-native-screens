@@ -9,7 +9,7 @@ function First(props) {
   return (
     <View style={styles.container}>
       <Text>This is the first screen</Text>
-      <Button 
+      <Button
         onPress={() => props.navigation.navigate('Second')}
         title="Navigate to second screen"
       />
@@ -31,17 +31,18 @@ function Second(props) {
 
 function Modal(props) {
   return (
-    <View style={{
-      ...styles.container,
-      backgroundColor: 'rgba(0, 170, 0, 0.5)',
-    }}>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: 'rgba(0, 170, 0, 0.5)',
+      }}>
       <Text>This is the modal</Text>
       <Button
         onPress={() => props.navigation.goBack()}
         title="Close the modal"
       />
     </View>
-  )
+  );
 }
 
 function App() {
@@ -49,9 +50,13 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="First">
         <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} options={{
-          fullScreenSwipeEnabled: true,
-        }}/>
+        <Stack.Screen
+          name="Second"
+          component={Second}
+          options={{
+            fullScreenSwipeEnabled: true,
+          }}
+        />
         <Stack.Screen
           name="Modal"
           component={Modal}

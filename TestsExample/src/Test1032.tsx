@@ -44,7 +44,10 @@ function First({
 function Second() {
   return (
     <View style={{backgroundColor: '#FFF'}}>
-      <Button title="Swipe back to see if button click triggers" onPress={() => Alert.alert('Click detected')} />
+      <Button
+        title="Swipe back to see if button click triggers"
+        onPress={() => Alert.alert('Click detected')}
+      />
     </View>
   );
 }

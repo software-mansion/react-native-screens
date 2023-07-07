@@ -35,7 +35,8 @@ const Screen1 = () => {
       }}>
       <Button
         title="Go to Screen 2"
-        onPress={() => navigation.navigate('Screen2')} />
+        onPress={() => navigation.navigate('Screen2')}
+      />
     </View>
   );
 };
