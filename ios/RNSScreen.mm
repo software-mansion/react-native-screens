@@ -69,13 +69,13 @@
     // Add the UIScrollView to the given view
     [self addSubview:scrollView];
 
-    UINavigationItem *navItem = [[self controller] navigationController].navigationItem;
-
-    if (navItem == nil) {
-      NSLog(@"NavItem is nil");
-    } else {
-      navItem.hidesSearchBarWhenScrolling = false;
-    }
+    //    UINavigationItem *navItem = [[self controller] navigationController].navigationItem;
+    //
+    //    if (navItem == nil) {
+    //      NSLog(@"NavItem is nil");
+    //    } else {
+    //      navItem.hidesSearchBarWhenScrolling = false;
+    //    }
   }
 }
 #endif
