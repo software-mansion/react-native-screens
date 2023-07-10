@@ -11,12 +11,12 @@
   }
 }
 
-- (void)viewDidDisappear:(BOOL)animated
+- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)())completion
 {
-  //    [super viewDidDisappear:animated];
-  if (self.screenView.isPresentedAsNativeModal) {
-    [self recalculateHeaderHeightIsModal:YES];
-  }
+  [super dismissViewControllerAnimated:flag completion:completion];
+  BOOL isPresentedAsNativeModal = self.screenView.isPresentedAsNativeModal;
+
+  [self recalculateHeaderHeightIsModal:isPresentedAsNativeModal];
 }
 
 - (CGFloat)getCalculatedHeaderHeight:(BOOL)isModal

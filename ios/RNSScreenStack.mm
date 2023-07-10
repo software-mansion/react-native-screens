@@ -70,20 +70,12 @@
 - (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)())completion
 {
   [super dismissViewControllerAnimated:flag completion:completion];
-
-  NSLog(@"Zdismissował");
   BOOL isPresentedAsNativeModal = ((RNSScreen *)self.topViewController).screenView.isPresentedAsNativeModal;
 
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     [(RNSScreen *)self.topViewController recalculateHeaderHeightIsModal:isPresentedAsNativeModal];
   }
 }
-
-//- (void)viewDidDisappear:(BOOL)animated {
-//    if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
-//      [(RNSScreen *)self.topViewController recalculateHeaderHeightIsModal:NO];
-//    }
-//}
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
