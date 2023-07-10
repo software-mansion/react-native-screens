@@ -286,6 +286,12 @@ const RouteView = ({
         });
       }}
       onHeaderHeightChange={(e) => {
+        navigation.emit({
+          type: 'headerHeightChange',
+          data: { newHeight: e.nativeEvent.newHeight },
+          target: route.key,
+        });
+
         console.log('Changed! ', e.nativeEvent.newHeight);
         setHeaderHeight(e.nativeEvent.newHeight);
       }}
