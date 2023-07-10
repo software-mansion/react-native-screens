@@ -18,8 +18,8 @@
 #import <React/RCTUIManagerUtils.h>
 #endif // RCT_NEW_ARCH_ENABLED
 
-#import "RNSScreen+RNSScreenHeaderHeight.h"
 #import "RNSScreen.h"
+#import "RNSScreenModal.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
@@ -219,6 +219,14 @@
     // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenWindowTraits updateWindowTraits];
     [_presentedModals removeObject:presentationController.presentedViewController];
+
+    if ([_controller.topViewController isKindOfClass:[RNSScreen class]]) {
+      RNSScreen *topController = (RNSScreen *)_controller.topViewController;
+      if (topController.presentedViewController == nil ||
+          [RNSScreenModal isFullscreenModal:topController.presentedViewController.modalPresentationStyle]) {
+        [(RNSScreen *)topController recalculateHeaderHeightIsModal:NO];
+      }
+    }
 
     _updatingModals = NO;
 #ifdef RCT_NEW_ARCH_ENABLED

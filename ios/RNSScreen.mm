@@ -21,6 +21,7 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
+#import "RNSScreenModal.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -956,6 +957,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL isDisplayedWithinUINavController =
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
 
+  if (self.screenView.isPresentedAsNativeModal) {
+    [self recalculateHeaderHeightIsModal:YES];
+  }
+
   if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
@@ -966,6 +971,66 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
 #endif
   }
+}
+
+- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)())completion
+{
+  [super dismissViewControllerAnimated:flag completion:completion];
+  BOOL isPresentedAsNativeModal = self.screenView.isPresentedAsNativeModal;
+
+  [self recalculateHeaderHeightIsModal:isPresentedAsNativeModal];
+}
+
+- (CGFloat)getCalculatedHeaderHeight:(BOOL)isModal
+{
+  CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
+
+  // In case where screen is a modal, we want to calculate it's childViewController's height
+  if (isModal && self.childViewControllers.count > 0 && self.childViewControllers[0] != nil) {
+    UINavigationController *childNavCtr = self.childViewControllers[0];
+    navbarHeight = childNavCtr.navigationBar.frame.size.height;
+  }
+
+  return navbarHeight;
+}
+
+- (CGSize)getCalculatedStatusBarHeightIsModal:(BOOL)isModal
+{
+  BOOL isGrabbableModal = isModal && ![RNSScreenModal isFullscreenModal:self.modalPresentationStyle];
+
+  if (self.childViewControllers.count > 0 && self.childViewControllers[0] != nil && isGrabbableModal) {
+    return CGSizeMake(0, 0);
+  }
+
+  CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
+
+  if (@available(iOS 13.0, *)) {
+    CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
+    if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0)
+      return fallbackStatusBarSize;
+
+    return primaryStatusBarSize;
+  } else {
+    return fallbackStatusBarSize;
+  }
+}
+
+- (void)recalculateHeaderHeightIsModal:(BOOL)isModal
+{
+  if ([RNSScreenModal isTransparentModal:self.modalPresentationStyle]) {
+    [self.screenView notifyHeaderHeightChange:0];
+    return;
+  }
+
+  CGFloat navbarHeight = [self getCalculatedHeaderHeight:isModal];
+  CGSize statusBarSize = [self getCalculatedStatusBarHeightIsModal:isModal];
+
+  // Unfortunately, UIKit doesn't care about switching width and height options on screen rotation.
+  // We should check if user has rotated its screen, so we're choosing the minimum value between the
+  // width and height.
+  CGFloat statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);
+  CGFloat summarizedHeight = navbarHeight + statusBarHeight;
+  [self.screenView notifyHeaderHeightChange:summarizedHeight];
 }
 
 - (void)notifyFinishTransitioning
