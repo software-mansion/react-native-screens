@@ -7,7 +7,9 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
+#import <React/RCTEnhancedScrollView.h>
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTScrollViewComponentView.h>
 
 #else
 #import <React/RCTBridge.h>
@@ -80,40 +82,223 @@
   NSLog(@"RNSScreensNavigationController did move to parent view controller %@\n", parent);
 }
 
+/// Works fine
+- (void)expOnlyUIKit
+{
+  UIViewController *viewController = [UIViewController new];
+  UIScrollView *scrollView = [self getUIKitScrollView];
+
+  [viewController setView:scrollView];
+  viewController.navigationItem.title = @"NavItem title";
+  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
+  viewController.navigationItem.searchController = [UISearchController new];
+  self.navigationBar.prefersLargeTitles = YES;
+
+  [self setViewControllers:@[ viewController ]];
+}
+
+/// Works fine
+- (void)expVcUIKitAndReactScrollView
+{
+  UIViewController *viewController = [UIViewController new];
+  RCTEnhancedScrollView *scrollView = [self getReactEnhancedScrollView];
+
+  [viewController setView:scrollView];
+  viewController.navigationItem.title = @"NavItem title";
+  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
+  viewController.navigationItem.searchController = [UISearchController new];
+  self.navigationBar.prefersLargeTitles = YES;
+
+  [self setViewControllers:@[ viewController ]];
+}
+
+/// Works fine
+- (void)expVcUIKitAndFullReactSetup
+{
+  UIViewController *viewController = [UIViewController new];
+  RCTScrollViewComponentView *scrollView = [self getReactRCTScrollViewComponentView];
+
+  [viewController setView:scrollView];
+  viewController.navigationItem.title = @"NavItem title";
+  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
+  viewController.navigationItem.searchController = [UISearchController new];
+  self.navigationBar.prefersLargeTitles = YES;
+
+  [self setViewControllers:@[ viewController ]];
+}
+
+/// Works fine
+- (void)expWithScreensVcAndReactScrollView
+{
+  RNSScreen *viewController = [[RNSScreen alloc] init];
+  RCTEnhancedScrollView *scrollView = [self getReactEnhancedScrollView];
+  [viewController setView:scrollView];
+
+  viewController.navigationItem.title = @"NavItem title";
+  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
+  viewController.navigationItem.searchController = [UISearchController new];
+  self.navigationBar.prefersLargeTitles = YES;
+
+  [self setViewControllers:@[ viewController ]];
+}
+
+/// Work fine
+- (void)expWithScreensVcAndFullReactSetup
+{
+  RNSScreen *viewController = [[RNSScreen alloc] init];
+  RCTScrollViewComponentView *scrollView = [self getReactRCTScrollViewComponentView];
+
+  [viewController setView:scrollView];
+  viewController.navigationItem.title = @"NavItem title";
+  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
+  viewController.navigationItem.searchController = [UISearchController new];
+  self.navigationBar.prefersLargeTitles = YES;
+
+  [self setViewControllers:@[ viewController ]];
+}
+
+/// Works fine
+- (void)expWithScreensVcAndIntermediateViewAndFullReactSetup
+{
+  RNSScreen *viewController = [[RNSScreen alloc] init];
+  RCTScrollViewComponentView *scrollView = [self getReactRCTScrollViewComponentView];
+  UIView *intermediateView = [UIView new];
+  [intermediateView addSubview:scrollView];
+
+  [viewController setView:intermediateView];
+  viewController.navigationItem.title = @"NavItem title";
+  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
+  viewController.navigationItem.searchController = [UISearchController new];
+  self.navigationBar.prefersLargeTitles = YES;
+
+  [self setViewControllers:@[ viewController ]];
+}
+
+/// Works fine
+- (void)expWithPartialScreensSetupAndUIScrollView
+{
+  RNSScreenView *screenView = [[RNSScreenView alloc] init];
+  //  RNSScreen *viewController = [[RNSScreen alloc] init];
+  RNSScreen *viewController = screenView.controller;
+  //  screenView.controller = viewController;
+
+  UIScrollView *scrollView = [self getUIKitScrollView];
+  [screenView addSubview:scrollView];
+
+  //  viewController.navigationItem.title = @"NavItem title";
+  //  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
+  //  viewController.navigationItem.searchController = [UISearchController new];
+  //  self.navigationBar.prefersLargeTitles = YES;
+
+  [self setViewControllers:@[ viewController ]];
+  //  [self setNavigationBarHidden:NO];
+}
+
+/// Works fine
+- (void)expWithPartialScreensSetupAndReactScrollView
+{
+  RNSScreenView *screenView = [[RNSScreenView alloc] init];
+  RNSScreen *viewController = screenView.controller;
+
+  RCTEnhancedScrollView *scrollView = [self getReactEnhancedScrollView];
+  [screenView addSubview:scrollView];
+
+  [self setViewControllers:@[ viewController ]];
+}
+
+/// Works fine...
+/// It indicates that the problem lays somewhere in configuration / configuration order?
+- (void)expWithPartialScreensSetupAndReactFullSetup
+{
+  RNSScreenView *screenView = [[RNSScreenView alloc] init];
+  RNSScreen *viewController = screenView.controller;
+
+  RCTScrollViewComponentView *scrollView = [self getReactRCTScrollViewComponentView];
+  [screenView addSubview:scrollView];
+
+  [self setViewControllers:@[ viewController ]];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
   NSLog(@"RNSScreensNavigationController view %@ did appear\n", self.view);
-  UIViewController *viewController = [UIViewController new];
-  UIScrollView *scrollView = [self getScrollView];
-  [viewController setView:scrollView];
-
-  // Configure navigation item
-  NSLog(@"New vc's navigation item: %@\n", viewController.navigationItem);
-  viewController.navigationItem.title = @"NavItem title";
-  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
-  //  viewController.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-  self.navigationBar.prefersLargeTitles = YES;
-  viewController.navigationItem.searchController = [UISearchController new];
-
-  [self pushViewController:viewController animated:YES];
+  //  [self expOnlyUIKit];
+  //  [self expVcUIKitAndReactScrollView];
+  //  [self expVcUIKitAndFullReactSetup];
+  //  [self expWithScreensVcAndReactScrollView];
+  //  [self expWithScreensVcAndFullReactSetup];
+  //  [self expWithScreensVcAndIntermediateViewAndFullReactSetup];
+  //  [self expWithPartialScreensSetupAndUIScrollView];
+  //  [self expWithPartialScreensSetupAndReactScrollView];
+  //  [self expWithPartialScreensSetupAndReactFullSetup];
+  return;
 }
 
-- (UIScrollView *)getScrollView
+- (UIScrollView *)getUIKitScrollView
 {
   CGRect frame = CGRectMake(0, 0, 390, 701);
-  //    UIScrollView *scrollView = [[RCTEnhancedScrollView alloc] initWithFrame:frame];
   UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:frame];
+
+  // Mimicing setup in RCTScrollViewComponentView
+  //  UIView *containerView = [[UIView alloc] initWithFrame:CGRectZero];
+  //  [scrollView addSubview:containerView];
+
+  //  UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:frame];
   //    scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   //(0 143; 390 701)
   // Initialize UIViews (test rectangles) to add to the UIScrollView
-  for (int i = 0; i < 10; i++) {
+  int nItems{10};
+  for (int i = 0; i < nItems; i++) {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, i * 100, frame.size.width, 80)];
     view.backgroundColor = [UIColor colorWithRed:drand48() green:drand48() blue:drand48() alpha:1.0];
     [scrollView addSubview:view];
+    //    [scrollView.subviews.firstObject addSubview:view];
   }
   // Set the content size of the UIScrollView
-  scrollView.contentSize = CGSizeMake(frame.size.width, 10 * 100);
+  scrollView.contentSize = CGSizeMake(frame.size.width, nItems * 100);
   [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAutomatic];
+  return scrollView;
+}
+
+- (RCTEnhancedScrollView *)getReactEnhancedScrollView
+{
+  CGRect frame = CGRectMake(0, 0, 390, 701);
+  UIScrollView *scrollView = [[RCTEnhancedScrollView alloc] initWithFrame:frame];
+
+  // Mimicing setup in RCTScrollViewComponentView
+  //  UIView *containerView = [[UIView alloc] initWithFrame:CGRectZero];
+  //  [scrollView addSubview:containerView];
+
+  //  UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:frame];
+  //    scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  //(0 143; 390 701)
+  // Initialize UIViews (test rectangles) to add to the UIScrollView
+  int nItems{10};
+  for (int i = 0; i < nItems; i++) {
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, i * 100, frame.size.width, 80)];
+    view.backgroundColor = [UIColor colorWithRed:drand48() green:drand48() blue:drand48() alpha:1.0];
+    [scrollView addSubview:view];
+    //    [scrollView.subviews.firstObject addSubview:view];
+  }
+  // Set the content size of the UIScrollView
+  scrollView.contentSize = CGSizeMake(frame.size.width, nItems * 100);
+  [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAutomatic];
+  return scrollView;
+}
+
+- (RCTScrollViewComponentView *)getReactRCTScrollViewComponentView
+{
+  CGRect frame = CGRectMake(0, 0, 390, 701);
+  RCTScrollViewComponentView *scrollView = [[RCTScrollViewComponentView alloc] initWithFrame:frame];
+  int nItems{10};
+  for (int i = 0; i < nItems; i++) {
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, i * 100, frame.size.width, 80)];
+    view.backgroundColor = [UIColor colorWithRed:drand48() green:drand48() blue:drand48() alpha:1.0];
+    [scrollView mountChildComponentView:view index:scrollView.subviews.count];
+    //    [scrollView addSubview:view];
+  }
+  scrollView.scrollView.contentSize = CGSizeMake(frame.size.width, nItems * 100);
+  [scrollView.scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAutomatic];
   return scrollView;
 }
 

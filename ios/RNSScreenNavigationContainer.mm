@@ -17,7 +17,7 @@
 - (void)setupController
 {
   self.controller = [[RNScreensContainerNavigationController alloc] init];
-  [(RNScreensContainerNavigationController *)self.controller setNavigationBarHidden:YES animated:NO];
+  //  [(RNScreensContainerNavigationController *)self.controller setNavigationBarHidden:YES animated:NO];
   [self addSubview:self.controller.view];
 }
 

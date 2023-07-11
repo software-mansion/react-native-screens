@@ -26,6 +26,7 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 @property (nonatomic) BOOL show;
+- (void)updateViewControllerIfNeeded;
 #else
 @property (nonatomic) UIBlurEffectStyle blurEffect;
 @property (nonatomic) BOOL hide;

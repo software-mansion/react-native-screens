@@ -450,6 +450,7 @@ namespace rct = facebook::react;
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
 {
+  //  return;
   UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
 
@@ -463,6 +464,18 @@ namespace rct = facebook::react;
 #else
   BOOL shouldHide = config == nil || config.hide;
 #endif
+  shouldHide = NO;
+
+  navitem.title = @"NavItem Title";
+  navitem.hidesSearchBarWhenScrolling = YES;
+  navitem.searchController = [UISearchController new];
+  [[navctr navigationBar] setPrefersLargeTitles:YES];
+
+  //  viewController.navigationItem.title = @"NavItem title";
+  //  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
+  //  viewController.navigationItem.searchController = [UISearchController new];
+  //  self.navigationBar.prefersLargeTitles = YES;
+  return;
 
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
@@ -606,7 +619,7 @@ namespace rct = facebook::react;
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             //            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
-            navitem.hidesSearchBarWhenScrolling = true;
+            navitem.hidesSearchBarWhenScrolling = YES;
           }
 #endif
         }

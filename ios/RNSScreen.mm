@@ -88,8 +88,8 @@
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     [self initCommonProps];
-    [self setFrame:CGRectMake(0, 0, 390, 701)];
-    [self attachScrollView];
+    //    [self setFrame:CGRectMake(0, 0, 390, 701)];
+    //    [self attachScrollView];
   }
   return self;
 }
@@ -617,18 +617,28 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  /// Original implementation
+  //  [super mountChildComponentView:childComponentView index:index];
+  //  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+  //    _config = childComponentView;
+  //    ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
+  //  }
+  //  [_reactSubviews insertObject:childComponentView atIndex:index];
+  //  return;
+  ////////////////////////////////////////////////////
+
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = childComponentView;
     ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
     [_reactSubviews insertObject:childComponentView atIndex:index];
   }
   //  [self attachScrollView];
-  if (![childComponentView isKindOfClass:[RCTScrollViewComponentView class]]) {
-    //    if (_reactSubviews.count > 0 && [_reactSubviews[0] isKindOfClass:[RCTScrollViewComponentView class]]) {
-    //      NSLog(@"FOUND THE SCROLL VIEW");
-    //    }
-    return;
-  }
+  //  if (![childComponentView isKindOfClass:[RCTScrollViewComponentView class]]) {
+  //    //    if (_reactSubviews.count > 0 && [_reactSubviews[0] isKindOfClass:[RCTScrollViewComponentView class]]) {
+  //    //      NSLog(@"FOUND THE SCROLL VIEW");
+  //    //    }
+  //    return;
+  //  }
   //  if ([childComponentView isKindOfClass:[RCTScrollViewComponentView class]]) {
   //    RCTScrollViewComponentView *scrollView = (RCTScrollViewComponentView *)childComponentView;
   //    if (scrollView.scrollViewDelegateSplitter != nil) {
@@ -644,8 +654,8 @@
   //    //    NSLog(@"FOUND THE SCROLL VIEW (BEFORE RCTViewComponentView)");
   //    return;
   //  }
-  return;
-  childComponentView.frame = CGRectMake(0, 0, 390, 701);
+  //  return;
+  //  childComponentView.frame = CGRectMake(0, 0, 390, 701);
   [super mountChildComponentView:childComponentView index:0];
   [_reactSubviews insertObject:childComponentView atIndex:0];
 }
@@ -659,10 +669,10 @@
   [super unmountChildComponentView:childComponentView index:index];
 }
 
-- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
-{
-  [self.controller.navigationController setNavigationBarHidden:YES animated:YES];
-}
+//- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
+//{
+//  [self.controller.navigationController setNavigationBarHidden:YES animated:YES];
+//}
 
 #pragma mark - RCTComponentViewProtocol
 
@@ -1260,9 +1270,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
       if (wasSearchBarActive && shouldHideHeader) {
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-          [self.navigationController setNavigationBarHidden:YES animated:NO];
-        });
+        dispatch_after(
+            popTime,
+            dispatch_get_main_queue(),
+            ^(void){
+                //          [self.navigationController setNavigationBarHidden:YES animated:NO];
+            });
       }
     }
   }
