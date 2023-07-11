@@ -13,7 +13,7 @@ import {
   TapGestureHandler,
 } from 'react-native-gesture-handler';
 import {useHeaderHeight} from 'react-native-screens/native-stack';
-import {FullWindowOverlay} from '../../lib/module';
+import {FullWindowOverlay} from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
 

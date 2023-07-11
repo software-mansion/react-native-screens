@@ -14,7 +14,6 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
-import com.facebook.react.util.RNLog
 import com.swmansion.rnscreens.Screen.ActivityState
 
 open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
@@ -108,8 +107,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     open fun removeScreenAt(index: Int) {
-        val screenToRemove = mScreenFragments[index].screen
-        screenToRemove.container = null
+        mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
 
         if (index >= mScreenFragments.size)
@@ -214,7 +212,6 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun detachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
-        println("screen detached")
         transaction.remove(screenFragment)
     }
 

@@ -26,8 +26,15 @@ import {
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
-import HeaderHeightContext from '../utils/HeaderHeightContext';
+import HeaderHeightContext, {
+  HeaderHeightContextProps,
+} from '../utils/HeaderHeightContext';
 import { useState } from 'react';
+import {
+  useSafeAreaFrame,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -61,7 +68,7 @@ const MaybeNestedStack = ({
   options: NativeStackNavigationOptions;
   route: Route<string>;
   stackPresentation: StackPresentationTypes;
-  headerHeight: number;
+  headerHeight: HeaderHeightContextProps;
   children: React.ReactNode;
 }) => {
   const { colors } = useTheme();
@@ -195,21 +202,29 @@ const RouteView = ({
     stackPresentation = 'push';
   }
 
+  const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
+  const defaultHeaderHeight = getDefaultHeaderHeight(
+    dimensions,
+    topInset,
+    stackPresentation
+  );
+
+  const [headerHeight, setHeaderHeight] = useState(defaultHeaderHeight);
+  const parentHeaderHeight = React.useContext(HeaderHeightContext);
+
   const isHeaderInPush = isAndroid
     ? headerShown
     : stackPresentation === 'push' && headerShown !== false;
 
-  // TODO: Change headerHeight to 0 after debugging height
-  const [headerHeight, setHeaderHeight] = useState(20);
+  const heightCombinedValues: HeaderHeightContextProps = {
+    height: headerHeight,
+    staticHeight:
+      isHeaderInPush !== false
+        ? defaultHeaderHeight
+        : parentHeaderHeight?.staticHeight ?? 0,
+  };
 
-  // const dimensions = useSafeAreaFrame();
-  // const topInset = useSafeAreaInsets().top;
-  // const headerHeight = getDefaultHeaderHeight(
-  //   dimensions,
-  //   topInset,
-  //   stackPresentation
-  // );
-  const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const Screen = React.useContext(ScreenContext);
 
   const { dark } = useTheme();
@@ -311,17 +326,13 @@ const RouteView = ({
         });
       }}
     >
-      <HeaderHeightContext.Provider
-        value={
-          isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
-        }
-      >
+      <HeaderHeightContext.Provider value={heightCombinedValues}>
         <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
         <MaybeNestedStack
           options={options}
           route={route}
           stackPresentation={stackPresentation}
-          headerHeight={headerHeight}
+          headerHeight={heightCombinedValues}
         >
           {renderScene()}
         </MaybeNestedStack>

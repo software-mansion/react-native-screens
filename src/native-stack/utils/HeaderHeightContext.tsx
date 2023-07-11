@@ -1,5 +1,12 @@
 import * as React from 'react';
 
-const HeaderHeightContext = React.createContext<number | undefined>(undefined);
+export type HeaderHeightContextProps = {
+  height: number;
+  staticHeight: number;
+};
+
+const HeaderHeightContext = React.createContext<
+  HeaderHeightContextProps | undefined
+>(undefined);
 
 export default HeaderHeightContext;
