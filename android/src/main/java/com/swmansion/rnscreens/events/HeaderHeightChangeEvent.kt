@@ -21,6 +21,6 @@ class HeaderHeightChangeEvent(
     }
 
     companion object {
-        const val EVENT_NAME = "headerHeightChange"
+        const val EVENT_NAME = "topHeaderHeightChange"
     }
 }
