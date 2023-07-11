@@ -242,7 +242,17 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
         }
 
-    private fun recalculateHeaderHeight() {
+    fun recalculateHeaderHeight() {
+        val summarizedHeight = when (stackPresentation) {
+            StackPresentation.TRANSPARENT_MODAL -> 0
+            else -> getSummarizedHeaderHeight()
+        }
+
+        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+            ?.dispatchEvent(HeaderHeightChangeEvent(id, summarizedHeight))
+    }
+
+    private fun getSummarizedHeaderHeight(): Int {
         val typedValue = TypedValue()
         val resolveAttributeByValue = context.theme.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
 
@@ -257,10 +267,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             ?.let { (context.resources::getDimensionPixelSize)(it) }?.convertToDp(context)
             ?: 24 // Default status bar height
 
-        val summarizedHeight = actionBarHeight + statusBarHeight
-
-        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(id, summarizedHeight))
+        return actionBarHeight + statusBarHeight
     }
 
     enum class StackPresentation {

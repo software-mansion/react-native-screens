@@ -14,6 +14,7 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.util.RNLog
 import com.swmansion.rnscreens.Screen.ActivityState
 
 open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
@@ -100,9 +101,20 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         onScreenChanged()
     }
 
+    private fun tryRecalculatingHeaderHeight(index: Int) {
+        if (mScreenFragments.size > 0 && index - 1 >= 0) {
+            mScreenFragments[index - 1].screen.recalculateHeaderHeight()
+        }
+    }
+
     open fun removeScreenAt(index: Int) {
-        mScreenFragments[index].screen.container = null
+        val screenToRemove = mScreenFragments[index].screen
+        screenToRemove.container = null
         mScreenFragments.removeAt(index)
+
+        if (index >= mScreenFragments.size)
+            tryRecalculatingHeaderHeight(index)
+
         onScreenChanged()
     }
 
@@ -202,6 +214,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     private fun detachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
+        println("screen detached")
         transaction.remove(screenFragment)
     }
 
