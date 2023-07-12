@@ -176,16 +176,16 @@ export interface ScreenProps extends ViewProps {
    */
   onDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
+   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
+   * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
+   */
+  onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
    * A callback that gets called when the header height has changed.
    */
   onHeaderHeightChange?: (
     e: NativeSyntheticEvent<HeaderChangeEventType>
   ) => void;
-  /**
-   * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
-   * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
-   */
-  onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
   /**
    * A callback that gets called after swipe back is canceled.
    */
