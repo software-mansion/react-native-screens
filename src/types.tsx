@@ -176,7 +176,7 @@ export interface ScreenProps extends ViewProps {
    */
   onDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
-   * A callback that gets called when the header height has changed;
+   * A callback that gets called when the header height has changed.
    */
   onHeaderHeightChange?: (
     e: NativeSyntheticEvent<HeaderChangeEventType>

@@ -314,7 +314,6 @@ const RouteView = ({
           target: route.key,
         });
 
-        console.log('Changed! ', e.nativeEvent.newHeight);
         setHeaderHeight(e.nativeEvent.newHeight);
       }}
       onDismissed={(e) => {

@@ -1014,6 +1014,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   BOOL isGrabbableModal = isModal && ![RNSScreenModal isFullscreenModal:self.modalPresentationStyle];
 
+  // When modal is floating (we can grab its header), we don't want to calculate status bar in it.
+  // Thus, we return '0' as a height of status bar.
   if (self.childViewControllers.count > 0 && self.childViewControllers[0] != nil && isGrabbableModal) {
     return CGSizeMake(0, 0);
   }
