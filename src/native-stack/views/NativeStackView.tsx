@@ -204,9 +204,16 @@ const RouteView = ({
 
   const dimensions = useSafeAreaFrame();
   const topInset = useSafeAreaInsets().top;
+  let statusBarHeight = topInset;
+  const hasDynamicIsland = Platform.OS === 'ios' && topInset === 59;
+  if (hasDynamicIsland) {
+    // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
+    statusBarHeight = 54;
+  }
+
   const defaultHeaderHeight = getDefaultHeaderHeight(
     dimensions,
-    topInset,
+    statusBarHeight,
     stackPresentation
   );
 

@@ -6,12 +6,11 @@ const formSheetModalHeight = 56;
 
 export default function getDefaultHeaderHeight(
   layout: Layout,
-  topInset: number,
+  statusBarHeight: number,
   stackPresentation: StackPresentationTypes
 ): number {
   // default header heights
   let headerHeight = Platform.OS === 'android' ? 56 : 64;
-  let statusBarHeight = topInset;
 
   if (Platform.OS === 'ios') {
     const isLandscape = layout.width > layout.height;
