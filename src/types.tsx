@@ -177,6 +177,10 @@ export interface ScreenProps extends ViewProps {
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
   /**
+   * A callback that gets called after swipe back is canceled.
+   */
+  onGestureCancel?: (e: NativeSyntheticEvent<null>) => void;
+  /**
    * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
    * @platform android

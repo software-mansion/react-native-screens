@@ -37,6 +37,10 @@ export type NativeStackNavigationEventMap = {
    * Event which fires when a transition animation ends.
    */
   transitionEnd: { data: { closing: boolean } };
+  /**
+   * Event which fires when a swipe back is canceled on iOS.
+   */
+  gestureCancel: { data: undefined };
 };
 
 export type NativeStackNavigationProp<
