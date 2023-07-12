@@ -2,13 +2,7 @@ import * as React from 'react';
 
 import HeaderHeightContext from './HeaderHeightContext';
 
-type HeaderHeightProps = {
-  dynamic: boolean;
-};
-
-export default function useHeaderHeight(
-  { dynamic }: HeaderHeightProps = { dynamic: true }
-) {
+export default function useHeaderHeight(dynamic = true) {
   const values = React.useContext(HeaderHeightContext);
 
   if (values === undefined) {
