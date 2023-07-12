@@ -1012,6 +1012,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (CGSize)getCalculatedStatusBarHeightIsModal:(BOOL)isModal
 {
+#if !TARGET_OS_TV
   BOOL isGrabbableModal = isModal && ![RNSScreenModal isFullscreenModal:self.modalPresentationStyle];
 
   // When modal is floating (we can grab its header), we don't want to calculate status bar in it.
@@ -1031,6 +1032,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   } else {
     return fallbackStatusBarSize;
   }
+#else
+  // On TVOS, status bar doesn't exist
+  return CGSizeMake(0, 0);
+#endif // !TARGET_OS_TV
 }
 
 - (void)recalculateHeaderHeightIsModal:(BOOL)isModal
