@@ -332,6 +332,12 @@ const RouteView = ({
           target: stateKey,
         });
       }}
+      onGestureCancel={() => {
+        navigation.emit({
+          type: 'gestureCancel',
+          target: route.key,
+        });
+      }}
     >
       <HeaderHeightContext.Provider value={heightCombinedValues}>
         <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />

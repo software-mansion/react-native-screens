@@ -38,6 +38,10 @@ export type NativeStackNavigationEventMap = {
    */
   transitionEnd: { data: { closing: boolean } };
   /**
+   * Event which fires when a swipe back is canceled on iOS.
+   */
+  gestureCancel: { data: undefined };
+  /**
    * Event which fires when a header height gets changed.
    */
   headerHeightChange: { data: { newHeight: number } };

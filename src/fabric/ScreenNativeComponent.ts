@@ -67,6 +67,7 @@ export interface NativeProps extends ViewProps {
   onWillDisappear?: BubblingEventHandler<ScreenEvent>;
   onHeaderHeightChange?: BubblingEventHandler<HeaderChangeEvent>;
   onTransitionProgress?: BubblingEventHandler<TransitionProgressEvent>;
+  onGestureCancel?: BubblingEventHandler<ScreenEvent>;
   sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>;
   sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>;
   sheetGrabberVisible?: WithDefault<boolean, false>;
