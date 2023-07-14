@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as React from 'react';
-import {Button, NativeSyntheticEvent, ScrollView} from 'react-native';
+import {Button, NativeSyntheticEvent, ScrollView, View} from 'react-native';
 import {
   NavigationContainer,
   NavigationProp,
@@ -19,8 +18,8 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <AppStack.Navigator
         screenOptions={{
-          // headerLargeTitle: true,
-          // headerTranslucent: true,
+          headerLargeTitle: true,
+          headerTranslucent: true,
         }}>
         <AppStack.Screen name="First" component={First} />
         <AppStack.Screen name="Second" component={Second} />
@@ -43,19 +42,19 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
 
   const searchBarOptions: SearchBarProps = {
     // // @ts-ignore
-    // ref: searchBarRef,
-    // barTintColor: 'powderblue',
-    // hideWhenScrolling: true,
-    // obscureBackground: false,
-    // hideNavigationBar: false,
-    // autoCapitalize: 'sentences',
-    // placeholder: 'Some text',
-    // onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
-    //   setSearch(e.nativeEvent.text),
-    // onCancelButtonPress: () => console.warn('Cancel button pressed'),
-    // onSearchButtonPress: () => console.warn('Search button pressed'),
-    // onFocus: () => console.warn('onFocus event'),
-    // onBlur: () => console.warn('onBlur event'),
+    ref: searchBarRef,
+    barTintColor: 'powderblue',
+    hideWhenScrolling: true,
+    obscureBackground: false,
+    hideNavigationBar: false,
+    autoCapitalize: 'sentences',
+    placeholder: 'Some text',
+    onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
+      setSearch(e.nativeEvent.text),
+    onCancelButtonPress: () => console.warn('Cancel button pressed'),
+    onSearchButtonPress: () => console.warn('Search button pressed'),
+    onFocus: () => console.warn('onFocus event'),
+    onBlur: () => console.warn('onBlur event'),
   };
 
   const items = [
@@ -77,7 +76,8 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
-      keyboardDismissMode="on-drag">
+      keyboardDismissMode="on-drag"
+      collapsable={false}>
       <Button
         title="Tap me for second screen"
         onPress={() => navigation.navigate('Second')}
@@ -91,10 +91,8 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
         onPress={() => searchBarRef.current?.focus()}
       />
       {items
-        .filter(
-          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1,
-        )
-        .map((item) => (
+        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+        .map(item => (
           <Button
             title={item}
             key={item}
