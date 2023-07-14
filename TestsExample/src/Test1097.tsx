@@ -19,8 +19,8 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <AppStack.Navigator
         screenOptions={{
-          // headerLargeTitle: true,
-          // headerTranslucent: true,
+          headerLargeTitle: true,
+          headerTranslucent: true,
         }}>
         <AppStack.Screen name="First" component={First} />
         <AppStack.Screen name="Second" component={Second} />
