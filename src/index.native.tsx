@@ -541,20 +541,6 @@ const ScreenStackHeaderSearchBarView = (
   />
 );
 
-export type {
-  StackPresentationTypes,
-  StackAnimationTypes,
-  BlurEffectTypes,
-  ScreenReplaceTypes,
-  ScreenOrientationTypes,
-  HeaderSubviewTypes,
-  ScreenProps,
-  ScreenContainerProps,
-  ScreenStackProps,
-  ScreenStackHeaderConfigProps,
-  SearchBarProps,
-};
-
 // context to be used when the user wants to use enhanced implementation
 // e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
 const ScreenContext = React.createContext(InnerScreen);
