@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, NativeSyntheticEvent, ScrollView, View} from 'react-native';
+import {Button, NativeSyntheticEvent, ScrollView} from 'react-native';
 import {
   NavigationContainer,
   NavigationProp,
