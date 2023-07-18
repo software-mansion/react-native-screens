@@ -532,7 +532,7 @@
 
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig
 {
-  for (UIView *view in _reactSubviews) {
+  for (UIView *view in self.reactSubviews) {
     if ([view isKindOfClass:RNSScreenStackHeaderConfig.class]) {
       return (RNSScreenStackHeaderConfig *)view;
     }
