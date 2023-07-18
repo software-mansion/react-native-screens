@@ -118,6 +118,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
+
+/// Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;
 
 @end
