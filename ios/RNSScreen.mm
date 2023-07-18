@@ -530,6 +530,16 @@
   return self.stackPresentation != RNSScreenStackPresentationPush;
 }
 
+- (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig
+{
+  for (UIView *view in _reactSubviews) {
+    if ([view isKindOfClass:RNSScreenStackHeaderConfig.class]) {
+      return (RNSScreenStackHeaderConfig *)view;
+    }
+  }
+  return nil;
+}
+
 #if !TARGET_OS_TV
 /**
  * Updates settings for sheet presentation controller.
@@ -1198,11 +1208,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
     // we need to check whether reactSubviews array is empty, because on Fabric child nodes are unmounted first ->
     // reactSubviews array may be empty
-    if (currentIndex > 0 && self.screenView.hasHeaderConfig) {
+    RNSScreenStackHeaderConfig *config = [self.screenView findHeaderConfig];
+    if (currentIndex > 0 && config != nil) {
       UINavigationItem *prevNavigationItem =
           [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
-      RNSScreenStackHeaderConfig *config = self.screenView.config;
-
       BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
 #ifdef RCT_NEW_ARCH_ENABLED
