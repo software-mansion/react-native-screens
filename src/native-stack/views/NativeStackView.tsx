@@ -100,6 +100,7 @@ const MaybeNestedStack = ({
       ]}
       // @ts-ignore Wrong props passed to View
       stackPresentation={stackPresentation}
+      collapsable={false}
     >
       {children}
     </Container>
@@ -313,7 +314,6 @@ const RouteView = ({
           isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
         }
       >
-        <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
         <MaybeNestedStack
           options={options}
           route={route}
@@ -321,6 +321,7 @@ const RouteView = ({
         >
           {renderScene()}
         </MaybeNestedStack>
+        <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
       </HeaderHeightContext.Provider>
     </Screen>
   );
