@@ -242,7 +242,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
         }
 
-    private fun calculateHeaderHeight() {
+    fun calculateHeaderHeight() {
         val actionBarTv = TypedValue()
         val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
 

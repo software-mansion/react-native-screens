@@ -739,13 +739,18 @@ navigation.popToTop();
 
 ### Measuring header's height
 
-To measure header's height, you can use `useHeaderHeight` hook.
-Please note the value, returned by this hook may differ, depending on which version you use:
-- As of [version `3.23.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.23.0), header height is being calculated dynamically. This means every action that changed the header height will have an impact to the value, returned by this hook. If you would like to use previous behavior, set parameter `dynamic` of the hook to `false`.
-- For versions [`3.22.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.22.0) or below, the default value of header height (status bar height, calculated by `react-native-safe-area-context` + hardcoded navigation bar height of view) is being returned. 
+To measure header's height, you can use the `useHeaderHeight` or `useAnimatedHeaderHeight` hook.
+- `useHeaderHeight` calculates the header's height statically. The value provided by this hook only changes when the view appears or when there is a view rotation. 
+Use this hook if you are certain that your header height will not change, or if your component is heavy, and you want to avoid recalculating the header height with every view layout.
+- `useAnimatedHeaderHeight` calculates the header's height dynamically. The value provided by this hook changes with every view layout (such as when dragging a large header). 
+Please beware of using this hook in heavy components, as it may result in performance issues.
 
 ```tsx
+// for using useHeaderHeight
 import {useHeaderHeight} from 'react-native-screens/native-stack';
+
+// for using useAnimatedHeaderHeight
+import {useAnimatedHeaderHeight} from 'react-native-screens/native-stack';
 ```
 
 ## Example
