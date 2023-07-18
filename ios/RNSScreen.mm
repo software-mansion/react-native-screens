@@ -6,7 +6,6 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
-#import <React/RCTEnhancedScrollView.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
