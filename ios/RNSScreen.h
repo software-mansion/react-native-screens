@@ -40,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@class RNSScreenStackHeaderConfig;
+
 @interface RNSScreenView :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView
@@ -88,7 +90,8 @@ NS_ASSUME_NONNULL_BEGIN
 // we recreate the behavior of `reactSetFrame` on new architecture
 @property (nonatomic) facebook::react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) facebook::react::LayoutMetrics newLayoutMetrics;
-@property (weak, nonatomic) UIView *config;
+@property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
+@property (nonatomic, readonly) BOOL hasHeaderConfig;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;

@@ -451,6 +451,7 @@ namespace rct = facebook::react;
                     animated:(BOOL)animated
 {
   //  return;
+  NSLog(@"HeaderConfig: updateViewController: %@ withConfig: %@ animated: %d\n", vc, config, animated);
   UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
 
@@ -464,18 +465,15 @@ namespace rct = facebook::react;
 #else
   BOOL shouldHide = config == nil || config.hide;
 #endif
-  shouldHide = NO;
-
-  navitem.title = @"NavItem Title";
-  navitem.hidesSearchBarWhenScrolling = YES;
-  navitem.searchController = [UISearchController new];
-  [[navctr navigationBar] setPrefersLargeTitles:YES];
-
-  //  viewController.navigationItem.title = @"NavItem title";
-  //  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
-  //  viewController.navigationItem.searchController = [UISearchController new];
-  //  self.navigationBar.prefersLargeTitles = YES;
-  return;
+  //  shouldHide = NO;
+  //
+  //  navitem.title = @"NavItem Title";
+  //  navitem.hidesSearchBarWhenScrolling = YES;
+  //  navitem.searchController = [UISearchController new];
+  //  navitem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+  //  [[navctr navigationBar] setPrefersLargeTitles:YES];
+  //  vc.edgesForExtendedLayout = UIRectEdgeNone;
+  //  return;
 
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
@@ -484,6 +482,7 @@ namespace rct = facebook::react;
   } else {
     // system default is UIRectEdgeAll
     vc.edgesForExtendedLayout = UIRectEdgeAll;
+    //    vc.extendedLayoutIncludesOpaqueBars = YES;
   }
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];

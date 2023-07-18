@@ -82,6 +82,7 @@
   NSLog(@"RNSScreensNavigationController did move to parent view controller %@\n", parent);
 }
 
+#ifdef RCT_NEW_ARCH_ENABLED
 /// Works fine
 - (void)expOnlyUIKit
 {
@@ -174,17 +175,16 @@
   [self setViewControllers:@[ viewController ]];
 }
 
-/// Works fine
+/// Works fine (but the animation is much faster)
 - (void)expWithPartialScreensSetupAndUIScrollView
 {
   RNSScreenView *screenView = [[RNSScreenView alloc] init];
-  //  RNSScreen *viewController = [[RNSScreen alloc] init];
   RNSScreen *viewController = screenView.controller;
-  //  screenView.controller = viewController;
 
   UIScrollView *scrollView = [self getUIKitScrollView];
   [screenView addSubview:scrollView];
 
+  // These options are set in RNSScreenStackHeaderConfig
   //  viewController.navigationItem.title = @"NavItem title";
   //  viewController.navigationItem.hidesSearchBarWhenScrolling = YES;
   //  viewController.navigationItem.searchController = [UISearchController new];
@@ -194,7 +194,7 @@
   //  [self setNavigationBarHidden:NO];
 }
 
-/// Works fine
+/// Works fine (but the animation is much faster)
 - (void)expWithPartialScreensSetupAndReactScrollView
 {
   RNSScreenView *screenView = [[RNSScreenView alloc] init];
@@ -219,18 +219,32 @@
   [self setViewControllers:@[ viewController ]];
 }
 
+- (void)expWithPartialScreensSetupAndReactFullSetupAndRCTView
+{
+  RNSScreenView *screenView = [[RNSScreenView alloc] init];
+  RNSScreen *viewController = screenView.controller;
+
+  RCTScrollViewComponentView *scrollView = [self getReactRCTScrollViewComponentView];
+  RCTViewComponentView *intermediateView = [[RCTViewComponentView alloc] initWithFrame:scrollView.frame];
+  [intermediateView addSubview:scrollView];
+  [screenView addSubview:intermediateView];
+
+  [self setViewControllers:@[ viewController ]];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
   NSLog(@"RNSScreensNavigationController view %@ did appear\n", self.view);
-  //  [self expOnlyUIKit];
-  //  [self expVcUIKitAndReactScrollView];
-  //  [self expVcUIKitAndFullReactSetup];
-  //  [self expWithScreensVcAndReactScrollView];
-  //  [self expWithScreensVcAndFullReactSetup];
-  //  [self expWithScreensVcAndIntermediateViewAndFullReactSetup];
-  //  [self expWithPartialScreensSetupAndUIScrollView];
-  //  [self expWithPartialScreensSetupAndReactScrollView];
-  //  [self expWithPartialScreensSetupAndReactFullSetup];
+  //    [self expOnlyUIKit];
+  //    [self expVcUIKitAndReactScrollView];
+  //    [self expVcUIKitAndFullReactSetup];
+  //    [self expWithScreensVcAndReactScrollView];
+  //    [self expWithScreensVcAndFullReactSetup];
+  //    [self expWithScreensVcAndIntermediateViewAndFullReactSetup];
+  //    [self expWithPartialScreensSetupAndUIScrollView];
+  //    [self expWithPartialScreensSetupAndReactScrollView];
+  //    [self expWithPartialScreensSetupAndReactFullSetup];
+  //    [self expWithPartialScreensSetupAndReactFullSetupAndRCTView];
   return;
 }
 
@@ -301,6 +315,7 @@
   [scrollView.scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAutomatic];
   return scrollView;
 }
+#endif
 
 @end
 
@@ -1234,26 +1249,7 @@
     return;
   }
 
-  if ([[self subviews] count] > 0) {
-    return;
-  }
-
-  //  UIViewController *viewController = [UIViewController new];
-  //  UIScrollView *scrollView = [self getScrollView];
-  //  [viewController setView:scrollView];
-  //
-  //  [_controller pushViewController:viewController animated:YES];
-
-  //  [self attachScrollView];
-  //  [self reactAddControllerToClosestParent:_controller];
-  //  dispatch_async(dispatch_get_main_queue(), ^{
-  //    [self maybeAddToParentAndUpdateContainer];
-  //  });
-
-  //  RNSScreenView *screenView = [[RNSScreenView alloc] initWithFrame:CGRectMake(0, 0, 390, 701)];
-  //  [self addSubview:screenView];
-  //  [self attachScrollView];
-  return;
+  //  return;
 
   RCTAssert(
       childComponentView.reactSuperview == nil,

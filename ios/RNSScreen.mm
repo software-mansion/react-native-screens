@@ -41,44 +41,14 @@
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
+  // True iff this screen view has scroll view attached as direct child
+  BOOL _hasScrollView;
+  int _removedViewIndex;
 #else
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
 #endif
 }
-
-#ifdef RCT_NEW_ARCH_ENABLED
-- (void)attachScrollView
-{
-  if ([[self subviews] count] == 0) {
-    CGRect frame = CGRectMake(0, 0, 390, 701);
-    //    UIScrollView *scrollView = [[RCTEnhancedScrollView alloc] initWithFrame:frame];
-    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:frame];
-    //    scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    //(0 143; 390 701)
-    // Initialize UIViews (test rectangles) to add to the UIScrollView
-    for (int i = 0; i < 10; i++) {
-      UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, i * 100, frame.size.width, 80)];
-      view.backgroundColor = [UIColor colorWithRed:drand48() green:drand48() blue:drand48() alpha:1.0];
-      [scrollView addSubview:view];
-    }
-    // Set the content size of the UIScrollView
-    scrollView.contentSize = CGSizeMake(frame.size.width, 10 * 100);
-    [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAutomatic];
-
-    // Add the UIScrollView to the given view
-    [self addSubview:scrollView];
-
-    //    UINavigationItem *navItem = [[self controller] navigationController].navigationItem;
-    //
-    //    if (navItem == nil) {
-    //      NSLog(@"NavItem is nil");
-    //    } else {
-    //      navItem.hidesSearchBarWhenScrolling = false;
-    //    }
-  }
-}
-#endif
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
@@ -88,8 +58,8 @@
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     [self initCommonProps];
-    //    [self setFrame:CGRectMake(0, 0, 390, 701)];
-    //    [self attachScrollView];
+    _hasScrollView = NO;
+    _removedViewIndex = -1;
   }
   return self;
 }
@@ -143,6 +113,7 @@
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
+    //    [navctr.view layoutIfNeeded];
   }
 #else
   [_bridge.uiManager setSize:self.bounds.size forView:self];
@@ -313,6 +284,11 @@
     ((RNSScreenStackHeaderConfig *)view).screenView = self;
   }
 }
+
+//- (void)willRemoveSubview:(UIView *)subview
+//{
+//  [super willRemoveSubview:subview];
+//}
 
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
@@ -610,6 +586,11 @@
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
+- (BOOL)hasHeaderConfig
+{
+  return _config != nil;
+}
+
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenComponentDescriptor>();
@@ -617,47 +598,12 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  /// Original implementation
-  //  [super mountChildComponentView:childComponentView index:index];
-  //  if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-  //    _config = childComponentView;
-  //    ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
-  //  }
-  //  [_reactSubviews insertObject:childComponentView atIndex:index];
-  //  return;
-  ////////////////////////////////////////////////////
-
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-    _config = childComponentView;
-    ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
-    [_reactSubviews insertObject:childComponentView atIndex:index];
+    _config = (RNSScreenStackHeaderConfig *)childComponentView;
+    _config.screenView = self;
   }
-  //  [self attachScrollView];
-  //  if (![childComponentView isKindOfClass:[RCTScrollViewComponentView class]]) {
-  //    //    if (_reactSubviews.count > 0 && [_reactSubviews[0] isKindOfClass:[RCTScrollViewComponentView class]]) {
-  //    //      NSLog(@"FOUND THE SCROLL VIEW");
-  //    //    }
-  //    return;
-  //  }
-  //  if ([childComponentView isKindOfClass:[RCTScrollViewComponentView class]]) {
-  //    RCTScrollViewComponentView *scrollView = (RCTScrollViewComponentView *)childComponentView;
-  //    if (scrollView.scrollViewDelegateSplitter != nil) {
-  //      [scrollView.scrollViewDelegateSplitter addDelegate:self];
-  //    } else {
-  //      NSLog(@"ScrollView's delegate is nil");
-  //    }
-  //
-  //    [[_reactSubviews lastObject] mountChildComponentView:childComponentView index:0];
-  //    //    index = index - 1;
-  //    //    [self unmountChildComponentView:_reactSubviews.lastObject index:index];
-  //    //    [_reactSubviews removeLastObject];
-  //    //    NSLog(@"FOUND THE SCROLL VIEW (BEFORE RCTViewComponentView)");
-  //    return;
-  //  }
-  //  return;
-  //  childComponentView.frame = CGRectMake(0, 0, 390, 701);
-  [super mountChildComponentView:childComponentView index:0];
-  [_reactSubviews insertObject:childComponentView atIndex:0];
+  [_reactSubviews insertObject:childComponentView atIndex:index];
+  [super mountChildComponentView:childComponentView index:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -668,11 +614,6 @@
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];
 }
-
-//- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
-//{
-//  [self.controller.navigationController setNavigationBarHidden:YES animated:YES];
-//}
 
 #pragma mark - RCTComponentViewProtocol
 
