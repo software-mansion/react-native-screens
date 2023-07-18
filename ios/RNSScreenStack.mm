@@ -941,66 +941,12 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
-- (void)attachScrollView
-{
-  if ([[self subviews] count] == 0) {
-    UIScrollView *scrollView = [self getScrollView];
-    //    CGRect frame = CGRectMake(0, 0, 390, 701);
-    //    //    UIScrollView *scrollView = [[RCTEnhancedScrollView alloc] initWithFrame:frame];
-    //    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:frame];
-    //    //    scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    //    //(0 143; 390 701)
-    //    // Initialize UIViews (test rectangles) to add to the UIScrollView
-    //    for (int i = 0; i < 10; i++) {
-    //      UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, i * 100, frame.size.width, 80)];
-    //      view.backgroundColor = [UIColor colorWithRed:drand48() green:drand48() blue:drand48() alpha:1.0];
-    //      [scrollView addSubview:view];
-    //    }
-    //    // Set the content size of the UIScrollView
-    //    scrollView.contentSize = CGSizeMake(frame.size.width, 10 * 100);
-    //    [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAutomatic];
-
-    // Add the UIScrollView to the given view
-
-    [self addSubview:scrollView];
-
-    //    UINavigationItem *navItem = [[self controller] navigationController].navigationItem;
-    //
-    //    if (navItem == nil) {
-    //      NSLog(@"NavItem is nil");
-    //    } else {
-    //      navItem.hidesSearchBarWhenScrolling = false;
-    //    }
-  }
-}
-
-- (UIScrollView *)getScrollView
-{
-  CGRect frame = CGRectMake(0, 0, 390, 701);
-  //    UIScrollView *scrollView = [[RCTEnhancedScrollView alloc] initWithFrame:frame];
-  UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:frame];
-  //    scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  //(0 143; 390 701)
-  // Initialize UIViews (test rectangles) to add to the UIScrollView
-  for (int i = 0; i < 10; i++) {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, i * 100, frame.size.width, 80)];
-    view.backgroundColor = [UIColor colorWithRed:drand48() green:drand48() blue:drand48() alpha:1.0];
-    [scrollView addSubview:view];
-  }
-  // Set the content size of the UIScrollView
-  scrollView.contentSize = CGSizeMake(frame.size.width, 10 * 100);
-  [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentAutomatic];
-  return scrollView;
-}
-
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if (![childComponentView isKindOfClass:[RNSScreenView class]]) {
     RCTLogError(@"ScreenStack only accepts children of type Screen");
     return;
   }
-
-  //  return;
 
   RCTAssert(
       childComponentView.reactSuperview == nil,
