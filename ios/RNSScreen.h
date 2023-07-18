@@ -31,7 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
-- (void)recalculateHeaderHeightIsModal:(BOOL)isModal;
+- (BOOL)hasAnyChildNavigators;
+- (void)calculateHeaderHeightIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -118,6 +119,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
+- (BOOL)isFullscreenModal;
+- (BOOL)isTransparentModal;
 
 @end
 

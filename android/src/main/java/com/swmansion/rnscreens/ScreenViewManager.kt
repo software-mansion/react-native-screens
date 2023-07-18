@@ -168,15 +168,15 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setSheetExpandsWhenScrolledToEdge(view: Screen?, value: Boolean) = Unit
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
-            ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
-            ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),
-            ScreenAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onAppear"),
-            ScreenWillDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillDisappear"),
-            ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
-            HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
-            HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
-            ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
-        )
+        ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
+        ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),
+        ScreenAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onAppear"),
+        ScreenWillDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillDisappear"),
+        ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
+        HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
+        HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
+        ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
+    )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = mDelegate
 

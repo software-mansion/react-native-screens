@@ -68,7 +68,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             val width = r - l
             val height = b - t
 
-            recalculateHeaderHeight()
+            calculateHeaderHeight()
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 updateScreenSizeFabric(width, height)
             } else {
@@ -242,23 +242,13 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
         }
 
-    fun recalculateHeaderHeight() {
-        val summarizedHeight = when (stackPresentation) {
-            StackPresentation.TRANSPARENT_MODAL -> 0
-            else -> getSummarizedHeaderHeight()
-        }
-
-        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(id, summarizedHeight))
-    }
-
-    private fun getSummarizedHeaderHeight(): Int {
-        val typedValue = TypedValue()
-        val resolveAttributeByValue = context.theme.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+    private fun calculateHeaderHeight() {
+        val actionBarTv = TypedValue()
+        val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
 
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
-        val actionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, resources.displayMetrics).takeIf { resolveAttributeByValue }
+        val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics).takeIf { resolvedActionBarSize }
             ?.convertToDp(context)
             ?: 56 // Default action bar height
 
@@ -267,7 +257,9 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             ?.let { (context.resources::getDimensionPixelSize)(it) }?.convertToDp(context)
             ?: 24 // Default status bar height
 
-        return actionBarHeight + statusBarHeight
+        val totalHeight = actionBarHeight + statusBarHeight
+        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+            ?.dispatchEvent(HeaderHeightChangeEvent(id, totalHeight))
     }
 
     enum class StackPresentation {
@@ -290,6 +282,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
     }
 
+    // One dp is equal to one pixel on a screen of density 160 dpi.
     private fun Int.convertToDp(context: Context): Int {
         val resources = context.resources
         val metrics = resources.displayMetrics

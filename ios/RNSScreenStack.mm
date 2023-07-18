@@ -19,7 +19,6 @@
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSScreen.h"
-#import "RNSScreenModal.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
@@ -63,17 +62,25 @@
 - (void)viewDidLayoutSubviews
 {
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
-    [(RNSScreen *)self.topViewController recalculateHeaderHeightIsModal:NO];
+    RNSScreen *screenController = (RNSScreen *)self.topViewController;
+
+    // If RNSScreen includes a navigation controller of type RNScreensNavigationController, it should not calculate
+    // header height, as it could have nested stack.
+    if (!(screenController.childViewControllers.count > 0 && screenController.hasAnyChildNavigators)) {
+      [(RNSScreen *)self.topViewController calculateHeaderHeightIsModal:NO];
+    }
   }
 }
 
 - (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)())completion
 {
   [super dismissViewControllerAnimated:flag completion:completion];
-  BOOL isPresentedAsNativeModal = ((RNSScreen *)self.topViewController).screenView.isPresentedAsNativeModal;
+  BOOL wasModalPresented = ((RNSScreen *)self.presentedViewController).screenView.isModal;
+  // Check if presented modal was nested
+  BOOL isTopViewCtrlNativeModal = ((RNSScreen *)self.topViewController).screenView.isPresentedAsNativeModal;
 
-  if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
-    [(RNSScreen *)self.topViewController recalculateHeaderHeightIsModal:isPresentedAsNativeModal];
+  if ([self.topViewController isKindOfClass:[RNSScreen class]] && wasModalPresented) {
+    [(RNSScreen *)self.topViewController calculateHeaderHeightIsModal:isTopViewCtrlNativeModal];
   }
 }
 
@@ -222,9 +229,8 @@
 
     if ([_controller.topViewController isKindOfClass:[RNSScreen class]]) {
       RNSScreen *topController = (RNSScreen *)_controller.topViewController;
-      if (topController.presentedViewController == nil ||
-          [RNSScreenModal isFullscreenModal:topController.presentedViewController.modalPresentationStyle]) {
-        [(RNSScreen *)topController recalculateHeaderHeightIsModal:NO];
+      if (topController.presentedViewController == nil) {
+        [(RNSScreen *)topController calculateHeaderHeightIsModal:NO];
       }
     }
 
@@ -302,6 +308,11 @@
     [self reactAddControllerToClosestParent:_controller];
     [self updateContainer];
   }
+}
+
+- (void)addSubview:(UIView *)view
+{
+  [super addSubview:view];
 }
 
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller

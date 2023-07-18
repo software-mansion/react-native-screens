@@ -100,18 +100,15 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         onScreenChanged()
     }
 
-    private fun tryRecalculatingHeaderHeight(index: Int) {
-        if (mScreenFragments.size > 0 && index - 1 >= 0) {
-            mScreenFragments[index - 1].screen.recalculateHeaderHeight()
-        }
-    }
-
     open fun removeScreenAt(index: Int) {
         mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
 
-        if (index >= mScreenFragments.size)
-            tryRecalculatingHeaderHeight(index)
+        // If screen at given index had another screen before in stack,
+        // calculate its header height.
+        if (mScreenFragments.isNotEmpty() && index - 1 >= 0) {
+            mScreenFragments[index - 1].screen.calculateHeaderHeight()
+        }
 
         onScreenChanged()
     }

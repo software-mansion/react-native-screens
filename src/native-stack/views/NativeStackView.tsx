@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, StyleSheet, View, ViewProps } from 'react-native';
+import { Animated, Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
@@ -26,15 +26,13 @@ import {
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
-import HeaderHeightContext, {
-  HeaderHeightContextProps,
-} from '../utils/HeaderHeightContext';
-import { useState } from 'react';
 import {
   useSafeAreaFrame,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
+import HeaderHeightContext from '../utils/HeaderHeightContext';
+import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -62,13 +60,11 @@ const MaybeNestedStack = ({
   options,
   route,
   stackPresentation,
-  headerHeight,
   children,
 }: {
   options: NativeStackNavigationOptions;
   route: Route<string>;
   stackPresentation: StackPresentationTypes;
-  headerHeight: HeaderHeightContextProps;
   children: React.ReactNode;
 }) => {
   const { colors } = useTheme();
@@ -78,7 +74,7 @@ const MaybeNestedStack = ({
 
   const isHeaderInModal = isAndroid
     ? false
-    : stackPresentation !== 'push' && headerShown;
+    : stackPresentation !== 'push' && headerShown === true;
 
   const headerShownPreviousRef = React.useRef(headerShown);
 
@@ -108,6 +104,20 @@ const MaybeNestedStack = ({
     >
       {children}
     </Container>
+  );
+
+  const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
+  let statusBarHeight = topInset;
+  const hasDynamicIsland = Platform.OS === 'ios' && topInset === 59;
+  if (hasDynamicIsland) {
+    // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
+    statusBarHeight = 54;
+  }
+  const headerHeight = getDefaultHeaderHeight(
+    dimensions,
+    statusBarHeight,
+    stackPresentation
   );
 
   if (isHeaderInModal) {
@@ -217,20 +227,15 @@ const RouteView = ({
     stackPresentation
   );
 
-  const [headerHeight, setHeaderHeight] = useState(defaultHeaderHeight);
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
-
   const isHeaderInPush = isAndroid
     ? headerShown
     : stackPresentation === 'push' && headerShown !== false;
 
-  const heightCombinedValues: HeaderHeightContextProps = {
-    height: headerHeight,
-    staticHeight:
-      isHeaderInPush !== false
-        ? defaultHeaderHeight
-        : parentHeaderHeight?.staticHeight ?? 0,
-  };
+  const staticHeaderHeight =
+    isHeaderInPush !== false ? defaultHeaderHeight : parentHeaderHeight ?? 0;
+
+  const animatedHeaderHeight = new Animated.Value(staticHeaderHeight);
 
   const Screen = React.useContext(ScreenContext);
 
@@ -314,7 +319,7 @@ const RouteView = ({
           target: route.key,
         });
 
-        setHeaderHeight(e.nativeEvent.newHeight);
+        animatedHeaderHeight.setValue(e.nativeEvent.newHeight);
       }}
       onDismissed={(e) => {
         navigation.emit({
@@ -338,17 +343,22 @@ const RouteView = ({
         });
       }}
     >
-      <HeaderHeightContext.Provider value={heightCombinedValues}>
-        <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
-        <MaybeNestedStack
-          options={options}
-          route={route}
-          stackPresentation={stackPresentation}
-          headerHeight={heightCombinedValues}
-        >
-          {renderScene()}
-        </MaybeNestedStack>
-      </HeaderHeightContext.Provider>
+      <AnimatedHeaderHeightContext.Provider value={animatedHeaderHeight}>
+        <HeaderHeightContext.Provider value={staticHeaderHeight}>
+          <HeaderConfig
+            {...options}
+            route={route}
+            headerShown={isHeaderInPush}
+          />
+          <MaybeNestedStack
+            options={options}
+            route={route}
+            stackPresentation={stackPresentation}
+          >
+            {renderScene()}
+          </MaybeNestedStack>
+        </HeaderHeightContext.Provider>
+      </AnimatedHeaderHeightContext.Provider>
     </Screen>
   );
 };

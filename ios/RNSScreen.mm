@@ -21,7 +21,6 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
-#import "RNSScreenModal.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -553,6 +552,23 @@
   return self.controller.parentViewController == nil && self.controller.presentingViewController != nil;
 }
 
+- (BOOL)isFullscreenModal
+{
+  switch (self.controller.modalPresentationStyle) {
+    case UIModalPresentationFullScreen:
+    case UIModalPresentationCurrentContext:
+    case UIModalPresentationOverCurrentContext:
+      return true;
+    default:
+      return false;
+  }
+}
+
+- (BOOL)isTransparentModal
+{
+  return self.controller.modalPresentationStyle == UIModalPresentationOverFullScreen;
+}
+
 #if !TARGET_OS_TV
 /**
  * Updates settings for sheet presentation controller.
@@ -974,7 +990,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
 
   if (self.screenView.isPresentedAsNativeModal) {
-    [self recalculateHeaderHeightIsModal:YES];
+    [self calculateHeaderHeightIsModal:YES];
   }
 
   if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
@@ -992,17 +1008,29 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)())completion
 {
   [super dismissViewControllerAnimated:flag completion:completion];
-  BOOL isPresentedAsNativeModal = self.screenView.isPresentedAsNativeModal;
-
-  [self recalculateHeaderHeightIsModal:isPresentedAsNativeModal];
+  [self calculateHeaderHeightIsModal:self.screenView.isPresentedAsNativeModal];
 }
 
-- (CGFloat)getCalculatedHeaderHeight:(BOOL)isModal
+// Checks whether this screen has any child view controllers of type RNScreensNavigationController.
+// Useful for checking if this screen has nested stack or is displayed at the top.
+- (BOOL)hasAnyChildNavigators
+{
+  for (int i = 0; i < [self.childViewControllers count]; i++) {
+    if ([self.childViewControllers[i] isKindOfClass:[RNScreensNavigationController class]]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+- (CGFloat)getCalculatedHeaderHeightIsModal:(BOOL)isModal
 {
   CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
 
-  // In case where screen is a modal, we want to calculate it's childViewController's height
-  if (isModal && self.childViewControllers.count > 0 && self.childViewControllers[0] != nil) {
+  // In case where screen is a modal, we want to calculate just its childViewController's height
+  if (isModal && self.childViewControllers.count > 0 &&
+      [self.childViewControllers[0] isKindOfClass:UINavigationController.class]) {
     UINavigationController *childNavCtr = self.childViewControllers[0];
     navbarHeight = childNavCtr.navigationBar.frame.size.height;
   }
@@ -1013,11 +1041,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (CGSize)getCalculatedStatusBarHeightIsModal:(BOOL)isModal
 {
 #if !TARGET_OS_TV
-  BOOL isGrabbableModal = isModal && ![RNSScreenModal isFullscreenModal:self.modalPresentationStyle];
+  BOOL isDraggableModal = isModal && ![self.screenView isFullscreenModal];
+  BOOL isDraggableModalWithChildViewCtr =
+      isDraggableModal && self.childViewControllers.count > 0 && self.childViewControllers[0] != nil;
 
   // When modal is floating (we can grab its header), we don't want to calculate status bar in it.
   // Thus, we return '0' as a height of status bar.
-  if (self.childViewControllers.count > 0 && self.childViewControllers[0] != nil && isGrabbableModal) {
+  if (isDraggableModalWithChildViewCtr || self.screenView.isTransparentModal) {
     return CGSizeMake(0, 0);
   }
 
@@ -1038,22 +1068,18 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif // !TARGET_OS_TV
 }
 
-- (void)recalculateHeaderHeightIsModal:(BOOL)isModal
+- (void)calculateHeaderHeightIsModal:(BOOL)isModal
 {
-  if ([RNSScreenModal isTransparentModal:self.modalPresentationStyle]) {
-    [self.screenView notifyHeaderHeightChange:0];
-    return;
-  }
-
-  CGFloat navbarHeight = [self getCalculatedHeaderHeight:isModal];
+  CGFloat navbarHeight = [self getCalculatedHeaderHeightIsModal:isModal];
   CGSize statusBarSize = [self getCalculatedStatusBarHeightIsModal:isModal];
 
   // Unfortunately, UIKit doesn't care about switching width and height options on screen rotation.
   // We should check if user has rotated its screen, so we're choosing the minimum value between the
   // width and height.
   CGFloat statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);
-  CGFloat summarizedHeight = navbarHeight + statusBarHeight;
-  [self.screenView notifyHeaderHeightChange:summarizedHeight];
+  CGFloat totalHeight = navbarHeight + statusBarHeight;
+
+  [self.screenView notifyHeaderHeightChange:totalHeight];
 }
 
 - (void)notifyFinishTransitioning
