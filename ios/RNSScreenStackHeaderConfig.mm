@@ -66,7 +66,7 @@ namespace rct = facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const rct::RNSScreenStackHeaderConfigProps>();
     _props = defaultProps;
-    _show = NO;
+    _show = YES;
     _translucent = NO;
     [self initProps];
   }
@@ -450,8 +450,6 @@ namespace rct = facebook::react;
                   withConfig:(RNSScreenStackHeaderConfig *)config
                     animated:(BOOL)animated
 {
-  //  return;
-  NSLog(@"HeaderConfig: updateViewController: %@ withConfig: %@ animated: %d\n", vc, config, animated);
   UINavigationItem *navitem = vc.navigationItem;
   UINavigationController *navctr = (UINavigationController *)vc.parentViewController;
 
@@ -465,15 +463,6 @@ namespace rct = facebook::react;
 #else
   BOOL shouldHide = config == nil || config.hide;
 #endif
-  //  shouldHide = NO;
-  //
-  //  navitem.title = @"NavItem Title";
-  //  navitem.hidesSearchBarWhenScrolling = YES;
-  //  navitem.searchController = [UISearchController new];
-  //  navitem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-  //  [[navctr navigationBar] setPrefersLargeTitles:YES];
-  //  vc.edgesForExtendedLayout = UIRectEdgeNone;
-  //  return;
 
   if (!shouldHide && !config.translucent) {
     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
@@ -482,7 +471,6 @@ namespace rct = facebook::react;
   } else {
     // system default is UIRectEdgeAll
     vc.edgesForExtendedLayout = UIRectEdgeAll;
-    //    vc.extendedLayoutIncludesOpaqueBars = YES;
   }
 
   [navctr setNavigationBarHidden:shouldHide animated:animated];
@@ -617,8 +605,7 @@ namespace rct = facebook::react;
           if (@available(iOS 11.0, *)) {
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
-            //            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
-            navitem.hidesSearchBarWhenScrolling = YES;
+            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
           }
 #endif
         }
