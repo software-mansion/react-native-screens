@@ -41,7 +41,7 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
   const [search, setSearch] = React.useState('');
 
   const searchBarOptions: SearchBarProps = {
-    // // @ts-ignore
+    // @ts-ignore
     ref: searchBarRef,
     barTintColor: 'powderblue',
     hideWhenScrolling: true,
