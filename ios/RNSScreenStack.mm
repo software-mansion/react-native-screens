@@ -77,10 +77,10 @@
   [super dismissViewControllerAnimated:flag completion:completion];
   BOOL wasModalPresented = ((RNSScreen *)self.presentedViewController).screenView.isModal;
   // Check if presented modal was nested
-  BOOL isTopViewCtrlNativeModal = ((RNSScreen *)self.topViewController).screenView.isPresentedAsNativeModal;
+  BOOL isTopViewCtrNativeModal = ((RNSScreen *)self.topViewController).screenView.isPresentedAsNativeModal;
 
   if ([self.topViewController isKindOfClass:[RNSScreen class]] && wasModalPresented) {
-    [(RNSScreen *)self.topViewController calculateHeaderHeightIsModal:isTopViewCtrlNativeModal];
+    [(RNSScreen *)self.topViewController calculateHeaderHeightIsModal:isTopViewCtrNativeModal];
   }
 }
 
