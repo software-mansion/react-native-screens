@@ -9,7 +9,6 @@
 #import <React/RCTEnhancedScrollView.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
-#import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -28,7 +27,7 @@
 
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
-    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, UIScrollViewDelegate>
+    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
 #else
     <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 #endif
@@ -41,9 +40,6 @@
   facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
-  // True iff this screen view has scroll view attached as direct child
-  BOOL _hasScrollView;
-  int _removedViewIndex;
 #else
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
@@ -58,8 +54,6 @@
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     [self initCommonProps];
-    _hasScrollView = NO;
-    _removedViewIndex = -1;
   }
   return self;
 }
@@ -113,7 +107,6 @@
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
-    //    [navctr.view layoutIfNeeded];
   }
 #else
   [_bridge.uiManager setSize:self.bounds.size forView:self];
@@ -284,11 +277,6 @@
     ((RNSScreenStackHeaderConfig *)view).screenView = self;
   }
 }
-
-//- (void)willRemoveSubview:(UIView *)subview
-//{
-//  [super willRemoveSubview:subview];
-//}
 
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
@@ -1211,12 +1199,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
       if (wasSearchBarActive && shouldHideHeader) {
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0);
-        dispatch_after(
-            popTime,
-            dispatch_get_main_queue(),
-            ^(void){
-                //          [self.navigationController setNavigationBarHidden:YES animated:NO];
-            });
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+          [self.navigationController setNavigationBarHidden:YES animated:NO];
+        });
       }
     }
   }
