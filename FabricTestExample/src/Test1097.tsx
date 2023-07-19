@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as React from 'react';
 import { Button, NativeSyntheticEvent, ScrollView } from 'react-native';
 import {

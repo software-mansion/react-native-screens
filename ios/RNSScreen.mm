@@ -54,7 +54,6 @@
     _reactSubviews = [NSMutableArray new];
     [self initCommonProps];
   }
-
   return self;
 }
 #endif // RCT_NEW_ARCH_ENABLED
@@ -531,6 +530,16 @@
   return self.stackPresentation != RNSScreenStackPresentationPush;
 }
 
+- (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig
+{
+  for (UIView *view in self.reactSubviews) {
+    if ([view isKindOfClass:RNSScreenStackHeaderConfig.class]) {
+      return (RNSScreenStackHeaderConfig *)view;
+    }
+  }
+  return nil;
+}
+
 #if !TARGET_OS_TV
 /**
  * Updates settings for sheet presentation controller.
@@ -588,6 +597,11 @@
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
+- (BOOL)hasHeaderConfig
+{
+  return _config != nil;
+}
+
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenComponentDescriptor>();
@@ -595,12 +609,12 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [super mountChildComponentView:childComponentView index:index];
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-    _config = childComponentView;
-    ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
+    _config = (RNSScreenStackHeaderConfig *)childComponentView;
+    _config.screenView = self;
   }
   [_reactSubviews insertObject:childComponentView atIndex:index];
+  [super mountChildComponentView:childComponentView index:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -1194,12 +1208,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
     // we need to check whether reactSubviews array is empty, because on Fabric child nodes are unmounted first ->
     // reactSubviews array may be empty
-    if (currentIndex > 0 && [self.screenView.reactSubviews count] > 0 &&
-        [self.screenView.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+    RNSScreenStackHeaderConfig *config = [self.screenView findHeaderConfig];
+    if (currentIndex > 0 && config != nil) {
       UINavigationItem *prevNavigationItem =
           [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
-      RNSScreenStackHeaderConfig *config = ((RNSScreenStackHeaderConfig *)self.screenView.reactSubviews[0]);
-
       BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
 #ifdef RCT_NEW_ARCH_ENABLED

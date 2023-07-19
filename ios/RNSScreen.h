@@ -40,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@class RNSScreenStackHeaderConfig;
+
 @interface RNSScreenView :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView
@@ -88,7 +90,8 @@ NS_ASSUME_NONNULL_BEGIN
 // we recreate the behavior of `reactSetFrame` on new architecture
 @property (nonatomic) facebook::react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) facebook::react::LayoutMetrics newLayoutMetrics;
-@property (weak, nonatomic) UIView *config;
+@property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
+@property (nonatomic, readonly) BOOL hasHeaderConfig;
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
@@ -109,11 +112,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyDisappear;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
+- (instancetype)initWithFrame:(CGRect)frame;
 #endif
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
+
+/// Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
+- (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;
 
 @end
 
