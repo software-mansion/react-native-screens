@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as React from 'react';
-import {Button, NativeSyntheticEvent, ScrollView} from 'react-native';
+import { Button, NativeSyntheticEvent, ScrollView } from 'react-native';
 import {
   NavigationContainer,
   NavigationProp,
@@ -10,7 +10,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from 'react-native-screens/native-stack';
-import {SearchBarProps, SearchBarCommands} from 'react-native-screens';
+import { SearchBarProps, SearchBarCommands } from 'react-native-screens';
 
 const AppStack = createNativeStackNavigator();
 
@@ -30,7 +30,7 @@ export default function App(): JSX.Element {
   );
 }
 
-function First({navigation}: NativeStackScreenProps<ParamListBase>) {
+function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
   const searchBarRef = React.useRef<SearchBarCommands>();
 
   React.useEffect(() => {
@@ -50,7 +50,7 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
-    onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
+    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),
@@ -91,10 +91,8 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
         onPress={() => searchBarRef.current?.focus()}
       />
       {items
-        .filter(
-          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1,
-        )
-        .map((item) => (
+        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+        .map(item => (
           <Button
             title={item}
             key={item}
@@ -119,7 +117,7 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
   );
 }
 
-function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
+function Second({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
@@ -134,7 +132,7 @@ function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
   );
 }
 
-function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
+function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   const searchBarRef = React.useRef<SearchBarCommands>();
 
   const searchBarProps: SearchBarProps = {
@@ -146,7 +144,7 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
-    onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
+    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       console.warn(`Text changed to ${e.nativeEvent.text}`),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),

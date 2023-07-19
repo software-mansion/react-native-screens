@@ -1,5 +1,5 @@
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import {
   ReanimatedScreenProvider,
@@ -9,7 +9,7 @@ import Reanimated, {
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
-import {Button} from 'react-native';
+import { Button } from 'react-native';
 
 export default function App() {
   return (
@@ -27,7 +27,7 @@ export default function App() {
 const Stack = createNativeStackNavigator();
 
 function RootScreen() {
-  const {navigate} = useNavigation();
+  const { navigate } = useNavigation();
   const reaProgress = useReanimatedTransitionProgress();
   const sv = useDerivedValue(
     () =>

@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
-import {StyleSheet, Animated, Button} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Animated, Button } from 'react-native';
 
 import {
   PanGestureHandler,
   ScrollView,
   State,
 } from 'react-native-gesture-handler';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
 function Example() {
   return (
@@ -24,7 +24,7 @@ class DraggableBox extends Component {
     super(props);
     this._translateX = new Animated.Value(0);
     this._translateY = new Animated.Value(0);
-    this._lastOffset = {x: 0, y: 0};
+    this._lastOffset = { x: 0, y: 0 };
     this._onGestureEvent = Animated.event(
       [
         {
@@ -34,11 +34,11 @@ class DraggableBox extends Component {
           },
         },
       ],
-      {useNativeDriver: true},
+      { useNativeDriver: true },
     );
   }
 
-  _onHandlerStateChange = (event) => {
+  _onHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastOffset.x += event.nativeEvent.translationX;
       this._lastOffset.y += event.nativeEvent.translationY;
@@ -60,8 +60,8 @@ class DraggableBox extends Component {
             styles.box,
             {
               transform: [
-                {translateX: this._translateX},
-                {translateY: this._translateY},
+                { translateX: this._translateX },
+                { translateY: this._translateY },
               ],
             },
             this.props.boxStyle,
@@ -74,7 +74,7 @@ class DraggableBox extends Component {
 
 const NativeStack = createNativeStackNavigator();
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
   return (
     <ScrollView
       style={{}}
@@ -94,12 +94,12 @@ export default function ReactNativeScreensBugs() {
           stackPresentation: 'modal',
         }}>
         <NativeStack.Screen
-          options={{headerLargeTitle: true}}
+          options={{ headerLargeTitle: true }}
           name="StickyHeader"
           component={HomeScreen}
         />
         <NativeStack.Screen
-          options={{headerLargeTitle: true, gestureEnabled: true}}
+          options={{ headerLargeTitle: true, gestureEnabled: true }}
           name="Second"
           component={Example}
         />

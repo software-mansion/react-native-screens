@@ -37,13 +37,13 @@ function Second({
   const headerHeight = useHeaderHeight();
   useLayoutEffect(() => {
     navigation.setOptions({
-    gestureResponseDistance: {
-      start: 200,
-      end: 250,
-      top: headerHeight,
-      bottom: headerHeight + 50,
-    }
-  });
+      gestureResponseDistance: {
+        start: 200,
+        end: 250,
+        top: headerHeight,
+        bottom: headerHeight + 50,
+      },
+    });
   });
   return (
     <ScrollView>
@@ -51,7 +51,16 @@ function Second({
         Use swipe back gesture to go back (iOS only)
       </Text>
       <Post />
-    <View style={{position: 'absolute', backgroundColor: 'red', width: 50, height: 50, left: 200, top: 0}}/>
+      <View
+        style={{
+          position: 'absolute',
+          backgroundColor: 'red',
+          width: 50,
+          height: 50,
+          left: 200,
+          top: 0,
+        }}
+      />
     </ScrollView>
   );
 }
@@ -81,7 +90,7 @@ function Post({ onPress }: { onPress?: () => void }) {
 
   return (
     <TapGestureHandler
-      onHandlerStateChange={(e) =>
+      onHandlerStateChange={e =>
         e.nativeEvent.oldState === State.ACTIVE && onPress?.()
       }>
       <View style={styles.post}>
@@ -97,7 +106,7 @@ function Post({ onPress }: { onPress?: () => void }) {
 function generatePhotos(
   amount: number,
   width: number,
-  height: number
+  height: number,
 ): JSX.Element[] {
   const startFrom = Math.floor(Math.random() * 20) + 10;
   return Array.from({ length: amount }, (_, index) => {

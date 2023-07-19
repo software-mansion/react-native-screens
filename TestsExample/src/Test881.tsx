@@ -1,12 +1,12 @@
 import React from 'react';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {View} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 
-const View1 = () => <View style={{flex: 1, backgroundColor: 'red'}} />;
-const View2 = () => <View style={{flex: 1, backgroundColor: 'blue'}} />;
-const View3 = () => <View style={{flex: 1, backgroundColor: 'yellow'}} />;
+const View1 = () => <View style={{ flex: 1, backgroundColor: 'red' }} />;
+const View2 = () => <View style={{ flex: 1, backgroundColor: 'blue' }} />;
+const View3 = () => <View style={{ flex: 1, backgroundColor: 'yellow' }} />;
 
 const Stack1 = createNativeStackNavigator();
 const Stack2 = createNativeStackNavigator();

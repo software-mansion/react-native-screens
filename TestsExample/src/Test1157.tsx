@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
-import {Button, View, TouchableOpacity} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Button, View, TouchableOpacity } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -14,7 +14,7 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{flex: 1, backgroundColor: 'red'}}>
+    <View style={{ flex: 1, backgroundColor: 'red' }}>
       <Button
         title="Tap me for second screen"
         onPress={() => navigation.navigate('Second')}
@@ -29,7 +29,7 @@ function Second({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{flex: 1, backgroundColor: 'yellow'}}>
+    <View style={{ flex: 1, backgroundColor: 'yellow' }}>
       <Button
         title="Tap me for first screen"
         onPress={() => navigation.goBack()}
@@ -45,11 +45,13 @@ function ButtonWithBiggerChild(props: {
   onClickText?: string | undefined;
   backgroundColor?: string | undefined;
 }): JSX.Element {
-  const {onClickText = 'Hello there General Kenobi', backgroundColor = 'red'} =
-    props;
+  const {
+    onClickText = 'Hello there General Kenobi',
+    backgroundColor = 'red',
+  } = props;
   return (
     <TouchableOpacity
-      style={{width: 30, height: 30, backgroundColor: 'red'}}
+      style={{ width: 30, height: 30, backgroundColor: 'red' }}
       onPress={() => console.log(onClickText)}>
       <View
         style={{
@@ -66,7 +68,7 @@ function ButtonWithBiggerChild(props: {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{stackPresentation: 'modal'}}>
+      <Stack.Navigator screenOptions={{ stackPresentation: 'modal' }}>
         <Stack.Screen
           name="First"
           component={First}
