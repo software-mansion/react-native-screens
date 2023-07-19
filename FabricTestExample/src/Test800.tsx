@@ -1,7 +1,6 @@
-/* eslint-disable react/display-name */
 import * as React from 'react';
-import {Button, StyleSheet, View, Text} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Button, StyleSheet, View, Text } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -51,18 +50,21 @@ function Second({
   return (
     <>
       <Button
-      title="Tap me for the first screen"
-      onPress={() => navigation.navigate('First')} />
+        title="Tap me for the first screen"
+        onPress={() => navigation.navigate('First')}
+      />
       <Text>{text}</Text>
       <Button
         title="Change text"
-        onPress={() => setText(Math.random().toString())} />
+        onPress={() => setText(Math.random().toString())}
+      />
       <Button
         title="Hide header"
         onPress={() => {
-          navigation.setOptions({headerShown: hidden});
+          navigation.setOptions({ headerShown: hidden });
           setHidden(!hidden);
-      }}/>
+        }}
+      />
     </>
   );
 }

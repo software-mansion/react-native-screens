@@ -11,23 +11,19 @@ import Animated, {
   measure,
   runOnJS,
 } from 'react-native-reanimated';
-import {
-  Dimensions,
-  StyleSheet,
-  View,
-  Image,
-  Platform,
-} from 'react-native';
+import { Dimensions, StyleSheet, View, Image, Platform } from 'react-native';
 import {
   ScrollView,
   PanGestureHandler,
   TapGestureHandler,
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
@@ -58,7 +54,7 @@ type ActiveExampleImage = ActiveExampleImageProperties & {
 type onItemPressFn = <T>(
   animatedRef: RefObject<T>,
   item: ExampleImage,
-  svs: ActiveExampleImageProperties
+  svs: ActiveExampleImageProperties,
 ) => void;
 function ImageList({
   images,
@@ -167,14 +163,14 @@ function ImageTransition({
 
   const targetX = useSharedValue(0);
   const targetY = useSharedValue(
-    (dimensions.height - targetHeight) / 2 - headerHeight
+    (dimensions.height - targetHeight) / 2 - headerHeight,
   );
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
   const onPan = useAnimatedGestureHandler({
-    onActive: (event) => {
+    onActive: event => {
       translateX.value = event.translationX;
       translateY.value = event.translationY;
 
@@ -182,14 +178,14 @@ function ImageTransition({
         translateY.value,
         [-200, 0, 200],
         [0.65, 1, 0.65],
-        Extrapolate.CLAMP
+        Extrapolate.CLAMP,
       );
 
       backdropOpacity.value = interpolate(
         translateY.value,
         [-100, 0, 100],
         [0, 1, 0],
-        Extrapolate.CLAMP
+        Extrapolate.CLAMP,
       );
     },
 
@@ -209,7 +205,7 @@ function ImageTransition({
             },
             () => {
               runOnJS(onClose)();
-            }
+            },
           );
         });
 
@@ -286,14 +282,14 @@ const images: ExampleImage[] = Array.from({ length: 30 }, (_, index) => {
 
 function LightboxExample(): React.ReactElement {
   const [activeImage, setActiveImage] = useState<ActiveExampleImage | null>(
-    null
+    null,
   );
 
   function onItemPress(
     // @ts-ignore: FIXME AnimatedImage type
     animatedRef: RefObject<AnimatedImage>,
     item: ExampleImage,
-    svs: ActiveExampleImageProperties
+    svs: ActiveExampleImageProperties,
   ) {
     setActiveImage({
       animatedRef,
@@ -341,7 +337,7 @@ const styles = StyleSheet.create({
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  return(
+  return (
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator>
@@ -349,5 +345,5 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
-  )
+  );
 }

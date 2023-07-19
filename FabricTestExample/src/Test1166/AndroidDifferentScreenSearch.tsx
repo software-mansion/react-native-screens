@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button, Image, Text, TouchableOpacity, View} from 'react-native';
-import {ParamListBase} from '@react-navigation/native';
+import { Button, Image, Text, TouchableOpacity, View } from 'react-native';
+import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -10,14 +10,14 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <Stack.Navigator screenOptions={{stackAnimation: 'none'}}>
+    <Stack.Navigator screenOptions={{ stackAnimation: 'none' }}>
       <Stack.Screen name="First" component={First} />
-      <Stack.Screen name="Search" component={Second} options={{title: ''}} />
+      <Stack.Screen name="Search" component={Second} options={{ title: '' }} />
     </Stack.Navigator>
   );
 }
 
-function SearchIconButton(props: {onPress: () => void}) {
+function SearchIconButton(props: { onPress: () => void }) {
   return (
     <TouchableOpacity onPress={props.onPress}>
       <Image source={require('../../assets/search_black.png')} />
@@ -41,7 +41,7 @@ function First({
     });
   }, [navigation]);
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF'}}>
+    <View style={{ flex: 1, backgroundColor: '#FFF' }}>
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
@@ -61,7 +61,7 @@ function Second({
         autoCapitalize: 'none',
         autoFocus: true,
         onClose: () => navigation.navigate('First'),
-        onChangeText: (e) => setText(e.nativeEvent.text),
+        onChangeText: e => setText(e.nativeEvent.text),
         barTintColor: text,
       },
       stackAnimation: 'none',
@@ -69,8 +69,8 @@ function Second({
   }, [navigation, text]);
 
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF', padding: 12}}>
-      <Text style={{fontSize: 24, fontWeight: '600', marginBottom: 12}}>
+    <View style={{ flex: 1, backgroundColor: '#FFF', padding: 12 }}>
+      <Text style={{ fontSize: 24, fontWeight: '600', marginBottom: 12 }}>
         Search Results
       </Text>
       <Text>{text}</Text>

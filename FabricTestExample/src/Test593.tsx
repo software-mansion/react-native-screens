@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import {
   ScrollView,
@@ -12,11 +13,14 @@ import {
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationProp } from 'react-native-screens/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
-}
+};
 
 const Stack = createNativeStackNavigator();
 const NestedStack = createNativeStackNavigator();
@@ -34,7 +38,7 @@ function Deeper({ navigation }: Props) {
           }`,
           backgroundColor: 'orange',
         });
-      }
+      },
     );
 
     return unsubscribe;
@@ -60,9 +64,9 @@ function Deeper({ navigation }: Props) {
         console.warn(
           Platform.OS +
             ' Deeper transitionStart ' +
-            (data.closing ? 'closing' : 'opening')
+            (data.closing ? 'closing' : 'opening'),
         );
-      }
+      },
     );
 
     return unsubscribe;
@@ -73,7 +77,7 @@ function Deeper({ navigation }: Props) {
       console.warn(
         Platform.OS +
           ' Deeper transitionEnd ' +
-          (data.closing ? 'closing' : 'opening')
+          (data.closing ? 'closing' : 'opening'),
       );
     });
 
@@ -81,7 +85,12 @@ function Deeper({ navigation }: Props) {
   }, [navigation]);
 
   return (
-    <NestedStack.Navigator screenOptions={{ headerShown: true, stackAnimation: 'slide_from_right', nativeBackButtonDismissalEnabled: true }}>
+    <NestedStack.Navigator
+      screenOptions={{
+        headerShown: true,
+        stackAnimation: 'slide_from_right',
+        nativeBackButtonDismissalEnabled: true,
+      }}>
       <NestedStack.Screen name="Privacy" component={Privacy} />
       <NestedStack.Screen name="Another" component={Another} />
     </NestedStack.Navigator>
@@ -92,10 +101,14 @@ export default function NativeNavigation() {
   return (
     <NavigationContainer>
       <ToastProvider>
-      <Stack.Navigator screenOptions={{stackAnimation: 'slide_from_bottom',  nativeBackButtonDismissalEnabled: true}}>
-        <Stack.Screen name="Status" component={Status} />
-        <Stack.Screen name="Deeper" component={Deeper} />
-      </Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            stackAnimation: 'slide_from_bottom',
+            nativeBackButtonDismissalEnabled: true,
+          }}>
+          <Stack.Screen name="Status" component={Status} />
+          <Stack.Screen name="Deeper" component={Deeper} />
+        </Stack.Navigator>
       </ToastProvider>
     </NavigationContainer>
   );
@@ -114,7 +127,7 @@ function Status({ navigation }: Props) {
           }`,
           backgroundColor: 'orange',
         });
-      }
+      },
     );
 
     return unsubscribe;
@@ -132,7 +145,7 @@ function Status({ navigation }: Props) {
 
     return unsubscribe;
   }, [navigation]);
-  
+
   React.useEffect(() => {
     const unsubscribe = navigation.addListener(
       'transitionStart',
@@ -140,9 +153,9 @@ function Status({ navigation }: Props) {
         console.warn(
           Platform.OS +
             ' Status transitionStart ' +
-            (data.closing ? 'closing' : 'opening')
+            (data.closing ? 'closing' : 'opening'),
         );
-      }
+      },
     );
 
     return unsubscribe;
@@ -153,7 +166,7 @@ function Status({ navigation }: Props) {
       console.warn(
         Platform.OS +
           ' Status transitionEnd ' +
-          (data.closing ? 'closing' : 'opening')
+          (data.closing ? 'closing' : 'opening'),
       );
     });
 
@@ -180,7 +193,7 @@ function Privacy({ navigation }: Props) {
           }`,
           backgroundColor: 'orange',
         });
-      }
+      },
     );
 
     return unsubscribe;
@@ -206,9 +219,9 @@ function Privacy({ navigation }: Props) {
         console.warn(
           Platform.OS +
             ' Privacy transitionStart ' +
-            (data.closing ? 'closing' : 'opening')
+            (data.closing ? 'closing' : 'opening'),
         );
-      }
+      },
     );
 
     return unsubscribe;
@@ -219,7 +232,7 @@ function Privacy({ navigation }: Props) {
       console.warn(
         Platform.OS +
           ' Privacy transitionEnd ' +
-          (data.closing ? 'closing' : 'opening')
+          (data.closing ? 'closing' : 'opening'),
       );
     });
 
@@ -246,7 +259,7 @@ function Another({ navigation }: Props) {
           }`,
           backgroundColor: 'orange',
         });
-      }
+      },
     );
 
     return unsubscribe;
@@ -272,9 +285,9 @@ function Another({ navigation }: Props) {
         console.warn(
           Platform.OS +
             ' Another transitionStart ' +
-            (data.closing ? 'closing' : 'opening')
+            (data.closing ? 'closing' : 'opening'),
         );
-      }
+      },
     );
 
     return unsubscribe;
@@ -285,7 +298,7 @@ function Another({ navigation }: Props) {
       console.warn(
         Platform.OS +
           ' Another transitionEnd ' +
-          (data.closing ? 'closing' : 'opening')
+          (data.closing ? 'closing' : 'opening'),
       );
     });
 
@@ -361,15 +374,12 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState(initialState);
 
   const remove = (id: string) => {
-    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
+    setToasts(prevToasts => prevToasts.filter(toast => toast.id !== id));
   };
 
   const push = ({ backgroundColor, message }: Omit<IToast, 'id'>): void => {
     const id = nanoid();
-    setToasts((prevToasts) => [
-      ...prevToasts,
-      { id, backgroundColor, message },
-    ]);
+    setToasts(prevToasts => [...prevToasts, { id, backgroundColor, message }]);
   };
 
   return (

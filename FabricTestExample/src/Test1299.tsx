@@ -17,12 +17,18 @@ export const MainScreen = React.memo(() => {
   return (
     <View
       style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button title={'Open modal 1'} onPress={() => {
-        navigation.navigate('modalScreen-1')
-      }}/>
-      <Button title={'Open modal 2'} onPress={() => {
-        navigation.navigate('modalScreen-2')
-      }}/>
+      <Button
+        title={'Open modal 1'}
+        onPress={() => {
+          navigation.navigate('modalScreen-1');
+        }}
+      />
+      <Button
+        title={'Open modal 2'}
+        onPress={() => {
+          navigation.navigate('modalScreen-2');
+        }}
+      />
     </View>
   );
 });

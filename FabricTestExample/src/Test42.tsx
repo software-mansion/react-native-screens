@@ -1,12 +1,12 @@
 // connected PRs: #679, #675
 import React from 'react';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {ScrollView, Button, Text} from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { ScrollView, Button, Text } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
@@ -42,10 +42,11 @@ const Tab = createBottomTabNavigator();
 
 const NestedNavigator = () => (
   <Tab.Navigator
-    screenOptions={{
+    screenOptions={
+      {
         // screenOrientation: 'landscape_left',
-    }}
-  >
+      }
+    }>
     <Tab.Screen name="Screen1" component={Home} />
     <Tab.Screen name="Screen2" component={Inner} />
     <Tab.Screen
@@ -75,7 +76,7 @@ function Home({
   const [yes, setYes] = React.useState(true);
   return (
     <ScrollView
-      style={{backgroundColor: 'yellow'}}
+      style={{ backgroundColor: 'yellow' }}
       contentInsetAdjustmentBehavior="automatic">
       <Button
         title="NestedNavigator"

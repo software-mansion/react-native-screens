@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, Button, ScrollView} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, ScrollView } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 // import {createStackNavigator} from '@react-navigation/stack';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
@@ -33,7 +33,7 @@ function HomeScreen({
 }) {
   const value = useValue();
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen {value}</Text>
       <Button
         title="Go to Details"
@@ -53,13 +53,13 @@ function DetailsScreen({
   console.log('render', value);
   return (
     <ScrollView>
-      <View style={{height: 400}} />
-      <Text style={{alignSelf: 'center'}}>Details Screen {value}</Text>
+      <View style={{ height: 400 }} />
+      <Text style={{ alignSelf: 'center' }}>Details Screen {value}</Text>
       <Button
         title="Go to Details"
         onPress={() => navigation.push('Details')}
       />
-      <View style={{height: 800}} />
+      <View style={{ height: 800 }} />
     </ScrollView>
   );
 }
@@ -71,7 +71,7 @@ function App() {
     let timer = 0;
     const interval = setInterval(() => {
       timer = timer + 1;
-      store.forEach((dispatch) => dispatch(timer));
+      store.forEach(dispatch => dispatch(timer));
     }, 3000);
     return () => clearInterval(interval);
   }, []);
