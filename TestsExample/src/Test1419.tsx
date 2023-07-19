@@ -10,7 +10,7 @@ import {
   Image,
   TextInput,
 } from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -41,7 +41,7 @@ function Second() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex: 1}}>
+      style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
           style={{
@@ -75,12 +75,12 @@ function Second() {
   );
 }
 
-const {Navigator, Screen} = createNativeStackNavigator();
+const { Navigator, Screen } = createNativeStackNavigator();
 
 export default () => {
   return (
     <NavigationContainer>
-      <Navigator screenOptions={{hideKeyboardOnSwipe: true}}>
+      <Navigator screenOptions={{ hideKeyboardOnSwipe: true }}>
         <Screen name={'First'} component={First} />
         <Screen name={'Second'} component={Second} />
       </Navigator>

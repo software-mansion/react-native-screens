@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text, Button} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { View, Text, Button } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   createStackNavigator,
   StackNavigationProp,
@@ -22,7 +22,7 @@ function Screen1({
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <Text style={{color: 'white'}}>Screen 1</Text>
+      <Text style={{ color: 'white' }}>Screen 1</Text>
       <Button
         onPress={() => navigation.navigate('Screen2')}
         title="Go to Screen 2"
@@ -44,7 +44,7 @@ function Screen2({
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <Text style={{color: 'white'}}>Screen 2</Text>
+      <Text style={{ color: 'white' }}>Screen 2</Text>
       <Button
         onPress={() => navigation.navigate('Screen3')}
         title="Go to Screen 3"
@@ -62,14 +62,14 @@ function Screen3() {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <Text style={{color: 'white'}}>Screen 3</Text>
+      <Text style={{ color: 'white' }}>Screen 3</Text>
     </View>
   );
 }
 
 function ScreenB() {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Screen B</Text>
     </View>
   );
@@ -92,11 +92,11 @@ export const maybePopToTop = (
 ) => {
   const state = navigation.dangerouslyGetState().routes;
 
-  const stackWithState = state.filter((stack) => stack.state);
+  const stackWithState = state.filter(stack => stack.state);
 
   if (
     stackWithState.length &&
-    stackWithState.some((route) => route.state?.index !== 0)
+    stackWithState.some(route => route.state?.index !== 0)
   ) {
     navigation.popToTop();
   }

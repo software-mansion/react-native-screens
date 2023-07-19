@@ -1,6 +1,6 @@
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import * as React from 'react';
-import {Button, Text, View} from 'react-native';
+import { Button, Text, View } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -12,7 +12,7 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>First Screen</Text>
       <Button
         title="Go to second"

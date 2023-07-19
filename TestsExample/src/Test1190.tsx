@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Button } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -19,7 +19,7 @@ export default function App() {
         <Stack.Screen
           name="First"
           component={First}
-          options={{stackAnimation: 'none'}}
+          options={{ stackAnimation: 'none' }}
         />
         <Stack.Screen
           name="Second"
@@ -34,7 +34,7 @@ export default function App() {
   );
 }
 
-function First({navigation}: Props) {
+function First({ navigation }: Props) {
   return (
     <>
       <Button
@@ -50,7 +50,7 @@ function First({navigation}: Props) {
   );
 }
 
-function Second({navigation}: Props) {
+function Second({ navigation }: Props) {
   return (
     <>
       <Button

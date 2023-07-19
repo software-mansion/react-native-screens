@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Button,
@@ -7,11 +7,19 @@ import {
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 // import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationContainer, NavigationProp, ParamListBase} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigationProp,
+  ParamListBase,
+} from '@react-navigation/native';
 
-const HomeScreen = ({navigation}: {navigation: NavigationProp<ParamListBase>}) => (
+const HomeScreen = ({
+  navigation,
+}: {
+  navigation: NavigationProp<ParamListBase>;
+}) => (
   <ScrollView>
     <View style={styles.screen}>
       <Button
@@ -26,7 +34,11 @@ const HomeScreen = ({navigation}: {navigation: NavigationProp<ParamListBase>}) =
   </ScrollView>
 );
 
-const ModalScreen = ({navigation}: {navigation: NavigationProp<ParamListBase>}) => (
+const ModalScreen = ({
+  navigation,
+}: {
+  navigation: NavigationProp<ParamListBase>;
+}) => (
   <View style={styles.screen}>
     <Button
       onPress={() => navigation.navigate('modalNestedScreen')}
@@ -45,7 +57,10 @@ const NestedScreen = () => {
         onPress={() => setCount(count + 1)}>
         <Text>{`Press count: ${count}`}</Text>
       </TouchableHighlight>
-      <Text>Change nested stacks to "normal" stack navigators to spot buggy behavior in native-stack's modal if fix in RNGH (#1323) not applied</Text>
+      <Text>
+        Change nested stacks to "normal" stack navigators to spot buggy behavior
+        in native-stack's modal if fix in RNGH (#1323) not applied
+      </Text>
     </View>
   );
 };
@@ -54,27 +69,15 @@ const NestedStack = createNativeStackNavigator();
 
 const HomeStack = () => (
   <NestedStack.Navigator>
-    <NestedStack.Screen
-      name="home"
-      component={HomeScreen}
-    />
-    <NestedStack.Screen
-      name="nestedScreen"
-      component={NestedScreen}
-    />
+    <NestedStack.Screen name="home" component={HomeScreen} />
+    <NestedStack.Screen name="nestedScreen" component={NestedScreen} />
   </NestedStack.Navigator>
 );
 
 const ModalStack = () => (
   <NestedStack.Navigator>
-    <NestedStack.Screen
-      name="modalScreen"
-      component={ModalScreen}
-    />
-    <NestedStack.Screen
-      name="modalNestedScreen"
-      component={NestedScreen}
-    />
+    <NestedStack.Screen name="modalScreen" component={ModalScreen} />
+    <NestedStack.Screen name="modalNestedScreen" component={NestedScreen} />
   </NestedStack.Navigator>
 );
 
@@ -87,10 +90,7 @@ const App = () => {
         screenOptions={{
           stackPresentation: 'modal',
         }}>
-        <MainStack.Screen
-          name="home"
-          component={HomeStack}
-        />
+        <MainStack.Screen name="home" component={HomeStack} />
         <MainStack.Screen name="modalScreen" component={ModalStack} />
       </MainStack.Navigator>
     </NavigationContainer>

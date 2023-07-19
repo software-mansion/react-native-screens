@@ -1,13 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {Text, View, StyleSheet, Button} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, Button } from 'react-native';
 import {
   useNavigation,
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
 } from '@react-navigation/native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
 export const FirstScreen = () => {
   const [theme, setTheme] = useState(false);
@@ -57,12 +57,12 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer theme={theme ? DarkTheme : DefaultTheme}>
-        <Stack.Navigator screenOptions={{stackPresentation: 'modal'}}>
+        <Stack.Navigator screenOptions={{ stackPresentation: 'modal' }}>
           <Stack.Screen name="screen1" component={FirstScreen} />
           <Stack.Screen
             name="screen2"
             component={SecondScreen}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

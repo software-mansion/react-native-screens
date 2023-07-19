@@ -1,11 +1,11 @@
 import React from 'react';
-import {Button, View} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Button, View } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -37,7 +37,7 @@ function First(props: Props) {
 
 const App = (): JSX.Element => {
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{

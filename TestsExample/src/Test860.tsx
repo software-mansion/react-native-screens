@@ -1,8 +1,12 @@
 import React from 'react';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {ScrollView, Button, Text} from 'react-native';
-import {createNativeStackNavigator, NativeStackNavigationProp, NativeStackNavigationOptions} from 'react-native-screens/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { ScrollView, Button, Text } from 'react-native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+  NativeStackNavigationOptions,
+} from 'react-native-screens/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
@@ -51,18 +55,25 @@ export default function NativeNavigation() {
 const Tab = createBottomTabNavigator();
 
 const NestedNavigator = () => (
-  <Tab.Navigator screenOptions={{           
-    //  statusBarColor: 'purple',
-    //  statusBarStyle: 'light',
-  }}>
+  <Tab.Navigator
+    screenOptions={
+      {
+        //  statusBarColor: 'purple',
+        //  statusBarStyle: 'light',
+      }
+    }>
     <Tab.Screen name="Screen1" component={Home} />
     <Tab.Screen name="Screen2" component={Inner} />
-    <Tab.Screen name="Screen3" component={Home}
-      options={{
-        // statusBarColor: 'powderblue', 
-        // statusBarStyle: 'dark',
-      }}
-      />
+    <Tab.Screen
+      name="Screen3"
+      component={Home}
+      options={
+        {
+          // statusBarColor: 'powderblue',
+          // statusBarStyle: 'dark',
+        }
+      }
+    />
   </Tab.Navigator>
 );
 
@@ -82,21 +93,27 @@ const Inner = () => (
   </InnerStack.Navigator>
 );
 
-function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
+function Home({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
   const [statusBarColor, setStatusBarColor] = React.useState('mediumseagreen');
-  const [statusBarStyle, setStatusBarStyle] = React.useState<NativeStackNavigationOptions['statusBarStyle']>('dark');
+  const [statusBarStyle, setStatusBarStyle] =
+    React.useState<NativeStackNavigationOptions['statusBarStyle']>('dark');
   const [statusBarHidden, setStatusBarHidden] = React.useState(false);
   const [statusBarTranslucent, setStatusBarTranslucent] = React.useState(true);
-  const [statusBarAnimation, setStatusBarAnimation] = React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
+  const [statusBarAnimation, setStatusBarAnimation] =
+    React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
   const [navigationBarColor, setNavigationBarColor] = React.useState('green');
   const [navigationBarHidden, setNavigationBarHidden] = React.useState(false);
-  const [headerTopInsetEnabled, setHeaderTopInsetEnabled] = React.useState(false);
+  const [headerTopInsetEnabled, setHeaderTopInsetEnabled] =
+    React.useState(false);
 
   return (
     <ScrollView
-      style={{backgroundColor: 'yellow'}}
-      contentInsetAdjustmentBehavior="automatic"
-      >
+      style={{ backgroundColor: 'yellow' }}
+      contentInsetAdjustmentBehavior="automatic">
       <Button
         title="NestedNavigator"
         onPress={() => {
@@ -121,16 +138,25 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           navigation.setOptions({
             statusBarColor,
           });
-          setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'rgba(255,128,128,0.5)' : 'mediumseagreen');
+          setStatusBarColor(
+            statusBarColor === 'mediumseagreen'
+              ? 'rgba(255,128,128,0.5)'
+              : 'mediumseagreen',
+          );
         }}
       />
       <Button
         title="Change status bar color in parent native-stack"
         onPress={() => {
-          navigation.dangerouslyGetParent()?.dangerouslyGetParent()?.setOptions({
-            statusBarColor,
-          });
-          setStatusBarColor(statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen');
+          navigation
+            .dangerouslyGetParent()
+            ?.dangerouslyGetParent()
+            ?.setOptions({
+              statusBarColor,
+            });
+          setStatusBarColor(
+            statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen',
+          );
         }}
       />
       <Button
@@ -160,7 +186,7 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           setHeaderTopInsetEnabled(!headerTopInsetEnabled);
         }}
       />
-            <Button
+      <Button
         title="Change status bar translucent"
         onPress={() => {
           navigation.setOptions({
@@ -169,13 +195,15 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           setStatusBarTranslucent(!statusBarTranslucent);
         }}
       />
-            <Button
+      <Button
         title="Change status bar animation"
         onPress={() => {
           navigation.setOptions({
             statusBarAnimation,
           });
-          setStatusBarAnimation(statusBarAnimation === 'none' ? 'slide' : 'none');
+          setStatusBarAnimation(
+            statusBarAnimation === 'none' ? 'slide' : 'none',
+          );
         }}
       />
       <Button
@@ -184,7 +212,9 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           navigation.setOptions({
             navigationBarColor,
           });
-          setNavigationBarColor(navigationBarColor === 'green' ? 'powderblue' : 'green');
+          setNavigationBarColor(
+            navigationBarColor === 'green' ? 'powderblue' : 'green',
+          );
         }}
       />
       <Button
@@ -196,7 +226,11 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           setNavigationBarHidden(!navigationBarHidden);
         }}
       />
-      <Text>Go to `TabNavigator` and then go to second tab there. Spot the difference between dismissing modal with a swipe and with a `Pop to top` button. </Text> 
+      <Text>
+        Go to `TabNavigator` and then go to second tab there. Spot the
+        difference between dismissing modal with a swipe and with a `Pop to top`
+        button.{' '}
+      </Text>
     </ScrollView>
   );
 }
