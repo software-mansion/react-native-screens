@@ -386,6 +386,7 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `onOpen` - A callback that gets called when search bar is expanding. (Android only)
 - `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
+- `placement` - Placement of the search bar in the navigation bar. (iOS only)
 - `textColor` - The search field text color.
 - `hintTextColor` - The search hint text color. (Android only)
 - `headerIconColor` - The search and close icon color shown in the header. (Android only)

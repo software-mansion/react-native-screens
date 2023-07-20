@@ -86,6 +86,7 @@ export type GestureResponseDistanceType = {
 };
 
 export type SheetDetentTypes = 'medium' | 'large' | 'all';
+export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -633,6 +634,20 @@ export interface SearchBarProps {
    * Text displayed when search field is empty
    */
   placeholder?: string;
+  /**
+   * Position of the search bar
+   *
+   * Supported values:
+   *
+   * * `automatic` - the search bar is placed according to current layout
+   * * `inline` - the search bar is placed on the trailing edge of navigation bar
+   * * `stacked` - the search bar is placed below the other content in navigation bar
+   *
+   * Defaults to `stacked`
+   *
+   * @platform iOS (>= 16.0)
+   */
+  placement?: SearchBarPlacement;
   /**
    * The search field text color
    */

@@ -606,8 +606,14 @@ namespace rct = facebook::react;
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+            if (@available(iOS 16.0, *)) {
+              navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
+            }
+#endif /* Check for iOS 16.0 */
           }
-#endif
+#endif /* !TARGET_OS_TV */
         }
         break;
       }

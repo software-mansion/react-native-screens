@@ -561,7 +561,6 @@ React.useLayoutEffect(() => {
 
 A callback that gets called when search bar is closing
 
-
 #### `onFocus`
 
 A callback that gets called when search bar has received focus.
@@ -580,6 +579,18 @@ Text displayed when search field is empty.
 
 Defaults to an empty string.
 
+#### `placement` (iOS only)
+
+Position of the search bar
+   
+Supported values:
+ 
+* `automatic` - the search bar is placed according to current layout
+* `inline` - the search bar is placed on the trailing edge of navigation bar
+* `stacked` - the search bar is placed below the other content in navigation bar
+
+Defaults to `stacked`
+  
 #### `textColor`
 
 The search field text color.
