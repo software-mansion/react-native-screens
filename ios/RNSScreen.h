@@ -119,8 +119,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
-- (BOOL)isFullscreenModal;
-- (BOOL)isTransparentModal;
 
 @end
 
