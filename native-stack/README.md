@@ -587,7 +587,7 @@ Supported values:
  
 * `automatic` - the search bar is placed according to current layout
 * `inline` - the search bar is placed on the trailing edge of navigation bar
-* `stacked` - the searcr bar is placed below the other content in navigation bar
+* `stacked` - the search bar is placed below the other content in navigation bar
 
 Defaults to `stacked`
   
