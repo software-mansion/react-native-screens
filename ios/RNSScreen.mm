@@ -1078,7 +1078,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (lastViewController == nil) {
     return selfOrNil;
   } else {
-    if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+    if ([lastViewController conformsToProtocol:@protocol(RNSScreensViewControllerDelegate)]) {
       // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the
       // trait, we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return
       // it, otherwise we return self if this VC has config, and nil if it doesn't we use

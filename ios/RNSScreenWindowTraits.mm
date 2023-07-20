@@ -242,7 +242,7 @@
                 inViewController:(UIViewController *)vc
 {
   UIViewController *lastViewController = [[vc childViewControllers] lastObject];
-  if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+  if ([lastViewController conformsToProtocol:@protocol(RNSScreensViewControllerDelegate)]) {
     UIViewController *vc = nil;
     if ([lastViewController isKindOfClass:[RNScreensViewController class]]) {
       vc = [(RNScreensViewController *)lastViewController findActiveChildVC];
