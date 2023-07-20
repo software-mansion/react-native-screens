@@ -1015,13 +1015,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 // Useful for checking if this screen has nested stack or is displayed at the top.
 - (BOOL)hasAnyChildNavigators
 {
-  for (int i = 0; i < [self.childViewControllers count]; i++) {
-    if ([self.childViewControllers[i] isKindOfClass:[RNScreensNavigationController class]]) {
-      return true;
+  for (UIViewController *vc in self.childViewControllers) {
+    if ([vc isKindOfClass:[RNScreensNavigationController class]]) {
+      return YES;
     }
   }
 
-  return false;
+  return NO;
 }
 
 - (CGFloat)getCalculatedHeaderHeightIsModal:(BOOL)isModal
@@ -1053,6 +1053,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
     if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0)
@@ -1062,6 +1064,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   } else {
     return fallbackStatusBarSize;
   }
+#endif
+
 #else
   // On TVOS, status bar doesn't exist
   return CGSizeMake(0, 0);
