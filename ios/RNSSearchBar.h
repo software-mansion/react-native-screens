@@ -17,6 +17,7 @@
 #endif
 
 @property (nonatomic) BOOL hideWhenScrolling;
+@property (nonatomic) UINavigationItemSearchBarPlacement placement;
 
 @property (nonatomic, retain) UISearchController *controller;
 

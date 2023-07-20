@@ -606,6 +606,7 @@ namespace rct = facebook::react;
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+            navitem.preferredSearchBarPlacement = searchBar.placement;
           }
 #endif
         }

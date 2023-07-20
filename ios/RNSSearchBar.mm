@@ -49,6 +49,7 @@
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
+  _placement = UINavigationItemSearchBarPlacementAutomatic;
 }
 
 - (void)emitOnFocusEvent
@@ -372,6 +373,7 @@ RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
+RCT_EXPORT_VIEW_PROPERTY(placement, UINavigationItemSearchBarPlacement)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)
@@ -422,5 +424,19 @@ RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text
 }
 
 #endif /* !RCT_NEW_ARCH_ENABLED */
+
+@end
+
+@implementation RCTConvert (RNSScreen)
+
+RCT_ENUM_CONVERTER(
+    UINavigationItemSearchBarPlacement,
+    (@{
+      @"automatic" : @(UINavigationItemSearchBarPlacementAutomatic),
+      @"inline" : @(UINavigationItemSearchBarPlacementInline),
+      @"stacked" : @(UINavigationItemSearchBarPlacementStacked),
+    }),
+    UINavigationItemSearchBarPlacementAutomatic,
+    integerValue)
 
 @end
