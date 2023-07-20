@@ -1,9 +1,17 @@
-import React, {useState} from 'react';
-import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+} from 'react-native';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
+  useAnimatedHeaderHeight,
 } from 'react-native-screens/native-stack';
 
 import {
@@ -12,22 +20,42 @@ import {
   State,
   TapGestureHandler,
 } from 'react-native-gesture-handler';
-import {useHeaderHeight} from 'react-native-screens/native-stack';
 import {FullWindowOverlay} from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
 
 function ExampleScreen() {
-  let height = useHeaderHeight();
+  const animatedValue = useAnimatedHeaderHeight();
 
   return (
     <FullWindowOverlay>
-      <View style={styles(height).headerHeightBox}>
-        <Text>Header height: {height}</Text>
-      </View>
+      <Animated.View
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+
+          backgroundColor: 'red',
+          width: '100%',
+          opacity: 0.5,
+          height: 60,
+          transform: [
+            {
+              translateY: animatedValue.interpolate({
+                inputRange: [0, 1000],
+                outputRange: [0, 1000],
+                extrapolate: 'clamp',
+              }),
+            },
+          ],
+        }}>
+        <Text>I'm a header!</Text>
+      </Animated.View>
     </FullWindowOverlay>
   );
 }
+
+const enablePerformanceTests = false;
 
 function First({
   navigation,
@@ -40,6 +68,13 @@ function First({
       <Post onPress={() => navigation.navigate('Second')} />
       <Post onPress={() => navigation.navigate('Second')} />
       <Post onPress={() => navigation.navigate('Second')} />
+      {
+        // Generate 1000 posts for performance testing.
+        enablePerformanceTests &&
+          Array(1000)
+            .fill(0)
+            .map(_ => <Post onPress={() => navigation.navigate('Second')} />)
+      }
     </ScrollView>
   );
 }
@@ -48,7 +83,7 @@ function Second() {
   return (
     <ScrollView>
       <ExampleScreen />
-      <Text style={styles(0).subTitle}>
+      <Text style={styles.subTitle}>
         Use swipe back gesture to go back (iOS only)
       </Text>
       <Post />
@@ -66,7 +101,7 @@ export default function App() {
             stackAnimation: 'fade_from_bottom',
             customAnimationOnSwipe: true,
             headerLargeTitle: true,
-            headerTranslucent: true,
+            // headerTranslucent: true,
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />
@@ -79,17 +114,17 @@ export default function App() {
 // components
 
 function Post({onPress}: {onPress?: () => void}) {
-  const [width] = useState(Math.round(Dimensions.get('screen').width));
+  const [width] = React.useState(Math.round(Dimensions.get('screen').width));
 
   return (
     <TapGestureHandler
       onHandlerStateChange={e =>
         e.nativeEvent.oldState === State.ACTIVE && onPress?.()
       }>
-      <View style={styles(0).post}>
-        <Text style={styles(0).title}>Post</Text>
+      <View style={styles.post}>
+        <Text style={styles.title}>Post</Text>
         <ScrollView horizontal>{generatePhotos(4, width, 400)}</ScrollView>
-        <Text style={styles(0).caption}>Scroll right for more photos</Text>
+        <Text style={styles.caption}>Scroll right for more photos</Text>
       </View>
     </TapGestureHandler>
   );
@@ -110,39 +145,28 @@ function generatePhotos(
   });
 }
 
-const styles = (headerHeight: number) =>
-  StyleSheet.create({
-    headerHeightBox: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-
-      backgroundColor: 'red',
-      width: '100%',
-      height: headerHeight,
-      opacity: 0.5,
-    },
-    title: {
-      fontWeight: 'bold',
-      fontSize: 32,
-      marginBottom: 8,
-      marginLeft: 8,
-    },
-    subTitle: {
-      fontSize: 18,
-      marginVertical: 16,
-      textAlign: 'center',
-    },
-    caption: {
-      textAlign: 'center',
-      marginTop: 4,
-    },
-    post: {
-      borderColor: '#ccc',
-      borderTopWidth: 1,
-      borderBottomWidth: 1,
-      paddingVertical: 10,
-      marginBottom: 16,
-      backgroundColor: 'white',
-    },
-  });
+const styles = StyleSheet.create({
+  title: {
+    fontWeight: 'bold',
+    fontSize: 32,
+    marginBottom: 8,
+    marginLeft: 8,
+  },
+  subTitle: {
+    fontSize: 18,
+    marginVertical: 16,
+    textAlign: 'center',
+  },
+  caption: {
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  post: {
+    borderColor: '#ccc',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    paddingVertical: 10,
+    marginBottom: 16,
+    backgroundColor: 'white',
+  },
+});
