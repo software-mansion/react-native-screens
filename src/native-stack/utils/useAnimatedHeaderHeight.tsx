@@ -2,9 +2,7 @@ import * as React from 'react';
 
 import AnimatedHeaderHeightContext from './AnimatedHeaderHeightContext';
 
-export default function useAnimatedHeaderHeight(
-  handleHeightChange: (height: number) => void
-) {
+export default function useAnimatedHeaderHeight() {
   const animatedValue = React.useContext(AnimatedHeaderHeightContext);
 
   if (animatedValue === undefined) {
@@ -13,13 +11,5 @@ export default function useAnimatedHeaderHeight(
     );
   }
 
-  const listener = animatedValue.addListener(({ value }) => {
-    handleHeightChange(value);
-  });
-
-  React.useEffect(() => {
-    return () => {
-      animatedValue.removeListener(listener);
-    };
-  });
+  return animatedValue;
 }

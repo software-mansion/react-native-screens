@@ -236,7 +236,7 @@ const RouteView = ({
     isHeaderInPush !== false ? defaultHeaderHeight : parentHeaderHeight ?? 0;
 
   // We need to ensure the first retrieved header height will be cached and set in animatedHeaderHeight.
-  let cachedAnimatedHeaderHeight = -1;
+  // let cachedAnimatedHeaderHeight = -1;
   const animatedHeaderHeight = new Animated.Value(staticHeaderHeight);
 
   const Screen = React.useContext(ScreenContext);
@@ -314,19 +314,16 @@ const RouteView = ({
           target: route.key,
         });
       }}
-      onHeaderHeightChange={(e) => {
-        const newHeight = e.nativeEvent.newHeight;
-        navigation.emit({
-          type: 'headerHeightChange',
-          data: { newHeight: newHeight },
-          target: route.key,
-        });
-
-        if (cachedAnimatedHeaderHeight !== newHeight) {
-          animatedHeaderHeight.setValue(newHeight);
-          cachedAnimatedHeaderHeight = newHeight;
-        }
-      }}
+      onHeaderHeightChange={Animated.event(
+        [
+          {
+            nativeEvent: {
+              newHeight: animatedHeaderHeight,
+            },
+          },
+        ],
+        { useNativeDriver: true }
+      )}
       onDismissed={(e) => {
         navigation.emit({
           type: 'dismiss',
