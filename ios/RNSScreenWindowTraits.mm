@@ -244,8 +244,8 @@
   UIViewController *lastViewController = [[vc childViewControllers] lastObject];
   if ([lastViewController conformsToProtocol:@protocol(RNSScreensViewControllerDelegate)]) {
     UIViewController *vc = nil;
-    if ([lastViewController isKindOfClass:[RNScreensViewController class]]) {
-      vc = [(RNScreensViewController *)lastViewController findActiveChildVC];
+    if ([lastViewController isKindOfClass:[RNSScreensViewController class]]) {
+      vc = [(RNSScreensViewController *)lastViewController findActiveChildVC];
     } else if ([lastViewController isKindOfClass:[RNScreensNavigationController class]]) {
       vc = [(RNScreensNavigationController *)lastViewController topViewController];
     }
