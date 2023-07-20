@@ -65,7 +65,6 @@ typedef NS_ENUM(NSInteger, RNSScreenDetentType) {
 };
 
 typedef NS_ENUM(NSInteger, RNSSearchBarPlacement) {
-  RNSSearchBarPlacementDefault,
   RNSSearchBarPlacementAutomatic,
   RNSSearchBarPlacementInline,
   RNSSearchBarPlacementStacked,
