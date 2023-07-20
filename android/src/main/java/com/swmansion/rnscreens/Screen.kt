@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
@@ -12,6 +11,7 @@ import android.view.WindowManager
 import android.webkit.WebView
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
@@ -248,14 +248,15 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
 
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
-        val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics).takeIf { resolvedActionBarSize }
-            ?.convertToDp(context)
-            ?: 56 // Default action bar height
+        val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
+            .takeIf { resolvedActionBarSize }
+            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toInt() } ?: 56
 
         val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
             .takeIf { it > 0 }
-            ?.let { (context.resources::getDimensionPixelSize)(it) }?.convertToDp(context)
-            ?: 24 // Default status bar height
+            ?.let { (context.resources::getDimensionPixelSize)(it) }
+            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toInt() }
+            ?: 24
 
         val totalHeight = actionBarHeight + statusBarHeight
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
@@ -280,13 +281,5 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
-    }
-
-    // One dp is equal to one pixel on a screen of density 160 dpi.
-    private fun Int.convertToDp(context: Context): Int {
-        val resources = context.resources
-        val metrics = resources.displayMetrics
-        val dp = this / (metrics.densityDpi / 160f)
-        return dp.toInt()
     }
 }
