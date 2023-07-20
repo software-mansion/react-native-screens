@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RNSScreenView;
 
-@interface RNSScreen : UIViewController <RNSScreensViewControllerDelegate>
+@interface RNSScreen : UIViewController <RNSViewControllerDelegate>
 
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;

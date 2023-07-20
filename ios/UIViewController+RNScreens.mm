@@ -40,7 +40,7 @@
 - (UIViewController *)findChildRNSScreensViewController
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
-  if ([lastViewController conformsToProtocol:@protocol(RNSScreensViewControllerDelegate)]) {
+  if ([lastViewController conformsToProtocol:@protocol(RNSViewControllerDelegate)]) {
     return lastViewController;
   }
   return nil;

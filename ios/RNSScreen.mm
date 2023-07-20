@@ -744,7 +744,7 @@
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
+  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
   // when screen is mounted under RNScreensNavigationController it's size is controller
@@ -962,8 +962,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // provides additional padding to account for possible header, and in the case when screen is
   // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
   // screen size
-  BOOL isDisplayedWithinUINavController =
-      [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
+  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
   BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
   if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
@@ -1078,7 +1077,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (lastViewController == nil) {
     return selfOrNil;
   } else {
-    if ([lastViewController conformsToProtocol:@protocol(RNSScreensViewControllerDelegate)]) {
+    if ([lastViewController conformsToProtocol:@protocol(RNSViewControllerDelegate)]) {
       // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the
       // trait, we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return
       // it, otherwise we return self if this VC has config, and nil if it doesn't we use

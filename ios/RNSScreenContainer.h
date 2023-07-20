@@ -14,11 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@protocol RNSScreensViewControllerDelegate
+@protocol RNSViewControllerDelegate
 
 @end
 
-@interface RNSScreensViewController : UIViewController <RNSScreensViewControllerDelegate>
+@interface RNSViewController : UIViewController <RNSViewControllerDelegate>
 
 - (UIViewController *)findActiveChildVC;
 

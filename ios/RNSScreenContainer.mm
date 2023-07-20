@@ -8,7 +8,7 @@
 #import <react/renderer/components/rnscreens/Props.h>
 #endif
 
-@implementation RNSScreensViewController
+@implementation RNSViewController
 
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
@@ -72,7 +72,7 @@
 
 - (void)setupController
 {
-  _controller = [[RNSScreensViewController alloc] init];
+  _controller = [[RNSViewController alloc] init];
   [self addSubview:_controller.view];
 }
 
