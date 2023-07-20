@@ -1029,7 +1029,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (BOOL)hasAnyChildNavigators
 {
   for (UIViewController *vc in self.childViewControllers) {
-    if ([vc isKindOfClass:[RNScreensNavigationController class]]) {
+    if ([vc isKindOfClass:[RNSNavigationController class]]) {
       return YES;
     }
   }
