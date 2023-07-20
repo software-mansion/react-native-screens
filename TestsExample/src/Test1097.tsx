@@ -50,6 +50,7 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
+    placement: 'stacked',
     onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
