@@ -11,8 +11,8 @@ class HeaderHeightChangeEvent(
 
     override fun getEventName() = EVENT_NAME
 
-    // All events for a given view can be coalesced.
-    override fun getCoalescingKey(): Short = 0
+    // As the same header height could appear twice, use header height as a coalescing key.
+    override fun getCoalescingKey(): Short = mNewHeight.toShort()
 
     override fun dispatch(rctEventEmitter: RCTEventEmitter) {
         val map = Arguments.createMap()
