@@ -39,7 +39,7 @@
 
 @end
 
-@implementation RNScreensNavigationController
+@implementation RNSNavigationController
 
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
@@ -126,7 +126,7 @@
 {
   _reactSubviews = [NSMutableArray new];
   _presentedModals = [NSMutableArray new];
-  _controller = [RNScreensNavigationController new];
+  _controller = [RNSNavigationController new];
   _controller.delegate = self;
 #if !TARGET_OS_TV
   [self setupGestureHandlers];
