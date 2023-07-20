@@ -1,20 +1,20 @@
 import * as React from 'react';
-import {Button, View} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Button, View } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{gestureEnabled: true}}>
+        <Stack.Navigator screenOptions={{ gestureEnabled: true }}>
           <Stack.Screen
             name="First"
             component={First}
@@ -71,7 +71,8 @@ function Second({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{backgroundColor: '#777', flex: 1, justifyContent: 'center'}}>
+    <View
+      style={{ backgroundColor: '#777', flex: 1, justifyContent: 'center' }}>
       <Button
         title="Tap me to go back"
         onPress={() => {

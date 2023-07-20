@@ -9,7 +9,8 @@ function TestScreen({ navigation }) {
       <Button
         title="PUSH ME"
         onPress={() => navigation.push('Test')}
-        style={styles.button} />
+        style={styles.button}
+      />
     </View>
   );
 }
@@ -29,15 +30,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator keyboardHandlingEnabled={false}>
-        <Stack.Screen
-          name="Home"
-          component={TestScreen}
-        />
-        <Stack.Screen
-          name="Test"
-          component={TestScreen2}
-        />
-    </Stack.Navigator>
+        <Stack.Screen name="Home" component={TestScreen} />
+        <Stack.Screen name="Test" component={TestScreen2} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button, View} from 'react-native';
-import {ParamListBase} from '@react-navigation/native';
+import { Button, View } from 'react-native';
+import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -33,7 +33,7 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF'}}>
+    <View style={{ flex: 1, backgroundColor: '#FFF' }}>
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );

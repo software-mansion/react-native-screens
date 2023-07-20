@@ -1,6 +1,6 @@
 import React from 'react';
-import {Button, View} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Button, View } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
           name="Customization"
@@ -45,25 +45,25 @@ function Home({
         justifyContent: 'center',
         padding: 12,
       }}>
-      <View style={{marginBottom: 12}}>
+      <View style={{ marginBottom: 12 }}>
         <Button
           title="Search bar customization"
           onPress={() => navigation.navigate('Customization')}
         />
       </View>
-      <View style={{marginBottom: 12}}>
+      <View style={{ marginBottom: 12 }}>
         <Button
           title="Search bar input types"
           onPress={() => navigation.navigate('InputTypes')}
         />
       </View>
-      <View style={{marginBottom: 12}}>
+      <View style={{ marginBottom: 12 }}>
         <Button
           title="Search bar events"
           onPress={() => navigation.navigate('Events')}
         />
       </View>
-      <View style={{marginBottom: 12}}>
+      <View style={{ marginBottom: 12 }}>
         <Button
           title="Search bar different search results screen"
           onPress={() => navigation.navigate('DifferentSearchScreen')}

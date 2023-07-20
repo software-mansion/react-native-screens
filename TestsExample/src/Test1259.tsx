@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Button } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,

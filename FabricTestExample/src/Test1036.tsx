@@ -1,6 +1,6 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,9 +16,9 @@ const App = () => {
         screenOptions={{
           headerTitle: 'Title',
           searchBar: {
-            onCancelButtonPress: ()=>{
-              console.log('cancel button press')
-            }
+            onCancelButtonPress: () => {
+              console.log('cancel button press');
+            },
           },
         }}>
         <Stack.Screen name="Screen" component={Screen} />

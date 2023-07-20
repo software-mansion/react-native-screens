@@ -54,7 +54,6 @@
     _reactSubviews = [NSMutableArray new];
     [self initCommonProps];
   }
-
   return self;
 }
 #endif // RCT_NEW_ARCH_ENABLED
@@ -542,6 +541,16 @@
   }
 }
 
+- (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig
+{
+  for (UIView *view in self.reactSubviews) {
+    if ([view isKindOfClass:RNSScreenStackHeaderConfig.class]) {
+      return (RNSScreenStackHeaderConfig *)view;
+    }
+  }
+  return nil;
+}
+
 - (BOOL)isModal
 {
   return self.stackPresentation != RNSScreenStackPresentationPush;
@@ -626,6 +635,11 @@
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
+- (BOOL)hasHeaderConfig
+{
+  return _config != nil;
+}
+
 + (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenComponentDescriptor>();
@@ -633,12 +647,12 @@
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [super mountChildComponentView:childComponentView index:index];
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-    _config = childComponentView;
-    ((RNSScreenStackHeaderConfig *)childComponentView).screenView = self;
+    _config = (RNSScreenStackHeaderConfig *)childComponentView;
+    _config.screenView = self;
   }
   [_reactSubviews insertObject:childComponentView atIndex:index];
+  [super mountChildComponentView:childComponentView index:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -768,10 +782,10 @@
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
+  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
-  // when screen is mounted under RNScreensNavigationController it's size is controller
+  // when screen is mounted under RNSNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
   // the controller. In that case we ignore react layout system from managing
   // the screen dimensions and we wait for the screen VC to update and then we
@@ -808,10 +822,10 @@
 {
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNScreensNavigationController class]]) {
+  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super reactSetFrame:frame];
   }
-  // when screen is mounted under RNScreensNavigationController it's size is controller
+  // when screen is mounted under RNSNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
   // the controller. In that case we ignore react layout system from managing
   // the screen dimensions and we wait for the screen VC to update and then we
@@ -982,12 +996,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   [super viewDidLayoutSubviews];
 
   // The below code makes the screen view adapt dimensions provided by the system. We take these
-  // into account only when the view is mounted under RNScreensNavigationController in which case system
+  // into account only when the view is mounted under RNSNavigationController in which case system
   // provides additional padding to account for possible header, and in the case when screen is
   // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
   // screen size
-  BOOL isDisplayedWithinUINavController =
-      [self.parentViewController isKindOfClass:[RNScreensNavigationController class]];
+  BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
 
   if (self.screenView.isPresentedAsNativeModal) {
     [self calculateHeaderHeightIsModal:YES];
@@ -1186,7 +1199,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (lastViewController == nil) {
     return selfOrNil;
   } else {
-    if ([lastViewController conformsToProtocol:@protocol(RNScreensViewControllerDelegate)]) {
+    if ([lastViewController conformsToProtocol:@protocol(RNSViewControllerDelegate)]) {
       // If there is a child (should be VC of ScreenContainer or ScreenStack), that has a child that could provide the
       // trait, we recursively go into its findChildVCForConfig, and if one of the children has the trait set, we return
       // it, otherwise we return self if this VC has config, and nil if it doesn't we use
@@ -1316,12 +1329,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
     // we need to check whether reactSubviews array is empty, because on Fabric child nodes are unmounted first ->
     // reactSubviews array may be empty
-    if (currentIndex > 0 && [self.screenView.reactSubviews count] > 0 &&
-        [self.screenView.reactSubviews[0] isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
+    RNSScreenStackHeaderConfig *config = [self.screenView findHeaderConfig];
+    if (currentIndex > 0 && config != nil) {
       UINavigationItem *prevNavigationItem =
           [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
-      RNSScreenStackHeaderConfig *config = ((RNSScreenStackHeaderConfig *)self.screenView.reactSubviews[0]);
-
       BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
 #ifdef RCT_NEW_ARCH_ENABLED

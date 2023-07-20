@@ -1,13 +1,13 @@
 import React from 'react';
-import {Button, Text, ScrollView, View} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { Button, Text, ScrollView, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
-function HomeScreen({navigation}) {
+function HomeScreen({ navigation }) {
   return (
     <ScrollView>
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text style={{fontSize: 24}}>Home screen with a 'bold' title</Text>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 24 }}>Home screen with a 'bold' title</Text>
         <Button
           onPress={() => navigation.navigate('Details')}
           title="Go to Details"
@@ -33,7 +33,7 @@ function RootStackScreen() {
   return (
     <RootStack.Navigator
       screenOptions={{
-        headerTitleStyle: {fontWeight: '900'},
+        headerTitleStyle: { fontWeight: '900' },
         headerLargeTitle: true,
         headerLargeTitleStyle: {
           fontWeight: '900',
@@ -44,7 +44,7 @@ function RootStackScreen() {
         name="Details"
         component={DetailsScreen}
         options={{
-          headerTitleStyle: {fontWeight: '100'},
+          headerTitleStyle: { fontWeight: '100' },
           headerLargeTitleStyle: {
             fontWeight: '100',
           },

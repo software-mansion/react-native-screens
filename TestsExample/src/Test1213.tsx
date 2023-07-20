@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {Text} from 'react-native';
+import { Text } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const NStack = createNativeStackNavigator();
@@ -21,7 +21,7 @@ type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
-const MainScreen = ({navigation}: Props): JSX.Element => {
+const MainScreen = ({ navigation }: Props): JSX.Element => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('transitionStart', () => {
       console.log('1');

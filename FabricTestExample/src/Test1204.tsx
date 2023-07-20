@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button, Text, View} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Button, Text, View } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -41,7 +41,7 @@ function Main({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{flex: 1, justifyContent: 'center'}}>
+    <View style={{ flex: 1, justifyContent: 'center' }}>
       <Text>Example text that could be read out by TalkBack</Text>
       <Button
         title="Open transparent modal"
@@ -76,7 +76,7 @@ function Details({
           justifyContent: 'space-around',
           backgroundColor: 'white',
         }}>
-        <Text style={{padding: 15}}>
+        <Text style={{ padding: 15 }}>
           Buttons beneath the modal shouldn&apos;t be picked up by Android
           TalkBack
         </Text>

@@ -1,9 +1,9 @@
 import React from 'react';
-import {Button, ScrollView, StyleSheet} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { Button, ScrollView, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
-function HomeScreen({navigation}) {
+function HomeScreen({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
       <Button
@@ -31,7 +31,7 @@ function RootStackScreen() {
       <RootStack.Screen
         name="Home"
         component={HomeScreen}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <RootStack.Screen name="Details" component={DetailsScreen} />
     </RootStack.Navigator>
