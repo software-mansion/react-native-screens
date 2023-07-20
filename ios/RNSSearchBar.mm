@@ -49,7 +49,7 @@
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
-  _placement = UINavigationItemSearchBarPlacementAutomatic;
+  _placement = RNSSearchBarPlacementStacked;
 }
 
 - (void)emitOnFocusEvent
@@ -209,6 +209,18 @@
 #endif
 }
 
+- (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement
+{
+  switch (_placement) {
+    case RNSSearchBarPlacementStacked:
+      return UINavigationItemSearchBarPlacementStacked;
+    case RNSSearchBarPlacementAutomatic:
+      return UINavigationItemSearchBarPlacementAutomatic;
+    case RNSSearchBarPlacementInline:
+      return UINavigationItemSearchBarPlacementInline;
+  }
+}
+
 #pragma mark delegate methods
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
@@ -327,6 +339,10 @@
     [self setTextColor:RCTUIColorFromSharedColor(newScreenProps.textColor)];
   }
 
+  if (oldScreenProps.placement != newScreenProps.placement) {
+    self.placement = [RNSConvert RNSScreenSearchBarPlacementFromCppEquivalent:newScreenProps.placement];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -373,7 +389,7 @@ RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
-RCT_EXPORT_VIEW_PROPERTY(placement, UINavigationItemSearchBarPlacement)
+RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)
@@ -430,13 +446,13 @@ RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text
 @implementation RCTConvert (RNSScreen)
 
 RCT_ENUM_CONVERTER(
-    UINavigationItemSearchBarPlacement,
+    RNSSearchBarPlacement,
     (@{
-      @"automatic" : @(UINavigationItemSearchBarPlacementAutomatic),
-      @"inline" : @(UINavigationItemSearchBarPlacementInline),
-      @"stacked" : @(UINavigationItemSearchBarPlacementStacked),
+      @"automatic" : @(RNSSearchBarPlacementAutomatic),
+      @"inline" : @(RNSSearchBarPlacementInline),
+      @"stacked" : @(RNSSearchBarPlacementStacked),
     }),
-    UINavigationItemSearchBarPlacementAutomatic,
+    RNSSearchBarPlacementStacked,
     integerValue)
 
 @end
