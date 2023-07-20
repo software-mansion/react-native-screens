@@ -310,11 +310,6 @@
   }
 }
 
-- (void)addSubview:(UIView *)view
-{
-  [super addSubview:view];
-}
-
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller
 {
   if (!controller.parentViewController) {
