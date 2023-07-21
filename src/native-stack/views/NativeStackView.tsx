@@ -113,6 +113,7 @@ const MaybeNestedStack = ({
   const topInset = useSafeAreaInsets().top;
   let statusBarHeight = topInset;
   const hasDynamicIsland = Platform.OS === 'ios' && topInset === 59;
+  const isLargeHeader = options.headerLargeTitle ?? false;
   if (hasDynamicIsland) {
     // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
     statusBarHeight = 54;
@@ -120,7 +121,8 @@ const MaybeNestedStack = ({
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
     statusBarHeight,
-    stackPresentation
+    stackPresentation,
+    isLargeHeader
   );
 
   if (isHeaderInModal) {
@@ -223,6 +225,8 @@ const RouteView = ({
   const topInset = useSafeAreaInsets().top;
   let statusBarHeight = topInset;
   const hasDynamicIsland = Platform.OS === 'ios' && topInset === 59;
+  const isLargeHeader = options.headerLargeTitle ?? false;
+
   if (hasDynamicIsland) {
     // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
     statusBarHeight = 54;
@@ -230,7 +234,8 @@ const RouteView = ({
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
     statusBarHeight,
-    stackPresentation
+    stackPresentation,
+    isLargeHeader
   );
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const Screen = React.useContext(ScreenContext);

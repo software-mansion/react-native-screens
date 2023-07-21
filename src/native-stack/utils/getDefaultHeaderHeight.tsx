@@ -7,7 +7,8 @@ const formSheetModalHeight = 56;
 export default function getDefaultHeaderHeight(
   layout: Layout,
   statusBarHeight: number,
-  stackPresentation: StackPresentationTypes
+  stackPresentation: StackPresentationTypes,
+  isLargeHeader: boolean
 ): number {
   // default header heights
   let headerHeight = Platform.OS === 'android' ? 56 : 64;
@@ -27,7 +28,9 @@ export default function getDefaultHeaderHeight(
       if (isLandscape) {
         headerHeight = 32;
       } else {
-        headerHeight = isFromSheetModal ? formSheetModalHeight : 44;
+        if (isFromSheetModal) headerHeight = formSheetModalHeight;
+        else if (isLargeHeader) headerHeight = 96;
+        else headerHeight = 44;
       }
     }
   }
