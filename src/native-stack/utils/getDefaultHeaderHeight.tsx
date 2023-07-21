@@ -29,8 +29,7 @@ export default function getDefaultHeaderHeight(
         headerHeight = 32;
       } else {
         if (isFromSheetModal) headerHeight = formSheetModalHeight;
-        else if (isLargeHeader) headerHeight = 96;
-        else headerHeight = 44;
+        headerHeight = isLargeHeader ? 96 : 44;
       }
     }
   }
