@@ -1077,7 +1077,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   } else {
     return fallbackStatusBarSize;
   }
-#endif
+#endif /* Check for iOS 13.0 */
 
 #else
   // On TVOS, status bar doesn't exist
