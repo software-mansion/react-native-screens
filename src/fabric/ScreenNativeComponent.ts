@@ -22,7 +22,7 @@ type TransitionProgressEvent = Readonly<{
 }>;
 
 type HeaderChangeEvent = Readonly<{
-  newHeight: Int32;
+  newHeight: Double;
 }>;
 
 type GestureResponseDistanceType = Readonly<{

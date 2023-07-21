@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;
-- (void)notifyHeaderHeightChange:(int)newHeight;
+- (void)notifyHeaderHeightChange:(double)newHeight;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)notifyWillAppear;

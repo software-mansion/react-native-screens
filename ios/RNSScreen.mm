@@ -14,6 +14,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenComponentDescriptor.h>
 #import "RNSConvert.h"
+#import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
 #else
 #import <React/RCTTouchHandler.h>
@@ -391,13 +392,19 @@
 #endif
 }
 
-- (void)notifyHeaderHeightChange:(int)newHeight
+- (void)notifyHeaderHeightChange:(double)newHeight
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onHeaderHeightChange(facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.newHeight = newHeight});
   }
+
+  RNSHeaderHeightChangeEvent *event =
+      [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
+                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                                  newHeight:newHeight];
+  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
