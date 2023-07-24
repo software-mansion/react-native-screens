@@ -1,18 +1,19 @@
 import React from 'react';
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-  useAnimatedHeaderHeight,
 } from 'react-native-screens/native-stack';
+
+// Uncomment this lines if you want to test useAnimatedHeaderHeight.
+import { Animated } from 'react-native';
+import { useAnimatedHeaderHeight } from 'react-native-screens/native-stack';
+
+// Uncomment this lines if you want to test useReanimatedHeaderHeight.
+// import Animated from 'react-native-reanimated';
+// import { useReanimatedHeaderHeight } from 'react-native-screens/reanimated';
 
 import {
   GestureHandlerRootView,
@@ -20,12 +21,14 @@ import {
   State,
   TapGestureHandler,
 } from 'react-native-gesture-handler';
-import {FullWindowOverlay} from 'react-native-screens';
+import { ReanimatedScreenProvider } from 'react-native-screens/reanimated';
+import { FullWindowOverlay } from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
 
 function ExampleScreen() {
-  const animatedValue = useAnimatedHeaderHeight();
+  const headerHeight = useAnimatedHeaderHeight();
+  // const headerHeight = useReanimatedHeaderHeight();
 
   return (
     <FullWindowOverlay>
@@ -39,13 +42,10 @@ function ExampleScreen() {
           width: '100%',
           opacity: 0.5,
           height: 60,
+          zIndex: 1,
           transform: [
             {
-              translateY: animatedValue.interpolate({
-                inputRange: [0, 1000],
-                outputRange: [0, 1000],
-                extrapolate: 'clamp',
-              }),
+              translateY: headerHeight,
             },
           ],
         }}>
@@ -93,27 +93,29 @@ function Second() {
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            fullScreenSwipeEnabled: true,
-            stackAnimation: 'fade_from_bottom',
-            customAnimationOnSwipe: true,
-            headerLargeTitle: true,
-            // headerTranslucent: true,
-          }}>
-          <Stack.Screen name="First" component={First} />
-          <Stack.Screen name="Second" component={Second} />
-        </Stack.Navigator>
-      </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ReanimatedScreenProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              fullScreenSwipeEnabled: true,
+              stackAnimation: 'fade_from_bottom',
+              customAnimationOnSwipe: true,
+              headerLargeTitle: true,
+              // headerTranslucent: true,
+            }}>
+            <Stack.Screen name="First" component={First} />
+            <Stack.Screen name="Second" component={Second} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ReanimatedScreenProvider>
     </GestureHandlerRootView>
   );
 }
 
 // components
 
-function Post({onPress}: {onPress?: () => void}) {
+function Post({ onPress }: { onPress?: () => void }) {
   const [width] = React.useState(Math.round(Dimensions.get('screen').width));
 
   return (
@@ -137,11 +139,11 @@ function generatePhotos(
   height: number,
 ): JSX.Element[] {
   const startFrom = Math.floor(Math.random() * 20) + 10;
-  return Array.from({length: amount}, (_, index) => {
+  return Array.from({ length: amount }, (_, index) => {
     const uri = `https://picsum.photos/id/${
       startFrom + index
     }/${width}/${height}`;
-    return <Image style={{width, height}} key={uri} source={{uri}} />;
+    return <Image style={{ width, height }} key={uri} source={{ uri }} />;
   });
 }
 
