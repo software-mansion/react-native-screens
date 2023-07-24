@@ -7,11 +7,11 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 
-// Uncomment this lines if you want to test useAnimatedHeaderHeight.
+// Uncomment these lines if you want to test useAnimatedHeaderHeight.
 import { Animated } from 'react-native';
 import { useAnimatedHeaderHeight } from 'react-native-screens/native-stack';
 
-// Uncomment this lines if you want to test useReanimatedHeaderHeight.
+// Uncomment these lines if you want to test useReanimatedHeaderHeight.
 // import Animated from 'react-native-reanimated';
 // import { useReanimatedHeaderHeight } from 'react-native-screens/reanimated';
 
