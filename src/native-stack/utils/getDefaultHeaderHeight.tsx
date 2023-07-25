@@ -28,8 +28,11 @@ export default function getDefaultHeaderHeight(
       if (isLandscape) {
         headerHeight = 32;
       } else {
-        if (isFormSheetModal) headerHeight = formSheetModalHeight;
-        else headerHeight = isLargeHeader ? 96 : 44;
+        if (isFormSheetModal) {
+          headerHeight = formSheetModalHeight;
+        } else {
+          headerHeight = isLargeHeader ? 96 : 44;
+        }
       }
     }
   }
