@@ -31,6 +31,8 @@
 + (UITextAutocapitalizationType)UITextAutocapitalizationTypeFromCppEquivalent:
     (facebook::react::RNSSearchBarAutoCapitalize)autoCapitalize;
 
++ (RNSSearchBarPlacement)RNSScreenSearchBarPlacementFromCppEquivalent:(facebook::react::RNSSearchBarPlacement)placement;
+
 @end
 
 #endif // RCT_NEW_ARCH_ENABLED

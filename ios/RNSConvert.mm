@@ -141,6 +141,18 @@
   }
 }
 
++ (RNSSearchBarPlacement)RNSScreenSearchBarPlacementFromCppEquivalent:(facebook::react::RNSSearchBarPlacement)placement
+{
+  switch (placement) {
+    case facebook::react::RNSSearchBarPlacement::Stacked:
+      return RNSSearchBarPlacementStacked;
+    case facebook::react::RNSSearchBarPlacement::Automatic:
+      return RNSSearchBarPlacementAutomatic;
+    case facebook::react::RNSSearchBarPlacement::Inline:
+      return RNSSearchBarPlacementInline;
+  }
+}
+
 @end
 
 #endif // RCT_NEW_ARCH_ENABLED

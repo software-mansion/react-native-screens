@@ -17,6 +17,8 @@ type ChangeTextEvent = Readonly<{
   text?: string;
 }>;
 
+type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 interface NativeProps extends ViewProps {
@@ -28,6 +30,7 @@ interface NativeProps extends ViewProps {
   hideWhenScrolling?: boolean;
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
+  placement?: WithDefault<SearchBarPlacement, 'stacked'>;
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;
   cancelButtonText?: string;
