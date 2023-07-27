@@ -223,7 +223,7 @@ function ScreenStack(props: ScreenStackProps) {
 
   return (
     <ScreensNativeModules.NativeScreenStack {...rest}>
-      {children}
+      {childrenWithFreeze}
     </ScreensNativeModules.NativeScreenStack>
   );
 }
