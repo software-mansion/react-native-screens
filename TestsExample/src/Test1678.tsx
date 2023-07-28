@@ -5,14 +5,19 @@ import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 // import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { atom, useAtom } from 'jotai';
 import { Screen, ScreenStack } from 'react-native-screens';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
 const loggedInAtom = atom(false);
 
-const Onboarding = ({ navigation }) => {
-  const [_, setLoggedIn] = useAtom(loggedInAtom);
+const Onboarding = ({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) => {
+  // const [_, _] = useAtom(loggedInAtom);
 
   return (
     <>
@@ -29,11 +34,11 @@ const Onboarding = ({ navigation }) => {
 };
 
 const AppScreen = () => {
-  return <Text>App</Text>;
+  return <Text>Main App Screen</Text>;
 };
 
 const Modal = () => {
-  const [, setLoggedIn] = useAtom(loggedInAtom);
+  const [_, setLoggedIn] = useAtom(loggedInAtom);
   return (
     <>
       <Text>Modal</Text>
@@ -48,7 +53,7 @@ const Modal = () => {
 };
 
 export function App2() {
-  const [isLoggedIn, setLoggedIn] = useAtom(loggedInAtom);
+  const [isLoggedIn, _] = useAtom(loggedInAtom);
 
   return (
     <NavigationContainer>
@@ -76,7 +81,6 @@ export function App2() {
 }
 
 export function App() {
-  // const [token] = React.useState(false);
   const [token, _] = useAtom(loggedInAtom);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const children = [];

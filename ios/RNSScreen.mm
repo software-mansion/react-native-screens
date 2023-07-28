@@ -64,7 +64,7 @@
     _bridge = bridge;
     [self initCommonProps];
   }
-
+  NSLog(@"RNSScreenView created %@\n", self);
   return self;
 }
 
@@ -149,6 +149,7 @@
       break;
   }
 
+  NSLog(@"RNSScreenView %p stackPresentation updated from %ld to %ld\n", self, _stackPresentation, stackPresentation);
   // There is a bug in UIKit which causes retain loop when presentationController is accessed for a
   // controller that is not going to be presented modally. We therefore need to avoid setting the
   // delegate for screens presented using push. This also means that when controller is updated from
@@ -838,7 +839,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _initialView = (RNSScreenView *)view;
 #endif
   }
-  NSLog(@"Creating RNScreen %@\n", self);
+  NSLog(@"RNSScreen created %@\n", self);
   return self;
 }
 
