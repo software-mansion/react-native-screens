@@ -932,57 +932,29 @@ PODS:
   - React-jsinspector (0.72.3)
   - React-logger (0.72.3):
     - glog
-  - react-native-safe-area-context (4.7.1):
-    - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+  - react-native-safe-area-context (4.5.3):
+    - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
-    - React-Codegen
     - React-Core
-    - React-debug
-    - React-Fabric
-    - React-graphics
-    - react-native-safe-area-context/common (= 4.7.1)
-    - react-native-safe-area-context/fabric (= 4.7.1)
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-utils
-    - ReactCommon/turbomodule/bridging
+    - react-native-safe-area-context/common (= 4.5.3)
+    - react-native-safe-area-context/fabric (= 4.5.3)
     - ReactCommon/turbomodule/core
-    - Yoga
-  - react-native-safe-area-context/common (4.7.1):
-    - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+  - react-native-safe-area-context/common (4.5.3):
+    - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
-    - React-Codegen
     - React-Core
-    - React-debug
-    - React-Fabric
-    - React-graphics
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-utils
-    - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Yoga
-  - react-native-safe-area-context/fabric (4.7.1):
-    - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+  - react-native-safe-area-context/fabric (4.5.3):
+    - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
     - React-Codegen
     - React-Core
-    - React-debug
-    - React-Fabric
-    - React-graphics
     - react-native-safe-area-context/common
-    - React-NativeModulesApple
     - React-RCTFabric
-    - React-utils
-    - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Yoga
   - React-NativeModulesApple (0.72.3):
     - hermes-engine
     - React-callinvoker
@@ -1390,12 +1362,12 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 59d1eb03af7d30b7d66589c410f13151271e8006
   React-jsinspector: b511447170f561157547bc0bef3f169663860be7
   React-logger: c5b527272d5f22eaa09bb3c3a690fee8f237ae95
-  react-native-safe-area-context: a283130af276caa22ecfed30c3d1eb450bc83439
+  react-native-safe-area-context: dc3a6849aadda66f7573c0f1fad5bde757b94999
   React-NativeModulesApple: c57f3efe0df288a6532b726ad2d0322a9bf38472
   React-perflogger: 6bd153e776e6beed54c56b0847e1220a3ff92ba5
   React-RCTActionSheet: c0b62af44e610e69d9a2049a682f5dba4e9dff17
   React-RCTAnimation: f9bf9719258926aea9ecb8a2aa2595d3ff9a6022
-  React-RCTAppDelegate: fbbffd9d0d5bf9ec1cb502891ffb0e114b5a8f55
+  React-RCTAppDelegate: ea8ff456539914ff0dabfde02319cdf9dd5b76c1
   React-RCTBlob: c4f1e69a6ef739aa42586b876d637dab4e3b5bed
   React-RCTFabric: 125e7d77057cb62f94e79ac977fd68be042a3bc5
   React-RCTImage: e5798f01aba248416c02a506cf5e6dfcba827638
