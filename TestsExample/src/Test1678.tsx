@@ -25,8 +25,8 @@ const Onboarding = ({
       <Button
         title="Open Modal"
         onPress={() => {
-          navigation.navigate('Modal');
-          // navigation(true)
+          // navigation.navigate('Modal');
+          navigation(true)
         }}
       />
     </>
@@ -51,6 +51,44 @@ const Modal = () => {
     </>
   );
 };
+
+export function App3() {
+  const [isLoggedIn, _] = useAtom(loggedInAtom);
+  // const [isModalOpen, setModalOpen] = React.useState(false);
+
+  const children = [];
+
+  if (isLoggedIn) {
+    children.push(
+      <Stack.Screen name="App" key="App-key" component={AppScreen} />,
+    );
+  } else {
+    children.push(
+      <Stack.Screen
+        name="Onboarding"
+        key="Onboarding-key"
+        component={Onboarding}
+      />,
+    );
+  }
+
+  if (!isLoggedIn) {
+    children.push(
+      <Stack.Screen
+        name="Modal"
+        key="Modal-key"
+        component={Modal}
+        options={{ stackPresentation: 'modal' }}
+      />,
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>{children}</Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
 export function App2() {
   const [isLoggedIn, _] = useAtom(loggedInAtom);
@@ -116,4 +154,4 @@ export function App() {
   );
 }
 
-export default App2;
+export default App;

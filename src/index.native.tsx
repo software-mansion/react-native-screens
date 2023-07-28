@@ -207,8 +207,9 @@ function ScreenStack(props: ScreenStackProps) {
   const { children, ...rest } = props;
   const size = React.Children.count(children);
   // freezes all screens except the top one
+  console.log('Children of ScreenStack');
   const childrenWithFreeze = React.Children.map(children, (child, index) => {
-    // console.log(child);
+    console.log(child);
     // @ts-expect-error it's either SceneView in v6 or RouteView in v5
     const { props, key } = child;
     const descriptor = props?.descriptor ?? props?.descriptors?.[key];
