@@ -1,10 +1,10 @@
 import React from 'react';
-import {StatusBar, View} from 'react-native';
+import { View } from 'react-native';
 import {
   useHeaderHeight,
   createNativeStackNavigator,
 } from 'react-native-screens/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 
 const App = () => {
   const backgroundStyle = {
@@ -19,7 +19,6 @@ const App = () => {
           flex: 1,
         },
       ]}>
-      <StatusBar barStyle={'dark-content'} />
       <View
         style={{
           flex: 1,
@@ -35,7 +34,7 @@ const List = () => {
   const headerHeight = useHeaderHeight();
 
   return (
-    <View style={{flex: 1, backgroundColor: '#00fffa'}}>
+    <View style={{ flex: 1, backgroundColor: '#00fffa' }}>
       <View
         style={{
           backgroundColor: '#fffa00',
@@ -62,7 +61,11 @@ const Navigation = () => {
           // headerLargeTitle: true,
           headerTranslucent: true,
         }}>
-        <Stack.Screen name="Header" component={List} />
+        <Stack.Screen
+          name="Header"
+          component={List}
+          options={{ statusBarStyle: 'dark' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
