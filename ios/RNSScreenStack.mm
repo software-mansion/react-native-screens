@@ -22,6 +22,8 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
+#import "UIViewController+RNScreens.h"
+
 @interface RNSScreenStackView () <
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
@@ -59,6 +61,21 @@
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
+  // We need to check if presentedViewController is not nil for modal support.
+  if ([self presentedViewController] != nil) {
+    UIViewController *presentingVC = [[self presentedViewController] presentingViewController];
+    if (presentingVC != nil) {
+      // If presenting view controller's child is the same instance of RNSScreenStack,
+      // We could get trapped in recurrence call. To avoid this, we need to return default accepted
+      // interface orientation, instead of checking parentVC's supported interface orientations.
+      if ([presentingVC findChildRNSScreensViewController] == self) {
+        return UIInterfaceOrientationMaskAllButUpsideDown;
+      } else {
+        return presentingVC.parentViewController.supportedInterfaceOrientations;
+      }
+    }
+  }
+
   return [self topViewController].supportedInterfaceOrientations;
 }
 

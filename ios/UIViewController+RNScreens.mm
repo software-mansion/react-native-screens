@@ -1,3 +1,4 @@
+#import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 #import "UIViewController+RNScreens.h"
 
@@ -28,6 +29,33 @@
 - (UIInterfaceOrientationMask)reactNativeScreensSupportedInterfaceOrientations
 {
   UIViewController *childVC = [self findChildRNSScreensViewController];
+  switch (childVC.supportedInterfaceOrientations) {
+    case UIInterfaceOrientationMaskAll:
+      NSLog(@"All");
+      break;
+    case UIInterfaceOrientationMaskPortrait:
+      NSLog(@"Portrait");
+      break;
+    case UIInterfaceOrientationMaskLandscape:
+      NSLog(@"Landscape");
+      break;
+    case UIInterfaceOrientationMaskLandscapeLeft:
+      NSLog(@"Landscape left");
+      break;
+    case UIInterfaceOrientationMaskLandscapeRight:
+      NSLog(@"Landscape right");
+      break;
+    case UIInterfaceOrientationMaskPortraitUpsideDown:
+      NSLog(@"Portrait upside down");
+      break;
+    case UIInterfaceOrientationMaskAllButUpsideDown:
+      NSLog(@"All but upside down");
+      break;
+    default:
+      NSLog(@"Default");
+      break;
+  }
+
   return childVC ? childVC.supportedInterfaceOrientations : [self reactNativeScreensSupportedInterfaceOrientations];
 }
 
