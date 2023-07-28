@@ -894,6 +894,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
+    NSLog(@"RNSScreen %p created with RNSScreenView %p", self, self.view);
   }
   return self;
 }
@@ -1219,7 +1220,16 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
+    NSLog(
+        @"RNSScreen %p found that presentedViewController is of class RNSScreen %p",
+        self,
+        self.presentedViewController);
     lastViewController = self.presentedViewController;
+    RNSScreen *modallyPresentedScreen = (RNSScreen *)lastViewController;
+    //    if (modallyPresentedScreen.screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal) {
+    //      NSLog(@"RNSScreen %p presented another screen with full screen stack presentation", self);
+    //      return self;
+    //    }
     // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
     // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
@@ -1313,11 +1323,25 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
+  NSLog(@"RNSScreen %p supportedInterfaceOrientations", self);
   UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
+    UIInterfaceOrientationMask mask = ((RNSScreen *)vc).screenView.screenOrientation;
+    NSLog(
+        @"RNSScreen %p supportedInterfaceOrientations found vc %p with orientation %ld; self?: %d",
+        self,
+        vc,
+        mask,
+        self == vc);
     return ((RNSScreen *)vc).screenView.screenOrientation;
   }
+  NSLog(
+      @"RNSScreen %p supportedInterfaceOrientations found vc %p with orientation %ld; self?: %d",
+      self,
+      vc,
+      UIInterfaceOrientationMaskAllButUpsideDown,
+      self == vc);
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
