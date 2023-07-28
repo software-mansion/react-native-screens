@@ -751,14 +751,14 @@ navigation.popToTop();
 ### Measuring header's height
 
 To measure header's height, you can use the `useHeaderHeight`, `useAnimatedHeaderHeight` or `useReanimatedHeaderHeight` hook.
-- `useHeaderHeight` calculates the header's height statically. The value provided by this hook only changes when the view appears or when there is a view rotation. 
-Use this hook if you are certain that your header height will not change, or if your component is heavy, and you want to avoid recalculating the header height with every view layout.
-- `useAnimatedHeaderHeight` calculates the header's height dynamically. The value provided by this hook changes with every view layout (such as when dragging a large header). It returns Animated.Value as a result.
-Please beware of using this hook in heavy components, as it may result in performance issues.
-- `useReanimatedHeaderHeight` lets you calculate the header's height dynamically by using Shared Values from Reanimated. The value provided by this hook changes with every view layout.
-It returns Animated.SharedValue as a result. Please remember to wrap your Stack.Navigator with `ReanimatedScreenProvider` before using this hook.
+- `useHeaderHeight` returns the static header's height. The value provided by this hook changes when screen appears, when there's a change in header options or screen orientation.
+  Use this hook if you're sure your header height won't change dynamically, or when the screen is heavy.
+- `useAnimatedHeaderHeight` dynamically calculates the header's height. The value provided by this hook changes with every view layout (such as shrinking a large header into small one with a ScrollView). It returns an Animated.Value. 
+  Please beware of using this hook in heavy components, as it may result in performance issues.
+- `useReanimatedHeaderHeight` also dynamically calculates the header's height but uses React Native Reanimated under the hood. It returns an Animated.SharedValue.
+  Make sure to wrap your Stack.Navigator with `ReanimatedScreenProvider` before using this hook.
 
-Choosing `useReanimatedHeaderHeight` might be better than `useAnimatedHeaderHeight` because its return type, Shared Value, is handling value updates in a more performant way. See [Shared Values vs Animated.Value](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/shared-values/#shared-values-vs-animatedvalue) section in Reanimated documentation for full comparison.
+We recommend using `useReanimatedHeaderHeight` rather than `useAnimatedHeaderHeight`. See [Shared Values vs Animated.Value](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/shared-values/#shared-values-vs-animatedvalue) section in React Native Reanimated's documentation for full comparison.
 
 ```tsx
 // for using useHeaderHeight
