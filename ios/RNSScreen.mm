@@ -1225,11 +1225,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
         self,
         self.presentedViewController);
     lastViewController = self.presentedViewController;
-    RNSScreen *modallyPresentedScreen = (RNSScreen *)lastViewController;
-    //    if (modallyPresentedScreen.screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal) {
-    //      NSLog(@"RNSScreen %p presented another screen with full screen stack presentation", self);
-    //      return self;
-    //    }
+    RNSScreen *modalScreen = (RNSScreen *)lastViewController;
+    if (modalScreen.screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal) {
+      NSLog(@"RNSScreen %p presented another screen with full screen stack presentation", self);
+      return self;
+    }
     // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
     // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
