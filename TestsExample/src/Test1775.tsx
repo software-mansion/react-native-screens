@@ -3,17 +3,21 @@ import * as React from 'react';
 import { View, Button } from 'react-native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationProp } from 'react-native-screens/native-stack';
+
+type NavProp = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
 
 const Stack = createNativeStackNavigator();
 
-const App = () => {
+function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="BottomTabStack"
+          name="HomeScreen"
           component={HomeScreen}
           options={{ orientation: 'portrait' }}
         />
@@ -23,42 +27,32 @@ const App = () => {
           component={LandscapeScreen}
           options={{
             orientation: 'landscape_right',
-            animation: 'slide_from_bottom',
+            animation: 'slide_from_right',
             presentation: 'fullScreenModal',
           }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+}
 
-const BottomNavigator = () => {
-  const Tab = createBottomTabNavigator();
-
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
-    </Tab.Navigator>
-  );
-};
-
-const HomeScreen = props => {
+function HomeScreen({ navigation }: NavProp) {
   return (
     <View style={{ flex: 1, backgroundColor: 'gold' }}>
       <Button
         title="Navigate to Landscape screen"
-        onPress={() => props.navigation.navigate('Landscape')}
+        onPress={() => navigation.navigate('Landscape')}
       />
     </View>
   );
-};
+}
 
-const LandscapeScreen = props => {
+function LandscapeScreen({ navigation }: NavProp) {
   return (
     <View style={{ flex: 1, backgroundColor: 'purple' }}>
-      <Button title="Back" onPress={props.navigation.goBack} />
+      <Button title="Back" onPress={navigation.goBack} />
     </View>
   );
-};
+}
 
 export default App;
