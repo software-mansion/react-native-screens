@@ -90,6 +90,7 @@ namespace react = facebook::react;
 @property (nonatomic) BOOL sheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
+@property (nonatomic) NSArray<NSNumber *> *sheetHeight;
 #endif // !TARGET_OS_TV
 
 #ifdef RCT_NEW_ARCH_ENABLED
