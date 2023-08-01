@@ -826,6 +826,9 @@ namespace react = facebook::react;
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
+  if ([changedProps containsObject:@"stackPresentation"]) {
+    NSLog(@"RNSScreen %p has set stackPresentation to: %ld", self.controller, self.stackPresentation);
+  }
 #if !TARGET_OS_TV
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
@@ -1229,6 +1232,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     if (modalScreen.screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal) {
       NSLog(@"RNSScreen %p presented another screen with full screen stack presentation", self);
       return self;
+    } else {
+      NSLog(
+          @"RNSScreen %p presented another screen with stack presentation OTHER than full screen: %ld",
+          self,
+          modalScreen.screenView.stackPresentation);
     }
     // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
     // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even

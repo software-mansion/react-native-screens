@@ -32,12 +32,13 @@
   if (childVC != nil) {
     UIInterfaceOrientationMask mask = childVC.supportedInterfaceOrientations;
     NSLog(
-        @"UIVC + RNS: found child VC for supported interface orientations: %@, with orientation mask %ld",
+        @"UIVC + RNS %p found child VC for supported interface orientations: %@, with orientation mask %ld",
+        self,
         childVC,
         mask);
     return mask;
   } else {
-    NSLog(@"UIVC + RNS: did NOT found child VC for supported interface orientations");
+    NSLog(@"UIVC + RNS %p did NOT found child VC for supported interface orientations", self);
     return [self reactNativeScreensSupportedInterfaceOrientations];
   }
 

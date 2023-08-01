@@ -2,7 +2,8 @@ import * as React from 'react';
 
 import { View, Button } from 'react-native';
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationProp } from 'react-native-screens/native-stack';
 
@@ -19,16 +20,16 @@ function App() {
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
-          options={{ orientation: 'portrait' }}
+          options={{ screenOrientation: 'portrait' }}
         />
 
         <Stack.Screen
           name="Landscape"
           component={LandscapeScreen}
           options={{
-            orientation: 'landscape_right',
-            animation: 'slide_from_right',
-            presentation: 'fullScreenModal',
+            screenOrientation: 'landscape_right',
+            stackAnimation: 'slide_from_bottom',
+            stackPresentation: 'fullScreenModal',
           }}
         />
       </Stack.Navigator>
