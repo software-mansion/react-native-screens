@@ -333,6 +333,8 @@ export type NativeStackNavigationOptions = {
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `true`.
+   *
+   * @platform ios
    */
   sheetExpandsWhenScrolledToEdge?: boolean;
   /**
