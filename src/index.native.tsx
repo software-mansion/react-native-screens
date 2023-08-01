@@ -271,6 +271,7 @@ class InnerScreen extends React.Component<ScreenProps> {
       sheetGrabberVisible = false,
       sheetCornerRadius = -1.0,
       sheetExpandsWhenScrolledToEdge = true,
+      sheetHeight = [0.5, 0.7],
     } = rest;
 
     if (enabled && isPlatformSupported) {
@@ -308,6 +309,8 @@ class InnerScreen extends React.Component<ScreenProps> {
         }
       };
 
+      console.log('[JS] sheetHeight: ', sheetHeight);
+
       return (
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedNativeScreen
@@ -318,6 +321,7 @@ class InnerScreen extends React.Component<ScreenProps> {
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
+            sheetHeight={sheetHeight}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,
