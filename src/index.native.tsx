@@ -309,8 +309,6 @@ class InnerScreen extends React.Component<ScreenProps> {
         }
       };
 
-      console.log('[JS] sheetHeight: ', sheetHeight);
-
       return (
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedNativeScreen
