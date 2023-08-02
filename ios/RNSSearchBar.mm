@@ -13,7 +13,11 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSConvert.h"
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
+
+#ifdef RCT_NEW_ARCH_ENABLED
+namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSSearchBar {
   __weak RCTBridge *_bridge;
@@ -36,7 +40,7 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSSearchBarProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSSearchBarProps>();
     _props = defaultProps;
     [self initCommonProps];
   }
@@ -56,8 +60,8 @@
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onFocus(facebook::react::RNSSearchBarEventEmitter::OnFocus{});
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onFocus(react::RNSSearchBarEventEmitter::OnFocus{});
   }
 #else
   if (self.onFocus) {
@@ -70,8 +74,8 @@
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onBlur(facebook::react::RNSSearchBarEventEmitter::OnBlur{});
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onBlur(react::RNSSearchBarEventEmitter::OnBlur{});
   }
 #else
   if (self.onBlur) {
@@ -84,9 +88,9 @@
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchButtonPress(
-            facebook::react::RNSSearchBarEventEmitter::OnSearchButtonPress{.text = RCTStringFromNSString(text)});
+            react::RNSSearchBarEventEmitter::OnSearchButtonPress{.text = RCTStringFromNSString(text)});
   }
 #else
   if (self.onSearchButtonPress) {
@@ -101,8 +105,8 @@
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onCancelButtonPress(facebook::react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onCancelButtonPress(react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
   }
 #else
   if (self.onCancelButtonPress) {
@@ -115,8 +119,8 @@
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onChangeText(facebook::react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onChangeText(react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
   }
 #else
   if (self.onChangeText) {
@@ -299,11 +303,10 @@
 #pragma mark-- Fabric specific
 
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)updateProps:(facebook::react::Props::Shared const &)props
-           oldProps:(facebook::react::Props::Shared const &)oldProps
+- (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
-  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSSearchBarProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSSearchBarProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(props);
 
   [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
 
@@ -346,9 +349,9 @@
   [super updateProps:props oldProps:oldProps];
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSSearchBarComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSSearchBarComponentDescriptor>();
 }
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
