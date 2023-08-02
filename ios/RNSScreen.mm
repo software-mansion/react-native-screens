@@ -627,8 +627,6 @@ namespace react = facebook::react;
         RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
       }
 
-      NSMutableArray<UISheetPresentationControllerDetent *> *detents = [NSMutableArray array];
-
       if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
         sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
         if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
@@ -643,22 +641,24 @@ namespace react = facebook::react;
             sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
           }];
         }
-      }
+      } else if (_sheetAllowedDetents == RNSScreenDetentTypeCustom) {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-      else if (_sheetAllowedDetents == RNSScreenDetentTypeCustom) {
+        if (@available(iOS 16.0, *)) {
+          sheet.detents = [self detentsFromSnapPoints];
+        }
+#endif // Check for iOS >= 16
+      } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
+        NSMutableArray<UISheetPresentationControllerDetent *> *detents = [NSMutableArray arrayWithArray:@[
+          UISheetPresentationControllerDetent.mediumDetent,
+          UISheetPresentationControllerDetent.largeDetent,
+        ]];
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
         if (@available(iOS 16.0, *)) {
           [detents addObjectsFromArray:[self detentsFromSnapPoints]];
-          sheet.detents = detents;
         }
-      }
 #endif // Check for iOS >= 16
-      else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
-        [detents addObjectsFromArray:[self detentsFromSnapPoints]];
-        [detents addObjectsFromArray:@[
-          UISheetPresentationControllerDetent.mediumDetent,
-          UISheetPresentationControllerDetent.largeDetent
-        ]];
         sheet.detents = detents;
       } else {
         RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
