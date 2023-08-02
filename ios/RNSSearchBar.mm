@@ -423,7 +423,7 @@ RCT_EXPORT_METHOD(clearText : (NSNumber *_Nonnull)reactTag)
   }];
 }
 
-RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL *)flag)
+RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL)flag)
 {
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
