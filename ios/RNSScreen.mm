@@ -88,7 +88,7 @@ namespace react = facebook::react;
   _hasHomeIndicatorHiddenSet = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
-  _sheetHeight = @[ @0.5, @0.7 ];
+  _sheetCustomDetents = [NSArray array];
 #endif // !TARGET_OS_TV
 }
 
@@ -615,24 +615,7 @@ namespace react = facebook::react;
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
-
   if (@available(iOS 15.0, *)) {
-    NSMutableArray<CGFloat (^)(id<UISheetPresentationControllerDetentResolutionContext>)> *resolvers =
-        [NSMutableArray arrayWithCapacity:self->_sheetHeight.count];
-    for (NSNumber *val in self->_sheetHeight) {
-      [resolvers addObject:^CGFloat(id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-        return ctx.maximumDetentValue * val.floatValue;
-      }];
-    }
-
-    //    CGFloat (^resolver)(id<UISheetPresentationControllerDetentResolutionContext>) = ^ CGFloat
-    //    (id<UISheetPresentationControllerDetentResolutionContext> _ctx) {
-    //      return _ctx.maximumDetentValue * self->_sheetHeight;
-    //    };
-
-    //    UISheetPresentationControllerDetent *customDetent = [UISheetPresentationControllerDetent
-    //    customDetentWithIdentifier:@"customDetent" resolver:resolver];
-
     UISheetPresentationController *sheet = _controller.sheetPresentationController;
     if (_stackPresentation == RNSScreenStackPresentationFormSheet && sheet != nil) {
       sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
@@ -640,53 +623,72 @@ namespace react = facebook::react;
       sheet.preferredCornerRadius =
           _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
 
-      sheet.largestUndimmedDetentIdentifier = nil;
-
-      NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
-          [NSMutableArray arrayWithCapacity:resolvers.count];
-      for (NSInteger i = 0; i < resolvers.count; ++i) {
-        const auto &resolver = resolvers[i];
-        [customDetents addObject:[UISheetPresentationControllerDetent customDetentWithIdentifier:nil
-                                                                                        resolver:resolver]];
+      if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
+        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
+      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
+        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
+      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
+        sheet.largestUndimmedDetentIdentifier = nil;
+      } else {
+        RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
       }
-      sheet.detents = customDetents;
 
-      //      sheet.detents = @[ customDetent ];
-      //      if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
-      //        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
-      //      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
-      //        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-      //      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
-      //        sheet.largestUndimmedDetentIdentifier = nil;
-      //      } else {
-      //        RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
-      //      }
-      //
-      //      if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
-      //        sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
-      //        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
-      //          [sheet animateChanges:^{
-      //            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
-      //          }];
-      //        }
-      //      } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
-      //        sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
-      //        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
-      //          [sheet animateChanges:^{
-      //            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-      //          }];
-      //        }
-      //      } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
-      //        sheet.detents =
-      //            @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent
-      //            ];
-      //      } else {
-      //        RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
-      //      }
+      NSMutableArray<UISheetPresentationControllerDetent *> *detents = [NSMutableArray array];
+
+      if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
+        sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
+        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
+          [sheet animateChanges:^{
+            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
+          }];
+        }
+      } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
+        sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
+        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
+          [sheet animateChanges:^{
+            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
+          }];
+        }
+      }
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+      else if (_sheetAllowedDetents == RNSScreenDetentTypeCustom) {
+        if (@available(iOS 16.0, *)) {
+          [detents addObjectsFromArray:[self detentsFromSnapPoints]];
+          sheet.detents = detents;
+        }
+      }
+#endif // Check for iOS >= 16
+      else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
+        [detents addObjectsFromArray:[self detentsFromSnapPoints]];
+        [detents addObjectsFromArray:@[
+          UISheetPresentationControllerDetent.mediumDetent,
+          UISheetPresentationControllerDetent.largeDetent
+        ]];
+        sheet.detents = detents;
+      } else {
+        RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
+      }
     }
   }
-#endif // Check for max allowed iOS version
+#endif // Check for iOS >= 15
 }
+
+- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromSnapPoints API_AVAILABLE(ios(16.0))
+{
+  NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
+      [NSMutableArray arrayWithCapacity:_sheetCustomDetents.count];
+  for (NSNumber *val in _sheetCustomDetents) {
+    [customDetents addObject:[UISheetPresentationControllerDetent
+                                 customDetentWithIdentifier:nil
+                                                   resolver:^CGFloat(
+                                                       id<UISheetPresentationControllerDetentResolutionContext> ctx) {
+                                                     return ctx.maximumDetentValue * val.floatValue;
+                                                   }]];
+  }
+  return customDetents;
+}
+
 #endif // !TARGET_OS_TV
 
 #pragma mark - Fabric specific
@@ -1534,7 +1536,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(sheetHeight, NSArray<NSNumber *> *);
+RCT_EXPORT_VIEW_PROPERTY(sheetCustomDetents, NSArray<NSNumber *> *);
 #endif
 
 #if !TARGET_OS_TV
@@ -1653,6 +1655,7 @@ RCT_ENUM_CONVERTER(
     (@{
       @"large" : @(RNSScreenDetentTypeLarge),
       @"medium" : @(RNSScreenDetentTypeMedium),
+      @"custom" : @(RNSScreenDetentTypeCustom),
       @"all" : @(RNSScreenDetentTypeAll),
     }),
     RNSScreenDetentTypeAll,
