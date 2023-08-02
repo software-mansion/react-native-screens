@@ -821,7 +821,8 @@ namespace react = facebook::react;
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
-  if (!newScreenProps.sheetCustomDetents.empty()) {
+  if (_stackPresentation == RNSScreenStackPresentationFormSheet &&
+      newScreenProps.sheetCustomDetents != oldScreenProps.sheetCustomDetents) {
     [self setSheetCustomDetents:[RNSConvert arrayFromVector:newScreenProps.sheetCustomDetents]];
   }
 
