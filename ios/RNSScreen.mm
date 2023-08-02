@@ -24,6 +24,10 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
+#ifdef RCT_NEW_ARCH_ENABLED
+namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
+
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
@@ -36,7 +40,7 @@
   __weak RCTBridge *_bridge;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
-  facebook::react::RNSScreenShadowNode::ConcreteState::Shared _state;
+  react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
 #else
@@ -49,7 +53,7 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSScreenProps>();
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
     [self initCommonProps];
@@ -102,7 +106,7 @@
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
-    auto newState = facebook::react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
+    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
@@ -283,8 +287,8 @@
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onDismissed(facebook::react::RNSScreenEventEmitter::OnDismissed{.dismissCount = dismissCount});
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onDismissed(react::RNSScreenEventEmitter::OnDismissed{.dismissCount = dismissCount});
   }
 #else
   // TODO: hopefully problems connected to dismissed prop are only the case on paper
@@ -305,9 +309,9 @@
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onNativeDismissCancelled(
-            facebook::react::RNSScreenEventEmitter::OnNativeDismissCancelled{.dismissCount = dismissCount});
+            react::RNSScreenEventEmitter::OnNativeDismissCancelled{.dismissCount = dismissCount});
   }
 #else
   if (self.onNativeDismissCancelled) {
@@ -322,8 +326,8 @@
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onWillAppear(facebook::react::RNSScreenEventEmitter::OnWillAppear{});
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onWillAppear(react::RNSScreenEventEmitter::OnWillAppear{});
   }
   [self updateLayoutMetrics:_newLayoutMetrics oldLayoutMetrics:_oldLayoutMetrics];
 #else
@@ -345,8 +349,8 @@
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onWillDisappear(facebook::react::RNSScreenEventEmitter::OnWillDisappear{});
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onWillDisappear(react::RNSScreenEventEmitter::OnWillDisappear{});
   }
 #else
   if (self.onWillDisappear) {
@@ -361,8 +365,8 @@
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onAppear(facebook::react::RNSScreenEventEmitter::OnAppear{});
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onAppear(react::RNSScreenEventEmitter::OnAppear{});
   }
 #else
   if (self.onAppear) {
@@ -381,8 +385,8 @@
   // If screen is already unmounted then there will be no event emitter
   // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onDisappear(facebook::react::RNSScreenEventEmitter::OnDisappear{});
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onDisappear(react::RNSScreenEventEmitter::OnDisappear{});
   }
 #else
   if (self.onDisappear) {
@@ -395,8 +399,8 @@
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onGestureCancel(facebook::react::RNSScreenEventEmitter::OnGestureCancel{});
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onGestureCancel(react::RNSScreenEventEmitter::OnGestureCancel{});
   }
 #else
   if (self.onGestureCancel) {
@@ -467,8 +471,8 @@
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onTransitionProgress(facebook::react::RNSScreenEventEmitter::OnTransitionProgress{
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
             .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
@@ -602,9 +606,9 @@
   return _config != nil;
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -649,11 +653,10 @@
   _stackPresentation = RNSScreenStackPresentationPush;
 }
 
-- (void)updateProps:(facebook::react::Props::Shared const &)props
-           oldProps:(facebook::react::Props::Shared const &)oldProps
+- (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
-  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
   [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
 
@@ -732,14 +735,13 @@
   [super updateProps:props oldProps:oldProps];
 }
 
-- (void)updateState:(facebook::react::State::Shared const &)state
-           oldState:(facebook::react::State::Shared const &)oldState
+- (void)updateState:(react::State::Shared const &)state oldState:(react::State::Shared const &)oldState
 {
-  _state = std::static_pointer_cast<const facebook::react::RNSScreenShadowNode::ConcreteState>(state);
+  _state = std::static_pointer_cast<const react::RNSScreenShadowNode::ConcreteState>(state);
 }
 
-- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
-           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+- (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;

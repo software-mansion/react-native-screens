@@ -8,9 +8,13 @@
 #import <React/RCTViewComponentView.h>
 #else
 #import <React/RCTView.h>
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
+
+#ifdef RCT_NEW_ARCH_ENABLED
+namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
 
 @interface RCTConvert (RNSScreen)
 
@@ -88,8 +92,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #ifdef RCT_NEW_ARCH_ENABLED
 // we recreate the behavior of `reactSetFrame` on new architecture
-@property (nonatomic) facebook::react::LayoutMetrics oldLayoutMetrics;
-@property (nonatomic) facebook::react::LayoutMetrics newLayoutMetrics;
+@property (nonatomic) react::LayoutMetrics oldLayoutMetrics;
+@property (nonatomic) react::LayoutMetrics newLayoutMetrics;
 @property (weak, nonatomic) RNSScreenStackHeaderConfig *config;
 @property (nonatomic, readonly) BOOL hasHeaderConfig;
 #else
