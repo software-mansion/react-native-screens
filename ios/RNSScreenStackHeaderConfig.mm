@@ -25,7 +25,7 @@
 #import "RNSUIBarButtonItem.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
-namespace rct = facebook::react;
+namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 #ifndef RCT_NEW_ARCH_ENABLED
@@ -64,7 +64,7 @@ namespace rct = facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const rct::RNSScreenStackHeaderConfigProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderConfigProps>();
     _props = defaultProps;
     _show = YES;
     _translucent = NO;
@@ -315,7 +315,7 @@ namespace rct = facebook::react;
                   scale:imageSource.scale
 #ifdef RCT_NEW_ARCH_ENABLED
              resizeMode:resizeModeFromCppEquiv(
-                            std::static_pointer_cast<const rct::ImageProps>(imageView.props)->resizeMode)];
+                            std::static_pointer_cast<const react::ImageProps>(imageView.props)->resizeMode)];
 #else
              resizeMode:imageView.resizeMode];
 #endif // RCT_NEW_ARCH_ENABLED
@@ -704,18 +704,18 @@ namespace rct = facebook::react;
   [childComponentView removeFromSuperview];
 }
 
-static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
+static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 {
   switch (resizeMode) {
-    case rct::ImageResizeMode::Cover:
+    case react::ImageResizeMode::Cover:
       return RCTResizeModeCover;
-    case rct::ImageResizeMode::Contain:
+    case react::ImageResizeMode::Contain:
       return RCTResizeModeContain;
-    case rct::ImageResizeMode::Stretch:
+    case react::ImageResizeMode::Stretch:
       return RCTResizeModeStretch;
-    case rct::ImageResizeMode::Center:
+    case react::ImageResizeMode::Center:
       return RCTResizeModeCenter;
-    case rct::ImageResizeMode::Repeat:
+    case react::ImageResizeMode::Repeat:
       return RCTResizeModeRepeat;
   }
 }
@@ -726,8 +726,8 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
  */
 + (RCTImageSource *)imageSourceFromImageView:(RCTImageComponentView *)view
 {
-  auto const imageProps = *std::static_pointer_cast<const rct::ImageProps>(view.props);
-  rct::ImageSource cppImageSource = imageProps.sources.at(0);
+  auto const imageProps = *std::static_pointer_cast<const react::ImageProps>(view.props);
+  react::ImageSource cppImageSource = imageProps.sources.at(0);
   auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
   NSURLRequest *request =
       [NSURLRequest requestWithURL:[NSURL URLWithString:RCTNSStringFromStringNilIfEmpty(cppImageSource.uri)]];
@@ -745,9 +745,9 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 }
 
-+ (rct::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return rct::concreteComponentDescriptorProvider<rct::RNSScreenStackHeaderConfigComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value
@@ -757,20 +757,20 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
   return nil;
 }
 
-- (UISemanticContentAttribute)getDirectionPropValue:(rct::RNSScreenStackHeaderConfigDirection)direction
+- (UISemanticContentAttribute)getDirectionPropValue:(react::RNSScreenStackHeaderConfigDirection)direction
 {
   switch (direction) {
-    case rct::RNSScreenStackHeaderConfigDirection::Rtl:
+    case react::RNSScreenStackHeaderConfigDirection::Rtl:
       return UISemanticContentAttributeForceRightToLeft;
-    case rct::RNSScreenStackHeaderConfigDirection::Ltr:
+    case react::RNSScreenStackHeaderConfigDirection::Ltr:
       return UISemanticContentAttributeForceLeftToRight;
   }
 }
 
-- (void)updateProps:(rct::Props::Shared const &)props oldProps:(rct::Props::Shared const &)oldProps
+- (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
-  const auto &oldScreenProps = *std::static_pointer_cast<const rct::RNSScreenStackHeaderConfigProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const rct::RNSScreenStackHeaderConfigProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderConfigProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderConfigProps>(props);
 
   BOOL needsNavigationControllerLayout = !_initialPropsSet;
 
@@ -832,7 +832,7 @@ static RCTResizeMode resizeModeFromCppEquiv(rct::ImageResizeMode resizeMode)
   }
 
   _initialPropsSet = YES;
-  _props = std::static_pointer_cast<rct::RNSScreenStackHeaderConfigProps const>(props);
+  _props = std::static_pointer_cast<react::RNSScreenStackHeaderConfigProps const>(props);
 
   [super updateProps:props oldProps:oldProps];
 }
