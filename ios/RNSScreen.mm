@@ -656,7 +656,7 @@ namespace react = facebook::react;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
         if (@available(iOS 16.0, *)) {
-          [detents addObjectsFromArray:[self detentsFromSnapPoints]];
+          //          [detents addObjectsFromArray:[self detentsFromSnapPoints]];
         }
 #endif // Check for iOS >= 16
         sheet.detents = detents;
@@ -670,14 +670,16 @@ namespace react = facebook::react;
 
 - (NSArray<UISheetPresentationControllerDetent *> *)detentsFromSnapPoints API_AVAILABLE(ios(16.0))
 {
+  NSLog(@"RNSScreen detentsFromSnapPoints");
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
       [NSMutableArray arrayWithCapacity:_sheetCustomDetents.count];
   for (NSNumber *val in _sheetCustomDetents) {
+    NSLog(@"RNSScreen detentsFromSnapPoints considering detent %f", val.floatValue);
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:nil
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                         return ctx.maximumDetentValue * val.floatValue;
+                                                     return ctx.maximumDetentValue * val.floatValue;
                                                    }]];
   }
   return customDetents;
@@ -817,6 +819,10 @@ namespace react = facebook::react;
 
   if (newScreenProps.replaceAnimation != oldScreenProps.replaceAnimation) {
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
+  }
+
+  if (!newScreenProps.sheetCustomDetents.empty()) {
+    [self setSheetCustomDetents:[RNSConvert arrayFromVector:newScreenProps.sheetCustomDetents]];
   }
 
   [super updateProps:props oldProps:oldProps];
