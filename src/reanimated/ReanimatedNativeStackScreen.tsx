@@ -50,6 +50,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
     stackPresentation
   );
 
+  const cachedHeaderHeight = React.useRef(defaultHeaderHeight);
   const headerHeight = useSharedValue(defaultHeaderHeight);
 
   const progress = useSharedValue(0);
@@ -81,7 +82,10 @@ const ReanimatedNativeStackScreen = React.forwardRef<
       onHeaderHeightChangeReanimated={useEvent(
         (event: HeaderChangeEventType) => {
           'worklet';
-          headerHeight.value = event.headerHeight;
+          if (event.headerHeight !== cachedHeaderHeight.current) {
+            headerHeight.value = event.headerHeight;
+            cachedHeaderHeight.current = event.headerHeight;
+          }
         },
         [
           // @ts-ignore wrong type
