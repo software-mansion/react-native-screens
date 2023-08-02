@@ -677,7 +677,7 @@ namespace react = facebook::react;
                                  customDetentWithIdentifier:nil
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     return ctx.maximumDetentValue * val.floatValue;
+                                                         return ctx.maximumDetentValue * val.floatValue;
                                                    }]];
   }
   return customDetents;
