@@ -758,6 +758,7 @@
 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
+  [super finalizeUpdates:updateMask];
 #if !TARGET_OS_TV
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
