@@ -1,10 +1,17 @@
 import * as React from 'react';
-import { Button, StyleSheet, View, Text, ScrollView } from 'react-native';
 import {
   TouchableOpacity,
   GestureHandlerRootView,
   TextInput,
 } from 'react-native-gesture-handler';
+import {
+  Button,
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  // TextInput,
+} from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -12,6 +19,47 @@ import {
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
 import { SheetDetentTypes } from 'react-native-screens';
+import * as jotai from 'jotai';
+
+type NavProp = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
+
+type SheetOptions = {
+  sheetAllowedDetents: SheetDetentTypes;
+  sheetLargestUndimmedDetent: SheetDetentTypes;
+  sheetGrabberVisible: boolean;
+  sheetCornerRadius: number;
+  sheetExpandsWhenScrolledToEdge: boolean;
+  sheetCustomDetents: number[];
+};
+
+/// Sheet options
+const allowedDetentsAtom = jotai.atom<SheetDetentTypes>('custom');
+const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes>('medium');
+const grabberVisibleAtom = jotai.atom(false);
+const cornerRadiusAtom = jotai.atom(-1);
+const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
+const customDetentsAtom = jotai.atom<number[]>([0.3, 0.6, 0.85]);
+
+const sheetOptionsAtom = jotai.atom(
+  get => ({
+    sheetAllowedDetents: get(allowedDetentsAtom),
+    sheetLargestUndimmedDetent: get(largestUndimmedDetentAtom),
+    sheetGrabberVisible: get(grabberVisibleAtom),
+    sheetCornerRadius: get(cornerRadiusAtom),
+    sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
+    sheetCustomDetents: get(customDetentsAtom),
+  }),
+  (_get, set, value: SheetOptions) => {
+    set(allowedDetentsAtom, value.sheetAllowedDetents);
+    set(largestUndimmedDetentAtom, value.sheetLargestUndimmedDetent);
+    set(grabberVisibleAtom, value.sheetGrabberVisible);
+    set(cornerRadiusAtom, value.sheetCornerRadius);
+    set(expandsWhenScrolledToEdgeAtom, value.sheetExpandsWhenScrolledToEdge);
+    set(customDetentsAtom, value.sheetCustomDetents);
+  },
+);
 
 const Stack = createNativeStackNavigator();
 
@@ -45,7 +93,7 @@ export default function App(): JSX.Element {
             headerShown: true,
             headerHideBackButton: false,
           }}>
-          <Stack.Screen name="First" component={First} />
+          <Stack.Screen name="First" component={Home} />
           <Stack.Screen
             name="Second"
             component={Second}
@@ -87,11 +135,7 @@ export default function App(): JSX.Element {
   );
 }
 
-function First({
-  navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
+function Home({ navigation }: NavProp) {
   return (
     <Button
       title="Tap me for the second screen"
@@ -102,9 +146,7 @@ function First({
 
 function Second({
   navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
+}: NavProp) {
   const navigateToFirstCallback = () => {
     console.log('Navigate to first callback called');
     navigation.navigate('First');
@@ -178,6 +220,8 @@ function SheetScreen({
     } else if (currDetent === 'medium') {
       return 'large';
     } else if (currDetent === 'large') {
+      return 'custom';
+    } else if (currDetent === 'custom') {
       return 'all';
     } else {
       console.warn('Unhandled sheetDetent type');
@@ -278,11 +322,7 @@ function SheetScreen({
   );
 }
 
-function SheetScreenWithScrollView({
-  navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
+function SheetScreenWithScrollView({ navigation }: NavProp) {
   return (
     <>
       <View style={styles.centeredView}>
@@ -294,6 +334,21 @@ function SheetScreenWithScrollView({
         </ScrollView>
       </View>
     </>
+  );
+}
+
+function SheetScreenWithTextInput({ navigation }: NavProp) {
+  const [textValue, setTextValue] = React.useState('text input');
+
+  return (
+    <View style={styles.centeredView}>
+      <TextInput
+        style={[styles.bordered, styles.keyboardTriggerTextInput]}
+        value={textValue}
+        onChangeText={text => setTextValue(text)}
+      />
+      <SheetScreen navigation={navigation} />
+    </View>
   );
 }
 
@@ -309,5 +364,14 @@ const styles = StyleSheet.create({
   centeredView: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  bordered: {
+    borderColor: 'black',
+    borderWidth: 2,
+  },
+  keyboardTriggerTextInput: {
+    paddingVertical: 5,
+    paddingHorizontal: 4,
+    marginTop: 10,
   },
 });
