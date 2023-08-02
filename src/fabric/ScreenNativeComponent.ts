@@ -57,7 +57,7 @@ type SwipeDirection = 'vertical' | 'horizontal';
 
 type ReplaceAnimation = 'pop' | 'push';
 
-type SheetDetentTypes = 'large' | 'medium' | 'all';
+type SheetDetentTypes = 'large' | 'medium' | 'custom' | 'all';
 
 export interface NativeProps extends ViewProps {
   onAppear?: BubblingEventHandler<ScreenEvent>;
