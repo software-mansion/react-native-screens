@@ -110,6 +110,8 @@
       return RNSScreenDetentTypeAll;
     case react::RNSScreenSheetLargestUndimmedDetent::Large:
       return RNSScreenDetentTypeLarge;
+    case react::RNSScreenSheetLargestUndimmedDetent::Custom:
+      return RNSScreenDetentTypeCustom;
     case react::RNSScreenSheetLargestUndimmedDetent::Medium:
       return RNSScreenDetentTypeMedium;
   }
@@ -153,7 +155,7 @@
   }
 }
 
-+ (NSMutableArray<NSNumber *> *)NSNumberMutableArrayFromFloatVector:(const std::vector<CGFloat> &)vector
++ (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
 {
   NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
   for (CGFloat val : vector) {

@@ -665,6 +665,43 @@ namespace react = facebook::react;
       } else {
         RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
       }
+
+      if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
+        sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
+        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
+          [sheet animateChanges:^{
+            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
+          }];
+        }
+      } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
+        sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
+        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
+          [sheet animateChanges:^{
+            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
+          }];
+        }
+      } else if (_sheetAllowedDetents == RNSScreenDetentTypeCustom) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+        if (@available(iOS 16.0, *)) {
+          sheet.detents = [self detentsFromSnapPoints];
+        }
+#endif // Check for iOS >= 16
+      } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
+        NSMutableArray<UISheetPresentationControllerDetent *> *detents = [NSMutableArray arrayWithArray:@[
+          UISheetPresentationControllerDetent.mediumDetent,
+          UISheetPresentationControllerDetent.largeDetent,
+        ]];
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+        if (@available(iOS 16.0, *)) {
+          //          [detents addObjectsFromArray:[self detentsFromSnapPoints]];
+        }
+#endif // Check for iOS >= 16
+        sheet.detents = detents;
+      } else {
+        RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
+      }
     }
   }
 #endif // Check for iOS >= 15
@@ -675,16 +712,16 @@ namespace react = facebook::react;
 - (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
     API_AVAILABLE(ios(16.0))
 {
+  NSLog(@"RNSScreen detentsFromSnapPoints");
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
-      [NSMutableArray arrayWithCapacity:fractions.count];
-  int detentIndex = 0;
-  for (NSNumber *frac in fractions) {
-    NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
+      [NSMutableArray arrayWithCapacity:_sheetCustomDetents.count];
+  for (NSNumber *val in _sheetCustomDetents) {
+    NSLog(@"RNSScreen detentsFromSnapPoints considering detent %f", val.floatValue);
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     return ctx.maximumDetentValue * frac.floatValue;
+                                                     return ctx.maximumDetentValue * val.floatValue;
                                                    }]];
     ++detentIndex;
   }
@@ -828,14 +865,8 @@ namespace react = facebook::react;
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
-  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
-    if (newScreenProps.sheetCustomDetents != oldScreenProps.sheetCustomDetents) {
-      [self setSheetCustomDetents:[RNSConvert NSNumberMutableArrayFromFloatVector:newScreenProps.sheetCustomDetents]];
-    }
-    if (newScreenProps.sheetCustomLargestUndimmedDetent != oldScreenProps.sheetCustomLargestUndimmedDetent) {
-      [self
-          setSheetCustomLargestUndimmedDetent:[NSNumber numberWithInt:newScreenProps.sheetCustomLargestUndimmedDetent]];
-    }
+  if (!newScreenProps.sheetCustomDetents.empty()) {
+    [self setSheetCustomDetents:[RNSConvert arrayFromVector:newScreenProps.sheetCustomDetents]];
   }
 
   [super updateProps:props oldProps:oldProps];

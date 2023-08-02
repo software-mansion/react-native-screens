@@ -33,6 +33,8 @@ namespace react = facebook::react;
 
 + (NSMutableArray<NSNumber *> *)NSNumberMutableArrayFromFloatVector:(const std::vector<CGFloat> &)vector;
 
++ (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector;
+
 @end
 
 #endif // RCT_NEW_ARCH_ENABLED
