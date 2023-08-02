@@ -82,7 +82,7 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSFullWindowOverlayProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSFullWindowOverlayProps>();
     _props = defaultProps;
     [self _initCommon];
   }
@@ -162,10 +162,9 @@
   }
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<
-      facebook::react::RNSFullWindowOverlayComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSFullWindowOverlayComponentDescriptor>();
 }
 
 - (void)prepareForRecycle
@@ -193,8 +192,8 @@
   [childComponentView removeFromSuperview];
 }
 
-- (void)updateLayoutMetrics:(facebook::react::LayoutMetrics const &)layoutMetrics
-           oldLayoutMetrics:(facebook::react::LayoutMetrics const &)oldLayoutMetrics
+- (void)updateLayoutMetrics:(react::LayoutMetrics const &)layoutMetrics
+           oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
 {
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
   _reactFrame = frame;
