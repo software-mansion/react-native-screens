@@ -611,7 +611,7 @@ namespace react = facebook::react;
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
  * guarantee that values of all related props had been updated earlier.
  */
-- (void)updatePresentationStyle
+- (void)updateFormSheetPresentationStyle
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
@@ -855,7 +855,7 @@ namespace react = facebook::react;
 {
   [super finalizeUpdates:updateMask];
 #if !TARGET_OS_TV
-  [self updatePresentationStyle];
+  [self updateFormSheetPresentationStyle];
 #endif // !TARGET_OS_TV
 }
 
@@ -866,7 +866,7 @@ namespace react = facebook::react;
 {
   [super didSetProps:changedProps];
 #if !TARGET_OS_TV
-  [self updatePresentationStyle];
+  [self updateFormSheetPresentationStyle];
 #endif // !TARGET_OS_TV
 }
 
