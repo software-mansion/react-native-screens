@@ -167,6 +167,7 @@ const RouteView = ({
   stateKey: string;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
+
   const {
     gestureEnabled,
     headerShown,
@@ -177,7 +178,7 @@ const RouteView = ({
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     sheetExpandsWhenScrolledToEdge = true,
-    sheetHeight = [0.5, 0.7],
+    sheetCustomDetents = [],
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -276,7 +277,7 @@ const RouteView = ({
       sheetGrabberVisible={sheetGrabberVisible}
       sheetCornerRadius={sheetCornerRadius}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-      sheetHeight={sheetHeight}
+      sheetCustomDetents={sheetCustomDetents}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
