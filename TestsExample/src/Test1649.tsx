@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Button, StyleSheet, View, Text, ScrollView } from 'react-native';
+import {
+  Button,
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+} from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -7,17 +14,56 @@ import {
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
 import { SheetDetentTypes } from 'react-native-screens';
+import * as jotai from 'jotai';
+
+type NavProp = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
+
+type SheetOptions = {
+  sheetAllowedDetents: SheetDetentTypes;
+  sheetLargestUndimmedDetent: SheetDetentTypes;
+  sheetGrabberVisible: boolean;
+  sheetCornerRadius: number;
+  sheetExpandsWhenScrolledToEdge: boolean;
+  sheetCustomDetents: number[];
+};
 
 const Stack = createNativeStackNavigator();
 
+/// Sheet options
+const allowedDetentsAtom = jotai.atom<SheetDetentTypes>('custom');
+const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes>('medium');
+const grabberVisibleAtom = jotai.atom(false);
+const cornerRadiusAtom = jotai.atom(-1);
+const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
+const customDetentsAtom = jotai.atom<number[]>([0.3, 0.6, 0.85]);
+
+const sheetOptionsAtom = jotai.atom(
+  get => ({
+    sheetAllowedDetents: get(allowedDetentsAtom),
+    sheetLargestUndimmedDetent: get(largestUndimmedDetentAtom),
+    sheetGrabberVisible: get(grabberVisibleAtom),
+    sheetCornerRadius: get(cornerRadiusAtom),
+    sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
+    sheetCustomDetents: get(customDetentsAtom),
+  }),
+  (_get, set, value: SheetOptions) => {
+    set(allowedDetentsAtom, value.sheetAllowedDetents);
+    set(largestUndimmedDetentAtom, value.sheetLargestUndimmedDetent);
+    set(grabberVisibleAtom, value.sheetGrabberVisible);
+    set(cornerRadiusAtom, value.sheetCornerRadius);
+    set(expandsWhenScrolledToEdgeAtom, value.sheetExpandsWhenScrolledToEdge);
+    set(customDetentsAtom, value.sheetCustomDetents);
+  },
+);
+
 export default function App(): JSX.Element {
+  const sheetOptions = jotai.useAtomValue(sheetOptionsAtom);
+
   const initialScreenOptions: NativeStackNavigationOptions = {
     stackPresentation: 'formSheet',
-    sheetAllowedDetents: 'all',
-    sheetLargestUndimmedDetent: 'medium',
-    sheetGrabberVisible: false,
-    sheetCornerRadius: -1,
-    sheetExpandsWhenScrolledToEdge: true,
+    ...sheetOptions,
   };
 
   return (
@@ -31,7 +77,7 @@ export default function App(): JSX.Element {
           headerShown: true,
           headerHideBackButton: false,
         }}>
-        <Stack.Screen name="First" component={First} />
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
           name="Second"
           component={Second}
@@ -53,16 +99,19 @@ export default function App(): JSX.Element {
             ...initialScreenOptions,
           }}
         />
+        <Stack.Screen
+          name="SheetScreenWithTextInput"
+          component={SheetScreenWithTextInput}
+          options={{
+            ...initialScreenOptions,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-function First({
-  navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
+function Home({ navigation }: NavProp) {
   return (
     <Button
       title="Tap me for the second screen"
@@ -71,11 +120,7 @@ function First({
   );
 }
 
-function Second({
-  navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
+function Second({ navigation }: NavProp) {
   return (
     <>
       <Button
@@ -86,22 +131,24 @@ function Second({
         title="Open the sheet with ScrollView"
         onPress={() => navigation.navigate('SheetScreenWithScrollView')}
       />
+      <Button
+        title="Open the sheet with text input (keyboard interaction)"
+        onPress={() => navigation.navigate('SheetScreenWithTextInput')}
+      />
     </>
   );
 }
 
-function SheetScreen({
-  navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
-  const [radius, setRadius] = React.useState(-1);
-  const [detent, setDetent] = React.useState<SheetDetentTypes>('all');
-  const [largestUndimmedDetent, sheetLargestUndimmedDetent] =
-    React.useState<SheetDetentTypes>('all');
-  const [isGrabberVisible, setIsGrabberVisible] = React.useState(false);
-  // navigation
-  const [shouldExpand, setShouldExpand] = React.useState(true);
+function SheetScreen({ navigation }: NavProp) {
+  const [allowedDetents, setAllowedDetents] = jotai.useAtom(allowedDetentsAtom);
+  const [largestUndimmedDetent, setLargestUndimmedDetent] = jotai.useAtom(
+    largestUndimmedDetentAtom,
+  );
+  const [grabberVisible, setGrabberVisible] = jotai.useAtom(grabberVisibleAtom);
+  const [cornerRadius, setCornerRadius] = jotai.useAtom(cornerRadiusAtom);
+  const [expandsWhenScrolledToEdge, setExpandsWhenScrolledToEdge] =
+    jotai.useAtom(expandsWhenScrolledToEdgeAtom);
+  // const [customDetents, setCustomDetents] = jotai.useAtom(customDetentsAtom);
 
   function nextDetentLevel(currDetent: SheetDetentTypes): SheetDetentTypes {
     if (currDetent === 'all') {
@@ -109,6 +156,8 @@ function SheetScreen({
     } else if (currDetent === 'medium') {
       return 'large';
     } else if (currDetent === 'large') {
+      return 'custom';
+    } else if (currDetent === 'custom') {
       return 'all';
     } else {
       console.warn('Unhandled sheetDetent type');
@@ -120,7 +169,7 @@ function SheetScreen({
     <View style={styles.centeredView}>
       <Button
         title="Tap me for the first screen"
-        onPress={() => navigation.navigate('First')}
+        onPress={() => navigation.navigate('Home')}
       />
       <Button
         title="Tap me for the second screen"
@@ -129,66 +178,63 @@ function SheetScreen({
       <Button
         title="Change the corner radius"
         onPress={() => {
-          const newRadius = radius >= 150 ? -1.0 : radius + 50;
-          setRadius(newRadius);
-          navigation.setOptions({
-            sheetCornerRadius: newRadius,
-          });
+          const newRadius = cornerRadius >= 150 ? -1.0 : cornerRadius + 50;
+          setCornerRadius(newRadius);
+          // navigation.setOptions({
+          //   sheetCornerRadius: newRadius,
+          // });
         }}
       />
-      <Text>radius: {radius}</Text>
+      <Text>radius: {cornerRadius}</Text>
       <Button
         title="Change detent level"
         onPress={() => {
-          const newDetentLevel = nextDetentLevel(detent);
-          setDetent(newDetentLevel);
-          navigation.setOptions({
-            sheetAllowedDetents: newDetentLevel,
-          });
+          const newDetentLevel = nextDetentLevel(allowedDetents);
+          setAllowedDetents(newDetentLevel);
+          // navigation.setOptions({
+          //   sheetAllowedDetents: newDetentLevel,
+          // });
         }}
       />
-      <Text>detent: {detent}</Text>
+      <Text>detent: {allowedDetents}</Text>
       <Button
         title="Change largest undimmed detent"
         onPress={() => {
           const newDetentLevel = nextDetentLevel(largestUndimmedDetent);
-          sheetLargestUndimmedDetent(newDetentLevel);
-          navigation.setOptions({
-            sheetLargestUndimmedDetent: newDetentLevel,
-          });
+          setLargestUndimmedDetent(newDetentLevel);
+          // navigation.setOptions({
+          //   sheetLargestUndimmedDetent: newDetentLevel,
+          // });
         }}
       />
       <Text>largestUndimmedDetent: {largestUndimmedDetent}</Text>
       <Button
         title="Toggle sheetExpandsWhenScrolledToEdge"
         onPress={() => {
-          setShouldExpand(!shouldExpand);
-          navigation.setOptions({
-            sheetExpandsWhenScrolledToEdge: !shouldExpand,
-          });
+          setExpandsWhenScrolledToEdge(!expandsWhenScrolledToEdge);
+          // navigation.setOptions({
+          //   sheetExpandsWhenScrolledToEdge: !expandsWhenScrolledToEdge,
+          // });
         }}
       />
       <Text>
-        sheetExpandsWhenScrolledToEdge: {shouldExpand ? 'true' : 'false'}
+        sheetExpandsWhenScrolledToEdge:{' '}
+        {expandsWhenScrolledToEdge ? 'true' : 'false'}
       </Text>
       <Button
         title="Toggle grabber visibility"
         onPress={() => {
-          setIsGrabberVisible(!isGrabberVisible);
-          navigation.setOptions({
-            sheetGrabberVisible: !isGrabberVisible,
-          });
+          setGrabberVisible(!grabberVisible);
+          // navigation.setOptions({
+          //   sheetGrabberVisible: !grabberVisible,
+          // });
         }}
       />
     </View>
   );
 }
 
-function SheetScreenWithScrollView({
-  navigation,
-}: {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-}) {
+function SheetScreenWithScrollView({ navigation }: NavProp) {
   return (
     <>
       <View style={styles.centeredView}>
@@ -203,6 +249,21 @@ function SheetScreenWithScrollView({
   );
 }
 
+function SheetScreenWithTextInput({ navigation }: NavProp) {
+  const [textValue, setTextValue] = React.useState('text input');
+
+  return (
+    <View style={styles.centeredView}>
+      <TextInput
+        style={[styles.bordered, styles.keyboardTriggerTextInput]}
+        value={textValue}
+        onChangeText={text => setTextValue(text)}
+      />
+      <SheetScreen navigation={navigation} />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   headerView: {
     height: 20,
@@ -212,5 +273,14 @@ const styles = StyleSheet.create({
   centeredView: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  bordered: {
+    borderColor: 'black',
+    borderWidth: 2,
+  },
+  keyboardTriggerTextInput: {
+    paddingVertical: 5,
+    paddingHorizontal: 4,
+    marginTop: 10,
   },
 });
