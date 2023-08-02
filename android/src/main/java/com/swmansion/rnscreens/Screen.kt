@@ -250,13 +250,13 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         // Otherwise, the default value will be returned.
         val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
             .takeIf { resolvedActionBarSize }
-            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toInt() } ?: 56
+            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 56.0
 
         val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
             .takeIf { it > 0 }
             ?.let { (context.resources::getDimensionPixelSize)(it) }
-            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toInt() }
-            ?: 24
+            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
+            ?: 24.0
 
         val totalHeight = actionBarHeight + statusBarHeight
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)

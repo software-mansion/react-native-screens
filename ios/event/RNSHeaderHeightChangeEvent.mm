@@ -2,20 +2,20 @@
 #import <React/RCTAssert.h>
 
 @implementation RNSHeaderHeightChangeEvent {
-  double _newHeight;
+  double _headerHeight;
 }
 
 @synthesize viewTag = _viewTag;
 @synthesize eventName = _eventName;
 
-- (instancetype)initWithEventName:(NSString *)eventName reactTag:(NSNumber *)reactTag newHeight:(double)newHeight
+- (instancetype)initWithEventName:(NSString *)eventName reactTag:(NSNumber *)reactTag headerHeight:(double)headerHeight
 {
   RCTAssertParam(reactTag);
 
   if ((self = [super init])) {
     _eventName = [eventName copy];
     _viewTag = reactTag;
-    _newHeight = newHeight;
+    _headerHeight = headerHeight;
   }
   return self;
 }
@@ -25,7 +25,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)init)
 - (NSDictionary *)body
 {
   NSDictionary *body = @{
-    @"newHeight" : @(_newHeight),
+    @"headerHeight" : @(_headerHeight),
   };
 
   return body;

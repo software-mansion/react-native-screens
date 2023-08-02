@@ -44,7 +44,7 @@ export type NativeStackNavigationEventMap = {
   /**
    * Event which fires when a header height gets changed.
    */
-  headerHeightChange: { data: { newHeight: number } };
+  headerHeightChange: { data: { headerHeight: number } };
 };
 
 export type NativeStackNavigationProp<

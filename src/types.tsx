@@ -73,7 +73,7 @@ export type HeaderSubviewTypes =
   | 'searchBar';
 
 export type HeaderChangeEventType = {
-  newHeight: number;
+  headerHeight: number;
 };
 
 export type TransitionProgressEventType = {

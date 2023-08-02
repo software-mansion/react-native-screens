@@ -247,7 +247,7 @@ const RouteView = ({
   // We need to ensure the first retrieved header height will be cached and set in animatedHeaderHeight.
   // We're caching the header height here, as on iOS native side events are not always coming to the JS on first notify.
   // TODO: Check why first event is not being received once it is cached on the native side.
-  const cachedAnimatedHeaderHeight = React.useRef(staticHeaderHeight);
+  const cachedAnimatedHeaderHeight = React.useRef(statusBarHeight);
   const animatedHeaderHeight = new Animated.Value(staticHeaderHeight, {
     useNativeDriver: true,
   });
@@ -328,15 +328,15 @@ const RouteView = ({
         });
       }}
       onHeaderHeightChange={(e) => {
-        const newHeight = e.nativeEvent.newHeight;
+        const headerHeight = e.nativeEvent.headerHeight;
 
-        if (cachedAnimatedHeaderHeight.current !== newHeight) {
+        if (cachedAnimatedHeaderHeight.current !== headerHeight) {
           // Currently, we're setting value by Animated#setValue, because we want to cache animated value.
           // Also, in React Native 0.72 there was a bug on Fabric causing a large delay between the screen transition,
           // which should not occur.
           // TODO: Check if it's possible to replace animated#setValue to Animated#event.
-          animatedHeaderHeight.setValue(newHeight);
-          cachedAnimatedHeaderHeight.current = newHeight;
+          animatedHeaderHeight.setValue(headerHeight);
+          cachedAnimatedHeaderHeight.current = headerHeight;
         }
       }}
       onDismissed={(e) => {

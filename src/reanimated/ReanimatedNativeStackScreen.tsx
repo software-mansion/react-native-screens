@@ -81,7 +81,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
       onHeaderHeightChangeReanimated={useEvent(
         (event: HeaderChangeEventType) => {
           'worklet';
-          headerHeight.value = event.newHeight;
+          headerHeight.value = event.headerHeight;
         },
         [
           // @ts-ignore wrong type

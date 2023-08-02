@@ -3,6 +3,6 @@
 
 @interface RNSHeaderHeightChangeEvent : NSObject <RCTEvent>
 
-- (instancetype)initWithEventName:(NSString *)eventName reactTag:(NSNumber *)reactTag newHeight:(double)newHeight;
+- (instancetype)initWithEventName:(NSString *)eventName reactTag:(NSNumber *)reactTag headerHeight:(double)headerHeight;
 
 @end

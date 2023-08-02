@@ -392,23 +392,24 @@
 #endif
 }
 
-- (void)notifyHeaderHeightChange:(double)newHeight
+- (void)notifyHeaderHeightChange:(double)headerHeight
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onHeaderHeightChange(facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.newHeight = newHeight});
+        ->onHeaderHeightChange(
+            facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.headerHeight = headerHeight});
   }
 
   RNSHeaderHeightChangeEvent *event =
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
-                                                  newHeight:newHeight];
+                                               headerHeight:headerHeight];
   [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
-      @"newHeight" : @(newHeight),
+      @"headerHeight" : @(headerHeight),
     });
   }
 #endif
