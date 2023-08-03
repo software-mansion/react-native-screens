@@ -109,7 +109,7 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
     auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
-    _state->updateState(std::move(newState));
+    //    _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
   }
