@@ -225,31 +225,29 @@ namespace react = facebook::react;
     }
 
 #if !TARGET_OS_TV
-    if (@available(iOS 11.0, *)) {
-      if (config.largeTitle &&
-          (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight ||
-           config.largeTitleColor || config.titleColor)) {
-        NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
-        if (config.largeTitleColor || config.titleColor) {
-          largeAttrs[NSForegroundColorAttributeName] =
-              config.largeTitleColor ? config.largeTitleColor : config.titleColor;
-        }
-        NSString *largeFamily = config.largeTitleFontFamily ?: nil;
-        NSNumber *largeSize = config.largeTitleFontSize ?: @34;
-        NSString *largeWeight = config.largeTitleFontWeight ?: nil;
-        if (largeFamily || largeWeight) {
-          largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil
-                                                     withFamily:largeFamily
-                                                           size:largeSize
-                                                         weight:largeWeight
-                                                          style:nil
-                                                        variant:nil
-                                                scaleMultiplier:1.0];
-        } else {
-          largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
-        }
-        [navbar setLargeTitleTextAttributes:largeAttrs];
+    if (config.largeTitle &&
+        (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight ||
+         config.largeTitleColor || config.titleColor)) {
+      NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
+      if (config.largeTitleColor || config.titleColor) {
+        largeAttrs[NSForegroundColorAttributeName] =
+            config.largeTitleColor ? config.largeTitleColor : config.titleColor;
       }
+      NSString *largeFamily = config.largeTitleFontFamily ?: nil;
+      NSNumber *largeSize = config.largeTitleFontSize ?: @34;
+      NSString *largeWeight = config.largeTitleFontWeight ?: nil;
+      if (largeFamily || largeWeight) {
+        largeAttrs[NSFontAttributeName] = [RCTFont updateFont:nil
+                                                   withFamily:largeFamily
+                                                         size:largeSize
+                                                       weight:largeWeight
+                                                        style:nil
+                                                      variant:nil
+                                              scaleMultiplier:1.0];
+      } else {
+        largeAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:[largeSize floatValue] weight:UIFontWeightBold];
+      }
+      [navbar setLargeTitleTextAttributes:largeAttrs];
     }
 #endif
   }
@@ -524,13 +522,11 @@ namespace react = facebook::react;
   }
   prevItem.backBarButtonItem = backBarButtonItem;
 
-  if (@available(iOS 11.0, *)) {
-    if (config.largeTitle) {
-      navctr.navigationBar.prefersLargeTitles = YES;
-    }
-    navitem.largeTitleDisplayMode =
-        config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
+  if (config.largeTitle) {
+    navctr.navigationBar.prefersLargeTitles = YES;
   }
+  navitem.largeTitleDisplayMode =
+      config.largeTitle ? UINavigationItemLargeTitleDisplayModeAlways : UINavigationItemLargeTitleDisplayModeNever;
 #endif
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
@@ -602,17 +598,15 @@ namespace react = facebook::react;
 
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
 #if !TARGET_OS_TV
-          if (@available(iOS 11.0, *)) {
-            RNSSearchBar *searchBar = subview.subviews[0];
-            navitem.searchController = searchBar.controller;
-            navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+          RNSSearchBar *searchBar = subview.subviews[0];
+          navitem.searchController = searchBar.controller;
+          navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-            if (@available(iOS 16.0, *)) {
-              navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
-            }
-#endif /* Check for iOS 16.0 */
+          if (@available(iOS 16.0, *)) {
+            navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
           }
+#endif /* Check for iOS 16.0 */
 #endif /* !TARGET_OS_TV */
         }
         break;
@@ -921,12 +915,10 @@ RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
     @"dark" : @(UIBlurEffectStyleDark),
   }];
 
-  if (@available(iOS 10.0, *)) {
-    [blurEffects addEntriesFromDictionary:@{
-      @"regular" : @(UIBlurEffectStyleRegular),
-      @"prominent" : @(UIBlurEffectStyleProminent),
-    }];
-  }
+  [blurEffects addEntriesFromDictionary:@{
+    @"regular" : @(UIBlurEffectStyleRegular),
+    @"prominent" : @(UIBlurEffectStyleProminent),
+  }];
 #if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {

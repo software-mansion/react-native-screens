@@ -133,9 +133,7 @@ namespace react = facebook::react;
 
 - (void)setObscureBackground:(BOOL)obscureBackground
 {
-  if (@available(iOS 9.1, *)) {
-    [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
-  }
+  [_controller setObscuresBackgroundDuringPresentation:obscureBackground];
 }
 
 - (void)setHideNavigationBar:(BOOL)hideNavigationBar
