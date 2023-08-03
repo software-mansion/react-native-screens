@@ -203,6 +203,17 @@ const RouteView = ({
   } = options;
 
   let {
+    sheetAllowedDetents = ['large'],
+  } = options;
+
+  if (!Array.isArray(sheetAllowedDetents)) {
+    sheetAllowedDetents = [sheetAllowedDetents];    
+  }
+
+  const sheetNativeDetents = sheetAllowedDetents.filter(detent => (typeof detent === 'string'));
+  const sheetUserDefindedDetents: number[] = sheetAllowedDetents.filter(detent => (typeof detent !== 'string'));
+
+  let {
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureResponseDistance,
@@ -289,12 +300,12 @@ const RouteView = ({
       isNativeStack
       hasLargeHeader={hasLargeHeader}
       style={StyleSheet.absoluteFill}
-      sheetAllowedDetents={sheetAllowedDetents}
+      sheetAllowedDetents={sheetNativeDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
       sheetGrabberVisible={sheetGrabberVisible}
       sheetCornerRadius={sheetCornerRadius}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-      sheetCustomDetents={sheetCustomDetents}
+      sheetCustomDetents={sheetUserDefindedDetents}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
