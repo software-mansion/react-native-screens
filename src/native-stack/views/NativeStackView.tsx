@@ -174,7 +174,6 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetAllowedDetents = 'large',
     sheetLargestUndimmedDetent = 'all',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
@@ -213,6 +212,17 @@ const RouteView = ({
     sheetNativeUndimmedDetent = sheetLargestUndimmedDetent;
     sheetUserDefinedUndimmedDetent = -1;
   }
+
+  let {
+    sheetAllowedDetents = ['large'],
+  } = options;
+
+  if (!Array.isArray(sheetAllowedDetents)) {
+    sheetAllowedDetents = [sheetAllowedDetents];    
+  }
+
+  const sheetNativeDetents = sheetAllowedDetents.filter(detent => (typeof detent === 'string'));
+  const sheetUserDefindedDetents: number[] = sheetAllowedDetents.filter(detent => (typeof detent !== 'string'));
 
   let {
     customAnimationOnSwipe,
