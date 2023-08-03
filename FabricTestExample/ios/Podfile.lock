@@ -1395,7 +1395,7 @@ SPEC CHECKSUMS:
   React-perflogger: 6bd153e776e6beed54c56b0847e1220a3ff92ba5
   React-RCTActionSheet: c0b62af44e610e69d9a2049a682f5dba4e9dff17
   React-RCTAnimation: f9bf9719258926aea9ecb8a2aa2595d3ff9a6022
-  React-RCTAppDelegate: fbbffd9d0d5bf9ec1cb502891ffb0e114b5a8f55
+  React-RCTAppDelegate: ea8ff456539914ff0dabfde02319cdf9dd5b76c1
   React-RCTBlob: c4f1e69a6ef739aa42586b876d637dab4e3b5bed
   React-RCTFabric: 125e7d77057cb62f94e79ac977fd68be042a3bc5
   React-RCTImage: e5798f01aba248416c02a506cf5e6dfcba827638
@@ -1411,7 +1411,7 @@ SPEC CHECKSUMS:
   ReactCommon: 3ccb8fb14e6b3277e38c73b0ff5e4a1b8db017a9
   RNGestureHandler: d8224aad6d7081834ae6e6cf925397059485b69e
   RNReanimated: 3ce2aec600ad2ef47a5927abf2742329d7a190e9
-  RNScreens: 95b62f9fb2aa427d7c1a2a2d127a72edb7450390
+  RNScreens: 32903fdc8249881d18daa988dd99c012f47fa992
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 8796b55dba14d7004f980b54bcc9833ee45b28ce
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
