@@ -213,7 +213,8 @@ namespace react = facebook::react;
 #endif
 }
 
-- (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement
+- (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))
+    API_UNAVAILABLE(tvos, watchos)
 {
   switch (_placement) {
     case RNSSearchBarPlacementStacked:
