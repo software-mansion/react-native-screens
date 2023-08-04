@@ -211,7 +211,7 @@ const RouteView = ({
   }
 
   const sheetNativeDetents = sheetAllowedDetents.filter(detent => (typeof detent === 'string'));
-  const sheetUserDefindedDetents: number[] = sheetAllowedDetents.filter(detent => (typeof detent !== 'string'));
+  const sheetUserDefindedDetents = sheetAllowedDetents.filter(detent => (typeof detent === 'number')) as number[];
 
   let {
     customAnimationOnSwipe,
