@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        rnsDefaultTargetSdkVersion = 31
-        rnsDefaultCompileSdkVersion = 31
+        rnsDefaultTargetSdkVersion = 32
+        rnsDefaultCompileSdkVersion = 32
         rnsDefaultMinSdkVersion = 21
         rnsDefaultKotlinVersion = '1.6.21'
     }
@@ -122,10 +122,10 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.fragment:fragment:1.2.1'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation "androidx.core:core-ktx:1.5.0"
 }

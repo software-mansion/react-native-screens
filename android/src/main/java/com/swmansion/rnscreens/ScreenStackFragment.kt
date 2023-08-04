@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,9 +17,12 @@ import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.widget.NestedScrollView
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.google.android.material.appbar.CollapsingToolbarLayout
+
 
 class ScreenStackFragment : ScreenFragment {
     private var mAppBarLayout: AppBarLayout? = null
@@ -101,8 +105,6 @@ class ScreenStackFragment : ScreenFragment {
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
 
-        view?.addView(recycleView(screen))
-
         mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
             // By default AppBarLayout will have a background color set but since we cover the whole layout
             // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
@@ -112,13 +114,37 @@ class ScreenStackFragment : ScreenFragment {
             layoutParams = AppBarLayout.LayoutParams(
                 AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
             )
+
+            val textSizeAttr = intArrayOf(R.attr.collapsingToolbarLayoutMediumSize)
+            val indexOfAttrTextSize = 0
+            val a: TypedArray = context.obtainStyledAttributes(textSizeAttr)
+            val textSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1)
+            a.recycle()
+
+            val collapsingToolbarLayout = CollapsingToolbarLayout(context, null, R.attr.collapsingToolbarLayoutMediumStyle)
+            collapsingToolbarLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, textSize)
+            collapsingToolbarLayout.isTitleEnabled = false
+//            collapsingToolbarLayout.title = "dupa"
+
+            mToolbar?.let { collapsingToolbarLayout.addView(recycleView(it)) }
+            this.addView(collapsingToolbarLayout)
         }
 
         view?.addView(mAppBarLayout)
         if (mShadowHidden) {
             mAppBarLayout?.targetElevation = 0f
         }
-        mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
+
+        val nestedScrollView = context?.let { NestedScrollView(it) }?.apply {
+            this.layoutParams = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)
+            (this.layoutParams as CoordinatorLayout.LayoutParams).behavior = ScrollingViewBehavior()
+            this.isFillViewport = true
+
+            this.addView(recycleView(screen))
+        }
+
+        view?.addView(nestedScrollView)
+//        mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
         setHasOptionsMenu(true)
         return view
     }

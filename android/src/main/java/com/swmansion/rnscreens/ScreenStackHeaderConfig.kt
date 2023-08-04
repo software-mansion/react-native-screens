@@ -157,11 +157,11 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         if (mIsTopInsetEnabled) {
             headerTopInset.let {
-                toolbar.setPadding(0, it ?: 0, 0, 0)
+//                toolbar.setPadding(0, it ?: 0, 0, 0)
             }
         } else {
             if (toolbar.paddingTop > 0) {
-                toolbar.setPadding(0, 0, 0, 0)
+//                toolbar.setPadding(0, 0, 0, 0)
             }
         }
 
@@ -174,7 +174,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         // reset startWithNavigation inset which corresponds to the distance between navigation icon and
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
-        toolbar.contentInsetStartWithNavigation = mDefaultStartInsetWithNavigation
+//        toolbar.contentInsetStartWithNavigation = mDefaultStartInsetWithNavigation
         toolbar.setContentInsetsRelative(mDefaultStartInset, mDefaultStartInset)
 
         // hide back button
@@ -194,7 +194,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         screenFragment?.setToolbarTranslucent(mIsTranslucent)
 
         // title
-        actionBar.title = mTitle
+//        actionBar.title = mTitle
         if (TextUtils.isEmpty(mTitle)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
             // views. When it is set to default it'd take up additional distance from the back button
@@ -300,7 +300,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         mConfigSubviews.add(index, child)
         maybeUpdate()
     }
-
     private val titleTextView: TextView?
         get() {
             for (i in 0 until toolbar.childCount) {
@@ -388,7 +387,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // set primary color as background by default
         val tv = TypedValue()
-        if (context.theme.resolveAttribute(R.attr.colorPrimary, tv, true)) {
+        if (context.theme.resolveAttribute(R.attr.colorError, tv, true)) {
             toolbar.setBackgroundColor(tv.data)
         }
         toolbar.clipChildren = false
