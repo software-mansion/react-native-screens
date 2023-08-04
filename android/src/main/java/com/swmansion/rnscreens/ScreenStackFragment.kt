@@ -110,8 +110,10 @@ class ScreenStackFragment : ScreenFragment {
 
         val collapsingToolbarLayout = context?.let { CollapsingToolbarLayout(it, null, R.attr.collapsingToolbarLayoutLargeStyle) }?.apply {
             this.layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT).apply { scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED }
-            fitsSystemWindows = true
-            mToolbar?.let { addView(it) }
+            mToolbar?.let {
+                this.background = it.background
+                addView(it)
+            }
         }
 
         mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
@@ -144,6 +146,7 @@ class ScreenStackFragment : ScreenFragment {
             (this.layoutParams as CoordinatorLayout.LayoutParams).behavior = ScrollingViewBehavior()
             this.isFillViewport = true
 
+            mToolbar?.let { this.background = it.background }
             this.addView(recycleView(screen))
         }
 
