@@ -23,7 +23,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.appbar.CollapsingToolbarLayout
 
-
 class ScreenStackFragment : ScreenFragment {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
@@ -54,10 +53,14 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     fun setToolbar(toolbar: Toolbar) {
-        mAppBarLayout?.addView(toolbar)
-        toolbar.layoutParams = AppBarLayout.LayoutParams(
-            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-        ).apply { scrollFlags = 0 }
+//        mAppBarLayout?.addView(toolbar)
+        val textSizeAttr = intArrayOf(R.attr.actionBarSize)
+        val indexOfAttrTextSize = 0
+        val a: TypedArray = toolbar.context.obtainStyledAttributes(textSizeAttr)
+        val textSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1)
+        a.recycle()
+
+        toolbar.layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, textSize)
         mToolbar = toolbar
     }
 
@@ -105,29 +108,30 @@ class ScreenStackFragment : ScreenFragment {
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
 
+        val collapsingToolbarLayout = context?.let { CollapsingToolbarLayout(it, null, R.attr.collapsingToolbarLayoutLargeStyle) }?.apply {
+            this.layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT).apply { scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED }
+            fitsSystemWindows = true
+            mToolbar?.let { addView(it) }
+        }
+
         mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
             // By default AppBarLayout will have a background color set but since we cover the whole layout
             // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
             // role. On top of that it breaks screens animations when alfa offscreen compositing is off
             // (which is the default)
-            setBackgroundColor(Color.TRANSPARENT)
-            layoutParams = AppBarLayout.LayoutParams(
-                AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-            )
 
-            val textSizeAttr = intArrayOf(R.attr.collapsingToolbarLayoutMediumSize)
+            val textSizeAttr = intArrayOf(R.attr.collapsingToolbarLayoutLargeSize)
             val indexOfAttrTextSize = 0
             val a: TypedArray = context.obtainStyledAttributes(textSizeAttr)
             val textSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1)
             a.recycle()
 
-            val collapsingToolbarLayout = CollapsingToolbarLayout(context, null, R.attr.collapsingToolbarLayoutMediumStyle)
-            collapsingToolbarLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, textSize)
-            collapsingToolbarLayout.isTitleEnabled = false
-//            collapsingToolbarLayout.title = "dupa"
-
-            mToolbar?.let { collapsingToolbarLayout.addView(recycleView(it)) }
-            this.addView(collapsingToolbarLayout)
+            setBackgroundColor(Color.TRANSPARENT)
+            layoutParams = AppBarLayout.LayoutParams(
+                AppBarLayout.LayoutParams.MATCH_PARENT, textSize
+            )
+            fitsSystemWindows = true
+            addView(collapsingToolbarLayout)
         }
 
         view?.addView(mAppBarLayout)
@@ -144,6 +148,7 @@ class ScreenStackFragment : ScreenFragment {
         }
 
         view?.addView(nestedScrollView)
+
 //        mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
         setHasOptionsMenu(true)
         return view
