@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Build
 import android.text.TextUtils
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
@@ -25,6 +24,7 @@ import com.swmansion.rnscreens.events.HeaderDetachedEvent
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
+    private var mHeaderType: String? = null
     private var headerTopInset: Int? = null
     private var mTitle: String? = null
     private var mTitleColor = 0
@@ -145,6 +145,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }
 
+        // header type
+        mHeaderType?.let { screenFragment?.setToolbarType(it) }
+
         if (mIsHidden) {
             if (toolbar.parent != null) {
                 screenFragment?.removeToolbar()
@@ -175,7 +178,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         // reset startWithNavigation inset which corresponds to the distance between navigation icon and
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
-//        toolbar.contentInsetStartWithNavigation = mDefaultStartInsetWithNavigation
+        toolbar.contentInsetStartWithNavigation = mDefaultStartInsetWithNavigation
         toolbar.setContentInsetsRelative(mDefaultStartInset, mDefaultStartInset)
 
         // hide back button
@@ -314,6 +317,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             return null
         }
 
+    fun setHeaderType(headerType: String?) {
+        mHeaderType = headerType
+    }
+
     fun setTitle(title: String?) {
         mTitle = title
     }
@@ -368,6 +375,13 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     fun setDirection(direction: String?) {
         mDirection = direction
+    }
+
+    enum class HeaderType(val isCollapsing: Boolean) {
+        CenterAligned(false),
+        Small(false),
+        Medium(true),
+        Large(true);
     }
 
     private class DebugMenuToolbar(context: Context, config: ScreenStackHeaderConfig) : CustomToolbar(context, config) {

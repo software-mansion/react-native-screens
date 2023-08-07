@@ -205,6 +205,13 @@ export type NativeStackNavigationOptions = {
     color?: string;
   };
   /**
+   * Indicates which type the header should be. Defaults to `small`.
+   * Only supported on Android.
+   *
+   * @platform android
+   */
+  headerType?: 'center-aligned' | 'small' | 'medium' | 'large';
+  /**
    * Function which returns a React Element to display on the left side of the header.
    */
   headerLeft?: (props: { tintColor?: string }) => React.ReactNode;

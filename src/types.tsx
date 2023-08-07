@@ -446,6 +446,19 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   hideShadow?: boolean;
   /**
+   * Customize the type of the header. Only supported on Android.
+   * Defaults to `small`.
+   *
+   * Available values:
+   * - `center-aligned` - the title of the header will be centered.
+   * - `small` - sets small size of header.
+   * - `medium` - sets medium size of header.
+   * - `large` - sets large size of header.
+   *
+   * @platform android
+   */
+  type?: 'center-aligned' | 'small' | 'medium' | 'large';
+  /**
    * Boolean to set native property to prefer large title header (like in iOS setting).
    * For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`.
    * If the scrollable area doesn't fill the screen, the large title won't collapse on scroll.
