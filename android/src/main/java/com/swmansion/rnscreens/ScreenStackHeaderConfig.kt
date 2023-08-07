@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Build
 import android.text.TextUtils
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
@@ -157,11 +158,11 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         if (mIsTopInsetEnabled) {
             headerTopInset.let {
-//                toolbar.setPadding(0, it ?: 0, 0, 0)
+                toolbar.setPadding(0, it ?: 0, 0, 0)
             }
         } else {
             if (toolbar.paddingTop > 0) {
-//                toolbar.setPadding(0, 0, 0, 0)
+                toolbar.setPadding(0, 0, 0, 0)
             }
         }
 
@@ -194,7 +195,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         screenFragment?.setToolbarTranslucent(mIsTranslucent)
 
         // title
-//        actionBar.title = mTitle
+        actionBar.title = mTitle
         if (TextUtils.isEmpty(mTitle)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
             // views. When it is set to default it'd take up additional distance from the back button

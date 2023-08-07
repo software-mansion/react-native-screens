@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -112,7 +111,7 @@ class ScreenStackFragment : ScreenFragment {
             this.layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT).apply { scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED }
             mToolbar?.let {
                 this.background = it.background
-                addView(it)
+                addView(recycleView(it))
             }
         }
 
@@ -128,12 +127,11 @@ class ScreenStackFragment : ScreenFragment {
             val textSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1)
             a.recycle()
 
-            setBackgroundColor(Color.TRANSPARENT)
             layoutParams = AppBarLayout.LayoutParams(
                 AppBarLayout.LayoutParams.MATCH_PARENT, textSize
             )
             fitsSystemWindows = true
-            addView(collapsingToolbarLayout)
+            collapsingToolbarLayout?.let { addView(recycleView(it)) }
         }
 
         view?.addView(mAppBarLayout)
