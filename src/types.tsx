@@ -92,10 +92,8 @@ export type GestureResponseDistanceType = {
 };
 
 export type ClampedNumber = number;
-export type SheetNativeDetent = 'medium' | 'large' | 'all';
 
-// export type SheetDetentTypes = 'medium' | 'large' | 'custom' | 'all';
-export type SheetDetentTypes = (ClampedNumber | SheetNativeDetent)[];
+export type SheetDetentTypes = 'medium' | 'large' | 'all';
 
 export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
@@ -271,7 +269,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  sheetAllowedDetents?: SheetDetentTypes;
+  sheetAllowedDetents?: SheetDetentTypes | number[];
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.

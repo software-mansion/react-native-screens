@@ -337,7 +337,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform ios
    */
-  sheetAllowedDetents?: SheetDetentTypes;
+  sheetAllowedDetents?: SheetDetentTypes | number[];
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -357,10 +357,6 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   sheetCornerRadius?: number;
-  /**
-   * TODO
-   */
-  sheetCustomDetents?: number[];
   /**
    * Boolean indicating whether the sheet shows a grabber at the top.
    * Works only when `stackPresentation` is set to `formSheet`.
