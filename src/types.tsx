@@ -551,13 +551,13 @@ export interface SearchBarProps {
   /**
    * The search field background color
    */
-  barTintColor?: string;
+  barTintColor?: ColorValue;
   /**
    * The color for the cursor caret and cancel button text.
    *
    * @platform ios
    */
-  tintColor?: string;
+  tintColor?: ColorValue;
   /**
    * The text to be used instead of default `Cancel` button text
    *
@@ -590,7 +590,7 @@ export interface SearchBarProps {
    */
   inputType?: 'text' | 'phone' | 'number' | 'email';
   /**
-   * Indicates whether to to obscure the underlying content
+   * Indicates whether to obscure the underlying content
    */
   obscureBackground?: boolean;
   /**
@@ -652,19 +652,19 @@ export interface SearchBarProps {
   /**
    * The search field text color
    */
-  textColor?: string;
+  textColor?: ColorValue;
   /**
    * The search hint text color
    *
    * @plaform android
    */
-  hintTextColor?: string;
+  hintTextColor?: ColorValue;
   /**
    * The search and close icon color shown in the header
    *
    * @plaform android
    */
-  headerIconColor?: string;
+  headerIconColor?: ColorValue;
   /**
    * Show the search hint icon when search bar is focused
    *
