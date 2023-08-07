@@ -185,7 +185,6 @@ const RouteView = ({
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
     sheetExpandsWhenScrolledToEdge = true,
-    sheetCustomDetents = [],
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -202,16 +201,18 @@ const RouteView = ({
     footerComponent,
   } = options;
 
-  let {
-    sheetAllowedDetents = ['large'],
-  } = options;
+  let { sheetAllowedDetents = ['large'] } = options;
 
   if (!Array.isArray(sheetAllowedDetents)) {
-    sheetAllowedDetents = [sheetAllowedDetents];    
+    sheetAllowedDetents = [sheetAllowedDetents];
   }
 
-  const sheetNativeDetents = sheetAllowedDetents.filter(detent => (typeof detent === 'string'));
-  const sheetUserDefindedDetents = sheetAllowedDetents.filter(detent => (typeof detent === 'number')) as number[];
+  const sheetNativeDetents = sheetAllowedDetents.filter(
+    (detent) => typeof detent === 'string'
+  );
+  const sheetUserDefindedDetents = sheetAllowedDetents.filter(
+    (detent) => typeof detent === 'number'
+  ) as number[];
 
   let {
     customAnimationOnSwipe,
