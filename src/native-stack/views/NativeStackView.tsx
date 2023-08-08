@@ -8,6 +8,7 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
+  SheetDetentTypes,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -193,12 +194,15 @@ const RouteView = ({
     freezeOnBlur,
   } = options;
 
-  const sheetUserDefindedDetents = !Array.isArray(sheetAllowedDetents)
-    ? []
-    : sheetAllowedDetents;
-  const sheetNativeDetents = !Array.isArray(sheetAllowedDetents)
-    ? sheetAllowedDetents
-    : 'large';
+  let sheetUserDefinedDetents: number[];
+  let sheetNativeDetents: SheetDetentTypes;
+  if (Array.isArray(sheetAllowedDetents)) {
+    sheetUserDefinedDetents = sheetAllowedDetents;
+    sheetNativeDetents = 'large';
+  } else {
+    sheetUserDefinedDetents = [];
+    sheetNativeDetents = sheetAllowedDetents;
+  }
 
   let {
     customAnimationOnSwipe,
@@ -283,7 +287,7 @@ const RouteView = ({
       sheetGrabberVisible={sheetGrabberVisible}
       sheetCornerRadius={sheetCornerRadius}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-      sheetCustomDetents={sheetUserDefindedDetents}
+      sheetCustomDetents={sheetUserDefinedDetents}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
