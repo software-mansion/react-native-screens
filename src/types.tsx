@@ -263,7 +263,7 @@ export interface ScreenProps extends ViewProps {
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * If set to non-negative value it will try to render sheet with provided radius, else ti will apply system default.
+   * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
    *
    * If left unset system default is used.
    *
