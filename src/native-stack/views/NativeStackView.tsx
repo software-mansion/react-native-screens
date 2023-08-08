@@ -201,18 +201,12 @@ const RouteView = ({
     footerComponent,
   } = options;
 
-  let { sheetAllowedDetents = ['large'] } = options;
-
-  if (!Array.isArray(sheetAllowedDetents)) {
-    sheetAllowedDetents = [sheetAllowedDetents];
-  }
-
-  const sheetNativeDetents = sheetAllowedDetents.filter(
-    (detent) => typeof detent === 'string'
-  );
-  const sheetUserDefindedDetents = sheetAllowedDetents.filter(
-    (detent) => typeof detent === 'number'
-  ) as number[];
+  const sheetUserDefindedDetents = !Array.isArray(sheetAllowedDetents)
+    ? []
+    : sheetAllowedDetents;
+  const sheetNativeDetents = !Array.isArray(sheetAllowedDetents)
+    ? sheetAllowedDetents
+    : 'large';
 
   let {
     customAnimationOnSwipe,
