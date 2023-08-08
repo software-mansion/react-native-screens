@@ -32,12 +32,15 @@ type SheetOptions = {
 const Stack = createNativeStackNavigator();
 
 /// Sheet options
-const allowedDetentsAtom = jotai.atom<SheetDetentTypes>('custom');
+// const allowedDetentsAtom = jotai.atom<SheetDetentTypes | number[]>('large');
+const allowedDetentsAtom = jotai.atom<SheetDetentTypes | number[]>([
+  0.3, 0.6, 0.85,
+]);
 const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes>('medium');
 const grabberVisibleAtom = jotai.atom(false);
 const cornerRadiusAtom = jotai.atom(-1);
 const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
-const customDetentsAtom = jotai.atom<number[]>([0.3, 0.6, 0.85]);
+// const customDetentsAtom = jotai.atom<number[]>([0.3, 0.6, 0.85]);
 
 const sheetOptionsAtom = jotai.atom(
   get => ({
@@ -46,7 +49,7 @@ const sheetOptionsAtom = jotai.atom(
     sheetGrabberVisible: get(grabberVisibleAtom),
     sheetCornerRadius: get(cornerRadiusAtom),
     sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
-    sheetCustomDetents: get(customDetentsAtom),
+    // sheetCustomDetents: get(customDetentsAtom),
   }),
   (_get, set, value: SheetOptions) => {
     set(allowedDetentsAtom, value.sheetAllowedDetents);
@@ -54,7 +57,7 @@ const sheetOptionsAtom = jotai.atom(
     set(grabberVisibleAtom, value.sheetGrabberVisible);
     set(cornerRadiusAtom, value.sheetCornerRadius);
     set(expandsWhenScrolledToEdgeAtom, value.sheetExpandsWhenScrolledToEdge);
-    set(customDetentsAtom, value.sheetCustomDetents);
+    // set(customDetentsAtom, value.sheetCustomDetents);
   },
 );
 
@@ -150,14 +153,14 @@ function SheetScreen({ navigation }: NavProp) {
     jotai.useAtom(expandsWhenScrolledToEdgeAtom);
   // const [customDetents, setCustomDetents] = jotai.useAtom(customDetentsAtom);
 
-  function nextDetentLevel(currDetent: SheetDetentTypes): SheetDetentTypes {
+  function nextDetentLevel(
+    currDetent: SheetDetentTypes | number[],
+  ): SheetDetentTypes {
     if (currDetent === 'all') {
       return 'medium';
     } else if (currDetent === 'medium') {
       return 'large';
     } else if (currDetent === 'large') {
-      return 'custom';
-    } else if (currDetent === 'custom') {
       return 'all';
     } else {
       console.warn('Unhandled sheetDetent type');
