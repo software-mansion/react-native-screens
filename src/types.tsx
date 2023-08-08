@@ -269,7 +269,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform ios
    */
-  sheetAllowedDetents?: SheetDetentTypes | number[];
+  sheetAllowedDetents?: SheetDetentTypes;
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
