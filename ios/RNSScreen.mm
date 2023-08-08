@@ -22,6 +22,7 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
+#import "NSArray+RNSUtil.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -618,6 +619,38 @@ namespace react = facebook::react;
   if (@available(iOS 15.0, *)) {
     UISheetPresentationController *sheet = _controller.sheetPresentationController;
     if (_stackPresentation == RNSScreenStackPresentationFormSheet && sheet != nil) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+      if (_sheetCustomDetents.notEmpty) {
+        if (@available(iOS 16.0, *)) {
+          sheet.detents = [self detentsFromSnapPoints];
+        }
+      } else
+#endif // Check for iOS >= 16
+      {
+        if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
+          sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
+          if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
+            [sheet animateChanges:^{
+              sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
+            }];
+          }
+        } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
+          sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
+          if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
+            [sheet animateChanges:^{
+              sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
+            }];
+          }
+        } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
+          NSMutableArray<UISheetPresentationControllerDetent *> *detents = [NSMutableArray arrayWithArray:@[
+            UISheetPresentationControllerDetent.mediumDetent,
+            UISheetPresentationControllerDetent.largeDetent,
+          ]];
+          sheet.detents = detents;
+        }
+      }
+
       sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
       sheet.prefersGrabberVisible = _sheetGrabberVisible;
       sheet.preferredCornerRadius =
@@ -632,48 +665,13 @@ namespace react = facebook::react;
       } else {
         RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
       }
-
-      if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
-        sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
-        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
-          [sheet animateChanges:^{
-            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
-          }];
-        }
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
-        sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
-        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
-          [sheet animateChanges:^{
-            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-          }];
-        }
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeCustom) {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-        if (@available(iOS 16.0, *)) {
-          sheet.detents = [self detentsFromSnapPoints];
-        }
-#endif // Check for iOS >= 16
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
-        NSMutableArray<UISheetPresentationControllerDetent *> *detents = [NSMutableArray arrayWithArray:@[
-          UISheetPresentationControllerDetent.mediumDetent,
-          UISheetPresentationControllerDetent.largeDetent,
-        ]];
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-        if (@available(iOS 16.0, *)) {
-          //          [detents addObjectsFromArray:[self detentsFromSnapPoints]];
-        }
-#endif // Check for iOS >= 16
-        sheet.detents = detents;
-      } else {
-        RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
-      }
     }
   }
 #endif // Check for iOS >= 15
 }
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
 - (NSArray<UISheetPresentationControllerDetent *> *)detentsFromSnapPoints API_AVAILABLE(ios(16.0))
 {
   NSLog(@"RNSScreen detentsFromSnapPoints");
@@ -690,6 +688,7 @@ namespace react = facebook::react;
   }
   return customDetents;
 }
+#endif // Check for iOS >= 16
 
 #endif // !TARGET_OS_TV
 
@@ -1662,7 +1661,6 @@ RCT_ENUM_CONVERTER(
     (@{
       @"large" : @(RNSScreenDetentTypeLarge),
       @"medium" : @(RNSScreenDetentTypeMedium),
-      @"custom" : @(RNSScreenDetentTypeCustom),
       @"all" : @(RNSScreenDetentTypeAll),
     }),
     RNSScreenDetentTypeAll,
