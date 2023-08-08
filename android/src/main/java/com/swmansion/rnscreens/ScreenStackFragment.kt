@@ -27,6 +27,7 @@ import com.swmansion.rnscreens.ScreenStackHeaderConfig.HeaderType
 class ScreenStackFragment : ScreenFragment {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
+    private var mCollapsingToolbarLayout: CollapsingToolbarLayout? = null
     private var mToolbarType: HeaderType = HeaderType.Small
     private var mShadowHidden = false
     private var mIsTranslucent = false
@@ -62,6 +63,27 @@ class ScreenStackFragment : ScreenFragment {
                 Toolbar.LayoutParams.MATCH_PARENT,
                 R.attr.actionBarSize.resolveAttribute(toolbar.context)
             )
+
+            if (mCollapsingToolbarLayout == null) {
+                mCollapsingToolbarLayout = createCollapsingToolbarLayout()
+                mAppBarLayout?.addView(mCollapsingToolbarLayout)
+            }
+
+            mCollapsingToolbarLayout?.apply {
+                toolbar.let {
+                    background = it.background
+                    addView(recycleView(it))
+                }
+            }
+
+            mAppBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(toolbar.context)
+            )
+            mAppBarLayout?.apply {
+                toolbar.let {
+                    background = it.background
+                }
+            }
         }
 
         mToolbar = toolbar
@@ -120,7 +142,10 @@ class ScreenStackFragment : ScreenFragment {
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
 
-        val collapsingToolbarLayout = if (!mToolbarType.isCollapsing) null else createCollapsingToolbarLayout()
+        if (mCollapsingToolbarLayout == null) {
+            val collapsingToolbarLayout = if (!mToolbarType.isCollapsing) null else createCollapsingToolbarLayout()
+            mCollapsingToolbarLayout = collapsingToolbarLayout
+        }
 
         mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
             // By default AppBarLayout will have a background color set but since we cover the whole layout
@@ -134,7 +159,9 @@ class ScreenStackFragment : ScreenFragment {
             )
 
             fitsSystemWindows = true
-            collapsingToolbarLayout?.let { addView(recycleView(it)) }
+            if (mCollapsingToolbarLayout != null) {
+                mCollapsingToolbarLayout?.let { addView(recycleView(it)) }
+            }
         }
 
         view?.addView(mAppBarLayout)
@@ -174,10 +201,10 @@ class ScreenStackFragment : ScreenFragment {
             layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT)
                 .apply { scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED }
 
-            mToolbar?.let {
-                background = it.background
-                addView(recycleView(it))
-            }
+//            mToolbar?.let {
+//                background = it.background
+//                addView(recycleView(it))
+//            }
         }
 
         return collapsingToolbarLayout
@@ -252,7 +279,7 @@ class ScreenStackFragment : ScreenFragment {
     private fun getHeightOfToolbar(context: Context) = when (mToolbarType) {
         HeaderType.Medium -> R.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
         HeaderType.Large -> R.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
-        else -> AppBarLayout.LayoutParams.WRAP_CONTENT
+        else -> CoordinatorLayout.LayoutParams.WRAP_CONTENT
     }
 
     private fun Int.resolveAttribute(context: Context): Int {

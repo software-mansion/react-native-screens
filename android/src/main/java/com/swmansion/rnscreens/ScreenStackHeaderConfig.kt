@@ -113,12 +113,13 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             return null
         }
+    var didUpdateConfig = false
 
     fun onUpdate() {
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
 
-        if (!mIsAttachedToWindow || !isTop || mDestroyed) {
+        if ((!mIsAttachedToWindow && didUpdateConfig) || !isTop || mDestroyed) {
             return
         }
 
@@ -277,6 +278,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             toolbar.addView(view)
             i++
         }
+
+        didUpdateConfig = true
     }
 
     private fun maybeUpdate() {
