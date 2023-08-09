@@ -221,7 +221,7 @@ function SheetScreen({
   const [shouldExpand, setShouldExpand] = React.useState(true);
 
   function nextDetentLevel(
-    currDetent: SheetDetentTypes | number[],
+    currDetent: SheetDetentTypes | number[] | number,
   ): SheetDetentTypes {
     if (currDetent === 'all') {
       return 'medium';
@@ -230,7 +230,6 @@ function SheetScreen({
     } else if (currDetent === 'large') {
       return 'all';
     } else {
-      console.warn('Unhandled sheetDetent type');
       return 'all';
     }
   }

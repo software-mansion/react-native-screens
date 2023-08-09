@@ -16,28 +16,37 @@ import {
 import { SheetDetentTypes } from 'react-native-screens';
 import * as jotai from 'jotai';
 
+type SheetDetent = SheetDetentTypes | number[];
+
 type NavProp = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
 type SheetOptions = {
-  sheetAllowedDetents: SheetDetentTypes;
+  sheetAllowedDetents: SheetDetent;
   sheetLargestUndimmedDetent: SheetDetentTypes;
   sheetGrabberVisible: boolean;
   sheetCornerRadius: number;
   sheetExpandsWhenScrolledToEdge: boolean;
-  sheetCustomDetents: number[];
 };
 
 const Stack = createNativeStackNavigator();
 
 /// Sheet options
-const allowedDetentsAtom = jotai.atom<SheetDetentTypes>('custom');
-const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes>('large');
+// const allowedDetentsAtom = jotai.atom<SheetDetent>('all');
+// const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>('all');
+
+const allowedDetentsAtom = jotai.atom<SheetDetent>([
+  0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
+]);
+const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>(3);
+
+// const allowedDetentsAtom = jotai.atom<SheetDetent>([0.7]);
+// const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>(0);
+
 const grabberVisibleAtom = jotai.atom(false);
 const cornerRadiusAtom = jotai.atom(-1);
 const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
-const customDetentsAtom = jotai.atom<number[]>([0.3, 0.6, 0.85]);
 
 const sheetOptionsAtom = jotai.atom(
   get => ({
@@ -46,7 +55,6 @@ const sheetOptionsAtom = jotai.atom(
     sheetGrabberVisible: get(grabberVisibleAtom),
     sheetCornerRadius: get(cornerRadiusAtom),
     sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
-    sheetCustomDetents: get(customDetentsAtom),
   }),
   (_get, set, value: SheetOptions) => {
     set(allowedDetentsAtom, value.sheetAllowedDetents);
@@ -54,7 +62,6 @@ const sheetOptionsAtom = jotai.atom(
     set(grabberVisibleAtom, value.sheetGrabberVisible);
     set(cornerRadiusAtom, value.sheetCornerRadius);
     set(expandsWhenScrolledToEdgeAtom, value.sheetExpandsWhenScrolledToEdge);
-    set(customDetentsAtom, value.sheetCustomDetents);
   },
 );
 
@@ -148,19 +155,17 @@ function SheetScreen({ navigation }: NavProp) {
   const [cornerRadius, setCornerRadius] = jotai.useAtom(cornerRadiusAtom);
   const [expandsWhenScrolledToEdge, setExpandsWhenScrolledToEdge] =
     jotai.useAtom(expandsWhenScrolledToEdgeAtom);
-  // const [customDetents, setCustomDetents] = jotai.useAtom(customDetentsAtom);
 
-  function nextDetentLevel(currDetent: SheetDetentTypes): SheetDetentTypes {
+  function nextDetentLevel(
+    currDetent: SheetDetentTypes | number[] | number,
+  ): SheetDetentTypes {
     if (currDetent === 'all') {
       return 'medium';
     } else if (currDetent === 'medium') {
       return 'large';
     } else if (currDetent === 'large') {
-      return 'custom';
-    } else if (currDetent === 'custom') {
       return 'all';
     } else {
-      console.warn('Unhandled sheetDetent type');
       return 'all';
     }
   }
@@ -180,9 +185,6 @@ function SheetScreen({ navigation }: NavProp) {
         onPress={() => {
           const newRadius = cornerRadius >= 150 ? -1.0 : cornerRadius + 50;
           setCornerRadius(newRadius);
-          // navigation.setOptions({
-          //   sheetCornerRadius: newRadius,
-          // });
         }}
       />
       <Text>radius: {cornerRadius}</Text>
@@ -191,9 +193,6 @@ function SheetScreen({ navigation }: NavProp) {
         onPress={() => {
           const newDetentLevel = nextDetentLevel(allowedDetents);
           setAllowedDetents(newDetentLevel);
-          // navigation.setOptions({
-          //   sheetAllowedDetents: newDetentLevel,
-          // });
         }}
       />
       <Text>detent: {allowedDetents}</Text>
@@ -202,9 +201,6 @@ function SheetScreen({ navigation }: NavProp) {
         onPress={() => {
           const newDetentLevel = nextDetentLevel(largestUndimmedDetent);
           setLargestUndimmedDetent(newDetentLevel);
-          // navigation.setOptions({
-          //   sheetLargestUndimmedDetent: newDetentLevel,
-          // });
         }}
       />
       <Text>largestUndimmedDetent: {largestUndimmedDetent}</Text>
@@ -212,9 +208,6 @@ function SheetScreen({ navigation }: NavProp) {
         title="Toggle sheetExpandsWhenScrolledToEdge"
         onPress={() => {
           setExpandsWhenScrolledToEdge(!expandsWhenScrolledToEdge);
-          // navigation.setOptions({
-          //   sheetExpandsWhenScrolledToEdge: !expandsWhenScrolledToEdge,
-          // });
         }}
       />
       <Text>
@@ -225,9 +218,6 @@ function SheetScreen({ navigation }: NavProp) {
         title="Toggle grabber visibility"
         onPress={() => {
           setGrabberVisible(!grabberVisible);
-          // navigation.setOptions({
-          //   sheetGrabberVisible: !grabberVisible,
-          // });
         }}
       />
     </View>
