@@ -30,6 +30,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "sheetLargestUndimmedDetent":
         mViewManager.setSheetLargestUndimmedDetent(view, value == null ? -1 : ((Double) value).intValue());
         break;
+      case "sheetCustomLargestUndimmedDetent":
+        mViewManager.setSheetCustomLargestUndimmedDetent(view, value == null ? -1 : ((Double) value).intValue());
+        break;
       case "sheetGrabberVisible":
         mViewManager.setSheetGrabberVisible(view, value == null ? false : (boolean) value);
         break;
@@ -38,6 +41,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
         break;
       case "sheetExpandsWhenScrolledToEdge":
         mViewManager.setSheetExpandsWhenScrolledToEdge(view, value == null ? false : (boolean) value);
+        break;
+      case "sheetCustomDetents":
+        mViewManager.setSheetCustomDetents(view, (ReadableArray) value);
         break;
       case "customAnimationOnSwipe":
         mViewManager.setCustomAnimationOnSwipe(view, value == null ? false : (boolean) value);
