@@ -153,7 +153,7 @@
   }
 }
 
-+ (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
++ (NSMutableArray<NSNumber *> *)NSNumberMutableArrayFromFloatVector:(const std::vector<CGFloat> &)vector
 {
   NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
   for (CGFloat val : vector) {
