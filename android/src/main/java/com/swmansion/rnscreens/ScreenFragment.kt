@@ -197,7 +197,7 @@ open class ScreenFragment : Fragment {
                     ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
                     ScreenLifecycleEvent.Appear -> ScreenAppearEvent(surfaceId, it.id)
                     ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(it.id)
-                    ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(it.id)
+                    ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(surfaceId, it.id)
                 }
                 val screenContext = screen.context as ReactContext
                 val eventDispatcher: EventDispatcher? =
