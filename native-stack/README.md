@@ -232,7 +232,7 @@ Defaults to `pop`.
 Describes heights where a sheet can rest. 
 Works only when `stackPresentation` is set to `formSheet`.
 
-This prop can be set either to native value:
+This prop can be set either to string value:
 
 - `large` - only large detent level will be allowed (exact detent is defined by system)
 - `medium` - only medium detent level will be allowed (exact detent is defined by system)
