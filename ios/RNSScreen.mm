@@ -624,7 +624,7 @@ namespace react = facebook::react;
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
       if ([_sheetCustomDetents rns_isNotEmpty]) {
         if (@available(iOS 16.0, *)) {
-          sheet.detents = [self detentsFromSnapPoints];
+          sheet.detents = [self detentsFromMaxHeightFractions:_sheetCustomDetents];
         }
       } else
 #endif // Check for iOS >= 16
@@ -679,22 +679,21 @@ namespace react = facebook::react;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromSnapPoints API_AVAILABLE(ios(16.0))
+- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
+    API_AVAILABLE(ios(16.0))
 {
-  NSLog(@"RNSScreen detentsFromSnapPoints");
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
-      [NSMutableArray arrayWithCapacity:_sheetCustomDetents.count];
-  NSInteger i = 0;
-  for (NSNumber *val in _sheetCustomDetents) {
-    NSString *ident = [[NSNumber numberWithInteger:i] stringValue];
-    NSLog(@"RNSScreen detentsFromSnapPoints considering detent %f with name %@", val.floatValue, ident);
+      [NSMutableArray arrayWithCapacity:fractions.count];
+  int detentIndex = 0;
+  for (NSNumber *frac in fractions) {
+    NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     return ctx.maximumDetentValue * val.floatValue;
+                                                     return ctx.maximumDetentValue * frac.floatValue;
                                                    }]];
-    ++i;
+    ++detentIndex;
   }
   return customDetents;
 }
