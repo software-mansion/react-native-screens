@@ -656,8 +656,9 @@ namespace react = facebook::react;
       sheet.preferredCornerRadius =
           _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
 
-      if (_sheetCustomLargestUndimmedDetent != nil && [_sheetCustomDetents rns_isNotEmpty]) {
-        if (_sheetCustomLargestUndimmedDetent.intValue < _sheetCustomDetents.count) {
+      int detentIndex = _sheetCustomLargestUndimmedDetent != nil ? _sheetCustomLargestUndimmedDetent.intValue : -1;
+      if (detentIndex != -1 && [_sheetCustomDetents rns_isNotEmpty]) {
+        if (detentIndex >= 0 && detentIndex < _sheetCustomDetents.count) {
           sheet.largestUndimmedDetentIdentifier = _sheetCustomLargestUndimmedDetent.stringValue;
         } else {
           sheet.largestUndimmedDetentIdentifier = nil;
