@@ -192,9 +192,10 @@ open class ScreenFragment : Fragment {
         if (fragment is ScreenStackFragment && fragment.canDispatchEvent(event)) {
             fragment.screen.let {
                 fragment.setLastEventDispatched(event)
+                val surfaceId = UIManagerHelper.getSurfaceId(it)
                 val lifecycleEvent: Event<*> = when (event) {
                     ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
-                    ScreenLifecycleEvent.Appear -> ScreenAppearEvent(it.id)
+                    ScreenLifecycleEvent.Appear -> ScreenAppearEvent(surfaceId, it.id)
                     ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(it.id)
                     ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(it.id)
                 }
