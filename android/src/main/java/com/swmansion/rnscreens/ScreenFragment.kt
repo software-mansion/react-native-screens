@@ -215,9 +215,10 @@ open class ScreenFragment : Fragment {
 
     fun dispatchHeaderBackButtonClickedEvent() {
         val screenContext = screen.context as ReactContext
+        val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
         UIManagerHelper
             .getEventDispatcherForReactTag(screenContext, screen.id)
-            ?.dispatchEvent(HeaderBackButtonClickedEvent(screen.id))
+            ?.dispatchEvent(HeaderBackButtonClickedEvent(surfaceId, screen.id))
     }
 
     fun dispatchTransitionProgress(alpha: Float, closing: Boolean) {
