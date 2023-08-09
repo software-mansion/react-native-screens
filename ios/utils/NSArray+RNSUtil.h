@@ -4,8 +4,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSArray (RNSUtil)
 
-@property (nonatomic, readonly, getter=isEmpty) BOOL empty;
-@property (nonatomic, readonly, getter=isNotEmpty) BOOL notEmpty;
+- (BOOL)rns_isEmpty;
+- (BOOL)rns_isNotEmpty;
 
 @end
 
