@@ -143,6 +143,7 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+
 ### `sheetAllowedDetents` (iOS only)
 
 Describes heights where a sheet can rest. 
