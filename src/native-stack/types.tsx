@@ -379,7 +379,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform ios
    */
-  sheetLargestUndimmedDetent?: SheetDetentTypes;
+  sheetLargestUndimmedDetent?: SheetDetentTypes | number;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
