@@ -194,9 +194,9 @@ open class ScreenFragment : Fragment {
                 fragment.setLastEventDispatched(event)
                 val surfaceId = UIManagerHelper.getSurfaceId(it)
                 val lifecycleEvent: Event<*> = when (event) {
-                    ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
+                    ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(surfaceId, it.id)
                     ScreenLifecycleEvent.Appear -> ScreenAppearEvent(surfaceId, it.id)
-                    ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(it.id)
+                    ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(surfaceId, it.id)
                     ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(surfaceId, it.id)
                 }
                 val screenContext = screen.context as ReactContext
@@ -239,6 +239,7 @@ open class ScreenFragment : Fragment {
                     .getEventDispatcherForReactTag(screenContext, screen.id)
                     ?.dispatchEvent(
                         ScreenTransitionProgressEvent(
+                            UIManagerHelper.getSurfaceId(screenContext),
                             screen.id, mProgress, closing, goingForward, coalescingKey
                         )
                     )

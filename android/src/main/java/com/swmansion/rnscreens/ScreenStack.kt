@@ -64,9 +64,10 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
     }
 
     private fun dispatchOnFinishTransitioning() {
+        val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper
             .getEventDispatcherForReactTag((context as ReactContext), id)
-            ?.dispatchEvent(StackFinishTransitioningEvent(id))
+            ?.dispatchEvent(StackFinishTransitioningEvent(surfaceId, id))
     }
 
     override fun removeScreenAt(index: Int) {

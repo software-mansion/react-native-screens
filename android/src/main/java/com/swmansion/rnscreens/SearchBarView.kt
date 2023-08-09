@@ -101,23 +101,23 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     }
 
     private fun handleTextChange(newText: String?) {
-        sendEvent(SearchBarChangeTextEvent(id, newText))
+        sendEvent(SearchBarChangeTextEvent(surfaceId, id, newText))
     }
 
     private fun handleFocusChange(hasFocus: Boolean) {
-        sendEvent(if (hasFocus) SearchBarFocusEvent(id) else SearchBarBlurEvent(id))
+        sendEvent(if (hasFocus) SearchBarFocusEvent(surfaceId, id) else SearchBarBlurEvent(surfaceId, id))
     }
 
     private fun handleClose() {
-        sendEvent(SearchBarCloseEvent(id))
+        sendEvent(SearchBarCloseEvent(surfaceId, id))
     }
 
     private fun handleOpen() {
-        sendEvent(SearchBarOpenEvent(id))
+        sendEvent(SearchBarOpenEvent(surfaceId, id))
     }
 
     private fun handleTextSubmit(newText: String?) {
-        sendEvent(SearchBarSearchButtonPressEvent(id, newText))
+        sendEvent(SearchBarSearchButtonPressEvent(surfaceId, id, newText))
     }
 
     private fun sendEvent(event: Event<*>) {
@@ -143,6 +143,8 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     fun handleSetTextJsRequest(text: String?) {
         text?.let { screenStackFragment?.searchView?.setText(it) }
     }
+
+    private val surfaceId = UIManagerHelper.getSurfaceId(this)
 
     enum class SearchBarAutoCapitalize {
         NONE, WORDS, SENTENCES, CHARACTERS
