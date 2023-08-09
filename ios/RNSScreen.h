@@ -87,6 +87,7 @@ namespace react = facebook::react;
 // Props controlling UISheetPresentationController
 @property (nonatomic) RNSScreenDetentType sheetAllowedDetents;
 @property (nonatomic) RNSScreenDetentType sheetLargestUndimmedDetent;
+@property (nonatomic) NSNumber *sheetCustomLargestUndimmedDetent;
 @property (nonatomic) BOOL sheetGrabberVisible;
 @property (nonatomic) CGFloat sheetCornerRadius;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
