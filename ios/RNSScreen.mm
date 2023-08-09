@@ -830,9 +830,14 @@ namespace react = facebook::react;
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
-  if (_stackPresentation == RNSScreenStackPresentationFormSheet &&
-      newScreenProps.sheetCustomDetents != oldScreenProps.sheetCustomDetents) {
-    [self setSheetCustomDetents:[RNSConvert arrayFromVector:newScreenProps.sheetCustomDetents]];
+  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
+    if (newScreenProps.sheetCustomDetents != oldScreenProps.sheetCustomDetents) {
+      [self setSheetCustomDetents:[RNSConvert arrayFromVector:newScreenProps.sheetCustomDetents]];
+    }
+    if (newScreenProps.sheetCustomLargestUndimmedDetent != oldScreenProps.sheetCustomLargestUndimmedDetent) {
+      [self
+          setSheetCustomLargestUndimmedDetent:[NSNumber numberWithInt:newScreenProps.sheetCustomLargestUndimmedDetent]];
+    }
   }
 
   [super updateProps:props oldProps:oldProps];
