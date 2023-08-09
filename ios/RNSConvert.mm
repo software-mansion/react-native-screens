@@ -110,8 +110,6 @@
       return RNSScreenDetentTypeAll;
     case react::RNSScreenSheetLargestUndimmedDetent::Large:
       return RNSScreenDetentTypeLarge;
-    case react::RNSScreenSheetLargestUndimmedDetent::Custom:
-      return RNSScreenDetentTypeCustom;
     case react::RNSScreenSheetLargestUndimmedDetent::Medium:
       return RNSScreenDetentTypeMedium;
   }
