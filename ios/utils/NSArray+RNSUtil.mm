@@ -2,12 +2,12 @@
 
 @implementation NSArray (RNSUtil)
 
-- (BOOL)isEmpty
+- (BOOL)rns_isEmpty
 {
   return self.count == 0;
 }
 
-- (BOOL)isNotEmpty
+- (BOOL)rns_isNotEmpty
 {
   return self.count > 0;
 }
