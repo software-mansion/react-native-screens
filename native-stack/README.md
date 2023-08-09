@@ -278,7 +278,7 @@ If this prop is set to:
 - `medium` - the view underneath will be dimmed only when detent level is `large`
 - `all` - the view underneath will be dimmed for any detent level
 
-In case `sheetAllowedDetents` prop is set to an array of numbers A, this prop can be set to an index of array A,
+In case `sheetAllowedDetents` prop is set to an array of numbers, this prop can be set to an index of that array,
 indicating last detent level without dimming view underneath.
 
 Defaults to `all`.
