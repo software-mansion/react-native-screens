@@ -296,9 +296,10 @@ open class ScreenFragment : Fragment {
             // we only send dismissed even when the screen has been removed from its container
             val screenContext = screen.context
             if (screenContext is ReactContext) {
+                val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
                 UIManagerHelper
                     .getEventDispatcherForReactTag(screenContext, screen.id)
-                    ?.dispatchEvent(ScreenDismissedEvent(screen.id))
+                    ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
             }
         }
         mChildScreenContainers.clear()
