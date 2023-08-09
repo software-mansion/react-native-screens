@@ -157,7 +157,7 @@ function SheetScreen({ navigation }: NavProp) {
     jotai.useAtom(expandsWhenScrolledToEdgeAtom);
 
   function nextDetentLevel(
-    currDetent: SheetDetentTypes | number[],
+    currDetent: SheetDetentTypes | number[] | number,
   ): SheetDetentTypes {
     if (currDetent === 'all') {
       return 'medium';
@@ -166,7 +166,6 @@ function SheetScreen({ navigation }: NavProp) {
     } else if (currDetent === 'large') {
       return 'all';
     } else {
-      console.warn('Unhandled sheetDetent type');
       return 'all';
     }
   }
@@ -186,9 +185,6 @@ function SheetScreen({ navigation }: NavProp) {
         onPress={() => {
           const newRadius = cornerRadius >= 150 ? -1.0 : cornerRadius + 50;
           setCornerRadius(newRadius);
-          // navigation.setOptions({
-          //   sheetCornerRadius: newRadius,
-          // });
         }}
       />
       <Text>radius: {cornerRadius}</Text>
@@ -197,9 +193,6 @@ function SheetScreen({ navigation }: NavProp) {
         onPress={() => {
           const newDetentLevel = nextDetentLevel(allowedDetents);
           setAllowedDetents(newDetentLevel);
-          // navigation.setOptions({
-          //   sheetAllowedDetents: newDetentLevel,
-          // });
         }}
       />
       <Text>detent: {allowedDetents}</Text>
@@ -208,9 +201,6 @@ function SheetScreen({ navigation }: NavProp) {
         onPress={() => {
           const newDetentLevel = nextDetentLevel(largestUndimmedDetent);
           setLargestUndimmedDetent(newDetentLevel);
-          // navigation.setOptions({
-          //   sheetLargestUndimmedDetent: newDetentLevel,
-          // });
         }}
       />
       <Text>largestUndimmedDetent: {largestUndimmedDetent}</Text>
@@ -218,9 +208,6 @@ function SheetScreen({ navigation }: NavProp) {
         title="Toggle sheetExpandsWhenScrolledToEdge"
         onPress={() => {
           setExpandsWhenScrolledToEdge(!expandsWhenScrolledToEdge);
-          // navigation.setOptions({
-          //   sheetExpandsWhenScrolledToEdge: !expandsWhenScrolledToEdge,
-          // });
         }}
       />
       <Text>
@@ -231,9 +218,6 @@ function SheetScreen({ navigation }: NavProp) {
         title="Toggle grabber visibility"
         onPress={() => {
           setGrabberVisible(!grabberVisible);
-          // navigation.setOptions({
-          //   sheetGrabberVisible: !grabberVisible,
-          // });
         }}
       />
     </View>
