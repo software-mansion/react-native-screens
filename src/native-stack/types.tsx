@@ -327,13 +327,19 @@ export type NativeStackNavigationOptions = {
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * This prop can be set either to native value:
+   *
+   * - `large` - only large detent level will be allowed (exact detent is defined by system)
+   * - `medium` - only medium detent level will be allowed (exact detent is defined by system)
+   * - `all` - all detent levels will be allowed (exact detents are defined by system)
+   *
+   * or to an array of real numbers in range [0, 1], each of which describes detent
+   * as a fraction of maximum detent height.
+   *
+   * Please note that the array *must* be sorted in ascending order.
+   *
    * Defaults to `large`.
-   *
-   * Available values:
-   *
-   * - `large` - only large detent level will be allowed
-   * - `medium` - only medium detent level will be allowed
-   * - `all` - all detent levels will be allowed
    *
    * @platform ios
    */
@@ -374,6 +380,9 @@ export type NativeStackNavigationOptions = {
    * - `large` - the view underneath won't be dimmed at any detent level
    * - `medium` - the view underneath will be dimmed only when detent level is `large`
    * - `all` - the view underneath will be dimmed for any detent level
+   *
+   * In case `sheetAllowedDetents` prop is set to an array of numbers A, this prop can be set to an index of array A,
+   * indicating last detent level without dimming view underneath.
    *
    * Defaults to `all`.
    *
