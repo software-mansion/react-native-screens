@@ -49,9 +49,6 @@ public class RNSScreenStackHeaderConfigManagerDelegate<T extends View, U extends
       case "hideShadow":
         mViewManager.setHideShadow(view, value == null ? false : (boolean) value);
         break;
-      case "type":
-        mViewManager.setType(view, value == null ? null : (String) value);
-        break;
       case "largeTitle":
         mViewManager.setLargeTitle(view, value == null ? false : (boolean) value);
         break;

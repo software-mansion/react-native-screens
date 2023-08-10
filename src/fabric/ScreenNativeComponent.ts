@@ -54,6 +54,8 @@ type ReplaceAnimation = 'pop' | 'push';
 
 type SheetDetentTypes = 'large' | 'medium' | 'all';
 
+type HeaderType = 'center-aligned' | 'small' | 'medium' | 'large';
+
 export interface NativeProps extends ViewProps {
   onAppear?: BubblingEventHandler<ScreenEvent>;
   onDisappear?: BubblingEventHandler<ScreenEvent>;
@@ -90,6 +92,7 @@ export interface NativeProps extends ViewProps {
   navigationBarColor?: ColorValue;
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
+  headerType?: WithDefault<HeaderType, 'small'>;
   onHeaderBackButtonClicked?: BubblingEventHandler<ScreenEvent>;
 }
 

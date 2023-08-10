@@ -22,7 +22,6 @@ public interface RNSScreenStackHeaderConfigManagerInterface<T extends View> {
   void setDirection(T view, @Nullable String value);
   void setHidden(T view, boolean value);
   void setHideShadow(T view, boolean value);
-  void setType(T view, @Nullable String value);
   void setLargeTitle(T view, boolean value);
   void setLargeTitleFontFamily(T view, @Nullable String value);
   void setLargeTitleFontSize(T view, int value);

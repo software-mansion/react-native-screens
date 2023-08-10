@@ -26,6 +26,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     var isGestureEnabled = true
     var screenOrientation: Int? = null
         private set
+    var headerType = HeaderType.Small
     private var mStatusBarStyle: String? = null
     private var mStatusBarHidden: Boolean? = null
     private var mStatusBarTranslucent: Boolean? = null
@@ -254,5 +255,12 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
+    }
+
+    enum class HeaderType(val isCollapsing: Boolean) {
+        CenterAligned(false),
+        Small(false),
+        Medium(true),
+        Large(true);
     }
 }

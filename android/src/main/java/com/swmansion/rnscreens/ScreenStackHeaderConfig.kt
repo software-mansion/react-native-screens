@@ -113,13 +113,12 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             return null
         }
-    var didUpdateConfig = false
 
     fun onUpdate() {
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
 
-        if ((!mIsAttachedToWindow && didUpdateConfig) || !isTop || mDestroyed) {
+        if (!mIsAttachedToWindow || !isTop || mDestroyed) {
             return
         }
 
@@ -145,9 +144,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }
-
-        // header type
-        mHeaderType?.let { screenFragment?.setToolbarType(it) }
 
         if (mIsHidden) {
             if (toolbar.parent != null) {
@@ -278,8 +274,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             toolbar.addView(view)
             i++
         }
-
-        didUpdateConfig = true
     }
 
     private fun maybeUpdate() {
@@ -319,10 +313,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             return null
         }
-
-    fun setHeaderType(headerType: String?) {
-        mHeaderType = headerType
-    }
 
     fun setTitle(title: String?) {
         mTitle = title
@@ -378,13 +368,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     fun setDirection(direction: String?) {
         mDirection = direction
-    }
-
-    enum class HeaderType(val isCollapsing: Boolean) {
-        CenterAligned(false),
-        Small(false),
-        Medium(true),
-        Large(true);
     }
 
     private class DebugMenuToolbar(context: Context, config: ScreenStackHeaderConfig) : CustomToolbar(context, config) {

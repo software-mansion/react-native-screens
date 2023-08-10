@@ -182,6 +182,13 @@ export interface ScreenProps extends ViewProps {
    */
   onGestureCancel?: (e: NativeSyntheticEvent<null>) => void;
   /**
+   * Indicates which type the header should be. Defaults to `small`.
+   * Only supported on Android.
+   *
+   * @platform android
+   */
+  headerType?: 'center-aligned' | 'small' | 'medium' | 'large';
+  /**
    * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
    * @platform android

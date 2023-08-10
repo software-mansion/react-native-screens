@@ -59,11 +59,6 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
         parent.onUpdate()
     }
 
-    @ReactProp(name = "type")
-    override fun setType(config: ScreenStackHeaderConfig, type: String?) {
-        config.setHeaderType(type)
-    }
-
     @ReactProp(name = "title")
     override fun setTitle(config: ScreenStackHeaderConfig, title: String?) {
         config.setTitle(title)
