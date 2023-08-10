@@ -524,9 +524,6 @@ namespace react = facebook::react;
     prevItem.backButtonTitle = resolvedBackTitle;
   }
   prevItem.backBarButtonItem = backBarButtonItem;
-  //  if (shouldHide) {
-  //    return;
-  //  }
 
   if (@available(iOS 11.0, *)) {
     if (config.largeTitle) {
