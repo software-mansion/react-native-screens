@@ -64,7 +64,7 @@
 
     // If RNSScreen includes a navigation controller of type RNScreensNavigationController, it should not calculate
     // header height, as it could have nested stack.
-    if (!(screenController.childViewControllers.count > 0 && screenController.hasAnyChildNavigators)) {
+    if (!(screenController.childViewControllers.count > 0 && screenController.hasNestedStack)) {
       [(RNSScreen *)self.topViewController calculateHeaderHeightIsModal:NO];
     }
   }

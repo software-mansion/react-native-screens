@@ -1034,7 +1034,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 // Checks whether this screen has any child view controllers of type RNScreensNavigationController.
 // Useful for checking if this screen has nested stack or is displayed at the top.
-- (BOOL)hasAnyChildNavigators
+- (BOOL)hasNestedStack
 {
   for (UIViewController *vc in self.childViewControllers) {
     if ([vc isKindOfClass:[RNSNavigationController class]]) {
