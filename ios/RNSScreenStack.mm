@@ -59,6 +59,7 @@
 
 - (void)viewDidLayoutSubviews
 {
+  [super viewDidLayoutSubviews];
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
 
