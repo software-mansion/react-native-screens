@@ -50,22 +50,13 @@ const grabberVisibleAtom = jotai.atom(false);
 const cornerRadiusAtom = jotai.atom(-1);
 const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
 
-const sheetOptionsAtom = jotai.atom(
-  get => ({
-    sheetAllowedDetents: get(allowedDetentsAtom),
-    sheetLargestUndimmedDetent: get(largestUndimmedDetentAtom),
-    sheetGrabberVisible: get(grabberVisibleAtom),
-    sheetCornerRadius: get(cornerRadiusAtom),
-    sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
-  }),
-  (_get, set, value: SheetOptions) => {
-    set(allowedDetentsAtom, value.sheetAllowedDetents);
-    set(largestUndimmedDetentAtom, value.sheetLargestUndimmedDetent);
-    set(grabberVisibleAtom, value.sheetGrabberVisible);
-    set(cornerRadiusAtom, value.sheetCornerRadius);
-    set(expandsWhenScrolledToEdgeAtom, value.sheetExpandsWhenScrolledToEdge);
-  },
-);
+const sheetOptionsAtom = jotai.atom(get => ({
+  sheetAllowedDetents: get(allowedDetentsAtom),
+  sheetLargestUndimmedDetent: get(largestUndimmedDetentAtom),
+  sheetGrabberVisible: get(grabberVisibleAtom),
+  sheetCornerRadius: get(cornerRadiusAtom),
+  sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
+}));
 
 const Stack = createNativeStackNavigator();
 
@@ -220,15 +211,15 @@ function SheetScreen({
   const [isGrabberVisible, setIsGrabberVisible] = React.useState(false);
   const [shouldExpand, setShouldExpand] = React.useState(true);
 
-  function nextDetentLevel(
-    currDetent: SheetDetentTypes | number[] | number,
-  ): SheetDetentTypes {
-    if (currDetent === 'all') {
-      return 'medium';
-    } else if (currDetent === 'medium') {
-      return 'large';
-    } else if (currDetent === 'large') {
+  function nextDetentLevel(detent: SheetDetent): SheetDetent {
+    if (Array.isArray(detent)) {
       return 'all';
+    } else if (detent === 'all') {
+      return 'medium';
+    } else if (detent === 'medium') {
+      return 'large';
+    } else if (detent === 'large') {
+      return initialAllowedDetentsArray;
     } else {
       return 'all';
     }
