@@ -484,6 +484,7 @@ namespace react = facebook::react;
   }
 
   if (shouldHide) {
+    navitem.title = config.title;
     return;
   }
 
