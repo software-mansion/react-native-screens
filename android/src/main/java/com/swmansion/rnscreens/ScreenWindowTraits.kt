@@ -117,7 +117,7 @@ object ScreenWindowTraits {
                         ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
                             val defaultInsets = ViewCompat.onApplyWindowInsets(v, insets)
 
-                            if (Build.VERSION.SDK_INT >= 30) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                                 val windowInsets =
                                     defaultInsets.getInsets(WindowInsetsCompat.Type.statusBars())
 
@@ -133,6 +133,8 @@ object ScreenWindowTraits {
                                         )
                                     )
                                     .build()
+
+                                insets
                             } else {
                                 defaultInsets.replaceSystemWindowInsets(
                                     defaultInsets.systemWindowInsetLeft,
