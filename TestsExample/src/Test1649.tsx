@@ -13,33 +13,26 @@ import {
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
-import { SheetDetentTypes } from 'react-native-screens';
 import * as jotai from 'jotai';
 
-type SheetDetent = SheetDetentTypes | number[];
+type SheetDetent = NativeStackNavigationOptions['sheetAllowedDetents'];
+type SheetUndimmedDetent =
+  NativeStackNavigationOptions['sheetLargestUndimmedDetent'];
 
 type NavProp = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
-type SheetOptions = {
-  sheetAllowedDetents: SheetDetent;
-  sheetLargestUndimmedDetent: SheetDetentTypes;
-  sheetGrabberVisible: boolean;
-  sheetCornerRadius: number;
-  sheetExpandsWhenScrolledToEdge: boolean;
-};
-
 const Stack = createNativeStackNavigator();
+
+const initialAllowedDetentsArray = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
 
 /// Sheet options
 // const allowedDetentsAtom = jotai.atom<SheetDetent>('all');
 // const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>('all');
 
-const allowedDetentsAtom = jotai.atom<SheetDetent>([
-  0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-]);
-const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>(3);
+const allowedDetentsAtom = jotai.atom<SheetDetent>(initialAllowedDetentsArray);
+const largestUndimmedDetentAtom = jotai.atom<SheetUndimmedDetent>(3);
 
 // const allowedDetentsAtom = jotai.atom<SheetDetent>([0.7]);
 // const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>(0);
@@ -48,22 +41,13 @@ const grabberVisibleAtom = jotai.atom(false);
 const cornerRadiusAtom = jotai.atom(-1);
 const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
 
-const sheetOptionsAtom = jotai.atom(
-  get => ({
-    sheetAllowedDetents: get(allowedDetentsAtom),
-    sheetLargestUndimmedDetent: get(largestUndimmedDetentAtom),
-    sheetGrabberVisible: get(grabberVisibleAtom),
-    sheetCornerRadius: get(cornerRadiusAtom),
-    sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
-  }),
-  (_get, set, value: SheetOptions) => {
-    set(allowedDetentsAtom, value.sheetAllowedDetents);
-    set(largestUndimmedDetentAtom, value.sheetLargestUndimmedDetent);
-    set(grabberVisibleAtom, value.sheetGrabberVisible);
-    set(cornerRadiusAtom, value.sheetCornerRadius);
-    set(expandsWhenScrolledToEdgeAtom, value.sheetExpandsWhenScrolledToEdge);
-  },
-);
+const sheetOptionsAtom = jotai.atom(get => ({
+  sheetAllowedDetents: get(allowedDetentsAtom),
+  sheetLargestUndimmedDetent: get(largestUndimmedDetentAtom),
+  sheetGrabberVisible: get(grabberVisibleAtom),
+  sheetCornerRadius: get(cornerRadiusAtom),
+  sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
+}));
 
 export default function App(): JSX.Element {
   const sheetOptions = jotai.useAtomValue(sheetOptionsAtom);
@@ -156,17 +140,37 @@ function SheetScreen({ navigation }: NavProp) {
   const [expandsWhenScrolledToEdge, setExpandsWhenScrolledToEdge] =
     jotai.useAtom(expandsWhenScrolledToEdgeAtom);
 
-  function nextDetentLevel(
-    currDetent: SheetDetentTypes | number[] | number,
-  ): SheetDetentTypes {
-    if (currDetent === 'all') {
-      return 'medium';
-    } else if (currDetent === 'medium') {
-      return 'large';
-    } else if (currDetent === 'large') {
+  function nextDetentLevel(detent: SheetDetent): SheetDetent {
+    if (Array.isArray(detent)) {
       return 'all';
+    } else if (detent === 'all') {
+      return 'medium';
+    } else if (detent === 'medium') {
+      return 'large';
+    } else if (detent === 'large') {
+      return initialAllowedDetentsArray;
     } else {
       return 'all';
+    }
+  }
+
+  function nextUndimmedDetentLevel(
+    detent: SheetUndimmedDetent,
+  ): SheetUndimmedDetent {
+    if (typeof detent === 'number') {
+      if (Array.isArray(allowedDetents) && detent + 1 < allowedDetents.length) {
+        return detent + 1;
+      } else {
+        return 'all';
+      }
+    } else if (detent === 'large') {
+      if (Array.isArray(allowedDetents)) {
+        return 0;
+      } else {
+        return 'all';
+      }
+    } else {
+      return nextDetentLevel(detent);
     }
   }
 
@@ -199,7 +203,7 @@ function SheetScreen({ navigation }: NavProp) {
       <Button
         title="Change largest undimmed detent"
         onPress={() => {
-          const newDetentLevel = nextDetentLevel(largestUndimmedDetent);
+          const newDetentLevel = nextUndimmedDetentLevel(largestUndimmedDetent);
           setLargestUndimmedDetent(newDetentLevel);
         }}
       />
