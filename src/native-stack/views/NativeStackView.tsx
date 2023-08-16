@@ -321,7 +321,6 @@ const RouteView = ({
           data: { closing: false },
           target: route.key,
         });
-        console.log('My height: ', animatedHeaderHeight);
       }}
       onDisappear={() => {
         navigation.emit({

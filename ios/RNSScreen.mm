@@ -1013,6 +1013,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // screen size
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
 
+  // Calculate header height on modal open
   if (self.screenView.isPresentedAsNativeModal) {
     [self calculateHeaderHeightIsModal:YES];
   }
@@ -1027,12 +1028,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
 #endif
   }
-}
-
-- (void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)())completion
-{
-  [super dismissViewControllerAnimated:flag completion:completion];
-  [self calculateHeaderHeightIsModal:self.screenView.isPresentedAsNativeModal];
 }
 
 // Checks whether this screen has any child view controllers of type RNScreensNavigationController.
