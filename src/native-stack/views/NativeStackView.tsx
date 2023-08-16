@@ -248,9 +248,11 @@ const RouteView = ({
   // We're caching the header height here, as on iOS native side events are not always coming to the JS on first notify.
   // TODO: Check why first event is not being received once it is cached on the native side.
   const cachedAnimatedHeaderHeight = React.useRef(statusBarHeight);
-  const animatedHeaderHeight = new Animated.Value(staticHeaderHeight, {
-    useNativeDriver: true,
-  });
+  const animatedHeaderHeight = React.useRef(
+    new Animated.Value(staticHeaderHeight, {
+      useNativeDriver: true,
+    })
+  ).current;
 
   const Screen = React.useContext(ScreenContext);
 
@@ -319,6 +321,7 @@ const RouteView = ({
           data: { closing: false },
           target: route.key,
         });
+        console.log('My height: ', animatedHeaderHeight);
       }}
       onDisappear={() => {
         navigation.emit({
