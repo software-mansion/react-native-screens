@@ -926,8 +926,39 @@ namespace react = facebook::react;
   // any attempt of setting that via React props
 }
 
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(
+      @"RNSScreen: %p Will set native frame: O(%.2lf, %.2lf) S(%.2lf, %.2lf)",
+      self->_controller,
+      frame.origin.x,
+      frame.origin.y,
+      frame.size.width,
+      frame.size.height);
+  [super setFrame:frame];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+  NSLog(
+      @"RNSScreen: %p Will set native bounds: S(%.2lf, %.2lf)",
+      self->_controller,
+      bounds.size.width,
+      bounds.size.height);
+  [super setBounds:bounds];
+}
+
 - (void)reactSetFrame:(CGRect)frame
 {
+  NSLog(
+      @"RNSScreen: %p Frame received from React: O(%.2lf, %.2lf) S(%.2lf, %.2lf) with actual origin O(%.2lf, %.2lf)",
+      self->_controller,
+      frame.origin.x,
+      frame.origin.y,
+      frame.size.width,
+      frame.size.height,
+      self.frame.origin.x,
+      self.frame.origin.y);
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
@@ -1119,6 +1150,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
 #else
+    if (self.screenView.frame.origin.y > 0) {
+      NSLog(
+          @"RNSScreen: %p Old frame: O(%.2lf, %.2lf) S(%.2lf, %.2lf) New frame: O(%.2lf, %.2lf) S(%.2lf, %.2lf)",
+          self,
+          _lastViewFrame.origin.x,
+          _lastViewFrame.origin.y,
+          _lastViewFrame.size.width,
+          _lastViewFrame.size.height,
+          self.screenView.frame.origin.x,
+          self.screenView.frame.origin.y,
+          self.screenView.frame.size.width,
+          self.screenView.frame.size.height);
+    }
     if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
       _lastViewFrame = self.screenView.frame;
       [((RNSScreenView *)self.viewIfLoaded) updateBounds];
