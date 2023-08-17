@@ -31,9 +31,9 @@ namespace react = facebook::react;
 
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
-    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
+    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
 #else
-    <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
+    <UIAdaptivePresentationControllerDelegate, RCTInvalidating, CAAnimationDelegate>
 #endif
 @end
 
@@ -115,8 +115,48 @@ namespace react = facebook::react;
     [navctr.view setNeedsLayout];
   }
 #else
-  [_bridge.uiManager setSize:self.bounds.size forView:self];
+
+  if ([self.layer.animationKeys count] != 0) {
+    UIView *sth =
+        [[[[[[[[[[[[[[[self.subviews objectAtIndex:0] subviews] objectAtIndex:0] subviews] objectAtIndex:0] subviews]
+            objectAtIndex:0] subviews] objectAtIndex:0] subviews] objectAtIndex:0] subviews] objectAtIndex:0] subviews]
+            objectAtIndex:0];
+    UIView *s = [self.subviews objectAtIndex:0];
+    for (int i = 0; i < 8; i++) {
+      NSLog(@"Lvl %d -> %@", i, s);
+      s = [s.subviews objectAtIndex:0];
+    }
+    //    NSLog(@"Update Bounds %@ %@ %@", self, self.layer.animationKeys, sth);
+  }
+  //  CGSize size = self.bounds.size;
+  //  if (self.layer.presentationLayer) {
+  //    size = self.layer.presentationLayer.bounds.size;
+  //  }
+  CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
+  if (sizeAnimation && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
+    CABasicAnimation *another = [CABasicAnimation new];
+    another.duration = sizeAnimation.duration;
+    another.beginTime = sizeAnimation.beginTime;
+    another.delegate = self;
+    [self.layer addAnimation:another forKey:@"blablabla"];
+    //    sizeAnimation.
+    //    sizeAnimation.delegate = self;
+  } else {
+    [_bridge.uiManager setSize:self.bounds.size forView:self];
+  }
+
+//  } else {
+//    CAAnimation *animation = [self.layer animationForKey:@"sdkjhf"];
+//    animation.dele
+//  }
 #endif
+}
+
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)finished
+{
+  if (finished) {
+    [self updateBounds];
+  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
@@ -929,13 +969,18 @@ namespace react = facebook::react;
 - (void)setFrame:(CGRect)frame
 {
   NSLog(
-      @"RNSScreen: %p Will set native frame: O(%.2lf, %.2lf) S(%.2lf, %.2lf)",
+      @"RNSScreen: %p Will set native frame: O(%.2lf, %.2lf) S(%.2lf, %.2lf) %@",
       self->_controller,
       frame.origin.x,
       frame.origin.y,
       frame.size.width,
-      frame.size.height);
+      frame.size.height,
+      self.layer.animationKeys);
+  //  if ([self.layer.animationKeys count] == 0) {
+  //  if (abs(frame.size.height - 655.67) > 0.1) {
   [super setFrame:frame];
+  //  }
+  //  }
 }
 
 - (void)setBounds:(CGRect)bounds
@@ -946,6 +991,12 @@ namespace react = facebook::react;
       bounds.size.width,
       bounds.size.height);
   [super setBounds:bounds];
+}
+
+- (void)setCenter:(CGPoint)center
+{
+  NSLog(@"Set center %.2lf %.2lf", center.x, center.y);
+  [super setCenter:center];
 }
 
 - (void)reactSetFrame:(CGRect)frame
