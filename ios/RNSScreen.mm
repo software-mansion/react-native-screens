@@ -115,23 +115,6 @@ namespace react = facebook::react;
     [navctr.view setNeedsLayout];
   }
 #else
-
-  if ([self.layer.animationKeys count] != 0) {
-    UIView *sth =
-        [[[[[[[[[[[[[[[self.subviews objectAtIndex:0] subviews] objectAtIndex:0] subviews] objectAtIndex:0] subviews]
-            objectAtIndex:0] subviews] objectAtIndex:0] subviews] objectAtIndex:0] subviews] objectAtIndex:0] subviews]
-            objectAtIndex:0];
-    UIView *s = [self.subviews objectAtIndex:0];
-    for (int i = 0; i < 8; i++) {
-      NSLog(@"Lvl %d -> %@", i, s);
-      s = [s.subviews objectAtIndex:0];
-    }
-    //    NSLog(@"Update Bounds %@ %@ %@", self, self.layer.animationKeys, sth);
-  }
-  //  CGSize size = self.bounds.size;
-  //  if (self.layer.presentationLayer) {
-  //    size = self.layer.presentationLayer.bounds.size;
-  //  }
   CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
   if (sizeAnimation && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
     CABasicAnimation *another = [CABasicAnimation new];
@@ -144,15 +127,10 @@ namespace react = facebook::react;
   } else {
     [_bridge.uiManager setSize:self.bounds.size forView:self];
   }
-
-//  } else {
-//    CAAnimation *animation = [self.layer animationForKey:@"sdkjhf"];
-//    animation.dele
-//  }
 #endif
 }
 
-- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)finished
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
 {
   if (finished) {
     [self updateBounds];
