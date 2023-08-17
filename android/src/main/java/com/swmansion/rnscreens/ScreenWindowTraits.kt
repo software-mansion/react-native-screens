@@ -133,8 +133,6 @@ object ScreenWindowTraits {
                                         )
                                     )
                                     .build()
-
-                                insets
                             } else {
                                 defaultInsets.replaceSystemWindowInsets(
                                     defaultInsets.systemWindowInsetLeft,
