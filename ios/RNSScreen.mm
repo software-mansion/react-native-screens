@@ -117,13 +117,11 @@ namespace react = facebook::react;
 #else
   CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
   if (sizeAnimation && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
-    CABasicAnimation *another = [CABasicAnimation new];
-    another.duration = sizeAnimation.duration;
-    another.beginTime = sizeAnimation.beginTime;
-    another.delegate = self;
-    [self.layer addAnimation:another forKey:@"blablabla"];
-    //    sizeAnimation.
-    //    sizeAnimation.delegate = self;
+    CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
+    callbackOnlyAnimation.duration = sizeAnimation.duration;
+    callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
+    callbackOnlyAnimation.delegate = self;
+    [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
   } else {
     [_bridge.uiManager setSize:self.bounds.size forView:self];
   }
