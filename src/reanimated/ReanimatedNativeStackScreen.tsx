@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import {
-  HeaderChangeEventType,
+  HeaderHeightChangeEventType,
   InnerScreen,
   ScreenProps,
   TransitionProgressEventType,
@@ -80,7 +80,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
         ]
       )}
       onHeaderHeightChangeReanimated={useEvent(
-        (event: HeaderChangeEventType) => {
+        (event: HeaderHeightChangeEventType) => {
           'worklet';
           if (event.headerHeight !== cachedHeaderHeight.current) {
             headerHeight.value = event.headerHeight;

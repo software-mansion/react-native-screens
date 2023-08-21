@@ -72,7 +72,7 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
-export type HeaderChangeEventType = {
+export type HeaderHeightChangeEventType = {
   headerHeight: number;
 };
 
@@ -185,7 +185,7 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called when the header height has changed.
    */
   onHeaderHeightChange?: (
-    e: NativeSyntheticEvent<HeaderChangeEventType>
+    e: NativeSyntheticEvent<HeaderHeightChangeEventType>
   ) => void;
   /**
    * A callback that gets called after swipe back is canceled.

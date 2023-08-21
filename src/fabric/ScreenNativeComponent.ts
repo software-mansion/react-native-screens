@@ -21,7 +21,7 @@ type TransitionProgressEvent = Readonly<{
   goingForward: Int32;
 }>;
 
-type HeaderChangeEvent = Readonly<{
+type HeaderHeightChangeEvent = Readonly<{
   headerHeight: Double;
 }>;
 
@@ -65,7 +65,7 @@ export interface NativeProps extends ViewProps {
   onNativeDismissCancelled?: BubblingEventHandler<ScreenDismissedEvent>;
   onWillAppear?: BubblingEventHandler<ScreenEvent>;
   onWillDisappear?: BubblingEventHandler<ScreenEvent>;
-  onHeaderHeightChange?: BubblingEventHandler<HeaderChangeEvent>;
+  onHeaderHeightChange?: BubblingEventHandler<HeaderHeightChangeEvent>;
   onTransitionProgress?: BubblingEventHandler<TransitionProgressEvent>;
   onGestureCancel?: BubblingEventHandler<ScreenEvent>;
   sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>;
