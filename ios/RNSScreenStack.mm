@@ -70,8 +70,8 @@ namespace react = facebook::react;
     // Calculate header height during simple transition from one screen to another.
     // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
     // header height, as it could have nested stack.
-    if (!screenController.hasNestedStack) {
-      [(RNSScreen *)self.topViewController calculateHeaderHeightIsModal:NO];
+    if (![screenController hasNestedStack]) {
+      [(RNSScreen *)self.topViewController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
   }
 }

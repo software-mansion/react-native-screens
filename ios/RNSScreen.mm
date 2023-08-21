@@ -579,9 +579,9 @@ namespace react = facebook::react;
     case UIModalPresentationFullScreen:
     case UIModalPresentationCurrentContext:
     case UIModalPresentationOverCurrentContext:
-      return true;
+      return YES;
     default:
-      return false;
+      return NO;
   }
 }
 
@@ -1016,7 +1016,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   // Calculate header height on modal open
   if (self.screenView.isPresentedAsNativeModal) {
-    [self calculateHeaderHeightIsModal:YES];
+    [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
   }
 
   if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
@@ -1092,7 +1092,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif // !TARGET_OS_TV
 }
 
-- (void)calculateHeaderHeightIsModal:(BOOL)isModal
+- (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
 {
   CGFloat navbarHeight = [self getCalculatedHeaderHeightIsModal:isModal];
   CGSize statusBarSize = [self getCalculatedStatusBarHeightIsModal:isModal];
@@ -1101,8 +1101,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // We should check if user has rotated its screen, so we're choosing the minimum value between the
   // width and height.
   CGFloat statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);
-  CGFloat totalHeight = navbarHeight + statusBarHeight;
+  return navbarHeight + statusBarHeight;
+}
 
+- (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal
+{
+  CGFloat totalHeight = [self calculateHeaderHeightIsModal:isModal];
   [self.screenView notifyHeaderHeightChange:totalHeight];
 }
 
