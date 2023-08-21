@@ -103,7 +103,6 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     open fun removeScreenAt(index: Int) {
         mScreenFragments[index].screen.container = null
         mScreenFragments.removeAt(index)
-
         onScreenChanged()
     }
 
