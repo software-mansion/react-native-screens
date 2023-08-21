@@ -127,9 +127,9 @@
   [window addSubview:_container];
 }
 
-- (void)didMoveToWindow
+- (void)didMoveToSuperview
 {
-  if (self.window == nil) {
+  if (self.superview == nil) {
     if (_container != nil) {
       [_container removeFromSuperview];
       [_touchHandler detachFromView:_container];
