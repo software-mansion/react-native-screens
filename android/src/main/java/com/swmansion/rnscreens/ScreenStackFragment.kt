@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -150,8 +151,39 @@ class ScreenStackFragment : ScreenFragment {
             view?.addView(nestedScrollView)
         }
 
+        println(getViewTree(view!!))
+
         setHasOptionsMenu(true)
         return view
+    }
+
+    private fun getViewTree(root: ViewGroup): String{
+        fun getViewDesc(v: View): String{
+            val res = v.resources
+            val id = v.id
+            return "[${v::class.simpleName}]: " + when(true){
+                (res == null) -> "no_resouces"
+                (id > 0) -> try{
+                    res.getResourceName(id)
+                } catch(e: android.content.res.Resources.NotFoundException){
+                    "name_not_found"
+                }
+                else -> "no_id"
+            }
+        }
+
+        val output = StringBuilder(getViewDesc(root))
+        for(i in 0 until root.childCount){
+            val v = root.getChildAt(i)
+            output.append("\n").append(
+                if(v is ViewGroup){
+                    getViewTree(v).prependIndent("  ")
+                } else{
+                    "  " + getViewDesc(v)
+                }
+            )
+        }
+        return output.toString()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -282,6 +314,11 @@ class ScreenStackFragment : ScreenFragment {
 
                 override fun onAnimationRepeat(animation: Animation) {}
             }
+
+        override fun addView(child: View?) {
+            super.addView(child)
+//            Log.i("SCREENS COORDINATOR", "Adding view ${child!!.javaClass.name} with parent ${child!!.parent.javaClass.name}")
+        }
 
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for

@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -44,8 +51,10 @@ function First({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <ScrollView>
-      <HeaderOverlay />
+    <ScrollView nestedScrollEnabled={true}>
+      {/*<HeaderOverlay />*/}
+      <Post onPress={() => navigation.navigate('Second')} />
+      <Post onPress={() => navigation.navigate('Second')} />
       <Post onPress={() => navigation.navigate('Second')} />
     </ScrollView>
   );
@@ -72,6 +81,7 @@ export default function App() {
             stackAnimation: 'default',
             customAnimationOnSwipe: true,
             headerLargeTitle: true,
+            headerType: 'large',
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />

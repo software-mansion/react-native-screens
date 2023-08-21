@@ -45,7 +45,9 @@ function First({
 }) {
   return (
     <ScrollView>
-      <HeaderOverlay />
+      {/*<HeaderOverlay />*/}
+      <Post onPress={() => navigation.navigate('Second')} />
+      <Post onPress={() => navigation.navigate('Second')} />
       <Post onPress={() => navigation.navigate('Second')} />
     </ScrollView>
   );
@@ -71,7 +73,8 @@ export default function App() {
             fullScreenSwipeEnabled: true,
             stackAnimation: 'default',
             customAnimationOnSwipe: true,
-            // headerLargeTitle: true,
+            headerLargeTitle: true,
+            headerType: 'small',
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />
