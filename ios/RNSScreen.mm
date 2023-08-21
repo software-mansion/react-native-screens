@@ -587,7 +587,8 @@ namespace react = facebook::react;
 
 - (BOOL)isTransparentModal
 {
-  return self.controller.modalPresentationStyle == UIModalPresentationOverFullScreen;
+  return self.controller.modalPresentationStyle == UIModalPresentationOverFullScreen ||
+      self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
 #if !TARGET_OS_TV
@@ -1030,7 +1031,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
-// Checks whether this screen has any child view controllers of type RNScreensNavigationController.
+// Checks whether this screen has any child view controllers of type RNSNavigationController.
 // Useful for checking if this screen has nested stack or is displayed at the top.
 - (BOOL)hasNestedStack
 {
