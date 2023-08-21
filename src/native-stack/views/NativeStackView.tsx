@@ -30,10 +30,6 @@ import {
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
-import {
-  useSafeAreaFrame,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
@@ -115,8 +111,10 @@ const MaybeNestedStack = ({
   );
 
   const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
   const isStatusBarTranslucent = options.statusBarTranslucent ?? false;
   const statusBarHeight = getStatusBarHeight(
+    topInset,
     dimensions,
     isStatusBarTranslucent
   );
@@ -223,8 +221,10 @@ const RouteView = ({
   }
 
   const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
   const isStatusBarTranslucent = options.statusBarTranslucent ?? false;
   const statusBarHeight = getStatusBarHeight(
+    topInset,
     dimensions,
     isStatusBarTranslucent
   );
@@ -425,10 +425,11 @@ export default function NativeStackView(props: Props) {
   );
 }
 
-function getStatusBarHeight(dimensions: Rect, isStatusBarTranslucent: boolean) {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const topInset = useSafeAreaInsets().top;
-
+function getStatusBarHeight(
+  topInset: number,
+  dimensions: Rect,
+  isStatusBarTranslucent: boolean
+) {
   if (Platform.OS === 'ios') {
     // It looks like some iOS devices don't have strictly set status bar height to 44.
     // Thus, if the top inset is higher than 50, then the device should have a dynamic island.
