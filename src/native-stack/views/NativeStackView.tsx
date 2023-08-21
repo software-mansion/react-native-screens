@@ -18,7 +18,11 @@ import {
   NavigationState,
   PartialState,
 } from '@react-navigation/native';
-
+import {
+  Rect,
+  useSafeAreaFrame,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
@@ -26,10 +30,6 @@ import {
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
-import {
-  useSafeAreaFrame,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
@@ -112,13 +112,15 @@ const MaybeNestedStack = ({
 
   const dimensions = useSafeAreaFrame();
   const topInset = useSafeAreaInsets().top;
-  let statusBarHeight = topInset;
-  const hasDynamicIsland = Platform.OS === 'ios' && topInset === 59;
+  const isStatusBarTranslucent = options.statusBarTranslucent ?? false;
+  const statusBarHeight = getStatusBarHeight(
+    topInset,
+    dimensions,
+    isStatusBarTranslucent
+  );
+
   const isLargeHeader = options.headerLargeTitle ?? false;
-  if (hasDynamicIsland) {
-    // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
-    statusBarHeight = 54;
-  }
+
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
     statusBarHeight,
@@ -220,14 +222,14 @@ const RouteView = ({
 
   const dimensions = useSafeAreaFrame();
   const topInset = useSafeAreaInsets().top;
-  let statusBarHeight = topInset;
-  const hasDynamicIsland = Platform.OS === 'ios' && topInset === 59;
-  const isLargeHeader = options.headerLargeTitle ?? false;
+  const isStatusBarTranslucent = options.statusBarTranslucent ?? false;
+  const statusBarHeight = getStatusBarHeight(
+    topInset,
+    dimensions,
+    isStatusBarTranslucent
+  );
 
-  if (hasDynamicIsland) {
-    // On models with Dynamic Island the status bar height is smaller than the safe area top inset.
-    statusBarHeight = 54;
-  }
+  const isLargeHeader = options.headerLargeTitle ?? false;
 
   const defaultHeaderHeight = getDefaultHeaderHeight(
     dimensions,
@@ -421,6 +423,26 @@ export default function NativeStackView(props: Props) {
       <NativeStackViewInner {...props} />
     </SafeAreaProviderCompat>
   );
+}
+
+function getStatusBarHeight(
+  topInset: number,
+  dimensions: Rect,
+  isStatusBarTranslucent: boolean
+) {
+  if (Platform.OS === 'ios') {
+    // It looks like some iOS devices don't have strictly set status bar height to 44.
+    // Thus, if the top inset is higher than 50, then the device should have a dynamic island.
+    // On models with Dynamic Island the status bar height is smaller than the safe area top inset by 5 pixels.
+    // See https://developer.apple.com/forums/thread/662466 for more details about status bar height.
+    const hasDynamicIsland = topInset > 50;
+    return hasDynamicIsland ? topInset - 5 : topInset;
+  } else if (Platform.OS === 'android') {
+    // On Android we should also rely on frame's y-axis position, as topInset is 0 on visible status bar.
+    return isStatusBarTranslucent ? topInset : dimensions.y;
+  }
+
+  return topInset;
 }
 
 const styles = StyleSheet.create({
