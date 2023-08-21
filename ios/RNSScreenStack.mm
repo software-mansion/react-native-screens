@@ -68,7 +68,7 @@ namespace react = facebook::react;
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
 
     // Calculate header height during simple transition from one screen to another.
-    // If RNSScreen includes a navigation controller of type RNScreensNavigationController, it should not calculate
+    // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
     // header height, as it could have nested stack.
     if (!screenController.hasNestedStack) {
       [(RNSScreen *)self.topViewController calculateHeaderHeightIsModal:NO];
@@ -218,25 +218,25 @@ namespace react = facebook::react;
     // that can handle it when dismissing a modal, the same for orientation
     [RNSScreenWindowTraits updateWindowTraits];
     [_presentedModals removeObject:presentationController.presentedViewController];
-  }
 
-  _updatingModals = NO;
+    _updatingModals = NO;
 #ifdef RCT_NEW_ARCH_ENABLED
-  [self emitOnFinishTransitioningEvent];
+    [self emitOnFinishTransitioningEvent];
 #else
-  // we double check if there are no new controllers pending to be presented since someone could
-  // have tried to push another one during the transition.
-  // We don't do it on Fabric since update of container will be triggered from "unmount" method afterwards
-  [self updateContainer];
-  if (self.onFinishTransitioning) {
-    // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
-    // main queue. We do that because onDismiss event is also enqueued and we want for the transition
-    // finish event to arrive later than onDismiss (see RNSScreen#notifyDismiss)
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [self emitOnFinishTransitioningEvent];
-    });
-  }
+    // we double check if there are no new controllers pending to be presented since someone could
+    // have tried to push another one during the transition.
+    // We don't do it on Fabric since update of container will be triggered from "unmount" method afterwards
+    [self updateContainer];
+    if (self.onFinishTransitioning) {
+      // instead of directly triggering onFinishTransitioning this time we enqueue the event on the
+      // main queue. We do that because onDismiss event is also enqueued and we want for the transition
+      // finish event to arrive later than onDismiss (see RNSScreen#notifyDismiss)
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [self emitOnFinishTransitioningEvent];
+      });
+    }
 #endif
+  }
 }
 
 - (NSArray<UIView *> *)reactSubviews
