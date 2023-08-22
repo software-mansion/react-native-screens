@@ -214,6 +214,7 @@ class ScreenStackFragment : ScreenFragment {
             layoutParams = CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.MATCH_PARENT)
             (layoutParams as CoordinatorLayout.LayoutParams).behavior = ScrollingViewBehavior()
             isFillViewport = true
+            fitsSystemWindows = true
 
             mToolbar?.let { background = it.background }
             addView(recycleView(screen))
