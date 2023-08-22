@@ -156,15 +156,15 @@ class ScreenStackFragment : ScreenFragment {
         return view
     }
 
-    private fun getViewTree(root: ViewGroup): String{
-        fun getViewDesc(v: View): String{
+    private fun getViewTree(root: ViewGroup): String {
+        fun getViewDesc(v: View): String {
             val res = v.resources
             val id = v.id
-            return "[${v::class.simpleName}]: " + when(true){
+            return "[${v::class.simpleName}]: " + when (true) {
                 (res == null) -> "no_resouces"
-                (id > 0) -> try{
+                (id > 0) -> try {
                     res.getResourceName(id)
-                } catch(e: android.content.res.Resources.NotFoundException){
+                } catch (e: android.content.res.Resources.NotFoundException) {
                     "name_not_found"
                 }
                 else -> "no_id"
@@ -172,12 +172,12 @@ class ScreenStackFragment : ScreenFragment {
         }
 
         val output = StringBuilder(getViewDesc(root))
-        for(i in 0 until root.childCount){
+        for (i in 0 until root.childCount) {
             val v = root.getChildAt(i)
             output.append("\n").append(
-                if(v is ViewGroup){
+                if (v is ViewGroup) {
                     getViewTree(v).prependIndent("  ")
-                } else{
+                } else {
                     "  " + getViewDesc(v)
                 }
             )
@@ -204,11 +204,6 @@ class ScreenStackFragment : ScreenFragment {
         val collapsingToolbarLayout = context?.let { CollapsingToolbarLayout(it, null, toolbarStyle) }?.apply {
             layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT)
                 .apply { scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED }
-
-            mToolbar?.let {
-                background = it.background
-                addView(recycleView(it))
-            }
         }
 
         return collapsingToolbarLayout
