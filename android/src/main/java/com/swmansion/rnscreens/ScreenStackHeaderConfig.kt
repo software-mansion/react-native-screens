@@ -155,7 +155,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             screenFragment?.setToolbar(toolbar)
         }
 
-        if (mIsTopInsetEnabled) {
+        if (mIsTopInsetEnabled && screen?.headerType?.isCollapsing == false) {
             headerTopInset.let {
                 toolbar.setPadding(0, it ?: 0, 0, 0)
             }
