@@ -219,8 +219,8 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     var isNavigationBarHidden: Boolean?
         get() = mNavigationBarHidden
         set(navigationBarHidden) {
-            if (navigationBarHidden != null) {
-                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
+            if (navigationBarHidden != null && navigationBarHidden) {
+                ScreenWindowTraits.applyDidSetNavigationBarHidden()
             }
             mNavigationBarHidden = navigationBarHidden
             fragment?.let {

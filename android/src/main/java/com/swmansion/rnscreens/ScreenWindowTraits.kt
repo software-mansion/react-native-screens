@@ -24,6 +24,7 @@ object ScreenWindowTraits {
     private var mDidSetOrientation = false
     private var mDidSetStatusBarAppearance = false
     private var mDidSetNavigationBarAppearance = false
+    private var mDidSetNavigationBarHidden = false
     private var mDefaultStatusBarColor: Int? = null
 
     internal fun applyDidSetOrientation() {
@@ -36,6 +37,10 @@ object ScreenWindowTraits {
 
     internal fun applyDidSetNavigationBarAppearance() {
         mDidSetNavigationBarAppearance = true
+    }
+
+    internal fun applyDidSetNavigationBarHidden() {
+        mDidSetNavigationBarHidden = true
     }
 
     internal fun setOrientation(screen: Screen, activity: Activity?) {
@@ -164,6 +169,7 @@ object ScreenWindowTraits {
             WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars =
                 isColorLight(color)
         }
+
         window.navigationBarColor = color
     }
 
@@ -204,6 +210,8 @@ object ScreenWindowTraits {
         }
         if (mDidSetNavigationBarAppearance) {
             setNavigationBarColor(screen, activity)
+        }
+        if (mDidSetNavigationBarHidden) {
             setNavigationBarHidden(screen, activity)
         }
     }
