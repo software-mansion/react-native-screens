@@ -24,7 +24,6 @@ object ScreenWindowTraits {
     private var mDidSetOrientation = false
     private var mDidSetStatusBarAppearance = false
     private var mDidSetNavigationBarAppearance = false
-    private var mDidSetNavigationBarHidden = false
     private var mDefaultStatusBarColor: Int? = null
 
     internal fun applyDidSetOrientation() {
@@ -37,10 +36,6 @@ object ScreenWindowTraits {
 
     internal fun applyDidSetNavigationBarAppearance() {
         mDidSetNavigationBarAppearance = true
-    }
-
-    internal fun applyDidSetNavigationBarHidden() {
-        mDidSetNavigationBarHidden = true
     }
 
     internal fun setOrientation(screen: Screen, activity: Activity?) {
@@ -183,7 +178,6 @@ object ScreenWindowTraits {
         val screenForNavBarHidden = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_HIDDEN)
         val hidden = screenForNavBarHidden?.isNavigationBarHidden ?: false
 
-        WindowCompat.setDecorFitsSystemWindows(window, hidden)
         if (hidden) {
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
                 controller.hide(WindowInsetsCompat.Type.navigationBars())
@@ -210,8 +204,6 @@ object ScreenWindowTraits {
         }
         if (mDidSetNavigationBarAppearance) {
             setNavigationBarColor(screen, activity)
-        }
-        if (mDidSetNavigationBarHidden) {
             setNavigationBarHidden(screen, activity)
         }
     }
