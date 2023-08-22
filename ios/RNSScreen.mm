@@ -109,10 +109,19 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
-    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
-    _state->updateState(std::move(newState));
-    UINavigationController *navctr = _controller.navigationController;
-    [navctr.view setNeedsLayout];
+    CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
+    if (sizeAnimation != nil && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
+      CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
+      callbackOnlyAnimation.duration = sizeAnimation.duration;
+      callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
+      callbackOnlyAnimation.delegate = self;
+      [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
+    } else {
+      auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
+      _state->updateState(std::move(newState));
+      UINavigationController *navctr = _controller.navigationController;
+      [navctr.view setNeedsLayout];
+    }
   }
 #else
   CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
