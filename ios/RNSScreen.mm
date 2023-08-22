@@ -22,7 +22,6 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
-#import "NSArray+RNSUtil.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -616,7 +615,7 @@ namespace react = facebook::react;
     if (_stackPresentation == RNSScreenStackPresentationFormSheet && sheet != nil) {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-      if ([_sheetCustomDetents rns_isNotEmpty]) {
+      if (_sheetCustomDetents.count > 0) {
         if (@available(iOS 16.0, *)) {
           sheet.detents = [self detentsFromMaxHeightFractions:_sheetCustomDetents];
         }
@@ -651,7 +650,7 @@ namespace react = facebook::react;
           _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
 
       int detentIndex = _sheetCustomLargestUndimmedDetent != nil ? _sheetCustomLargestUndimmedDetent.intValue : -1;
-      if (detentIndex != -1 && [_sheetCustomDetents rns_isNotEmpty]) {
+      if (detentIndex != -1 && _sheetCustomDetents.count > 0) {
         if (detentIndex >= 0 && detentIndex < _sheetCustomDetents.count) {
           sheet.largestUndimmedDetentIdentifier = _sheetCustomLargestUndimmedDetent.stringValue;
         } else {
