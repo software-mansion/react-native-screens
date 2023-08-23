@@ -300,6 +300,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         mConfigSubviews.add(index, child)
         maybeUpdate()
     }
+
     private val titleTextView: TextView?
         get() {
             for (i in 0 until toolbar.childCount) {
@@ -387,7 +388,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // set primary color as background by default
         val tv = TypedValue()
-        if (context.theme.resolveAttribute(R.attr.colorError, tv, true)) {
+        if (context.theme.resolveAttribute(R.attr.colorPrimary, tv, true)) {
             toolbar.setBackgroundColor(tv.data)
         }
         toolbar.clipChildren = false

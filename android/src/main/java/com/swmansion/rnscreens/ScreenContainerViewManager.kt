@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
@@ -16,7 +15,6 @@ class ScreenContainerViewManager : ViewGroupManager<ScreenContainer<*>>() {
 
     override fun addView(parent: ScreenContainer<*>, child: View, index: Int) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreens" }
-        Log.i("SCREENS CONTAINER", "Adding ${child.javaClass.name} with parent ${parent.javaClass.name} of index $index")
         parent.addScreen(child, index)
     }
 

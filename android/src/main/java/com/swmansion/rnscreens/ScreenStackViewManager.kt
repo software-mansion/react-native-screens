@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactApplicationContext
@@ -27,7 +26,6 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
 
     override fun addView(parent: ScreenStack, child: View, index: Int) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreen" }
-        Log.i("SCREENS STACK", "Adding ${child.javaClass.name} with parent ${parent.javaClass.name} of index $index")
         parent.addScreen(child, index)
     }
 

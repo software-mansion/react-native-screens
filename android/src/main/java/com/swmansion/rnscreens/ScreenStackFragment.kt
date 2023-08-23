@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
@@ -58,18 +59,32 @@ class ScreenStackFragment : ScreenFragment {
     fun setToolbar(toolbar: Toolbar) {
         if (!screen.headerType.isCollapsing) {
             mAppBarLayout?.addView(toolbar)
+            toolbar.layoutParams = AppBarLayout.LayoutParams(
+                AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
+            ).apply { scrollFlags = 0 }
         } else {
             toolbar.layoutParams = Toolbar.LayoutParams(
                 Toolbar.LayoutParams.MATCH_PARENT,
                 R.attr.actionBarSize.resolveAttribute(toolbar.context)
             )
 
-            mCollapsingToolbarLayout?.background = toolbar.background
-            mNestedScrollView?.background = toolbar.background
             mCollapsingToolbarLayout?.addView(toolbar)
         }
 
         mToolbar = toolbar
+        propagatePropsFromToolbarToViews(toolbar)
+    }
+
+    private fun propagatePropsFromToolbarToViews(toolbar: Toolbar) {
+        mAppBarLayout?.apply {
+            background = toolbar.background
+        }
+
+        mCollapsingToolbarLayout?.apply {
+            title = toolbar.title
+            background = toolbar.background
+            contentScrim = toolbar.background
+        }
     }
 
     fun setToolbarShadowHidden(hidden: Boolean) {
@@ -81,7 +96,7 @@ class ScreenStackFragment : ScreenFragment {
 
     fun setToolbarTranslucent(translucent: Boolean) {
         if (mIsTranslucent != translucent) {
-            val params = screen.layoutParams
+            val params = if (!screen.headerType.isCollapsing) screen.layoutParams else (screen.parent as ViewGroup).layoutParams
             (params as CoordinatorLayout.LayoutParams).behavior =
                 if (translucent) null else ScrollingViewBehavior()
             mIsTranslucent = translucent
@@ -108,13 +123,17 @@ class ScreenStackFragment : ScreenFragment {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view: ScreensCoordinatorLayout? =
             context?.let { ScreensCoordinatorLayout(it, this) }
 
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
+
+        if (!screen.headerType.isCollapsing) {
+            view?.addView(recycleView(screen))
+        }
 
         if (mCollapsingToolbarLayout == null) {
             val collapsingToolbarLayout = if (!screen.headerType.isCollapsing) null else createCollapsingToolbarLayout()
@@ -133,7 +152,9 @@ class ScreenStackFragment : ScreenFragment {
             )
 
             fitsSystemWindows = true
-            mCollapsingToolbarLayout?.let { addView(recycleView(it)) }
+            mCollapsingToolbarLayout?.let {
+                addView(recycleView(it))
+            }
         }
 
         view?.addView(mAppBarLayout)
@@ -142,7 +163,6 @@ class ScreenStackFragment : ScreenFragment {
         }
 
         if (!screen.headerType.isCollapsing) {
-            view?.addView(recycleView(screen))
             mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
         } else {
             val nestedScrollView = createNestedScrollViewFromScreen()
@@ -216,7 +236,9 @@ class ScreenStackFragment : ScreenFragment {
             isFillViewport = true
             fitsSystemWindows = true
 
-            mToolbar?.let { background = it.background }
+            mToolbar?.let {
+                background = it.background
+            }
             addView(recycleView(screen))
         }
 
@@ -309,11 +331,6 @@ class ScreenStackFragment : ScreenFragment {
 
                 override fun onAnimationRepeat(animation: Animation) {}
             }
-
-        override fun addView(child: View?) {
-            super.addView(child)
-//            Log.i("SCREENS COORDINATOR", "Adding view ${child!!.javaClass.name} with parent ${child!!.parent.javaClass.name}")
-        }
 
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for
