@@ -31,6 +31,7 @@ class ScreenStackFragment : ScreenFragment {
     private var mNestedScrollView: NestedScrollView? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
+    private var isToolbarHidden = false
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -45,18 +46,45 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     fun removeToolbar() {
+        isToolbarHidden = true
         mAppBarLayout?.let {
+            // For small headers, removing `toolbar` is sufficient.
+            // Thus, we can simply remove toolbar from AppBarLayout.
             mToolbar?.let { toolbar ->
                 if (toolbar.parent === it) {
                     it.removeView(toolbar)
                 }
             }
+
+            // For medium and large headers, we need to check if toolbar's parent is
+            // collapsingToolbarLayout and if collapsingToolbarLayout's parent is AppBarLayout.
+            // we're removing those views from their parents here.
+            mCollapsingToolbarLayout?.let { collapsingToolbar ->
+                mToolbar?.let { toolbar ->
+                    if (toolbar.parent === collapsingToolbar) {
+                        toolbar.removeView(collapsingToolbar)
+                    }
+                }
+
+                if (collapsingToolbar.parent === it) {
+                    it.removeView(collapsingToolbar)
+                }
+            }
+
+            // As AppBarLayout may have dimensions of expanded medium / large header,
+            // We need to change its layout params to `WRAP_CONTENT`.
+            it.layoutParams = CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT
+            )
         }
+
         mToolbar = null
+        mCollapsingToolbarLayout = null
     }
 
     fun setToolbar(toolbar: Toolbar) {
         mToolbar = toolbar
+        isToolbarHidden = false
 
         if (!screen.headerType.isCollapsing) {
             mAppBarLayout?.addView(toolbar)
@@ -74,6 +102,12 @@ class ScreenStackFragment : ScreenFragment {
 
             mCollapsingToolbarLayout?.addView(toolbar)
             mAppBarLayout?.addView(mCollapsingToolbarLayout)
+
+            // As `setToolbar` may be called after changing header's visibility,
+            // we need to apply correction to layoutParams with proper dimensions.
+            mAppBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(toolbar.context)
+            )
         }
     }
 
@@ -298,10 +332,16 @@ class ScreenStackFragment : ScreenFragment {
         container.dismiss(this)
     }
 
-    private fun getHeightOfToolbar(context: Context) = when (screen.headerType) {
-        HeaderType.Medium -> R.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
-        HeaderType.Large -> R.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
-        else -> CoordinatorLayout.LayoutParams.WRAP_CONTENT
+    private fun getHeightOfToolbar(context: Context): Int {
+        if (isToolbarHidden) {
+            return CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        }
+
+        return when (screen.headerType) {
+            HeaderType.Medium -> R.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
+            HeaderType.Large -> R.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
+            else -> CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        }
     }
 
     private fun Int.resolveAttribute(context: Context): Int {

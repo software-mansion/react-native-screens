@@ -145,9 +145,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         if (mIsHidden) {
-            if (toolbar.parent != null) {
-                screenFragment?.removeToolbar()
-            }
+            screenFragment?.removeToolbar()
             return
         }
 
