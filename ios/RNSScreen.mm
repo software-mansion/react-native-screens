@@ -68,7 +68,7 @@ namespace react = facebook::react;
     _bridge = bridge;
     [self initCommonProps];
   }
-
+  NSLog(@"RNSScreenView created %@\n", self);
   return self;
 }
 
@@ -153,6 +153,7 @@ namespace react = facebook::react;
       break;
   }
 
+  NSLog(@"RNSScreenView %p stackPresentation updated from %ld to %ld\n", self, _stackPresentation, stackPresentation);
   // There is a bug in UIKit which causes retain loop when presentationController is accessed for a
   // controller that is not going to be presented modally. We therefore need to avoid setting the
   // delegate for screens presented using push. This also means that when controller is updated from
@@ -841,6 +842,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _initialView = (RNSScreenView *)view;
 #endif
   }
+  NSLog(@"RNSScreen created %@\n", self);
   return self;
 }
 
@@ -1065,15 +1067,28 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
+
     // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
     // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
     // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
-    return !includingModals
-        ? nil
-        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
-            ?: lastViewController;
+    //    return !includingModals
+    //        ? nil
+    //        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
+    //            ?: lastViewController;
+
+    if (!includingModals) {
+      return nil;
+    } else {
+      auto theVC = [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals];
+
+      if (theVC != nil) {
+        return theVC;
+      } else {
+        return lastViewController;
+      }
+    }
   }
 
   UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;

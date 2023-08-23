@@ -409,6 +409,7 @@ namespace react = facebook::react;
           return;
         }
 
+        NSLog(@"VC %@ presents %@ next\n", previous, next);
         [previous presentViewController:next
                                animated:shouldAnimate
                              completion:^{

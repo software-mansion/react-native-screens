@@ -369,6 +369,8 @@ function NativeStackViewInner({
 }: Props): JSX.Element {
   const { key, routes } = state;
 
+  console.log('NativeStackViewInner key:', key, 'routes', routes);
+
   return (
     <ScreenStack style={styles.container}>
       {routes.map((route, index) => (
