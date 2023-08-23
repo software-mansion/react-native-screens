@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
@@ -57,6 +56,8 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     fun setToolbar(toolbar: Toolbar) {
+        mToolbar = toolbar
+
         if (!screen.headerType.isCollapsing) {
             mAppBarLayout?.addView(toolbar)
             toolbar.layoutParams = AppBarLayout.LayoutParams(
@@ -68,22 +69,11 @@ class ScreenStackFragment : ScreenFragment {
                 R.attr.actionBarSize.resolveAttribute(toolbar.context)
             )
 
+            mCollapsingToolbarLayout = createCollapsingToolbarLayout()
+            updatePropsFromToolbarToViews(toolbar)
+
             mCollapsingToolbarLayout?.addView(toolbar)
-        }
-
-        mToolbar = toolbar
-        propagatePropsFromToolbarToViews(toolbar)
-    }
-
-    private fun propagatePropsFromToolbarToViews(toolbar: Toolbar) {
-        mAppBarLayout?.apply {
-            background = toolbar.background
-        }
-
-        mCollapsingToolbarLayout?.apply {
-            title = toolbar.title
-            background = toolbar.background
-            contentScrim = toolbar.background
+            mAppBarLayout?.addView(mCollapsingToolbarLayout)
         }
     }
 
@@ -133,11 +123,6 @@ class ScreenStackFragment : ScreenFragment {
 
         if (!screen.headerType.isCollapsing) {
             view?.addView(recycleView(screen))
-        }
-
-        if (mCollapsingToolbarLayout == null) {
-            val collapsingToolbarLayout = if (!screen.headerType.isCollapsing) null else createCollapsingToolbarLayout()
-            mCollapsingToolbarLayout = collapsingToolbarLayout
         }
 
         mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
@@ -224,6 +209,11 @@ class ScreenStackFragment : ScreenFragment {
         val collapsingToolbarLayout = context?.let { CollapsingToolbarLayout(it, null, toolbarStyle) }?.apply {
             layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT)
                 .apply { scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED }
+
+            mToolbar?.let {
+                title = it.title
+                background = it.background
+            }
         }
 
         return collapsingToolbarLayout
@@ -243,6 +233,16 @@ class ScreenStackFragment : ScreenFragment {
         }
 
         return nestedScrollView
+    }
+
+    private fun updatePropsFromToolbarToViews(toolbar: Toolbar) {
+        mAppBarLayout?.apply {
+            background = toolbar.background
+        }
+
+        mNestedScrollView?.apply {
+            background = toolbar.background
+        }
     }
 
     private fun shouldShowSearchBar(): Boolean {
