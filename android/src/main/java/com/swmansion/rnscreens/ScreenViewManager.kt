@@ -28,7 +28,9 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun getName() = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext) = Screen(reactContext)
+    override fun createViewInstance(reactContext: ThemedReactContext): Screen {
+        return Screen(reactContext)
+    }
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())

@@ -22,7 +22,9 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
 
     override fun getName() = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStack(reactContext)
+    override fun createViewInstance(reactContext: ThemedReactContext): ScreenStack {
+        return ScreenStack(reactContext)
+    }
 
     override fun addView(parent: ScreenStack, child: View, index: Int) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreen" }

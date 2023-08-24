@@ -11,7 +11,9 @@ import com.facebook.react.uimanager.ViewGroupManager
 class ScreenContainerViewManager : ViewGroupManager<ScreenContainer<*>>() {
     override fun getName(): String = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext): ScreenContainer<ScreenFragment> = ScreenContainer(reactContext)
+    override fun createViewInstance(reactContext: ThemedReactContext): ScreenContainer<ScreenFragment> {
+        return ScreenContainer(reactContext)
+    }
 
     override fun addView(parent: ScreenContainer<*>, child: View, index: Int) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreens" }
