@@ -87,13 +87,19 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         performUpdatesNow()
     }
 
-    protected open fun adapt(screen: Screen): T {
-        @Suppress("UNCHECKED_CAST")
-        return ScreenFragment(screen) as T
+    protected open fun adapt(screen: Screen): Fragment {
+        if (screen.stackPresentation == Screen.StackPresentation.MODAL) {
+            return ScreenFragment(screen) as T
+        } else {
+            return ScreenFragment(screen) as T
+        }
+
+//        @Suppress("UNCHECKED_CAST")
+//        return ScreenFragment(screen) as T
     }
 
     fun addScreen(screen: Screen, index: Int) {
-        val fragment = adapt(screen)
+        val fragment = adapt(screen) as T
         screen.fragment = fragment
         mScreenFragments.add(index, fragment)
         screen.container = this

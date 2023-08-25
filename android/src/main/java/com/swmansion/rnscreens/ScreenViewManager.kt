@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens
 
+import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -30,6 +32,14 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun createViewInstance(reactContext: ThemedReactContext): Screen {
         return Screen(reactContext)
+    }
+
+    override fun addView(parent: Screen?, child: View?, index: Int) {
+        super.addView(parent, child, index)
+    }
+
+    override fun addViews(parent: Screen?, views: MutableList<View>?) {
+        super.addViews(parent, views)
     }
 
     override fun setActivityState(view: Screen, activityState: Float) {

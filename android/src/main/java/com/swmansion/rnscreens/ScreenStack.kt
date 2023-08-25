@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.view.View
+import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
@@ -42,7 +43,15 @@ class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(cont
             throw IllegalStateException("Stack has no root screen set")
         }
 
-    override fun adapt(screen: Screen) = ScreenStackFragment(screen)
+    override fun adapt(screen: Screen): Fragment {
+        if (screen.stackPresentation == Screen.StackPresentation.MODAL) {
+            return ScreenModalFragment(screen)
+//            return ScreenStackFragment(screen)
+        } else {
+            return ScreenStackFragment(screen)
+        }
+//        return ScreenStackFragment(screen)
+    }
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
