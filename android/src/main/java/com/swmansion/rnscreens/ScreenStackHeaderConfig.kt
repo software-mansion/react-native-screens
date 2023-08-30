@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.os.Build
 import android.text.TextUtils
@@ -18,6 +19,7 @@ import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.views.text.ReactTypefaceUtils
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 
@@ -112,6 +114,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
             return null
         }
+    private val collapsingToolbarLayout: CollapsingToolbarLayout?
+        get() = screenFragment?.mCollapsingToolbarLayout
 
     fun onUpdate() {
         val stack = screenStack
@@ -193,6 +197,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // title
         actionBar.title = mTitle
+        collapsingToolbarLayout?.title = mTitle
+        collapsingToolbarLayout?.isTitleEnabled = screen?.headerType?.isCollapsing == true
+
         if (TextUtils.isEmpty(mTitle)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
             // views. When it is set to default it'd take up additional distance from the back button
@@ -203,6 +210,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         val titleTextView = titleTextView
         if (mTitleColor != 0) {
             toolbar.setTitleTextColor(mTitleColor)
+            collapsingToolbarLayout?.setCollapsedTitleTextColor(mTitleColor)
+            collapsingToolbarLayout?.setExpandedTitleTextColor(ColorStateList.valueOf(mTitleColor))
         }
 
         if (titleTextView != null) {
@@ -211,15 +220,21 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                     null, 0, mTitleFontWeight, mTitleFontFamily, context.assets
                 )
                 titleTextView.typeface = titleTypeface
+                collapsingToolbarLayout?.setCollapsedTitleTypeface(titleTypeface)
+                collapsingToolbarLayout?.setExpandedTitleTypeface(titleTypeface)
             }
+
             if (mTitleFontSize > 0) {
                 titleTextView.textSize = mTitleFontSize
+                // TODO: Add property for changing expandedTitleTextSize
+                collapsingToolbarLayout?.collapsedTitleTextSize = mTitleFontSize
             }
         }
 
         // background
         mBackgroundColor?.let {
-            screenFragment?.mScreenStackToolbar?.setBackgroundColor(it)
+            toolbar.setBackgroundColor(it)
+            collapsingToolbarLayout?.setBackgroundColor(it)
         }
 
         // color
