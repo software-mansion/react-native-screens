@@ -218,7 +218,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         // background
-        mBackgroundColor?.let { toolbar.setBackgroundColor(it) }
+        mBackgroundColor?.let {
+            screenFragment?.mScreenStackToolbar?.setBackgroundColor(it)
+        }
 
         // color
         if (mTintColor != 0) {

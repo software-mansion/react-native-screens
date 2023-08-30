@@ -304,7 +304,7 @@ open class ScreenFragment : Fragment {
 
     companion object {
         @JvmStatic
-        protected fun recycleView(view: View): View {
+        fun recycleView(view: View): View {
             // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
             // view it needs to be detached from the view hierarchy to allow the fragment to attach it back.
             val parent = view.parent
