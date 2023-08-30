@@ -8,6 +8,7 @@ import android.util.SparseArray
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
+import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
@@ -15,7 +16,7 @@ import com.facebook.react.uimanager.UIManagerModule
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
-    var fragment: ScreenFragment? = null
+    var fragment: IScreenFragment? = null
     var container: ScreenContainer<*>? = null
     var activityState: ActivityState? = null
         private set

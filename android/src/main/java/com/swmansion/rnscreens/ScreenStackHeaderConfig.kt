@@ -105,7 +105,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         get() {
             val screen = parent
             if (screen is Screen) {
-                val fragment: Fragment? = screen.fragment
+                val fragment: Fragment? = screen.fragment as Fragment?
                 if (fragment is ScreenStackFragment) {
                     return fragment
                 }

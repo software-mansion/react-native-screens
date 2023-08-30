@@ -16,25 +16,30 @@ import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.swmansion.rnscreens.Screen.ActivityState
 
-open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
+open class ScreenContainer<T>(context: Context?) : ViewGroup(context)
+        where
+T : Fragment,
+T : IScreenFragment {
     @JvmField
     protected val mScreenFragments = ArrayList<T>()
+
     @JvmField
     protected var mFragmentManager: FragmentManager? = null
     private var mIsAttached = false
     private var mNeedUpdate = false
     private var mLayoutEnqueued = false
-    private val mLayoutCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
-        override fun doFrame(frameTimeNanos: Long) {
-            mLayoutEnqueued = false
-            measure(
-                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
-            )
-            layout(left, top, right, bottom)
+    private val mLayoutCallback: ChoreographerCompat.FrameCallback =
+        object : ChoreographerCompat.FrameCallback() {
+            override fun doFrame(frameTimeNanos: Long) {
+                mLayoutEnqueued = false
+                measure(
+                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+                )
+                layout(left, top, right, bottom)
+            }
         }
-    }
-    private var mParentScreenFragment: ScreenFragment? = null
+    private var mParentScreenFragment: IScreenFragment? = null
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         var i = 0
@@ -89,9 +94,9 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
     protected open fun adapt(screen: Screen): Fragment {
         if (screen.stackPresentation == Screen.StackPresentation.MODAL) {
-            return ScreenFragment(screen) as T
+            return ScreenFragment(screen)
         } else {
-            return ScreenFragment(screen) as T
+            return ScreenFragment(screen)
         }
 
 //        @Suppress("UNCHECKED_CAST")
@@ -99,9 +104,9 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
     }
 
     fun addScreen(screen: Screen, index: Int) {
-        val fragment = adapt(screen) as T
-        screen.fragment = fragment
-        mScreenFragments.add(index, fragment)
+        val fragment = adapt(screen)
+        screen.fragment = fragment as IScreenFragment
+        mScreenFragments.add(index, fragment as T)
         screen.container = this
         onScreenChanged()
     }
@@ -183,7 +188,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
                 parent.fragment?.let { screenFragment ->
                     mParentScreenFragment = screenFragment
                     screenFragment.registerChildScreenContainer(this)
-                    setFragmentManager(screenFragment.childFragmentManager)
+                    setFragmentManager((screenFragment as Fragment).childFragmentManager)
                 }
             ) { "Parent Screen does not have its Fragment attached" }
         } else {
@@ -203,18 +208,18 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             .setReorderingAllowed(true)
     }
 
-    private fun attachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
+    private fun attachScreen(transaction: FragmentTransaction, screenFragment: Fragment) {
         transaction.add(id, screenFragment)
     }
 
-    private fun detachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
+    private fun detachScreen(transaction: FragmentTransaction, screenFragment: Fragment) {
         transaction.remove(screenFragment)
     }
 
-    private fun getActivityState(screenFragment: ScreenFragment): ActivityState? =
+    private fun getActivityState(screenFragment: T): ActivityState? =
         screenFragment.screen.activityState
 
-    open fun hasScreen(screenFragment: ScreenFragment?): Boolean =
+    open fun hasScreen(screenFragment: IScreenFragment?): Boolean =
         mScreenFragments.contains(screenFragment)
 
     override fun onAttachedToWindow() {
@@ -330,7 +335,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
                 if (getActivityState(screenFragment) === ActivityState.INACTIVE &&
                     screenFragment.isAdded
                 ) {
-                    detachScreen(it, screenFragment)
+                    detachScreen(it, screenFragment as Fragment)
                 }
                 orphaned.remove(screenFragment)
             }
@@ -338,6 +343,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
                 val orphanedAry = orphaned.toTypedArray()
                 for (fragment in orphanedAry) {
                     if (fragment is ScreenFragment) {
+
                         if (fragment.screen.container == null) {
                             detachScreen(it, fragment)
                         }

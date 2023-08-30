@@ -16,23 +16,25 @@ import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.Fragment
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.swmansion.rnscreens.ext.recycle
 
-class ScreenStackFragment : ScreenFragment {
+class ScreenStackFragment(private val screenFragmentDelegate: ScreenFragment) : Fragment(), IScreenFragment by screenFragmentDelegate, IScreenStackFragment {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
 
-    var searchView: CustomSearchView? = null
-    var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
+    override var searchView: CustomSearchView? = null
+    override var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
     @SuppressLint("ValidFragment")
-    constructor(screenView: Screen) : super(screenView)
+    constructor(screenView: Screen) : this(ScreenFragment(screenView))
 
-    constructor() {
+    constructor() : this(ScreenFragment(Screen(null))) {
         throw IllegalStateException(
             "ScreenStack fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
         )
@@ -78,7 +80,7 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     override fun onViewAnimationEnd() {
-        super.onViewAnimationEnd()
+        screenFragmentDelegate.onViewAnimationEnd()
         notifyViewAppearTransitionEnd()
     }
 
@@ -95,13 +97,13 @@ class ScreenStackFragment : ScreenFragment {
         savedInstanceState: Bundle?
     ): View? {
         val view: ScreensCoordinatorLayout? =
-            context?.let { ScreensCoordinatorLayout(it, this) }
+            context?.let { ScreensCoordinatorLayout(it, screenFragmentDelegate) }
 
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
 
-        view?.addView(recycleView(screen))
+        view?.addView(screen.recycle())
 
         mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
             // By default AppBarLayout will have a background color set but since we cover the whole layout
@@ -118,7 +120,7 @@ class ScreenStackFragment : ScreenFragment {
         if (mShadowHidden) {
             mAppBarLayout?.targetElevation = 0f
         }
-        mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
+        mToolbar?.let { mAppBarLayout?.addView(it.recycle()) }
         setHasOptionsMenu(true)
         return view
     }

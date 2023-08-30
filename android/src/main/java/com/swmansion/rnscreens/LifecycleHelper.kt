@@ -53,7 +53,7 @@ class LifecycleHelper {
                 parent = parent.parent
             }
             return if (parent != null) {
-                (parent as Screen).fragment
+                (parent as Screen).fragment as Fragment?
             } else null
         }
     }
