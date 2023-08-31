@@ -15,22 +15,19 @@
     "test-e2e-android": "detox test --configuration android.release --take-screenshots failing"
   },
   "dependencies": {
-    "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/bottom-tabs": "^5.11.7",
     "@react-navigation/compat": "^5.3.14",
     "@react-navigation/drawer": "^5.12.3",
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
-    "nanoid": "^4.0.0",
+    "nanoid": "^4.0.2",
     "react": "18.2.0",
     "react-native": "0.69.7",
-    "react-native-gesture-handler": "^2.9.0",
-    "react-native-redash": "^16.0.8",
-    "react-native-restart": "^0.0.22",
-    "react-native-safe-area-context": "^4.4.1",
+    "react-native-gesture-handler": "^2.12.1",
+    "react-native-restart": "^0.0.27",
+    "react-native-safe-area-context": "^4.7.1",
     "react-native-screens": "link:../",
-    "react-native-vector-icons": "^8.0.0",
-    "react-native-webview": "^11.13.0"
+    "react-native-vector-icons": "^8.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
