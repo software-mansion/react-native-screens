@@ -44,7 +44,7 @@ export default function HeaderConfig({
   headerTintColor,
   headerTitle,
   headerTitleStyle = {},
-  headerTopInsetEnabled = true,
+  headerTopInsetEnabled = false,
   headerTranslucent,
   route,
   searchBar,

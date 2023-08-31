@@ -39,7 +39,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private var mIsShadowHidden = false
     private var mDestroyed = false
     private var mBackButtonInCustomView = false
-    private var mIsTopInsetEnabled = true
+    private var mIsTopInsetEnabled = false
     private var mIsTranslucent = false
     private var mTintColor = 0
     private var mIsAttachedToWindow = false
@@ -157,7 +157,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             screenFragment?.setToolbar(toolbar)
         }
 
-        if (mIsTopInsetEnabled && screen?.headerType?.isCollapsing == false) {
+        if (mIsTopInsetEnabled) {
             headerTopInset.let {
                 toolbar.setPadding(0, it ?: 0, 0, 0)
             }
@@ -199,6 +199,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         actionBar.title = mTitle
         collapsingToolbarLayout?.title = mTitle
         collapsingToolbarLayout?.isTitleEnabled = screen?.headerType?.isCollapsing == true
+
+        // centering title
+        toolbar.isTitleCentered = screen?.headerType == Screen.HeaderType.CenterAligned
 
         if (TextUtils.isEmpty(mTitle)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered

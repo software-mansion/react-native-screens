@@ -215,10 +215,19 @@ class ScreenStackFragment : ScreenFragment {
             return CoordinatorLayout.LayoutParams.WRAP_CONTENT
         }
 
-        return when (screen.headerType) {
+        val resolvedSize = when (screen.headerType) {
             Screen.HeaderType.Medium -> R.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
             Screen.HeaderType.Large -> R.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
             else -> CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        }
+
+        // For apps that don't support Material 3 it's possible that resolved attribute of
+        // given header type size will return -1. In such case we want to return fallback value of
+        // desired header type.
+        return when (screen.headerType) {
+            Screen.HeaderType.Medium -> if (resolvedSize != -1) resolvedSize else PixelUtil.toPixelFromDIP(112f).toInt()
+            Screen.HeaderType.Large -> if (resolvedSize != -1) resolvedSize else PixelUtil.toPixelFromDIP(152f).toInt()
+            else -> resolvedSize
         }
     }
 

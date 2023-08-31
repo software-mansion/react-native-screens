@@ -6,7 +6,6 @@ import type {
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 type DirectionType = 'rtl' | 'ltr';
-type HeaderType = 'center-aligned' | 'small' | 'medium' | 'large';
 
 export interface NativeProps extends ViewProps {
   backgroundColor?: ColorValue;
@@ -18,7 +17,6 @@ export interface NativeProps extends ViewProps {
   direction?: WithDefault<DirectionType, 'ltr'>;
   hidden?: boolean;
   hideShadow?: boolean;
-  type?: WithDefault<HeaderType, 'small'>;
   largeTitle?: boolean;
   largeTitleFontFamily?: string;
   largeTitleFontSize?: Int32;
