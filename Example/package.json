@@ -15,13 +15,12 @@
     "test-e2e-android": "detox test --configuration android.release --take-screenshots failing"
   },
   "dependencies": {
-    "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/bottom-tabs": "^5.11.7",
     "@react-navigation/compat": "^5.3.14",
     "@react-navigation/drawer": "^5.12.3",
     "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
-    "nanoid": "^4.0.0",
+    "nanoid": "^4.0.2",
     "react": "18.2.0",
     "react-native": "0.69.7",
     "react-native-gesture-handler": "^2.12.1",
