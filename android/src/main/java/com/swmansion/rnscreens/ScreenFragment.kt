@@ -192,11 +192,12 @@ open class ScreenFragment : Fragment {
         if (fragment is ScreenStackFragment && fragment.canDispatchEvent(event)) {
             fragment.screen.let {
                 fragment.setLastEventDispatched(event)
+                val surfaceId = UIManagerHelper.getSurfaceId(it)
                 val lifecycleEvent: Event<*> = when (event) {
-                    ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(it.id)
-                    ScreenLifecycleEvent.Appear -> ScreenAppearEvent(it.id)
-                    ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(it.id)
-                    ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(it.id)
+                    ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(surfaceId, it.id)
+                    ScreenLifecycleEvent.Appear -> ScreenAppearEvent(surfaceId, it.id)
+                    ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(surfaceId, it.id)
+                    ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(surfaceId, it.id)
                 }
                 val screenContext = screen.context as ReactContext
                 val eventDispatcher: EventDispatcher? =
@@ -215,9 +216,10 @@ open class ScreenFragment : Fragment {
 
     fun dispatchHeaderBackButtonClickedEvent() {
         val screenContext = screen.context as ReactContext
+        val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
         UIManagerHelper
             .getEventDispatcherForReactTag(screenContext, screen.id)
-            ?.dispatchEvent(HeaderBackButtonClickedEvent(screen.id))
+            ?.dispatchEvent(HeaderBackButtonClickedEvent(surfaceId, screen.id))
     }
 
     fun dispatchTransitionProgress(alpha: Float, closing: Boolean) {
@@ -237,6 +239,7 @@ open class ScreenFragment : Fragment {
                     .getEventDispatcherForReactTag(screenContext, screen.id)
                     ?.dispatchEvent(
                         ScreenTransitionProgressEvent(
+                            UIManagerHelper.getSurfaceId(screenContext),
                             screen.id, mProgress, closing, goingForward, coalescingKey
                         )
                     )
@@ -294,9 +297,10 @@ open class ScreenFragment : Fragment {
             // we only send dismissed even when the screen has been removed from its container
             val screenContext = screen.context
             if (screenContext is ReactContext) {
+                val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
                 UIManagerHelper
                     .getEventDispatcherForReactTag(screenContext, screen.id)
-                    ?.dispatchEvent(ScreenDismissedEvent(screen.id))
+                    ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
             }
         }
         mChildScreenContainers.clear()
