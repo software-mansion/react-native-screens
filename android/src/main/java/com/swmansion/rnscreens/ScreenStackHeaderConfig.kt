@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Build
 import android.text.TextUtils
@@ -167,6 +168,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
         }
 
+        // As navigation icon in toolbar might not be shown after hiding and showing the toolbar,
+        // We're setting it to null after setting `supportActionBar` to true.
+        toolbar.navigationIcon = null
+
         activity.setSupportActionBar(toolbar)
         // non-null toolbar is set in the line above and it is used here
         val actionBar = requireNotNull(activity.supportActionBar)
@@ -277,18 +282,20 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                         toolbar.navigationIcon = null
                     }
                     toolbar.title = null
+                    // Hide title of collapsed toolbar when its type is set to medium / large.
+                    collapsingToolbarLayout?.setCollapsedTitleTextColor(Color.TRANSPARENT)
                     params.gravity = Gravity.START
                 }
                 ScreenStackHeaderSubview.Type.RIGHT -> params.gravity = Gravity.END
                 ScreenStackHeaderSubview.Type.CENTER -> {
-                    params.width = LayoutParams.MATCH_PARENT
+                    if (screen?.headerType?.isCollapsing == false) params.width = LayoutParams.MATCH_PARENT
                     params.gravity = Gravity.CENTER_HORIZONTAL
                     toolbar.title = null
                 }
                 else -> {}
             }
             view.layoutParams = params
-            toolbar.addView(view)
+            toolbar.addView(view, 0)
             i++
         }
     }

@@ -75,11 +75,13 @@ class ScreenStackFragment : ScreenFragment {
         mToolbar = toolbar
         mIsToolbarHidden = false
 
-        toolbar.layoutParams = CollapsingToolbarLayout.LayoutParams(
-            CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,
-            R.attr.actionBarSize.resolveAttribute(toolbar.context)
-        ).apply {
-            collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
+        if (screen.headerType.isCollapsing) {
+            toolbar.layoutParams = CollapsingToolbarLayout.LayoutParams(
+                CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,
+                R.attr.actionBarSize.resolveAttribute(toolbar.context)
+            ).apply {
+                collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
+            }
         }
 
         createCollapsingToolbarLayout()

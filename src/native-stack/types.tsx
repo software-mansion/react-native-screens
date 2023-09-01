@@ -156,6 +156,7 @@ export type NativeStackNavigationOptions = {
   headerBackTitleVisible?: boolean;
   /**
    * Function which returns a React Element to display in the center of the header.
+   * Currently, this type is not supported on header set to 'medium' / 'large' type.
    */
   headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
   /**
@@ -205,8 +206,14 @@ export type NativeStackNavigationOptions = {
     color?: string;
   };
   /**
-   * Indicates which type the header should be. Defaults to `small`.
-   * Only supported on Android.
+   * Customize the type of the header. Only supported on Android.
+   * Defaults to `small`.
+   *
+   * Available values:
+   * - `center-aligned` - the title of the header will be centered.
+   * - `small` - sets small size of header.
+   * - `medium` - sets medium size of header.
+   * - `large` - sets large size of header.
    *
    * @platform android
    */

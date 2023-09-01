@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.os.Build
 import android.view.ViewParent
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.facebook.react.bridge.GuardedRunnable

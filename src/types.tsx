@@ -182,8 +182,14 @@ export interface ScreenProps extends ViewProps {
    */
   onGestureCancel?: (e: NativeSyntheticEvent<null>) => void;
   /**
-   * Indicates which type the header should be. Defaults to `small`.
-   * Only supported on Android.
+   * Customize the type of the header. Only supported on Android.
+   * Defaults to `small`.
+   *
+   * Available values:
+   * - `center-aligned` - the title of the header will be centered.
+   * - `small` - sets small size of header.
+   * - `medium` - sets medium size of header.
+   * - `large` - sets large size of header.
    *
    * @platform android
    */
@@ -452,19 +458,6 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * Boolean indicating whether to hide the elevation shadow or the bottom border on the header.
    */
   hideShadow?: boolean;
-  /**
-   * Customize the type of the header. Only supported on Android.
-   * Defaults to `small`.
-   *
-   * Available values:
-   * - `center-aligned` - the title of the header will be centered.
-   * - `small` - sets small size of header.
-   * - `medium` - sets medium size of header.
-   * - `large` - sets large size of header.
-   *
-   * @platform android
-   */
-  type?: 'center-aligned' | 'small' | 'medium' | 'large';
   /**
    * Boolean to set native property to prefer large title header (like in iOS setting).
    * For large title to collapse on scroll, the content of the screen should be wrapped in a scrollable view such as `ScrollView` or `FlatList`.
