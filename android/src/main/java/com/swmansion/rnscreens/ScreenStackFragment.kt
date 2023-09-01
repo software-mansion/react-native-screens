@@ -24,7 +24,7 @@ import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.appbar.CollapsingToolbarLayout
 
 class ScreenStackFragment : ScreenFragment {
-    var mAppBarLayout: AppBarLayout? = null
+    private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     var mCollapsingToolbarLayout: CollapsingToolbarLayout? = null
 
