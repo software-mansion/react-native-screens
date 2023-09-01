@@ -68,8 +68,6 @@ class ScreenStackFragment : ScreenFragment {
 
         mToolbar = null
         mCollapsingToolbarLayout = null
-
-        println(getViewTree(requireView() as ViewGroup))
     }
 
     fun setToolbar(toolbar: Toolbar) {
@@ -96,37 +94,6 @@ class ScreenStackFragment : ScreenFragment {
         mAppBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
             CoordinatorLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(toolbar.context)
         )
-
-        println(getViewTree(requireView() as ViewGroup))
-    }
-
-    private fun getViewTree(root: ViewGroup): String {
-        fun getViewDesc(v: View): String {
-            val res = v.resources
-            val id = v.id
-            return "[${v::class.simpleName}]: " + when (true) {
-                (res == null) -> "no_resouces"
-                (id > 0) -> try {
-                    res.getResourceName(id)
-                } catch (e: android.content.res.Resources.NotFoundException) {
-                    "name_not_found"
-                }
-                else -> "no_id"
-            }
-        }
-
-        val output = StringBuilder(getViewDesc(root))
-        for (i in 0 until root.childCount) {
-            val v = root.getChildAt(i)
-            output.append("\n").append(
-                if (v is ViewGroup) {
-                    getViewTree(v).prependIndent("  ")
-                } else {
-                    "  " + getViewDesc(v)
-                }
-            )
-        }
-        return output.toString()
     }
 
     fun setToolbarShadowHidden(hidden: Boolean) {
