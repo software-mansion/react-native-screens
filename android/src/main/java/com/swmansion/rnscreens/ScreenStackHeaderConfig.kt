@@ -169,7 +169,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         // As navigation icon in toolbar might not be shown after hiding and showing the toolbar,
-        // We're setting it to null after setting `supportActionBar` to true.
+        // We're setting it to null before setting `supportActionBar` on activity.
         toolbar.navigationIcon = null
 
         activity.setSupportActionBar(toolbar)
