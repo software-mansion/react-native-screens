@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -185,6 +186,13 @@ class ScreenStackFragment : ScreenFragment {
             layoutParams = AppBarLayout.LayoutParams(
                 AppBarLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(context)
             )
+
+            // On Material 3 the elevation is not visible on AppBarLayout.
+            // To prevent this behavior, we're setting outline shadow colors to black.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                outlineAmbientShadowColor = Color.BLACK
+                outlineSpotShadowColor = Color.BLACK
+            }
 
             fitsSystemWindows = true
             mCollapsingToolbarLayout?.let {

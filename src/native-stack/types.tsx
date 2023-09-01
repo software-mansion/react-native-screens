@@ -215,6 +215,8 @@ export type NativeStackNavigationOptions = {
    * - `medium` - sets medium size of header.
    * - `large` - sets large size of header.
    *
+   * For medium and large headers to collapse on scroll, the content of the screen should be wrapped in a `ScrollView` with the property `nestedScrollEnabled` set to true.
+   * For the best experience of using `medium` and `large` header types it is recommended to have Material 3 bundled into the application.
    * @platform android
    */
   headerType?: 'center-aligned' | 'small' | 'medium' | 'large';

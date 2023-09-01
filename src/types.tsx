@@ -191,6 +191,8 @@ export interface ScreenProps extends ViewProps {
    * - `medium` - sets medium size of header.
    * - `large` - sets large size of header.
    *
+   * For medium and large headers to collapse on scroll, the content of the screen should be wrapped in a `ScrollView` with property `nestedScrollEnabled` set to true.
+   * It is also recommended to have Material 3 bundled into the application for the best experience of using `medium` and `large` header types.
    * @platform android
    */
   headerType?: 'center-aligned' | 'small' | 'medium' | 'large';

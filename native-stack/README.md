@@ -151,6 +151,18 @@ Style object for header large title. Supported properties:
 - `fontSize`
 - `color`
 
+#### `headerType`
+
+The type of the header. Defaults to `small`. Possible values are:
+
+- `center-aligned` - Small header with centered title.
+- `small`
+- `medium`
+- `large`
+
+For `medium` and `large` header type being able to scroll, the content of the screen should be wrapped in a `ScrollView` with the property `nestedScrollEnabled` set to true.
+For the best experience of using `medium` and `large` header types it is recommended to have Material 3 bundled into the application.
+
 #### `headerLeft`
 
 Function which returns a React Element to display on the left side of the header. For now, on Android, using it will cause the title to also disappear.
