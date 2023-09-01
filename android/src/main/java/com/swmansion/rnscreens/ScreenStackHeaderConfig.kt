@@ -79,8 +79,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         mIsAttachedToWindow = true
+        val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
-            ?.dispatchEvent(HeaderAttachedEvent(id))
+            ?.dispatchEvent(HeaderAttachedEvent(surfaceId, id))
         // we want to save the top inset before the status bar can be hidden, which would resolve in
         // inset being 0
         if (headerTopInset == null) {
@@ -96,8 +97,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         mIsAttachedToWindow = false
+        val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
-            ?.dispatchEvent(HeaderDetachedEvent(id))
+            ?.dispatchEvent(HeaderDetachedEvent(surfaceId, id))
     }
 
     private val screen: Screen?

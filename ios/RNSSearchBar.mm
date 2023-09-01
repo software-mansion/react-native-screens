@@ -213,7 +213,10 @@ namespace react = facebook::react;
 #endif
 }
 
-- (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0 && !TARGET_OS_TV
+- (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))
+    API_UNAVAILABLE(tvos, watchos)
 {
   switch (_placement) {
     case RNSSearchBarPlacementStacked:
@@ -224,6 +227,7 @@ namespace react = facebook::react;
       return UINavigationItemSearchBarPlacementInline;
   }
 }
+#endif // Check for iOS >= 16 && !TARGET_OS_TV
 
 #pragma mark delegate methods
 

@@ -10,7 +10,12 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
+import {
+  ImageSourcePropType,
+  StyleProp,
+  ViewStyle,
+  ColorValue,
+} from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
@@ -158,7 +163,7 @@ export type NativeStackNavigationOptions = {
    * Function which returns a React Element to display in the center of the header.
    * Currently, this type is not supported on header set to 'medium' / 'large' type.
    */
-  headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
+  headerCenter?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
    */
@@ -174,7 +179,7 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   headerLargeStyle?: {
-    backgroundColor?: string;
+    backgroundColor?: ColorValue;
   };
   /**
    * Boolean to set native property to prefer large title header (like in iOS setting).
@@ -203,7 +208,7 @@ export type NativeStackNavigationOptions = {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
+    color?: ColorValue;
   };
   /**
    * Customize the type of the header. Only supported on Android.
@@ -223,11 +228,11 @@ export type NativeStackNavigationOptions = {
   /**
    * Function which returns a React Element to display on the left side of the header.
    */
-  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
+  headerLeft?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Function which returns a React Element to display on the right side of the header.
    */
-  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
+  headerRight?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Whether to show the header.
    */
@@ -238,13 +243,13 @@ export type NativeStackNavigationOptions = {
    * - blurEffect
    */
   headerStyle?: {
-    backgroundColor?: string;
+    backgroundColor?: ColorValue;
     blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
   };
   /**
    * Tint color for the header. Changes the color of back button and title.
    */
-  headerTintColor?: string;
+  headerTintColor?: ColorValue;
   /**
    * String to display in the header as title. Defaults to scene `title`.
    */
@@ -260,7 +265,7 @@ export type NativeStackNavigationOptions = {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
+    color?: ColorValue;
   };
   /**
    * A flag to that lets you opt out of insetting the header. You may want to
@@ -300,7 +305,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  navigationBarColor?: string;
+  navigationBarColor?: ColorValue;
   /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
@@ -357,7 +362,7 @@ export type NativeStackNavigationOptions = {
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * If set to non-negative value it will try to render sheet with provided radius, else ti will apply system default.
+   * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
    *
    * If left unset system default is used.
    *
@@ -422,7 +427,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  statusBarColor?: string;
+  statusBarColor?: ColorValue;
   /**
    * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */

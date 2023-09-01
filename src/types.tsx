@@ -5,6 +5,7 @@ import {
   View,
   TargetedEvent,
   TextInputFocusEventData,
+  ColorValue,
 } from 'react-native';
 
 export type SearchBarCommands = {
@@ -156,7 +157,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  navigationBarColor?: string;
+  navigationBarColor?: ColorValue;
   /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
@@ -278,7 +279,7 @@ export interface ScreenProps extends ViewProps {
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * If set to non-negative value it will try to render sheet with provided radius, else ti will apply system default.
+   * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
    *
    * If left unset system default is used.
    *
@@ -343,7 +344,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  statusBarColor?: string;
+  statusBarColor?: ColorValue;
   /**
    * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */
@@ -405,7 +406,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of the navigation header.
    */
-  backgroundColor?: string;
+  backgroundColor?: ColorValue;
   /**
    * Title to display in the back button.
    * @platform ios.
@@ -438,7 +439,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
    */
-  color?: string;
+  color?: ColorValue;
   /**
    * Whether the stack should be in rtl or ltr form.
    */
@@ -472,12 +473,12 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
-  largeTitleBackgroundColor?: string;
+  largeTitleBackgroundColor?: ColorValue;
   /**
    * Customize the color to be used for the large title. By default uses the titleColor property.
    * @platform ios
    */
-  largeTitleColor?: string;
+  largeTitleColor?: ColorValue;
   /**
    * Customize font family to be used for the large title.
    * @platform ios
@@ -512,7 +513,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Allows for setting text color of the title.
    */
-  titleColor?: string;
+  titleColor?: ColorValue;
   /**
    * Customize font family to be used for the title.
    */
@@ -567,13 +568,13 @@ export interface SearchBarProps {
   /**
    * The search field background color
    */
-  barTintColor?: string;
+  barTintColor?: ColorValue;
   /**
    * The color for the cursor caret and cancel button text.
    *
    * @platform ios
    */
-  tintColor?: string;
+  tintColor?: ColorValue;
   /**
    * The text to be used instead of default `Cancel` button text
    *
@@ -606,7 +607,7 @@ export interface SearchBarProps {
    */
   inputType?: 'text' | 'phone' | 'number' | 'email';
   /**
-   * Indicates whether to to obscure the underlying content
+   * Indicates whether to obscure the underlying content
    */
   obscureBackground?: boolean;
   /**
@@ -668,19 +669,19 @@ export interface SearchBarProps {
   /**
    * The search field text color
    */
-  textColor?: string;
+  textColor?: ColorValue;
   /**
    * The search hint text color
    *
    * @plaform android
    */
-  hintTextColor?: string;
+  hintTextColor?: ColorValue;
   /**
    * The search and close icon color shown in the header
    *
    * @plaform android
    */
-  headerIconColor?: string;
+  headerIconColor?: ColorValue;
   /**
    * Show the search hint icon when search bar is focused
    *
