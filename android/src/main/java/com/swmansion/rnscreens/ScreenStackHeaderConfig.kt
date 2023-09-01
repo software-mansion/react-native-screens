@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
@@ -40,7 +41,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private var mIsShadowHidden = false
     private var mDestroyed = false
     private var mBackButtonInCustomView = false
-    private var mIsTopInsetEnabled = false
+    private var mIsTopInsetEnabled = true
     private var mIsTranslucent = false
     private var mTintColor = 0
     private var mIsAttachedToWindow = false
@@ -160,13 +161,15 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             screenFragment?.setToolbar(toolbar)
         }
 
+        val layoutParams = toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams
         if (mIsTopInsetEnabled) {
             headerTopInset.let {
-                toolbar.setPadding(0, it ?: 0, 0, 0)
+                layoutParams.topMargin = it ?: 0
+                collapsingToolbarLayout?.setContentScrimColor(Color.TRANSPARENT)
             }
         } else {
-            if (toolbar.paddingTop > 0) {
-                toolbar.setPadding(0, 0, 0, 0)
+            if (layoutParams.topMargin > 0) {
+                (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).topMargin = 0
             }
         }
 
