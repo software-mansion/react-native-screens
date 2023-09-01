@@ -136,4 +136,10 @@ dependencies {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.test:core:1.5.0'
+    }
+}
+
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
