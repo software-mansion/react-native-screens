@@ -10,8 +10,14 @@ buildscript {
         kotlinVersion = "1.6.21"
     }
     repositories {
+        // Detox repository for `com.wix:detox` dependency specified
+        // in app build.gradle.
+        maven {
+            url("$rootDir/../node_modules/detox/Detox-android")
+        }
         google()
         mavenCentral()
+
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
