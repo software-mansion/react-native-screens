@@ -90,5 +90,5 @@ import Test1844 from './src/Test1844';
 enableFreeze(true);
 
 export default function App() {
-  return <Test1844 />;
+  return <Test42 />;
 }
