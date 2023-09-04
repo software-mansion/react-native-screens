@@ -118,7 +118,7 @@ dependencies {
         // https://github.com/wix/Detox/issues/2848
         exclude group: 'com.google.android.material'
     }
-    implementation "androidx.appcompat:appcompat:1.1.0"
+    implementation "androidx.appcompat:appcompat:1.6.1"
   
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
@@ -133,12 +133,6 @@ dependencies {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
-    }
-}
-
-configurations.all {
-    resolutionStrategy {
-        force 'androidx.test:core:1.5.0'
     }
 }
 
