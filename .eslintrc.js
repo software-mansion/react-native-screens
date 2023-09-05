@@ -5,8 +5,6 @@ module.exports = {
     'plugin:import/warnings',
     'plugin:react/recommended',
     'prettier',
-    'prettier/react',
-    'prettier/standard',
   ],
 
   plugins: ['react-native', 'react-hooks'],
@@ -51,10 +49,12 @@ module.exports = {
     {
       files: ['*.{ts,tsx}'],
       parser: '@typescript-eslint/parser',
+      parserOptions: {
+        project: ['./tsconfig.json'],
+      },
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:import/typescript',
-        'prettier/@typescript-eslint',
       ],
       settings: {
         'import/parsers': {
@@ -62,6 +62,7 @@ module.exports = {
         },
       },
       rules: {
+        '@typescript-eslint/no-explicit-any': 'warn',
         '@typescript-eslint/array-type': 'error',
         '@typescript-eslint/consistent-type-assertions': [
           'error',
