@@ -14,7 +14,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
@@ -169,7 +168,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             }
         } else {
             if (layoutParams.topMargin > 0) {
-                (toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams).topMargin = 0
+                layoutParams.topMargin = 0
             }
         }
 
