@@ -51,15 +51,13 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : 'topTransitionProgress',
         ]
       )}
-      {...rest}
-    >
+      {...rest}>
       <ReanimatedTransitionProgressContext.Provider
         value={{
-          progress: progress,
-          closing: closing,
-          goingForward: goingForward,
-        }}
-      >
+          progress,
+          closing,
+          goingForward,
+        }}>
         {children}
       </ReanimatedTransitionProgressContext.Provider>
     </AnimatedScreen>
