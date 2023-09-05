@@ -36,7 +36,7 @@ const initialMetrics =
 export default function SafeAreaProviderCompat({ children, style }: Props) {
   return (
     <SafeAreaInsetsContext.Consumer>
-      {(insets) => {
+      {insets => {
         if (insets) {
           // If we already have insets, don't wrap the stack in another safe area provider
           // This avoids an issue with updates at the cost of potentially incorrect values

@@ -10,7 +10,12 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageSourcePropType, StyleProp, ViewStyle, ColorValue } from 'react-native';
+import {
+  ImageSourcePropType,
+  StyleProp,
+  ViewStyle,
+  ColorValue,
+} from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
