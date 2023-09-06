@@ -85,15 +85,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     }
 
     val headerConfig: ScreenStackHeaderConfig?
-        get() {
-            for (child in children) {
-                if (child is ScreenStackHeaderConfig) {
-                    return child
-                }
-            }
-
-            return null
-        }
+        get() = children.find { it is ScreenStackHeaderConfig } as? ScreenStackHeaderConfig
 
     /**
      * While transitioning this property allows to optimize rendering behavior on Android and provide
