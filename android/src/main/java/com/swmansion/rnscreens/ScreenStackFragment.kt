@@ -163,7 +163,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
-    fun canNavigateBack(): Boolean {
+    override fun canNavigateBack(): Boolean {
         val container: ScreenContainer? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         return if (container.rootScreen == screen) {

@@ -8,4 +8,7 @@ interface ScreenStackFragmentWrapper : ScreenFragmentWrapper {
     fun setToolbar(toolbar: Toolbar)
     fun setToolbarShadowHidden(hidden: Boolean)
     fun setToolbarTranslucent(translucent: Boolean)
+
+    // Navigation
+    fun canNavigateBack(): Boolean
 }
