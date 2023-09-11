@@ -3,7 +3,7 @@ package com.swmansion.rnscreens
 import android.app.Activity
 import com.facebook.react.bridge.ReactContext
 
-interface ScreenFragmentWrapper : FragmentHolder {
+interface ScreenFragmentWrapper : FragmentHolder, ScreenEventDispatcher {
     var screen: Screen
     val childScreenContainers: List<ScreenContainer<*>>
 
