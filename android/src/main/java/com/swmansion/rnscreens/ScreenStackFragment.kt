@@ -164,7 +164,7 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     fun canNavigateBack(): Boolean {
-        val container: ScreenContainer<*>? = screen.container
+        val container: ScreenContainer? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         return if (container.rootScreen == screen) {
             // this screen is the root of the container, if it is nested we can check parent container
@@ -181,7 +181,7 @@ class ScreenStackFragment : ScreenFragment {
     }
 
     fun dismiss() {
-        val container: ScreenContainer<*>? = screen.container
+        val container: ScreenContainer? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         container.dismiss(this)
     }
