@@ -16,9 +16,9 @@ import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
 import com.swmansion.rnscreens.Screen.ActivityState
 
-open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(context) {
+open class ScreenContainer(context: Context?) : ViewGroup(context) {
     @JvmField
-    protected val mScreenFragments = ArrayList<T>()
+    protected val mScreenFragments = ArrayList<ScreenFragmentWrapper>()
     @JvmField
     protected var mFragmentManager: FragmentManager? = null
     private var mIsAttached = false
@@ -87,14 +87,11 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
         performUpdatesNow()
     }
 
-    protected open fun adapt(screen: Screen): T {
-        @Suppress("UNCHECKED_CAST")
-        return ScreenFragment(screen) as T
-    }
+    protected open fun adapt(screen: Screen): ScreenFragmentWrapper = ScreenFragment(screen)
 
     fun addScreen(screen: Screen, index: Int) {
         val fragment = adapt(screen)
-        screen.fragment = fragment
+        screen.fragment = fragment.fragment as ScreenFragment
         mScreenFragments.add(index, fragment)
         screen.container = this
         onScreenChanged()
@@ -197,19 +194,19 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             .setReorderingAllowed(true)
     }
 
-    private fun attachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
-        transaction.add(id, screenFragment)
+    private fun attachScreen(transaction: FragmentTransaction, fragment: Fragment) {
+        transaction.add(id, fragment)
     }
 
-    private fun detachScreen(transaction: FragmentTransaction, screenFragment: ScreenFragment) {
-        transaction.remove(screenFragment)
+    private fun detachScreen(transaction: FragmentTransaction, fragment: Fragment) {
+        transaction.remove(fragment)
     }
 
-    private fun getActivityState(screenFragment: ScreenFragment): ActivityState? =
-        screenFragment.screen.activityState
+    private fun getActivityState(screenFragmentWrapper: ScreenFragmentWrapper): ActivityState? =
+        screenFragmentWrapper.screen.activityState
 
-    open fun hasScreen(screenFragment: ScreenFragment?): Boolean =
-        mScreenFragments.contains(screenFragment)
+    open fun hasScreen(screenFragmentWrapper: ScreenFragmentWrapper?): Boolean =
+        mScreenFragments.contains(screenFragmentWrapper)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -320,13 +317,13 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
                     "mFragmentManager is null when performing update in ScreenContainer"
                 }.fragments
             )
-            for (screenFragment in mScreenFragments) {
-                if (getActivityState(screenFragment) === ActivityState.INACTIVE &&
-                    screenFragment.isAdded
+            for (fragmentWrapper in mScreenFragments) {
+                if (getActivityState(fragmentWrapper) === ActivityState.INACTIVE &&
+                    fragmentWrapper.fragment.isAdded
                 ) {
-                    detachScreen(it, screenFragment)
+                    detachScreen(it, fragmentWrapper.fragment)
                 }
-                orphaned.remove(screenFragment)
+                orphaned.remove(fragmentWrapper.fragment)
             }
             if (orphaned.isNotEmpty()) {
                 val orphanedAry = orphaned.toTypedArray()
@@ -344,23 +341,23 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
 
             // attach newly activated screens
             var addedBefore = false
-            val pendingFront: ArrayList<T> = ArrayList()
+            val pendingFront: ArrayList<ScreenFragmentWrapper> = ArrayList()
 
-            for (screenFragment in mScreenFragments) {
-                val activityState = getActivityState(screenFragment)
-                if (activityState !== ActivityState.INACTIVE && !screenFragment.isAdded) {
+            for (fragmentWrapper in mScreenFragments) {
+                val activityState = getActivityState(fragmentWrapper)
+                if (activityState !== ActivityState.INACTIVE && !fragmentWrapper.fragment.isAdded) {
                     addedBefore = true
-                    attachScreen(it, screenFragment)
+                    attachScreen(it, fragmentWrapper.fragment)
                 } else if (activityState !== ActivityState.INACTIVE && addedBefore) {
                     // we detach the screen and then reattach it later to make it appear on front
-                    detachScreen(it, screenFragment)
-                    pendingFront.add(screenFragment)
+                    detachScreen(it, fragmentWrapper.fragment)
+                    pendingFront.add(fragmentWrapper)
                 }
-                screenFragment.screen.setTransitioning(transitioning)
+                fragmentWrapper.screen.setTransitioning(transitioning)
             }
 
             for (screenFragment in pendingFront) {
-                attachScreen(it, screenFragment)
+                attachScreen(it, screenFragment.fragment)
             }
 
             it.commitNowAllowingStateLoss()
