@@ -1,0 +1,3 @@
+package com.swmansion.rnscreens
+
+interface ScreenLifecycleEventDispatcher
