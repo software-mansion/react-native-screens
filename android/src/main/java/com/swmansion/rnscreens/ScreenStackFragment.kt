@@ -20,7 +20,7 @@ import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 
-class ScreenStackFragment : ScreenFragment {
+class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
@@ -38,7 +38,7 @@ class ScreenStackFragment : ScreenFragment {
         )
     }
 
-    fun removeToolbar() {
+    override fun removeToolbar() {
         mAppBarLayout?.let {
             mToolbar?.let { toolbar ->
                 if (toolbar.parent === it) {
@@ -49,7 +49,7 @@ class ScreenStackFragment : ScreenFragment {
         mToolbar = null
     }
 
-    fun setToolbar(toolbar: Toolbar) {
+    override fun setToolbar(toolbar: Toolbar) {
         mAppBarLayout?.addView(toolbar)
         toolbar.layoutParams = AppBarLayout.LayoutParams(
             AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
@@ -57,14 +57,14 @@ class ScreenStackFragment : ScreenFragment {
         mToolbar = toolbar
     }
 
-    fun setToolbarShadowHidden(hidden: Boolean) {
+    override fun setToolbarShadowHidden(hidden: Boolean) {
         if (mShadowHidden != hidden) {
             mAppBarLayout?.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
             mShadowHidden = hidden
         }
     }
 
-    fun setToolbarTranslucent(translucent: Boolean) {
+    override fun setToolbarTranslucent(translucent: Boolean) {
         if (mIsTranslucent != translucent) {
             val params = screen.layoutParams
             (params as CoordinatorLayout.LayoutParams).behavior =
