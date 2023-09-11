@@ -36,6 +36,7 @@ export default function App(): JSX.Element {
           name="Second"
           component={Second}
           options={{
+            stackPresentation: 'modal',
             fullScreenSwipeEnabled: true,
           }}
         />
