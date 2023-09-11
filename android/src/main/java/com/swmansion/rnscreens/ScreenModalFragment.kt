@@ -9,6 +9,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
     override lateinit var screen: Screen
 
+    override val fragment: Fragment
+        get() = this
+
     constructor() {
         throw IllegalStateException("TODO: Better error message")
     }
@@ -67,9 +70,6 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     override fun tryGetContext(): ReactContext? {
         TODO("Not yet implemented")
     }
-
-    override val fragment: Fragment
-        get() = TODO("Not yet implemented")
 
     override fun canDispatchLifecycleEvent(event: ScreenFragment.ScreenLifecycleEvent): Boolean {
         TODO("Not yet implemented")
