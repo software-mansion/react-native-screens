@@ -259,7 +259,7 @@ object ScreenWindowTraits {
         screen: Screen?,
         trait: WindowTraits
     ): Screen? {
-        screen?.fragment?.let {
+        screen?.fragmentWrapper?.let {
             for (sc in it.childScreenContainers) {
                 // we check only the top screen for the trait
                 val topScreen = sc.topScreen

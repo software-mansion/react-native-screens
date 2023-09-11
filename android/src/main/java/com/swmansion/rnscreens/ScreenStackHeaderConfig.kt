@@ -141,7 +141,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             val reactContext = if (context is ReactContext) {
                 context as ReactContext
             } else {
-                it.fragment?.tryGetContext()
+                it.fragmentWrapper?.tryGetContext()
             }
             ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }

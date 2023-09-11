@@ -216,7 +216,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
 
     override fun dispatchLifecycleEventInChildContainers(event: ScreenLifecycleEvent) {
         mChildScreenContainers.filter { it.screenCount > 0 }.forEach {
-            it.topScreen?.fragment?.let { fragment -> dispatchLifecycleEvent(event, fragment) }
+            it.topScreen?.fragmentWrapper?.let { fragment -> dispatchLifecycleEvent(event, fragment) }
         }
     }
 

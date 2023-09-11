@@ -116,6 +116,8 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
 
     fun getScreenAt(index: Int): Screen = mScreenFragments[index].screen
 
+    fun getScreenFragmentWrapperAt(index: Int): ScreenFragmentWrapper = mScreenFragments[index]
+
     open val topScreen: Screen?
         get() = mScreenFragments.firstOrNull { getActivityState(it) === ActivityState.ON_TOP }?.screen
 
