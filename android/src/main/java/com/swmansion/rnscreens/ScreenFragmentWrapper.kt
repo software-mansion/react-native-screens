@@ -5,6 +5,7 @@ import com.facebook.react.bridge.ReactContext
 
 interface ScreenFragmentWrapper : FragmentHolder {
     var screen: Screen
+    val childScreenContainers: List<ScreenContainer<*>>
 
     // Communication with container
     fun onContainerUpdate()
