@@ -34,7 +34,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
             layout(left, top, right, bottom)
         }
     }
-    private var mParentScreenFragment: ScreenFragment? = null
+    private var mParentScreenFragment: ScreenFragmentWrapper? = null
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         var i = 0
@@ -91,7 +91,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
 
     fun addScreen(screen: Screen, index: Int) {
         val fragment = adapt(screen)
-        screen.fragment = fragment.fragment as ScreenFragment
+        screen.fragmentWrapper = fragment
         mScreenFragments.add(index, fragment)
         screen.container = this
         onScreenChanged()
@@ -171,10 +171,10 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         // Otherwise we expect to connect directly with root view and get root fragment manager
         if (parent is Screen) {
             checkNotNull(
-                parent.fragment?.let { screenFragment ->
-                    mParentScreenFragment = screenFragment
-                    screenFragment.addChildContainer(this)
-                    setFragmentManager(screenFragment.childFragmentManager)
+                parent.fragmentWrapper?.let { fragmentWrapper ->
+                    mParentScreenFragment = fragmentWrapper
+                    fragmentWrapper.addChildContainer(this)
+                    setFragmentManager(fragmentWrapper.fragment.childFragmentManager)
                 }
             ) { "Parent Screen does not have its Fragment attached" }
         } else {
@@ -365,6 +365,6 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
     }
 
     protected open fun notifyContainerUpdate() {
-        topScreen?.fragment?.onContainerUpdate()
+        topScreen?.fragmentWrapper?.onContainerUpdate()
     }
 }
