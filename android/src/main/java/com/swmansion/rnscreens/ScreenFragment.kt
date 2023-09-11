@@ -164,7 +164,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         ScreenLifecycleEvent.Disappear -> !canDispatchAppear
     }
 
-    private fun setLastEventDispatched(event: ScreenLifecycleEvent) {
+    override fun updateLastEventDispatched(event: ScreenLifecycleEvent) {
         when (event) {
             ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear = false
             ScreenLifecycleEvent.Appear -> canDispatchAppear = false
@@ -197,7 +197,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         val fragment = fragmentWrapper.fragment
         if (fragment is ScreenStackFragment && fragment.canDispatchLifecycleEvent(event)) {
             fragment.screen.let {
-                fragment.setLastEventDispatched(event)
+                fragmentWrapper.updateLastEventDispatched(event)
                 val surfaceId = UIManagerHelper.getSurfaceId(it)
                 val lifecycleEvent: Event<*> = when (event) {
                     ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(surfaceId, it.id)
@@ -209,12 +209,12 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                 val eventDispatcher: EventDispatcher? =
                     UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
                 eventDispatcher?.dispatchEvent(lifecycleEvent)
-                fragment.dispatchEventInChildContainers(event)
+                fragmentWrapper.dispatchLifecycleEventInChildContainers(event)
             }
         }
     }
 
-    private fun dispatchEventInChildContainers(event: ScreenLifecycleEvent) {
+    override fun dispatchLifecycleEventInChildContainers(event: ScreenLifecycleEvent) {
         mChildScreenContainers.filter { it.screenCount > 0 }.forEach {
             it.topScreen?.fragment?.let { fragment -> dispatchLifecycleEvent(event, fragment) }
         }
