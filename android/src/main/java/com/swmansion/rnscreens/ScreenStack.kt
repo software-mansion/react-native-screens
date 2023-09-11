@@ -11,7 +11,7 @@ import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
-class ScreenStack(context: Context?) : ScreenContainer<ScreenStackFragment>(context) {
+class ScreenStack(context: Context?) : ScreenContainer(context) {
     private val mStack = ArrayList<ScreenStackFragment>()
     private val mDismissed: MutableSet<ScreenStackFragment> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()

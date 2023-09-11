@@ -36,7 +36,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     // if we call empty constructor, there is no screen to be assigned so not sure why it is suggested
     @Suppress("JoinDeclarationAndAssignment")
     override lateinit var screen: Screen
-    private val mChildScreenContainers: MutableList<ScreenContainer<*>> = ArrayList()
+    private val mChildScreenContainers: MutableList<ScreenContainer> = ArrayList()
     private var shouldUpdateOnResume = false
     // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
     // due to progress value being already 0.0f
@@ -152,7 +152,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         return null
     }
 
-    override val childScreenContainers: List<ScreenContainer<*>>
+    override val childScreenContainers: List<ScreenContainer>
         get() = mChildScreenContainers
 
 //    override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = canDispatchEvent(event)
@@ -238,7 +238,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                  - progress is between 0 and 1 -> key 3
              */
                 val coalescingKey = (if (mProgress == 0.0f) 1 else if (mProgress == 1.0f) 2 else 3).toShort()
-                val container: ScreenContainer<*>? = screen.container
+                val container: ScreenContainer? = screen.container
                 val goingForward = if (container is ScreenStack) container.goingForward else false
                 val screenContext = screen.context as ReactContext
                 UIManagerHelper
@@ -253,11 +253,11 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         }
     }
 
-    override fun addChildContainer(container: ScreenContainer<*>) {
+    override fun addChildContainer(container: ScreenContainer) {
         mChildScreenContainers.add(container)
     }
 
-    override fun removeChildContainer(container: ScreenContainer<*>) {
+    override fun removeChildContainer(container: ScreenContainer) {
         mChildScreenContainers.remove(container)
     }
 
