@@ -251,7 +251,7 @@ class ScreenStackFragment : ScreenFragment {
         override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
             super.applyTransformation(interpolatedTime, t)
             // interpolated time should be the progress of the current transition
-            mFragment.dispatchTransitionProgress(interpolatedTime, !mFragment.isResumed)
+            mFragment.dispatchTransitionProgressEvent(interpolatedTime, !mFragment.isResumed)
         }
     }
 }

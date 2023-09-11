@@ -8,8 +8,8 @@ interface ScreenEventDispatcher {
      */
     fun dispatchLifecycleEvent(event: ScreenFragment.ScreenLifecycleEvent, fragmentHolder: FragmentHolder)
 
-    fun dispatchHeaderBackButtonClicked()
-    fun dispatchTransitionProgress()
+    fun dispatchHeaderBackButtonClickedEvent()
+    fun dispatchTransitionProgressEvent(alpha: Float, closing: Boolean)
 
     // Concrete dispatchers
 }
