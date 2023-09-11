@@ -12,18 +12,18 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
 class ScreenStack(context: Context?) : ScreenContainer(context) {
-    private val mStack = ArrayList<ScreenStackFragment>()
-    private val mDismissed: MutableSet<ScreenStackFragment> = HashSet()
+    private val mStack = ArrayList<ScreenStackFragmentWrapper>()
+    private val mDismissed: MutableSet<ScreenStackFragmentWrapper> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
-    private var mTopScreen: ScreenStackFragment? = null
+    private var mTopScreen: ScreenStackFragmentWrapper? = null
     private var mRemovalTransitionStarted = false
     private var isDetachingCurrentScreen = false
     private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
     var goingForward = false
 
-    fun dismiss(screenFragment: ScreenStackFragment) {
+    fun dismiss(screenFragment: ScreenStackFragmentWrapper) {
         mDismissed.add(screenFragment)
         performUpdatesNow()
     }
@@ -80,8 +80,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         super.removeAllScreens()
     }
 
-    override fun hasScreen(screenFragment: ScreenFragment?): Boolean =
-        super.hasScreen(screenFragment) && !mDismissed.contains(screenFragment)
+    override fun hasScreen(screenFragmentWrapper: ScreenFragment?): Boolean =
+        super.hasScreen(screenFragmentWrapper) && !mDismissed.contains(screenFragmentWrapper)
 
     override fun onUpdate() {
         // When going back from a nested stack with a single screen on it, we may hit an edge case
