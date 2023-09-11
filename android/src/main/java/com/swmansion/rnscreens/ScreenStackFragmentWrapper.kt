@@ -11,4 +11,5 @@ interface ScreenStackFragmentWrapper : ScreenFragmentWrapper {
 
     // Navigation
     fun canNavigateBack(): Boolean
+    fun dismiss()
 }
