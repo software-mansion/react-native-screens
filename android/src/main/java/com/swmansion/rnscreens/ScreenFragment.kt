@@ -25,14 +25,17 @@ import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 import kotlin.math.max
 import kotlin.math.min
 
-open class ScreenFragment : Fragment {
+open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     enum class ScreenLifecycleEvent {
         Appear, WillAppear, Disappear, WillDisappear
     }
 
+    override val fragment: Fragment
+        get() = this
+
     // if we call empty constructor, there is no screen to be assigned so not sure why it is suggested
     @Suppress("JoinDeclarationAndAssignment")
-    lateinit var screen: Screen
+    override lateinit var screen: Screen
     private val mChildScreenContainers: MutableList<ScreenContainer<*>> = ArrayList()
     private var shouldUpdateOnResume = false
     // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
@@ -100,7 +103,7 @@ open class ScreenFragment : Fragment {
         }
     }
 
-    open fun onContainerUpdate() {
+    override fun onContainerUpdate() {
         updateWindowTraits()
     }
 
@@ -113,7 +116,7 @@ open class ScreenFragment : Fragment {
         ScreenWindowTraits.trySetWindowTraits(screen, activity, tryGetContext())
     }
 
-    fun tryGetActivity(): Activity? {
+    override fun tryGetActivity(): Activity? {
         activity?.let { return it }
         val context = screen.context
         if (context is ReactContext && context.currentActivity != null) {
@@ -130,7 +133,7 @@ open class ScreenFragment : Fragment {
         return null
     }
 
-    fun tryGetContext(): ReactContext? {
+    override fun tryGetContext(): ReactContext? {
         if (context is ReactContext) {
             return context as ReactContext
         }
@@ -149,10 +152,12 @@ open class ScreenFragment : Fragment {
         return null
     }
 
-    val childScreenContainers: List<ScreenContainer<*>>
+    override val childScreenContainers: List<ScreenContainer<*>>
         get() = mChildScreenContainers
 
-    private fun canDispatchEvent(event: ScreenLifecycleEvent): Boolean = when (event) {
+//    override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = canDispatchEvent(event)
+
+    override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = when (event) {
         ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
         ScreenLifecycleEvent.Appear -> canDispatchAppear
         ScreenLifecycleEvent.WillDisappear -> !canDispatchWillAppear
@@ -169,27 +174,28 @@ open class ScreenFragment : Fragment {
     }
 
     private fun dispatchOnWillAppear() {
-        dispatchEvent(ScreenLifecycleEvent.WillAppear, this)
-        dispatchTransitionProgress(0.0f, false)
+        dispatchLifecycleEvent(ScreenLifecycleEvent.WillAppear, this)
+        dispatchTransitionProgressEvent(0.0f, false)
     }
 
     private fun dispatchOnAppear() {
-        dispatchEvent(ScreenLifecycleEvent.Appear, this)
-        dispatchTransitionProgress(1.0f, false)
+        dispatchLifecycleEvent(ScreenLifecycleEvent.Appear, this)
+        dispatchTransitionProgressEvent(1.0f, false)
     }
 
     private fun dispatchOnWillDisappear() {
-        dispatchEvent(ScreenLifecycleEvent.WillDisappear, this)
-        dispatchTransitionProgress(0.0f, true)
+        dispatchLifecycleEvent(ScreenLifecycleEvent.WillDisappear, this)
+        dispatchTransitionProgressEvent(0.0f, true)
     }
 
     private fun dispatchOnDisappear() {
-        dispatchEvent(ScreenLifecycleEvent.Disappear, this)
-        dispatchTransitionProgress(1.0f, true)
+        dispatchLifecycleEvent(ScreenLifecycleEvent.Disappear, this)
+        dispatchTransitionProgressEvent(1.0f, true)
     }
 
-    private fun dispatchEvent(event: ScreenLifecycleEvent, fragment: ScreenFragment) {
-        if (fragment is ScreenStackFragment && fragment.canDispatchEvent(event)) {
+    override fun dispatchLifecycleEvent(event: ScreenLifecycleEvent, fragmentWrapper: ScreenFragmentWrapper) {
+        val fragment = fragmentWrapper.fragment
+        if (fragment is ScreenStackFragment && fragment.canDispatchLifecycleEvent(event)) {
             fragment.screen.let {
                 fragment.setLastEventDispatched(event)
                 val surfaceId = UIManagerHelper.getSurfaceId(it)
@@ -210,11 +216,11 @@ open class ScreenFragment : Fragment {
 
     private fun dispatchEventInChildContainers(event: ScreenLifecycleEvent) {
         mChildScreenContainers.filter { it.screenCount > 0 }.forEach {
-            it.topScreen?.fragment?.let { fragment -> dispatchEvent(event, fragment) }
+            it.topScreen?.fragment?.let { fragment -> dispatchLifecycleEvent(event, fragment) }
         }
     }
 
-    fun dispatchHeaderBackButtonClickedEvent() {
+    override fun dispatchHeaderBackButtonClickedEvent() {
         val screenContext = screen.context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
         UIManagerHelper
@@ -222,7 +228,7 @@ open class ScreenFragment : Fragment {
             ?.dispatchEvent(HeaderBackButtonClickedEvent(surfaceId, screen.id))
     }
 
-    fun dispatchTransitionProgress(alpha: Float, closing: Boolean) {
+    override fun dispatchTransitionProgressEvent(alpha: Float, closing: Boolean) {
         if (this is ScreenStackFragment) {
             if (mProgress != alpha) {
                 mProgress = max(0.0f, min(1.0f, alpha))
@@ -247,19 +253,19 @@ open class ScreenFragment : Fragment {
         }
     }
 
-    fun registerChildScreenContainer(screenContainer: ScreenContainer<*>) {
-        mChildScreenContainers.add(screenContainer)
+    override fun addChildContainer(container: ScreenContainer<*>) {
+        mChildScreenContainers.add(container)
     }
 
-    fun unregisterChildScreenContainer(screenContainer: ScreenContainer<*>) {
-        mChildScreenContainers.remove(screenContainer)
+    override fun removeChildContainer(container: ScreenContainer<*>) {
+        mChildScreenContainers.remove(container)
     }
 
-    fun onViewAnimationStart() {
+    override fun onViewAnimationStart() {
         dispatchViewAnimationEvent(false)
     }
 
-    open fun onViewAnimationEnd() {
+    override fun onViewAnimationEnd() {
         dispatchViewAnimationEvent(true)
     }
 

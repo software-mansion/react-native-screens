@@ -176,7 +176,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             checkNotNull(
                 parent.fragment?.let { screenFragment ->
                     mParentScreenFragment = screenFragment
-                    screenFragment.registerChildScreenContainer(this)
+                    screenFragment.addChildContainer(this)
                     setFragmentManager(screenFragment.childFragmentManager)
                 }
             ) { "Parent Screen does not have its Fragment attached" }
@@ -246,7 +246,7 @@ open class ScreenContainer<T : ScreenFragment>(context: Context?) : ViewGroup(co
             }
         }
 
-        mParentScreenFragment?.unregisterChildScreenContainer(this)
+        mParentScreenFragment?.removeChildContainer(this)
         mParentScreenFragment = null
 
         super.onDetachedFromWindow()
