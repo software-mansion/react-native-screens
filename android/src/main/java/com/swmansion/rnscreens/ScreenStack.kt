@@ -333,7 +333,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
 
     companion object {
         private fun isTransparent(fragmentWrapper: ScreenFragmentWrapper): Boolean =
-            fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL
+            fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL ||
+                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
