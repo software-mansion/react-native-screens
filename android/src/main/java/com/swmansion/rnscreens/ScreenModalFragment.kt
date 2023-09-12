@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens
 
 import android.app.Activity
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -40,10 +39,6 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
             CoordinatorLayout.LayoutParams.WRAP_CONTENT
         )
         mockCoordinatorLayout.addView(screen)
-//        return screen
-
-//        screen
-
         return mockCoordinatorLayout
     }
 
@@ -52,9 +47,11 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
         val callback = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    dismiss()
+                }
                 println("STATE CHANGED TO $newState")
             }
-
             override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
         }
 
@@ -70,13 +67,8 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
             }
         }
 
-//        view.setBackgroundColor(Color.BLUE)
-        view.setBackgroundColor(Color.TRANSPARENT)
-        screen.setBackgroundColor(Color.GREEN)
         val behavior: BottomSheetBehavior<Screen> = BottomSheetBehavior.from(screen)
         println("maxHeight ${behavior.maxHeight} peekHeight ${behavior.peekHeight} state ${behavior.state}")
-
-//        println(((screen.layoutParams as CoordinatorLayout.LayoutParams).behavior as BottomSheetBehavior<Screen>).state)
     }
 
     override fun removeToolbar() {
