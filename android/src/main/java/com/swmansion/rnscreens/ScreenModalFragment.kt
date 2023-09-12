@@ -1,9 +1,18 @@
 package com.swmansion.rnscreens
 
 import android.app.Activity
+import android.graphics.Color
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
@@ -18,6 +27,56 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     constructor(screen: Screen) : super() {
         this.screen = screen
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val mockCoordinatorLayout = CoordinatorLayout(requireContext())
+        mockCoordinatorLayout.layoutParams = CoordinatorLayout.LayoutParams(
+            CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+            CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        )
+        mockCoordinatorLayout.addView(screen)
+//        return screen
+
+//        screen
+
+        return mockCoordinatorLayout
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val callback = object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                println("STATE CHANGED TO $newState")
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+        }
+
+        val screen = (view as ViewGroup).children.first() as Screen
+        screen.layoutParams = CoordinatorLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        ).apply {
+            behavior = BottomSheetBehavior<Screen>().apply {
+                isHideable = true
+                peekHeight = BottomSheetBehavior.PEEK_HEIGHT_AUTO
+                addBottomSheetCallback(callback)
+            }
+        }
+
+//        view.setBackgroundColor(Color.BLUE)
+        view.setBackgroundColor(Color.TRANSPARENT)
+        screen.setBackgroundColor(Color.GREEN)
+        val behavior: BottomSheetBehavior<Screen> = BottomSheetBehavior.from(screen)
+        println("maxHeight ${behavior.maxHeight} peekHeight ${behavior.peekHeight} state ${behavior.state}")
+
+//        println(((screen.layoutParams as CoordinatorLayout.LayoutParams).behavior as BottomSheetBehavior<Screen>).state)
     }
 
     override fun removeToolbar() {
@@ -52,7 +111,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     }
 
     override fun onContainerUpdate() {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 
     override fun onViewAnimationStart() {
