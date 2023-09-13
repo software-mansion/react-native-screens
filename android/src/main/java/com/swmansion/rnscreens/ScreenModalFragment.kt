@@ -17,6 +17,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
     override lateinit var screen: Screen
 
+    private val container
+        get() = screen.container
+
     override val fragment: Fragment
         get() = this
 
@@ -48,7 +51,9 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         val callback = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    dismiss()
+                    val container = container
+                    check(container is ScreenStack) { "ScreenModalFragment added to a non-stack container" }
+                    container.dismiss(this@ScreenModalFragment)
                 }
                 println("STATE CHANGED TO $newState")
             }
