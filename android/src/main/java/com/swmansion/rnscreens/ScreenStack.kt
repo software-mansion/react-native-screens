@@ -32,15 +32,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         get() = mTopScreen?.screen
 
     val rootScreen: Screen
-        get() {
-            for (i in 0 until screenCount) {
-                val screenWrapper = getScreenFragmentWrapperAt(i)
-                if (!mDismissed.contains(screenWrapper)) {
-                    return screenWrapper.screen
-                }
-            }
-            throw IllegalStateException("Stack has no root screen set")
-        }
+        get() = mScreenFragments.firstOrNull { !mDismissed.contains(it) }?.screen
+            ?: throw IllegalStateException("Stack has no root screen set")
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper {
         if (screen.stackPresentation != Screen.StackPresentation.MODAL) {
