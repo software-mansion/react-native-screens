@@ -78,7 +78,7 @@ function Second({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <>
+    <View>
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -87,7 +87,11 @@ function Second({
         title="Open the sheet with ScrollView"
         onPress={() => navigation.navigate('SheetScreenWithScrollView')}
       />
-    </>
+      <Button
+        title="Go back to first screen"
+        onPress={() => navigation.navigate('First')}
+      />
+    </View>
   );
 }
 
