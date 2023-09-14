@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        rnsDefaultTargetSdkVersion = 31
-        rnsDefaultCompileSdkVersion = 31
+        rnsDefaultTargetSdkVersion = 34
+        rnsDefaultCompileSdkVersion = 34
         rnsDefaultMinSdkVersion = 21
         rnsDefaultKotlinVersion = '1.6.21'
     }
