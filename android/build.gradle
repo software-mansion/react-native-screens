@@ -1,3 +1,5 @@
+import com.android.Version
+
 buildscript {
     ext {
         rnsDefaultTargetSdkVersion = 34
@@ -45,7 +47,7 @@ def reactNativeArchitectures() {
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
-    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
+    def agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION
     if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
         namespace "com.swmansion.rnscreens"
     }
