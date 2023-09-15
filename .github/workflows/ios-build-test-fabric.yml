@@ -18,6 +18,7 @@ on:
 jobs:
   build:
     runs-on: macos-12
+    timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricTestExample
     concurrency:
