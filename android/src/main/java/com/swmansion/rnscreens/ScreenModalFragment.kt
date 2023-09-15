@@ -99,11 +99,11 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     override val childScreenContainers: List<ScreenContainer>
         get() = TODO("Not yet implemented")
 
-    override fun addChildContainer(container: ScreenContainer) {
+    override fun addChildScreenContainer(container: ScreenContainer) {
         TODO("Not yet implemented")
     }
 
-    override fun removeChildContainer(container: ScreenContainer) {
+    override fun removeChildScreenContainer(container: ScreenContainer) {
         TODO("Not yet implemented")
     }
 
