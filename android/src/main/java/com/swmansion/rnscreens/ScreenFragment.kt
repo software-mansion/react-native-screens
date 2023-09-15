@@ -155,8 +155,6 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     override val childScreenContainers: List<ScreenContainer>
         get() = mChildScreenContainers
 
-//    override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = canDispatchEvent(event)
-
     override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = when (event) {
         ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
         ScreenLifecycleEvent.Appear -> canDispatchAppear
