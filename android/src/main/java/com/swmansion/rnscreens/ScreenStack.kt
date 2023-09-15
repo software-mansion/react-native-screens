@@ -212,7 +212,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 it.add(id, newTop.fragment)
             }
-            mTopScreen = newTop as ScreenStackFragmentWrapper
+            mTopScreen = newTop as? ScreenStackFragmentWrapper
             mStack.clear()
             mStack.addAll(mScreenFragments.map { it as ScreenStackFragmentWrapper })
 
