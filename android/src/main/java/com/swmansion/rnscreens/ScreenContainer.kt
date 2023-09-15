@@ -175,7 +175,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
             checkNotNull(
                 parent.fragmentWrapper?.let { fragmentWrapper ->
                     mParentScreenFragment = fragmentWrapper
-                    fragmentWrapper.addChildContainer(this)
+                    fragmentWrapper.addChildScreenContainer(this)
                     setFragmentManager(fragmentWrapper.fragment.childFragmentManager)
                 }
             ) { "Parent Screen does not have its Fragment attached" }
@@ -245,7 +245,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
             }
         }
 
-        mParentScreenFragment?.removeChildContainer(this)
+        mParentScreenFragment?.removeChildScreenContainer(this)
         mParentScreenFragment = null
 
         super.onDetachedFromWindow()

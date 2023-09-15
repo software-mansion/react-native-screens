@@ -251,11 +251,11 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         }
     }
 
-    override fun addChildContainer(container: ScreenContainer) {
+    override fun addChildScreenContainer(container: ScreenContainer) {
         mChildScreenContainers.add(container)
     }
 
-    override fun removeChildContainer(container: ScreenContainer) {
+    override fun removeChildScreenContainer(container: ScreenContainer) {
         mChildScreenContainers.remove(container)
     }
 

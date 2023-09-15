@@ -8,8 +8,8 @@ interface ScreenFragmentWrapper : FragmentHolder, ScreenEventDispatcher {
 
     // Communication with container
     val childScreenContainers: List<ScreenContainer>
-    fun addChildContainer(container: ScreenContainer)
-    fun removeChildContainer(container: ScreenContainer)
+    fun addChildScreenContainer(container: ScreenContainer)
+    fun removeChildScreenContainer(container: ScreenContainer)
     fun onContainerUpdate()
 
     // Animation phase callbacks
