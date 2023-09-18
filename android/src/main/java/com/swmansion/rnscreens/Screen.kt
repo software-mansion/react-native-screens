@@ -8,15 +8,19 @@ import android.util.SparseArray
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
+import androidx.core.view.children
+import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerModule
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(context) {
+    val fragment: Fragment?
+        get() = fragmentWrapper?.fragment
 
-    var fragment: ScreenFragment? = null
-    var container: ScreenContainer<*>? = null
+    var fragmentWrapper: ScreenFragmentWrapper? = null
+    var container: ScreenContainer? = null
     var activityState: ActivityState? = null
         private set
     private var mTransitioning = false
@@ -85,7 +89,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     }
 
     val headerConfig: ScreenStackHeaderConfig?
-        get() = getChildAt(0) as? ScreenStackHeaderConfig
+        get() = children.find { it is ScreenStackHeaderConfig } as? ScreenStackHeaderConfig
 
     /**
      * While transitioning this property allows to optimize rendering behavior on Android and provide
@@ -150,7 +154,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
 
-        fragment?.let { ScreenWindowTraits.setOrientation(this, it.tryGetActivity()) }
+        fragmentWrapper?.let { ScreenWindowTraits.setOrientation(this, it.tryGetActivity()) }
     }
 
     // Accepts one of 4 accessibility flags
@@ -167,7 +171,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarStyle = statusBarStyle
-            fragment?.let { ScreenWindowTraits.setStyle(this, it.tryGetActivity(), it.tryGetContext()) }
+            fragmentWrapper?.let { ScreenWindowTraits.setStyle(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
     var isStatusBarHidden: Boolean?
@@ -177,7 +181,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarHidden = statusBarHidden
-            fragment?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
+            fragmentWrapper?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
     var isStatusBarTranslucent: Boolean?
@@ -187,7 +191,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarTranslucent = statusBarTranslucent
-            fragment?.let {
+            fragmentWrapper?.let {
                 ScreenWindowTraits.setTranslucent(
                     this,
                     it.tryGetActivity(),
@@ -203,7 +207,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             mStatusBarColor = statusBarColor
-            fragment?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
+            fragmentWrapper?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
     var navigationBarColor: Int?
@@ -213,7 +217,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
                 ScreenWindowTraits.applyDidSetNavigationBarAppearance()
             }
             mNavigationBarColor = navigationBarColor
-            fragment?.let { ScreenWindowTraits.setNavigationBarColor(this, it.tryGetActivity()) }
+            fragmentWrapper?.let { ScreenWindowTraits.setNavigationBarColor(this, it.tryGetActivity()) }
         }
 
     var isNavigationBarHidden: Boolean?
@@ -223,7 +227,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
                 ScreenWindowTraits.applyDidSetNavigationBarAppearance()
             }
             mNavigationBarHidden = navigationBarHidden
-            fragment?.let {
+            fragmentWrapper?.let {
                 ScreenWindowTraits.setNavigationBarHidden(
                     this,
                     it.tryGetActivity(),

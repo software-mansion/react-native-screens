@@ -23,7 +23,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.appbar.CollapsingToolbarLayout
 
-class ScreenStackFragment : ScreenFragment {
+class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     var mCollapsingToolbarLayout: CollapsingToolbarLayout? = null
@@ -44,7 +44,7 @@ class ScreenStackFragment : ScreenFragment {
         )
     }
 
-    fun removeToolbar() {
+   override fun removeToolbar() {
         mIsToolbarHidden = true
 
         // Cleanup all views from toolbar and collapsingToolbarLayout
@@ -70,7 +70,7 @@ class ScreenStackFragment : ScreenFragment {
         mCollapsingToolbarLayout = null
     }
 
-    fun setToolbar(toolbar: Toolbar) {
+   override fun setToolbar(toolbar: Toolbar) {
         mToolbar = toolbar
         mIsToolbarHidden = false
 
@@ -96,14 +96,14 @@ class ScreenStackFragment : ScreenFragment {
         )
     }
 
-    fun setToolbarShadowHidden(hidden: Boolean) {
+    override fun setToolbarShadowHidden(hidden: Boolean) {
         if (mShadowHidden != hidden) {
             mAppBarLayout?.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
             mShadowHidden = hidden
         }
     }
 
-    fun setToolbarTranslucent(translucent: Boolean) {
+    override fun setToolbarTranslucent(translucent: Boolean) {
         if (mIsTranslucent != translucent) {
             val params = screen.layoutParams
             (params as CoordinatorLayout.LayoutParams).behavior =
@@ -255,8 +255,8 @@ class ScreenStackFragment : ScreenFragment {
         }
     }
 
-    fun canNavigateBack(): Boolean {
-        val container: ScreenContainer<*>? = screen.container
+    override fun canNavigateBack(): Boolean {
+        val container: ScreenContainer? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         return if (container.rootScreen == screen) {
             // this screen is the root of the container, if it is nested we can check parent container
@@ -272,8 +272,8 @@ class ScreenStackFragment : ScreenFragment {
         }
     }
 
-    fun dismiss() {
-        val container: ScreenContainer<*>? = screen.container
+    override fun dismiss() {
+        val container: ScreenContainer? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         container.dismiss(this)
     }
@@ -354,7 +354,7 @@ class ScreenStackFragment : ScreenFragment {
         override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
             super.applyTransformation(interpolatedTime, t)
             // interpolated time should be the progress of the current transition
-            mFragment.dispatchTransitionProgress(interpolatedTime, !mFragment.isResumed)
+            mFragment.dispatchTransitionProgressEvent(interpolatedTime, !mFragment.isResumed)
         }
     }
 }
