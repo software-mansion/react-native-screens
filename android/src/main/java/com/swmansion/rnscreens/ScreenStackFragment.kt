@@ -131,7 +131,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun onStop() {
-        mLastFocusedChild = findLastFocusedChild()
+        if (isTelevision()) mLastFocusedChild = findLastFocusedChild()
         super.onStop()
     }
 
@@ -176,9 +176,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     private fun findLastFocusedChild(): View? {
-        // If current device is not television, we don't want to save last focused child.
-        if (!isTelevision()) return null
-
         var view: View? = screen
         while (view != null) {
             if (view.isFocused) return view
