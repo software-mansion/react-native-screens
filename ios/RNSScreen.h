@@ -35,6 +35,8 @@ namespace react = facebook::react;
 
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
+- (BOOL)hasNestedStack;
+- (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -100,6 +102,7 @@ namespace react = facebook::react;
 @property (nonatomic, copy) RCTDirectEventBlock onAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onDisappear;
 @property (nonatomic, copy) RCTDirectEventBlock onDismissed;
+@property (nonatomic, copy) RCTDirectEventBlock onHeaderHeightChange;
 @property (nonatomic, copy) RCTDirectEventBlock onWillAppear;
 @property (nonatomic, copy) RCTDirectEventBlock onWillDisappear;
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
@@ -108,6 +111,7 @@ namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;
+- (void)notifyHeaderHeightChange:(double)height;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (void)notifyWillAppear;
@@ -122,6 +126,7 @@ namespace react = facebook::react;
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
+- (BOOL)isPresentedAsNativeModal;
 
 /// Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;

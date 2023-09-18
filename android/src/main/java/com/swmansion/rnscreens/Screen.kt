@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
+import android.util.TypedValue
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
@@ -12,7 +13,10 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.PixelUtil
+import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
+import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(context) {
@@ -67,6 +71,8 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         if (changed) {
             val width = r - l
             val height = b - t
+
+            calculateHeaderHeight()
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 updateScreenSizeFabric(width, height)
             } else {
@@ -239,6 +245,27 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         set(enableNativeBackButtonDismissal) {
             mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
         }
+
+    fun calculateHeaderHeight() {
+        val actionBarTv = TypedValue()
+        val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
+
+        // Check if it's possible to get an attribute from theme context and assign a value from it.
+        // Otherwise, the default value will be returned.
+        val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
+            .takeIf { resolvedActionBarSize }
+            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 56.0
+
+        val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+            .takeIf { it > 0 }
+            ?.let { (context.resources::getDimensionPixelSize)(it) }
+            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
+            ?: 24.0
+
+        val totalHeight = actionBarHeight + statusBarHeight
+        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+            ?.dispatchEvent(HeaderHeightChangeEvent(id, totalHeight))
+    }
 
     enum class StackPresentation {
         PUSH, MODAL, TRANSPARENT_MODAL

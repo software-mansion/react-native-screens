@@ -750,10 +750,25 @@ navigation.popToTop();
 
 ### Measuring header's height
 
-To measure header's height, you can use `useHeaderHeight` hook.
+To measure header's height, you can use the `useHeaderHeight`, `useAnimatedHeaderHeight` or `useReanimatedHeaderHeight` hook.
+- `useHeaderHeight` returns the static header's height. The value provided by this hook changes when screen appears, when there's a change in header options or screen orientation.
+  Use this hook if you're sure your header height won't change dynamically, or when the screen is heavy.
+- `useAnimatedHeaderHeight` dynamically calculates the header's height. The value provided by this hook changes with every view layout (such as shrinking a large header into small one with a ScrollView). It returns an Animated.Value. 
+  Please beware of using this hook in heavy components, as it may result in performance issues.
+- `useReanimatedHeaderHeight` also dynamically calculates the header's height but uses React Native Reanimated under the hood. It returns an Animated.SharedValue.
+  Make sure to wrap your Stack.Navigator with `ReanimatedScreenProvider` before using this hook.
+
+We recommend using `useReanimatedHeaderHeight` rather than `useAnimatedHeaderHeight`. See [Shared Values vs Animated.Value](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/shared-values/#shared-values-vs-animatedvalue) section in React Native Reanimated's documentation for full comparison.
 
 ```tsx
+// for using useHeaderHeight
 import {useHeaderHeight} from 'react-native-screens/native-stack';
+
+// for using useAnimatedHeaderHeight
+import {useAnimatedHeaderHeight} from 'react-native-screens/native-stack';
+
+// for using useReanimatedHeaderHeight
+import {useReanimatedHeaderHeight} from 'react-native-screens/reanimated';
 ```
 
 ## Example
