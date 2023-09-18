@@ -2,13 +2,16 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.UiModeManager
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
 import android.widget.FrameLayout
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
@@ -154,6 +157,10 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
 
     override val childScreenContainers: List<ScreenContainer>
         get() = mChildScreenContainers
+
+    fun isTelevision(): Boolean {
+        return context?.getSystemService<UiModeManager>()?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+    }
 
     override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = when (event) {
         ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
