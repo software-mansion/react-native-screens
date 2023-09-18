@@ -346,8 +346,7 @@ class InnerScreen extends React.Component<ScreenProps> {
               (() => {
                 // for internal use
               })
-            }
-          >
+            }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
             ) : (
@@ -356,8 +355,7 @@ class InnerScreen extends React.Component<ScreenProps> {
                   progress: this.progress,
                   closing: this.closing,
                   goingForward: this.goingForward,
-                }}
-              >
+                }}>
                 {children}
               </TransitionProgressContext.Provider>
             )}
@@ -408,8 +406,7 @@ function FullWindowOverlay(props: { children: ReactNode }) {
   }
   return (
     <ScreensNativeModules.NativeFullWindowOverlay
-      style={{ position: 'absolute', width: '100%', height: '100%' }}
-    >
+      style={{ position: 'absolute', width: '100%', height: '100%' }}>
       {props.children}
     </ScreensNativeModules.NativeFullWindowOverlay>
   );
@@ -429,8 +426,7 @@ const styles = StyleSheet.create({
 const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   <ScreensNativeModules.NativeScreenStackHeaderSubview
     type="back"
-    style={styles.headerSubview}
-  >
+    style={styles.headerSubview}>
     <Image resizeMode="center" fadeDuration={0} {...props} />
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
@@ -455,31 +451,31 @@ class SearchBar extends React.Component<SearchBarProps> {
   }
 
   blur() {
-    this._callMethodWithRef((ref) =>
+    this._callMethodWithRef(ref =>
       ScreensNativeModules.NativeSearchBarCommands.blur(ref)
     );
   }
 
   focus() {
-    this._callMethodWithRef((ref) =>
+    this._callMethodWithRef(ref =>
       ScreensNativeModules.NativeSearchBarCommands.focus(ref)
     );
   }
 
   toggleCancelButton(flag: boolean) {
-    this._callMethodWithRef((ref) =>
+    this._callMethodWithRef(ref =>
       ScreensNativeModules.NativeSearchBarCommands.toggleCancelButton(ref, flag)
     );
   }
 
   clearText() {
-    this._callMethodWithRef((ref) =>
+    this._callMethodWithRef(ref =>
       ScreensNativeModules.NativeSearchBarCommands.clearText(ref)
     );
   }
 
   setText(text: string) {
-    this._callMethodWithRef((ref) =>
+    this._callMethodWithRef(ref =>
       ScreensNativeModules.NativeSearchBarCommands.setText(ref, text)
     );
   }

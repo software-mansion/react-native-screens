@@ -96,16 +96,14 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : 'topHeaderHeightChange',
         ]
       )}
-      {...rest}
-    >
+      {...rest}>
       <ReanimatedHeaderHeightContext.Provider value={headerHeight}>
         <ReanimatedTransitionProgressContext.Provider
           value={{
-            progress: progress,
-            closing: closing,
-            goingForward: goingForward,
-          }}
-        >
+            progress,
+            closing,
+            goingForward,
+          }}>
           {children}
         </ReanimatedTransitionProgressContext.Provider>
       </ReanimatedHeaderHeightContext.Provider>
