@@ -1,14 +1,13 @@
 package com.swmansion.rnscreens
 
 import android.app.Activity
+import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -31,49 +30,75 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         this.screen = screen
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        showsDialog = screen.stackPresentation == Screen.StackPresentation.MODAL
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val bottomSheetDialog = super.onCreateDialog(savedInstanceState)
+        bottomSheetDialog.setContentView(screen)
+        return bottomSheetDialog
+    }
+
+//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+//        BottomSheetDialog
+//        return super.onCreateDialog(savedInstanceState)
+//    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val mockCoordinatorLayout = CoordinatorLayout(requireContext())
-        mockCoordinatorLayout.layoutParams = CoordinatorLayout.LayoutParams(
-            CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-            CoordinatorLayout.LayoutParams.WRAP_CONTENT
-        )
-        mockCoordinatorLayout.addView(screen)
-        return mockCoordinatorLayout
+//        val coordinatorLayoutWrapper = CoordinatorLayout(requireContext())
+//        coordinatorLayoutWrapper.layoutParams = CoordinatorLayout.LayoutParams(
+//            CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+//            CoordinatorLayout.LayoutParams.WRAP_CONTENT
+//        )
+//        coordinatorLayoutWrapper.addView(screen)
+//        return coordinatorLayoutWrapper
+        return null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireDialog().setContentView(view)
 
         val callback = object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    val container = container
-                    check(container is ScreenStack) { "ScreenModalFragment added to a non-stack container" }
-                    container.dismiss(this@ScreenModalFragment)
-                }
-                println("STATE CHANGED TO $newState")
-            }
+            override fun onStateChanged(bottomSheet: View, newState: Int) = Unit
+//            override fun onStateChanged(bottomSheet: View, newState: Int) {
+//                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+//                    val container = container
+//                    check(container is ScreenStack) { "ScreenModalFragment added to a non-stack container" }
+//                    container.dismiss(this@ScreenModalFragment)
+//                }
+//                println("STATE CHANGED TO $newState")
+//            }
             override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
         }
 
-        val screen = (view as ViewGroup).children.first() as Screen
-        screen.layoutParams = CoordinatorLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-        ).apply {
-            behavior = BottomSheetBehavior<Screen>().apply {
-                isHideable = true
-                peekHeight = BottomSheetBehavior.PEEK_HEIGHT_AUTO
-                addBottomSheetCallback(callback)
-            }
-        }
+//        val screen = (view as ViewGroup).children.first() as Screen
+//        screen.layoutParams = CoordinatorLayout.LayoutParams(
+//            FrameLayout.LayoutParams.MATCH_PARENT,
+//            FrameLayout.LayoutParams.MATCH_PARENT
+//        ).apply {
+//            behavior = BottomSheetBehavior<Screen>().apply {
+//                isHideable = true
+//                peekHeight = BottomSheetBehavior.PEEK_HEIGHT_AUTO
+// //                addBottomSheetCallback(callback)
+//            }
+//        }
+//
+//        val behavior: BottomSheetBehavior<Screen> = BottomSheetBehavior.from(screen)
+//        println("maxHeight ${behavior.maxHeight} peekHeight ${behavior.peekHeight} state ${behavior.state}")
 
-        val behavior: BottomSheetBehavior<Screen> = BottomSheetBehavior.from(screen)
-        println("maxHeight ${behavior.maxHeight} peekHeight ${behavior.peekHeight} state ${behavior.state}")
+        if (view.parent != null) {
+            Log.e("ScreenModalFragment", "SCREEN HAS A NON NULL PARENT")
+        } else {
+            Log.e("ScreenModalFragment", "SCREEN DOES NOT HAVE A PARENT")
+        }
+        dialog?.setContentView(view)
     }
 
     override fun removeToolbar() {
