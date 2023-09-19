@@ -19,6 +19,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.swmansion.rnscreens.utils.DeviceUtils
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var mAppBarLayout: AppBarLayout? = null
@@ -131,7 +132,9 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun onStop() {
-        if (isTelevision()) mLastFocusedChild = findLastFocusedChild()
+        if (DeviceUtils.isPlatformAndroidTV(context))
+            mLastFocusedChild = findLastFocusedChild()
+
         super.onStop()
     }
 
