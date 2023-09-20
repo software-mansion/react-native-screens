@@ -61,7 +61,6 @@ target 'FabricTestExample' do
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
-
     projects = installer.aggregate_targets
         .map{ |t| t.user_project }
         .uniq{ |p| p.path }
