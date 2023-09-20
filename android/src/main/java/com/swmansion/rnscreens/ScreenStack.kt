@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.content.Context
 import android.graphics.Canvas
 import android.view.View
-import androidx.fragment.app.FragmentTransaction
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
@@ -129,38 +128,38 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
 
         createTransaction().let {
             // animation logic start
-//            if (stackAnimation != null) {
-//                if (shouldUseOpenAnimation) {
-//                    when (stackAnimation) {
-//                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
-//                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
-//                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
-//                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
-//                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
-//                        StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
-//                            R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
-//                        )
-//                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
-//                    }
-//                } else {
-//                    when (stackAnimation) {
-//                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
-//                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
-//                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
-//                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
-//                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
-//                        StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
-//                            R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
-//                        )
-//                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
-//                    }
-//                }
-//            }
-            if (shouldUseOpenAnimation) {
-                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            } else {
-                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+            if (stackAnimation != null) {
+                if (shouldUseOpenAnimation) {
+                    when (stackAnimation) {
+                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
+                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
+                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
+                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
+                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
+                        StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
+                            R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
+                        )
+                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
+                    }
+                } else {
+                    when (stackAnimation) {
+                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
+                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
+                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
+                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
+                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
+                        StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
+                            R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
+                        )
+                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
+                    }
+                }
             }
+//            if (shouldUseOpenAnimation) {
+//                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//            } else {
+//                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+//            }
             // animation logic end
             goingForward = shouldUseOpenAnimation
 
