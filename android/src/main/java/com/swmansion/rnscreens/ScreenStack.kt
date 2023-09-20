@@ -36,12 +36,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         get() = mScreenFragments.firstOrNull { !mDismissed.contains(it) }?.screen
             ?: throw IllegalStateException("Stack has no root screen set")
 
-    override fun adapt(screen: Screen): ScreenStackFragmentWrapper {
-        if (screen.stackPresentation != Screen.StackPresentation.MODAL) {
-            return ScreenStackFragment(screen)
-        } else {
-            return ScreenModalFragment(screen)
-        }
+    override fun adapt(screen: Screen): ScreenStackFragmentWrapper = when (screen.stackPresentation) {
+        Screen.StackPresentation.MODAL -> ScreenModalFragment(screen)
+        else -> ScreenStackFragment(screen)
     }
 
     override fun startViewTransition(view: View) {
