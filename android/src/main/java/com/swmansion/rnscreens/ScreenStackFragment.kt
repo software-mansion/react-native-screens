@@ -19,12 +19,15 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.swmansion.rnscreens.utils.DeviceUtils
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
+
+    private var mLastFocusedChild: View? = null
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -89,6 +92,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
+    override fun onStart() {
+        mLastFocusedChild?.requestFocus()
+        super.onStart()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -121,6 +129,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
         setHasOptionsMenu(true)
         return view
+    }
+
+    override fun onStop() {
+        if (DeviceUtils.isPlatformAndroidTV(context))
+            mLastFocusedChild = findLastFocusedChild()
+
+        super.onStop()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -161,6 +176,16 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 actionView = searchView
             }
         }
+    }
+
+    private fun findLastFocusedChild(): View? {
+        var view: View? = screen
+        while (view != null) {
+            if (view.isFocused) return view
+            view = if (view is ViewGroup) view.focusedChild else null
+        }
+
+        return null
     }
 
     override fun canNavigateBack(): Boolean {
