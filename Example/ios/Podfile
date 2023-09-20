@@ -58,5 +58,19 @@ target 'ScreensExample' do
       :mac_catalyst_enabled => false
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+
+    projects = installer.aggregate_targets
+        .map{ |t| t.user_project }
+        .uniq{ |p| p.path }
+    should_use_classic_linker = File.exists?(File.join(`xcode-select -p`.strip, 'Toolchains/XcodeDefault.xctoolchain/usr/bin/ld-classic'))
+    projects.each do |project|
+      if should_use_classic_linker
+        Pod::UI.puts("Applying -ld_classic for Xcode 15 on #{ project.path }")
+        project.build_configurations.each do |config|
+          config.build_settings['OTHER_LDFLAGS'] = '$(inherited) -ld_classic'
+        end
+        project.save()
+      end
+    end
   end
 end
