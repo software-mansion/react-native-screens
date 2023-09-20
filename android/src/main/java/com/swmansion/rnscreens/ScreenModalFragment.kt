@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,13 +12,25 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
     override lateinit var screen: Screen
 
+    private val bottomSheetDismissCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+    }
+
     private val container
         get() = screen.container
+
+    private val behavior
+        get() = (dialog as? BottomSheetDialog)?.behavior
 
     override val fragment: Fragment
         get() = this
@@ -36,30 +49,23 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val bottomSheetDialog = super.onCreateDialog(savedInstanceState)
+        val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         bottomSheetDialog.setContentView(screen)
+        bottomSheetDialog.dismissWithAnimation = true
+        bottomSheetDialog.behavior.apply {
+            isHideable = true
+            isDraggable = true
+            state = BottomSheetBehavior.STATE_EXPANDED
+//            addBottomSheetCallback()
+        }
         return bottomSheetDialog
     }
-
-//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//        BottomSheetDialog
-//        return super.onCreateDialog(savedInstanceState)
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-//        val coordinatorLayoutWrapper = CoordinatorLayout(requireContext())
-//        coordinatorLayoutWrapper.layoutParams = CoordinatorLayout.LayoutParams(
-//            CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-//            CoordinatorLayout.LayoutParams.WRAP_CONTENT
-//        )
-//        coordinatorLayoutWrapper.addView(screen)
-//        return coordinatorLayoutWrapper
-        return null
-    }
+    ): View? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,7 +73,8 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
         val callback = object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) = Unit
-//            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+            //            override fun onStateChanged(bottomSheet: View, newState: Int) {
 //                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
 //                    val container = container
 //                    check(container is ScreenStack) { "ScreenModalFragment added to a non-stack container" }
@@ -99,6 +106,21 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
             Log.e("ScreenModalFragment", "SCREEN DOES NOT HAVE A PARENT")
         }
         dialog?.setContentView(view)
+    }
+
+    // TODO: Consider two approaches:
+    // 1. Override whole native dismiss logic and rely on the one in ScreenStack
+    // 2. Stay with native dismiss logic and notify ScreenStack that particular fragment has been already dismissed.
+    override fun dismiss() {
+        // Approach 1
+        super.dismiss()
+        check(container is ScreenStack)
+        val container = container as ScreenStack
+        container.dismiss(this)
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
     }
 
     override fun removeToolbar() {
