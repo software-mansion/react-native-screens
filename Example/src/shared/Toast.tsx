@@ -8,6 +8,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { nanoid } from 'nanoid/non-secure';
+import { LaunchArguments } from 'react-native-launch-arguments';
 
 interface ToastProps {
   index: number;
@@ -28,11 +29,18 @@ const Toast = ({
   style = {},
   remove,
 }: ToastProps): JSX.Element => {
+  const launchArgs = LaunchArguments?.value();
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      remove(id);
-    }, DISAPPEAR_AFTER);
-    return () => clearTimeout(timer);
+    // Unfortunately, sometimes Detox tests are failing because the specific toast
+    // has been removed too suddenly. On detox tests, we're disabling
+    // removing the toasts.
+    if (!launchArgs.isDetox) {
+      const timer = setTimeout(() => {
+        remove(id);
+      }, DISAPPEAR_AFTER);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (

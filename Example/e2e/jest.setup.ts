@@ -1,7 +1,11 @@
 import { device } from 'detox';
 
 beforeAll(async () => {
-  await device.launchApp();
+  await device.launchApp({
+    launchArgs: {
+      isDetox: true,
+    },
+  });
 });
 
 afterAll(async () => {

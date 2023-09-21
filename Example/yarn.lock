@@ -6705,6 +6705,11 @@ react-native-iphone-x-helper@^1.3.0:
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
 
+react-native-launch-arguments@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-launch-arguments/-/react-native-launch-arguments-4.0.1.tgz#6d83c05c8de948db5eed8e75fbf76c28431b0c2d"
+  integrity sha512-sP2Vd+IEtApGiSDboyx8Dqnjj6IlPRA/M8KEoip4r5gidOvGcF/JGVJh9kIlgAchXheH7SWXvtmgvP0dJopikg==
+
 react-native-restart@^0.0.27:
   version "0.0.27"
   resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.27.tgz#43aa8210312c9dfa5ec7bd4b2f35238ad7972b19"
