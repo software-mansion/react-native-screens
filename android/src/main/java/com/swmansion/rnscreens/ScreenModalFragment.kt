@@ -14,6 +14,7 @@ import com.facebook.react.bridge.ReactContext
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.swmansion.rnscreens.ext.recycle
 
 class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
     override lateinit var screen: Screen
@@ -50,7 +51,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        bottomSheetDialog.setContentView(screen)
+        bottomSheetDialog.setContentView(screen.recycle())
         bottomSheetDialog.dismissWithAnimation = true
         bottomSheetDialog.behavior.apply {
             isHideable = true
