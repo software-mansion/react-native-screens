@@ -626,7 +626,7 @@ namespace react = facebook::react;
     }
   }
 
-  dispatch_async(dispatch_get_main_queue(), ^{
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
     // Position the contents in the navigation bar, regarding to the direction.
     for (UIView *view in navctr.navigationBar.subviews) {
       view.semanticContentAttribute = config.direction;
