@@ -73,6 +73,10 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type HeaderHeightChangeEventType = {
+  headerHeight: number;
+};
+
 export type TransitionProgressEventType = {
   progress: number;
   closing: number;
@@ -178,6 +182,12 @@ export interface ScreenProps extends ViewProps {
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
+   * A callback that gets called when the header height has changed.
+   */
+  onHeaderHeightChange?: (
+    e: NativeSyntheticEvent<HeaderHeightChangeEventType>
+  ) => void;
   /**
    * A callback that gets called after swipe back is canceled.
    */
