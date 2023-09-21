@@ -22,6 +22,7 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
+import com.swmansion.rnscreens.ext.recycle
 import kotlin.math.max
 import kotlin.math.min
 
@@ -81,7 +82,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
         )
         val wrapper = context?.let { ScreensFrameLayout(it) }?.apply {
-            addView(recycleView(screen))
+            addView(screen.recycle())
         }
         return wrapper
     }
@@ -308,24 +309,5 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
             }
         }
         mChildScreenContainers.clear()
-    }
-
-    companion object {
-        @JvmStatic
-        protected fun recycleView(view: View): View {
-            // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
-            // view it needs to be detached from the view hierarchy to allow the fragment to attach it back.
-            val parent = view.parent
-            if (parent != null) {
-                (parent as ViewGroup).endViewTransition(view)
-                parent.removeView(view)
-            }
-
-            // view detached from fragment manager get their visibility changed to GONE after their state is
-            // dumped. Since we don't restore the state but want to reuse the view we need to change
-            // visibility back to VISIBLE in order for the fragment manager to animate in the view.
-            view.visibility = View.VISIBLE
-            return view
-        }
     }
 }

@@ -19,6 +19,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.swmansion.rnscreens.ext.recycle
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var mAppBarLayout: AppBarLayout? = null
@@ -101,7 +102,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
 
-        view?.addView(recycleView(screen))
+        view?.addView(screen.recycle())
 
         mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
             // By default AppBarLayout will have a background color set but since we cover the whole layout
@@ -118,7 +119,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         if (mShadowHidden) {
             mAppBarLayout?.targetElevation = 0f
         }
-        mToolbar?.let { mAppBarLayout?.addView(recycleView(it)) }
+        mToolbar?.let { mAppBarLayout?.addView(it.recycle()) }
         setHasOptionsMenu(true)
         return view
     }
