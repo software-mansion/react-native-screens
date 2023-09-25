@@ -8,7 +8,6 @@ on:
       - 'ios/**'
       - 'common/**'
       - 'Example/**'
-      - 'TestsExample/**'
   push:
     branches:
       - main
@@ -39,13 +38,16 @@ jobs:
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
+      - name: Install Facebook IDB tool
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn prepare-e2e-ios
       - name: Install pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
-      - name: Build app
+      - name: Install Maestro CLI
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn build-e2e-ios
-      - name: Test app
+        run: yarn install-e2e
+      - name: Run emulator and tests
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios
       - uses: actions/upload-artifact@v3

@@ -1,0 +1,22 @@
+appId: ${APP_ID}
+---
+# Example buttons
+- assertVisible:
+    id: "root-screen-example-SimpleNativeStack"
+- assertVisible:
+    id: "root-screen-example-StackPresentation"
+- assertVisible:
+    id: "root-screen-example-BottomTabsAndStack"
+- assertVisible:
+    id: "root-screen-example-Modals"
+# Playground buttons
+- assertVisible:
+    id: "root-screen-playground-HeaderOptions"
+- assertVisible:
+    id: "root-screen-playground-StatusBar"
+- assertVisible:
+    id: "root-screen-playground-Animations"
+- assertVisible:
+    id: "root-screen-playground-Orientation"
+- assertVisible:
+    id: "root-screen-playground-SearchBar"

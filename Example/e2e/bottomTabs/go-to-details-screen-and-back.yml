@@ -1,0 +1,21 @@
+appId: ${APP_ID}
+---
+- launchApp
+- tapOn:
+    id: "root-screen-example-BottomTabsAndStack"
+- tapOn: "More details 0"
+- assertVisible: "More details 1"
+
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Details screen #0"
+
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+
+- assertVisible: "More details 0"

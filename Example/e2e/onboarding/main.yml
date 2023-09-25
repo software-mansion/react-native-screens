@@ -1,0 +1,6 @@
+appId: ${APP_ID}
+---
+- launchApp
+- assertVisible:
+    id: "root-screen-examples-header"
+- runFlow: "visible-example-buttons.yml"

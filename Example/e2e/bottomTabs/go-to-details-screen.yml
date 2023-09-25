@@ -1,0 +1,8 @@
+appId: ${APP_ID}
+---
+- launchApp
+- tapOn:
+    id: "root-screen-example-BottomTabsAndStack"
+- tapOn: "More details 0"
+- assertVisible:
+    text: "More details 1"

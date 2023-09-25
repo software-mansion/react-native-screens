@@ -1,0 +1,6 @@
+appId: ${APP_ID}
+onFlowStart:
+  - launchApp
+---
+- runFlow: onboarding/main.yml
+- runFlow: bottomTabs/main.yml

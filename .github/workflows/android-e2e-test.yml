@@ -7,7 +7,6 @@ on:
       - 'android/**'
       - 'common/**'
       - 'Example/**'
-      - 'TestsExample/**'
   push:
     branches:
       - main
@@ -40,10 +39,11 @@ jobs:
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn install
-      - name: Build app
+      - name: Install Maestro CLI
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn build-e2e-android
+        run: yarn install-e2e
       - name: Run emulator and tests
+        run: yarn test-e2e-android
         uses: reactivecircus/android-emulator-runner@v2.28.0
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}

@@ -1,0 +1,8 @@
+appId: com.swmansion.rnscreens.example
+---
+- runFlow: main-screen-and-back.yml
+- runFlow: go-to-details-screen.yml
+- runFlow: go-to-details-screen-and-back.yml
+- runFlow: switch-between-tabs.yml
+- runFlow: first-screen-and-double-tap-on-tab.yml
+- runFlow: keep-stack-state-on-tab-change.yml
