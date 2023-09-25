@@ -11,9 +11,11 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.recycle
 
 class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
@@ -21,14 +23,16 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     private val bottomSheetDismissCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            TODO("Not yet implemented")
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                container!!.onScreenDismissed(this@ScreenModalFragment)
+            }
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
     }
 
-    private val container
-        get() = screen.container
+    private val container: ScreenStack?
+        get() = screen.container as? ScreenStack
 
     private val behavior
         get() = (dialog as? BottomSheetDialog)?.behavior
@@ -57,7 +61,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
             isHideable = true
             isDraggable = true
             state = BottomSheetBehavior.STATE_EXPANDED
-//            addBottomSheetCallback()
+//            addBottomSheetCallback(bottomSheetDismissCallback)
         }
         return bottomSheetDialog
     }
@@ -200,5 +204,17 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     override fun dispatchTransitionProgressEvent(alpha: Float, closing: Boolean) {
         TODO("Not yet implemented")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val container = container
+        if (container == null || !container.hasScreen(this)) {
+            val screenContext = screen.context
+            if (screenContext is ReactContext) {
+                val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
+                UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
+            }
+        }
     }
 }
