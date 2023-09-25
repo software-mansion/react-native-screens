@@ -10,6 +10,7 @@ appId: ${APP_ID}
     when:
       platform: iOS
     commands:
+      # TODO: Check if it's possible to tap on type `_UIButtonBarButton`
       - tapOn: "Details screen #0"
 
 - runFlow:
