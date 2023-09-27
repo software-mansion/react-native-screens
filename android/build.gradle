@@ -5,7 +5,7 @@ buildscript {
         rnsDefaultTargetSdkVersion = 34
         rnsDefaultCompileSdkVersion = 34
         rnsDefaultMinSdkVersion = 21
-        rnsDefaultKotlinVersion = '1.8.0'
+        rnsDefaultKotlinVersion = '1.9.10'
     }
     ext.safeExtGet = {prop, fallback ->
         rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
