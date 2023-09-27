@@ -11,8 +11,8 @@
     "check-types": "tsc --noEmit",
     "install-e2e": "export MAESTRO_VERSION=1.32.0; curl -Ls \"https://get.maestro.mobile.dev\" | bash",
     "prepare-e2e-ios": "brew tap facebook/fb && brew install facebook/fb/idb-companion",
-    "test-e2e-ios": "yarn ios && maestro test -e APP_ID=org.reactjs.native.example.ScreensExample e2e/flow.yml",
-    "test-e2e-android": "yarn android && maestro test --format junit --output results.xml -e APP_ID=com.swmansion.rnscreens.example e2e/flow.yml"
+    "test-e2e-ios": "yarn ios && maestro test --output results.xml -e APP_ID=org.reactjs.native.example.ScreensExample e2e/flow.yml",
+    "test-e2e-android": "yarn android && maestro test --output results.xml -e APP_ID=com.swmansion.rnscreens.example e2e/flow.yml"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^5.11.7",
@@ -42,7 +42,6 @@
     "@types/react-native-restart": "^0.0.0",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.3.1",
-    "detox": "^20.11.4",
     "eslint": "^8.19.0",
     "glob-to-regexp": "^0.4.1",
     "jest": "^29.3.1",

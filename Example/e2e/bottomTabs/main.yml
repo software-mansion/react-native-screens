@@ -1,4 +1,4 @@
-appId: com.swmansion.rnscreens.example
+appId: ${APP_ID}
 ---
 - runFlow: main-screen-and-back.yml
 - runFlow: go-to-details-screen.yml

@@ -1,0 +1,18 @@
+appId: ${APP_ID}
+---
+- launchApp
+- tapOn:
+    id: "root-screen-playground-Events"
+- tapOn:
+    id: "events-stack-animation-picker"
+- tapOn:
+    id: "stack-animation-slide_from_bottom"
+- tapOn:
+    id: "events-go-to-chats"
+
+- assertVisible: "3. Main | transitionStart | closing"
+- assertVisible: "4. Chats | transitionStart | opening"
+- assertVisible: "5. Privacy | transitionStart | opening"
+- assertVisible: "6. Main | transitionEnd | closing"
+- assertVisible: "7. Chats | transitionEnd | opening"
+- assertVisible: "8. Privacy | transitionEnd | opening"

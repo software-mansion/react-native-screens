@@ -1,0 +1,12 @@
+appId: ${APP_ID}
+---
+- launchApp
+- assertVisible:
+    id: "root-screen-example-SimpleNativeStack"
+- tapOn:
+    id: "root-screen-example-SimpleNativeStack"
+- tapOn: "Go to detail"
+- assertVisible: "Go back"
+- tapOn: "Go back"
+- assertVisible:
+      id: "simple-native-stack-go-to-detail"

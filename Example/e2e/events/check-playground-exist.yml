@@ -1,0 +1,10 @@
+appId: ${APP_ID}
+---
+- launchApp
+- assertVisible:
+    id: "root-screen-playground-Events"
+- tapOn:
+    id: "root-screen-playground-Events"
+
+- assertVisible: "1. Main | transitionStart | opening"
+- assertVisible: "2. Main | transitionEnd | opening"

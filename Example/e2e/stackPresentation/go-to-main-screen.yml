@@ -1,0 +1,9 @@
+appId: ${APP_ID}
+---
+- launchApp
+- assertVisible:
+    id: "root-screen-example-StackPresentation"
+- tapOn:
+    id: "root-screen-example-StackPresentation"
+- assertVisible:
+    id: "stack-presentation-root-scroll-view"

@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+---
+- runFlow: check-playground-exist.yml
+- runFlow: back-from-chats.yml
+- runFlow: back-from-chats-none-animation.yml
+- runFlow: slide-from-bottom-animation.yml
+- runFlow: back-from-chats-slide-from-bottom-animation.yml
+
+- runFlow:
+    when:
+      platform: Android
+    file: android-back-from-chats.yml
+- runFlow:
+    when:
+      platform: Android
+    file: android-back-from-chats-none-animation.yml
+- runFlow:
+    when:
+      platform: Android
+    file: android-back-from-chats-slide-from-bottom-animation.yml

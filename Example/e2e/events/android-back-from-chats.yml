@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+---
+- launchApp
+- tapOn:
+    id: "root-screen-playground-Events"
+- tapOn:
+    id: "events-go-to-chats"
+- back
+
+- assertVisible: "9. Main | transitionStart | opening"
+- assertVisible: "10. Main | transitionEnd | opening"
