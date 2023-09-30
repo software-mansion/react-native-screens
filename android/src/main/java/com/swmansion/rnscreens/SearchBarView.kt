@@ -32,14 +32,18 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     private var mAreListenersSet: Boolean = false
 
-    private val screenStackFragment: ScreenStackFragment?
+    private val headerConfig: ScreenStackHeaderConfig?
         get() {
             val currentParent = parent
             if (currentParent is ScreenStackHeaderSubview) {
-                return currentParent.config?.screenFragment
+                return currentParent.config
             }
+
             return null
         }
+
+    private val screenStackFragment: ScreenStackFragment?
+        get() = headerConfig?.screenFragment
 
     fun onUpdate() {
         setSearchViewProps()
@@ -110,10 +114,12 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     private fun handleClose() {
         sendEvent(SearchBarCloseEvent(surfaceId, id))
+        setToolbarElementsVisibility(VISIBLE)
     }
 
     private fun handleOpen() {
         sendEvent(SearchBarOpenEvent(surfaceId, id))
+        setToolbarElementsVisibility(GONE)
     }
 
     private fun handleTextSubmit(newText: String?) {
@@ -142,6 +148,14 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     fun handleSetTextJsRequest(text: String?) {
         text?.let { screenStackFragment?.searchView?.setText(it) }
+    }
+
+    private fun setToolbarElementsVisibility(visibility: Int) {
+        for (i in 0..(headerConfig?.configSubviewsCount?.minus(1) ?: 0)) {
+            val subview = headerConfig?.getConfigSubview(i)
+            if (subview?.type != ScreenStackHeaderSubview.Type.SEARCH_BAR)
+                subview?.visibility = visibility
+        }
     }
 
     private val surfaceId = UIManagerHelper.getSurfaceId(this)
