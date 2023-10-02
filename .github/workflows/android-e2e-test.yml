@@ -43,7 +43,6 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn install-e2e
       - name: Run emulator and tests
-        run: yarn test-e2e-android
         uses: reactivecircus/android-emulator-runner@v2.28.0
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
