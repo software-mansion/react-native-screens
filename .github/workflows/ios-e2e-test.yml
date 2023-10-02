@@ -45,11 +45,10 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
       - name: Install Maestro CLI
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn install-e2e
-      - name: Export Maestro CLI env
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: echo "PATH=$HOME/.maestro/bin" >> $GITHUB_ENV
+        run: |
+          yarn install-e2e
+          echo "$HOME/.maestro/bin" >> $GITHUB_ENV
+          echo "$PATH"
       - name: Run emulator and tests
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios

@@ -42,9 +42,9 @@ jobs:
       - name: Install Maestro CLI
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          - yarn install-e2e
-          - echo "PATH=$HOME/.maestro/bin" >> $GITHUB_ENV
-          - echo "$PATH"
+          yarn install-e2e
+          echo "$HOME/.maestro/bin" >> $GITHUB_ENV
+          echo "$PATH"
       - name: Run emulator and tests
         uses: reactivecircus/android-emulator-runner@v2.28.0
         with:
