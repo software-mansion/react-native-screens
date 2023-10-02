@@ -43,8 +43,8 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           yarn install-e2e
-          echo "$HOME/.maestro/bin" >> "$GITHUB_ENV"
-          echo "$PATH"
+          MAESTRO_PATH=$HOME/.maestro/bin
+          echo "$MAESTRO_PATH" >> $GITHUB_ENV
       - name: Run emulator and tests
         uses: reactivecircus/android-emulator-runner@v2.28.0
         with:
