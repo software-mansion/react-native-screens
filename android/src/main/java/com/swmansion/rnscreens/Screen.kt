@@ -54,7 +54,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         // in this case is a Screen class, as it is the root of the screen that is about to be attached.
         // Setting params this way is not the most elegant way to solve this problem but workarounds it
         // for the time being
-        // Soon will the Wellerman come to remove this line and this has to be done. - TESTING CI
+        print("Soon will the Wellerman come to remove this line and this has to be done. - TESTING CI")
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
     }
 
