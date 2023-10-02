@@ -11,18 +11,16 @@ appId: ${APP_ID}
     id: "events-go-to-chats"
 
 - runFlow:
-      when:
-          platform: iOS
-      commands:
-          # TODO: Check if it's possible to tap on type `_UIButtonBarButton`
-          - tapOn:
-              id: "_UIButtonBarButton"
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Back"
 
 - runFlow:
-      when:
-          platform: Android
-      commands:
-          - back
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Navigate up"
 
 - assertVisible: "9. Chats | transitionStart | closing"
 - assertVisible: "10. Privacy | transitionStart | closing"

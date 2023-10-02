@@ -1,6 +1,5 @@
 appId: ${APP_ID}
 ---
-- launchApp
 - tapOn:
     id: "stack-presentation-modal-button"
 - assertVisible:

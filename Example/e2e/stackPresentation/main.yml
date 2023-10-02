@@ -1,5 +1,4 @@
 appId: ${APP_ID}
 ---
-- runFlow: go-to-main-screen.yml
 - runFlow: push-form-screen.yml
 - runFlow: open-modal.yml
