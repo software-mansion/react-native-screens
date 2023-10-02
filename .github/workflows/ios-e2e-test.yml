@@ -47,7 +47,7 @@ jobs:
       - name: Install Maestro CLI
         run: |
           yarn install-e2e
-          echo "$HOME/.maestro/bin" >> $GITHUB_ENV
+          echo "$HOME/.maestro/bin" >> "$GITHUB_ENV"
           echo "$PATH"
       - name: Run emulator and tests
         working-directory: ${{ env.WORKING_DIRECTORY }}
