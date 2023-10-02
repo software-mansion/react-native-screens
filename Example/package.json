@@ -9,7 +9,7 @@
     "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types && yarn format",
     "check-types": "tsc --noEmit",
-    "install-e2e": "export MAESTRO_VERSION=1.32.0; curl -Ls \"https://get.maestro.mobile.dev\" | bash && export PATH=\"$PATH\":\"$HOME/.maestro/bin\"",
+    "install-e2e": "export MAESTRO_VERSION=1.32.0; curl -Ls \"https://get.maestro.mobile.dev\" | bash",
     "prepare-e2e-ios": "brew tap facebook/fb && brew install facebook/fb/idb-companion",
     "test-e2e-ios": "yarn ios && maestro test --output results.xml -e APP_ID=org.reactjs.native.example.ScreensExample e2e/flow.yml",
     "test-e2e-android": "yarn android && maestro test --output results.xml -e APP_ID=com.swmansion.rnscreens.example e2e/flow.yml"
