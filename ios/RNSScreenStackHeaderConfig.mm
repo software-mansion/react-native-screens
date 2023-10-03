@@ -567,6 +567,8 @@ namespace react = facebook::react;
 #endif
   }
 #if !TARGET_OS_TV
+  // Workaround for the wrong rotation of back button arrow in RTL mode.
+  navitem.hidesBackButton = true;
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
@@ -623,6 +625,13 @@ namespace react = facebook::react;
       }
     }
   }
+
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
+    // Position the contents in the navigation bar, regarding to the direction.
+    for (UIView *view in navctr.navigationBar.subviews) {
+      view.semanticContentAttribute = config.direction;
+    }
+  });
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
