@@ -8,6 +8,7 @@ on:
       - 'common/**'
       - 'Example/**'
       - 'TestsExample/**'
+      - 'src/**'
   push:
     branches:
       - main
