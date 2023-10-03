@@ -1,13 +1,13 @@
-import {NavigationContainer, RouteProp} from '@react-navigation/native';
+import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import {
   createStackNavigator,
   StackNavigationProp,
   TransitionPresets,
 } from '@react-navigation/stack';
 import React from 'react';
-import {Alert, LogBox} from 'react-native';
-import {StyleSheet, Text, View, FlatList, Pressable} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import { Alert, LogBox } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import {
   Header,
@@ -36,7 +36,7 @@ LogBox.ignoreLogs([
 
 const Stack = createStackNavigator();
 
-const dataset = Array.from<unknown, DataItem>({length: 100}, (_, i) => ({
+const dataset = Array.from<unknown, DataItem>({ length: 100 }, (_, i) => ({
   title: `Title ${i}`,
   value: i,
 }));
@@ -44,7 +44,7 @@ const dataset = Array.from<unknown, DataItem>({length: 100}, (_, i) => ({
 const Screen: React.FC<{
   route: RouteProp<RootStackParamList, any>;
   navigation: StackNavigationProp<RootStackParamList, any>;
-}> = ({route, navigation}) => {
+}> = ({ route, navigation }) => {
   for (let i = 0; i < 10 ** 3; i++) {}
   const isSecondScreen = route.name === Route.SecondScreen;
 
@@ -58,7 +58,7 @@ const Screen: React.FC<{
 
   const renderItem = (item: DataItem) => (
     <Pressable
-      android_ripple={{color: Colors.light}}
+      android_ripple={{ color: Colors.light }}
       style={styles.listItemContainer}
       onPress={handleItemPress(item)}>
       <View style={styles.listItemContentWrapper}>
@@ -75,8 +75,8 @@ const Screen: React.FC<{
     <ScrollView>
       <FlatList
         data={dataset}
-        keyExtractor={(item) => item.value.toString()}
-        renderItem={({item}) => renderItem(item)}
+        keyExtractor={item => item.value.toString()}
+        renderItem={({ item }) => renderItem(item)}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListHeaderComponent={!isSecondScreen && Header}
         ListHeaderComponentStyle={styles.headerWrapper}
@@ -91,16 +91,17 @@ const Screen: React.FC<{
 const App: React.FC = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{...TransitionPresets.SlideFromRightIOS}}>
+      <Stack.Navigator
+        screenOptions={{ ...TransitionPresets.SlideFromRightIOS }}>
         <Stack.Screen
           name={Route.FirstScreen}
           component={Screen}
-          options={{title: 'Sample List'}}
+          options={{ title: 'Sample List' }}
         />
         <Stack.Screen
           name={Route.SecondScreen}
           component={Screen}
-          options={{title: 'Sample List 2'}}
+          options={{ title: 'Sample List 2' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

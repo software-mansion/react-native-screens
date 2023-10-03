@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Platform, StyleSheet, View, ViewProps } from 'react-native';
+import { Animated, Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
+// eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
 import warnOnce from 'warn-once';
 import {
@@ -18,10 +19,10 @@ import {
   PartialState,
 } from '@react-navigation/native';
 import {
+  Rect,
   useSafeAreaFrame,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-
 import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
@@ -31,6 +32,7 @@ import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
+import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -98,17 +100,31 @@ const MaybeNestedStack = ({
         contentStyle,
       ]}
       // @ts-ignore Wrong props passed to View
-      stackPresentation={stackPresentation}>
+      stackPresentation={stackPresentation}
+      // This view must *not* be flattened.
+      // See https://github.com/software-mansion/react-native-screens/pull/1825
+      // for detailed explanation.
+      collapsable={false}>
       {children}
     </Container>
   );
 
-  const topInset = useSafeAreaInsets().top;
   const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
+  const isStatusBarTranslucent = options.statusBarTranslucent ?? false;
+  const statusBarHeight = getStatusBarHeight(
+    topInset,
+    dimensions,
+    isStatusBarTranslucent
+  );
+
+  const isLargeHeader = options.headerLargeTitle ?? false;
+
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
-    topInset,
-    stackPresentation
+    statusBarHeight,
+    stackPresentation,
+    isLargeHeader
   );
 
   if (isHeaderInModal) {
@@ -123,7 +139,6 @@ const MaybeNestedStack = ({
       </ScreenStack>
     );
   }
-
   return content;
 };
 
@@ -153,6 +168,11 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
+    sheetAllowedDetents = 'large',
+    sheetLargestUndimmedDetent = 'all',
+    sheetGrabberVisible = false,
+    sheetCornerRadius = -1.0,
+    sheetExpandsWhenScrolledToEdge = true,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -199,19 +219,45 @@ const RouteView = ({
     stackPresentation = 'push';
   }
 
+  const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
+  const isStatusBarTranslucent = options.statusBarTranslucent ?? false;
+  const statusBarHeight = getStatusBarHeight(
+    topInset,
+    dimensions,
+    isStatusBarTranslucent
+  );
+
+  const isLargeHeader = options.headerLargeTitle ?? false;
+
+  const defaultHeaderHeight = getDefaultHeaderHeight(
+    dimensions,
+    statusBarHeight,
+    stackPresentation,
+    isLargeHeader
+  );
+
+  const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const isHeaderInPush = isAndroid
     ? headerShown
     : stackPresentation === 'push' && headerShown !== false;
 
-  const dimensions = useSafeAreaFrame();
-  const topInset = useSafeAreaInsets().top;
-  const headerHeight = getDefaultHeaderHeight(
-    dimensions,
-    topInset,
-    stackPresentation
-  );
-  const parentHeaderHeight = React.useContext(HeaderHeightContext);
+  const staticHeaderHeight =
+    isHeaderInPush !== false ? defaultHeaderHeight : parentHeaderHeight ?? 0;
+
+  // We need to ensure the first retrieved header height will be cached and set in animatedHeaderHeight.
+  // We're caching the header height here, as on iOS native side events are not always coming to the JS on first notify.
+  // TODO: Check why first event is not being received once it is cached on the native side.
+  const cachedAnimatedHeaderHeight = React.useRef(statusBarHeight);
+  const animatedHeaderHeight = React.useRef(
+    new Animated.Value(staticHeaderHeight, {
+      useNativeDriver: true,
+    })
+  ).current;
+
   const Screen = React.useContext(ScreenContext);
+
+  const { dark } = useTheme();
 
   return (
     <Screen
@@ -219,6 +265,11 @@ const RouteView = ({
       enabled
       isNativeStack
       style={StyleSheet.absoluteFill}
+      sheetAllowedDetents={sheetAllowedDetents}
+      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      sheetGrabberVisible={sheetGrabberVisible}
+      sheetCornerRadius={sheetCornerRadius}
+      sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
@@ -236,7 +287,7 @@ const RouteView = ({
       statusBarAnimation={statusBarAnimation}
       statusBarColor={statusBarColor}
       statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle}
+      statusBarStyle={statusBarStyle ?? (dark ? 'light' : 'dark')}
       statusBarTranslucent={statusBarTranslucent}
       swipeDirection={swipeDirection}
       transitionDuration={transitionDuration}
@@ -279,7 +330,19 @@ const RouteView = ({
           target: route.key,
         });
       }}
-      onDismissed={(e) => {
+      onHeaderHeightChange={e => {
+        const headerHeight = e.nativeEvent.headerHeight;
+
+        if (cachedAnimatedHeaderHeight.current !== headerHeight) {
+          // Currently, we're setting value by Animated#setValue, because we want to cache animated value.
+          // Also, in React Native 0.72 there was a bug on Fabric causing a large delay between the screen transition,
+          // which should not occur.
+          // TODO: Check if it's possible to replace animated#setValue to Animated#event.
+          animatedHeaderHeight.setValue(headerHeight);
+          cachedAnimatedHeaderHeight.current = headerHeight;
+        }
+      }}
+      onDismissed={e => {
         navigation.emit({
           type: 'dismiss',
           target: route.key,
@@ -293,19 +356,31 @@ const RouteView = ({
           source: route.key,
           target: stateKey,
         });
+      }}
+      onGestureCancel={() => {
+        navigation.emit({
+          type: 'gestureCancel',
+          target: route.key,
+        });
       }}>
-      <HeaderHeightContext.Provider
-        value={
-          isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
-        }>
-        <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
-        <MaybeNestedStack
-          options={options}
-          route={route}
-          stackPresentation={stackPresentation}>
-          {renderScene()}
-        </MaybeNestedStack>
-      </HeaderHeightContext.Provider>
+      <AnimatedHeaderHeightContext.Provider value={animatedHeaderHeight}>
+        <HeaderHeightContext.Provider value={staticHeaderHeight}>
+          <MaybeNestedStack
+            options={options}
+            route={route}
+            stackPresentation={stackPresentation}>
+            {renderScene()}
+          </MaybeNestedStack>
+          {/* HeaderConfig must not be first child of a Screen.
+           See https://github.com/software-mansion/react-native-screens/pull/1825
+           for detailed explanation */}
+          <HeaderConfig
+            {...options}
+            route={route}
+            headerShown={isHeaderInPush}
+          />
+        </HeaderHeightContext.Provider>
+      </AnimatedHeaderHeightContext.Provider>
     </Screen>
   );
 };
@@ -345,6 +420,26 @@ export default function NativeStackView(props: Props) {
       <NativeStackViewInner {...props} />
     </SafeAreaProviderCompat>
   );
+}
+
+function getStatusBarHeight(
+  topInset: number,
+  dimensions: Rect,
+  isStatusBarTranslucent: boolean
+) {
+  if (Platform.OS === 'ios') {
+    // It looks like some iOS devices don't have strictly set status bar height to 44.
+    // Thus, if the top inset is higher than 50, then the device should have a dynamic island.
+    // On models with Dynamic Island the status bar height is smaller than the safe area top inset by 5 pixels.
+    // See https://developer.apple.com/forums/thread/662466 for more details about status bar height.
+    const hasDynamicIsland = topInset > 50;
+    return hasDynamicIsland ? topInset - 5 : topInset;
+  } else if (Platform.OS === 'android') {
+    // On Android we should also rely on frame's y-axis position, as topInset is 0 on visible status bar.
+    return isStatusBarTranslucent ? topInset : dimensions.y;
+  }
+
+  return topInset;
 }
 
 const styles = StyleSheet.create({

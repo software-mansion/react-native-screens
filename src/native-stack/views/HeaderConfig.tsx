@@ -65,17 +65,15 @@ export default function HeaderConfig({
     isDisabled: !searchBar || !!searchBar.disableBackButtonOverride,
   });
 
-  const [
-    backTitleFontFamily,
-    largeTitleFontFamily,
-    titleFontFamily,
-  ] = processFonts([
-    headerBackTitleStyle.fontFamily,
-    headerLargeTitleStyle.fontFamily,
-    headerTitleStyle.fontFamily,
-  ]);
+  const [backTitleFontFamily, largeTitleFontFamily, titleFontFamily] =
+    processFonts([
+      headerBackTitleStyle.fontFamily,
+      headerLargeTitleStyle.fontFamily,
+      headerTitleStyle.fontFamily,
+    ]);
 
   // We want to clear clearSubscription only when components unmounts or search bar changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => clearSubscription, [searchBar]);
 
   const processedSearchBarOptions = React.useMemo(() => {
@@ -104,9 +102,10 @@ export default function HeaderConfig({
       backgroundColor={
         headerStyle.backgroundColor ? headerStyle.backgroundColor : colors.card
       }
-      backTitle={headerBackTitleVisible ? headerBackTitle : ' '}
+      backTitle={headerBackTitle}
       backTitleFontFamily={backTitleFontFamily}
       backTitleFontSize={headerBackTitleStyle.fontSize}
+      backTitleVisible={headerBackTitleVisible}
       blurEffect={headerStyle.blurEffect}
       color={tintColor}
       direction={direction}

@@ -13,6 +13,7 @@ export * from './types';
 export { default as useTransitionProgress } from './useTransitionProgress';
 export {
   isSearchBarAvailableForCurrentPlatform,
+  isNewBackTitleImplementation,
   executeNativeBackPress,
 } from './utils';
 
@@ -68,9 +69,11 @@ export const ScreenContext = React.createContext(Screen);
 
 export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
-export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> = View;
+export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> =
+  View;
 
-export const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps> = View;
+export const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps> =
+  View;
 
 export const ScreenStack: React.ComponentType<ScreenStackProps> = View;
 
@@ -99,16 +102,18 @@ export const ScreenStackHeaderCenterView = (
 ): JSX.Element => <View {...props} />;
 
 export const ScreenStackHeaderSearchBarView = (
-  props: React.PropsWithChildren<SearchBarProps>
+  props: React.PropsWithChildren<Omit<SearchBarProps, 'ref'>>
 ): JSX.Element => <View {...props} />;
 
-export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> = View;
+export const ScreenStackHeaderConfig = (
+  props: React.PropsWithChildren<ScreenStackHeaderConfigProps>
+): JSX.Element => <View {...props} />;
 
 // @ts-expect-error: search bar props have no common props with View
 export const SearchBar: React.ComponentType<SearchBarProps> = View;
 
-export const ScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
-  ViewProps & { type?: HeaderSubviewTypes }
->> = View;
+export const ScreenStackHeaderSubview: React.ComponentType<
+  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
+> = View;
 
 export const shouldUseActivityState = true;

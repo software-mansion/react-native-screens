@@ -23,9 +23,8 @@ interface FirstScreenProps {
 }
 
 const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
-  const [screenOrientation, setScreenOrientation] = useState<ScreenOrientation>(
-    'default'
-  );
+  const [screenOrientation, setScreenOrientation] =
+    useState<ScreenOrientation>('default');
 
   useLayoutEffect(() => {
     navigation.setOptions({

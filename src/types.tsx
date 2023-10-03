@@ -5,7 +5,16 @@ import {
   View,
   TargetedEvent,
   TextInputFocusEventData,
+  ColorValue,
 } from 'react-native';
+
+export type SearchBarCommands = {
+  focus: () => void;
+  blur: () => void;
+  clearText: () => void;
+  toggleCancelButton: (show: boolean) => void;
+  setText: (text: string) => void;
+};
 
 export type StackPresentationTypes =
   | 'push'
@@ -64,6 +73,10 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type HeaderHeightChangeEventType = {
+  headerHeight: number;
+};
+
 export type TransitionProgressEventType = {
   progress: number;
   closing: number;
@@ -77,9 +90,12 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
+export type SheetDetentTypes = 'medium' | 'large' | 'all';
+export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+
 export interface ScreenProps extends ViewProps {
-  active?: 0 | 1 | Animated.AnimatedInterpolation;
-  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation;
+  active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
+  activityState?: 0 | 1 | 2 | Animated.AnimatedInterpolation<number>;
   children?: React.ReactNode;
   /**
    * Boolean indicating that swipe dismissal should trigger animation provided by `stackAnimation`. Defaults to `false`.
@@ -145,7 +161,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  navigationBarColor?: string;
+  navigationBarColor?: ColorValue;
   /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
@@ -166,6 +182,16 @@ export interface ScreenProps extends ViewProps {
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
+   * A callback that gets called when the header height has changed.
+   */
+  onHeaderHeightChange?: (
+    e: NativeSyntheticEvent<HeaderHeightChangeEventType>
+  ) => void;
+  /**
+   * A callback that gets called after swipe back is canceled.
+   */
+  onGestureCancel?: (e: NativeSyntheticEvent<null>) => void;
   /**
    * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
@@ -223,6 +249,62 @@ export interface ScreenProps extends ViewProps {
    */
   screenOrientation?: ScreenOrientationTypes;
   /**
+   * Describes heights where a sheet can rest.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `large`.
+   *
+   * Available values:
+   *
+   * - `large` - only large detent level will be allowed
+   * - `medium` - only medium detent level will be allowed
+   * - `all` - all detent levels will be allowed
+   *
+   * @platform ios
+   */
+  sheetAllowedDetents?: SheetDetentTypes;
+  /**
+   * Whether the sheet should expand to larger detent when scrolling.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `true`.
+   *
+   * @platform ios
+   */
+  sheetExpandsWhenScrolledToEdge?: boolean;
+  /**
+   * The corner radius that the sheet will try to render with.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
+   *
+   * If left unset system default is used.
+   *
+   * @platform ios
+   */
+  sheetCornerRadius?: number;
+  /**
+   * Boolean indicating whether the sheet shows a grabber at the top.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  sheetGrabberVisible?: boolean;
+  /**
+   * The largest sheet detent for which a view underneath won't be dimmed.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * If this prop is set to:
+   *
+   * - `large` - the view underneath won't be dimmed at any detent level
+   * - `medium` - the view underneath will be dimmed only when detent level is `large`
+   * - `all` - the view underneath will be dimmed for any detent level
+   *
+   * Defaults to `all`.
+   *
+   * @platform ios
+   */
+  sheetLargestUndimmedDetent?: SheetDetentTypes;
+  /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
    * - "default" – uses a platform default animation
@@ -257,7 +339,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  statusBarColor?: string;
+  statusBarColor?: ColorValue;
   /**
    * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */
@@ -319,7 +401,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of the navigation header.
    */
-  backgroundColor?: string;
+  backgroundColor?: ColorValue;
   /**
    * Title to display in the back button.
    * @platform ios.
@@ -336,6 +418,11 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    */
   backTitleFontSize?: number;
   /**
+   * Whether the back button title should be visible or not. Defaults to `true`.
+   * @platform ios
+   */
+  backTitleVisible?: boolean;
+  /**
    * Blur effect to be applied to the header. Works with backgroundColor's alpha < 1.
    * @platform ios
    */
@@ -347,7 +434,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
    */
-  color?: string;
+  color?: ColorValue;
   /**
    * Whether the stack should be in rtl or ltr form.
    */
@@ -381,12 +468,12 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
-  largeTitleBackgroundColor?: string;
+  largeTitleBackgroundColor?: ColorValue;
   /**
    * Customize the color to be used for the large title. By default uses the titleColor property.
    * @platform ios
    */
-  largeTitleColor?: string;
+  largeTitleColor?: ColorValue;
   /**
    * Customize font family to be used for the large title.
    * @platform ios
@@ -421,7 +508,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Allows for setting text color of the title.
    */
-  titleColor?: string;
+  titleColor?: ColorValue;
   /**
    * Customize font family to be used for the title.
    */
@@ -451,6 +538,19 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
 
 export interface SearchBarProps {
   /**
+   * Reference to imperatively modify search bar.
+   *
+   * Currently supported operations are:
+   *
+   * * `focus` - focuses the search bar
+   * * `blur` - removes focus from the search bar
+   * * `clearText` - removes any text present in the search bar input field
+   * * `setText` - sets the search bar's content to given value
+   * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
+   */
+  ref?: React.RefObject<SearchBarCommands>;
+
+  /**
    * The auto-capitalization behavior
    */
   autoCapitalize?: 'none' | 'words' | 'sentences' | 'characters';
@@ -463,13 +563,13 @@ export interface SearchBarProps {
   /**
    * The search field background color
    */
-  barTintColor?: string;
+  barTintColor?: ColorValue;
   /**
    * The color for the cursor caret and cancel button text.
    *
    * @platform ios
    */
-  tintColor?: string;
+  tintColor?: ColorValue;
   /**
    * The text to be used instead of default `Cancel` button text
    *
@@ -502,7 +602,7 @@ export interface SearchBarProps {
    */
   inputType?: 'text' | 'phone' | 'number' | 'email';
   /**
-   * Indicates whether to to obscure the underlying content
+   * Indicates whether to obscure the underlying content
    */
   obscureBackground?: boolean;
   /**
@@ -548,21 +648,35 @@ export interface SearchBarProps {
    */
   placeholder?: string;
   /**
+   * Position of the search bar
+   *
+   * Supported values:
+   *
+   * * `automatic` - the search bar is placed according to current layout
+   * * `inline` - the search bar is placed on the trailing edge of navigation bar
+   * * `stacked` - the search bar is placed below the other content in navigation bar
+   *
+   * Defaults to `stacked`
+   *
+   * @platform iOS (>= 16.0)
+   */
+  placement?: SearchBarPlacement;
+  /**
    * The search field text color
    */
-  textColor?: string;
+  textColor?: ColorValue;
   /**
    * The search hint text color
    *
    * @plaform android
    */
-  hintTextColor?: string;
+  hintTextColor?: ColorValue;
   /**
    * The search and close icon color shown in the header
    *
    * @plaform android
    */
-  headerIconColor?: string;
+  headerIconColor?: ColorValue;
   /**
    * Show the search hint icon when search bar is focused
    *

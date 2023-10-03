@@ -250,9 +250,8 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const NestedStack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => {
-  const [stackAnimation, setStackAnimation] = useState<StackAnimation>(
-    'default'
-  );
+  const [stackAnimation, setStackAnimation] =
+    useState<StackAnimation>('default');
 
   return (
     <ToastProvider>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import React, { PropsWithChildren, ReactNode } from 'react';
 import {
   Animated,
@@ -29,9 +30,11 @@ import {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
+  SearchBarCommands,
 } from './types';
 import {
   isSearchBarAvailableForCurrentPlatform,
+  isNewBackTitleImplementation,
   executeNativeBackPress,
 } from './utils';
 
@@ -74,6 +77,26 @@ function screensEnabled(): boolean {
   return ENABLE_SCREENS;
 }
 
+type SearchBarCommandsType = {
+  blur: (
+    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>
+  ) => void;
+  focus: (
+    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>
+  ) => void;
+  clearText: (
+    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>
+  ) => void;
+  toggleCancelButton: (
+    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>,
+    flag: boolean
+  ) => void;
+  setText: (
+    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>,
+    text: string
+  ) => void;
+};
+
 // We initialize these lazily so that importing the module doesn't throw error when not linked
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
 let NativeScreenValue: React.ComponentType<ScreenProps>;
@@ -81,26 +104,32 @@ let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenNavigationContainerValue: React.ComponentType<ScreenContainerProps>;
 let NativeScreenStack: React.ComponentType<ScreenStackProps>;
 let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
-let NativeScreenStackHeaderSubview: React.ComponentType<React.PropsWithChildren<
-  ViewProps & { type?: HeaderSubviewTypes }
->>;
+let NativeScreenStackHeaderSubview: React.ComponentType<
+  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
+>;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
-let NativeSearchBar: React.ComponentType<SearchBarProps>;
-let NativeFullWindowOverlay: React.ComponentType<PropsWithChildren<{
-  style: StyleProp<ViewStyle>;
-}>>;
+
+let NativeSearchBar: React.ComponentType<SearchBarProps> &
+  typeof NativeSearchBarCommands;
+let NativeSearchBarCommands: SearchBarCommandsType;
+
+let NativeFullWindowOverlay: React.ComponentType<
+  PropsWithChildren<{
+    style: StyleProp<ViewStyle>;
+  }>
+>;
 
 const ScreensNativeModules = {
   get NativeScreen() {
     NativeScreenValue =
-      NativeScreenValue || requireNativeComponent('RNSScreen');
+      NativeScreenValue || require('./fabric/ScreenNativeComponent').default;
     return NativeScreenValue;
   },
 
   get NativeScreenContainer() {
     NativeScreenContainerValue =
       NativeScreenContainerValue ||
-      requireNativeComponent('RNSScreenContainer');
+      require('./fabric/ScreenContainerNativeComponent').default;
     return NativeScreenContainerValue;
   },
 
@@ -134,8 +163,15 @@ const ScreensNativeModules = {
   },
 
   get NativeSearchBar() {
-    NativeSearchBar = NativeSearchBar || requireNativeComponent('RNSSearchBar');
+    NativeSearchBar =
+      NativeSearchBar || require('./fabric/SearchBarNativeComponent').default;
     return NativeSearchBar;
+  },
+  get NativeSearchBarCommands() {
+    NativeSearchBarCommands =
+      NativeSearchBarCommands ||
+      require('./fabric/SearchBarNativeComponent').Commands;
+    return NativeSearchBarCommands;
   },
 
   get NativeFullWindowOverlay() {
@@ -225,6 +261,16 @@ class InnerScreen extends React.Component<ScreenProps> {
       ...rest
     } = this.props;
 
+    // To maintain default behaviour of formSheet stack presentation style & and to have resonable
+    // defaults for new medium-detent iOS API we need to set defaults here
+    const {
+      sheetAllowedDetents = 'large',
+      sheetLargestUndimmedDetent = 'all',
+      sheetGrabberVisible = false,
+      sheetCornerRadius = -1.0,
+      sheetExpandsWhenScrolledToEdge = true,
+    } = rest;
+
     if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
         AnimatedNativeScreen ||
@@ -239,6 +285,7 @@ class InnerScreen extends React.Component<ScreenProps> {
         children,
         isNativeStack,
         gestureResponseDistance,
+        onGestureCancel,
         ...props
       } = rest;
 
@@ -264,6 +311,11 @@ class InnerScreen extends React.Component<ScreenProps> {
           <AnimatedNativeScreen
             {...props}
             activityState={activityState}
+            sheetAllowedDetents={sheetAllowedDetents}
+            sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+            sheetGrabberVisible={sheetGrabberVisible}
+            sheetCornerRadius={sheetCornerRadius}
+            sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,
@@ -288,6 +340,12 @@ class InnerScreen extends React.Component<ScreenProps> {
                     ],
                     { useNativeDriver: true }
                   )
+            }
+            onGestureCancel={
+              onGestureCancel ??
+              (() => {
+                // for internal use
+              })
             }>
             {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
               children
@@ -373,6 +431,72 @@ const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
   </ScreensNativeModules.NativeScreenStackHeaderSubview>
 );
 
+class SearchBar extends React.Component<SearchBarProps> {
+  nativeSearchBarRef: React.RefObject<SearchBarCommands>;
+
+  constructor(props: SearchBarProps) {
+    super(props);
+    this.nativeSearchBarRef = React.createRef();
+  }
+
+  _callMethodWithRef(method: (ref: SearchBarCommands) => void) {
+    const ref = this.nativeSearchBarRef.current;
+    if (ref) {
+      method(ref);
+    } else {
+      console.warn(
+        'Reference to native search bar component has not been updated yet'
+      );
+    }
+  }
+
+  blur() {
+    this._callMethodWithRef(ref =>
+      ScreensNativeModules.NativeSearchBarCommands.blur(ref)
+    );
+  }
+
+  focus() {
+    this._callMethodWithRef(ref =>
+      ScreensNativeModules.NativeSearchBarCommands.focus(ref)
+    );
+  }
+
+  toggleCancelButton(flag: boolean) {
+    this._callMethodWithRef(ref =>
+      ScreensNativeModules.NativeSearchBarCommands.toggleCancelButton(ref, flag)
+    );
+  }
+
+  clearText() {
+    this._callMethodWithRef(ref =>
+      ScreensNativeModules.NativeSearchBarCommands.clearText(ref)
+    );
+  }
+
+  setText(text: string) {
+    this._callMethodWithRef(ref =>
+      ScreensNativeModules.NativeSearchBarCommands.setText(ref, text)
+    );
+  }
+
+  render() {
+    if (!isSearchBarAvailableForCurrentPlatform) {
+      console.warn(
+        'Importing SearchBar is only valid on iOS and Android devices.'
+      );
+      return View as any as ReactNode;
+    }
+
+    return (
+      <ScreensNativeModules.NativeSearchBar
+        {...this.props}
+        ref={this.nativeSearchBarRef}
+      />
+    );
+  }
+}
+
 const ScreenStackHeaderRightView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
@@ -435,7 +559,7 @@ class Screen extends React.Component<ScreenProps> {
   static contextType = ScreenContext;
 
   render() {
-    const ScreenWrapper = this.context || InnerScreen;
+    const ScreenWrapper = (this.context || InnerScreen) as React.ElementType;
     return <ScreenWrapper {...this.props} />;
   }
 }
@@ -448,6 +572,7 @@ module.exports = {
   ScreenContext,
   ScreenStack,
   InnerScreen,
+  SearchBar,
   FullWindowOverlay,
 
   get NativeScreen() {
@@ -468,15 +593,8 @@ module.exports = {
   get ScreenStackHeaderSubview() {
     return ScreensNativeModules.NativeScreenStackHeaderSubview;
   },
-  get SearchBar() {
-    if (!isSearchBarAvailableForCurrentPlatform) {
-      console.warn(
-        'Importing SearchBar is only valid on iOS and Android devices.'
-      );
-      return View;
-    }
-
-    return ScreensNativeModules.NativeSearchBar;
+  get SearchBarCommands() {
+    return ScreensNativeModules.NativeSearchBarCommands;
   },
   // these are functions and will not be evaluated until used
   // so no need to use getters for them
@@ -493,5 +611,6 @@ module.exports = {
   useTransitionProgress,
 
   isSearchBarAvailableForCurrentPlatform,
+  isNewBackTitleImplementation,
   executeNativeBackPress,
 };

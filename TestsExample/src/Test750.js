@@ -23,7 +23,11 @@ const Stack = createNativeStackNavigator();
 function StackNav() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Screen1" component={Screen1} options={{ headerShown: true }} />
+      <Stack.Screen
+        name="Screen1"
+        component={Screen1}
+        options={{ headerShown: true }}
+      />
       <Stack.Screen name="Screen2" component={Screen2} />
     </Stack.Navigator>
   );

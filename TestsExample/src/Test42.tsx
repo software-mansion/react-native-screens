@@ -1,9 +1,12 @@
 // connected PRs: #679, #675
 import React from 'react';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {ScrollView, Button, Text} from 'react-native';
-import {createNativeStackNavigator, NativeStackNavigationProp} from 'react-native-screens/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { ScrollView, Button, Text } from 'react-native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
@@ -38,14 +41,17 @@ export default function NativeNavigation() {
 const Tab = createBottomTabNavigator();
 
 const NestedNavigator = () => (
-  <Tab.Navigator 
-    screenOptions={{
-      // screenOrientation: 'landscape_left',
-    }}
-  >
+  <Tab.Navigator
+    screenOptions={
+      {
+        // screenOrientation: 'landscape_left',
+      }
+    }>
     <Tab.Screen name="Screen1" component={Home} />
     <Tab.Screen name="Screen2" component={Inner} />
-    <Tab.Screen name="Screen3" component={Home} 
+    <Tab.Screen
+      name="Screen3"
+      component={Home}
       // options={{screenOrientation: 'landscape_right'}}
     />
   </Tab.Navigator>
@@ -62,13 +68,16 @@ const Inner = () => (
   </InnerStack.Navigator>
 );
 
-function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
+function Home({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
   const [yes, setYes] = React.useState(true);
   return (
     <ScrollView
-      style={{backgroundColor: 'yellow'}}
-      contentInsetAdjustmentBehavior="automatic"
-      >
+      style={{ backgroundColor: 'yellow' }}
+      contentInsetAdjustmentBehavior="automatic">
       <Button
         title="NestedNavigator"
         onPress={() => {
@@ -96,7 +105,11 @@ function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase
           setYes(!yes);
         }}
       />
-      <Text>Go to `TabNavigator` and then go to second tab there. Spot the difference between dismissing modal with a swipe and with a `Pop to top` button. </Text> 
+      <Text>
+        Go to `TabNavigator` and then go to second tab there. Spot the
+        difference between dismissing modal with a swipe and with a `Pop to top`
+        button.{' '}
+      </Text>
     </ScrollView>
   );
 }

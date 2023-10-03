@@ -1,15 +1,14 @@
 import React from 'react';
-import {Button, Text, View} from 'react-native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { Button, Text, View } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
-
-function HomeScreen({navigation}) {
+function HomeScreen({ navigation }) {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text style={{fontSize: 30}}>This is the home screen!</Text>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 30 }}>This is the home screen!</Text>
       <Button
         onPress={() => navigation.navigate('Details')}
         title="Go to Details"
@@ -30,10 +29,10 @@ function DetailsScreen() {
   );
 }
 
-function ModalScreen({navigation}) {
+function ModalScreen({ navigation }) {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text style={{fontSize: 30}}>This is a modal!</Text>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 30 }}>This is a modal!</Text>
       <Button onPress={() => navigation.goBack()} title="Dismiss" />
     </View>
   );
@@ -57,7 +56,7 @@ function RootStackScreen() {
       <RootStack.Screen
         name="Main"
         component={MainStackScreen}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <RootStack.Screen name="MyModal" component={ModalScreen} />
     </RootStack.Navigator>

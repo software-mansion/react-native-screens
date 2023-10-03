@@ -25,7 +25,7 @@ export function SettingsPicker<T extends string>({
       onPress={() => setIsOpen(!isOpen)}>
       <Text testID={testID} style={styles.label}>{`${label}: ${value}`}</Text>
       {isOpen
-        ? items.map((item) => (
+        ? items.map(item => (
             <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
               <Text
                 testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}

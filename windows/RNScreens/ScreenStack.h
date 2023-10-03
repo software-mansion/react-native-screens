@@ -17,6 +17,7 @@ class ScreenStack
       m_children;
 
  private:
+  void onChildModified(int64_t index);
   winrt::Microsoft::ReactNative::IReactContext m_reactContext{nullptr};
 };
 } // namespace winrt::RNScreens::implementation

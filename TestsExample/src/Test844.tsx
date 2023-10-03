@@ -1,6 +1,6 @@
-import React, {useEffect, useRef} from 'react';
-import {Text, View, Button, StyleSheet} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import React, { useEffect, useRef } from 'react';
+import { Text, View, Button, StyleSheet } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -21,7 +21,7 @@ type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
-function Main({navigation}: Props) {
+function Main({ navigation }: Props) {
   const times = useRef(8);
   const id = useRef<any>(0);
 
@@ -48,7 +48,7 @@ function Main({navigation}: Props) {
   );
 }
 
-const Modal = ({navigation}: Props) => (
+const Modal = ({ navigation }: Props) => (
   <View style={styles.container}>
     <Button title="back" onPress={() => navigation.goBack()} />
   </View>
@@ -58,7 +58,7 @@ const ModalStack = createNativeStackNavigator();
 
 const ModalNavigator = () => (
   <ModalStack.Navigator
-    screenOptions={{...defaultOptions, headerTitle: 'modal'}}>
+    screenOptions={{ ...defaultOptions, headerTitle: 'modal' }}>
     <ModalStack.Screen
       name="modal"
       component={Modal}

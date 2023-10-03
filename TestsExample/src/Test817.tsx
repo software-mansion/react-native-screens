@@ -1,9 +1,12 @@
 /* eslint-disable react/display-name */
-import React from "react";
-import { View, Text, Button } from "react-native";
+import React from 'react';
+import { View, Text, Button } from 'react-native';
 
-import { NavigationContainer, ParamListBase } from "@react-navigation/native";
-import { createNativeStackNavigator, NativeStackNavigationProp } from "react-native-screens/native-stack";
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,13 +15,9 @@ const App = (): JSX.Element => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackAnimation: "slide_from_right",
-        }}
-      >
-        <Stack.Screen
-          name="Home"
-          component={Home}
-        />
+          stackAnimation: 'slide_from_right',
+        }}>
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
           name="Notifications"
           component={Notifications}
@@ -32,15 +31,19 @@ const App = (): JSX.Element => {
   );
 };
 
-function Home({navigation}: {navigation: NativeStackNavigationProp<ParamListBase>}) {
+function Home({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
   return (
     <View>
       <Button
         title="Navigate"
-        onPress={() => navigation.navigate("Notifications")}
+        onPress={() => navigation.navigate('Notifications')}
       />
     </View>
-  )
+  );
 }
 
 function Notifications() {

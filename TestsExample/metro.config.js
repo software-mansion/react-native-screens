@@ -9,8 +9,6 @@ const root = path.resolve(__dirname, '..');
 
 const modules = [
   '@react-navigation/native',
-  'react-navigation',
-  'react-navigation-stack',
   'react-native-reanimated',
   'react-native-safe-area-context',
   ...Object.keys(pack.peerDependencies),
@@ -25,8 +23,7 @@ module.exports = {
   resolver: {
     blacklistRE: exclusionList(
       modules.map(
-        (m) =>
-          new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`),
+        m => new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`),
       ),
     ),
 

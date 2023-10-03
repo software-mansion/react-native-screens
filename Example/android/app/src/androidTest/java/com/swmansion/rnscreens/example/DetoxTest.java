@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens.example;
 
 import com.wix.detox.Detox;
+import com.wix.detox.config.DetoxConfig;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,11 +22,11 @@ public class DetoxTest {
 
     @Test
     public void runDetoxTests() {
-        Detox.DetoxIdlePolicyConfig idlePolicyConfig = new Detox.DetoxIdlePolicyConfig();
-        idlePolicyConfig.masterTimeoutSec = 120;
-        idlePolicyConfig.idleResourceTimeoutSec = 120;
+        DetoxConfig detoxConfig = new DetoxConfig();
+        detoxConfig.idlePolicyConfig.masterTimeoutSec = 120;
+        detoxConfig.idlePolicyConfig.idleResourceTimeoutSec = 120;
+        detoxConfig.rnContextLoadTimeoutSec = (BuildConfig.DEBUG ? 240 : 120);
 
-        Detox.runTests(mActivityRule, idlePolicyConfig);
+        Detox.runTests(mActivityRule, detoxConfig);
     }
 }
-

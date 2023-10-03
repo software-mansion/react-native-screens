@@ -10,11 +10,17 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
+import {
+  ImageSourcePropType,
+  StyleProp,
+  ViewStyle,
+  ColorValue,
+} from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
+  SheetDetentTypes,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -36,6 +42,14 @@ export type NativeStackNavigationEventMap = {
    * Event which fires when a transition animation ends.
    */
   transitionEnd: { data: { closing: boolean } };
+  /**
+   * Event which fires when a swipe back is canceled on iOS.
+   */
+  gestureCancel: { data: undefined };
+  /**
+   * Event which fires when a header height gets changed.
+   */
+  headerHeightChange: { data: { headerHeight: number } };
 };
 
 export type NativeStackNavigationProp<
@@ -152,7 +166,7 @@ export type NativeStackNavigationOptions = {
   /**
    * Function which returns a React Element to display in the center of the header.
    */
-  headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
+  headerCenter?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
    */
@@ -168,7 +182,7 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   headerLargeStyle?: {
-    backgroundColor?: string;
+    backgroundColor?: ColorValue;
   };
   /**
    * Boolean to set native property to prefer large title header (like in iOS setting).
@@ -197,16 +211,16 @@ export type NativeStackNavigationOptions = {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
+    color?: ColorValue;
   };
   /**
    * Function which returns a React Element to display on the left side of the header.
    */
-  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
+  headerLeft?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Function which returns a React Element to display on the right side of the header.
    */
-  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
+  headerRight?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Whether to show the header.
    */
@@ -217,13 +231,13 @@ export type NativeStackNavigationOptions = {
    * - blurEffect
    */
   headerStyle?: {
-    backgroundColor?: string;
+    backgroundColor?: ColorValue;
     blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
   };
   /**
    * Tint color for the header. Changes the color of back button and title.
    */
-  headerTintColor?: string;
+  headerTintColor?: ColorValue;
   /**
    * String to display in the header as title. Defaults to scene `title`.
    */
@@ -239,7 +253,7 @@ export type NativeStackNavigationOptions = {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
+    color?: ColorValue;
   };
   /**
    * A flag to that lets you opt out of insetting the header. You may want to
@@ -279,7 +293,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  navigationBarColor?: string;
+  navigationBarColor?: ColorValue;
   /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
@@ -310,6 +324,62 @@ export type NativeStackNavigationOptions = {
    * Object in which you should pass props in order to render native iOS searchBar.
    */
   searchBar?: SearchBarProps;
+  /**
+   * Describes heights where a sheet can rest.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `large`.
+   *
+   * Available values:
+   *
+   * - `large` - only large detent level will be allowed
+   * - `medium` - only medium detent level will be allowed
+   * - `all` - all detent levels will be allowed
+   *
+   * @platform ios
+   */
+  sheetAllowedDetents?: SheetDetentTypes;
+  /**
+   * Whether the sheet should expand to larger detent when scrolling.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `true`.
+   *
+   * @platform ios
+   */
+  sheetExpandsWhenScrolledToEdge?: boolean;
+  /**
+   * The corner radius that the sheet will try to render with.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
+   *
+   * If left unset system default is used.
+   *
+   * @platform ios
+   */
+  sheetCornerRadius?: number;
+  /**
+   * Boolean indicating whether the sheet shows a grabber at the top.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   * Defaults to `false`.
+   *
+   * @platform ios
+   */
+  sheetGrabberVisible?: boolean;
+  /**
+   * The largest sheet detent for which a view underneath won't be dimmed.
+   * Works only when `stackPresentation` is se tto `formSheet`.
+   *
+   * If this prop is set to:
+   *
+   * - `large` - the view underneath won't be dimmed at any detent level
+   * - `medium` - the view underneath will be dimmed only when detent level is `large`
+   * - `all` - the view underneath will be dimmed for any detent level
+   *
+   * Defaults to `all`.
+   *
+   * @platform ios
+   */
+  sheetLargestUndimmedDetent?: SheetDetentTypes;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
@@ -345,7 +415,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  statusBarColor?: string;
+  statusBarColor?: ColorValue;
   /**
    * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */
@@ -382,11 +452,10 @@ export type NativeStackNavigationOptions = {
   transitionDuration?: number;
 };
 
-export type NativeStackNavigatorProps = DefaultNavigatorOptions<
-  NativeStackNavigationOptions
-> &
-  StackRouterOptions &
-  NativeStackNavigationConfig;
+export type NativeStackNavigatorProps =
+  DefaultNavigatorOptions<NativeStackNavigationOptions> &
+    StackRouterOptions &
+    NativeStackNavigationConfig;
 
 export type NativeStackDescriptor = Descriptor<
   ParamListBase,

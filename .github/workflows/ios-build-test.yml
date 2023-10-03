@@ -17,6 +17,7 @@ on:
 jobs:
   build:
     runs-on: macos-12
+    timeout-minutes: 60
     env:
       WORKING_DIRECTORY: TestsExample
     concurrency:
@@ -25,10 +26,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Use Node.js 14
+      - name: Use Node.js 18
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 18
           cache: 'yarn'
           cache-dependency-path: 'TestsExample/yarn.lock'
       - name: Install node dependencies
@@ -43,7 +44,7 @@ jobs:
         id: remove_pods
         name: Remove pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
-        run: rm -fr build Pods Podfile.lock 
+        run: rm -fr build Pods Podfile.lock
       - if: steps.remove_pods.outcome == 'success'
         id: reinstall_pods
         name: Reinstall pods

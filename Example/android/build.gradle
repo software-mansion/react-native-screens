@@ -2,36 +2,33 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "30.0.2"
+        buildToolsVersion = "33.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 30
-        targetSdkVersion = 30
-        ndkVersion = "21.4.7075529"
-        kotlinVersion = "1.4.10"
+        compileSdkVersion = 33
+        targetSdkVersion = 33
+        ndkVersion = "23.1.7779620"
+        kotlinVersion = "1.8.22"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:4.2.2')
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath("com.android.tools.build:gradle")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
+// Detox repository for `com.wix:detox` dependency specified
+// in app build.gradle. This most likely does not have to be
+// specified for each project but AFAIK it does not create any conflicts.
+// See: https://github.com/wix/Detox/issues/3973#issuecomment-1459895555
+// TODO: Find out which project should have it added.
 allprojects {
     repositories {
-        mavenLocal()
-        google()
         maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url "$rootDir/../node_modules/react-native/android"
+            url("$rootDir/../node_modules/detox/Detox-android")
         }
-        maven {
-            // All of Detox' artifacts are provided via the npm module
-            url "$rootDir/../node_modules/detox/Detox-android"
-        }
-        mavenCentral()
-        maven { url 'https://www.jitpack.io' }
     }
 }

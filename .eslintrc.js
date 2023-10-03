@@ -5,8 +5,6 @@ module.exports = {
     'plugin:import/warnings',
     'plugin:react/recommended',
     'prettier',
-    'prettier/react',
-    'prettier/standard',
   ],
 
   plugins: ['react-native', 'react-hooks'],
@@ -19,10 +17,13 @@ module.exports = {
     'import/core-modules': [
       'react-native-screens',
       'react-native-screens/native-stack',
-      'react-native-screens/createNativeStackNavigator',
       'react-native-screens/reanimated',
     ],
-    'import/ignore': ['node_modules/react-native/index\\.js$'],
+    'import/ignore': [
+      'node_modules/react-native/index\\.js$', 
+      'react-native/Libraries/Utilities/codegenNativeComponent.*',
+      'react-native/Libraries/Types/CodegenTypes.*'
+    ],
     'import/resolver': {
       node: {
         paths: ['src'],
@@ -48,10 +49,12 @@ module.exports = {
     {
       files: ['*.{ts,tsx}'],
       parser: '@typescript-eslint/parser',
+      parserOptions: {
+        project: ['./tsconfig.json'],
+      },
       extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:import/typescript',
-        'prettier/@typescript-eslint',
       ],
       settings: {
         'import/parsers': {
@@ -59,6 +62,7 @@ module.exports = {
         },
       },
       rules: {
+        '@typescript-eslint/no-explicit-any': 'warn',
         '@typescript-eslint/array-type': 'error',
         '@typescript-eslint/consistent-type-assertions': [
           'error',

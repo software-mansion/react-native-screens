@@ -17,6 +17,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       WORKING_DIRECTORY: FabricTestExample
     concurrency:
@@ -25,10 +26,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Use Node.js 14
+      - name: Use Node.js 18
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 18
           cache: 'yarn'
           cache-dependency-path: 'FabricTestExample/yarn.lock'
       - name: Install node dependencies
