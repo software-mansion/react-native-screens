@@ -158,6 +158,7 @@ namespace react = facebook::react;
   // the header will render in collapsed state which is perhaps a bug
   // in UIKit but ¯\_(ツ)_/¯
   [_controller setViewControllers:@[ [UIViewController new] ]];
+  NSLog(@"RNSScreenStackView alloc at %p with NavVC at %p", self, _controller);
 }
 
 #pragma mark - helper methods
@@ -402,7 +403,17 @@ namespace react = facebook::react;
       afterTransitions();
       return;
     } else {
+      NSLog(@"visibleViewController %p", self->_controller.visibleViewController);
       UIViewController *previous = changeRootController;
+      UIViewController *visibleViewController = self->_controller.visibleViewController;
+      if ([visibleViewController isKindOfClass:RNSScreen.class]) {
+        RNSScreen *screen = (RNSScreen *)visibleViewController;
+        if (screen.screenView.isModal && screen.presentingViewController != weakSelf) {
+          // We have already presented a modal from different (nested) stack
+          // So the first view controller to be used as presenting view controller should be the last current modal.
+          previous = screen;
+        }
+      }
       for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
         UIViewController *next = controllers[i];
         BOOL lastModal = (i == controllers.count - 1);
@@ -427,6 +438,7 @@ namespace react = facebook::react;
           return;
         }
 
+        NSLog(@"%p is presenting %p modally", previous, next);
         [previous presentViewController:next
                                animated:shouldAnimate
                              completion:^{

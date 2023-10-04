@@ -89,6 +89,7 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
+  NSLog(@"RNSScreenView alloc at %p with VC at %p", self, _controller);
 }
 
 - (UIViewController *)reactViewController
