@@ -5,7 +5,6 @@ import {
   Image,
   ImageProps,
   Platform,
-  requireNativeComponent,
   StyleProp,
   StyleSheet,
   UIManager,
@@ -137,28 +136,29 @@ const ScreensNativeModules = {
     NativeScreenNavigationContainerValue =
       NativeScreenNavigationContainerValue ||
       (Platform.OS === 'ios'
-        ? requireNativeComponent('RNSScreenNavigationContainer')
+        ? require('./fabric/ScreenNavigationContainerNativeComponent').default
         : this.NativeScreenContainer);
     return NativeScreenNavigationContainerValue;
   },
 
   get NativeScreenStack() {
     NativeScreenStack =
-      NativeScreenStack || requireNativeComponent('RNSScreenStack');
+      NativeScreenStack ||
+      require('./fabric/ScreenStackNativeComponent').default;
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
     NativeScreenStackHeaderConfig =
       NativeScreenStackHeaderConfig ||
-      requireNativeComponent('RNSScreenStackHeaderConfig');
+      require('./fabric/ScreenStackHeaderConfigNativeComponent').default;
     return NativeScreenStackHeaderConfig;
   },
 
   get NativeScreenStackHeaderSubview() {
     NativeScreenStackHeaderSubview =
       NativeScreenStackHeaderSubview ||
-      requireNativeComponent('RNSScreenStackHeaderSubview');
+      require('./fabric/ScreenStackHeaderSubviewNativeComponent').default;
     return NativeScreenStackHeaderSubview;
   },
 
@@ -167,6 +167,7 @@ const ScreensNativeModules = {
       NativeSearchBar || require('./fabric/SearchBarNativeComponent').default;
     return NativeSearchBar;
   },
+
   get NativeSearchBarCommands() {
     NativeSearchBarCommands =
       NativeSearchBarCommands ||
@@ -176,7 +177,8 @@ const ScreensNativeModules = {
 
   get NativeFullWindowOverlay() {
     NativeFullWindowOverlay =
-      NativeFullWindowOverlay || requireNativeComponent('RNSFullWindowOverlay');
+      NativeFullWindowOverlay ||
+      require('./fabric/FullWindowOverlayNativeComponent').default;
     return NativeFullWindowOverlay;
   },
 };
