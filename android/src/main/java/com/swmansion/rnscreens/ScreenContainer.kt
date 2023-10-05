@@ -14,7 +14,9 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.ActivityState
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
 
 open class ScreenContainer(context: Context?) : ViewGroup(context) {
     @JvmField
@@ -198,6 +200,23 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
 
     private fun attachScreen(transaction: FragmentTransaction, fragment: Fragment) {
         transaction.add(id, fragment)
+    }
+
+    fun attachBelowTop() {
+        val transaction = createTransaction()
+        attachScreen(transaction, mScreenFragments[mScreenFragments.size - 2].fragment)
+    }
+
+    fun detachTop() {
+        val transaction = createTransaction()
+        val top = topScreen as Screen
+//        detachScreen(transaction, top.fragment as Fragment)
+        if (context is ReactContext) {
+            val surfaceId = UIManagerHelper.getSurfaceId(context)
+            UIManagerHelper
+                .getEventDispatcherForReactTag(context as ReactContext, top.id)
+                ?.dispatchEvent(ScreenDismissedEvent(surfaceId, top.id))
+        }
     }
 
     private fun detachScreen(transaction: FragmentTransaction, fragment: Fragment) {

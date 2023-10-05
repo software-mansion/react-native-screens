@@ -600,12 +600,13 @@ namespace react = facebook::react;
   }
   BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:(RNSScreenView *)fromVC.view
                                                         toView:(RNSScreenView *)toVC.view];
-  if (screen != nil &&
-      // when preventing the native dismiss with back button, we have to return the animator.
-      // Also, we need to return the animator when full width swiping even if the animation is not custom,
-      // otherwise the screen will be just popped immediately due to no animation
-      ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
-       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+  if (true ||
+      screen != nil &&
+          // when preventing the native dismiss with back button, we have to return the animator.
+          // Also, we need to return the animator when full width swiping even if the animation is not custom,
+          // otherwise the screen will be just popped immediately due to no animation
+          ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
+           [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -955,6 +956,33 @@ namespace react = facebook::react;
     self->_hasLayout = YES;
     [self maybeAddToParentAndUpdateContainer];
   });
+}
+
+- (void)startScreenTransition
+{
+  if (_interactionController == nil) {
+    _customAnimation = YES;
+    _interactionController = [UIPercentDrivenInteractiveTransition new];
+    [_controller popViewControllerAnimated:YES];
+  }
+}
+
+- (void)updateScreenTransition:(double)progress
+{
+  [_interactionController updateInteractiveTransition:progress];
+}
+
+- (void)finishScreenTransition:(BOOL)canceled
+{
+  _customAnimation = NO;
+  if (canceled) {
+    [_interactionController updateInteractiveTransition:0.0];
+    [_interactionController cancelInteractiveTransition];
+  } else {
+    [_interactionController updateInteractiveTransition:1.0];
+    [_interactionController finishInteractiveTransition];
+  }
+  _interactionController = nil;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED

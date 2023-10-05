@@ -10,6 +10,7 @@ const root = path.resolve(__dirname, '..');
 const modules = [
   '@react-navigation/native',
   'react-native-safe-area-context',
+  'react-native-gesture-handler',
   ...Object.keys(pack.peerDependencies),
 ];
 

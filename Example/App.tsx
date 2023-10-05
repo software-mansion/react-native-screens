@@ -27,6 +27,8 @@ import Events from './src/screens/Events';
 import Gestures from './src/screens/Gestures';
 
 import { enableFreeze } from 'react-native-screens';
+import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 enableFreeze();
 
@@ -150,26 +152,13 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
 );
 
 const ExampleApp = (): JSX.Element => (
-  <NavigationContainer>
-    <Stack.Navigator
-      screenOptions={{
-        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-      }}>
-      <Stack.Screen
-        name="Main"
-        options={{ title: '📱 React Native Screens Examples' }}
-        component={MainScreen}
-      />
-      {Object.keys(SCREENS).map(name => (
-        <Stack.Screen
-          key={name}
-          name={name}
-          getComponent={() => SCREENS[name].component}
-          options={{ headerShown: false }}
-        />
-      ))}
-    </Stack.Navigator>
-  </NavigationContainer>
+  <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureDetectorProvider>
+      <NavigationContainer>
+        <SimpleNativeStack />
+      </NavigationContainer>
+    </GestureDetectorProvider>
+  </GestureHandlerRootView>
 );
 
 const styles = StyleSheet.create({

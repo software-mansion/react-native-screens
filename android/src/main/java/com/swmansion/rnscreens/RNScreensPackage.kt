@@ -7,7 +7,9 @@ import com.facebook.react.uimanager.ViewManager
 
 class RNScreensPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
-        emptyList()
+        listOf<NativeModule>(
+            ScreensModule(reactContext)
+        )
 
     override fun createViewManagers(reactContext: ReactApplicationContext) =
         listOf<ViewManager<*, *>>(

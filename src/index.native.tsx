@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { PropsWithChildren, ReactNode } from 'react';
+import React, { Fragment, PropsWithChildren, ReactNode } from 'react';
 import {
   Animated,
   Image,
@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { Freeze } from 'react-freeze';
 import { version } from 'react-native/package.json';
+import NativeScreensModule from './fabric/NativeScreensModule';
 
 import TransitionProgressContext from './TransitionProgressContext';
 import useTransitionProgress from './useTransitionProgress';
@@ -204,7 +205,7 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
 }
 
 function ScreenStack(props: ScreenStackProps) {
-  const { children, ...rest } = props;
+  const { children, stackRef, ...rest } = props;
   const size = React.Children.count(children);
   // freezes all screens except the top one
   const childrenWithFreeze = React.Children.map(children, (child, index) => {
@@ -221,7 +222,7 @@ function ScreenStack(props: ScreenStackProps) {
   });
 
   return (
-    <ScreensNativeModules.NativeScreenStack {...rest}>
+    <ScreensNativeModules.NativeScreenStack {...rest} ref={stackRef}>
       {childrenWithFreeze}
     </ScreensNativeModules.NativeScreenStack>
   );
@@ -252,6 +253,9 @@ class InnerScreen extends React.Component<ScreenProps> {
   setRef = (ref: React.ElementRef<typeof View> | null): void => {
     this.ref = ref;
     this.props.onComponentRef?.(ref);
+    if (this.props.screenRef) {
+      this.props.screenRef.current = ref;
+    }
   };
 
   render() {
@@ -555,6 +559,9 @@ export type {
 // e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
 const ScreenContext = React.createContext(InnerScreen);
 
+// context to be used when the user wants full screen swipe (see `gesture-handler` folder in repo)
+const GHContext = React.createContext(Fragment);
+
 class Screen extends React.Component<ScreenProps> {
   static contextType = ScreenContext;
 
@@ -570,10 +577,12 @@ module.exports = {
   Screen,
   ScreenContainer,
   ScreenContext,
+  GHContext,
   ScreenStack,
   InnerScreen,
   SearchBar,
   FullWindowOverlay,
+  NativeScreensModule,
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;

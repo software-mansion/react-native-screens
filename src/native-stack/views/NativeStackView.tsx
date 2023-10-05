@@ -8,6 +8,8 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
+  GHContext,
+  ScreenProps,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -155,12 +157,14 @@ const RouteView = ({
   index,
   navigation,
   stateKey,
+  screenRef,
 }: {
   descriptors: NativeStackDescriptorMap;
   route: NavigationRoute<ParamListBase, string>;
   index: number;
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
+  screenRef?: React.RefObject<ScreenProps> | null;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -261,6 +265,7 @@ const RouteView = ({
 
   return (
     <Screen
+      screenRef={screenRef}
       key={route.key}
       enabled
       isNativeStack
@@ -398,19 +403,36 @@ function NativeStackViewInner({
 }: Props): JSX.Element {
   const { key, routes } = state;
 
+  const stackRef = React.useRef(null);
+  const topScreenRef = React.useRef(null);
+  const belowTopScreenRef = React.useRef(null);
+  const GestureDetector = React.useContext(GHContext);
+
   return (
-    <ScreenStack style={styles.container}>
-      {routes.map((route, index) => (
-        <RouteView
-          key={route.key}
-          descriptors={descriptors}
-          route={route}
-          index={index}
-          navigation={navigation}
-          stateKey={key}
-        />
-      ))}
-    </ScreenStack>
+    <GestureDetector
+      stackRef={stackRef}
+      topScreenRef={topScreenRef}
+      belowTopScreenRef={belowTopScreenRef}>
+      <ScreenStack style={styles.container} stackRef={stackRef}>
+        {routes.map((route, index) => (
+          <RouteView
+            screenRef={
+              index === routes.length - 1
+                ? topScreenRef
+                : index === routes.length - 2
+                ? belowTopScreenRef
+                : null
+            }
+            key={route.key}
+            descriptors={descriptors}
+            route={route}
+            index={index}
+            navigation={navigation}
+            stateKey={key}
+          />
+        ))}
+      </ScreenStack>
+    </GestureDetector>
   );
 }
 

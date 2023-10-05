@@ -8,6 +8,7 @@ import {
   HeaderSubviewTypes,
   SearchBarProps,
 } from './types';
+import NativeScreensModule from './fabric/NativeScreensModule';
 
 export * from './types';
 export { default as useTransitionProgress } from './useTransitionProgress';
@@ -67,6 +68,8 @@ export const InnerScreen = View;
 
 export const ScreenContext = React.createContext(Screen);
 
+export const GHContext = React.createContext(View);
+
 export const ScreenContainer: React.ComponentType<ScreenContainerProps> = View;
 
 export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> =
@@ -117,3 +120,5 @@ export const ScreenStackHeaderSubview: React.ComponentType<
 > = View;
 
 export const shouldUseActivityState = true;
+
+export { NativeScreensModule };
