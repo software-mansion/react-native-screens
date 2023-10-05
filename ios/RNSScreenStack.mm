@@ -408,7 +408,7 @@ namespace react = facebook::react;
       UIViewController *visibleViewController = self->_controller.visibleViewController;
       if ([visibleViewController isKindOfClass:RNSScreen.class]) {
         RNSScreen *screen = (RNSScreen *)visibleViewController;
-        if (screen.screenView.isModal && screen.presentingViewController != weakSelf) {
+        if (screen.screenView.isModal && screen.presentingViewController != (UIViewController *)weakSelf) {
           // We have already presented a modal from different (nested) stack
           // So the first view controller to be used as presenting view controller should be the last current modal.
           previous = screen;
