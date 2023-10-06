@@ -11,6 +11,7 @@ const modules = [
   '@react-navigation/native',
   'react-native-safe-area-context',
   'react-native-gesture-handler',
+  'react-native-reanimated',
   ...Object.keys(pack.peerDependencies),
 ];
 
