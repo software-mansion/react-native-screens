@@ -264,6 +264,7 @@ const RouteView = ({
       key={route.key}
       enabled
       isNativeStack
+      screenDescriptor={descriptors[route.key]}
       style={StyleSheet.absoluteFill}
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
