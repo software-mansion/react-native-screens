@@ -32,7 +32,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   typeof AnimatedScreen,
   ScreenProps
 >((props, ref) => {
-  const { descriptor } = useScreenInfo();
+  const { options } = useScreenInfo();
 
   const { children, ...rest } = props;
   const { stackPresentation = 'push' } = rest;
@@ -46,7 +46,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
     isStatusBarTranslucent
   );
 
-  const isLargeHeader = descriptor?.options.headerLargeTitle ?? false;
+  const isLargeHeader = options.headerLargeTitle ?? false;
 
   // Default header height, normally used in `useHeaderHeight` hook.
   // Here, it is used for returning a default value for shared value.

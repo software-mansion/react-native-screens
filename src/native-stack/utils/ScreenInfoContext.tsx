@@ -1,17 +1,12 @@
 import * as React from 'react';
-import { NativeStackDescriptor, NativeStackNavigationRoute } from '../types';
-import { ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationOptions } from '../types';
 
-export type ScreenInfoType = {
-  descriptor: NativeStackDescriptor | undefined;
-  route: NativeStackNavigationRoute<ParamListBase, string> | undefined;
-  screenIndex: number;
+type ScreenInfoType = {
+  options: NativeStackNavigationOptions;
 };
 
 const ScreenInfoContext = React.createContext<ScreenInfoType>({
-  descriptor: undefined,
-  route: undefined,
-  screenIndex: -1,
+  options: {},
 });
 
 export default ScreenInfoContext;

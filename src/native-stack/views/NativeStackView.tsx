@@ -32,7 +32,7 @@ import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../utils/getStatusBarHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
-import ScreenInfoContext, { ScreenInfoType } from '../utils/ScreenInfoContext';
+import ScreenInfoContext from '../utils/ScreenInfoContext';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -251,14 +251,9 @@ const RouteView = ({
   const Screen = React.useContext(ScreenContext);
 
   const { dark } = useTheme();
-  const screenInfo: ScreenInfoType = {
-    descriptor: descriptors[route.key],
-    route,
-    screenIndex: index,
-  };
 
   return (
-    <ScreenInfoContext.Provider value={screenInfo}>
+    <ScreenInfoContext.Provider value={{ options }}>
       <Screen
         key={route.key}
         enabled
