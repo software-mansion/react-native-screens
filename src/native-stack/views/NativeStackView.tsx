@@ -15,6 +15,8 @@ import {
   StackNavigationState,
   useTheme,
   Route,
+  NavigationState,
+  PartialState,
 } from '@react-navigation/native';
 import {
   useSafeAreaFrame,
@@ -22,7 +24,6 @@ import {
 } from 'react-native-safe-area-context';
 import {
   NativeStackDescriptorMap,
-  NativeStackNavigationRoute,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
 } from '../types';
@@ -142,6 +143,13 @@ const MaybeNestedStack = ({
   return content;
 };
 
+type NavigationRoute<
+  ParamList extends ParamListBase,
+  RouteName extends keyof ParamList
+> = Route<Extract<RouteName, string>, ParamList[RouteName]> & {
+  state?: NavigationState | PartialState<NavigationState>;
+};
+
 const RouteView = ({
   descriptors,
   route,
@@ -150,7 +158,7 @@ const RouteView = ({
   stateKey,
 }: {
   descriptors: NativeStackDescriptorMap;
-  route: NativeStackNavigationRoute<ParamListBase, string>;
+  route: NavigationRoute<ParamListBase, string>;
   index: number;
   navigation: NativeStackNavigationHelpers;
   stateKey: string;

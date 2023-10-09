@@ -8,9 +8,6 @@ import {
   StackRouterOptions,
   StackActionHelpers,
   RouteProp,
-  Route,
-  NavigationState,
-  PartialState,
 } from '@react-navigation/native';
 import * as React from 'react';
 import {
@@ -459,13 +456,6 @@ export type NativeStackNavigatorProps =
   DefaultNavigatorOptions<NativeStackNavigationOptions> &
     StackRouterOptions &
     NativeStackNavigationConfig;
-
-export type NativeStackNavigationRoute<
-  ParamList extends ParamListBase,
-  RouteName extends keyof ParamList
-> = Route<Extract<RouteName, string>, ParamList[RouteName]> & {
-  state?: NavigationState | PartialState<NavigationState>;
-};
 
 export type NativeStackDescriptor = Descriptor<
   ParamListBase,
