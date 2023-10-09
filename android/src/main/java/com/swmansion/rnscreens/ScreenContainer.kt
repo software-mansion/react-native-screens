@@ -204,7 +204,12 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
 
     fun attachBelowTop() {
         val transaction = createTransaction()
+        val top = topScreen as Screen
+        // we have to reattach topScreen so it is on top of the one below
+        detachScreen(transaction, top.fragment as Fragment)
         attachScreen(transaction, mScreenFragments[mScreenFragments.size - 2].fragment)
+        attachScreen(transaction, top.fragment as Fragment)
+        transaction.commitNowAllowingStateLoss()
     }
 
     fun detachTop() {
