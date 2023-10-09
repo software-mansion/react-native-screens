@@ -403,17 +403,17 @@ function NativeStackViewInner({
 }: Props): JSX.Element {
   const { key, routes } = state;
 
-  const stackRef = React.useRef(null);
+  const stackRefWrapper = {};
   const topScreenRef = React.useRef(null);
   const belowTopScreenRef = React.useRef(null);
   const GestureDetector = React.useContext(GHContext);
 
   return (
     <GestureDetector
-      stackRef={stackRef}
+      stackRefWrapper={stackRefWrapper}
       topScreenRef={topScreenRef}
       belowTopScreenRef={belowTopScreenRef}>
-      <ScreenStack style={styles.container} stackRef={stackRef}>
+      <ScreenStack style={styles.container} stackRefWrapper={stackRefWrapper}>
         {routes.map((route, index) => (
           <RouteView
             screenRef={

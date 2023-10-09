@@ -21,16 +21,27 @@ RCT_EXPORT_MODULE()
 }
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition : (nonnull NSNumber *)reactTag)
 {
-  RNSScreenStackView *view = [self getScreenStackView:reactTag];
+  RNSScreenStackView *stackView = [self getScreenStackView:reactTag];
 
-  if (![view isKindOfClass:[RNSScreenStackView class]]) {
-    RCTLogError(@"Invalid svg returned from registry, expecting RNSScreenStackView, got: %@", view);
+  if (![stackView isKindOfClass:[RNSScreenStackView class]]) {
+    RCTLogError(@"Invalid svg returned from registry, expecting RNSScreenStackView, got: %@", stackView);
     return @(0);
   }
 
   dispatch_sync(dispatch_get_main_queue(), ^{
-    [view startScreenTransition];
+    [stackView startScreenTransition];
   });
+  
+//  NSNumber *currentTopScreen = @(-1);
+//  NSNumber *newTopScreen = @(-1);
+//  unsigned long screenCount = [stackView.subviews count];
+//  if (screenCount == 1) {
+//    newTopScreen = stackView.subviews[0].reactTag;
+//  } else if (screenCount > 1) {
+//    currentTopScreen = stackView.subviews[screenCount - 2].reactTag;
+//    newTopScreen = stackView.subviews[screenCount - 1].reactTag;
+//  }
+//  return @[currentTopScreen, newTopScreen];
   return @(1);
 }
 

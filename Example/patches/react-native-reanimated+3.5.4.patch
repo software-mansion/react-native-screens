@@ -1,0 +1,63 @@
+diff --git a/node_modules/react-native-reanimated/src/ConfigHelper.ts b/node_modules/react-native-reanimated/src/ConfigHelper.ts
+index fac2429..e79cbc9 100644
+--- a/node_modules/react-native-reanimated/src/ConfigHelper.ts
++++ b/node_modules/react-native-reanimated/src/ConfigHelper.ts
+@@ -119,7 +119,7 @@ let NATIVE_THREAD_PROPS_WHITELIST: Record<string, boolean> = {
+   placeholderTextColor: true,
+ };
+ 
+-function configureProps(): void {
++export function configureProps(): void {
+   jsiConfigureProps(
+     Object.keys(UI_THREAD_PROPS_WHITELIST),
+     Object.keys(NATIVE_THREAD_PROPS_WHITELIST)
+diff --git a/node_modules/react-native-reanimated/src/createAnimatedComponent/createAnimatedComponent.tsx b/node_modules/react-native-reanimated/src/createAnimatedComponent/createAnimatedComponent.tsx
+index e4192ae..cbcda0e 100644
+--- a/node_modules/react-native-reanimated/src/createAnimatedComponent/createAnimatedComponent.tsx
++++ b/node_modules/react-native-reanimated/src/createAnimatedComponent/createAnimatedComponent.tsx
+@@ -16,6 +16,7 @@ import { adaptViewConfig } from '../ConfigHelper';
+ import { RNRenderer } from '../reanimated2/platform-specific/RNRenderer';
+ import {
+   configureLayoutAnimations,
++  configureProps,
+   enableLayoutAnimations,
+   startMapper,
+   stopMapper,
+@@ -52,6 +53,7 @@ import { getReduceMotionFromConfig } from '../reanimated2/animation/util';
+ import { maybeBuild } from '../animationBuilder';
+ import type { AnimatedComponentProps, AnimatedProps } from './utils';
+ import { flattenArray, has } from './utils';
++import { configureProps as synchProps } from '../ConfigHelper';
+ 
+ const IS_WEB = isWeb();
+ 
+@@ -728,3 +730,5 @@ export default function createAnimatedComponent(
+     );
+   });
+ }
++
++synchProps();
+\ No newline at end of file
+diff --git a/node_modules/react-native-reanimated/src/reanimated2/UpdateProps.ts b/node_modules/react-native-reanimated/src/reanimated2/UpdateProps.ts
+index 8652be8..c8c73e6 100644
+--- a/node_modules/react-native-reanimated/src/reanimated2/UpdateProps.ts
++++ b/node_modules/react-native-reanimated/src/reanimated2/UpdateProps.ts
+@@ -8,7 +8,7 @@ import { shouldBeUseWeb } from './PlatformChecker';
+ import type { ViewRefSet } from './ViewDescriptorsSet';
+ import { runOnUIImmediately } from './threads';
+ 
+-let updateProps: (
++export let updateProps: (
+   viewDescriptor: SharedValue<Descriptor[]>,
+   updates: StyleProps | AnimatedStyle<any>,
+   maybeViewRef: ViewRefSet<any> | undefined,
+diff --git a/node_modules/react-native-reanimated/src/reanimated2/index.ts b/node_modules/react-native-reanimated/src/reanimated2/index.ts
+index 9725e49..2ff2da5 100644
+--- a/node_modules/react-native-reanimated/src/reanimated2/index.ts
++++ b/node_modules/react-native-reanimated/src/reanimated2/index.ts
+@@ -256,3 +256,4 @@ export type {
+ export type { AnimatedScrollViewProps } from './component/ScrollView';
+ export type { FlatListPropsWithLayout } from './component/FlatList';
+ export { startMapper, stopMapper } from './mappers';
++export { updateProps } from './UpdateProps';
+\ No newline at end of file
