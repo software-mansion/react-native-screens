@@ -57,8 +57,6 @@ const ReanimatedNativeStackScreen = React.forwardRef<
     isLargeHeader
   );
 
-  console.log(defaultHeaderHeight);
-
   const cachedHeaderHeight = React.useRef(defaultHeaderHeight);
   const headerHeight = useSharedValue(defaultHeaderHeight);
 
