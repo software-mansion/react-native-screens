@@ -1,0 +1,13 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Aeonik-Bold.otf",
+      "sha1": "4f2ce3d81d3cfb85ac46d73b024b0f626765a06c"
+    },
+    {
+      "path": "assets/fonts/Aeonik-Medium.otf",
+      "sha1": "2f08ac4aedccab83ff7aa5d74a0cbbbdf8789862"
+    }
+  ]
+}

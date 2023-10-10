@@ -306,38 +306,36 @@ const IncludingScreen = () => {
     },
   );
 
-  // const animatedStyle = useAnimatedStyle(() => {
-  //   return {
-  //     transform: [
-  //       { translateY: -250 },
-  //       {
-  //         scale: withTiming(
-  //           interpolate(bouncingHeaderHeight.value, [150, 400], [0.5, 1.4]),
-  //           { duration: 750, easing: Easing.elastic(4) },
-  //           () => {
-  //             if (canNavigate && bouncingHeaderHeight.value < 130) {
-  //               runOnJS(navigate)();
-  //             }
-  //           },
-  //         ),
-  //       },
-  //     ],
-  //   };
-  // });
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateY: -250 },
+        {
+          scale: withTiming(
+            interpolate(bouncingHeaderHeight.value, [150, 400], [0.5, 1.4]),
+            { duration: 750, easing: Easing.elastic(4) },
+            () => {
+              if (canNavigate && bouncingHeaderHeight.value < 130) {
+                runOnJS(navigate)();
+              }
+            },
+          ),
+        },
+      ],
+    };
+  });
 
   return (
     <Animated.ScrollView
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={
-        {
-          // alignItems: 'center',
-          // marginTop: 150,
-        }
-      }
+      contentContainerStyle={{
+        alignItems: 'center',
+        marginTop: 150,
+      }}
       style={styles.including}>
-      {/*<Text style={styles.smallerIncludingText}>Contains... new hook! 👀</Text>*/}
-      {/*<Text style={styles.includingText}>useAnimatedHeaderHeight()</Text>*/}
-      {/*<Animated.Image source={require('./screens.png')} style={animatedStyle} />*/}
+      <Text style={styles.smallerIncludingText}>Contains... new hook! 👀</Text>
+      <Text style={styles.includingText}>useAnimatedHeaderHeight()</Text>
+      <Animated.Image source={require('./screens.png')} style={animatedStyle} />
     </Animated.ScrollView>
   );
 };
