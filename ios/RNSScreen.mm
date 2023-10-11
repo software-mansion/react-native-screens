@@ -251,6 +251,9 @@ namespace react = facebook::react;
   _statusBarHidden = statusBarHidden;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
   [RNSScreenWindowTraits updateStatusBarAppearance];
+  // As the status bar could change its visibility, we need to calculate header height
+  // for the correct value in `onHeaderHeightChange` event.
+  [self.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
 }
 
 - (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation

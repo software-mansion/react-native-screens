@@ -666,6 +666,10 @@ namespace react = facebook::react;
   } else {
     [self setAnimatedConfig:vc withConfig:config];
   }
+
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    [((RNSScreen *)vc) calculateAndNotifyHeaderHeightChangeIsModal:NO];
+  }
 }
 
 - (void)insertReactSubview:(RNSScreenStackHeaderSubview *)subview atIndex:(NSInteger)atIndex
