@@ -387,7 +387,7 @@ const Navigation = () => {
           {/*    headerShown: false,*/}
           {/*  }}*/}
           {/*/>*/}
-          {/*<Stack.Screen name="Main" component={Screen} />*/}
+          <Stack.Screen name="Main" component={Screen} />
           <Stack.Screen
             name="Including"
             component={IncludingScreen}
