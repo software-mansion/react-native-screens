@@ -34,6 +34,7 @@ import Animated, {
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import SwmLogo from './SwmLogo';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const App = () => {
   return (
@@ -386,14 +387,15 @@ const Navigation = () => {
           {/*    headerShown: false,*/}
           {/*  }}*/}
           {/*/>*/}
-          <Stack.Screen name="Main" component={Screen} />
+          {/*<Stack.Screen name="Main" component={Screen} />*/}
           <Stack.Screen
             name="Including"
             component={IncludingScreen}
             options={{
               headerShown: true,
               headerStyle: { backgroundColor: '#b8dcf9' },
-              statusBarHidden: false,
+              statusBarHidden: true,
+              headerTitle: '🎉🎉🎉',
             }}
           />
           <Stack.Screen
