@@ -1074,20 +1074,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     return CGSizeMake(0, 0);
   }
 
-  CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13.0, *)) {
-    CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
-    if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0)
-      return fallbackStatusBarSize;
-
-    return primaryStatusBarSize;
-  } else {
-    return fallbackStatusBarSize;
-  }
-#endif /* Check for iOS 13.0 */
+  CGFloat statusBarSize = self.navigationController.navigationBar.frame.origin.y;
+  return CGSizeMake(statusBarSize, statusBarSize);
 
 #else
   // On TVOS, status bar doesn't exist
