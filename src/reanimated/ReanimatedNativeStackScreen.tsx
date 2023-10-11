@@ -32,7 +32,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   ScreenProps
 >((props, ref) => {
   const { children, ...rest } = props;
-  const { stackPresentation = 'push', isLargeHeader } = rest;
+  const { stackPresentation = 'push', hasLargeHeader } = rest;
 
   const dimensions = useSafeAreaFrame();
   const topInset = useSafeAreaInsets().top;
@@ -49,7 +49,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
     dimensions,
     statusBarHeight,
     stackPresentation,
-    isLargeHeader
+    hasLargeHeader
   );
 
   const cachedHeaderHeight = React.useRef(defaultHeaderHeight);

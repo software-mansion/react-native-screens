@@ -118,13 +118,13 @@ const MaybeNestedStack = ({
     isStatusBarTranslucent
   );
 
-  const isLargeHeader = options.headerLargeTitle ?? false;
+  const hasLargeHeader = options.headerLargeTitle ?? false;
 
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
     statusBarHeight,
     stackPresentation,
-    isLargeHeader
+    hasLargeHeader
   );
 
   if (isHeaderInModal) {
@@ -133,7 +133,7 @@ const MaybeNestedStack = ({
         <Screen
           enabled
           isNativeStack
-          isLargeHeader={isLargeHeader}
+          hasLargeHeader={hasLargeHeader}
           style={StyleSheet.absoluteFill}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
@@ -232,13 +232,13 @@ const RouteView = ({
     isStatusBarTranslucent
   );
 
-  const isLargeHeader = options.headerLargeTitle ?? false;
+  const hasLargeHeader = options.headerLargeTitle ?? false;
 
   const defaultHeaderHeight = getDefaultHeaderHeight(
     dimensions,
     statusBarHeight,
     stackPresentation,
-    isLargeHeader
+    hasLargeHeader
   );
 
   const parentHeaderHeight = React.useContext(HeaderHeightContext);
@@ -268,7 +268,7 @@ const RouteView = ({
       key={route.key}
       enabled
       isNativeStack
-      isLargeHeader={isLargeHeader}
+      hasLargeHeader={hasLargeHeader}
       style={StyleSheet.absoluteFill}
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
