@@ -33,7 +33,6 @@ import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../utils/getStatusBarHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
-import ScreenInfoContext from '../utils/ScreenInfoContext';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -131,7 +130,11 @@ const MaybeNestedStack = ({
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.container}>
-        <Screen enabled isNativeStack style={StyleSheet.absoluteFill}>
+        <Screen
+          enabled
+          isNativeStack
+          isLargeHeader={isLargeHeader}
+          style={StyleSheet.absoluteFill}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -261,130 +264,129 @@ const RouteView = ({
   const { dark } = useTheme();
 
   return (
-    <ScreenInfoContext.Provider value={{ options }}>
-      <Screen
-        key={route.key}
-        enabled
-        isNativeStack
-        style={StyleSheet.absoluteFill}
-        sheetAllowedDetents={sheetAllowedDetents}
-        sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
-        sheetGrabberVisible={sheetGrabberVisible}
-        sheetCornerRadius={sheetCornerRadius}
-        sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-        customAnimationOnSwipe={customAnimationOnSwipe}
-        freezeOnBlur={freezeOnBlur}
-        fullScreenSwipeEnabled={fullScreenSwipeEnabled}
-        hideKeyboardOnSwipe={hideKeyboardOnSwipe}
-        homeIndicatorHidden={homeIndicatorHidden}
-        gestureEnabled={isAndroid ? false : gestureEnabled}
-        gestureResponseDistance={gestureResponseDistance}
-        nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
-        navigationBarColor={navigationBarColor}
-        navigationBarHidden={navigationBarHidden}
-        replaceAnimation={replaceAnimation}
-        screenOrientation={screenOrientation}
-        stackAnimation={stackAnimation}
-        stackPresentation={stackPresentation}
-        statusBarAnimation={statusBarAnimation}
-        statusBarColor={statusBarColor}
-        statusBarHidden={statusBarHidden}
-        statusBarStyle={statusBarStyle ?? (dark ? 'light' : 'dark')}
-        statusBarTranslucent={statusBarTranslucent}
-        swipeDirection={swipeDirection}
-        transitionDuration={transitionDuration}
-        onHeaderBackButtonClicked={() => {
-          navigation.dispatch({
-            ...StackActions.pop(),
-            source: route.key,
-            target: stateKey,
-          });
-        }}
-        onWillAppear={() => {
-          navigation.emit({
-            type: 'transitionStart',
-            data: { closing: false },
-            target: route.key,
-          });
-        }}
-        onWillDisappear={() => {
-          navigation.emit({
-            type: 'transitionStart',
-            data: { closing: true },
-            target: route.key,
-          });
-        }}
-        onAppear={() => {
-          navigation.emit({
-            type: 'appear',
-            target: route.key,
-          });
-          navigation.emit({
-            type: 'transitionEnd',
-            data: { closing: false },
-            target: route.key,
-          });
-        }}
-        onDisappear={() => {
-          navigation.emit({
-            type: 'transitionEnd',
-            data: { closing: true },
-            target: route.key,
-          });
-        }}
-        onHeaderHeightChange={e => {
-          const headerHeight = e.nativeEvent.headerHeight;
+    <Screen
+      key={route.key}
+      enabled
+      isNativeStack
+      isLargeHeader={isLargeHeader}
+      style={StyleSheet.absoluteFill}
+      sheetAllowedDetents={sheetAllowedDetents}
+      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      sheetGrabberVisible={sheetGrabberVisible}
+      sheetCornerRadius={sheetCornerRadius}
+      sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
+      customAnimationOnSwipe={customAnimationOnSwipe}
+      freezeOnBlur={freezeOnBlur}
+      fullScreenSwipeEnabled={fullScreenSwipeEnabled}
+      hideKeyboardOnSwipe={hideKeyboardOnSwipe}
+      homeIndicatorHidden={homeIndicatorHidden}
+      gestureEnabled={isAndroid ? false : gestureEnabled}
+      gestureResponseDistance={gestureResponseDistance}
+      nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
+      navigationBarColor={navigationBarColor}
+      navigationBarHidden={navigationBarHidden}
+      replaceAnimation={replaceAnimation}
+      screenOrientation={screenOrientation}
+      stackAnimation={stackAnimation}
+      stackPresentation={stackPresentation}
+      statusBarAnimation={statusBarAnimation}
+      statusBarColor={statusBarColor}
+      statusBarHidden={statusBarHidden}
+      statusBarStyle={statusBarStyle ?? (dark ? 'light' : 'dark')}
+      statusBarTranslucent={statusBarTranslucent}
+      swipeDirection={swipeDirection}
+      transitionDuration={transitionDuration}
+      onHeaderBackButtonClicked={() => {
+        navigation.dispatch({
+          ...StackActions.pop(),
+          source: route.key,
+          target: stateKey,
+        });
+      }}
+      onWillAppear={() => {
+        navigation.emit({
+          type: 'transitionStart',
+          data: { closing: false },
+          target: route.key,
+        });
+      }}
+      onWillDisappear={() => {
+        navigation.emit({
+          type: 'transitionStart',
+          data: { closing: true },
+          target: route.key,
+        });
+      }}
+      onAppear={() => {
+        navigation.emit({
+          type: 'appear',
+          target: route.key,
+        });
+        navigation.emit({
+          type: 'transitionEnd',
+          data: { closing: false },
+          target: route.key,
+        });
+      }}
+      onDisappear={() => {
+        navigation.emit({
+          type: 'transitionEnd',
+          data: { closing: true },
+          target: route.key,
+        });
+      }}
+      onHeaderHeightChange={e => {
+        const headerHeight = e.nativeEvent.headerHeight;
 
-          if (cachedAnimatedHeaderHeight.current !== headerHeight) {
-            // Currently, we're setting value by Animated#setValue, because we want to cache animated value.
-            // Also, in React Native 0.72 there was a bug on Fabric causing a large delay between the screen transition,
-            // which should not occur.
-            // TODO: Check if it's possible to replace animated#setValue to Animated#event.
-            animatedHeaderHeight.setValue(headerHeight);
-            cachedAnimatedHeaderHeight.current = headerHeight;
-          }
-        }}
-        onDismissed={e => {
-          navigation.emit({
-            type: 'dismiss',
-            target: route.key,
-          });
+        if (cachedAnimatedHeaderHeight.current !== headerHeight) {
+          // Currently, we're setting value by Animated#setValue, because we want to cache animated value.
+          // Also, in React Native 0.72 there was a bug on Fabric causing a large delay between the screen transition,
+          // which should not occur.
+          // TODO: Check if it's possible to replace animated#setValue to Animated#event.
+          animatedHeaderHeight.setValue(headerHeight);
+          cachedAnimatedHeaderHeight.current = headerHeight;
+        }
+      }}
+      onDismissed={e => {
+        navigation.emit({
+          type: 'dismiss',
+          target: route.key,
+        });
 
-          const dismissCount =
-            e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
+        const dismissCount =
+          e.nativeEvent.dismissCount > 0 ? e.nativeEvent.dismissCount : 1;
 
-          navigation.dispatch({
-            ...StackActions.pop(dismissCount),
-            source: route.key,
-            target: stateKey,
-          });
-        }}
-        onGestureCancel={() => {
-          navigation.emit({
-            type: 'gestureCancel',
-            target: route.key,
-          });
-        }}>
-        <AnimatedHeaderHeightContext.Provider value={animatedHeaderHeight}>
-          <HeaderHeightContext.Provider value={staticHeaderHeight}>
-            <MaybeNestedStack
-              options={options}
-              route={route}
-              stackPresentation={stackPresentation}>
-              {renderScene()}
-            </MaybeNestedStack>
-            {/* HeaderConfig must not be first child of a Screen.
+        navigation.dispatch({
+          ...StackActions.pop(dismissCount),
+          source: route.key,
+          target: stateKey,
+        });
+      }}
+      onGestureCancel={() => {
+        navigation.emit({
+          type: 'gestureCancel',
+          target: route.key,
+        });
+      }}>
+      <AnimatedHeaderHeightContext.Provider value={animatedHeaderHeight}>
+        <HeaderHeightContext.Provider value={staticHeaderHeight}>
+          <MaybeNestedStack
+            options={options}
+            route={route}
+            stackPresentation={stackPresentation}>
+            {renderScene()}
+          </MaybeNestedStack>
+          {/* HeaderConfig must not be first child of a Screen.
            See https://github.com/software-mansion/react-native-screens/pull/1825
            for detailed explanation */}
-            <HeaderConfig
-              {...options}
-              route={route}
-              headerShown={isHeaderInPush}
-            />
-          </HeaderHeightContext.Provider>
-        </AnimatedHeaderHeightContext.Provider>
-      </Screen>
-    </ScreenInfoContext.Provider>
+          <HeaderConfig
+            {...options}
+            route={route}
+            headerShown={isHeaderInPush}
+          />
+        </HeaderHeightContext.Provider>
+      </AnimatedHeaderHeightContext.Provider>
+    </Screen>
   );
 };
 

@@ -17,7 +17,6 @@ import {
 import getDefaultHeaderHeight from '../native-stack/utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../native-stack/utils/getStatusBarHeight';
 import ReanimatedHeaderHeightContext from './ReanimatedHeaderHeightContext';
-import useScreenInfo from '../native-stack/utils/useScreenInfo';
 
 const AnimatedScreen = Animated.createAnimatedComponent(
   InnerScreen as unknown as React.ComponentClass
@@ -32,10 +31,8 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   typeof AnimatedScreen,
   ScreenProps
 >((props, ref) => {
-  const { options } = useScreenInfo();
-
   const { children, ...rest } = props;
-  const { stackPresentation = 'push' } = rest;
+  const { stackPresentation = 'push', isLargeHeader } = rest;
 
   const dimensions = useSafeAreaFrame();
   const topInset = useSafeAreaInsets().top;
@@ -45,8 +42,6 @@ const ReanimatedNativeStackScreen = React.forwardRef<
     dimensions,
     isStatusBarTranslucent
   );
-
-  const isLargeHeader = options.headerLargeTitle ?? false;
 
   // Default header height, normally used in `useHeaderHeight` hook.
   // Here, it is used for returning a default value for shared value.
