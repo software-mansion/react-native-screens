@@ -1044,7 +1044,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return NO;
 }
 
-- (CGFloat)getCalculatedHeaderHeightIsModal:(BOOL)isModal
+- (CGFloat)getNavigationBarHeightIsModal:(BOOL)isModal
 {
   CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
 
@@ -1058,38 +1058,32 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return navbarHeight;
 }
 
-- (CGSize)getCalculatedStatusBarHeightIsModal:(BOOL)isModal
+- (CGFloat)getNavigationBarInsetIsModal:(BOOL)isModal
 {
 #if !TARGET_OS_TV
   BOOL isDraggableModal = isModal && ![self.screenView isFullscreenModal];
   BOOL isDraggableModalWithChildViewCtr =
       isDraggableModal && self.childViewControllers.count > 0 && self.childViewControllers[0] != nil;
 
-  // When modal is floating (we can grab its header), we don't want to calculate status bar in it.
-  // Thus, we return '0' as a height of status bar.
+  // When modal is floating (we can grab its header), we don't want to get inset of the navigation bar.
+  // Thus, we return '0' as an inset.
   if (isDraggableModalWithChildViewCtr || self.screenView.isTransparentModal) {
-    return CGSizeMake(0, 0);
+    return 0;
   }
 
-  CGFloat statusBarSize = self.navigationController.navigationBar.frame.origin.y;
-  return CGSizeMake(statusBarSize, statusBarSize);
+  return self.navigationController.navigationBar.frame.origin.y;
 
 #else
-  // On TVOS, status bar doesn't exist
-  return CGSizeMake(0, 0);
+  // On TVOS there's no inset of navigation bar.
+  return 0;
 #endif // !TARGET_OS_TV
 }
 
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
 {
-  CGFloat navbarHeight = [self getCalculatedHeaderHeightIsModal:isModal];
-  CGSize statusBarSize = [self getCalculatedStatusBarHeightIsModal:isModal];
-
-  // Unfortunately, UIKit doesn't care about switching width and height options on screen rotation.
-  // We should check if user has rotated its screen, so we're choosing the minimum value between the
-  // width and height.
-  CGFloat statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);
-  return navbarHeight + statusBarHeight;
+  CGFloat navbarHeight = [self getNavigationBarHeightIsModal:isModal];
+  CGFloat navbarInset = [self getNavigationBarInsetIsModal:isModal];
+  return navbarHeight + navbarInset;
 }
 
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal
