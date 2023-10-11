@@ -1060,23 +1060,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (CGFloat)getNavigationBarInsetIsModal:(BOOL)isModal
 {
-#if !TARGET_OS_TV
-  BOOL isDraggableModal = isModal && ![self.screenView isFullscreenModal];
-  BOOL isDraggableModalWithChildViewCtr =
-      isDraggableModal && self.childViewControllers.count > 0 && self.childViewControllers[0] != nil;
-
-  // When modal is floating (we can grab its header), we don't want to get inset of the navigation bar.
-  // Thus, we return '0' as an inset.
-  if (isDraggableModalWithChildViewCtr || self.screenView.isTransparentModal) {
-    return 0;
-  }
-
-  return self.navigationController.navigationBar.frame.origin.y;
-
-#else
+#if TARGET_OS_TV
   // On TVOS there's no inset of navigation bar.
   return 0;
-#endif // !TARGET_OS_TV
+#endif // TARGET_OS_TV
+
+  return self.navigationController.navigationBar.frame.origin.y;
 }
 
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal

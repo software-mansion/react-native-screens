@@ -149,9 +149,7 @@ namespace react = facebook::react;
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:YES];
     // As the header might have change in `updateViewController` we need to ensure that header height
     // returned by the `onHeaderHeightChange` event is correct.
-    if ([vc isKindOfClass:[RNSScreen class]]) {
-      [(RNSScreen *)self.screenView.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
-    }
+    [(RNSScreen *)self.screenView.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
   }
 }
 
