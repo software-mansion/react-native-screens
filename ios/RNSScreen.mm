@@ -563,6 +563,12 @@ namespace react = facebook::react;
   return nil;
 }
 
+- (BOOL)hasModalOpened
+{
+  return self.controller.childViewControllers.count > 0 &&
+      [self.controller.childViewControllers[0] isKindOfClass:UINavigationController.class];
+}
+
 - (BOOL)isModal
 {
   return self.stackPresentation != RNSScreenStackPresentationPush;
@@ -1046,16 +1052,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (CGFloat)getNavigationBarHeightIsModal:(BOOL)isModal
 {
-  CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
+  UINavigationController *navctr = self.navigationController;
 
-  // In case where screen is a modal, we want to calculate just its childViewController's height
-  if (isModal && self.childViewControllers.count > 0 &&
-      [self.childViewControllers[0] isKindOfClass:UINavigationController.class]) {
-    UINavigationController *childNavCtr = self.childViewControllers[0];
-    navbarHeight = childNavCtr.navigationBar.frame.size.height;
+  // In case where screen is a modal, we want to calculate childViewController's
+  // navigation bar height instead of the navigation controller from RNSScreen.
+  if (isModal && self.screenView.hasModalOpened) {
+    navctr = self.childViewControllers[0];
   }
 
-  return navbarHeight;
+  return navctr.navigationBar.frame.size.height;
 }
 
 - (CGFloat)getNavigationBarInsetIsModal:(BOOL)isModal
@@ -1064,8 +1069,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // On TVOS there's no inset of navigation bar.
   return 0;
 #endif // TARGET_OS_TV
+  UINavigationController *navctr = self.navigationController;
 
-  return self.navigationController.navigationBar.frame.origin.y;
+  // In case where screen is a modal, we want to calculate childViewController's
+  // navigation bar inset instead of the navigation controller from RNSScreen.
+  if (isModal && self.screenView.hasModalOpened) {
+    navctr = self.childViewControllers[0];
+  }
+
+  return navctr.navigationBar.frame.origin.y;
 }
 
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
