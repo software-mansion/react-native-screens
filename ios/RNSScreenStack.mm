@@ -71,7 +71,7 @@ namespace react = facebook::react;
     // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
     // header height, as it could have nested stack.
     if (![screenController hasNestedStack]) {
-      [(RNSScreen *)self.topViewController calculateAndNotifyHeaderHeightChangeIsModal:NO];
+      [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
   }
 }
