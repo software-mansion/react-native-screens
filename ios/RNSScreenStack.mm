@@ -350,7 +350,14 @@ namespace react = facebook::react;
   NSMutableArray<UIViewController *> *newControllers = [NSMutableArray arrayWithArray:controllers];
   [newControllers removeObjectsInArray:_presentedModals];
 
-  // find bottom-most controller that should stay on the stack for the duration of transition
+  // We need to find bottom-most view controller that should stay on the stack
+  // for the duration of transition. There are couple of scenarios:
+  // (1) No modals are presented or all modals were presented by this RNSNavigationController,
+  // (2) There are modals presented by other RNSNavigationControllers (nested/outer)
+
+  // Szukamy ile modali od dołu jest takich samych jak wcześniej
+  // Jeżeli nie ma takiego "prefixu", to "bazowym" kontrollerem jest wtedy
+  // RNSNavigationController skojarzony z tym widokiem
   NSUInteger changeRootIndex = 0;
   UIViewController *changeRootController = _controller;
   for (NSUInteger i = 0; i < MIN(_presentedModals.count, controllers.count); i++) {
@@ -458,6 +465,9 @@ namespace react = facebook::react;
         [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
         ((RNSScreen *)changeRootController.presentedViewController).screenView.stackAnimation !=
             RNSScreenStackAnimationNone;
+    // We dismiss every VC that was presented by changeRootController VC or its descendant.
+    // After the series of dismissals is completed we run completion block in which
+    // we present modals on top of changeRootController (which may be the this stack VC)
     [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
   } else {
     finish();
