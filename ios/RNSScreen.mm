@@ -563,12 +563,6 @@ namespace react = facebook::react;
   return nil;
 }
 
-- (BOOL)hasModalOpened
-{
-  return self.controller.childViewControllers.count > 0 &&
-      [self.controller.childViewControllers[0] isKindOfClass:UINavigationController.class];
-}
-
 - (BOOL)isModal
 {
   return self.stackPresentation != RNSScreenStackPresentationPush;
@@ -1037,6 +1031,20 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
+- (BOOL)assertModalHierarchy
+{
+  if (self.childViewControllers.count == 0) {
+    RCTLogError(
+        @"Modal has been rendered without the navigation controller, which is not allowed. Ensure that modal has RNSNavigationController mounted as a child view controller.");
+  } else if (self.childViewControllers.count > 1) {
+    RCTLogError(
+        @"Modal has been rendered with more than one navigation controller, which is not allowed. Ensure that modal has only one RNSNavigationController mounted as a child view controller.");
+  }
+
+  return self.childViewControllers.count == 1 &&
+      [self.childViewControllers[0] isKindOfClass:UINavigationController.class];
+}
+
 // Checks whether this screen has any child view controllers of type RNSNavigationController.
 // Useful for checking if this screen has nested stack or is displayed at the top.
 - (BOOL)hasNestedStack
@@ -1056,7 +1064,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   // In case where screen is a modal, we want to calculate childViewController's
   // navigation bar height instead of the navigation controller from RNSScreen.
-  if (isModal && self.screenView.hasModalOpened) {
+  if (isModal && self.assertModalHierarchy) {
     navctr = self.childViewControllers[0];
   }
 
@@ -1073,7 +1081,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   // In case where screen is a modal, we want to calculate childViewController's
   // navigation bar inset instead of the navigation controller from RNSScreen.
-  if (isModal && self.screenView.hasModalOpened) {
+  if (isModal && self.assertModalHierarchy) {
     navctr = self.childViewControllers[0];
   }
 
