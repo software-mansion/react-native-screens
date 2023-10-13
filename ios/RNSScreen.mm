@@ -1058,40 +1058,42 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return NO;
 }
 
-- (CGFloat)getNavigationBarHeightIsModal:(BOOL)isModal
+- (UINavigationController *)getVisibleNavigationControllerIsModal:(BOOL)isModal
 {
   UINavigationController *navctr = self.navigationController;
 
-  // In case where screen is a modal, we want to calculate childViewController's
-  // navigation bar height instead of the navigation controller from RNSScreen.
-  if (isModal && self.assertModalHierarchy) {
-    navctr = self.childViewControllers[0];
+  if (isModal) {
+    // In case where screen is a modal, we want to calculate childViewController's
+    // navigation bar height instead of the navigation controller from RNSScreen.
+    if (self.assertModalHierarchy) {
+      navctr = self.childViewControllers[0];
+    } else {
+      // If the modal does not meet requirements (there's no RNSNavigationController which means that probably it
+      // doesn't have header or there are more than one RNSNavigationController which is invalid) we don't want to
+      // return anything.
+      return nil;
+    }
   }
 
-  return navctr.navigationBar.frame.size.height;
-}
-
-- (CGFloat)getNavigationBarInsetIsModal:(BOOL)isModal
-{
-#if TARGET_OS_TV
-  // On TVOS there's no inset of navigation bar.
-  return 0;
-#endif // TARGET_OS_TV
-  UINavigationController *navctr = self.navigationController;
-
-  // In case where screen is a modal, we want to calculate childViewController's
-  // navigation bar inset instead of the navigation controller from RNSScreen.
-  if (isModal && self.assertModalHierarchy) {
-    navctr = self.childViewControllers[0];
-  }
-
-  return navctr.navigationBar.frame.origin.y;
+  return navctr;
 }
 
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
 {
-  CGFloat navbarHeight = [self getNavigationBarHeightIsModal:isModal];
-  CGFloat navbarInset = [self getNavigationBarInsetIsModal:isModal];
+  UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
+
+  if (navctr == nil || navctr.navigationBarHidden) {
+    return 0;
+  }
+
+  CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
+#if !TARGET_OS_TV
+  CGFloat navbarInset = navctr.navigationBar.frame.origin.y;
+#else
+  // On TVOS there's no inset of navigation bar.
+  CGFloat navbarInset = 0;
+#endif // !TARGET_OS_TV
+
   return navbarHeight + navbarInset;
 }
 
