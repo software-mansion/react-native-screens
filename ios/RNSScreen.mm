@@ -255,7 +255,7 @@ namespace react = facebook::react;
   // As the status bar could change its visibility, we need to calculate header
   // height for the correct value in `onHeaderHeightChange` event when navigation
   // bar is not visible.
-  if (self.controller.navigationController.navigationBarHidden) {
+  if (self.controller.navigationController.navigationBarHidden && !self.isModal) {
     [self.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
   }
 }
