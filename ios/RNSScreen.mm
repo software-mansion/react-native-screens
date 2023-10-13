@@ -251,6 +251,13 @@ namespace react = facebook::react;
   _statusBarHidden = statusBarHidden;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
   [RNSScreenWindowTraits updateStatusBarAppearance];
+
+  // As the status bar could change its visibility, we need to calculate header
+  // height for the correct value in `onHeaderHeightChange` event when navigation
+  // bar is not visible.
+  if (self.controller.navigationController.navigationBarHidden) {
+    [self.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
+  }
 }
 
 - (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
@@ -1058,6 +1065,30 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return NO;
 }
 
+- (CGSize)getStatusBarHeightIsModal:(BOOL)isModal
+{
+#if !TARGET_OS_TV
+  CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
+    if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0)
+      return fallbackStatusBarSize;
+
+    return primaryStatusBarSize;
+  } else {
+    return fallbackStatusBarSize;
+  }
+#endif /* Check for iOS 13.0 */
+
+#else
+  // TVOS does not have status bar.
+  return CGSizeMake(0, 0);
+#endif // !TARGET_OS_TV
+}
+
 - (UINavigationController *)getVisibleNavigationControllerIsModal:(BOOL)isModal
 {
   UINavigationController *navctr = self.navigationController;
@@ -1081,9 +1112,17 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
 {
   UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
+  CGSize statusBarSize = [self getStatusBarHeightIsModal:isModal];
 
-  if (navctr == nil || navctr.navigationBarHidden) {
-    return 0;
+  // If navigation controller doesn't exists (or it is hidden) we want to handle two possible cases.
+  // If there's no navigation controller for the modal, we simply don't want to return header height, as modal possibly
+  // does not have header and we don't want to count status bar. If there's no navigation controller for the view we
+  // just want to return status bar height (if it's hidden, it will simply return 0).
+  if (navctr == nil || navctr.isNavigationBarHidden) {
+    if (isModal)
+      return 0;
+    else
+      return MIN(statusBarSize.width, statusBarSize.height);
   }
 
   CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
