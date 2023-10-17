@@ -24,6 +24,7 @@ import com.swmansion.rnscreens.events.HeaderDetachedEvent
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
+    var mIsHidden = false
     private var headerTopInset: Int? = null
     private var mTitle: String? = null
     private var mTitleColor = 0
@@ -32,7 +33,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private var mTitleFontSize = 0f
     private var mTitleFontWeight = 0
     private var mBackgroundColor: Int? = null
-    private var mIsHidden = false
     private var mIsBackButtonHidden = false
     private var mIsShadowHidden = false
     private var mDestroyed = false
