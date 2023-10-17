@@ -91,11 +91,15 @@ Screens are already integrated with the React Native's most popular navigation l
 
 [Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system.
 
+- As of [version `3.21.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.21.0) of this project, Fabric is supported only for react-native 0.72+. Support for lower versions has been dropped.
+- As of [version `3.19.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.19.0) of this project, Fabric is supported only for react-native 0.71+. Support for lower versions has been dropped.
 - As of [version `3.18.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.18.0) of this project, Fabric is supported only for react-native 0.70+. Support for lower versions has been dropped.
 - As of [version `3.14.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.14.0) of this project, Fabric is supported only for react-native 0.69+. Support for lower versions has been dropped.
 
 | version | react-native version |
 | ------- | -------------------- |
+| 3.21.0+ | 0.72.0+              |
+| 3.19.0+ | 0.71.0+              |
 | 3.18.0+ | 0.70.0+              |
 | 3.14.0+ | 0.69.0+              |
 
@@ -110,7 +114,7 @@ To configure react-navigation to use screens instead of plain RN Views for rende
 yarn add react-native-screens
 
 # if you use Expo managed workflow
-expo install react-native-screens
+npx expo install react-native-screens
 ```
 
 Just make sure that the version of [react-navigation](https://github.com/react-navigation/react-navigation) you are using is 2.14.0 or higher.
@@ -153,7 +157,6 @@ To take advantage of the native stack navigator primitive for React Navigation t
 
 - for React Navigation >= v6 to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator)
 - for React Navigation v5 to the [README in react-native-screens/native-stack](https://github.com/software-mansion/react-native-screens/tree/main/native-stack)
-- for older versions to the [README in react-native-screens/createNativeStackNavigator](https://github.com/software-mansion/react-native-screens/tree/main/createNativeStackNavigator)
 
 ## `FullWindowOverlay`
 

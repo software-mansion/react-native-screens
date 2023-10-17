@@ -3,11 +3,17 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.text.InputType
 import androidx.appcompat.widget.SearchView
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.bridge.WritableMap
-import com.facebook.react.uimanager.events.RCTEventEmitter
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.events.Event
+import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.views.view.ReactViewGroup
+import com.swmansion.rnscreens.events.SearchBarBlurEvent
+import com.swmansion.rnscreens.events.SearchBarChangeTextEvent
+import com.swmansion.rnscreens.events.SearchBarCloseEvent
+import com.swmansion.rnscreens.events.SearchBarFocusEvent
+import com.swmansion.rnscreens.events.SearchBarOpenEvent
+import com.swmansion.rnscreens.events.SearchBarSearchButtonPressEvent
 
 @SuppressLint("ViewConstructor")
 class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) {
@@ -26,14 +32,18 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     private var mAreListenersSet: Boolean = false
 
-    private val screenStackFragment: ScreenStackFragment?
+    private val headerConfig: ScreenStackHeaderConfig?
         get() {
             val currentParent = parent
             if (currentParent is ScreenStackHeaderSubview) {
-                return currentParent.config?.screenFragment
+                return currentParent.config
             }
+
             return null
         }
+
+    private val screenStackFragment: ScreenStackFragment?
+        get() = headerConfig?.screenFragment
 
     fun onUpdate() {
         setSearchViewProps()
@@ -95,33 +105,60 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     }
 
     private fun handleTextChange(newText: String?) {
-        val event = Arguments.createMap()
-        event.putString("text", newText)
-        sendEvent("onChangeText", event)
+        sendEvent(SearchBarChangeTextEvent(surfaceId, id, newText))
     }
 
     private fun handleFocusChange(hasFocus: Boolean) {
-        sendEvent(if (hasFocus) "onFocus" else "onBlur", null)
+        sendEvent(if (hasFocus) SearchBarFocusEvent(surfaceId, id) else SearchBarBlurEvent(surfaceId, id))
     }
 
     private fun handleClose() {
-        sendEvent("onClose", null)
+        sendEvent(SearchBarCloseEvent(surfaceId, id))
+        setToolbarElementsVisibility(VISIBLE)
     }
 
     private fun handleOpen() {
-        sendEvent("onOpen", null)
+        sendEvent(SearchBarOpenEvent(surfaceId, id))
+        setToolbarElementsVisibility(GONE)
     }
 
     private fun handleTextSubmit(newText: String?) {
-        val event = Arguments.createMap()
-        event.putString("text", newText)
-        sendEvent("onSearchButtonPress", event)
+        sendEvent(SearchBarSearchButtonPressEvent(surfaceId, id, newText))
     }
 
-    private fun sendEvent(eventName: String, eventContent: WritableMap?) {
-        (context as ReactContext).getJSModule(RCTEventEmitter::class.java)
-            ?.receiveEvent(id, eventName, eventContent)
+    private fun sendEvent(event: Event<*>) {
+        val eventDispatcher: EventDispatcher? =
+            UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+        eventDispatcher?.dispatchEvent(event)
     }
+
+    fun handleClearTextJsRequest() {
+        screenStackFragment?.searchView?.clearText()
+    }
+
+    fun handleFocusJsRequest() {
+        screenStackFragment?.searchView?.focus()
+    }
+
+    fun handleBlurJsRequest() {
+        screenStackFragment?.searchView?.clearFocus()
+    }
+
+    fun handleToggleCancelButtonJsRequest(flag: Boolean) = Unit
+
+    fun handleSetTextJsRequest(text: String?) {
+        text?.let { screenStackFragment?.searchView?.setText(it) }
+    }
+
+    private fun setToolbarElementsVisibility(visibility: Int) {
+        for (i in 0..(headerConfig?.configSubviewsCount?.minus(1) ?: 0)) {
+            val subview = headerConfig?.getConfigSubview(i)
+            if (subview?.type != ScreenStackHeaderSubview.Type.SEARCH_BAR)
+                subview?.visibility = visibility
+        }
+    }
+
+    private val surfaceId = UIManagerHelper.getSurfaceId(this)
 
     enum class SearchBarAutoCapitalize {
         NONE, WORDS, SENTENCES, CHARACTERS

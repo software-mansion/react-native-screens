@@ -6,15 +6,18 @@
 #import <React/RCTComponent.h>
 #import <React/RCTUIManager.h>
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import "RNSConvert.h"
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
+
+#ifdef RCT_NEW_ARCH_ENABLED
+namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSSearchBar {
   __weak RCTBridge *_bridge;
@@ -33,11 +36,11 @@
   return self;
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)init
 {
   if (self = [super init]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSSearchBarProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSSearchBarProps>();
     _props = defaultProps;
     [self initCommonProps];
   }
@@ -50,14 +53,15 @@
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
+  _placement = RNSSearchBarPlacementStacked;
 }
 
 - (void)emitOnFocusEvent
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onFocus(facebook::react::RNSSearchBarEventEmitter::OnFocus{});
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onFocus(react::RNSSearchBarEventEmitter::OnFocus{});
   }
 #else
   if (self.onFocus) {
@@ -68,10 +72,10 @@
 
 - (void)emitOnBlurEvent
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onBlur(facebook::react::RNSSearchBarEventEmitter::OnBlur{});
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onBlur(react::RNSSearchBarEventEmitter::OnBlur{});
   }
 #else
   if (self.onBlur) {
@@ -82,11 +86,11 @@
 
 - (void)emitOnSearchButtonPressEventWithText:(NSString *)text
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchButtonPress(
-            facebook::react::RNSSearchBarEventEmitter::OnSearchButtonPress{.text = RCTStringFromNSString(text)});
+            react::RNSSearchBarEventEmitter::OnSearchButtonPress{.text = RCTStringFromNSString(text)});
   }
 #else
   if (self.onSearchButtonPress) {
@@ -99,10 +103,10 @@
 
 - (void)emitOnCancelButtonPressEvent
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onCancelButtonPress(facebook::react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onCancelButtonPress(react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
   }
 #else
   if (self.onCancelButtonPress) {
@@ -113,10 +117,10 @@
 
 - (void)emitOnChangeTextEventWithText:(NSString *)text
 {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSSearchBarEventEmitter>(_eventEmitter)
-        ->onChangeText(facebook::react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
+    std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
+        ->onChangeText(react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
   }
 #else
   if (self.onChangeText) {
@@ -209,6 +213,22 @@
 #endif
 }
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0 && !TARGET_OS_TV
+- (UINavigationItemSearchBarPlacement)placementAsUINavigationItemSearchBarPlacement API_AVAILABLE(ios(16.0))
+    API_UNAVAILABLE(tvos, watchos)
+{
+  switch (_placement) {
+    case RNSSearchBarPlacementStacked:
+      return UINavigationItemSearchBarPlacementStacked;
+    case RNSSearchBarPlacementAutomatic:
+      return UINavigationItemSearchBarPlacementAutomatic;
+    case RNSSearchBarPlacementInline:
+      return UINavigationItemSearchBarPlacementInline;
+  }
+}
+#endif // Check for iOS >= 16 && !TARGET_OS_TV
+
 #pragma mark delegate methods
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
@@ -257,14 +277,40 @@
 }
 #endif // !TARGET_OS_TV
 
+- (void)blur
+{
+  [_controller.searchBar resignFirstResponder];
+}
+
+- (void)focus
+{
+  [_controller.searchBar becomeFirstResponder];
+}
+
+- (void)clearText
+{
+  [_controller.searchBar setText:@""];
+}
+
+- (void)toggleCancelButton:(BOOL)flag
+{
+#if !TARGET_OS_TV
+  [_controller.searchBar setShowsCancelButton:flag animated:YES];
+#endif
+}
+
+- (void)setText:(NSString *)text
+{
+  [_controller.searchBar setText:text];
+}
+
 #pragma mark-- Fabric specific
 
-#ifdef RN_FABRIC_ENABLED
-- (void)updateProps:(facebook::react::Props::Shared const &)props
-           oldProps:(facebook::react::Props::Shared const &)oldProps
+#ifdef RCT_NEW_ARCH_ENABLED
+- (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
-  const auto &oldScreenProps = *std::static_pointer_cast<const facebook::react::RNSSearchBarProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSSearchBarProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(props);
 
   [self setHideWhenScrolling:newScreenProps.hideWhenScrolling];
 
@@ -300,20 +346,29 @@
     [self setTextColor:RCTUIColorFromSharedColor(newScreenProps.textColor)];
   }
 
+  if (oldScreenProps.placement != newScreenProps.placement) {
+    self.placement = [RNSConvert RNSScreenSearchBarPlacementFromCppEquivalent:newScreenProps.placement];
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSSearchBarComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSSearchBarComponentDescriptor>();
+}
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNSSearchBarHandleCommand(self, commandName, args);
 }
 
 #else
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
 {
   return RNSSearchBar.class;
@@ -324,7 +379,7 @@ Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
 
 RCT_EXPORT_MODULE()
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {
@@ -341,11 +396,70 @@ RCT_EXPORT_VIEW_PROPERTY(barTintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(cancelButtonText, NSString)
+RCT_EXPORT_VIEW_PROPERTY(placement, RNSSearchBarPlacement)
 
 RCT_EXPORT_VIEW_PROPERTY(onChangeText, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCancelButtonPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onFocus, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBlur, RCTBubblingEventBlock)
+
+#ifndef RCT_NEW_ARCH_ENABLED
+
+RCT_EXPORT_METHOD(focus : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar focus];
+  }];
+}
+
+RCT_EXPORT_METHOD(blur : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar blur];
+  }];
+}
+
+RCT_EXPORT_METHOD(clearText : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar clearText];
+  }];
+}
+
+RCT_EXPORT_METHOD(toggleCancelButton : (NSNumber *_Nonnull)reactTag flag : (BOOL)flag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar toggleCancelButton:flag];
+  }];
+}
+
+RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar setText:text];
+  }];
+}
+
+#endif /* !RCT_NEW_ARCH_ENABLED */
+
+@end
+
+@implementation RCTConvert (RNSScreen)
+
+RCT_ENUM_CONVERTER(
+    RNSSearchBarPlacement,
+    (@{
+      @"automatic" : @(RNSSearchBarPlacementAutomatic),
+      @"inline" : @(RNSSearchBarPlacementInline),
+      @"stacked" : @(RNSSearchBarPlacementStacked),
+    }),
+    RNSSearchBarPlacementStacked,
+    integerValue)
 
 @end

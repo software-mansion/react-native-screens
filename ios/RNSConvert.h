@@ -1,30 +1,36 @@
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
+
+namespace react = facebook::react;
 
 @interface RNSConvert : NSObject
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
-    (facebook::react::RNSScreenStackPresentation)stackPresentation;
+    (react::RNSScreenStackPresentation)stackPresentation;
 
-+ (RNSScreenStackAnimation)RNSScreenStackAnimationFromCppEquivalent:
-    (facebook::react::RNSScreenStackAnimation)stackAnimation;
++ (RNSScreenStackAnimation)RNSScreenStackAnimationFromCppEquivalent:(react::RNSScreenStackAnimation)stackAnimation;
 
 + (RNSScreenStackHeaderSubviewType)RNSScreenStackHeaderSubviewTypeFromCppEquivalent:
-    (facebook::react::RNSScreenStackHeaderSubviewType)subviewType;
+    (react::RNSScreenStackHeaderSubviewType)subviewType;
 
 + (RNSScreenReplaceAnimation)RNSScreenReplaceAnimationFromCppEquivalent:
-    (facebook::react::RNSScreenReplaceAnimation)replaceAnimation;
+    (react::RNSScreenReplaceAnimation)replaceAnimation;
 
-+ (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:
-    (facebook::react::RNSScreenSwipeDirection)swipeDirection;
++ (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:(react::RNSScreenSwipeDirection)swipeDirection;
+
++ (RNSScreenDetentType)RNSScreenDetentTypeFromAllowedDetents:(react::RNSScreenSheetAllowedDetents)allowedDetents;
+
++ (RNSScreenDetentType)RNSScreenDetentTypeFromLargestUndimmedDetent:(react::RNSScreenSheetLargestUndimmedDetent)detent;
 
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
-    (const facebook::react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance;
+    (const react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance;
 
 + (UITextAutocapitalizationType)UITextAutocapitalizationTypeFromCppEquivalent:
-    (facebook::react::RNSSearchBarAutoCapitalize)autoCapitalize;
+    (react::RNSSearchBarAutoCapitalize)autoCapitalize;
+
++ (RNSSearchBarPlacement)RNSScreenSearchBarPlacementFromCppEquivalent:(react::RNSSearchBarPlacement)placement;
 
 @end
 
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED

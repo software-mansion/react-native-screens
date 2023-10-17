@@ -11,19 +11,16 @@ export default function App() {
       <AppStack.Navigator
         screenOptions={{
           headerLargeTitle: true,
-          stackAnimation: 'slide_from_right'
+          stackAnimation: 'slide_from_right',
         }}>
         <AppStack.Screen name="First" component={First} />
-        <AppStack.Screen
-          name="Second"
-          component={Second}
-        />
+        <AppStack.Screen name="Second" component={Second} />
       </AppStack.Navigator>
     </NavigationContainer>
   );
 }
 
-function First({navigation}) {
+function First({ navigation }) {
   return (
     <ScrollView>
       <Button
@@ -34,7 +31,7 @@ function First({navigation}) {
   );
 }
 
-function Second({navigation}) {
+function Second({ navigation }) {
   return (
     <ScrollView>
       <Button

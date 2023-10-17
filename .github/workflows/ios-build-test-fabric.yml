@@ -10,7 +10,7 @@ on:
       - 'ios/**'
       - 'common/**'
       - 'src/fabric/**'
-      - 'FabricExample/**'
+      - 'FabricTestExample/**'
   push:
     branches:
       - main
@@ -18,8 +18,9 @@ on:
 jobs:
   build:
     runs-on: macos-12
+    timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: FabricExample
+      WORKING_DIRECTORY: FabricTestExample
     concurrency:
       group: ios-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -27,12 +28,12 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
-      - name: Use Node.js 14
+      - name: Use Node.js 18
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 18
           cache: 'yarn'
-          cache-dependency-path: 'FabricExample/yarn.lock'
+          cache-dependency-path: 'FabricTestExample/yarn.lock'
 
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}

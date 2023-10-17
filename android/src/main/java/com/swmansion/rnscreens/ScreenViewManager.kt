@@ -11,6 +11,7 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
+import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -156,24 +157,26 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setSwipeDirection(view: Screen?, value: String?) = Unit
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
-        return MapBuilder.of(
-            ScreenDismissedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDismissed"),
-            ScreenWillAppearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onWillAppear"),
-            ScreenAppearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onAppear"),
-            ScreenWillDisappearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onWillDisappear"),
-            ScreenDisappearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDisappear"),
-            HeaderBackButtonClickedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
-            ScreenTransitionProgressEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onTransitionProgress")
-        )
-    }
+    override fun setSheetAllowedDetents(view: Screen, value: String?) = Unit
+
+    override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) = Unit
+
+    override fun setSheetGrabberVisible(view: Screen?, value: Boolean) = Unit
+
+    override fun setSheetCornerRadius(view: Screen?, value: Float) = Unit
+
+    override fun setSheetExpandsWhenScrolledToEdge(view: Screen?, value: Boolean) = Unit
+
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
+        ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
+        ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),
+        ScreenAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onAppear"),
+        ScreenWillDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillDisappear"),
+        ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
+        HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
+        HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
+        ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
+    )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = mDelegate
 

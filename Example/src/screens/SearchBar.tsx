@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { I18nManager, ScrollView, Text, StyleSheet } from 'react-native';
-import { SearchBarProps } from 'react-native-screens';
+import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -36,23 +36,22 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   const [placeholder, setPlaceholder] = useState('Search for something...');
   const [barTintColor, setBarTintColor] = useState<BarTintColor>('white');
   const [hintTextColor, setHintTextColor] = useState<BarTintColor>('orange');
-  const [headerIconColor, setHeaderIconColor] = useState<BarTintColor>(
-    'orange'
-  );
-  const [shouldShowHintSearchIcon, setShouldShowHintSearchIcon] = useState(
-    true
-  );
+  const [headerIconColor, setHeaderIconColor] =
+    useState<BarTintColor>('orange');
+  const [shouldShowHintSearchIcon, setShouldShowHintSearchIcon] =
+    useState(true);
   const [hideWhenScrolling, setHideWhenScrolling] = useState(false);
   const [obscureBackground, setObscureBackground] = useState(false);
   const [hideNavigationBar, setHideNavigationBar] = useState(false);
-  const [autoCapitalize, setAutoCapitalize] = useState<AutoCapitalize>(
-    'sentences'
-  );
+  const [autoCapitalize, setAutoCapitalize] =
+    useState<AutoCapitalize>('sentences');
   const [inputType, setInputType] = useState<InputType>('text');
+  const searchBarRef = useRef<SearchBarCommands>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       searchBar: {
+        ref: searchBarRef,
         barTintColor,
         hintTextColor,
         headerIconColor,
@@ -63,7 +62,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         autoCapitalize,
         placeholder,
         inputType,
-        onChangeText: (event) => setSearch(event.nativeEvent.text),
+        onChangeText: event => setSearch(event.nativeEvent.text),
         onCancelButtonPress: () =>
           toast.push({
             message: '[iOS] Cancel button pressed',
@@ -173,6 +172,21 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         value={shouldShowHintSearchIcon}
         onValueChange={setShouldShowHintSearchIcon}
       />
+      <Text style={styles.heading}>Imperative actions</Text>
+      <Button onPress={() => searchBarRef.current?.blur()} title="Blur" />
+      <Button onPress={() => searchBarRef.current?.focus()} title="Focus" />
+      <Button
+        onPress={() => searchBarRef.current?.clearText()}
+        title="Clear Text"
+      />
+      <Button
+        onPress={() => searchBarRef.current?.toggleCancelButton(true)}
+        title="Show cancel"
+      />
+      <Button
+        onPress={() => searchBarRef.current?.toggleCancelButton(false)}
+        title="Hide cancel"
+      />
       <Text style={styles.heading}>Other</Text>
       <Button
         onPress={() => navigation.navigate('Search')}
@@ -212,7 +226,7 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
     navigation.setOptions({
       searchBar: {
         placeholder: 'Interesting places...',
-        onChangeText: (event) => setSearch(event.nativeEvent.text),
+        onChangeText: event => setSearch(event.nativeEvent.text),
         obscureBackground: false,
         autoCapitalize: 'none',
         hideWhenScrolling: false,
@@ -225,10 +239,8 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
       contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag">
       {places
-        .filter(
-          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1
-        )
-        .map((place) => (
+        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+        .map(place => (
           <ListItem
             key={place}
             title={place}

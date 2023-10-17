@@ -1,57 +1,74 @@
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTImageComponentView.h>
 #import <React/UIView+React.h>
+#import <react/renderer/components/image/ImageProps.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTImageComponentView+RNSScreenStackHeaderConfig.h"
 #else
-#import <React/RCTBridge.h>
-#import <React/RCTImageLoader.h>
-#import <React/RCTImageSource.h>
 #import <React/RCTImageView.h>
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 #endif
+#import <React/RCTBridge.h>
 #import <React/RCTFont.h>
+#import <React/RCTImageLoader.h>
+#import <React/RCTImageSource.h>
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
-#ifdef RN_FABRIC_ENABLED
-#else
+#ifdef RCT_NEW_ARCH_ENABLED
+namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
+
+#ifndef RCT_NEW_ARCH_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
 - (UIImage *)image;
 @end
+#endif // !RCT_NEW_ARCH_ENABLED
 
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
 @end
-#endif
+
+@implementation NSString (RNSStringUtil)
+
++ (BOOL)RNSisBlank:(NSString *)string
+{
+  if (string == nil) {
+    return YES;
+  }
+  return [[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0;
+}
+
+@end
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
 #else
 #endif
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackHeaderConfigProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderConfigProps>();
     _props = defaultProps;
-    self.hidden = YES;
     _show = YES;
     _translucent = NO;
-    _reactSubviews = [NSMutableArray new];
+    [self initProps];
   }
   return self;
 }
@@ -59,13 +76,19 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-    self.hidden = YES;
     _translucent = YES;
-    _reactSubviews = [NSMutableArray new];
+    [self initProps];
   }
   return self;
 }
 #endif
+
+- (void)initProps
+{
+  self.hidden = YES;
+  _reactSubviews = [NSMutableArray new];
+  _backTitleVisible = YES;
+}
 
 - (UIView *)reactSuperview
 {
@@ -124,6 +147,9 @@
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
   if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC)) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:YES];
+    // As the header might have change in `updateViewController` we need to ensure that header height
+    // returned by the `onHeaderHeightChange` event is correct.
+    [self.screenView.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
   }
 }
 
@@ -243,14 +269,15 @@
 
 + (UIImage *)loadBackButtonImageInViewController:(UIViewController *)vc withConfig:(RNSScreenStackHeaderConfig *)config
 {
-#ifdef RN_FABRIC_ENABLED
-  @throw([NSException exceptionWithName:@"UNIMPLEMENTED" reason:@"Implement" userInfo:nil]);
-#else
   BOOL hasBackButtonImage = NO;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
       hasBackButtonImage = YES;
+#ifdef RCT_NEW_ARCH_ENABLED
+      RCTImageComponentView *imageView = subview.subviews[0];
+#else
       RCTImageView *imageView = subview.subviews[0];
+#endif // RCT_NEW_ARCH_ENABLED
       if (imageView.image == nil) {
         // This is yet another workaround for loading custom back icon. It turns out that under
         // certain circumstances image attribute can be null despite the app running in production
@@ -259,14 +286,16 @@
         // does not populate the frame of the image view before the loading start. The latter result
         // in the image attribute not being updated. We manually set frame to the size of an image
         // in order to trigger proper reload that'd update the image attribute.
-        RCTImageSource *source = imageView.imageSources[0];
+        RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
         [imageView reactSetFrame:CGRectMake(
                                      imageView.frame.origin.x,
                                      imageView.frame.origin.y,
-                                     source.size.width,
-                                     source.size.height)];
+                                     imageSource.size.width,
+                                     imageSource.size.height)];
       }
+
       UIImage *image = imageView.image;
+
       // IMPORTANT!!!
       // image can be nil in DEV MODE ONLY
       //
@@ -280,12 +309,19 @@
       if (image == nil) {
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
-        RCTImageSource *source = imageView.imageSources[0];
-        RCTImageLoader *imageloader = [subview.bridge moduleForClass:[RCTImageLoader class]];
-        image = [imageloader.imageCache imageForUrl:source.request.URL.absoluteString
-                                               size:source.size
-                                              scale:source.scale
-                                         resizeMode:imageView.resizeMode];
+        RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
+        RCTImageLoader *imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
+
+        image = [imageLoader.imageCache
+            imageForUrl:imageSource.request.URL.absoluteString
+                   size:imageSource.size
+                  scale:imageSource.scale
+#ifdef RCT_NEW_ARCH_ENABLED
+             resizeMode:resizeModeFromCppEquiv(
+                            std::static_pointer_cast<const react::ImageProps>(imageView.props)->resizeMode)];
+#else
+             resizeMode:imageView.resizeMode];
+#endif // RCT_NEW_ARCH_ENABLED
       }
       if (image == nil) {
         // This will be triggered if the image is not in the cache yet. What we do is we wait until
@@ -312,7 +348,6 @@
       }
     }
   }
-#endif // RN_FABRIC_ENABLED
   return nil;
 }
 
@@ -321,6 +356,11 @@
                     withConfig:(RNSScreenStackHeaderConfig *)config
 {
   [self updateViewController:vc withConfig:config animated:animated];
+  // As the header might have change in `updateViewController` we need to ensure that header height
+  // returned by the `onHeaderHeightChange` event is correct.
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    [(RNSScreen *)vc calculateAndNotifyHeaderHeightChangeIsModal:NO];
+  }
 }
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
@@ -343,7 +383,7 @@
   }
 
   // TODO: implement blurEffect on Fabric
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #else
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
@@ -404,19 +444,15 @@
     appearance.largeTitleTextAttributes = largeAttrs;
   }
 
-#ifdef RN_FABRIC_ENABLED
-  [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
-#else
   UIImage *backButtonImage = [self loadBackButtonImageInViewController:vc withConfig:config];
   if (backButtonImage) {
     [appearance setBackIndicatorImage:backButtonImage transitionMaskImage:backButtonImage];
   } else if (appearance.backIndicatorImage) {
     [appearance setBackIndicatorImage:nil transitionMaskImage:nil];
   }
-#endif // RN_FABRIC_ENABLED
   return appearance;
 }
-#endif
+#endif // Check for >= iOS 13.0
 
 + (void)updateViewController:(UIViewController *)vc
                   withConfig:(RNSScreenStackHeaderConfig *)config
@@ -430,7 +466,7 @@
       currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
 
   BOOL wasHidden = navctr.navigationBarHidden;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   BOOL shouldHide = config == nil || !config.show;
 #else
   BOOL shouldHide = config == nil || config.hide;
@@ -456,36 +492,20 @@
   }
 
   if (shouldHide) {
+    navitem.title = config.title;
     return;
   }
 
 #if !TARGET_OS_TV
-  // Fix for github.com/react-navigation/react-navigation/issues/11015
-  // It allows to hide back button title and use back button menu as normal.
-  // Back button display mode and back button menu are available since iOS 14.
-  if (@available(iOS 14.0, *)) {
-    // Make sure to set display mode to default.
-    // This line resets back button display mode - especially needed on the Fabric architecture.
-    navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeDefault;
+  const auto isBackTitleBlank = [NSString RNSisBlank:config.backTitle] == YES;
+  NSString *resolvedBackTitle = isBackTitleBlank ? prevItem.title : config.backTitle;
+  RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:resolvedBackTitle
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:nil
+                                                                             action:nil];
+  [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-    NSString *trimmedBackTitle =
-        [config.backTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-
-    // When an whitespace only back title is passed set back button mode to minimal.
-    if (config.backTitle != nil && [trimmedBackTitle length] == 0) {
-      navitem.backButtonDisplayMode = UINavigationItemBackButtonDisplayModeMinimal;
-    }
-  } else if (
-      config.backTitle != nil || config.backTitleFontFamily || config.backTitleFontSize ||
-      config.disableBackButtonMenu) {
-    RNSUIBarButtonItem *backBarButtonItem = [[RNSUIBarButtonItem alloc] initWithTitle:config.backTitle ?: prevItem.title
-                                                                                style:UIBarButtonItemStylePlain
-                                                                               target:nil
-                                                                               action:nil];
-
-    [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
-
-    prevItem.backBarButtonItem = backBarButtonItem;
+  if (config.isBackTitleVisible) {
     if (config.backTitleFontFamily || config.backTitleFontSize) {
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
@@ -500,11 +520,18 @@
       } else {
         attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:[size floatValue]];
       }
-      [self setTitleAttibutes:attrs forButton:prevItem.backBarButtonItem];
+      [self setTitleAttibutes:attrs forButton:backBarButtonItem];
     }
   } else {
-    prevItem.backBarButtonItem = nil;
+    // back button title should be not visible next to back button,
+    // but it should still appear in back menu (if one is enabled)
+
+    // When backBarButtonItem's title is null, back menu will use value
+    // of backButtonTitle
+    [backBarButtonItem setTitle:nil];
+    prevItem.backButtonTitle = resolvedBackTitle;
   }
+  prevItem.backBarButtonItem = backBarButtonItem;
 
   if (@available(iOS 11.0, *)) {
     if (config.largeTitle) {
@@ -548,6 +575,8 @@
 #endif
   }
 #if !TARGET_OS_TV
+  // Workaround for the wrong rotation of back button arrow in RTL mode.
+  navitem.hidesBackButton = true;
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
@@ -588,19 +617,29 @@
             RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+            if (@available(iOS 16.0, *)) {
+              navitem.preferredSearchBarPlacement = [searchBar placementAsUINavigationItemSearchBarPlacement];
+            }
+#endif /* Check for iOS 16.0 */
           }
-#endif
+#endif /* !TARGET_OS_TV */
         }
         break;
       }
       case RNSScreenStackHeaderSubviewTypeBackButton: {
-#ifdef RN_FABRIC_ENABLED
-        RCTLogWarn(@"Back button subview is not yet Fabric compatible in react-native-screens");
-#endif
         break;
       }
     }
   }
+
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
+    // Position the contents in the navigation bar, regarding to the direction.
+    for (UIView *view in navctr.navigationBar.subviews) {
+      view.semanticContentAttribute = config.direction;
+    }
+  });
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
@@ -654,7 +693,7 @@
   [self updateViewControllerIfNeeded];
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -683,6 +722,39 @@
   [childComponentView removeFromSuperview];
 }
 
+static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
+{
+  switch (resizeMode) {
+    case react::ImageResizeMode::Cover:
+      return RCTResizeModeCover;
+    case react::ImageResizeMode::Contain:
+      return RCTResizeModeContain;
+    case react::ImageResizeMode::Stretch:
+      return RCTResizeModeStretch;
+    case react::ImageResizeMode::Center:
+      return RCTResizeModeCenter;
+    case react::ImageResizeMode::Repeat:
+      return RCTResizeModeRepeat;
+  }
+}
+
+/**
+ * Fabric implementation of helper method for +loadBackButtonImageInViewController:withConfig:
+ * There is corresponding Paper implementation (with different parameter type) in Paper specific section.
+ */
++ (RCTImageSource *)imageSourceFromImageView:(RCTImageComponentView *)view
+{
+  auto const imageProps = *std::static_pointer_cast<const react::ImageProps>(view.props);
+  react::ImageSource cppImageSource = imageProps.sources.at(0);
+  auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
+  NSURLRequest *request =
+      [NSURLRequest requestWithURL:[NSURL URLWithString:RCTNSStringFromStringNilIfEmpty(cppImageSource.uri)]];
+  RCTImageSource *imageSource = [[RCTImageSource alloc] initWithURLRequest:request
+                                                                      size:imageSize
+                                                                     scale:cppImageSource.scale];
+  return imageSource;
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 - (void)prepareForRecycle
@@ -691,10 +763,9 @@
   _initialPropsSet = NO;
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<
-      facebook::react::RNSScreenStackHeaderConfigComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
 - (NSNumber *)getFontSizePropValue:(int)value
@@ -704,24 +775,20 @@
   return nil;
 }
 
-- (UISemanticContentAttribute)getDirectionPropValue:(facebook::react::RNSScreenStackHeaderConfigDirection)direction
+- (UISemanticContentAttribute)getDirectionPropValue:(react::RNSScreenStackHeaderConfigDirection)direction
 {
   switch (direction) {
-    case facebook::react::RNSScreenStackHeaderConfigDirection::Rtl:
+    case react::RNSScreenStackHeaderConfigDirection::Rtl:
       return UISemanticContentAttributeForceRightToLeft;
-    case facebook::react::RNSScreenStackHeaderConfigDirection::Ltr:
+    case react::RNSScreenStackHeaderConfigDirection::Ltr:
       return UISemanticContentAttributeForceLeftToRight;
   }
 }
 
-- (void)updateProps:(facebook::react::Props::Shared const &)props
-           oldProps:(facebook::react::Props::Shared const &)oldProps
+- (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
-  [super updateProps:props oldProps:oldProps];
-
-  const auto &oldScreenProps =
-      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderConfigProps>(props);
+  const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderConfigProps>(_props);
+  const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderConfigProps>(props);
 
   BOOL needsNavigationControllerLayout = !_initialPropsSet;
 
@@ -767,6 +834,8 @@
     _direction = [self getDirectionPropValue:newScreenProps.direction];
   }
 
+  _backTitleVisible = newScreenProps.backTitleVisible;
+
   // We cannot compare SharedColor because it is shared value.
   // We could compare color value, but it is more performant to just assign new value
   _titleColor = RCTUIColorFromSharedColor(newScreenProps.titleColor);
@@ -781,7 +850,9 @@
   }
 
   _initialPropsSet = YES;
-  _props = std::static_pointer_cast<facebook::react::RNSScreenStackHeaderConfigProps const>(props);
+  _props = std::static_pointer_cast<react::RNSScreenStackHeaderConfigProps const>(props);
+
+  [super updateProps:props oldProps:oldProps];
 }
 
 #else
@@ -799,10 +870,19 @@
   }
 }
 
+/**
+ * Paper implementation of helper method for +loadBackButtonImageInViewController:withConfig:
+ * There is corresponding Fabric implementation (with different parameter type) in Fabric specific section.
+ */
++ (RCTImageSource *)imageSourceFromImageView:(RCTImageView *)view
+{
+  return view.imageSources[0];
+}
+
 #endif
 @end
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 {
   return RNSScreenStackHeaderConfig.class;
@@ -827,6 +907,7 @@ RCT_EXPORT_VIEW_PROPERTY(backTitle, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(backTitleFontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(backgroundColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(backTitleVisible, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(blurEffect, UIBlurEffectStyle)
 RCT_EXPORT_VIEW_PROPERTY(color, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(direction, UISemanticContentAttribute)

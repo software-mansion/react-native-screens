@@ -1,12 +1,12 @@
 import React from 'react';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {ScrollView, Button, Text} from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { ScrollView, Button, Text } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
@@ -99,17 +99,20 @@ function Home({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   const [statusBarColor, setStatusBarColor] = React.useState('mediumseagreen');
-  const [statusBarStyle, setStatusBarStyle] = React.useState<NativeStackNavigationOptions['statusBarStyle']>('dark');
+  const [statusBarStyle, setStatusBarStyle] =
+    React.useState<NativeStackNavigationOptions['statusBarStyle']>('dark');
   const [statusBarHidden, setStatusBarHidden] = React.useState(false);
   const [statusBarTranslucent, setStatusBarTranslucent] = React.useState(true);
-  const [statusBarAnimation, setStatusBarAnimation] = React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
+  const [statusBarAnimation, setStatusBarAnimation] =
+    React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
   const [navigationBarColor, setNavigationBarColor] = React.useState('green');
   const [navigationBarHidden, setNavigationBarHidden] = React.useState(false);
-  const [headerTopInsetEnabled, setHeaderTopInsetEnabled] = React.useState(false);
+  const [headerTopInsetEnabled, setHeaderTopInsetEnabled] =
+    React.useState(false);
 
   return (
     <ScrollView
-      style={{backgroundColor: 'yellow'}}
+      style={{ backgroundColor: 'yellow' }}
       contentInsetAdjustmentBehavior="automatic">
       <Button
         title="NestedNavigator"

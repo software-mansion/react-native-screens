@@ -1,14 +1,17 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreen.h"
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/Props.h>
-#endif
 
-@implementation RNScreensViewController
+namespace react = facebook::react;
+
+#endif // RCT_NEW_ARCH_ENABLED
+
+@implementation RNSViewController
 
 #if !TARGET_OS_TV
 - (UIViewController *)childViewControllerForStatusBarStyle
@@ -58,8 +61,8 @@
 - (instancetype)init
 {
   if (self = [super init]) {
-#ifdef RN_FABRIC_ENABLED
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenContainerProps>();
+#ifdef RCT_NEW_ARCH_ENABLED
+    static const auto defaultProps = std::make_shared<const react::RNSScreenContainerProps>();
     _props = defaultProps;
 #endif
     _activeScreens = [NSMutableSet new];
@@ -72,7 +75,7 @@
 
 - (void)setupController
 {
-  _controller = [[RNScreensViewController alloc] init];
+  _controller = [[RNSViewController alloc] init];
   [self addSubview:_controller.view];
 }
 
@@ -234,8 +237,8 @@
   [super layoutSubviews];
   _controller.view.frame = self.bounds;
   for (RNSScreenView *subview in _reactSubviews) {
-#ifdef RN_FABRIC_ENABLED
-    facebook::react::LayoutMetrics screenLayoutMetrics = subview.newLayoutMetrics;
+#ifdef RCT_NEW_ARCH_ENABLED
+    react::LayoutMetrics screenLayoutMetrics = subview.newLayoutMetrics;
     screenLayoutMetrics.frame = RCTRectFromCGRect(CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height));
     [subview updateLayoutMetrics:screenLayoutMetrics oldLayoutMetrics:subview.oldLayoutMetrics];
 #else
@@ -246,7 +249,7 @@
 }
 
 #pragma mark-- Fabric specific
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
@@ -267,7 +270,7 @@
 
   [_reactSubviews insertObject:screenView atIndex:index];
   screenView.reactSuperview = self;
-  facebook::react::LayoutMetrics screenLayoutMetrics = screenView.newLayoutMetrics;
+  react::LayoutMetrics screenLayoutMetrics = screenView.newLayoutMetrics;
   screenLayoutMetrics.frame = RCTRectFromCGRect(CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height));
   [screenView updateLayoutMetrics:screenLayoutMetrics oldLayoutMetrics:screenView.oldLayoutMetrics];
   [self markChildUpdated];
@@ -295,9 +298,9 @@
   [self markChildUpdated];
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSScreenContainerComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSScreenContainerComponentDescriptor>();
 }
 
 - (void)prepareForRecycle
@@ -321,7 +324,7 @@
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenContainerCls(void)
 {
   return RNSScreenContainerView.class;

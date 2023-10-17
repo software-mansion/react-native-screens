@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
-import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -41,7 +41,7 @@ function Second() {
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -59,12 +59,12 @@ export default function App() {
 
 // components
 
-function Post({onPress}: {onPress?: () => void}) {
+function Post({ onPress }: { onPress?: () => void }) {
   const [width] = useState(Math.round(Dimensions.get('screen').width));
 
   return (
     <TapGestureHandler
-      onHandlerStateChange={(e) =>
+      onHandlerStateChange={e =>
         e.nativeEvent.oldState === State.ACTIVE && onPress?.()
       }>
       <View style={styles.post}>
@@ -83,11 +83,11 @@ function generatePhotos(
   height: number,
 ): JSX.Element[] {
   const startFrom = Math.floor(Math.random() * 20) + 10;
-  return Array.from({length: amount}, (_, index) => {
+  return Array.from({ length: amount }, (_, index) => {
     const uri = `https://picsum.photos/id/${
       startFrom + index
     }/${width}/${height}`;
-    return <Image style={{width, height}} key={uri} source={{uri}} />;
+    return <Image style={{ width, height }} key={uri} source={{ uri }} />;
   });
 }
 

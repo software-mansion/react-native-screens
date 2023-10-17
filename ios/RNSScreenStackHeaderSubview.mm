@@ -1,27 +1,35 @@
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSConvert.h"
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
+
+#ifdef RCT_NEW_ARCH_ENABLED
+namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
+
+@interface RCTBridge (Private)
++ (RCTBridge *)currentBridge;
+@end
 
 @implementation RNSScreenStackHeaderSubview
 
 #pragma mark - Common
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma mark - Fabric specific
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSScreenStackHeaderSubviewProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSScreenStackHeaderSubviewProps>();
     _props = defaultProps;
   }
 
@@ -35,29 +43,21 @@
   [super prepareForRecycle];
 }
 
-- (void)updateProps:(facebook::react::Props::Shared const &)props
-           oldProps:(facebook::react::Props::Shared const &)oldProps
+- (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
-  const auto &newHeaderSubviewProps =
-      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(props);
-  const auto &oldHeaderSubviewProps =
-      *std::static_pointer_cast<const facebook::react::RNSScreenStackHeaderSubviewProps>(_props);
+  const auto &newHeaderSubviewProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderSubviewProps>(props);
 
-  if (newHeaderSubviewProps.type != oldHeaderSubviewProps.type) {
-    _type = [RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type];
-  }
-
+  [self setType:[RNSConvert RNSScreenStackHeaderSubviewTypeFromCppEquivalent:newHeaderSubviewProps.type]];
   [super updateProps:props oldProps:oldProps];
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<
-      facebook::react::RNSScreenStackHeaderSubviewComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderSubviewComponentDescriptor>();
 }
 
-- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
-           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+- (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
   // CALayer will crash if we pass NaN or Inf values.
@@ -93,7 +93,17 @@
   [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 }
 
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
+
+- (RCTBridge *)bridge
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  return [RCTBridge currentBridge];
+#else
+  return _bridge;
+#endif // RCT_NEW_ARCH_ENABLED
+}
+
 @end
 
 @implementation RNSScreenStackHeaderSubviewManager
@@ -102,7 +112,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {
@@ -112,7 +122,7 @@ RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubview.class;

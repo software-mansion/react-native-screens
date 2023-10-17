@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import {Button, NativeSyntheticEvent, ScrollView} from 'react-native';
+import { Button, NativeSyntheticEvent, ScrollView } from 'react-native';
 import {
   NavigationContainer,
   NavigationProp,
@@ -9,7 +10,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from 'react-native-screens/native-stack';
-import {SearchBarProps} from 'react-native-screens';
+import { SearchBarProps } from 'react-native-screens';
 
 const AppStack = createNativeStackNavigator();
 
@@ -28,7 +29,7 @@ export default function App(): JSX.Element {
   );
 }
 
-function First({navigation}: NativeStackScreenProps<ParamListBase>) {
+function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       searchBar: searchBarOptions,
@@ -47,7 +48,7 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
     cancelButtonText: 'Some text',
-    onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
+    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),
@@ -80,10 +81,8 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
         onPress={() => navigation.navigate('Second')}
       />
       {items
-        .filter(
-          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1,
-        )
-        .map((item) => (
+        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+        .map(item => (
           <Button
             title={item}
             key={item}
@@ -96,7 +95,7 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
   );
 }
 
-function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
+function Second({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button

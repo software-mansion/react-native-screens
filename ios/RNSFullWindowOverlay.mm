@@ -2,7 +2,7 @@
 
 #import "RNSFullWindowOverlay.h"
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTSurfaceTouchHandler.h>
@@ -11,9 +11,17 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #else
 #import <React/RCTTouchHandler.h>
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSFullWindowOverlayContainer
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+    self.accessibilityViewIsModal = YES;
+  }
+  return self;
+}
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
@@ -63,24 +71,24 @@
   __weak RCTBridge *_bridge;
   RNSFullWindowOverlayContainer *_container;
   CGRect _reactFrame;
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
 #else
   RCTTouchHandler *_touchHandler;
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)init
 {
   if (self = [super init]) {
-    static const auto defaultProps = std::make_shared<const facebook::react::RNSFullWindowOverlayProps>();
+    static const auto defaultProps = std::make_shared<const react::RNSFullWindowOverlayProps>();
     _props = defaultProps;
     [self _initCommon];
   }
   return self;
 }
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
@@ -119,16 +127,19 @@
   [window addSubview:_container];
 }
 
-- (void)didMoveToWindow
+- (void)didMoveToSuperview
 {
-  if (self.window == nil) {
+  if (self.superview == nil) {
     if (_container != nil) {
       [_container removeFromSuperview];
       [_touchHandler detachFromView:_container];
     }
   } else {
+    if (_container != nil) {
+      UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, _container);
+    }
     if (_touchHandler == nil) {
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
       _touchHandler = [RCTSurfaceTouchHandler new];
 #else
       _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
@@ -138,7 +149,7 @@
   }
 }
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric Specific
 
 // When the component unmounts we remove it from window's children,
@@ -151,10 +162,9 @@
   }
 }
 
-+ (facebook::react::ComponentDescriptorProvider)componentDescriptorProvider
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return facebook::react::concreteComponentDescriptorProvider<
-      facebook::react::RNSFullWindowOverlayComponentDescriptor>();
+  return react::concreteComponentDescriptorProvider<react::RNSFullWindowOverlayComponentDescriptor>();
 }
 
 - (void)prepareForRecycle
@@ -182,8 +192,8 @@
   [childComponentView removeFromSuperview];
 }
 
-- (void)updateLayoutMetrics:(facebook::react::LayoutMetrics const &)layoutMetrics
-           oldLayoutMetrics:(facebook::react::LayoutMetrics const &)oldLayoutMetrics
+- (void)updateLayoutMetrics:(react::LayoutMetrics const &)layoutMetrics
+           oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics
 {
   CGRect frame = RCTCGRectFromRect(layoutMetrics.frame);
   _reactFrame = frame;
@@ -205,27 +215,27 @@
   _container = nil;
 }
 
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSFullWindowOverlayCls(void)
 {
   return RNSFullWindowOverlay.class;
 }
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 @implementation RNSFullWindowOverlayManager
 
 RCT_EXPORT_MODULE()
 
-#ifdef RN_FABRIC_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {
   return [[RNSFullWindowOverlay alloc] initWithBridge:self.bridge];
 }
-#endif // RN_FABRIC_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
 
 @end

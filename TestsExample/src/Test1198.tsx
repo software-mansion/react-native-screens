@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react';
-import {NavigationContainer, useIsFocused} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Text, View} from 'react-native';
+import React, { useEffect } from 'react';
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Text, View } from 'react-native';
 
 const BottomTabs = createBottomTabNavigator();
 
@@ -29,7 +29,7 @@ function Settings() {
     }
   }, [isFocused]);
 
-  console.log({isFocused});
+  console.log({ isFocused });
 
   return (
     <View

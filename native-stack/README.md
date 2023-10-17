@@ -102,7 +102,7 @@ gestureResponseDistance: {
 
 #### `headerBackTitle`
 
-Title string used by the back button on iOS. Defaults to the previous scene's `headerTitle`.
+Title string used by the back button on iOS. Defaults to the previous scene's `headerTitle` when not set or set to whitespace only value.
 
 #### `headerBackTitleStyle`
 
@@ -234,6 +234,54 @@ The following values are currently supported:
   - `pop` – the new screen will perform pop animation.
 
 Defaults to `pop`.
+
+#### `sheetAllowedDetents` (iOS only)
+
+Describes heights where a sheet can rest. 
+Works only when `stackPresentation` is set to `formSheet`.
+
+Available values:
+
+- `large` - only large detent level will be allowed
+- `medium` - only medium detent level will be allowed
+- `all` - all detent levels will be allowed
+
+Defaults to `large`.
+
+#### `sheetExpandsWhenScrolledToEdge` (iOS only)
+
+Whether the sheet should expand to larger detent when scrolling.
+Works only when `stackPresentation` is set to `formSheet`.
+
+Defaults to `true`.
+
+#### `sheetCornerRadius (iOS only)
+
+The corner radius that the sheet will try to render with.
+Works only when `stackPresentation` is set to `formSheet`.
+
+If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
+
+Defaults to system default.
+
+#### `sheetGrabberVisible` (iOS only)
+
+Boolean indicating whether the sheet shows a grabber at the top.
+Works only when `stackPresentation` is set to `formSheet`.
+Defaults to `false`.
+
+#### `sheetLargestUndimmedDetent` (iOS only)
+
+ The largest sheet detent for which a view underneath won't be dimmed.
+ Works only when `stackPresentation` is set to `formSheet`.
+
+ If this prop is set to:
+
+ - `large` - the view underneath won't be dimmed at any detent level
+ - `medium` - the view underneath will be dimmed only when detent level is `large`
+ - `all` - the view underneath will be dimmed for any detent level
+
+ Defaults to `all`.
 
 #### `stackAnimation`
 
@@ -521,7 +569,6 @@ React.useLayoutEffect(() => {
 
 A callback that gets called when search bar is closing
 
-
 #### `onFocus`
 
 A callback that gets called when search bar has received focus.
@@ -540,6 +587,18 @@ Text displayed when search field is empty.
 
 Defaults to an empty string.
 
+#### `placement` (iOS only)
+
+Position of the search bar
+   
+Supported values:
+ 
+* `automatic` - the search bar is placed according to current layout
+* `inline` - the search bar is placed on the trailing edge of navigation bar
+* `stacked` - the search bar is placed below the other content in navigation bar
+
+Defaults to `stacked`
+  
 #### `textColor`
 
 The search field text color.
@@ -555,6 +614,16 @@ The search and close icon color shown in the header. (Android only)
 #### `shouldShowHintSearchIcon`
 
 Show the search hint icon when search bar is focused. (Android only)
+
+#### `ref`
+
+A React ref to imperatively modify search bar. Supported actions:
+
+*  `focus` - focus on search bar
+*  `blur` - remove focus from search bar
+*  `clearText` - clear text in search bar
+*  `setText` - set search bar's content to given string
+*  `toggleCancelButton` (iOS only) - toggle cancel button display near search bar.
 
 ### Events
 
@@ -689,10 +758,25 @@ navigation.popToTop();
 
 ### Measuring header's height
 
-To measure header's height, you can use `useHeaderHeight` hook.
+To measure header's height, you can use the `useHeaderHeight`, `useAnimatedHeaderHeight` or `useReanimatedHeaderHeight` hook.
+- `useHeaderHeight` returns the static header's height. The value provided by this hook changes when screen appears, when there's a change in header options or screen orientation.
+  Use this hook if you're sure your header height won't change dynamically, or when the screen is heavy.
+- `useAnimatedHeaderHeight` dynamically calculates the header's height. The value provided by this hook changes with every view layout (such as shrinking a large header into small one with a ScrollView). It returns an Animated.Value. 
+  Please beware of using this hook in heavy components, as it may result in performance issues.
+- `useReanimatedHeaderHeight` also dynamically calculates the header's height but uses React Native Reanimated under the hood. It returns an Animated.SharedValue.
+  Make sure to wrap your Stack.Navigator with `ReanimatedScreenProvider` before using this hook.
+
+We recommend using `useReanimatedHeaderHeight` rather than `useAnimatedHeaderHeight`. See [Shared Values vs Animated.Value](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/shared-values/#shared-values-vs-animatedvalue) section in React Native Reanimated's documentation for full comparison.
 
 ```tsx
+// for using useHeaderHeight
 import {useHeaderHeight} from 'react-native-screens/native-stack';
+
+// for using useAnimatedHeaderHeight
+import {useAnimatedHeaderHeight} from 'react-native-screens/native-stack';
+
+// for using useReanimatedHeaderHeight
+import {useReanimatedHeaderHeight} from 'react-native-screens/reanimated';
 ```
 
 ## Example

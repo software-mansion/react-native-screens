@@ -1,7 +1,7 @@
-import {NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
-import {Button, Dimensions, Text, View} from 'react-native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import { Button, Dimensions, Text, View } from 'react-native';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,7 +33,7 @@ export default function App() {
   );
 }
 
-function Screen({navigation}) {
+function Screen({ navigation }) {
   const addedRoutes = navigation.dangerouslyGetState().routes.length - 1;
   const margin = addedRoutes * 20;
   const width = Dimensions.get('screen').width - addedRoutes * 40;
@@ -41,7 +41,7 @@ function Screen({navigation}) {
   return (
     <View
       style={[
-        {width, margin, backgroundColor, height: '100%', borderWidth: 2},
+        { width, margin, backgroundColor, height: '100%', borderWidth: 2 },
       ]}>
       <Button
         title="Open transparent modal"
@@ -51,11 +51,11 @@ function Screen({navigation}) {
       {addedRoutes > 0 && (
         <Button title="Back" onPress={() => navigation.goBack()} />
       )}
-      <Text style={{padding: 10}}>
+      <Text style={{ padding: 10 }}>
         For each transparent modal you open, all previously visible screens
         should be visible underneath.
       </Text>
-      <Text style={{padding: 10}}>
+      <Text style={{ padding: 10 }}>
         For each new (non-transparent) modal you open, all previously visible
         screens should be hidden.
       </Text>

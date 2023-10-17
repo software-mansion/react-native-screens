@@ -1,7 +1,7 @@
 import React from 'react';
-import {Button, SafeAreaView} from 'react-native';
+import { Button, SafeAreaView } from 'react-native';
 
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -31,7 +31,7 @@ const App = (): JSX.Element => {
   );
 };
 
-const First = ({navigation}: Props) => (
+const First = ({ navigation }: Props) => (
   <SafeAreaView>
     <Button
       title="Go to second screen"
@@ -40,8 +40,8 @@ const First = ({navigation}: Props) => (
   </SafeAreaView>
 );
 
-const Second = ({navigation}: Props) => (
-  <SafeAreaView style={{flex: 1, justifyContent: 'center'}}>
+const Second = ({ navigation }: Props) => (
+  <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </SafeAreaView>
 );

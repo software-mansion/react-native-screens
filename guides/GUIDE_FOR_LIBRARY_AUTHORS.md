@@ -151,6 +151,53 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+### `sheetAllowedDetents` (iOS only)
+
+Describes heights where a sheet can rest. 
+Works only when `stackPresentation` is set to `formSheet`.
+
+Available values:
+
+- `large` - only large detent level will be allowed
+- `medium` - only medium detent level will be allowed
+- `all` - all detent levels will be allowed
+
+Defaults to `large`.
+
+### `sheetExpandsWhenScrolledToEdge` (iOS only)
+
+Whether the sheet should expand to larger detent when scrolling.
+Works only when `stackPresentation` is set to `formSheet`.
+
+Defaults to `true`.
+
+### `sheetCornerRadius (iOS only)
+
+The corner radius that the sheet will try to render with.
+Works only when `stackPresentation` is set to `formSheet`.
+
+If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
+
+Defaults to system default.
+
+### `sheetGrabberVisible` (iOS only)
+
+Boolean indicating whether the sheet shows a grabber at the top.
+Works only when `stackPresentation` is set to `formSheet`.
+Defaults to `false`.
+
+### `sheetLargestUndimmedDetent` (iOS only)
+
+ The largest sheet detent for which a view underneath won't be dimmed.
+ Works only when `stackPresentation` is set to `formSheet`.
+
+ If this prop is set to:
+
+ - `large` - the view underneath won't be dimmed at any detent level
+ - `medium` - the view underneath will be dimmed only when detent level is `large`
+ - `all` - the view underneath will be dimmed for any detent level
+
+ Defaults to `all`.
 
 ### `stackAnimation`
 
@@ -347,10 +394,20 @@ To render a search bar use `ScreenStackHeaderSearchBarView` with `<SearchBar>` c
 - `onOpen` - A callback that gets called when search bar is expanding. (Android only)
 - `onSearchButtonPress` - A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
 - `placeholder` - Text displayed when search field is empty. Defaults to an empty string.
+- `placement` - Placement of the search bar in the navigation bar. (iOS only)
 - `textColor` - The search field text color.
 - `hintTextColor` - The search hint text color. (Android only)
 - `headerIconColor` - The search and close icon color shown in the header. (Android only)
 - `shouldShowHintSearchIcon` - Show the search hint icon when search bar is focused. (Android only)
+- `ref` - A React ref to imperatively modify search bar.
+
+Allowed imperative actions on search bar are:
+
+- `focus` - Function to focus on search bar.
+- `blur` - Function to remove focus from search bar.
+- `clearText` - Function to clear text in search bar.
+- `setText` - Function to set search bar's text to given value.
+- `toggleCancelButton` - Function toggle cancel button display near search bar. (iOS only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:
 
@@ -373,6 +430,10 @@ Allows for customizing font family to be used for back button title on iOS.
 ### `backTitleFontSize` (iOS only)
 
 Allows for customizing font size to be used for back button title on iOS.
+
+### `backTitleVisible` (iOS only)
+
+Whether the back button title should be visible. Defaults to `true`.
 
 ### `blurEffect` (iOS only)
 

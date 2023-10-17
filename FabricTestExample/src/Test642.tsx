@@ -1,12 +1,12 @@
 // connected PRs: #679, #675
 import React from 'react';
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
-import {ScrollView, View, Button} from 'react-native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { ScrollView, View, Button } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -72,13 +72,13 @@ const Inner = () => (
   </InnerStack.Navigator>
 );
 
-function Home({navigation}: Props) {
+function Home({ navigation }: Props) {
   const [yes, setYes] = React.useState(true);
   const [hidden, setHidden] = React.useState(true);
   const [animation, setAnimation] = React.useState(true);
   return (
     <ScrollView
-      style={{backgroundColor: 'rgba(255,255,0,0.5)'}}
+      style={{ backgroundColor: 'rgba(255,255,0,0.5)' }}
       contentInsetAdjustmentBehavior="automatic">
       <View />
       <Button
