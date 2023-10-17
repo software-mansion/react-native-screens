@@ -43,7 +43,7 @@ class RNScreensDependencyHelper
       s.dependency "RCTTypeSafety"
       s.dependency "ReactCommon/turbomodule/core"
 
-      self.add_common_subspec(s)
+      self.add_common_subspec(s, new_arch_enabled)
     else
       s.dependency "React-Core"
       s.dependency "React-RCTImage"
