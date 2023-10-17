@@ -1038,14 +1038,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
-- (BOOL)assertModalHierarchy
+- (BOOL)isModalWithHeader
 {
-  if (self.childViewControllers.count > 1) {
-    RCTLogError(
-        @"Modal has been rendered with more than one navigation controller, which is not allowed. Ensure that modal has none or only one RNSNavigationController mounted as a child view controller.");
-  }
-
-  return self.childViewControllers.count == 1 &&
+  return self.screenView.isModal && self.childViewControllers.count == 1 &&
       [self.childViewControllers[0] isKindOfClass:UINavigationController.class];
 }
 
@@ -1093,7 +1088,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if (isModal) {
     // In case where screen is a modal, we want to calculate childViewController's
     // navigation bar height instead of the navigation controller from RNSScreen.
-    if (self.assertModalHierarchy) {
+    if (self.isModalWithHeader) {
       navctr = self.childViewControllers[0];
     } else {
       // If the modal does not meet requirements (there's no RNSNavigationController which means that probably it
@@ -1109,17 +1104,18 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
 {
   UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
-  CGSize statusBarSize = [self getStatusBarHeightIsModal:isModal];
 
   // If navigation controller doesn't exists (or it is hidden) we want to handle two possible cases.
   // If there's no navigation controller for the modal, we simply don't want to return header height, as modal possibly
   // does not have header and we don't want to count status bar. If there's no navigation controller for the view we
   // just want to return status bar height (if it's hidden, it will simply return 0).
   if (navctr == nil || navctr.isNavigationBarHidden) {
-    if (isModal)
+    if (isModal) {
       return 0;
-    else
+    } else {
+      CGSize statusBarSize = [self getStatusBarHeightIsModal:isModal];
       return MIN(statusBarSize.width, statusBarSize.height);
+    }
   }
 
   CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
