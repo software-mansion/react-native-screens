@@ -5,13 +5,18 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 platform = new_arch_enabled ? "11.0" : "9.0"
 source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : "ios/**/*.{h,m,mm}"
+puts "Source files for RNScreens are: #{source_files}"
 
 folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32'
 
 # Helper class to avoid clashing with Cocoapods install_dependencies function
 class RNScreensDependencyHelper
   # Helper class to add the Common subspec
-  def self.add_common_subspec(s)
+  def self.add_common_subspec(s, new_arch_enabled)
+    unless new_arch_enabled
+      return
+    end
+
     s.subspec "common" do |ss|
       ss.source_files         = "common/cpp/**/*.{cpp,h}"
       ss.header_dir           = "rnscreens"
@@ -63,7 +68,7 @@ Pod::Spec.new do |s|
 
   if defined?(install_modules_dependencies()) != nil
     install_modules_dependencies(s)
-    RNScreensDependencyHelper.add_common_subspec(s)
+    RNScreensDependencyHelper.add_common_subspec(s, new_arch_enabled)
   else
     RNScreensDependencyHelper.install_dependencies(s, new_arch_enabled)
   end
