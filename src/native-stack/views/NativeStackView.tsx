@@ -252,7 +252,7 @@ const RouteView = ({
   // We need to ensure the first retrieved header height will be cached and set in animatedHeaderHeight.
   // We're caching the header height here, as on iOS native side events are not always coming to the JS on first notify.
   // TODO: Check why first event is not being received once it is cached on the native side.
-  const cachedAnimatedHeaderHeight = React.useRef(statusBarHeight);
+  const cachedAnimatedHeaderHeight = React.useRef(defaultHeaderHeight);
   const animatedHeaderHeight = React.useRef(
     new Animated.Value(staticHeaderHeight, {
       useNativeDriver: true,

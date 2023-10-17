@@ -147,6 +147,9 @@ namespace react = facebook::react;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
   if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC)) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:YES];
+    // As the header might have change in `updateViewController` we need to ensure that header height
+    // returned by the `onHeaderHeightChange` event is correct.
+    [self.screenView.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
   }
 }
 
@@ -353,6 +356,11 @@ namespace react = facebook::react;
                     withConfig:(RNSScreenStackHeaderConfig *)config
 {
   [self updateViewController:vc withConfig:config animated:animated];
+  // As the header might have change in `updateViewController` we need to ensure that header height
+  // returned by the `onHeaderHeightChange` event is correct.
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    [(RNSScreen *)vc calculateAndNotifyHeaderHeightChangeIsModal:NO];
+  }
 }
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
