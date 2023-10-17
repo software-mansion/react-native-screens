@@ -1040,12 +1040,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (BOOL)assertModalHierarchy
 {
-  if (self.childViewControllers.count == 0) {
+  if (self.childViewControllers.count > 1) {
     RCTLogError(
-        @"Modal has been rendered without the navigation controller, which is not allowed. Ensure that modal has RNSNavigationController mounted as a child view controller.");
-  } else if (self.childViewControllers.count > 1) {
-    RCTLogError(
-        @"Modal has been rendered with more than one navigation controller, which is not allowed. Ensure that modal has only one RNSNavigationController mounted as a child view controller.");
+        @"Modal has been rendered with more than one navigation controller, which is not allowed. Ensure that modal has none or only one RNSNavigationController mounted as a child view controller.");
   }
 
   return self.childViewControllers.count == 1 &&
