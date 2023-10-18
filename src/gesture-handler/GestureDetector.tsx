@@ -6,19 +6,21 @@ import { GestureDetector, Gesture, PanGestureHandlerEventPayload, GestureUpdateE
 import Animated, { SharedValue, runOnJS, useAnimatedRef, useSharedValue, updateProps, measure, MeasuredDimensions } from 'react-native-reanimated';
 
 type AnimatedScreenTransition = {
-  computeFrame: (event: GestureUpdateEvent<PanGestureHandlerEventPayload>) 
-    => Record<string, unknown>,
-  getProgress: (event: GestureUpdateEvent<PanGestureHandlerEventPayload>, screenDimensions: MeasuredDimensions) 
-    => number,
-  shouldFinishTransition: (event: GestureUpdateEvent<PanGestureHandlerEventPayload>, screenDimensions: MeasuredDimensions)
-    => boolean,
+  topScreenFrame: (
+    event: GestureUpdateEvent<PanGestureHandlerEventPayload>, 
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>,
+  belowTopScreenFrame: (
+    event: GestureUpdateEvent<PanGestureHandlerEventPayload>, 
+    screenSize: MeasuredDimensions,
+  ) => Record<string, unknown>,
 };
 
 const ReanimatedAnimations: 
-  Record<string, AnimatedScreenTransition> 
+  Record<string, AnimatedScreenTransition>
 = {
-  default: {
-    computeFrame: (event) => {
+  horizontal: {
+    topScreenFrame: (event) => {
       'worklet';
       return {
         transform: [
@@ -26,31 +28,33 @@ const ReanimatedAnimations:
         ],
       };
     },
-    getProgress: (event, screenDimensions) => {
+    belowTopScreenFrame: (event, screenSize) => {
       'worklet';
-      return event.translationX / screenDimensions.width;
-    },
-    shouldFinishTransition: (event, screenDimensions) => {
-      'worklet';
-      return (event.translationX + event.velocityX * 0.3) > (screenDimensions.width / 2);
+      return {
+        transform: [
+          { translateX: (event.translationX - screenSize.width) * 0.3 },
+        ],
+      };
     },
   },
-  // vertical: (event) => {
-  //   'worklet';
-  //   return {
-  //     transform: [
-  //       { translateY: event.translationY },
-  //     ],
-  //   };
-  // },
-  // horizontal: (event) => {
-  //   'worklet';
-  //   return {
-  //     transform: [
-  //       { translateX: event.translationX },
-  //     ],
-  //   };
-  // },
+  vertical: {
+    topScreenFrame: (event) => {
+      'worklet';
+      return {
+        transform: [
+          { translateY: event.translationY },
+        ],
+      };
+    },
+    belowTopScreenFrame: (event) => {
+      'worklet';
+      return {
+        transform: [
+          { rotate: 3 * event.translationY + 'deg' },
+        ],
+      };
+    },
+  },
   // twoDimensional: (event) => {
   //   'worklet';
   //   return {
@@ -74,59 +78,166 @@ type ScreenTransitionConfig = {
   topScreenTag: number;
   screenTransition: AnimatedScreenTransition;
   isSwipeGesture: boolean;
-  sharedEvent: SharedValue<GestureUpdateEvent<PanGestureHandlerEventPayload>>
+  sharedEvent: SharedValue<GestureUpdateEvent<PanGestureHandlerEventPayload>>;
+  startingGesturePosition: SharedValue<GestureUpdateEvent<PanGestureHandlerEventPayload>>;
   onFinishAnimation?: () => void;
-  canceled: boolean;
+  isTransitionCanceled: boolean;
   goBackGesture: GoBackGesture;
   screenDimensions: MeasuredDimensions;
 };
-const ScreenSize = Dimensions.get('window');
+
+function applyStyle(
+  screenTransitionConfig: ScreenTransitionConfig, 
+  event: GestureUpdateEvent<PanGestureHandlerEventPayload>
+) {
+  'worklet';
+  const screenSize = screenTransitionConfig.screenDimensions;
+
+  const topScreenTag = screenTransitionConfig.topScreenTag;
+  const topScreenFrame = screenTransitionConfig.screenTransition.topScreenFrame;
+  const topStyle = topScreenFrame(event, screenSize);
+  const topScreenDescriptor = {value: [{tag: topScreenTag, name: 'RCTView'}]};
+  updateProps(topScreenDescriptor as any, topStyle, null as any);
+
+  const belowTopScreenTag = screenTransitionConfig.belowTopScreenTag;
+  const belowTopScreenFrame = screenTransitionConfig.screenTransition.belowTopScreenFrame;
+  const belowTopStyle = belowTopScreenFrame(event, screenSize);
+  const belowTopScreenDescriptor = {value: [{tag: belowTopScreenTag, name: 'RCTView'}]};
+  updateProps(belowTopScreenDescriptor as any, belowTopStyle, null as any);
+};
+
 const reanimated = {
   startScreenTransition: (screenTransitionConfig: ScreenTransitionConfig) => {
     'worklet';
-    const topScreenTag = screenTransitionConfig.topScreenTag;
-    const computeFrame = screenTransitionConfig.screenTransition.computeFrame;
     const sharedEvent = screenTransitionConfig.sharedEvent;
     sharedEvent.addListener(screenTransitionConfig.stackTag, () => {
       'worklet';
-      const style = computeFrame(sharedEvent.value);
-      const viewDescriptor = {value: [{tag: topScreenTag, name: 'RCTView'}]};
-      updateProps(viewDescriptor as any, style as any, null as any);
+      applyStyle(screenTransitionConfig, sharedEvent.value);
     });
   },
   finishScreenTransition: (screenTransitionConfig: ScreenTransitionConfig) => {
     'worklet';
     screenTransitionConfig.sharedEvent.removeListener(screenTransitionConfig.stackTag);
-    // const event = screenTransitionConfig.sharedEvent.value;
-    // const isCanceled = screenTransitionConfig.canceled;
-    // if (event.absoluteX < ScreenSize.width) {
-    //   const step = () => {
-    //     console.log('step', screenTransitionConfig.sharedEvent.value.translationX, isCanceled);
-    //     const distance = ScreenSize.width - event.translationX;
-    //     if (isCanceled) {
-    //       screenTransitionConfig.sharedEvent.value.translationX -= 400 * 0.016;
-    //     } else {
-    //       screenTransitionConfig.sharedEvent.value.translationX += 400 * 0.016;
-    //     }
-    //     const style = screenTransitionConfig.animation(screenTransitionConfig.sharedEvent.value);
-    //     const viewDescriptor = {value: [{tag: screenTransitionConfig.topScreenTag, name: 'RCTView'}]};
-    //     updateProps(viewDescriptor, style);
-    //     if (distance > 0) {
-    //       requestAnimationFrame(step);
-    //     } else {
-    //       if (screenTransitionConfig.onFinishAnimation) {
-    //         screenTransitionConfig.onFinishAnimation();
-    //       }
-    //     }
-    //   };
-    //   step();
-    // } else if (event.absoluteY < ScreenSize.height) {
+    const event = screenTransitionConfig.sharedEvent.value;
+    const isTransitionCanceled = screenTransitionConfig.isTransitionCanceled;
+    const goBackGesture = screenTransitionConfig.goBackGesture;
 
-    // }
-
-    if (screenTransitionConfig.onFinishAnimation) {
-      screenTransitionConfig.onFinishAnimation();
+    let step = () => {};
+    if (goBackGesture == 'swipeRight') {
+      step = () => {
+        const screenSize = screenTransitionConfig.screenDimensions;
+        let isScreenReachDestination = false;
+        if (isTransitionCanceled) {
+          event.translationX -= 400 * 0.016;
+          if (event.translationX < 0) {
+            isScreenReachDestination = true;
+            event.translationX = 0;
+          }
+        } else {
+          event.translationX += 400 * 0.016;
+          if (event.translationX > screenSize.width) {
+            isScreenReachDestination = true;
+            event.translationX = screenSize.width;
+          }
+        }
+        applyStyle(screenTransitionConfig, event);
+        if (!isScreenReachDestination) {
+          requestAnimationFrame(step);
+        } else {
+          if (screenTransitionConfig.onFinishAnimation) {
+            screenTransitionConfig.onFinishAnimation();
+          }
+        }
+      };
     }
+
+    if (goBackGesture == 'swipeLeft') {
+      step = () => {
+        const screenSize = screenTransitionConfig.screenDimensions;
+        let isScreenReachDestination = false;
+        if (isTransitionCanceled) {
+          event.translationX += 400 * 0.016;
+          if (event.translationX > 0) {
+            isScreenReachDestination = true;
+            event.translationX = 0;
+          }
+        } else {
+          event.translationX -= 400 * 0.016;
+          if (event.translationX < -screenSize.width) {
+            isScreenReachDestination = true;
+            event.translationX = -screenSize.width;
+          }
+        }
+        applyStyle(screenTransitionConfig, event);
+        if (!isScreenReachDestination) {
+          requestAnimationFrame(step);
+        } else {
+          if (screenTransitionConfig.onFinishAnimation) {
+            screenTransitionConfig.onFinishAnimation();
+          }
+        }
+      };
+    }
+
+    if (goBackGesture == 'swipeUp') {
+      step = () => {
+        console.log('step', event.translationY, isTransitionCanceled);
+        const screenSize = screenTransitionConfig.screenDimensions;
+        let isScreenReachDestination = false;
+        if (isTransitionCanceled) {
+          event.translationY += 400 * 0.016;
+          if (event.translationY > 0) {
+            isScreenReachDestination = true;
+            event.translationY = 0;
+          }
+        } else {
+          event.translationY -= 400 * 0.016;
+          if (event.translationY < -screenSize.height) {
+            isScreenReachDestination = true;
+            event.translationY = -screenSize.height;
+          }
+        }
+        applyStyle(screenTransitionConfig, event);
+        if (!isScreenReachDestination) {
+          requestAnimationFrame(step);
+        } else {
+          if (screenTransitionConfig.onFinishAnimation) {
+            screenTransitionConfig.onFinishAnimation();
+          }
+        }
+      };
+    }
+
+    if (goBackGesture == 'swipeDown') {
+      step = () => {
+        console.log('step', event.translationX, isTransitionCanceled);
+        const screenSize = screenTransitionConfig.screenDimensions;
+        let isScreenReachDestination = false;
+        if (isTransitionCanceled) {
+          event.translationY -= 400 * 0.016;
+          if (event.translationY < 0) {
+            isScreenReachDestination = true;
+            event.translationY = 0;
+          }
+        } else {
+          event.translationY += 400 * 0.016;
+          if (event.translationY > screenSize.height) {
+            isScreenReachDestination = true;
+            event.translationY = screenSize.height;
+          }
+        }
+        applyStyle(screenTransitionConfig, event);
+        if (!isScreenReachDestination) {
+          requestAnimationFrame(step);
+        } else {
+          if (screenTransitionConfig.onFinishAnimation) {
+            screenTransitionConfig.onFinishAnimation();
+          }
+        }
+      };
+    }
+    step();
+
   },
 };
 
@@ -136,7 +247,6 @@ const TransitionHandler = ({
   topScreenRef,
   belowTopScreenRef,
 }) => {
-  // const screenWidth = Dimensions.get('window').width;
   const ScreenSize = Dimensions.get('window');
   stackRefWrapper.ref = useAnimatedRef();
   const defaultEvent: GestureUpdateEvent<PanGestureHandlerEventPayload> = {
@@ -153,15 +263,17 @@ const TransitionHandler = ({
     y: 0
   };
   const sharedEvent = useSharedValue(defaultEvent);
-  const goBackGesture = 'swipeRight';
+  const startingGesturePosition = useSharedValue(defaultEvent);
+  let goBackGesture: GoBackGesture = 'swipeRight'; // GESTURE <-----------------------------------
   const screenTransitionConfig = useSharedValue<ScreenTransitionConfig>({
     stackTag: 0,
     belowTopScreenTag: Platform.OS === 'ios' ? 35 : 29,
     topScreenTag: Platform.OS === 'ios' ? 69 : 63,
     sharedEvent,
-    screenTransition: ReanimatedAnimations.default, 
+    startingGesturePosition,
+    screenTransition: ReanimatedAnimations.horizontal, 
     isSwipeGesture: true,
-    canceled: false,
+    isTransitionCanceled: false,
     goBackGesture,
     screenDimensions: {
       width: 0,
@@ -186,7 +298,7 @@ const TransitionHandler = ({
     console.log(stackRefWrapper.ref.current._children.map((screen: any) => findNodeHandle(screen)));
   }
   let panGesture = Gesture.Pan()
-    .onStart(() => {
+    .onStart((event) => {
       // runOnJS(getTags)();
       const screenSize: MeasuredDimensions = measure((() => {
         'worklet';
@@ -197,36 +309,55 @@ const TransitionHandler = ({
       runOnJS(startTransition)(stackTag);
       screenTransitionConfig.value.stackTag = stackTag;
       screenTransitionConfig.value.screenDimensions = screenSize;
+      startingGesturePosition.value = event;
       reanimated.startScreenTransition(screenTransitionConfig.value);
     })
     .onUpdate(event => {
-      // console.log('update', event, screenTransitionConfig.value.screenDimensions);
+      console.log(event.translationX, event.translationY);
       if (goBackGesture === 'swipeRight' && event.translationX < 0) {
         event.translationX = 0;
       } else if (goBackGesture === 'swipeLeft' && event.translationX > 0) {
         event.translationX = 0;
-      } else if (goBackGesture === 'swipeDown' && event.translationY > 0) {
+      } else if (goBackGesture === 'swipeDown' && event.translationY < 0) {
         event.translationY = 0;
-      } else if (goBackGesture === 'swipeUp' && event.translationY < 0) {
+      } else if (goBackGesture === 'swipeUp' && event.translationY > 0) {
         event.translationY = 0;
       }
-      
+
+      let progress = 0;
+      if (goBackGesture === 'swipeRight') {
+        const screenWidth = screenTransitionConfig.value.screenDimensions.width;
+        progress = event.translationX / (screenWidth - startingGesturePosition.value.absoluteX);
+      } else if (goBackGesture === 'swipeLeft') {
+        progress = -1 * event.translationX / startingGesturePosition.value.absoluteX;
+      } else if (goBackGesture === 'swipeDown') {
+        const screenHeight = screenTransitionConfig.value.screenDimensions.height;
+        progress = -1 * event.translationY / (screenHeight - startingGesturePosition.value.absoluteY);
+      } else if (goBackGesture === 'swipeUp') {
+        progress = event.translationY / startingGesturePosition.value.absoluteY;
+      }
       sharedEvent.value = event;
       runOnJS(updateTransition)(
         screenTransitionConfig.value.stackTag,
-        screenTransitionConfig.value.screenTransition.getProgress(event, screenTransitionConfig.value.screenDimensions)
+        progress
       );
     })
     .onEnd((event) => {
-      const shouldFinishTransition = screenTransitionConfig.value.screenTransition.shouldFinishTransition(
-        event, 
-        screenTransitionConfig.value.screenDimensions
-      );
+      const screenSize: MeasuredDimensions = measure((() => {
+        'worklet';
+        return screenTransitionConfig.value.topScreenTag;
+      }) as any)!;
+      let isTransitionCanceled = false;
+      if (goBackGesture === 'swipeRight' || goBackGesture === 'swipeLeft') {
+        isTransitionCanceled = Math.abs(event.translationX + event.velocityX * 0.3) < (screenSize.width / 2);
+      } else if (goBackGesture === 'swipeDown' || goBackGesture === 'swipeUp') {
+        isTransitionCanceled = Math.abs(event.translationY + event.velocityY * 0.3) < (screenSize.height / 2);
+      }
       screenTransitionConfig.value.onFinishAnimation = () => runOnJS(finishTransition)(
         screenTransitionConfig.value.stackTag, 
-        !shouldFinishTransition
+        isTransitionCanceled
       );
-      screenTransitionConfig.value.canceled = !shouldFinishTransition;
+      screenTransitionConfig.value.isTransitionCanceled = isTransitionCanceled;
       reanimated.finishScreenTransition(screenTransitionConfig.value);
     });
 
@@ -234,19 +365,19 @@ const TransitionHandler = ({
   if (goBackGesture === 'swipeRight') {
     panGesture = panGesture
       .activeOffsetX(20)
-      .hitSlop({left: 0, top: 0, width: HIT_SLOP_SIZE});
+      .hitSlop({ left: 0, top: 0, width: HIT_SLOP_SIZE });
   } else if (goBackGesture === 'swipeLeft') {
     panGesture = panGesture
       .activeOffsetX(-20)
-      .hitSlop({right: 0, top: 0, width: HIT_SLOP_SIZE});
+      .hitSlop({ right: 0, top: 0, width: HIT_SLOP_SIZE });
   } else if (goBackGesture === 'swipeDown') {
     panGesture = panGesture
       .activeOffsetY(20)
-      .hitSlop({top: 0, height: ScreenSize.height * 0.2}); // workaround, because we don't have access to header height
+      .hitSlop({ top: 0, height: ScreenSize.height * 0.2 }); // workaround, because we don't have access to header height
   } else if (goBackGesture === 'swipeUp') {
     panGesture = panGesture
       .activeOffsetY(-20)
-      .hitSlop({bottom: 0, height: HIT_SLOP_SIZE});
+      .hitSlop({ bottom: 0, height: HIT_SLOP_SIZE });
   }
 
   return <GestureDetector gesture={panGesture}>{children}</GestureDetector>;
