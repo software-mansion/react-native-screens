@@ -450,6 +450,9 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   transitionDuration?: number;
+
+  goBackGesture?: any;
+  transitionAnimation?: any;
 };
 
 export type NativeStackNavigatorProps =

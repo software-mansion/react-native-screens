@@ -5,6 +5,7 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import { Button } from '../shared';
+import { ScreenTransition } from 'react-native-reanimated';
 
 type StackParamList = {
   Main: undefined;
@@ -40,7 +41,7 @@ const DetailScreen = ({ navigation }: DetailScreenProps): JSX.Element => (
   </View>
 );
 
-const Stack = createNativeStackNavigator<StackParamList>();
+const Stack = createNativeStackNavigator<StackParamList>() as any;
 
 const App = (): JSX.Element => (
   <Stack.Navigator
@@ -48,6 +49,8 @@ const App = (): JSX.Element => (
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
       stackAnimation: 'none',
+      goBackGesture: 'swipeRight',
+      transitionAnimation: ScreenTransition.horizontal,
     }}>
     <Stack.Screen
       name="Main"

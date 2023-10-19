@@ -396,6 +396,8 @@ export interface ScreenStackProps extends ViewProps {
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  stackRefWrapper?: { ref: React.Ref<View> };
+  ref?: any;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {

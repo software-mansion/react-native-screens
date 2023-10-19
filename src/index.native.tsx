@@ -257,9 +257,6 @@ class InnerScreen extends React.Component<ScreenProps> {
   setRef = (ref: React.ElementRef<typeof View> | null): void => {
     this.ref = ref;
     this.props.onComponentRef?.(ref);
-    if (this.props.screenRef) {
-      this.props.screenRef.current = ref;
-    }
   };
 
   render() {

@@ -1,14 +1,13 @@
-import React, { PropsWithChildren } from 'react';
-import { GHContext } from 'react-native-screens';
+import React from 'react';
+import { GHContext } from '../index';
 import GestureDetector from './GestureDetector';
+import type { GestureProviderProps } from './GestureDetector';
 
-function GHWrapper(props) {
+function GHWrapper(props: GestureProviderProps) {
   return <GestureDetector {...props} />;
 }
 
-export default function GestureDetectorProvider(
-  props: PropsWithChildren<unknown>
-) {
+export default function GestureDetectorProvider(props: GestureProviderProps) {
   return (
     <GHContext.Provider value={GHWrapper as any}>
       {props.children}

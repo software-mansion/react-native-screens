@@ -1,6 +1,6 @@
-import React from 'react';
-import { Dimensions, Platform } from 'react-native';
-import { NativeScreensModule } from 'react-native-screens';
+import React, { PropsWithChildren } from 'react';
+import { Dimensions, Platform, View } from 'react-native';
+import { NativeScreensModule } from '../index';
 
 import {
   GestureDetector,
@@ -14,16 +14,28 @@ import {
   useSharedValue,
   measure,
   MeasuredDimensions,
-  ScreenTransition,
   startScreenTransition,
   finishScreenTransition,
+  ScreenTransition,
 } from 'react-native-reanimated';
 import type {
+  AnimatedScreenTransition,
   GoBackGesture,
   ScreenTransitionConfig,
 } from 'react-native-reanimated';
 
-const TransitionHandler = ({ children, stackRefWrapper }) => {
+export type GestureProviderProps = PropsWithChildren<{
+  stackRefWrapper: { ref: React.Ref<View> };
+  goBackGesture: GoBackGesture;
+  transitionAnimation?: AnimatedScreenTransition;
+}>;
+
+const TransitionHandler = ({
+  children,
+  stackRefWrapper,
+  goBackGesture,
+  transitionAnimation: userTransitionAnimation,
+}: GestureProviderProps) => {
   const ScreenSize = Dimensions.get('window');
   stackRefWrapper.ref = useAnimatedRef();
   const defaultEvent: GestureUpdateEvent<PanGestureHandlerEventPayload> = {
@@ -41,14 +53,26 @@ const TransitionHandler = ({ children, stackRefWrapper }) => {
   };
   const sharedEvent = useSharedValue(defaultEvent);
   const startingGesturePosition = useSharedValue(defaultEvent);
-  const goBackGesture: GoBackGesture = 'swipeRight'; // GESTURE <-----------------------------------
+  let transitionAnimation;
+  if (userTransitionAnimation) {
+    transitionAnimation = userTransitionAnimation;
+  } else {
+    if (goBackGesture === 'swipeRight' || goBackGesture === 'swipeLeft') {
+      transitionAnimation = ScreenTransition.horizontal;
+    } else if (goBackGesture === 'swipeDown' || goBackGesture === 'swipeUp') {
+      transitionAnimation = ScreenTransition.vertical;
+    } else {
+      throw new Error('Invalid value of `goBackGesture`: ' + goBackGesture);
+    }
+  }
+
   const screenTransitionConfig = useSharedValue<ScreenTransitionConfig>({
-    stackTag: 0,
+    stackTag: -1,
     belowTopScreenTag: Platform.OS === 'ios' ? 35 : 29,
     topScreenTag: Platform.OS === 'ios' ? 69 : 63,
     sharedEvent,
     startingGesturePosition,
-    screenTransition: ScreenTransition.horizontal,
+    screenTransition: transitionAnimation as any,
     isSwipeGesture: true,
     isTransitionCanceled: false,
     goBackGesture,
@@ -71,18 +95,14 @@ const TransitionHandler = ({ children, stackRefWrapper }) => {
   const finishTransition = (stackTag: number, canceled: boolean) => {
     NativeScreensModule.finishTransition(stackTag, canceled);
   };
-  // const getTags = () => {
-  //   console.log(stackRefWrapper.ref.current._children.map((screen: any) => findNodeHandle(screen)));
-  // }
   let panGesture = Gesture.Pan()
     .onStart(event => {
-      // runOnJS(getTags)();
       const screenSize: MeasuredDimensions = measure((() => {
         'worklet';
         return screenTransitionConfig.value.topScreenTag;
       }) as any)!;
       sharedEvent.value = defaultEvent;
-      const stackTag = stackRefWrapper.ref();
+      const stackTag = (stackRefWrapper as any).ref();
       runOnJS(startTransition)(stackTag);
       screenTransitionConfig.value.stackTag = stackTag;
       screenTransitionConfig.value.screenDimensions = screenSize;
@@ -90,7 +110,6 @@ const TransitionHandler = ({ children, stackRefWrapper }) => {
       startScreenTransition(screenTransitionConfig.value);
     })
     .onUpdate(event => {
-      console.log(event.translationX, event.translationY);
       if (goBackGesture === 'swipeRight' && event.translationX < 0) {
         event.translationX = 0;
       } else if (goBackGesture === 'swipeLeft' && event.translationX > 0) {
@@ -161,13 +180,16 @@ const TransitionHandler = ({ children, stackRefWrapper }) => {
   } else if (goBackGesture === 'swipeDown') {
     panGesture = panGesture
       .activeOffsetY(20)
-      .hitSlop({ top: 0, height: ScreenSize.height * 0.2 }); // workaround, because we don't have access to header height
+      .hitSlop({ top: 0, height: ScreenSize.height * 0.2 });
+    // workaround, because we don't have access to header height
   } else if (goBackGesture === 'swipeUp') {
     panGesture = panGesture
       .activeOffsetY(-20)
       .hitSlop({ bottom: 0, height: HIT_SLOP_SIZE });
   }
-
+  if (!goBackGesture) {
+    return <>{children}</>;
+  }
   return <GestureDetector gesture={panGesture}>{children}</GestureDetector>;
 };
 

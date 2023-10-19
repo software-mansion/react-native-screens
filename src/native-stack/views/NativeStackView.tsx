@@ -9,7 +9,6 @@ import {
   StackPresentationTypes,
   ScreenContext,
   GHContext,
-  ScreenProps,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -35,6 +34,10 @@ import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../utils/getStatusBarHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
+import {
+  AnimatedScreenTransition,
+  GoBackGesture,
+} from 'react-native-reanimated'; // to remove
 
 const isAndroid = Platform.OS === 'android';
 
@@ -161,14 +164,12 @@ const RouteView = ({
   index,
   navigation,
   stateKey,
-  screenRef,
 }: {
   descriptors: NativeStackDescriptorMap;
   route: NavigationRoute<ParamListBase, string>;
   index: number;
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
-  screenRef?: React.RefObject<ScreenProps> | null;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -266,10 +267,8 @@ const RouteView = ({
   const Screen = React.useContext(ScreenContext);
 
   const { dark } = useTheme();
-
   return (
     <Screen
-      screenRef={screenRef}
       key={route.key}
       enabled
       isNativeStack
@@ -399,35 +398,30 @@ type Props = {
   state: StackNavigationState<ParamListBase>;
   navigation: NativeStackNavigationHelpers;
   descriptors: NativeStackDescriptorMap;
+  goBackGesture?: GoBackGesture;
+  transitionAnimation?: AnimatedScreenTransition;
 };
 
 function NativeStackViewInner({
   state,
   navigation,
   descriptors,
+  goBackGesture,
+  transitionAnimation,
 }: Props): JSX.Element {
   const { key, routes } = state;
 
-  const stackRefWrapper = {};
-  const topScreenRef = React.useRef(null);
-  const belowTopScreenRef = React.useRef(null);
-  const GestureDetector = React.useContext(GHContext);
+  const stackRefWrapper: any = {};
+  const GestureDetector = React.useContext(GHContext) as any;
 
   return (
     <GestureDetector
       stackRefWrapper={stackRefWrapper}
-      topScreenRef={topScreenRef}
-      belowTopScreenRef={belowTopScreenRef}>
+      goBackGesture={goBackGesture}
+      transitionAnimation={transitionAnimation}>
       <ScreenStack style={styles.container} stackRefWrapper={stackRefWrapper}>
         {routes.map((route, index) => (
           <RouteView
-            screenRef={
-              index === routes.length - 1
-                ? topScreenRef
-                : index === routes.length - 2
-                ? belowTopScreenRef
-                : null
-            }
             key={route.key}
             descriptors={descriptors}
             route={route}
