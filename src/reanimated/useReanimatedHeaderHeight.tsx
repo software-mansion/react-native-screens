@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReanimatedHeaderHeightContext from './ReanimatedHeaderHeightContext';
 
-export default function useReanimatedTransitionProgress() {
+export default function useReanimatedHeaderHeight() {
   const height = React.useContext(ReanimatedHeaderHeightContext);
 
   if (height === undefined) {

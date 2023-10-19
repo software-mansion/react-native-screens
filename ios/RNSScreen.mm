@@ -251,6 +251,13 @@ namespace react = facebook::react;
   _statusBarHidden = statusBarHidden;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
   [RNSScreenWindowTraits updateStatusBarAppearance];
+
+  // As the status bar could change its visibility, we need to calculate header
+  // height for the correct value in `onHeaderHeightChange` event when navigation
+  // bar is not visible.
+  if (self.controller.navigationController.navigationBarHidden && !self.isModal) {
+    [self.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
+  }
 }
 
 - (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
@@ -1031,6 +1038,12 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 }
 
+- (BOOL)isModalWithHeader
+{
+  return self.screenView.isModal && self.childViewControllers.count == 1 &&
+      [self.childViewControllers[0] isKindOfClass:UINavigationController.class];
+}
+
 // Checks whether this screen has any child view controllers of type RNSNavigationController.
 // Useful for checking if this screen has nested stack or is displayed at the top.
 - (BOOL)hasNestedStack
@@ -1044,33 +1057,9 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return NO;
 }
 
-- (CGFloat)getCalculatedHeaderHeightIsModal:(BOOL)isModal
-{
-  CGFloat navbarHeight = self.navigationController.navigationBar.frame.size.height;
-
-  // In case where screen is a modal, we want to calculate just its childViewController's height
-  if (isModal && self.childViewControllers.count > 0 &&
-      [self.childViewControllers[0] isKindOfClass:UINavigationController.class]) {
-    UINavigationController *childNavCtr = self.childViewControllers[0];
-    navbarHeight = childNavCtr.navigationBar.frame.size.height;
-  }
-
-  return navbarHeight;
-}
-
-- (CGSize)getCalculatedStatusBarHeightIsModal:(BOOL)isModal
+- (CGSize)getStatusBarHeightIsModal:(BOOL)isModal
 {
 #if !TARGET_OS_TV
-  BOOL isDraggableModal = isModal && ![self.screenView isFullscreenModal];
-  BOOL isDraggableModalWithChildViewCtr =
-      isDraggableModal && self.childViewControllers.count > 0 && self.childViewControllers[0] != nil;
-
-  // When modal is floating (we can grab its header), we don't want to calculate status bar in it.
-  // Thus, we return '0' as a height of status bar.
-  if (isDraggableModalWithChildViewCtr || self.screenView.isTransparentModal) {
-    return CGSizeMake(0, 0);
-  }
-
   CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
@@ -1087,21 +1076,57 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif /* Check for iOS 13.0 */
 
 #else
-  // On TVOS, status bar doesn't exist
+  // TVOS does not have status bar.
   return CGSizeMake(0, 0);
 #endif // !TARGET_OS_TV
 }
 
+- (UINavigationController *)getVisibleNavigationControllerIsModal:(BOOL)isModal
+{
+  UINavigationController *navctr = self.navigationController;
+
+  if (isModal) {
+    // In case where screen is a modal, we want to calculate childViewController's
+    // navigation bar height instead of the navigation controller from RNSScreen.
+    if (self.isModalWithHeader) {
+      navctr = self.childViewControllers[0];
+    } else {
+      // If the modal does not meet requirements (there's no RNSNavigationController which means that probably it
+      // doesn't have header or there are more than one RNSNavigationController which is invalid) we don't want to
+      // return anything.
+      return nil;
+    }
+  }
+
+  return navctr;
+}
+
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
 {
-  CGFloat navbarHeight = [self getCalculatedHeaderHeightIsModal:isModal];
-  CGSize statusBarSize = [self getCalculatedStatusBarHeightIsModal:isModal];
+  UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
 
-  // Unfortunately, UIKit doesn't care about switching width and height options on screen rotation.
-  // We should check if user has rotated its screen, so we're choosing the minimum value between the
-  // width and height.
-  CGFloat statusBarHeight = MIN(statusBarSize.width, statusBarSize.height);
-  return navbarHeight + statusBarHeight;
+  // If navigation controller doesn't exists (or it is hidden) we want to handle two possible cases.
+  // If there's no navigation controller for the modal, we simply don't want to return header height, as modal possibly
+  // does not have header and we don't want to count status bar. If there's no navigation controller for the view we
+  // just want to return status bar height (if it's hidden, it will simply return 0).
+  if (navctr == nil || navctr.isNavigationBarHidden) {
+    if (isModal) {
+      return 0;
+    } else {
+      CGSize statusBarSize = [self getStatusBarHeightIsModal:isModal];
+      return MIN(statusBarSize.width, statusBarSize.height);
+    }
+  }
+
+  CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
+#if !TARGET_OS_TV
+  CGFloat navbarInset = navctr.navigationBar.frame.origin.y;
+#else
+  // On TVOS there's no inset of navigation bar.
+  CGFloat navbarInset = 0;
+#endif // !TARGET_OS_TV
+
+  return navbarHeight + navbarInset;
 }
 
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal
