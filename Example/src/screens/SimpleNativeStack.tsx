@@ -47,6 +47,7 @@ const App = (): JSX.Element => (
     screenOptions={{
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      stackAnimation: 'none',
     }}>
     <Stack.Screen
       name="Main"
