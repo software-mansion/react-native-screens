@@ -222,7 +222,9 @@ function ScreenStack(props: ScreenStackProps) {
   });
 
   return (
-    <ScreensNativeModules.NativeScreenStack {...rest} ref={stackRefWrapper?.ref}>
+    <ScreensNativeModules.NativeScreenStack
+      {...rest}
+      ref={stackRefWrapper?.ref}>
       {childrenWithFreeze}
     </ScreensNativeModules.NativeScreenStack>
   );

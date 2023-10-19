@@ -228,7 +228,7 @@ export interface ScreenProps extends ViewProps {
    */
   preventNativeDismiss?: boolean;
   ref?: React.Ref<View>;
-  stackRefWrapper?: { ref?: React.Ref<View>} ;
+  stackRefWrapper?: { ref?: React.Ref<View> };
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:
