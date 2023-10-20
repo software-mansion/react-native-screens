@@ -33,7 +33,17 @@ RCT_NOT_IMPLEMENTED(-(instancetype)init)
 
 - (BOOL)canCoalesce
 {
-  return NO;
+  return YES;
+}
+
+- (uint16_t)coalescingKey
+{
+  return _headerHeight;
+}
+
+- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent
+{
+  return newEvent;
 }
 
 + (NSString *)moduleDotMethod
