@@ -4,7 +4,9 @@
 #import <React/RCTUIManagerUtils.h>
 #import "RNSScreenStack.h"
 
-@implementation RNSModule
+@implementation RNSModule {
+  std::atomic<bool> isActiveTransition;
+}
 
 RCT_EXPORT_MODULE()
 
@@ -19,59 +21,19 @@ RCT_EXPORT_MODULE()
   // for the blocks to be dispatched before the batch is completed
   return dispatch_get_main_queue();
 }
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition : (nonnull NSNumber *)reactTag)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition:(nonnull NSNumber *)stackTag)
 {
-  RNSScreenStackView *stackView = [self getScreenStackView:reactTag];
-
-  if (![stackView isKindOfClass:[RNSScreenStackView class]]) {
-    RCTLogError(@"Invalid svg returned from registry, expecting RNSScreenStackView, got: %@", stackView);
-    return @(0);
-  }
-
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [stackView startScreenTransition];
-  });
-  
-//  NSNumber *currentTopScreen = @(-1);
-//  NSNumber *newTopScreen = @(-1);
-//  unsigned long screenCount = [stackView.subviews count];
-//  if (screenCount == 1) {
-//    newTopScreen = stackView.subviews[0].reactTag;
-//  } else if (screenCount > 1) {
-//    currentTopScreen = stackView.subviews[screenCount - 2].reactTag;
-//    newTopScreen = stackView.subviews[screenCount - 1].reactTag;
-//  }
-//  return @[currentTopScreen, newTopScreen];
-  return @(1);
+  return [self _startTransition:stackTag];
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition : (nonnull NSNumber *)reactTag progress : (double)progress)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress)
 {
-  RNSScreenStackView *view = [self getScreenStackView:reactTag];
-
-  if (![view isKindOfClass:[RNSScreenStackView class]]) {
-    RCTLogError(@"Invalid svg returned from registry, expecting RNSScreenStackView, got: %@", view);
-    return @(0);
-  }
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [view updateScreenTransition:progress];
-  });
-
-  return @(1);
+  return @([self _updateTransition:stackTag progress:progress]);
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)reactTag canceled : (BOOL)canceled)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stackTag canceled:(bool)canceled)
 {
-  RNSScreenStackView *view = [self getScreenStackView:reactTag];
-
-  if (![view isKindOfClass:[RNSScreenStackView class]]) {
-    RCTLogError(@"Invalid svg returned from registry, expecting RNSScreenStackView, got: %@", view);
-    return @(0);
-  }
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [view finishScreenTransition:canceled];
-  });
-  return @(1);
+  return @([self _finishTransition:stackTag canceled:canceled]);
 }
 
 - (RNSScreenStackView *)getScreenStackView:(NSNumber *)reactTag
@@ -82,9 +44,13 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)re
     view = [self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
   });
 #else
-  dispatch_sync(dispatch_get_main_queue(), ^{
+  if ([[NSThread currentThread] isMainThread]) {
     view = [self.bridge.uiManager viewForReactTag:reactTag];
-  });
+  } else {
+    dispatch_sync(dispatch_get_main_queue(), ^{
+      view = [self.bridge.uiManager viewForReactTag:reactTag];
+    });
+  }
 #endif // RCT_NEW_ARCH_ENABLED
   return view;
 }
@@ -96,5 +62,77 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)re
   return std::make_shared<facebook::react::NativeScreensModuleSpecJSI>(params);
 }
 #endif
+
+- (nonnull NSArray<NSNumber *> *)_startTransition:(nonnull NSNumber *)stackTag
+{  
+  RNSScreenStackView *stackView = [self getStackView:stackTag];
+  if (stackView == nil || isActiveTransition) {
+    return @[];
+  }
+  
+  if ([[NSThread currentThread] isMainThread]) {
+    [stackView startScreenTransition];
+  } else {
+    dispatch_sync(dispatch_get_main_queue(), ^{
+      [stackView startScreenTransition];
+    });
+  }
+
+  auto screens = stackView.reactSubviews;
+  unsigned long screenCount = [screens count];
+  if (screenCount > 1) {
+    NSNumber *topScreen = screens[screenCount - 1].reactTag;
+    NSNumber *belowTopScreen = screens[screenCount - 2].reactTag;
+    screens[screenCount - 2].transform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
+    isActiveTransition = true;
+    return @[topScreen, belowTopScreen];
+  }
+  return @[];
+}
+
+- (bool)_updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress
+{
+  RNSScreenStackView *stackView = [self getStackView:stackTag];
+  if (stackView == nil || !isActiveTransition) {
+    return false;
+  }
+  
+  if ([[NSThread currentThread] isMainThread]) {
+    [stackView updateScreenTransition:progress];
+  } else {
+    dispatch_sync(dispatch_get_main_queue(), ^{
+      [stackView updateScreenTransition:progress];
+    });
+  }
+  return true;
+}
+
+- (bool)_finishTransition:(nonnull NSNumber *)stackTag canceled:(bool)canceled
+{
+  RNSScreenStackView *stackView = [self getStackView:stackTag];
+  if (stackView == nil || !isActiveTransition) {
+    return false;
+  }
+  
+  if ([[NSThread currentThread] isMainThread]) {
+    [stackView finishScreenTransition:canceled];
+  } else {
+    dispatch_sync(dispatch_get_main_queue(), ^{
+      [stackView finishScreenTransition:canceled];
+    });
+  }
+  isActiveTransition = false;
+  return true;
+}
+
+- (RNSScreenStackView *)getStackView:(nonnull NSNumber *)stackTag
+{
+  RNSScreenStackView *view = [self getScreenStackView:stackTag];
+  if (![view isKindOfClass:[RNSScreenStackView class]]) {
+    RCTLogError(@"Invalid svg returned from registry, expecting RNSScreenStackView, got: %@", view);
+    return nil;
+  }
+  return view;
+}
 
 @end

@@ -1,6 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { Dimensions, Platform, View } from 'react-native';
-import { NativeScreensModule } from '../index';
+import { Dimensions, View } from 'react-native';
 
 import {
   GestureDetector,
@@ -9,7 +8,6 @@ import {
   GestureUpdateEvent,
 } from 'react-native-gesture-handler';
 import {
-  runOnJS,
   useAnimatedRef,
   useSharedValue,
   measure,
@@ -29,6 +27,12 @@ export type GestureProviderProps = PropsWithChildren<{
   goBackGesture: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
 }>;
+
+enum ScreenTransitionCommand {
+  Start = 1,
+  Update = 2,
+  Finish = 3,
+}
 
 const TransitionHandler = ({
   children,
@@ -53,6 +57,7 @@ const TransitionHandler = ({
   };
   const sharedEvent = useSharedValue(defaultEvent);
   const startingGesturePosition = useSharedValue(defaultEvent);
+  const canPerformUpdates = useSharedValue(false);
   let transitionAnimation;
   if (userTransitionAnimation) {
     transitionAnimation = userTransitionAnimation;
@@ -65,11 +70,10 @@ const TransitionHandler = ({
       throw new Error('Invalid value of `goBackGesture`: ' + goBackGesture);
     }
   }
-
   const screenTransitionConfig = useSharedValue<ScreenTransitionConfig>({
     stackTag: -1,
-    belowTopScreenTag: Platform.OS === 'ios' ? 35 : 29,
-    topScreenTag: Platform.OS === 'ios' ? 69 : 63,
+    belowTopScreenTag: -1,
+    topScreenTag: -1,
     sharedEvent,
     startingGesturePosition,
     screenTransition: transitionAnimation as any,
@@ -85,31 +89,33 @@ const TransitionHandler = ({
       pageY: 0,
     },
   });
-
-  const startTransition = (stackTag: number) => {
-    NativeScreensModule.startTransition(stackTag);
-  };
-  const updateTransition = (stackTag: number, progress: number) => {
-    NativeScreensModule.updateTransition(stackTag, progress);
-  };
-  const finishTransition = (stackTag: number, canceled: boolean) => {
-    NativeScreensModule.finishTransition(stackTag, canceled);
-  };
   let panGesture = Gesture.Pan()
     .onStart(event => {
+      sharedEvent.value = defaultEvent;
+      const transitionConfig = screenTransitionConfig.value;
+      const stackTag = (stackRefWrapper as any).ref();
+      const screenTags = (global as any)._manageScreenTransition(
+        ScreenTransitionCommand.Start, stackTag, null);
+        if (!screenTags) {
+          canPerformUpdates.value = false;
+          return;
+        }
+      transitionConfig.topScreenTag = screenTags.topScreenTag;
+      transitionConfig.belowTopScreenTag = screenTags.belowTopScreenTag;
+      transitionConfig.stackTag = stackTag;
+      startingGesturePosition.value = event;
       const screenSize: MeasuredDimensions = measure((() => {
         'worklet';
         return screenTransitionConfig.value.topScreenTag;
       }) as any)!;
-      sharedEvent.value = defaultEvent;
-      const stackTag = (stackRefWrapper as any).ref();
-      runOnJS(startTransition)(stackTag);
-      screenTransitionConfig.value.stackTag = stackTag;
-      screenTransitionConfig.value.screenDimensions = screenSize;
-      startingGesturePosition.value = event;
-      startScreenTransition(screenTransitionConfig.value);
+      transitionConfig.screenDimensions = screenSize;
+      startScreenTransition(transitionConfig);
+      canPerformUpdates.value = true;
     })
     .onUpdate(event => {
+      if (!canPerformUpdates.value) {
+        return;
+      }
       if (goBackGesture === 'swipeRight' && event.translationX < 0) {
         event.translationX = 0;
       } else if (goBackGesture === 'swipeLeft' && event.translationX > 0) {
@@ -139,12 +145,13 @@ const TransitionHandler = ({
         progress = event.translationY / startingGesturePosition.value.absoluteY;
       }
       sharedEvent.value = event;
-      runOnJS(updateTransition)(
-        screenTransitionConfig.value.stackTag,
-        progress
-      );
+      const stackTag = screenTransitionConfig.value.stackTag;
+      (global as any)._manageScreenTransition(ScreenTransitionCommand.Update, stackTag, progress);
     })
     .onEnd(event => {
+      if (!canPerformUpdates.value) {
+        return;
+      }
       const screenSize: MeasuredDimensions = measure((() => {
         'worklet';
         return screenTransitionConfig.value.topScreenTag;
@@ -159,11 +166,11 @@ const TransitionHandler = ({
           Math.abs(event.translationY + event.velocityY * 0.3) <
           screenSize.height / 2;
       }
-      screenTransitionConfig.value.onFinishAnimation = () =>
-        runOnJS(finishTransition)(
-          screenTransitionConfig.value.stackTag,
-          isTransitionCanceled
-        );
+      const stackTag = screenTransitionConfig.value.stackTag;
+      screenTransitionConfig.value.onFinishAnimation = () => {
+        (global as any)._manageScreenTransition(
+          ScreenTransitionCommand.Finish, stackTag, isTransitionCanceled);
+      }
       screenTransitionConfig.value.isTransitionCanceled = isTransitionCanceled;
       finishScreenTransition(screenTransitionConfig.value);
     });
