@@ -31,6 +31,11 @@ RCT_NOT_IMPLEMENTED(-(instancetype)init)
   return body;
 }
 
+- (BOOL)canCoalesce
+{
+  return NO;
+}
+
 + (NSString *)moduleDotMethod
 {
   return @"RCTEventEmitter.receiveEvent";
