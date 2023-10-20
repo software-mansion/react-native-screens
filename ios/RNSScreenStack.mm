@@ -410,9 +410,9 @@ namespace react = facebook::react;
       afterTransitions();
       return;
     } else {
-      NSLog(@"visibleViewController %p", self->_controller.visibleViewController);
       UIViewController *previous = changeRootController;
       UIViewController *visibleViewController = self->_controller.visibleViewController;
+      NSLog(@"StackView %p visibleViewController %p", self, visibleViewController);
       if ([visibleViewController isKindOfClass:RNSScreen.class]) {
         RNSScreen *screen = (RNSScreen *)visibleViewController;
         if (screen.screenView.isModal && screen.presentingViewController != (UIViewController *)weakSelf) {
