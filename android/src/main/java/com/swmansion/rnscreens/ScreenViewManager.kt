@@ -73,6 +73,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
             "slide_from_left" -> Screen.StackAnimation.SLIDE_FROM_LEFT
             "slide_from_bottom" -> Screen.StackAnimation.SLIDE_FROM_BOTTOM
             "fade_from_bottom" -> Screen.StackAnimation.FADE_FROM_BOTTOM
+            "cupertino" -> Screen.StackAnimation.CUPERTINO
             else -> throw JSApplicationIllegalArgumentException("Unknown animation type $animation")
         }
     }
