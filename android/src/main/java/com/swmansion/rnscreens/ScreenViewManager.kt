@@ -42,8 +42,11 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         props: ReactStylesDiffMap?,
         stateWrapper: StateWrapper?
     ): Any? {
-        view.fabricViewStateManager.setStateWrapper(stateWrapper)
-        return null
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            view.fabricViewStateManager.setStateWrapper(stateWrapper)
+            return null
+        }
+        return super.updateState(view, props, stateWrapper)
     }
 
     @ReactProp(name = "activityState")
