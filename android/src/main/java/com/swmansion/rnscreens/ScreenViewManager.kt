@@ -4,6 +4,8 @@ import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -33,6 +35,15 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())
+    }
+
+    override fun updateState(
+        view: Screen,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?
+    ): Any? {
+        view.fabricViewStateManager.setStateWrapper(stateWrapper)
+        return null
     }
 
     @ReactProp(name = "activityState")
