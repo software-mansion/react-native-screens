@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+typedef void (^RNSScreenRemoved)();
+
 @interface RNSScreenStackView :
 #ifdef RCT_NEW_ARCH_ENABLED
     RCTViewComponentView <RNSScreenContainerDelegate>
@@ -27,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)finishScreenTransition:(BOOL)canceled;
 
 @property (nonatomic) BOOL customAnimation;
+@property RNSScreenRemoved onScreenRemovedHook;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

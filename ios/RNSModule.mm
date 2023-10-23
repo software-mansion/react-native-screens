@@ -21,17 +21,17 @@ RCT_EXPORT_MODULE()
   // for the blocks to be dispatched before the batch is completed
   return dispatch_get_main_queue();
 }
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition:(nonnull NSNumber *)stackTag)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition : (nonnull NSNumber *)stackTag)
 {
   return [self _startTransition:stackTag];
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition : (nonnull NSNumber *)stackTag progress : (double)progress)
 {
   return @([self _updateTransition:stackTag progress:progress]);
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stackTag canceled:(bool)canceled)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)stackTag canceled : (bool)canceled)
 {
   return @([self _finishTransition:stackTag canceled:canceled]);
 }
@@ -64,12 +64,12 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
 #endif
 
 - (nonnull NSArray<NSNumber *> *)_startTransition:(nonnull NSNumber *)stackTag
-{  
+{
   RNSScreenStackView *stackView = [self getStackView:stackTag];
   if (stackView == nil || isActiveTransition) {
     return @[];
   }
-  
+
   if ([[NSThread currentThread] isMainThread]) {
     [stackView startScreenTransition];
   } else {
@@ -85,7 +85,12 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
     NSNumber *belowTopScreen = screens[screenCount - 2].reactTag;
     screens[screenCount - 2].transform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
     isActiveTransition = true;
-    return @[topScreen, belowTopScreen];
+    if (!stackView.onScreenRemovedHook) {
+      stackView.onScreenRemovedHook = ^() {
+        self->isActiveTransition = false;
+      };
+    }
+    return @[ topScreen, belowTopScreen ];
   }
   return @[];
 }
@@ -96,7 +101,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
   if (stackView == nil || !isActiveTransition) {
     return false;
   }
-  
+
   if ([[NSThread currentThread] isMainThread]) {
     [stackView updateScreenTransition:progress];
   } else {
@@ -113,7 +118,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
   if (stackView == nil || !isActiveTransition) {
     return false;
   }
-  
+
   if ([[NSThread currentThread] isMainThread]) {
     [stackView finishScreenTransition:canceled];
   } else {
@@ -121,7 +126,9 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
       [stackView finishScreenTransition:canceled];
     });
   }
-  isActiveTransition = false;
+  if (canceled) {
+    isActiveTransition = false;
+  }
   return true;
 }
 
