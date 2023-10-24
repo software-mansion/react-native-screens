@@ -6,7 +6,7 @@ import com.facebook.react.uimanager.FabricViewStateManager
 
 abstract class FabricEnabledViewGroup constructor(context: ReactContext?) : ViewGroup(context) {
 
-    val fabricViewStateManager get() = null as FabricViewStateManager
+    val fabricViewStateManager get() = null as FabricViewStateManager?
 
     protected fun updateScreenSizeFabric(width: Int, height: Int) {
         // do nothing
