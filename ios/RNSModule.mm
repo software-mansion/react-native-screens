@@ -21,17 +21,17 @@ RCT_EXPORT_MODULE()
   // for the blocks to be dispatched before the batch is completed
   return dispatch_get_main_queue();
 }
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition : (nonnull NSNumber *)stackTag)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition:(nonnull NSNumber *)stackTag)
 {
   return [self _startTransition:stackTag];
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition : (nonnull NSNumber *)stackTag progress : (double)progress)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress)
 {
   return @([self _updateTransition:stackTag progress:progress]);
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)stackTag canceled : (bool)canceled)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stackTag canceled:(bool)canceled)
 {
   return @([self _finishTransition:stackTag canceled:canceled]);
 }
@@ -69,7 +69,17 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
   if (stackView == nil || isActiveTransition) {
     return @[];
   }
-
+  NSArray<NSNumber *> *screenTags = @[];
+  auto screens = stackView.reactViewController.childViewControllers;
+  unsigned long screenCount = [screens count];
+  if (screenCount > 1) {
+    NSNumber *topScreen = screens[screenCount - 1].view.reactTag;
+    NSNumber *belowTopScreen = screens[screenCount - 2].view.reactTag;
+    screens[screenCount - 2].view.transform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
+    isActiveTransition = true;
+    screenTags = @[topScreen, belowTopScreen];
+  }
+  
   if ([[NSThread currentThread] isMainThread]) {
     [stackView startScreenTransition];
   } else {
@@ -78,21 +88,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
     });
   }
 
-  auto screens = stackView.reactSubviews;
-  unsigned long screenCount = [screens count];
-  if (screenCount > 1) {
-    NSNumber *topScreen = screens[screenCount - 1].reactTag;
-    NSNumber *belowTopScreen = screens[screenCount - 2].reactTag;
-    screens[screenCount - 2].transform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
-    isActiveTransition = true;
-    if (!stackView.onScreenRemovedHook) {
-      stackView.onScreenRemovedHook = ^() {
-        self->isActiveTransition = false;
-      };
-    }
-    return @[ topScreen, belowTopScreen ];
-  }
-  return @[];
+  return screenTags;
 }
 
 - (bool)_updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress
@@ -126,9 +122,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
       [stackView finishScreenTransition:canceled];
     });
   }
-  if (canceled) {
-    isActiveTransition = false;
-  }
+  isActiveTransition = false;
   return true;
 }
 

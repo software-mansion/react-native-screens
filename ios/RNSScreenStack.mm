@@ -948,9 +948,6 @@ namespace react = facebook::react;
 {
   subview.reactSuperview = nil;
   [_reactSubviews removeObject:subview];
-  if (_onScreenRemovedHook) {
-    _onScreenRemovedHook();
-  }
 }
 
 - (void)didUpdateReactSubviews
