@@ -43,7 +43,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         stateWrapper: StateWrapper?
     ): Any? {
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED && view.fabricViewStateManager != null) {
-            // fabricViewStateManager should never be null in Fabric. the null check is only for Paper's empty impl.
+            // fabricViewStateManager should never be null in Fabric. The null check is only for Paper's empty impl.
             view.fabricViewStateManager!!.setStateWrapper(stateWrapper)
         }
         return super.updateState(view, props, stateWrapper)
