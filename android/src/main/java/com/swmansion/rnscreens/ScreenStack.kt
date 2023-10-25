@@ -31,6 +31,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     override val topScreen: Screen?
         get() = mTopScreen?.screen
 
+    val fragments: ArrayList<ScreenStackFragmentWrapper>
+        get() = mStack
+
     val rootScreen: Screen
         get() {
             for (i in 0 until screenCount) {

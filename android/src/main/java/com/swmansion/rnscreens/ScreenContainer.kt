@@ -212,10 +212,14 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         transaction.commitNowAllowingStateLoss()
     }
 
-    fun detachTop() {
+    fun detachBelowTop() {
         val transaction = createTransaction()
+        detachScreen(transaction, mScreenFragments[mScreenFragments.size - 2].fragment)
+        transaction.commitNowAllowingStateLoss()
+    }
+
+    fun detachTop() {
         val top = topScreen as Screen
-//        detachScreen(transaction, top.fragment as Fragment)
         if (context is ReactContext) {
             val surfaceId = UIManagerHelper.getSurfaceId(context)
             UIManagerHelper

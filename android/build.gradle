@@ -1,4 +1,5 @@
 import com.android.Version
+import groovy.json.JsonSlurper
 
 buildscript {
     ext {
@@ -27,6 +28,19 @@ def isNewArchitectureEnabled() {
     // - Invoke gradle with `-newArchEnabled=true`
     // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}
+
+def shouldUseCommonInterfaceFromReanimated() {
+    def reanimated = rootProject.subprojects.find { it.name == 'react-native-reanimated' }
+    if (reanimated != null) {
+        def inputFile = new File(reanimated.projectDir, '../package.json')
+        def json = new JsonSlurper().parseText(inputFile.text)
+        def reanimatedVersion = json.version as String
+        def (major, minor, patch) = reanimatedVersion.tokenize('.')
+        return (Integer.parseInt(major) == 2 && Integer.parseInt(minor) >= 3) || Integer.parseInt(major) == 3
+    } else {
+        return false
+    }
 }
 
 // spotless is only accessible within react-native-screens repo
@@ -98,7 +112,9 @@ android {
                     "build/generated/source/codegen/java"
                 ]
             }
-
+            if (!shouldUseCommonInterfaceFromReanimated()) {
+                srcDirs += 'common/src/main/java'
+            }
         }
         res {
             if (safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion) >= 33) {
@@ -124,10 +140,17 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.fragment:fragment-ktx:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.fragment:fragment:1.3.6'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.9.0'
-    implementation "androidx.core:core-ktx:1.10.1"
+    implementation "androidx.core:core-ktx:1.8.0"
+
+    if (shouldUseCommonInterfaceFromReanimated()) {
+        // Include Reanimated as dependency to load the common interface
+        implementation (rootProject.subprojects.find { it.name == 'react-native-reanimated' }) {
+            exclude group:'com.facebook.fbjni' // resolves "Duplicate class com.facebook.jni.CppException"
+        }
+    }
 }
