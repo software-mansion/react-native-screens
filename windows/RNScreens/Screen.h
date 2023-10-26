@@ -11,7 +11,7 @@ enum class StackAnimation {
   SIMPLE_FROM_BOTTOM,
   SLIDE_FROM_RIGHT,
   SLIDE_FROM_LEFT,
-  CUPERTINO
+  IOS
 };
 
 enum class ReplaceAnimation { PUSH, POP };

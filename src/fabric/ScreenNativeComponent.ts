@@ -51,7 +51,7 @@ type StackAnimation =
   | 'slide_from_left'
   | 'slide_from_bottom'
   | 'fade_from_bottom'
-  | 'cupertino';
+  | 'ios';
 
 type SwipeDirection = 'vertical' | 'horizontal';
 

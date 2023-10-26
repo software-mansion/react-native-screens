@@ -30,7 +30,7 @@
     // these four are intentionally grouped
     case react::RNSScreenStackAnimation::Slide_from_right:
     case react::RNSScreenStackAnimation::Slide_from_left:
-    case react::RNSScreenStackAnimation::Cupertino:
+    case react::RNSScreenStackAnimation::Ios:
     case react::RNSScreenStackAnimation::Default:
       return RNSScreenStackAnimationDefault;
     case react::RNSScreenStackAnimation::Flip:

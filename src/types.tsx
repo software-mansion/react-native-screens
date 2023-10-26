@@ -34,7 +34,7 @@ export type StackAnimationTypes =
   | 'slide_from_bottom'
   | 'slide_from_right'
   | 'slide_from_left'
-  | 'cupertino';
+  | 'ios';
 export type BlurEffectTypes =
   | 'extraLight'
   | 'light'
@@ -320,7 +320,7 @@ export interface ScreenProps extends ViewProps {
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
-   * - "cupertino" - iOS like slide in animation (Android only, resolves to default transition on iOS)
+   * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: StackAnimationTypes;
