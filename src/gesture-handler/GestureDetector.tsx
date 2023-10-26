@@ -62,10 +62,14 @@ const TransitionHandler = ({
   if (userTransitionAnimation) {
     transitionAnimation = userTransitionAnimation;
   } else {
-    if (goBackGesture === 'swipeRight' || goBackGesture === 'swipeLeft') {
-      transitionAnimation = ScreenTransition.horizontal;
-    } else if (goBackGesture === 'swipeDown' || goBackGesture === 'swipeUp') {
-      transitionAnimation = ScreenTransition.vertical;
+    if (goBackGesture === 'swipeRight') {
+      transitionAnimation = ScreenTransition.SwipeRight;
+    } else if (goBackGesture === 'swipeLeft') {
+      transitionAnimation = ScreenTransition.SwipeLeft;
+    } else if (goBackGesture === 'swipeDown') {
+      transitionAnimation = ScreenTransition.SwipeDown;
+    } else if (goBackGesture === 'swipeUp') {
+      transitionAnimation = ScreenTransition.SwipeUp;
     } else {
       throw new Error('Invalid value of `goBackGesture`: ' + goBackGesture);
     }
@@ -94,12 +98,11 @@ const TransitionHandler = ({
       sharedEvent.value = defaultEvent;
       const transitionConfig = screenTransitionConfig.value;
       const stackTag = (stackRefWrapper as any).ref();
-      const screenTags = (global as any)._manageScreenTransition(
-        ScreenTransitionCommand.Start, stackTag, null);
-        if (!screenTags) {
-          canPerformUpdates.value = false;
-          return;
-        }
+      const screenTags = (global as any)._manageScreenTransition(ScreenTransitionCommand.Start, stackTag, null);
+      if (!screenTags) {
+        canPerformUpdates.value = false;
+        return;
+      }
       transitionConfig.topScreenTag = screenTags.topScreenTag;
       transitionConfig.belowTopScreenTag = screenTags.belowTopScreenTag;
       transitionConfig.stackTag = stackTag;
@@ -108,6 +111,12 @@ const TransitionHandler = ({
         'worklet';
         return screenTransitionConfig.value.topScreenTag;
       }) as any)!;
+      if (screenSize == null) {
+        canPerformUpdates.value = false;
+        (global as any)._manageScreenTransition(
+          ScreenTransitionCommand.Finish, stackTag, true);
+        return;
+      }
       transitionConfig.screenDimensions = screenSize;
       startScreenTransition(transitionConfig);
       canPerformUpdates.value = true;
@@ -125,7 +134,6 @@ const TransitionHandler = ({
       } else if (goBackGesture === 'swipeUp' && event.translationY > 0) {
         event.translationY = 0;
       }
-
       let progress = 0;
       if (goBackGesture === 'swipeRight') {
         const screenWidth = screenTransitionConfig.value.screenDimensions.width;
@@ -168,8 +176,7 @@ const TransitionHandler = ({
       }
       const stackTag = screenTransitionConfig.value.stackTag;
       screenTransitionConfig.value.onFinishAnimation = () => {
-        (global as any)._manageScreenTransition(
-          ScreenTransitionCommand.Finish, stackTag, isTransitionCanceled);
+        (global as any)._manageScreenTransition(ScreenTransitionCommand.Finish, stackTag, isTransitionCanceled);
       }
       screenTransitionConfig.value.isTransitionCanceled = isTransitionCanceled;
       finishScreenTransition(screenTransitionConfig.value);
@@ -187,7 +194,7 @@ const TransitionHandler = ({
   } else if (goBackGesture === 'swipeDown') {
     panGesture = panGesture
       .activeOffsetY(20)
-      .hitSlop({ top: 0, height: ScreenSize.height * 0.2 });
+      .hitSlop({ top: 0, height: ScreenSize.height * 0.15 });
     // workaround, because we don't have access to header height
   } else if (goBackGesture === 'swipeUp') {
     panGesture = panGesture
