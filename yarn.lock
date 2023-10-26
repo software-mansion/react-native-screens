@@ -8315,9 +8315,9 @@ react-native-iphone-x-helper@^1.3.0:
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
 
-"react-native-reanimated@github:software-mansion/react-native-reanimated#c74789d0cc56dae17b6aea8c556fb9c999fedff6":
+"react-native-reanimated@github:software-mansion/react-native-reanimated#5b372dcf5038de8b4cd64d7a99efb3b2a1a25dfe":
   version "3.5.0"
-  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/c74789d0cc56dae17b6aea8c556fb9c999fedff6"
+  resolved "https://codeload.github.com/software-mansion/react-native-reanimated/tar.gz/5b372dcf5038de8b4cd64d7a99efb3b2a1a25dfe"
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
