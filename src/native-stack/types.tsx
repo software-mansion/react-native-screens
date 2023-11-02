@@ -10,11 +10,13 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
+import { PropsWithChildren } from 'react';
 import {
   ImageSourcePropType,
   StyleProp,
   ViewStyle,
   ColorValue,
+  View,
 } from 'react-native';
 import {
   ScreenProps,
@@ -509,3 +511,9 @@ export type AnimatedScreenTransition = {
     screenSize: MeasuredDimensions
   ) => Record<string, unknown>;
 };
+
+export type GestureProviderProps = PropsWithChildren<{
+  stackRefWrapper: { ref: React.Ref<View> };
+  goBackGesture?: GoBackGesture;
+  transitionAnimation?: AnimatedScreenTransition;
+}>;

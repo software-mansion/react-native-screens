@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from 'react';
-import { Dimensions, View } from 'react-native';
+import React from 'react';
+import { Dimensions } from 'react-native';
 
 import {
   GestureDetector,
@@ -17,16 +17,7 @@ import {
   ScreenTransition,
   makeMutable,
 } from 'react-native-reanimated';
-import type {
-  AnimatedScreenTransition,
-  GoBackGesture,
-} from 'react-native-reanimated';
-
-export type GestureProviderProps = PropsWithChildren<{
-  stackRefWrapper: { ref: React.Ref<View> };
-  goBackGesture?: GoBackGesture;
-  transitionAnimation?: AnimatedScreenTransition;
-}>;
+import type { GestureProviderProps } from 'src/native-stack/types';
 
 enum ScreenTransitionCommand {
   Start = 1,

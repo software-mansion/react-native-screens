@@ -82,7 +82,7 @@ function NativeStackNavigator({
       navigation={navigation}
       descriptors={descriptors}
       goBackGesture={topScreenOptions?.goBackGesture}
-      transitionAnimation={(topScreenOptions as any)?.transitionAnimation}
+      transitionAnimation={topScreenOptions?.transitionAnimation}
     />
   );
 }

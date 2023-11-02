@@ -1,7 +1,7 @@
 import React from 'react';
 import { GHContext } from '../index';
 import GestureDetector from './GestureDetector';
-import type { GestureProviderProps } from './GestureDetector';
+import type { GestureProviderProps } from '../native-stack/types';
 
 function GHWrapper(props: GestureProviderProps) {
   return <GestureDetector {...props} />;
@@ -9,8 +9,6 @@ function GHWrapper(props: GestureProviderProps) {
 
 export default function GestureDetectorProvider(props: GestureProviderProps) {
   return (
-    <GHContext.Provider value={GHWrapper as any}>
-      {props.children}
-    </GHContext.Provider>
+    <GHContext.Provider value={GHWrapper}>{props.children}</GHContext.Provider>
   );
 }
