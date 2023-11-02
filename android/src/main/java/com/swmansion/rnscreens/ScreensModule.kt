@@ -22,12 +22,7 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : ReactC
 
     @ReactMethod
     override fun startTransition(reactTag: Int): IntArray {
-        if (UiThreadUtil.isOnUiThread()) {
-            return startTransitionUI(reactTag)
-        } else {
-            UiThreadUtil.runOnUiThread { startTransitionUI(reactTag) }
-        }
-        return intArrayOf(-1, -1)
+        return startTransitionUI(reactTag)
     }
 
     @ReactMethod
@@ -35,14 +30,11 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : ReactC
 
     @ReactMethod
     override fun finishTransition(reactTag: Int, canceled: Boolean) {
-        if (UiThreadUtil.isOnUiThread()) {
-            return finishTransitionUI(reactTag, canceled)
-        } else {
-            UiThreadUtil.runOnUiThread { finishTransitionUI(reactTag, canceled) }
-        }
+        finishTransitionUI(reactTag, canceled)
     }
 
     private fun startTransitionUI(reactTag: Int): IntArray {
+        UiThreadUtil.assertOnUiThread()
         if (isActiveTransition.get()) {
             return intArrayOf(-1, -1)
         }
@@ -63,6 +55,7 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : ReactC
     }
 
     private fun finishTransitionUI(reactTag: Int, canceled: Boolean) {
+        UiThreadUtil.assertOnUiThread()
         if (!isActiveTransition.get()) {
             return
         }

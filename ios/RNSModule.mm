@@ -21,6 +21,7 @@ RCT_EXPORT_MODULE()
   // for the blocks to be dispatched before the batch is completed
   return dispatch_get_main_queue();
 }
+
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition:(nonnull NSNumber *)stackTag)
 {
   return [self _startTransition:stackTag];
@@ -38,19 +39,12 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
 
 - (RNSScreenStackView *)getScreenStackView:(NSNumber *)reactTag
 {
-  __block RNSScreenStackView *view;
+  RCTAssertMainQueue();
+  RNSScreenStackView *view;
 #ifdef RCT_NEW_ARCH_ENABLED
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    view = [self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
-  });
+  view = [self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
 #else
-  if ([[NSThread currentThread] isMainThread]) {
-    view = [self.bridge.uiManager viewForReactTag:reactTag];
-  } else {
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      view = [self.bridge.uiManager viewForReactTag:reactTag];
-    });
-  }
+  view = (RNSScreenStackView *)[self.bridge.uiManager viewForReactTag:reactTag];
 #endif // RCT_NEW_ARCH_ENABLED
   return view;
 }
@@ -65,6 +59,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
 
 - (nonnull NSArray<NSNumber *> *)_startTransition:(nonnull NSNumber *)stackTag
 {
+  RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
   if (stackView == nil || isActiveTransition) {
     return @[];
@@ -79,49 +74,29 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
     isActiveTransition = true;
     screenTags = @[topScreen, belowTopScreen];
   }
-  
-  if ([[NSThread currentThread] isMainThread]) {
-    [stackView startScreenTransition];
-  } else {
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      [stackView startScreenTransition];
-    });
-  }
-
+  [stackView startScreenTransition];
   return screenTags;
 }
 
 - (bool)_updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress
 {
+  RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
   if (stackView == nil || !isActiveTransition) {
     return false;
   }
-
-  if ([[NSThread currentThread] isMainThread]) {
-    [stackView updateScreenTransition:progress];
-  } else {
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      [stackView updateScreenTransition:progress];
-    });
-  }
+  [stackView updateScreenTransition:progress];
   return true;
 }
 
 - (bool)_finishTransition:(nonnull NSNumber *)stackTag canceled:(bool)canceled
 {
+  RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
   if (stackView == nil || !isActiveTransition) {
     return false;
   }
-
-  if ([[NSThread currentThread] isMainThread]) {
-    [stackView finishScreenTransition:canceled];
-  } else {
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      [stackView finishScreenTransition:canceled];
-    });
-  }
+  [stackView finishScreenTransition:canceled];
   isActiveTransition = false;
   return true;
 }
