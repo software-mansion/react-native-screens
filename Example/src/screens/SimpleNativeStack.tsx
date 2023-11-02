@@ -55,7 +55,10 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="Main"
       component={MainScreen}
-      options={{ title: 'Simple Native Stack' }}
+      options={{
+        title: 'Simple Native Stack',
+        mleko: 'mleko',
+      }}
     />
     <Stack.Screen name="Detail" component={DetailScreen} />
   </Stack.Navigator>

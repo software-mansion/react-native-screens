@@ -8,7 +8,6 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
-  GHContext,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -38,7 +37,7 @@ import {
   AnimatedScreenTransition,
   GoBackGesture,
 } from 'react-native-reanimated'; // to remove
-import GestureDetector from 'react-native-screens/src/gesture-handler/GestureDetector';
+import GestureDetector from '../../gesture-handler/GestureDetector';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -418,9 +417,8 @@ function NativeStackViewInner({
   return (
     <GestureDetector
       stackRefWrapper={stackRefWrapper}
-      goBackGesture={goBackGesture}
-      transitionAnimation={transitionAnimation}
-      >
+      goBackGesture={goBackGesture as any}
+      transitionAnimation={transitionAnimation}>
       <ScreenStack style={styles.container} stackRefWrapper={stackRefWrapper}>
         {routes.map((route, index) => (
           <RouteView
