@@ -15,16 +15,16 @@ import {
   startScreenTransition,
   finishScreenTransition,
   ScreenTransition,
+  makeMutable,
 } from 'react-native-reanimated';
 import type {
   AnimatedScreenTransition,
   GoBackGesture,
-  ScreenTransitionConfig,
 } from 'react-native-reanimated';
 
 export type GestureProviderProps = PropsWithChildren<{
   stackRefWrapper: { ref: React.Ref<View> };
-  goBackGesture: GoBackGesture;
+  goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
 }>;
 
@@ -61,6 +61,11 @@ const TransitionHandler = ({
   let transitionAnimation;
   if (userTransitionAnimation) {
     transitionAnimation = userTransitionAnimation;
+    if (!goBackGesture) {
+      throw new Error(
+        'You have to specify `goBackGesture` when using `transitionAnimation`'
+      );
+    }
   } else {
     if (goBackGesture === 'swipeRight') {
       transitionAnimation = ScreenTransition.SwipeRight;
@@ -70,35 +75,45 @@ const TransitionHandler = ({
       transitionAnimation = ScreenTransition.SwipeDown;
     } else if (goBackGesture === 'swipeUp') {
       transitionAnimation = ScreenTransition.SwipeUp;
-    } else {
+    } else if (goBackGesture !== undefined) {
       throw new Error('Invalid value of `goBackGesture`: ' + goBackGesture);
     }
   }
-  const screenTransitionConfig = useSharedValue<ScreenTransitionConfig>({
-    stackTag: -1,
-    belowTopScreenTag: -1,
-    topScreenTag: -1,
-    sharedEvent,
-    startingGesturePosition,
-    screenTransition: transitionAnimation as any,
-    isSwipeGesture: true,
-    isTransitionCanceled: false,
-    goBackGesture,
-    screenDimensions: {
-      width: 0,
-      height: 0,
-      x: 0,
-      y: 0,
-      pageX: 0,
-      pageY: 0,
+  const screenTransitionConfig = makeMutable(
+    {
+      stackTag: -1,
+      belowTopScreenTag: -1,
+      topScreenTag: -1,
+      sharedEvent,
+      startingGesturePosition,
+      screenTransition: transitionAnimation as any,
+      isSwipeGesture: true,
+      isTransitionCanceled: false,
+      goBackGesture: goBackGesture ?? 'swipeRight',
+      screenDimensions: {
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0,
+        pageX: 0,
+        pageY: 0,
+      },
+      onFinishAnimation: () => {
+        'worklet';
+      },
     },
-  });
+    true
+  );
   let panGesture = Gesture.Pan()
     .onStart(event => {
       sharedEvent.value = defaultEvent;
       const transitionConfig = screenTransitionConfig.value;
       const stackTag = (stackRefWrapper as any).ref();
-      const screenTags = (global as any)._manageScreenTransition(ScreenTransitionCommand.Start, stackTag, null);
+      const screenTags = (global as any)._manageScreenTransition(
+        ScreenTransitionCommand.Start,
+        stackTag,
+        null
+      );
       if (!screenTags) {
         canPerformUpdates.value = false;
         return;
@@ -114,7 +129,10 @@ const TransitionHandler = ({
       if (screenSize == null) {
         canPerformUpdates.value = false;
         (global as any)._manageScreenTransition(
-          ScreenTransitionCommand.Finish, stackTag, true);
+          ScreenTransitionCommand.Finish,
+          stackTag,
+          true
+        );
         return;
       }
       transitionConfig.screenDimensions = screenSize;
@@ -154,7 +172,11 @@ const TransitionHandler = ({
       }
       sharedEvent.value = event;
       const stackTag = screenTransitionConfig.value.stackTag;
-      (global as any)._manageScreenTransition(ScreenTransitionCommand.Update, stackTag, progress);
+      (global as any)._manageScreenTransition(
+        ScreenTransitionCommand.Update,
+        stackTag,
+        progress
+      );
     })
     .onEnd(event => {
       if (!canPerformUpdates.value) {
@@ -169,6 +191,7 @@ const TransitionHandler = ({
         isTransitionCanceled =
           Math.abs(event.translationX + event.velocityX * 0.3) <
           screenSize.width / 2;
+        console.log(isTransitionCanceled, event.translationX, event.velocityX);
       } else if (goBackGesture === 'swipeDown' || goBackGesture === 'swipeUp') {
         isTransitionCanceled =
           Math.abs(event.translationY + event.velocityY * 0.3) <
@@ -176,8 +199,12 @@ const TransitionHandler = ({
       }
       const stackTag = screenTransitionConfig.value.stackTag;
       screenTransitionConfig.value.onFinishAnimation = () => {
-        (global as any)._manageScreenTransition(ScreenTransitionCommand.Finish, stackTag, isTransitionCanceled);
-      }
+        (global as any)._manageScreenTransition(
+          ScreenTransitionCommand.Finish,
+          stackTag,
+          isTransitionCanceled
+        );
+      };
       screenTransitionConfig.value.isTransitionCanceled = isTransitionCanceled;
       finishScreenTransition(screenTransitionConfig.value);
     });

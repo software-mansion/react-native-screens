@@ -23,6 +23,8 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import {
+  AnimatedScreenTransition,
+  GoBackGesture,
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
@@ -33,10 +35,6 @@ import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../utils/getStatusBarHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
-import {
-  AnimatedScreenTransition,
-  GoBackGesture,
-} from 'react-native-reanimated'; // to remove
 import GestureDetector from '../../gesture-handler/GestureDetector';
 
 const isAndroid = Platform.OS === 'android';
@@ -417,7 +415,7 @@ function NativeStackViewInner({
   return (
     <GestureDetector
       stackRefWrapper={stackRefWrapper}
-      goBackGesture={goBackGesture as any}
+      goBackGesture={goBackGesture}
       transitionAnimation={transitionAnimation}>
       <ScreenStack style={styles.container} stackRefWrapper={stackRefWrapper}>
         {routes.map((route, index) => (

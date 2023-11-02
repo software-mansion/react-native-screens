@@ -452,8 +452,8 @@ export type NativeStackNavigationOptions = {
    */
   transitionDuration?: number;
 
-  goBackGesture?: any;
-  transitionAnimation?: any;
+  goBackGesture?: GoBackGesture;
+  transitionAnimation?: AnimatedScreenTransition;
 };
 
 export type NativeStackNavigatorProps =
@@ -470,4 +470,42 @@ export type NativeStackDescriptor = Descriptor<
 
 export type NativeStackDescriptorMap = {
   [key: string]: NativeStackDescriptor;
+};
+
+// copy from Reanimated, to avoid strong dependency
+export type GoBackGesture =
+  | 'swipeRight'
+  | 'swipeLeft'
+  | 'swipeUp'
+  | 'swipeDown';
+
+export type PanGestureHandlerEventPayload = {
+  x: number;
+  y: number;
+  absoluteX: number;
+  absoluteY: number;
+  translationX: number;
+  translationY: number;
+  velocityX: number;
+  velocityY: number;
+};
+
+export interface MeasuredDimensions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  pageX: number;
+  pageY: number;
+}
+
+export type AnimatedScreenTransition = {
+  topScreenFrame: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions
+  ) => Record<string, unknown>;
+  belowTopScreenFrame: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions
+  ) => Record<string, unknown>;
 };
