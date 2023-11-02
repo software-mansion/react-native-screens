@@ -182,7 +182,6 @@ const TransitionHandler = ({
         isTransitionCanceled =
           Math.abs(event.translationX + event.velocityX * 0.3) <
           screenSize.width / 2;
-        console.log(isTransitionCanceled, event.translationX, event.velocityX);
       } else if (goBackGesture === 'swipeDown' || goBackGesture === 'swipeUp') {
         isTransitionCanceled =
           Math.abs(event.translationY + event.velocityY * 0.3) <
