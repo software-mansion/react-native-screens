@@ -1543,6 +1543,7 @@ RCT_ENUM_CONVERTER(
       @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
       @"slide_from_right" : @(RNSScreenStackAnimationDefault),
       @"slide_from_left" : @(RNSScreenStackAnimationDefault),
+      @"ios" : @(RNSScreenStackAnimationDefault),
     }),
     RNSScreenStackAnimationDefault,
     integerValue)

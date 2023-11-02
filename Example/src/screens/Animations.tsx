@@ -52,6 +52,7 @@ const MainScreen = ({
           'slide_from_bottom',
           'slide_from_right',
           'slide_from_left',
+          'ios',
           'none',
         ]}
       />
