@@ -22,17 +22,17 @@ RCT_EXPORT_MODULE()
   return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition:(nonnull NSNumber *)stackTag)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition : (nonnull NSNumber *)stackTag)
 {
   return [self _startTransition:stackTag];
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition : (nonnull NSNumber *)stackTag progress : (double)progress)
 {
   return @([self _updateTransition:stackTag progress:progress]);
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stackTag canceled:(bool)canceled)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)stackTag canceled : (bool)canceled)
 {
   return @([self _finishTransition:stackTag canceled:canceled]);
 }
@@ -42,20 +42,12 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
   RCTAssertMainQueue();
   RNSScreenStackView *view;
 #ifdef RCT_NEW_ARCH_ENABLED
-  view = [self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
+  view = (RNSScreenStackView *)[self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
 #else
   view = (RNSScreenStackView *)[self.bridge.uiManager viewForReactTag:reactTag];
 #endif // RCT_NEW_ARCH_ENABLED
   return view;
 }
-
-#ifdef RCT_NEW_ARCH_ENABLED
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
-{
-  return std::make_shared<facebook::react::NativeScreensModuleSpecJSI>(params);
-}
-#endif
 
 - (nonnull NSArray<NSNumber *> *)_startTransition:(nonnull NSNumber *)stackTag
 {
@@ -72,7 +64,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition:(nonnull NSNumber *)stac
     NSNumber *belowTopScreen = screens[screenCount - 2].view.reactTag;
     screens[screenCount - 2].view.transform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
     isActiveTransition = true;
-    screenTags = @[topScreen, belowTopScreen];
+    screenTags = @[ topScreen, belowTopScreen ];
   }
   [stackView startScreenTransition];
   return screenTags;
