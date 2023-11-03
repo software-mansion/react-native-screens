@@ -15,6 +15,7 @@ import RNRestart from 'react-native-restart';
 import { ListItem, SettingsSwitch } from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
+import SwipeBackAnimation from './src/screens/SwipeBackAnimation';
 import StackPresentation from './src/screens/StackPresentation';
 import HeaderOptions from './src/screens/HeaderOptions';
 import StatusBarExample from './src/screens/StatusBar';
@@ -47,6 +48,11 @@ const SCREENS: Record<
   SimpleNativeStack: {
     title: 'Simple Native Stack',
     component: SimpleNativeStack,
+    type: 'example',
+  },
+  SwipeBackAnimation: {
+    title: 'Swipe Back Animation',
+    component: SwipeBackAnimation,
     type: 'example',
   },
   StackPresentation: {
@@ -155,7 +161,24 @@ const ExampleApp = (): JSX.Element => (
   <GestureHandlerRootView style={{ flex: 1 }}>
     <GestureDetectorProvider>
       <NavigationContainer>
-        <SimpleNativeStack />
+        <Stack.Navigator
+          screenOptions={{
+            direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+          }}>
+          <Stack.Screen
+            name="Main"
+            options={{ title: '📱 React Native Screens Examples' }}
+            component={MainScreen}
+          />
+          {Object.keys(SCREENS).map(name => (
+            <Stack.Screen
+              key={name}
+              name={name}
+              getComponent={() => SCREENS[name].component}
+              options={{ headerShown: false }}
+            />
+          ))}
+        </Stack.Navigator>
       </NavigationContainer>
     </GestureDetectorProvider>
   </GestureHandlerRootView>

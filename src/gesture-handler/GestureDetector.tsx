@@ -32,6 +32,9 @@ const TransitionHandler = ({
   transitionAnimation: userTransitionAnimation,
 }: GestureProviderProps) => {
   const ScreenSize = Dimensions.get('window');
+  if (stackRefWrapper == null) {
+    throw new Error('You have to specify `stackRefWrapper`');
+  }
   stackRefWrapper.ref = useAnimatedRef();
   const defaultEvent: GestureUpdateEvent<PanGestureHandlerEventPayload> = {
     absoluteX: 0,
