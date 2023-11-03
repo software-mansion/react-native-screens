@@ -8,6 +8,7 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
+  GHContext,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -35,7 +36,6 @@ import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../utils/getStatusBarHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
-import GestureDetector from '../../gesture-handler/GestureDetector';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -410,7 +410,7 @@ function NativeStackViewInner({
   const { key, routes } = state;
 
   const stackRefWrapper: any = {};
-  // const GestureDetector = React.useContext(GHContext) as any; // TO FIX
+  const GestureDetector = React.useContext(GHContext);
 
   return (
     <GestureDetector
