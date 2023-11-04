@@ -211,6 +211,13 @@ namespace react = facebook::react;
   _gestureEnabled = gestureEnabled;
 }
 
+- (void)setOnModalDismiss:(RCTDirectEventBlock)onModalDismiss {
+    _onModalDismiss = onModalDismiss;
+    if (@available(iOS 13.0, tvOS 13.0, *)) {
+        _controller.modalInPresentation = onModalDismiss != nil;
+    }
+}
+
 - (void)setReplaceAnimation:(RNSScreenReplaceAnimation)replaceAnimation
 {
   _replaceAnimation = replaceAnimation;
@@ -977,6 +984,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   _isSwiping = NO;
   _shouldNotify = YES;
+  self.presentationController.delegate = self;
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -1166,6 +1174,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
   }
   return nil;
+}
+
+#pragma mark - UIAdaptivePresentationControllerDelegate
+
+- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController {
+    if (self.screenView.onModalDismiss) {
+        self.screenView.onModalDismiss(nil);
+    }
 }
 
 #pragma mark - transition progress related methods
@@ -1462,6 +1478,7 @@ RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onModalDismiss, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)

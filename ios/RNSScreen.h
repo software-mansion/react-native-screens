@@ -31,7 +31,7 @@ namespace react = facebook::react;
 
 @class RNSScreenView;
 
-@interface RNSScreen : UIViewController <RNSViewControllerDelegate>
+@interface RNSScreen : UIViewController <RNSViewControllerDelegate, UIAdaptivePresentationControllerDelegate>
 
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
@@ -108,6 +108,7 @@ namespace react = facebook::react;
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 @property (nonatomic, copy) RCTDirectEventBlock onGestureCancel;
+@property (nonatomic, copy) RCTDirectEventBlock onModalDismiss;
 #endif // RCT_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;

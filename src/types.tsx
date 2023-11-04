@@ -183,6 +183,13 @@ export interface ScreenProps extends ViewProps {
    */
   onDisappear?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
+  /**
+   * A callback that gets is called when an attempt is made to dismiss the presented view controller.
+   *
+   * @platform ios
+   */
+  onModalDismiss?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
    * A callback that gets called when the current screen is dismissed by hardware back (on Android) or dismiss gesture (swipe back or down).
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
