@@ -190,6 +190,7 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
+    onModalDismiss,
   } = options;
 
   let {
@@ -277,6 +278,7 @@ const RouteView = ({
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
+      onModalDismiss={onModalDismiss}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
       hideKeyboardOnSwipe={hideKeyboardOnSwipe}
       homeIndicatorHidden={homeIndicatorHidden}

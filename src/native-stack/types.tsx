@@ -451,6 +451,12 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   transitionDuration?: number;
+  /**
+   * A callback that gets is called when an attempt is made to dismiss the presented view controller.
+   *
+   * @platform ios
+   */
+  onModalDismiss?: () => void;
 };
 
 export type NativeStackNavigatorProps =
