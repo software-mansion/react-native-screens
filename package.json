@@ -26,6 +26,7 @@
     "common/",
     "lib/",
     "native-stack/",
+    "gesture-handler/",
     "reanimated/",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
