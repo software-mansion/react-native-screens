@@ -31,6 +31,9 @@ def isNewArchitectureEnabled() {
 }
 
 def shouldUseCommonInterfaceFromReanimated() {
+    if (project.hasProperty("useCommonInterfaceFromReanimated")) {
+        return project.useCommonInterfaceFromReanimated == "true"
+    }
     def reanimated = rootProject.subprojects.find { it.name == 'react-native-reanimated' }
     if (reanimated != null) {
         def inputFile = new File(reanimated.projectDir, '../package.json')
