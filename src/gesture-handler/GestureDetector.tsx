@@ -11,13 +11,24 @@ import {
   useAnimatedRef,
   useSharedValue,
   measure,
-  MeasuredDimensions,
   startScreenTransition,
   finishScreenTransition,
   ScreenTransition,
   makeMutable,
 } from 'react-native-reanimated';
 import type { GestureProviderProps } from 'src/native-stack/types';
+
+declare global {
+  // eslint-disable-next-line no-var
+  var _manageScreenTransition: (
+    command: number,
+    stackTag: number,
+    additionalParam: unknown
+  ) => {
+    topScreenTag: number;
+    belowTopScreenTag: number;
+  };
+}
 
 enum ScreenTransitionCommand {
   Start = 1,
@@ -31,7 +42,6 @@ const TransitionHandler = ({
   goBackGesture,
   transitionAnimation: userTransitionAnimation,
 }: GestureProviderProps) => {
-  const ScreenSize = Dimensions.get('window');
   if (stackRefWrapper == null) {
     throw new Error('You have to specify `stackRefWrapper`');
   }
@@ -52,7 +62,7 @@ const TransitionHandler = ({
   const sharedEvent = useSharedValue(defaultEvent);
   const startingGesturePosition = useSharedValue(defaultEvent);
   const canPerformUpdates = useSharedValue(false);
-  let transitionAnimation;
+  let transitionAnimation = ScreenTransition.SwipeRight;
   if (userTransitionAnimation) {
     transitionAnimation = userTransitionAnimation;
     if (!goBackGesture) {
@@ -80,7 +90,7 @@ const TransitionHandler = ({
       topScreenTag: -1,
       sharedEvent,
       startingGesturePosition,
-      screenTransition: transitionAnimation as any,
+      screenTransition: transitionAnimation,
       isSwipeGesture: true,
       isTransitionCanceled: false,
       goBackGesture: goBackGesture ?? 'swipeRight',
@@ -102,8 +112,12 @@ const TransitionHandler = ({
     .onStart(event => {
       sharedEvent.value = defaultEvent;
       const transitionConfig = screenTransitionConfig.value;
-      const stackTag = (stackRefWrapper as any).ref();
-      const screenTags = (global as any)._manageScreenTransition(
+      const animatedRef = stackRefWrapper.ref;
+      if (!animatedRef) {
+        throw new Error('[Reanimated] Unable to recognize stack ref.');
+      }
+      const stackTag = (animatedRef as () => number)();
+      const screenTags = global._manageScreenTransition(
         ScreenTransitionCommand.Start,
         stackTag,
         null
@@ -116,13 +130,16 @@ const TransitionHandler = ({
       transitionConfig.belowTopScreenTag = screenTags.belowTopScreenTag;
       transitionConfig.stackTag = stackTag;
       startingGesturePosition.value = event;
-      const screenSize: MeasuredDimensions = measure((() => {
-        'worklet';
+      const animatedRefMock = () => {
         return screenTransitionConfig.value.topScreenTag;
-      }) as any)!;
+      };
+      const screenSize = measure(animatedRefMock as any);
+      if (screenSize == null) {
+        throw new Error('[Reanimated] Failed to measure screen.');
+      }
       if (screenSize == null) {
         canPerformUpdates.value = false;
-        (global as any)._manageScreenTransition(
+        global._manageScreenTransition(
           ScreenTransitionCommand.Finish,
           stackTag,
           true
@@ -166,7 +183,7 @@ const TransitionHandler = ({
       }
       sharedEvent.value = event;
       const stackTag = screenTransitionConfig.value.stackTag;
-      (global as any)._manageScreenTransition(
+      global._manageScreenTransition(
         ScreenTransitionCommand.Update,
         stackTag,
         progress
@@ -176,10 +193,7 @@ const TransitionHandler = ({
       if (!canPerformUpdates.value) {
         return;
       }
-      const screenSize: MeasuredDimensions = measure((() => {
-        'worklet';
-        return screenTransitionConfig.value.topScreenTag;
-      }) as any)!;
+      const screenSize = screenTransitionConfig.value.screenDimensions;
       let isTransitionCanceled = false;
       if (goBackGesture === 'swipeRight' || goBackGesture === 'swipeLeft') {
         isTransitionCanceled =
@@ -192,7 +206,7 @@ const TransitionHandler = ({
       }
       const stackTag = screenTransitionConfig.value.stackTag;
       screenTransitionConfig.value.onFinishAnimation = () => {
-        (global as any)._manageScreenTransition(
+        global._manageScreenTransition(
           ScreenTransitionCommand.Finish,
           stackTag,
           isTransitionCanceled
@@ -214,7 +228,7 @@ const TransitionHandler = ({
   } else if (goBackGesture === 'swipeDown') {
     panGesture = panGesture
       .activeOffsetY(20)
-      .hitSlop({ top: 0, height: ScreenSize.height * 0.15 });
+      .hitSlop({ top: 0, height: Dimensions.get('window').height * 0.15 });
     // workaround, because we don't have access to header height
   } else if (goBackGesture === 'swipeUp') {
     panGesture = panGesture
