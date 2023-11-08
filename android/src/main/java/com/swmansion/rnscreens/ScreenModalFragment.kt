@@ -61,7 +61,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
             isHideable = true
             isDraggable = true
             state = BottomSheetBehavior.STATE_EXPANDED
-//            addBottomSheetCallback(bottomSheetDismissCallback)
+            addBottomSheetCallback(bottomSheetDismissCallback)
         }
         return bottomSheetDialog
     }
@@ -77,7 +77,11 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         requireDialog().setContentView(view)
 
         val callback = object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) = Unit
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    Log.i("ScreenModalFragment", "State change to hidden")
+                }
+            }
 
             //            override fun onStateChanged(bottomSheet: View, newState: Int) {
 //                if (newState == BottomSheetBehavior.STATE_HIDDEN) {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,12 +14,15 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.Transformation
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.swmansion.rnscreens.ext.recycle
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
@@ -90,6 +94,18 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
+    private val bottomSheetCallback = object : BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                this@ScreenStackFragment.dismiss()
+            }
+            Log.i("ScreenStackFragment", "Sheet state changed to $newState")
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -98,29 +114,47 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         val view: ScreensCoordinatorLayout? =
             context?.let { ScreensCoordinatorLayout(it, this) }
 
+//        screen.layoutParams = CoordinatorLayout.LayoutParams(
+//            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
+//        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
-        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
+        ).apply {
+            behavior = if (screen.stackPresentation == Screen.StackPresentation.MODAL) {
+                BottomSheetBehavior<FrameLayout>().apply {
+                    state = BottomSheetBehavior.STATE_EXPANDED
+                    addBottomSheetCallback(bottomSheetCallback)
+                    isHideable = true
+                    isDraggable = true
+                    skipCollapsed = true
+                }
+            } else {
+                ScrollingViewBehavior()
+            }
+        }
 
         view?.addView(screen.recycle())
 
-        mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
-            // By default AppBarLayout will have a background color set but since we cover the whole layout
-            // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
-            // role. On top of that it breaks screens animations when alfa offscreen compositing is off
-            // (which is the default)
-            setBackgroundColor(Color.TRANSPARENT)
-            layoutParams = AppBarLayout.LayoutParams(
-                AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-            )
-        }
+        if (screen.stackPresentation != Screen.StackPresentation.MODAL) {
+            mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
+                // By default AppBarLayout will have a background color set but since we cover the whole layout
+                // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
+                // role. On top of that it breaks screens animations when alfa offscreen compositing is off
+                // (which is the default)
+                setBackgroundColor(Color.TRANSPARENT)
+                layoutParams = AppBarLayout.LayoutParams(
+                    AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
 
-        view?.addView(mAppBarLayout)
-        if (mShadowHidden) {
-            mAppBarLayout?.targetElevation = 0f
+
+            view?.addView(mAppBarLayout)
+            if (mShadowHidden) {
+                mAppBarLayout?.targetElevation = 0f
+            }
+            mToolbar?.let { mAppBarLayout?.addView(it.recycle()) }
+            setHasOptionsMenu(true)
         }
-        mToolbar?.let { mAppBarLayout?.addView(it.recycle()) }
-        setHasOptionsMenu(true)
         return view
     }
 
