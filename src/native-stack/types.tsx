@@ -16,7 +16,6 @@ import {
   StyleProp,
   ViewStyle,
   ColorValue,
-  View,
 } from 'react-native';
 import {
   ScreenProps,
@@ -456,6 +455,7 @@ export type NativeStackNavigationOptions = {
 
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
+  nearByScreenEdgeGesture?: false;
 };
 
 export type NativeStackNavigatorProps =
@@ -479,7 +479,10 @@ export type GoBackGesture =
   | 'swipeRight'
   | 'swipeLeft'
   | 'swipeUp'
-  | 'swipeDown';
+  | 'swipeDown'
+  | 'verticalSwipe'
+  | 'horizontalSwipe'
+  | 'twoDimensionalSwipe';
 
 export type PanGestureHandlerEventPayload = {
   x: number;
@@ -513,7 +516,8 @@ export type AnimatedScreenTransition = {
 };
 
 export type GestureProviderProps = PropsWithChildren<{
-  stackRefWrapper?: { ref: React.Ref<View> };
-  goBackGesture?: GoBackGesture;
-  transitionAnimation?: AnimatedScreenTransition;
+  stackRef: React.MutableRefObject<unknown>;
+  goBackGesture: GoBackGesture | undefined;
+  transitionAnimation: AnimatedScreenTransition | undefined;
+  nearByScreenEdgeGesture: false | undefined;
 }>;

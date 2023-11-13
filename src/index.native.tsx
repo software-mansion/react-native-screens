@@ -207,7 +207,7 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
 }
 
 function ScreenStack(props: ScreenStackProps) {
-  const { children, stackRefWrapper, ...rest } = props;
+  const { children, stackRef, ...rest } = props;
   const size = React.Children.count(children);
   // freezes all screens except the top one
   const childrenWithFreeze = React.Children.map(children, (child, index) => {
@@ -226,7 +226,7 @@ function ScreenStack(props: ScreenStackProps) {
   return (
     <ScreensNativeModules.NativeScreenStack
       {...rest}
-      ref={stackRefWrapper?.ref}>
+      ref={stackRef?.current as React.MutableRefObject<React.Ref<View>>}>
       {childrenWithFreeze}
     </ScreensNativeModules.NativeScreenStack>
   );

@@ -36,16 +36,24 @@ enum ScreenTransitionCommand {
   Finish = 3,
 }
 
+const AnimationForGesture = {
+  swipeRight: ScreenTransition.SwipeRight,
+  swipeLeft: ScreenTransition.SwipeLeft,
+  swipeDown: ScreenTransition.SwipeDown,
+  swipeUp: ScreenTransition.SwipeUp,
+  horizontalSwipe: ScreenTransition.Horizontal,
+  verticalSwipe: ScreenTransition.Vertical,
+  twoDimensionalSwipe: ScreenTransition.TwoDimensional,
+};
+
 const TransitionHandler = ({
   children,
-  stackRefWrapper,
+  stackRef,
   goBackGesture,
+  nearByScreenEdgeGesture,
   transitionAnimation: userTransitionAnimation,
 }: GestureProviderProps) => {
-  if (stackRefWrapper == null) {
-    throw new Error('You have to specify `stackRefWrapper`');
-  }
-  stackRefWrapper.ref = useAnimatedRef();
+  stackRef.current = useAnimatedRef();
   const defaultEvent: GestureUpdateEvent<PanGestureHandlerEventPayload> = {
     absoluteX: 0,
     absoluteY: 0,
@@ -71,16 +79,8 @@ const TransitionHandler = ({
       );
     }
   } else {
-    if (goBackGesture === 'swipeRight') {
-      transitionAnimation = ScreenTransition.SwipeRight;
-    } else if (goBackGesture === 'swipeLeft') {
-      transitionAnimation = ScreenTransition.SwipeLeft;
-    } else if (goBackGesture === 'swipeDown') {
-      transitionAnimation = ScreenTransition.SwipeDown;
-    } else if (goBackGesture === 'swipeUp') {
-      transitionAnimation = ScreenTransition.SwipeUp;
-    } else if (goBackGesture !== undefined) {
-      throw new Error('Invalid value of `goBackGesture`: ' + goBackGesture);
+    if (goBackGesture !== undefined) {
+      transitionAnimation = AnimationForGesture[goBackGesture];
     }
   }
   const screenTransitionConfig = makeMutable(
@@ -108,132 +108,171 @@ const TransitionHandler = ({
     },
     true
   );
-  let panGesture = Gesture.Pan()
-    .onStart(event => {
-      sharedEvent.value = defaultEvent;
-      const transitionConfig = screenTransitionConfig.value;
-      const animatedRef = stackRefWrapper.ref;
-      if (!animatedRef) {
-        throw new Error('[Reanimated] Unable to recognize stack ref.');
-      }
-      const stackTag = (animatedRef as () => number)();
-      const screenTags = global._manageScreenTransition(
-        ScreenTransitionCommand.Start,
-        stackTag,
-        null
-      );
-      if (!screenTags) {
-        canPerformUpdates.value = false;
-        return;
-      }
-      transitionConfig.topScreenTag = screenTags.topScreenTag;
-      transitionConfig.belowTopScreenTag = screenTags.belowTopScreenTag;
-      transitionConfig.stackTag = stackTag;
-      startingGesturePosition.value = event;
-      const animatedRefMock = () => {
-        return screenTransitionConfig.value.topScreenTag;
-      };
-      const screenSize = measure(animatedRefMock as any);
-      if (screenSize == null) {
-        throw new Error('[Reanimated] Failed to measure screen.');
-      }
-      if (screenSize == null) {
-        canPerformUpdates.value = false;
-        global._manageScreenTransition(
-          ScreenTransitionCommand.Finish,
-          stackTag,
-          true
-        );
-        return;
-      }
-      transitionConfig.screenDimensions = screenSize;
-      startScreenTransition(transitionConfig);
-      canPerformUpdates.value = true;
-    })
-    .onUpdate(event => {
-      if (!canPerformUpdates.value) {
-        return;
-      }
-      if (goBackGesture === 'swipeRight' && event.translationX < 0) {
-        event.translationX = 0;
-      } else if (goBackGesture === 'swipeLeft' && event.translationX > 0) {
-        event.translationX = 0;
-      } else if (goBackGesture === 'swipeDown' && event.translationY < 0) {
-        event.translationY = 0;
-      } else if (goBackGesture === 'swipeUp' && event.translationY > 0) {
-        event.translationY = 0;
-      }
-      let progress = 0;
-      if (goBackGesture === 'swipeRight') {
-        const screenWidth = screenTransitionConfig.value.screenDimensions.width;
-        progress =
-          event.translationX /
-          (screenWidth - startingGesturePosition.value.absoluteX);
-      } else if (goBackGesture === 'swipeLeft') {
-        progress =
-          (-1 * event.translationX) / startingGesturePosition.value.absoluteX;
-      } else if (goBackGesture === 'swipeDown') {
-        const screenHeight =
-          screenTransitionConfig.value.screenDimensions.height;
-        progress =
-          (-1 * event.translationY) /
-          (screenHeight - startingGesturePosition.value.absoluteY);
-      } else if (goBackGesture === 'swipeUp') {
-        progress = event.translationY / startingGesturePosition.value.absoluteY;
-      }
-      sharedEvent.value = event;
-      const stackTag = screenTransitionConfig.value.stackTag;
-      global._manageScreenTransition(
-        ScreenTransitionCommand.Update,
-        stackTag,
-        progress
-      );
-    })
-    .onEnd(event => {
-      if (!canPerformUpdates.value) {
-        return;
-      }
-      const screenSize = screenTransitionConfig.value.screenDimensions;
-      let isTransitionCanceled = false;
-      if (goBackGesture === 'swipeRight' || goBackGesture === 'swipeLeft') {
-        isTransitionCanceled =
-          Math.abs(event.translationX + event.velocityX * 0.3) <
-          screenSize.width / 2;
-      } else if (goBackGesture === 'swipeDown' || goBackGesture === 'swipeUp') {
-        isTransitionCanceled =
-          Math.abs(event.translationY + event.velocityY * 0.3) <
-          screenSize.height / 2;
-      }
-      const stackTag = screenTransitionConfig.value.stackTag;
-      screenTransitionConfig.value.onFinishAnimation = () => {
-        global._manageScreenTransition(
-          ScreenTransitionCommand.Finish,
-          stackTag,
-          isTransitionCanceled
-        );
-      };
-      screenTransitionConfig.value.isTransitionCanceled = isTransitionCanceled;
-      finishScreenTransition(screenTransitionConfig.value);
-    });
+  const refCurrent = stackRef.current;
+  if (refCurrent === null) {
+    throw new Error('You have to specify `stackRefWrapper`');
+  }
 
-  const HIT_SLOP_SIZE = 50;
-  if (goBackGesture === 'swipeRight') {
-    panGesture = panGesture
-      .activeOffsetX(20)
-      .hitSlop({ left: 0, top: 0, width: HIT_SLOP_SIZE });
-  } else if (goBackGesture === 'swipeLeft') {
-    panGesture = panGesture
-      .activeOffsetX(-20)
-      .hitSlop({ right: 0, top: 0, width: HIT_SLOP_SIZE });
-  } else if (goBackGesture === 'swipeDown') {
-    panGesture = panGesture
-      .activeOffsetY(20)
-      .hitSlop({ top: 0, height: Dimensions.get('window').height * 0.15 });
-    // workaround, because we don't have access to header height
-  } else if (goBackGesture === 'swipeUp') {
-    panGesture = panGesture
-      .activeOffsetY(-20)
-      .hitSlop({ bottom: 0, height: HIT_SLOP_SIZE });
+  function onStart(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
+    'worklet';
+    sharedEvent.value = defaultEvent;
+    const transitionConfig = screenTransitionConfig.value;
+    const animatedRef = refCurrent;
+    if (!animatedRef) {
+      throw new Error('[Reanimated] Unable to recognize stack ref.');
+    }
+    const stackTag = (animatedRef as () => number)();
+    const screenTags = global._manageScreenTransition(
+      ScreenTransitionCommand.Start,
+      stackTag,
+      null
+    );
+    if (!screenTags) {
+      canPerformUpdates.value = false;
+      return;
+    }
+    transitionConfig.topScreenTag = screenTags.topScreenTag;
+    transitionConfig.belowTopScreenTag = screenTags.belowTopScreenTag;
+    transitionConfig.stackTag = stackTag;
+    startingGesturePosition.value = event;
+    const animatedRefMock = () => {
+      return screenTransitionConfig.value.topScreenTag;
+    };
+    const screenSize = measure(animatedRefMock as any);
+    if (screenSize == null) {
+      throw new Error('[Reanimated] Failed to measure screen.');
+    }
+    if (screenSize == null) {
+      canPerformUpdates.value = false;
+      global._manageScreenTransition(
+        ScreenTransitionCommand.Finish,
+        stackTag,
+        true
+      );
+      return;
+    }
+    transitionConfig.screenDimensions = screenSize;
+    startScreenTransition(transitionConfig);
+    canPerformUpdates.value = true;
+  }
+
+  function onUpdate(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
+    'worklet';
+    if (!canPerformUpdates.value) {
+      return;
+    }
+    if (goBackGesture === 'swipeRight' && event.translationX < 0) {
+      event.translationX = 0;
+    } else if (goBackGesture === 'swipeLeft' && event.translationX > 0) {
+      event.translationX = 0;
+    } else if (goBackGesture === 'swipeDown' && event.translationY < 0) {
+      event.translationY = 0;
+    } else if (goBackGesture === 'swipeUp' && event.translationY > 0) {
+      event.translationY = 0;
+    }
+    let progress = 0;
+    if (goBackGesture === 'swipeRight') {
+      const screenWidth = screenTransitionConfig.value.screenDimensions.width;
+      progress =
+        event.translationX /
+        (screenWidth - startingGesturePosition.value.absoluteX);
+    } else if (goBackGesture === 'swipeLeft') {
+      progress =
+        (-1 * event.translationX) / startingGesturePosition.value.absoluteX;
+    } else if (goBackGesture === 'swipeDown') {
+      const screenHeight = screenTransitionConfig.value.screenDimensions.height;
+      progress =
+        (-1 * event.translationY) /
+        (screenHeight - startingGesturePosition.value.absoluteY);
+    } else if (goBackGesture === 'swipeUp') {
+      progress = event.translationY / startingGesturePosition.value.absoluteY;
+    } else if (goBackGesture === 'horizontalSwipe') {
+      const screenWidth = screenTransitionConfig.value.screenDimensions.width;
+      progress = Math.abs(event.translationX / screenWidth / 2);
+    } else if (goBackGesture === 'verticalSwipe') {
+      const screenHeight = screenTransitionConfig.value.screenDimensions.height;
+      progress = Math.abs(event.translationY / screenHeight / 2);
+    } else if (goBackGesture === 'twoDimensionalSwipe') {
+      const screenWidth = screenTransitionConfig.value.screenDimensions.width;
+      const progressX = Math.abs(event.translationX / screenWidth / 2);
+      const screenHeight = screenTransitionConfig.value.screenDimensions.height;
+      const progressY = Math.abs(event.translationY / screenHeight / 2);
+      progress = Math.max(progressX, progressY);
+    }
+    sharedEvent.value = event;
+    const stackTag = screenTransitionConfig.value.stackTag;
+    global._manageScreenTransition(
+      ScreenTransitionCommand.Update,
+      stackTag,
+      progress
+    );
+  }
+
+  function onEnd(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
+    'worklet';
+    if (!canPerformUpdates.value) {
+      return;
+    }
+    const screenSize = screenTransitionConfig.value.screenDimensions;
+    const distanceX = event.translationX + event.velocityX * 0.3;
+    const distanceY = event.translationY + event.velocityY * 0.3;
+    const requiredXDistance = screenSize.width / 2;
+    const requiredYDistance = screenSize.height / 2;
+    let isTransitionCanceled = false;
+    if (goBackGesture === 'swipeRight') {
+      isTransitionCanceled = distanceX < requiredXDistance;
+    } else if (goBackGesture === 'swipeLeft') {
+      isTransitionCanceled = -distanceX < requiredXDistance;
+    } else if (goBackGesture === 'horizontalSwipe') {
+      isTransitionCanceled = Math.abs(distanceX) < requiredXDistance;
+    } else if (goBackGesture === 'swipeUp') {
+      isTransitionCanceled = distanceY < requiredYDistance;
+    } else if (goBackGesture === 'swipeDown') {
+      isTransitionCanceled = -distanceY < requiredYDistance;
+    } else if (goBackGesture === 'verticalSwipe') {
+      isTransitionCanceled = Math.abs(distanceY) < requiredYDistance;
+    } else if (goBackGesture === 'twoDimensionalSwipe') {
+      const isCanceledHorizontally = Math.abs(distanceX) < requiredXDistance;
+      const isCanceledVertically = Math.abs(distanceY) < requiredYDistance;
+      isTransitionCanceled = isCanceledHorizontally && isCanceledVertically;
+    }
+    const stackTag = screenTransitionConfig.value.stackTag;
+    screenTransitionConfig.value.onFinishAnimation = () => {
+      global._manageScreenTransition(
+        ScreenTransitionCommand.Finish,
+        stackTag,
+        isTransitionCanceled
+      );
+    };
+    screenTransitionConfig.value.isTransitionCanceled = isTransitionCanceled;
+    finishScreenTransition(screenTransitionConfig.value);
+  }
+
+  let panGesture = Gesture.Pan()
+    .onStart(onStart)
+    .onUpdate(onUpdate)
+    .onEnd(onEnd);
+
+  if (nearByScreenEdgeGesture) {
+    const HIT_SLOP_SIZE = 50;
+    if (goBackGesture === 'swipeRight') {
+      panGesture = panGesture
+        .activeOffsetX(20)
+        .hitSlop({ left: 0, top: 0, width: HIT_SLOP_SIZE });
+    } else if (goBackGesture === 'swipeLeft') {
+      panGesture = panGesture
+        .activeOffsetX(-20)
+        .hitSlop({ right: 0, top: 0, width: HIT_SLOP_SIZE });
+    } else if (goBackGesture === 'swipeDown') {
+      panGesture = panGesture
+        .activeOffsetY(20)
+        .hitSlop({ top: 0, height: Dimensions.get('window').height * 0.15 });
+      // workaround, because we don't have access to header height
+    } else if (goBackGesture === 'swipeUp') {
+      panGesture = panGesture
+        .activeOffsetY(-20)
+        .hitSlop({ bottom: 0, height: HIT_SLOP_SIZE });
+    }
   }
   if (!goBackGesture) {
     return <>{children}</>;

@@ -24,8 +24,6 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import {
-  AnimatedScreenTransition,
-  GoBackGesture,
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
@@ -396,28 +394,29 @@ type Props = {
   state: StackNavigationState<ParamListBase>;
   navigation: NativeStackNavigationHelpers;
   descriptors: NativeStackDescriptorMap;
-  goBackGesture?: GoBackGesture;
-  transitionAnimation?: AnimatedScreenTransition;
 };
 
 function NativeStackViewInner({
   state,
   navigation,
   descriptors,
-  goBackGesture,
-  transitionAnimation,
 }: Props): JSX.Element {
   const { key, routes } = state;
 
-  const stackRefWrapper: any = {};
+  const topScreenOptions = descriptors[state.routes[state.index].key].options;
+
+  const stackRef = React.useRef(null);
   const GestureDetector = React.useContext(GHContext);
 
   return (
     <GestureDetector
-      stackRefWrapper={stackRefWrapper}
-      goBackGesture={goBackGesture}
-      transitionAnimation={transitionAnimation}>
-      <ScreenStack style={styles.container} stackRefWrapper={stackRefWrapper}>
+      stackRef={stackRef}
+      goBackGesture={topScreenOptions?.goBackGesture}
+      transitionAnimation={topScreenOptions?.transitionAnimation}
+      nearByScreenEdgeGesture={
+        topScreenOptions?.nearByScreenEdgeGesture ?? false
+      }>
+      <ScreenStack style={styles.container} stackRef={stackRef}>
         {routes.map((route, index) => (
           <RouteView
             key={route.key}

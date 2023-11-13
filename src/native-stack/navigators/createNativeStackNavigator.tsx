@@ -34,7 +34,6 @@ function NativeStackNavigator({
     children,
     screenOptions,
   });
-  const topScreenOptions = descriptors[state.routes[state.index].key].options;
   // Starting from React Navigation v6, `native-stack` should be imported from
   // `@react-navigation/native-stack` rather than `react-native-screens/native-stack`
   React.useEffect(() => {
@@ -81,8 +80,6 @@ function NativeStackNavigator({
       state={state}
       navigation={navigation}
       descriptors={descriptors}
-      goBackGesture={topScreenOptions?.goBackGesture}
-      transitionAnimation={topScreenOptions?.transitionAnimation}
     />
   );
 }

@@ -53,14 +53,13 @@ const App = (): JSX.Element => (
       headerHideBackButton: true,
       direction: I18nManager.isRTL ? 'rtl' : 'ltr',
       stackAnimation: 'none',
-      goBackGesture: 'swipeRight',
     }}>
     <Stack.Screen name="ScreenA" component={MainScreen} />
     <Stack.Screen
       name="ScreenB"
       component={ScreenB}
       options={{
-        goBackGesture: 'swipeLeft',
+        goBackGesture: 'twoDimensionalSwipe',
       }}
     />
     <Stack.Screen name="ScreenC" component={ScreenC} options={{}} />
