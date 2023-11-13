@@ -117,6 +117,13 @@ namespace react = facebook::react;
 #endif
 }
 
+- (void)setFrame:(CGRect)frame
+{
+  if (!self.controller.isChangingOrientation) {
+    [super setFrame:frame];
+  }
+}
+
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
 {
   switch (stackPresentation) {
@@ -880,6 +887,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   BOOL _goingForward;
   int _dismissCount;
   BOOL _isSwiping;
+  BOOL isChangingOrientation;
   BOOL _shouldNotify;
 }
 
@@ -1008,6 +1016,23 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #else
   [self traverseForScrollView:self.screenView];
 #endif
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size
+       withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+  [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+  self->isChangingOrientation = true;
+  NSLog(@"IsChangingOrientation: true");
+  [coordinator
+      animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> coordinator) {
+        self.screenView.frame = CGRectMake(0, 0, size.width, size.height);
+      }
+      completion:^(id<UIViewControllerTransitionCoordinatorContext> coordinator) {
+        self->isChangingOrientation = false;
+        [self.screenView setNeedsLayout];
+        NSLog(@"IsChangingOrientation: false");
+      }];
 }
 
 - (void)viewDidLayoutSubviews

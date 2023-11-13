@@ -33,6 +33,8 @@ namespace react = facebook::react;
 
 @interface RNSScreen : UIViewController <RNSViewControllerDelegate>
 
+@property (nonatomic) BOOL isChangingOrientation;
+
 - (instancetype)initWithView:(UIView *)view;
 - (UIViewController *)findChildVCForConfigAndTrait:(RNSWindowTrait)trait includingModals:(BOOL)includingModals;
 - (BOOL)hasNestedStack;
