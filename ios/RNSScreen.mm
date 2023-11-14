@@ -39,6 +39,7 @@ namespace react = facebook::react;
 
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
+  CADisplayLink *_displayLink;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -91,6 +92,8 @@ namespace react = facebook::react;
   _sheetCustomDetents = [NSArray array];
   _sheetCustomLargestUndimmedDetent = nil;
 #endif // !TARGET_OS_TV
+  _displayLink = nil;
+  //  _displayLink = [CADisplayLink displayLinkWithTarget:self selector:<#(nonnull SEL)#>]
 }
 
 - (UIViewController *)reactViewController
@@ -104,6 +107,23 @@ namespace react = facebook::react;
   return _reactSubviews;
 }
 #endif
+
+- (void)setBounds:(CGRect)bounds
+{
+  [super setBounds:bounds];
+  NSLog(@"setBounds (%f, %f), (%f, %f)", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
+}
+
+- (void)setFrame:(CGRect)frame
+{
+  [super setFrame:frame];
+  if (self->_stackPresentation == RNSScreenStackPresentationFormSheet) {
+    //    NSLog(@"setFrame (%f, %f), (%f, %f)",
+    //          frame.origin.x, frame.origin.y,
+    //          frame.size.width, frame.size.height);
+    NSLog(@"setFrame (%f, %f)", frame.size.width, frame.size.height);
+  }
+}
 
 - (void)updateBounds
 {
@@ -124,24 +144,37 @@ namespace react = facebook::react;
     }
   }
 #else
-  CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
-  if (sizeAnimation && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
-    CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
-    callbackOnlyAnimation.duration = sizeAnimation.duration;
-    callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
-    callbackOnlyAnimation.delegate = self;
-    [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
-  } else {
-    [_bridge.uiManager setSize:self.bounds.size forView:self];
-  }
+  //  CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
+  //  if (sizeAnimation && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
+  //  if (sizeAnimation && self.layer.presentationLayer.frame.size.height > self.bounds.size.height) {
+  //  if (sizeAnimation) {
+  //    CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
+  //    callbackOnlyAnimation.duration = sizeAnimation.duration;
+  //    callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
+  //    callbackOnlyAnimation.delegate = self;
+  //    NSLog(@"Adding animation");
+  //    [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
+  //    CGRect bounds = self.layer.presentationLayer.bounds;
+  //    NSLog(@"Sending (%f, %f) size to UIM (ANIM)", bounds.size.width, bounds.size.height);
+  //
+  //    [_bridge.uiManager setSize:self.layer.presentationLayer.bounds.size forView:self];
+  //  } else {
+  //    NSLog(@"Sending (%f, %f) size to UIM", self.bounds.size.width, self.bounds.size.height);
+  //    [_bridge.uiManager setSize:self.bounds.size forView:self];
+  //  }
+  [_bridge.uiManager setSize:self.bounds.size forView:self];
 #endif
+}
+
+- (void)animationDidStart:(CAAnimation *)animation
+{
 }
 
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
 {
-  if (finished) {
-    [self updateBounds];
-  }
+  //  if (finished) {
+  [self updateBounds];
+  //  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
@@ -690,43 +723,6 @@ namespace react = facebook::react;
       } else {
         RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
       }
-
-      if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
-        sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
-        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
-          [sheet animateChanges:^{
-            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
-          }];
-        }
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
-        sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
-        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
-          [sheet animateChanges:^{
-            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-          }];
-        }
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeCustom) {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-        if (@available(iOS 16.0, *)) {
-          sheet.detents = [self detentsFromSnapPoints];
-        }
-#endif // Check for iOS >= 16
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
-        NSMutableArray<UISheetPresentationControllerDetent *> *detents = [NSMutableArray arrayWithArray:@[
-          UISheetPresentationControllerDetent.mediumDetent,
-          UISheetPresentationControllerDetent.largeDetent,
-        ]];
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-        if (@available(iOS 16.0, *)) {
-          //          [detents addObjectsFromArray:[self detentsFromSnapPoints]];
-        }
-#endif // Check for iOS >= 16
-        sheet.detents = detents;
-      } else {
-        RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
-      }
     }
   }
 #endif // Check for iOS >= 15
@@ -737,16 +733,16 @@ namespace react = facebook::react;
 - (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
     API_AVAILABLE(ios(16.0))
 {
-  NSLog(@"RNSScreen detentsFromSnapPoints");
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
-      [NSMutableArray arrayWithCapacity:_sheetCustomDetents.count];
-  for (NSNumber *val in _sheetCustomDetents) {
-    NSLog(@"RNSScreen detentsFromSnapPoints considering detent %f", val.floatValue);
+      [NSMutableArray arrayWithCapacity:fractions.count];
+  int detentIndex = 0;
+  for (NSNumber *frac in fractions) {
+    NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     return ctx.maximumDetentValue * val.floatValue;
+                                                     return ctx.maximumDetentValue * frac.floatValue;
                                                    }]];
     ++detentIndex;
   }
@@ -941,6 +937,13 @@ namespace react = facebook::react;
 {
   [super didSetProps:changedProps];
 #if !TARGET_OS_TV
+  if ([changedProps containsObject:@"stackPresentation"] &&
+      self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    //    if (_displayLink == nil) {
+    //      _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateBounds)];
+    //      [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    //    }
+  }
   [self updateFormSheetPresentationStyle];
 #endif // !TARGET_OS_TV
 }
@@ -969,6 +972,7 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _controller = nil;
+  //  [_displayLink invalidate];
 }
 #endif
 
