@@ -404,7 +404,6 @@ function NativeStackViewInner({
   const { key, routes } = state;
 
   const topScreenOptions = descriptors[state.routes[state.index].key].options;
-
   const stackRef = React.useRef(null);
   const GestureDetector = React.useContext(GHContext);
 
@@ -413,9 +412,7 @@ function NativeStackViewInner({
       stackRef={stackRef}
       goBackGesture={topScreenOptions?.goBackGesture}
       transitionAnimation={topScreenOptions?.transitionAnimation}
-      nearByScreenEdgeGesture={
-        topScreenOptions?.nearByScreenEdgeGesture ?? false
-      }>
+      screenEdgeGesture={topScreenOptions?.screenEdgeGesture ?? false}>
       <ScreenStack style={styles.container} stackRef={stackRef}>
         {routes.map((route, index) => (
           <RouteView

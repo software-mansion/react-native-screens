@@ -455,7 +455,7 @@ export type NativeStackNavigationOptions = {
 
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
-  nearByScreenEdgeGesture?: false;
+  screenEdgeGesture?: false;
 };
 
 export type NativeStackNavigatorProps =
@@ -519,5 +519,5 @@ export type GestureProviderProps = PropsWithChildren<{
   stackRef: React.MutableRefObject<unknown>;
   goBackGesture: GoBackGesture | undefined;
   transitionAnimation: AnimatedScreenTransition | undefined;
-  nearByScreenEdgeGesture: false | undefined;
+  screenEdgeGesture: false | undefined;
 }>;

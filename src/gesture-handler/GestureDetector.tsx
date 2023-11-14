@@ -1,6 +1,5 @@
 import React from 'react';
 import { Dimensions } from 'react-native';
-
 import {
   GestureDetector,
   Gesture,
@@ -46,41 +45,68 @@ const AnimationForGesture = {
   twoDimensionalSwipe: ScreenTransition.TwoDimensional,
 };
 
+const EmptyGestureHandler = Gesture.Tap();
+
+const SupportedGestures = [
+  'swipeRight',
+  'swipeLeft',
+  'swipeDown',
+  'swipeUp',
+  'horizontalSwipe',
+  'verticalSwipe',
+  'twoDimensionalSwipe',
+];
+
+const DefaultEvent: GestureUpdateEvent<PanGestureHandlerEventPayload> = {
+  absoluteX: 0,
+  absoluteY: 0,
+  handlerTag: 0,
+  numberOfPointers: 0,
+  state: 0,
+  translationX: 0,
+  translationY: 0,
+  velocityX: 0,
+  velocityY: 0,
+  x: 0,
+  y: 0,
+};
+
+const DefaultScreenDimensions = {
+  width: 0,
+  height: 0,
+  x: 0,
+  y: 0,
+  pageX: 0,
+  pageY: 0,
+};
+
 const TransitionHandler = ({
   children,
   stackRef,
   goBackGesture,
-  nearByScreenEdgeGesture,
+  screenEdgeGesture,
   transitionAnimation: userTransitionAnimation,
 }: GestureProviderProps) => {
+  if (stackRef === undefined) {
+    throw new Error('[RNScreens] You have to specify `stackRef`');
+  }
   stackRef.current = useAnimatedRef();
-  const defaultEvent: GestureUpdateEvent<PanGestureHandlerEventPayload> = {
-    absoluteX: 0,
-    absoluteY: 0,
-    handlerTag: 0,
-    numberOfPointers: 0,
-    state: 0,
-    translationX: 0,
-    translationY: 0,
-    velocityX: 0,
-    velocityY: 0,
-    x: 0,
-    y: 0,
-  };
-  const sharedEvent = useSharedValue(defaultEvent);
-  const startingGesturePosition = useSharedValue(defaultEvent);
+  const sharedEvent = useSharedValue(DefaultEvent);
+  const startingGesturePosition = useSharedValue(DefaultEvent);
   const canPerformUpdates = useSharedValue(false);
   let transitionAnimation = ScreenTransition.SwipeRight;
   if (userTransitionAnimation) {
     transitionAnimation = userTransitionAnimation;
     if (!goBackGesture) {
       throw new Error(
-        'You have to specify `goBackGesture` when using `transitionAnimation`'
+        '[RNScreens] You have to specify `goBackGesture` when using `transitionAnimation`'
       );
     }
   } else {
-    if (goBackGesture !== undefined) {
+    if (!!goBackGesture && SupportedGestures.includes(goBackGesture)) {
       transitionAnimation = AnimationForGesture[goBackGesture];
+    } else if (goBackGesture !== undefined) {
+      throw new Error(`[RNScreens] Unknown goBackGesture: ${goBackGesture}`);
     }
   }
   const screenTransitionConfig = makeMutable(
@@ -91,17 +117,9 @@ const TransitionHandler = ({
       sharedEvent,
       startingGesturePosition,
       screenTransition: transitionAnimation,
-      isSwipeGesture: true,
       isTransitionCanceled: false,
       goBackGesture: goBackGesture ?? 'swipeRight',
-      screenDimensions: {
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0,
-        pageX: 0,
-        pageY: 0,
-      },
+      screenDimensions: DefaultScreenDimensions,
       onFinishAnimation: () => {
         'worklet';
       },
@@ -110,12 +128,12 @@ const TransitionHandler = ({
   );
   const refCurrent = stackRef.current;
   if (refCurrent === null) {
-    throw new Error('You have to specify `stackRefWrapper`');
+    throw new Error('[RNScreens] You have to specify `stackRefWrapper`');
   }
 
   function onStart(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
     'worklet';
-    sharedEvent.value = defaultEvent;
+    sharedEvent.value = event;
     const transitionConfig = screenTransitionConfig.value;
     const animatedRef = refCurrent;
     if (!animatedRef) {
@@ -253,7 +271,7 @@ const TransitionHandler = ({
     .onUpdate(onUpdate)
     .onEnd(onEnd);
 
-  if (nearByScreenEdgeGesture) {
+  if (screenEdgeGesture) {
     const HIT_SLOP_SIZE = 50;
     if (goBackGesture === 'swipeRight') {
       panGesture = panGesture
@@ -266,7 +284,7 @@ const TransitionHandler = ({
     } else if (goBackGesture === 'swipeDown') {
       panGesture = panGesture
         .activeOffsetY(20)
-        .hitSlop({ top: 0, height: Dimensions.get('window').height * 0.15 });
+        .hitSlop({ top: 0, height: Dimensions.get('window').height * 0.2 });
       // workaround, because we don't have access to header height
     } else if (goBackGesture === 'swipeUp') {
       panGesture = panGesture
@@ -274,10 +292,12 @@ const TransitionHandler = ({
         .hitSlop({ bottom: 0, height: HIT_SLOP_SIZE });
     }
   }
-  if (!goBackGesture) {
-    return <>{children}</>;
-  }
-  return <GestureDetector gesture={panGesture}>{children}</GestureDetector>;
+  return (
+    <GestureDetector
+      gesture={goBackGesture ? panGesture : EmptyGestureHandler}>
+      {children}
+    </GestureDetector>
+  );
 };
 
 export default TransitionHandler;

@@ -5,7 +5,6 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import { Button } from '../shared';
-// import { ScreenTransition } from 'react-native-reanimated';
 
 type StackParamList = {
   ScreenA: undefined;
@@ -62,7 +61,7 @@ const App = (): JSX.Element => (
         goBackGesture: 'twoDimensionalSwipe',
       }}
     />
-    <Stack.Screen name="ScreenC" component={ScreenC} options={{}} />
+    <Stack.Screen name="ScreenC" component={ScreenC} />
   </Stack.Navigator>
 );
 

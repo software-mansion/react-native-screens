@@ -97,7 +97,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
 {
   RNSScreenStackView *view = [self getScreenStackView:stackTag];
   if (![view isKindOfClass:[RNSScreenStackView class]]) {
-    RCTLogError(@"Invalid svg returned from registry, expecting RNSScreenStackView, got: %@", view);
+    RCTLogError(@"Invalid view type, expecting RNSScreenStackView, got: %@", view);
     return nil;
   }
   return view;
