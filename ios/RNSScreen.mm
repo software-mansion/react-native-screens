@@ -896,6 +896,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _initialView = (RNSScreenView *)view;
 #endif
   }
+  NSLog(@"RNSScreen created at %p", self);
   return self;
 }
 
@@ -1153,6 +1154,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       _previousFirstResponder = responder;
     }
   }
+  NSLog(@"RNSScreen %p moving to parent VG: %p", self, parent);
 }
 
 - (id)findFirstResponder:(UIView *)parent

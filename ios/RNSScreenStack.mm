@@ -109,6 +109,7 @@ namespace react = facebook::react;
 @implementation RNSScreenStackView {
   UINavigationController *_controller;
   NSMutableArray<RNSScreenView *> *_reactSubviews;
+  NSMutableArray<RNSScreen *> *_modalsPresentedByOtherStack;
   BOOL _invalidated;
   BOOL _isFullWidthSwiping;
   UIPercentDrivenInteractiveTransition *_interactionController;
@@ -148,6 +149,7 @@ namespace react = facebook::react;
 {
   _reactSubviews = [NSMutableArray new];
   _presentedModals = [NSMutableArray new];
+  _modalsPresentedByOtherStack = [NSMutableArray new];
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
 #if !TARGET_OS_TV
@@ -445,7 +447,7 @@ namespace react = facebook::react;
           return;
         }
 
-        NSLog(@"%p is presenting %p modally", previous, next);
+        NSLog(@"VC: %p is presenting VC: %p modally", previous, next);
         [previous presentViewController:next
                                animated:shouldAnimate
                              completion:^{
@@ -468,8 +470,10 @@ namespace react = facebook::react;
     // We dismiss every VC that was presented by changeRootController VC or its descendant.
     // After the series of dismissals is completed we run completion block in which
     // we present modals on top of changeRootController (which may be the this stack VC)
+    NSLog(@"StackView %p is dismissing all VCs on top of %p", self, changeRootController);
     [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
   } else {
+    NSLog(@"StackView %p is only presenting new modals", self);
     finish();
   }
 }
@@ -1111,6 +1115,14 @@ Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
+
+- (instancetype)init
+{
+  if (self = [super init]) {
+    NSLog(@"RNSScreenStackManager instance created");
+  }
+  return self;
+}
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
