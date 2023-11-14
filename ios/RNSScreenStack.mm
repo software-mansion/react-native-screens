@@ -603,7 +603,7 @@ namespace react = facebook::react;
   }
   BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:(RNSScreenView *)fromVC.view
                                                         toView:(RNSScreenView *)toVC.view];
-  if (true ||
+  if (_customAnimation ||
       screen != nil &&
           // when preventing the native dismiss with back button, we have to return the animator.
           // Also, we need to return the animator when full width swiping even if the animation is not custom,
