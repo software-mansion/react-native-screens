@@ -7,7 +7,9 @@ function GHWrapper(props: GestureProviderProps) {
   return <GestureDetector {...props} />;
 }
 
-export default function GestureDetectorProvider(props: GestureProviderProps) {
+export default function GestureDetectorProvider(props: {
+  children: React.ReactNode;
+}) {
   return (
     <GHContext.Provider value={GHWrapper}>{props.children}</GHContext.Provider>
   );
