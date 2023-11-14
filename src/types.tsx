@@ -91,11 +91,7 @@ export type GestureResponseDistanceType = {
   bottom?: number;
 };
 
-export type ClampedNumber = number;
-export type SheetNativeDetent = 'medium' | 'large' | 'all';
-
-// export type SheetDetentTypes = 'medium' | 'large' | 'custom' | 'all';
-export type SheetDetentTypes = (ClampedNumber | SheetNativeDetent)[];
+export type SheetDetentTypes = 'medium' | 'large' | 'all';
 
 export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
@@ -335,11 +331,6 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   sheetLargestUndimmedDetent?: SheetDetentTypes;
-  /**
-   * TODO
-   * This should be the index
-   */
-  sheetCustomLargestUndimmedDetent?: number;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:

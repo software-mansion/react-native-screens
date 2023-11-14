@@ -174,6 +174,7 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
+    sheetAllowedDetents = 'large',
     sheetLargestUndimmedDetent = 'all',
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
