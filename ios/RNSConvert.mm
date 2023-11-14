@@ -99,7 +99,6 @@
       return RNSScreenDetentTypeMedium;
     case react::RNSScreenSheetAllowedDetents::Custom:
       return RNSScreenDetentTypeCustom;
-
   }
 }
 
