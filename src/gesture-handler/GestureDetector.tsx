@@ -293,8 +293,7 @@ const TransitionHandler = ({
     }
   }
   return (
-    <GestureDetector
-      gesture={goBackGesture ? panGesture : EmptyGestureHandler}>
+    <GestureDetector gesture={goBackGesture ? panGesture : EmptyGestureHandler}>
       {children}
     </GestureDetector>
   );
