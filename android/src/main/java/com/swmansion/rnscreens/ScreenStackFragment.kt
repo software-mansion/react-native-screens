@@ -23,6 +23,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetBehavior.PEEK_HEIGHT_AUTO
 import com.swmansion.rnscreens.ext.recycle
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
@@ -122,11 +123,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         ).apply {
             behavior = if (screen.stackPresentation == Screen.StackPresentation.MODAL) {
                 BottomSheetBehavior<FrameLayout>().apply {
-                    state = BottomSheetBehavior.STATE_EXPANDED
+                    state = BottomSheetBehavior.STATE_HALF_EXPANDED
                     addBottomSheetCallback(bottomSheetCallback)
                     isHideable = true
                     isDraggable = true
                     skipCollapsed = true
+                    halfExpandedRatio = 0.5F
+                    peekHeight = PEEK_HEIGHT_AUTO
                 }
             } else {
                 ScrollingViewBehavior()
