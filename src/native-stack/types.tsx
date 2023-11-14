@@ -516,6 +516,7 @@ export type AnimatedScreenTransition = {
 };
 
 export type GestureProviderProps = PropsWithChildren<{
+  children: React.ReactNode;
   stackRef: React.MutableRefObject<unknown>;
   goBackGesture: GoBackGesture | undefined;
   transitionAnimation: AnimatedScreenTransition | undefined;
