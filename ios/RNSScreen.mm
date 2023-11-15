@@ -31,14 +31,15 @@ namespace react = facebook::react;
 
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
-    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
+    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
 #else
-    <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
+    <UIAdaptivePresentationControllerDelegate, RCTInvalidating, CAAnimationDelegate>
 #endif
 @end
 
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
+  CADisplayLink *_displayLink;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -91,6 +92,8 @@ namespace react = facebook::react;
   _sheetCustomDetents = [NSArray array];
   _sheetCustomLargestUndimmedDetent = nil;
 #endif // !TARGET_OS_TV
+  _displayLink = nil;
+  //  _displayLink = [CADisplayLink displayLinkWithTarget:self selector:<#(nonnull SEL)#>]
 }
 
 - (UIViewController *)reactViewController
@@ -105,18 +108,75 @@ namespace react = facebook::react;
 }
 #endif
 
+- (void)setBounds:(CGRect)bounds
+{
+  [super setBounds:bounds];
+  NSLog(@"setBounds (%f, %f), (%f, %f)", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
+}
+
+- (void)setFrame:(CGRect)frame
+{
+  [super setFrame:frame];
+  if (self->_stackPresentation == RNSScreenStackPresentationFormSheet) {
+    //    NSLog(@"setFrame (%f, %f), (%f, %f)",
+    //          frame.origin.x, frame.origin.y,
+    //          frame.size.width, frame.size.height);
+    NSLog(@"setFrame (%f, %f)", frame.size.width, frame.size.height);
+  }
+}
+
 - (void)updateBounds
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
-    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
-    _state->updateState(std::move(newState));
-    UINavigationController *navctr = _controller.navigationController;
-    [navctr.view setNeedsLayout];
+    CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
+    if (sizeAnimation != nil && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
+      CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
+      callbackOnlyAnimation.duration = sizeAnimation.duration;
+      callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
+      callbackOnlyAnimation.delegate = self;
+      [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
+    } else {
+      auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
+      _state->updateState(std::move(newState));
+      UINavigationController *navctr = _controller.navigationController;
+      [navctr.view setNeedsLayout];
+    }
   }
 #else
-  [_bridge.uiManager setSize:self.bounds.size forView:self];
+  if (self->_stackPresentation == RNSScreenStackPresentationFormSheet) {
+    return;
+  } else {
+    [_bridge.uiManager setSize:self.bounds.size forView:self];
+  }
+//    CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
+////    if (sizeAnimation && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
+////    if (sizeAnimation && self.layer.presentationLayer.frame.size.height > self.bounds.size.height) {
+//    if (sizeAnimation) {
+//      CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
+//      callbackOnlyAnimation.duration = sizeAnimation.duration;
+//      callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
+//      callbackOnlyAnimation.delegate = self;
+////      NSLog(@"Adding animation");
+////      [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
+////      CGRect bounds = self.layer.presentationLayer.bounds;
+////      NSLog(@"Sending (%f, %f) size to UIM (ANIM)", bounds.size.width, bounds.size.height);
+//    } else {
+//      NSLog(@"Sending (%f, %f) size to UIM", self.bounds.size.width, self.bounds.size.height);
+////      [_bridge.uiManager setSize:self.bounds.size forView:self];
+//    }
 #endif
+}
+
+- (void)animationDidStart:(CAAnimation *)animation
+{
+}
+
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
+{
+  if (finished) {
+    [self updateBounds];
+  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
@@ -836,7 +896,7 @@ namespace react = facebook::react;
 
   if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
     if (newScreenProps.sheetCustomDetents != oldScreenProps.sheetCustomDetents) {
-      [self setSheetCustomDetents:[RNSConvert NSNumberMutableArrayFromFloatVector:newScreenProps.sheetCustomDetents]];
+      [self setSheetCustomDetents:[RNSConvert arrayFromVector:newScreenProps.sheetCustomDetents]];
     }
     if (newScreenProps.sheetCustomLargestUndimmedDetent != oldScreenProps.sheetCustomLargestUndimmedDetent) {
       [self
@@ -885,6 +945,13 @@ namespace react = facebook::react;
 {
   [super didSetProps:changedProps];
 #if !TARGET_OS_TV
+  if ([changedProps containsObject:@"stackPresentation"] &&
+      self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    //    if (_displayLink == nil) {
+    //      _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateBounds)];
+    //      [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    //    }
+  }
   [self updateFormSheetPresentationStyle];
 #endif // !TARGET_OS_TV
 }
@@ -913,6 +980,7 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _controller = nil;
+  //  [_displayLink invalidate];
 }
 #endif
 
