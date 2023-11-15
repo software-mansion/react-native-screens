@@ -99,7 +99,6 @@
       return RNSScreenDetentTypeMedium;
     case react::RNSScreenSheetAllowedDetents::Custom:
       return RNSScreenDetentTypeCustom;
-
   }
 }
 
@@ -153,7 +152,7 @@
   }
 }
 
-+ (NSMutableArray<NSNumber *> *)NSNumberMutableArrayFromFloatVector:(const std::vector<CGFloat> &)vector
++ (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
 {
   NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
   for (CGFloat val : vector) {
