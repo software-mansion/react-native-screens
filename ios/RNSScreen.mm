@@ -117,11 +117,6 @@ namespace react = facebook::react;
 #endif
 }
 
-- (void)setFrame:(CGRect)frame
-{
-  [super setFrame:frame];
-}
-
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
 {
   switch (stackPresentation) {
