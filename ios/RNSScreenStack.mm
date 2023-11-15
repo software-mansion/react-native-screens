@@ -801,6 +801,7 @@ namespace react = facebook::react;
 {
   [self emitOnFinishTransitioningEvent];
   [RNSScreenWindowTraits updateWindowTraits];
+  [_controller.view setNeedsLayout];
 }
 #endif
 
