@@ -144,25 +144,27 @@ namespace react = facebook::react;
     }
   }
 #else
-  //  CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
-  //  if (sizeAnimation && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
-  //  if (sizeAnimation && self.layer.presentationLayer.frame.size.height > self.bounds.size.height) {
-  //  if (sizeAnimation) {
-  //    CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
-  //    callbackOnlyAnimation.duration = sizeAnimation.duration;
-  //    callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
-  //    callbackOnlyAnimation.delegate = self;
-  //    NSLog(@"Adding animation");
-  //    [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
-  //    CGRect bounds = self.layer.presentationLayer.bounds;
-  //    NSLog(@"Sending (%f, %f) size to UIM (ANIM)", bounds.size.width, bounds.size.height);
-  //
-  //    [_bridge.uiManager setSize:self.layer.presentationLayer.bounds.size forView:self];
-  //  } else {
-  //    NSLog(@"Sending (%f, %f) size to UIM", self.bounds.size.width, self.bounds.size.height);
-  //    [_bridge.uiManager setSize:self.bounds.size forView:self];
-  //  }
-  [_bridge.uiManager setSize:self.bounds.size forView:self];
+  if (self->_stackPresentation == RNSScreenStackPresentationFormSheet) {
+    return;
+  } else {
+    [_bridge.uiManager setSize:self.bounds.size forView:self];
+  }
+//    CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
+////    if (sizeAnimation && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
+////    if (sizeAnimation && self.layer.presentationLayer.frame.size.height > self.bounds.size.height) {
+//    if (sizeAnimation) {
+//      CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
+//      callbackOnlyAnimation.duration = sizeAnimation.duration;
+//      callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
+//      callbackOnlyAnimation.delegate = self;
+////      NSLog(@"Adding animation");
+////      [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
+////      CGRect bounds = self.layer.presentationLayer.bounds;
+////      NSLog(@"Sending (%f, %f) size to UIM (ANIM)", bounds.size.width, bounds.size.height);
+//    } else {
+//      NSLog(@"Sending (%f, %f) size to UIM", self.bounds.size.width, self.bounds.size.height);
+////      [_bridge.uiManager setSize:self.bounds.size forView:self];
+//    }
 #endif
 }
 
@@ -172,9 +174,9 @@ namespace react = facebook::react;
 
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
 {
-  //  if (finished) {
-  [self updateBounds];
-  //  }
+  if (finished) {
+    [self updateBounds];
+  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
