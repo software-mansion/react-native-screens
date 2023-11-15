@@ -801,11 +801,9 @@ namespace react = facebook::react;
 {
   [self emitOnFinishTransitioningEvent];
   [RNSScreenWindowTraits updateWindowTraits];
-#ifdef RCT_NEW_ARCH_ENABLED
   [_controller.view setNeedsLayout];
-#endif
 }
-#endif // !TARGET_OS_TV
+#endif
 
 - (void)markChildUpdated
 {
