@@ -805,7 +805,7 @@ namespace react = facebook::react;
   [_controller.view setNeedsLayout];
 #endif
 }
-#endif
+#endif // !TARGET_OS_TV
 
 - (void)markChildUpdated
 {
