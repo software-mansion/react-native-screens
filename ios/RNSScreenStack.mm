@@ -356,10 +356,6 @@ namespace react = facebook::react;
   // for the duration of transition. There are couple of scenarios:
   // (1) No modals are presented or all modals were presented by this RNSNavigationController,
   // (2) There are modals presented by other RNSNavigationControllers (nested/outer)
-
-  // Szukamy ile modali od dołu jest takich samych jak wcześniej
-  // Jeżeli nie ma takiego "prefixu", to "bazowym" kontrollerem jest wtedy
-  // RNSNavigationController skojarzony z tym widokiem
   NSUInteger changeRootIndex = 0;
   UIViewController *changeRootController = _controller;
   for (NSUInteger i = 0; i < MIN(_presentedModals.count, controllers.count); i++) {
