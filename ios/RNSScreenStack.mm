@@ -356,8 +356,11 @@ namespace react = facebook::react;
   // for the duration of transition. There are couple of scenarios:
   // (1) No modals are presented or all modals were presented by this RNSNavigationController,
   // (2) There are modals presented by other RNSNavigationControllers (nested/outer)
-  NSUInteger changeRootIndex = 0;
+
+  // Last controller that is common for both _presentedModals & controllers
   UIViewController *changeRootController = _controller;
+  // Last common controller index + 1
+  NSUInteger changeRootIndex = 0;
   for (NSUInteger i = 0; i < MIN(_presentedModals.count, controllers.count); i++) {
     if (_presentedModals[i] == controllers[i]) {
       changeRootController = controllers[i];
@@ -457,6 +460,30 @@ namespace react = facebook::react;
     }
   };
 
+  //  if (changeRootController.presentedViewController != nil) {
+  //    BOOL shouldAnimate = changeRootIndex == controllers.count &&
+  //        [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
+  //        ((RNSScreen *)changeRootController.presentedViewController).screenView.stackAnimation !=
+  //            RNSScreenStackAnimationNone;
+  //
+  //    if ([_presentedModals containsObject:changeRootController.presentedViewController]) {
+  //      BOOL shouldAnimate = changeRootIndex == controllers.count &&
+  //          [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
+  //          ((RNSScreen *)changeRootController.presentedViewController).screenView.stackAnimation !=
+  //              RNSScreenStackAnimationNone;
+  //      [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
+  //    } else if (newControllers.count > 0) {
+  //      finish();
+  //    } else {
+  //      // So the currently presented view controller is not in _presentedModals ==> it was presented by
+  //      // different stack ==> we need to apply the changes from there.
+  //      // Please note that this code is not robust (TODO explanation)
+  //      [changeRootController.presentedViewController dismissViewControllerAnimated:shouldAnimate completion:finish];
+  //    }
+  //  } else {
+  //    finish();
+  //  }
+
   if (changeRootController.presentedViewController != nil &&
       [_presentedModals containsObject:changeRootController.presentedViewController]) {
     BOOL shouldAnimate = changeRootIndex == controllers.count &&
@@ -468,6 +495,16 @@ namespace react = facebook::react;
     // we present modals on top of changeRootController (which may be the this stack VC)
     NSLog(@"StackView %p is dismissing all VCs on top of %p", self, changeRootController);
     [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
+  } else if (
+      changeRootController.presentedViewController != nil &&
+      changeRootController.presentedViewController.presentedViewController != nil) {
+    BOOL shouldAnimate = changeRootIndex == controllers.count &&
+        [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
+        ((RNSScreen *)changeRootController.presentedViewController).screenView.stackAnimation !=
+            RNSScreenStackAnimationNone;
+    [changeRootController.presentedViewController.presentedViewController dismissViewControllerAnimated:shouldAnimate
+                                                                                             completion:finish];
+    //    RCTAssert(realVisibleViewController != nil, @"NO REAL VISIBLE VIEW CONTROLLER");
   } else {
     NSLog(@"StackView %p is only presenting new modals", self);
     finish();
