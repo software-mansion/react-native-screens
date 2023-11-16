@@ -50,6 +50,9 @@ android {
     def agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION
     if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
         namespace "com.swmansion.rnscreens"
+        buildFeatures {
+            buildConfig true
+        }
     }
 
     // Used to override the NDK path/version on internal CI or by allowing
