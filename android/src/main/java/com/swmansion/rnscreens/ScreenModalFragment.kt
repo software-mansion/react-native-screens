@@ -120,7 +120,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     // TODO: Consider two approaches:
     // 1. Override whole native dismiss logic and rely on the one in ScreenStack
     // 2. Stay with native dismiss logic and notify ScreenStack that particular fragment has been already dismissed.
-    override fun dismiss() {
+    override fun dismissFromContainer() {
         // Approach 1
         super.dismiss()
         check(container is ScreenStack)

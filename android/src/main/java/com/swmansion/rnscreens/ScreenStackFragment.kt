@@ -35,6 +35,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
+    val screenStack: ScreenStack
+        get() {
+            val container = screen.container
+            check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
+            return container
+        }
+
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
 
@@ -98,7 +105,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private val bottomSheetCallback = object : BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                this@ScreenStackFragment.dismiss()
+                this@ScreenStackFragment.dismissFromContainer()
             }
             Log.i("ScreenStackFragment", "Sheet state changed to $newState")
         }
@@ -218,10 +225,8 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
-    override fun dismiss() {
-        val container: ScreenContainer? = screen.container
-        check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
-        container.dismiss(this)
+    override fun dismissFromContainer() {
+        screenStack.dismiss(this)
     }
 
     private class ScreensCoordinatorLayout(
