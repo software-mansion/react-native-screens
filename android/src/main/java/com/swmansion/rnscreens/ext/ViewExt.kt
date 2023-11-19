@@ -3,11 +3,14 @@ package com.swmansion.rnscreens.ext
 import android.view.View
 import android.view.ViewGroup
 
-fun View.recycle(): View {
+internal fun View.parentAsView() = this.parent as? View
+
+internal fun View.parentAsViewGroup() = this.parent as? ViewGroup
+
+internal fun View.recycle(): View {
     // screen fragments reuse view instances instead of creating new ones. In order to reuse a given
     // view it needs to be detached from the view hierarchy to allow the fragment to attach it back.
-    val parent = this.parent as? ViewGroup
-    if (parent != null) {
+    this.parentAsViewGroup()?.let { parent ->
         parent.endViewTransition(this)
         parent.removeView(this)
     }
