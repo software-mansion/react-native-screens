@@ -13,7 +13,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.swmansion.rnscreens.bottomsheet.RNSBottomSheetDialog
@@ -27,16 +26,6 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     // Nested containers
     override val childScreenContainers = ArrayList<ScreenContainer>()
 
-    private val bottomSheetDismissCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                container!!.onScreenDismissed(this@ScreenModalFragment)
-            }
-        }
-
-        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
-    }
-
     private val container: ScreenStack?
         get() = screen.container as? ScreenStack
 
@@ -47,7 +36,9 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         get() = this
 
     constructor() {
-        throw IllegalStateException("TODO: Better error message")
+        throw IllegalStateException(
+            "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
+        )
     }
 
     constructor(screen: Screen) : super() {
@@ -68,7 +59,6 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         bottomSheetDialog.behavior.apply {
             isHideable = true
             isDraggable = true
-//            addBottomSheetCallback(bottomSheetDismissCallback)
         }
         bottomSheetDialog.setContentView(screen.recycle())
         screen.parentAsView()?.clipToOutline = true
@@ -90,12 +80,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         super.onViewCreated(view, savedInstanceState)
     }
 
-    // TODO: Consider two approaches:
-    // 1. Override whole native dismiss logic and rely on the one in ScreenStack
-    // 2. Stay with native dismiss logic and notify ScreenStack that particular fragment has been already dismissed.
     override fun dismissFromContainer() {
-        // Approach 1
-        super.dismiss()
         check(container is ScreenStack)
         val container = container as ScreenStack
         container.dismiss(this)
