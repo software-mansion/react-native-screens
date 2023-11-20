@@ -125,16 +125,16 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 //        screen.layoutParams = CoordinatorLayout.LayoutParams(
 //            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
 //        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
+
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply {
-            behavior = if (screen.stackPresentation == Screen.StackPresentation.MODAL) {
+            behavior = if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
                 BottomSheetBehavior<FrameLayout>().apply {
                     state = BottomSheetBehavior.STATE_HALF_EXPANDED
                     addBottomSheetCallback(bottomSheetCallback)
                     isHideable = true
                     isDraggable = true
-                    skipCollapsed = true
                     halfExpandedRatio = 0.5F
                     peekHeight = PEEK_HEIGHT_AUTO
                 }
@@ -142,10 +142,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 ScrollingViewBehavior()
             }
         }
+        screen.clipToOutline = true
 
         view?.addView(screen.recycle())
 
-        if (screen.stackPresentation != Screen.StackPresentation.MODAL) {
+        if (screen.stackPresentation != Screen.StackPresentation.MODAL && screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
             mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
                 // By default AppBarLayout will have a background color set but since we cover the whole layout
                 // with toolbar (that can be semi-transparent) the bar layout background color does not pay a

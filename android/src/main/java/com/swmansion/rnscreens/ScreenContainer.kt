@@ -21,6 +21,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
     protected val mScreenFragments = ArrayList<ScreenFragmentWrapper>()
     @JvmField
     protected var mFragmentManager: FragmentManager? = null
+
     private var mIsAttached = false
     private var mNeedUpdate = false
     private var mLayoutEnqueued = false

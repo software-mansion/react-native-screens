@@ -54,7 +54,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setStackPresentation(view: Screen, presentation: String?) {
         view.stackPresentation = when (presentation) {
             "push" -> Screen.StackPresentation.PUSH
-            "modal", "containedModal", "fullScreenModal", "formSheet" ->
+            "formSheet" -> Screen.StackPresentation.FORM_SHEET
+            "modal", "containedModal", "fullScreenModal" ->
                 Screen.StackPresentation.MODAL
             "transparentModal", "containedTransparentModal" ->
                 Screen.StackPresentation.TRANSPARENT_MODAL

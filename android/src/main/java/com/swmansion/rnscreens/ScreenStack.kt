@@ -35,11 +35,12 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         get() = mScreenFragments.firstOrNull { !mDismissed.contains(it) }?.screen
             ?: throw IllegalStateException("Stack has no root screen set")
 
-//    override fun adapt(screen: Screen): ScreenStackFragmentWrapper = when (screen.stackPresentation) {
-//        Screen.StackPresentation.MODAL -> ScreenModalFragment(screen)
-//        else -> ScreenStackFragment(screen)
-//    }
-    override fun adapt(screen: Screen): ScreenStackFragmentWrapper = ScreenStackFragment(screen)
+    override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
+        when (screen.stackPresentation) {
+            Screen.StackPresentation.MODAL -> ScreenModalFragment(screen)
+            else -> ScreenStackFragment(screen)
+        }
+//    override fun adapt(screen: Screen): ScreenStackFragmentWrapper = ScreenStackFragment(screen)
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
@@ -90,7 +91,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
         // handle the case of newTop being NULL, which happens in several places below
         var newTop: ScreenFragmentWrapper? = null // newTop is nullable, see the above comment ^
-        var visibleBottom: ScreenFragmentWrapper? = null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
+        var visibleBottom: ScreenFragmentWrapper? =
+            null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
         for (i in mScreenFragments.indices.reversed()) {
             val screen = getScreenFragmentWrapperAt(i)
@@ -119,7 +121,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                 val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
                 shouldUseOpenAnimation = containsTopScreen || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
-                stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else mTopScreen?.screen?.stackAnimation
+                stackAnimation =
+                    if (shouldUseOpenAnimation) newTop.screen.stackAnimation else mTopScreen?.screen?.stackAnimation
             } else if (mTopScreen == null && newTop != null) {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering
@@ -137,27 +140,75 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             if (stackAnimation != null) {
                 if (shouldUseOpenAnimation) {
                     when (stackAnimation) {
-                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
-                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
-                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
-                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
-                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
+                        StackAnimation.DEFAULT -> it.setCustomAnimations(
+                            R.anim.rns_default_enter_in,
+                            R.anim.rns_default_enter_out
+                        )
+
+                        StackAnimation.NONE -> it.setCustomAnimations(
+                            R.anim.rns_no_animation_20,
+                            R.anim.rns_no_animation_20
+                        )
+
+                        StackAnimation.FADE -> it.setCustomAnimations(
+                            R.anim.rns_fade_in,
+                            R.anim.rns_fade_out
+                        )
+
+                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(
+                            R.anim.rns_slide_in_from_right,
+                            R.anim.rns_slide_out_to_left
+                        )
+
+                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(
+                            R.anim.rns_slide_in_from_left,
+                            R.anim.rns_slide_out_to_right
+                        )
+
                         StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
                             R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
                         )
-                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
+
+                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(
+                            R.anim.rns_fade_from_bottom,
+                            R.anim.rns_no_animation_350
+                        )
                     }
                 } else {
                     when (stackAnimation) {
-                        StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
-                        StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
-                        StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
-                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
-                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
+                        StackAnimation.DEFAULT -> it.setCustomAnimations(
+                            R.anim.rns_default_exit_in,
+                            R.anim.rns_default_exit_out
+                        )
+
+                        StackAnimation.NONE -> it.setCustomAnimations(
+                            R.anim.rns_no_animation_20,
+                            R.anim.rns_no_animation_20
+                        )
+
+                        StackAnimation.FADE -> it.setCustomAnimations(
+                            R.anim.rns_fade_in,
+                            R.anim.rns_fade_out
+                        )
+
+                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(
+                            R.anim.rns_slide_in_from_left,
+                            R.anim.rns_slide_out_to_right
+                        )
+
+                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(
+                            R.anim.rns_slide_in_from_right,
+                            R.anim.rns_slide_out_to_left
+                        )
+
                         StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
                             R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
                         )
-                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
+
+                        StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(
+                            R.anim.rns_no_animation_250,
+                            R.anim.rns_fade_to_bottom
+                        )
                     }
                 }
             }
@@ -185,7 +236,10 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
 
             // remove all screens previously on stack
             for (fragmentWrapper in mStack) {
-                if (!mScreenFragments.contains(fragmentWrapper) || mDismissed.contains(fragmentWrapper)) {
+                if (!mScreenFragments.contains(fragmentWrapper) || mDismissed.contains(
+                        fragmentWrapper
+                    )
+                ) {
                     it.remove(fragmentWrapper.fragment)
                 }
             }
@@ -233,10 +287,13 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         if (mScreenFragments.size > 1 && visibleBottom != null) {
             mTopScreen?.let {
                 if (isTransparent(it)) {
-                    val screenFragmentsBeneathTop = mScreenFragments.slice(0 until mScreenFragments.size - 1).asReversed()
+                    val screenFragmentsBeneathTop =
+                        mScreenFragments.slice(0 until mScreenFragments.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {
-                        fragmentWrapper.screen.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
+                        fragmentWrapper.screen.changeAccessibilityMode(
+                            IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                        )
 
                         // don't change a11y below non-transparent screens
                         if (fragmentWrapper == visibleBottom) {
@@ -334,10 +391,11 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     companion object {
         private fun isTransparent(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL ||
-                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL
+                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL ||
+                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
-                fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
+                    fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM
     }
 }

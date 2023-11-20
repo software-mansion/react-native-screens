@@ -241,7 +241,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         }
 
     enum class StackPresentation {
-        PUSH, MODAL, TRANSPARENT_MODAL
+        PUSH, MODAL, TRANSPARENT_MODAL, FORM_SHEET
     }
 
     enum class StackAnimation {
