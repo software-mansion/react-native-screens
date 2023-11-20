@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
   const initialScreenOptions: NativeStackNavigationOptions = {
-    stackPresentation: 'modal',
+    stackPresentation: 'formSheet',
     sheetAllowedDetents: 'all',
     sheetLargestUndimmedDetent: 'medium',
     sheetGrabberVisible: false,
@@ -122,16 +122,11 @@ function SheetScreen({
   }
 
   return (
-    // <View
-    //   style={[
-    //     styles.containerView,
-    //     { backgroundColor: 'red' },
-    //     styles.centeredView,
-    //   ]}>
     <View
-      style={{
-        backgroundColor: 'translucent',
-      }}>
+      style={[
+        styles.containerView,
+        { backgroundColor: 'green' },
+      ]}>
       <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('First')}

@@ -11,8 +11,7 @@ class RNSBottomSheetDialog(context: Context, fragment: ScreenModalFragment) : Bo
 
     override fun cancel() {
         Log.d(TAG, "cancel")
-        fragmentRef.get()?.dismissFromContainer()
-
+        fragmentRef.get()!!.dismissFromContainer()
     }
 
     companion object {
