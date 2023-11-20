@@ -25,12 +25,15 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior.PEEK_HEIGHT_AUTO
 import com.swmansion.rnscreens.ext.recycle
+import com.swmansion.rnscreens.utils.DeviceUtils
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var mAppBarLayout: AppBarLayout? = null
     private var mToolbar: Toolbar? = null
     private var mShadowHidden = false
     private var mIsTranslucent = false
+
+    private var mLastFocusedChild: View? = null
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -87,6 +90,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun onContainerUpdate() {
+        super.onContainerUpdate()
         screen.headerConfig?.onUpdate()
     }
 
@@ -111,7 +115,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
-
+    }
+    
+    override fun onStart() {
+        mLastFocusedChild?.requestFocus()
+        super.onStart()
     }
 
     override fun onCreateView(
@@ -169,6 +177,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return view
     }
 
+    override fun onStop() {
+        if (DeviceUtils.isPlatformAndroidTV(context))
+            mLastFocusedChild = findLastFocusedChild()
+
+        super.onStop()
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu) {
         updateToolbarMenu(menu)
         return super.onPrepareOptionsMenu(menu)
@@ -207,6 +222,16 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 actionView = searchView
             }
         }
+    }
+
+    private fun findLastFocusedChild(): View? {
+        var view: View? = screen
+        while (view != null) {
+            if (view.isFocused) return view
+            view = if (view is ViewGroup) view.focusedChild else null
+        }
+
+        return null
     }
 
     override fun canNavigateBack(): Boolean {

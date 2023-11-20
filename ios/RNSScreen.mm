@@ -14,6 +14,7 @@
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #import <rnscreens/RNSScreenComponentDescriptor.h>
 #import "RNSConvert.h"
+#import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
 #else
 #import <React/RCTTouchHandler.h>
@@ -250,6 +251,13 @@ namespace react = facebook::react;
   _statusBarHidden = statusBarHidden;
   [RNSScreenWindowTraits assertViewControllerBasedStatusBarAppearenceSet];
   [RNSScreenWindowTraits updateStatusBarAppearance];
+
+  // As the status bar could change its visibility, we need to calculate header
+  // height for the correct value in `onHeaderHeightChange` event when navigation
+  // bar is not visible.
+  if (self.controller.navigationController.navigationBarHidden && !self.isModal) {
+    [self.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
+  }
 }
 
 - (void)setScreenOrientation:(UIInterfaceOrientationMask)screenOrientation
@@ -395,6 +403,29 @@ namespace react = facebook::react;
 #endif
 }
 
+- (void)notifyHeaderHeightChange:(double)headerHeight
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  if (_eventEmitter != nullptr) {
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onHeaderHeightChange(
+            facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.headerHeight = headerHeight});
+  }
+
+  RNSHeaderHeightChangeEvent *event =
+      [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
+                                                   reactTag:[NSNumber numberWithInt:self.tag]
+                                               headerHeight:headerHeight];
+  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+#else
+  if (self.onHeaderHeightChange) {
+    self.onHeaderHeightChange(@{
+      @"headerHeight" : @(headerHeight),
+    });
+  }
+#endif
+}
+
 - (void)notifyGestureCancel
 {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -529,11 +560,6 @@ namespace react = facebook::react;
   }
 }
 
-- (BOOL)isModal
-{
-  return self.stackPresentation != RNSScreenStackPresentationPush;
-}
-
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig
 {
   for (UIView *view in self.reactSubviews) {
@@ -542,6 +568,34 @@ namespace react = facebook::react;
     }
   }
   return nil;
+}
+
+- (BOOL)isModal
+{
+  return self.stackPresentation != RNSScreenStackPresentationPush;
+}
+
+- (BOOL)isPresentedAsNativeModal
+{
+  return self.controller.parentViewController == nil && self.controller.presentingViewController != nil;
+}
+
+- (BOOL)isFullscreenModal
+{
+  switch (self.controller.modalPresentationStyle) {
+    case UIModalPresentationFullScreen:
+    case UIModalPresentationCurrentContext:
+    case UIModalPresentationOverCurrentContext:
+      return YES;
+    default:
+      return NO;
+  }
+}
+
+- (BOOL)isTransparentModal
+{
+  return self.controller.modalPresentationStyle == UIModalPresentationOverFullScreen ||
+      self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
 #if !TARGET_OS_TV
@@ -966,9 +1020,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // shown as a native modal, as the final dimensions of the modal on iOS 12+ are shorter than the
   // screen size
   BOOL isDisplayedWithinUINavController = [self.parentViewController isKindOfClass:[RNSNavigationController class]];
-  BOOL isPresentedAsNativeModal = self.parentViewController == nil && self.presentingViewController != nil;
 
-  if (isDisplayedWithinUINavController || isPresentedAsNativeModal) {
+  // Calculate header height on modal open
+  if (self.screenView.isPresentedAsNativeModal) {
+    [self calculateAndNotifyHeaderHeightChangeIsModal:YES];
+  }
+
+  if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
 #ifdef RCT_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
 #else
@@ -978,6 +1036,103 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     }
 #endif
   }
+}
+
+- (BOOL)isModalWithHeader
+{
+  return self.screenView.isModal && self.childViewControllers.count == 1 &&
+      [self.childViewControllers[0] isKindOfClass:UINavigationController.class];
+}
+
+// Checks whether this screen has any child view controllers of type RNSNavigationController.
+// Useful for checking if this screen has nested stack or is displayed at the top.
+- (BOOL)hasNestedStack
+{
+  for (UIViewController *vc in self.childViewControllers) {
+    if ([vc isKindOfClass:[RNSNavigationController class]]) {
+      return YES;
+    }
+  }
+
+  return NO;
+}
+
+- (CGSize)getStatusBarHeightIsModal:(BOOL)isModal
+{
+#if !TARGET_OS_TV
+  CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    CGSize primaryStatusBarSize = self.view.window.windowScene.statusBarManager.statusBarFrame.size;
+    if (primaryStatusBarSize.height == 0 || primaryStatusBarSize.width == 0)
+      return fallbackStatusBarSize;
+
+    return primaryStatusBarSize;
+  } else {
+    return fallbackStatusBarSize;
+  }
+#endif /* Check for iOS 13.0 */
+
+#else
+  // TVOS does not have status bar.
+  return CGSizeMake(0, 0);
+#endif // !TARGET_OS_TV
+}
+
+- (UINavigationController *)getVisibleNavigationControllerIsModal:(BOOL)isModal
+{
+  UINavigationController *navctr = self.navigationController;
+
+  if (isModal) {
+    // In case where screen is a modal, we want to calculate childViewController's
+    // navigation bar height instead of the navigation controller from RNSScreen.
+    if (self.isModalWithHeader) {
+      navctr = self.childViewControllers[0];
+    } else {
+      // If the modal does not meet requirements (there's no RNSNavigationController which means that probably it
+      // doesn't have header or there are more than one RNSNavigationController which is invalid) we don't want to
+      // return anything.
+      return nil;
+    }
+  }
+
+  return navctr;
+}
+
+- (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal
+{
+  UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
+
+  // If navigation controller doesn't exists (or it is hidden) we want to handle two possible cases.
+  // If there's no navigation controller for the modal, we simply don't want to return header height, as modal possibly
+  // does not have header and we don't want to count status bar. If there's no navigation controller for the view we
+  // just want to return status bar height (if it's hidden, it will simply return 0).
+  if (navctr == nil || navctr.isNavigationBarHidden) {
+    if (isModal) {
+      return 0;
+    } else {
+      CGSize statusBarSize = [self getStatusBarHeightIsModal:isModal];
+      return MIN(statusBarSize.width, statusBarSize.height);
+    }
+  }
+
+  CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
+#if !TARGET_OS_TV
+  CGFloat navbarInset = navctr.navigationBar.frame.origin.y;
+#else
+  // On TVOS there's no inset of navigation bar.
+  CGFloat navbarInset = 0;
+#endif // !TARGET_OS_TV
+
+  return navbarHeight + navbarInset;
+}
+
+- (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal
+{
+  CGFloat totalHeight = [self calculateHeaderHeightIsModal:isModal];
+  [self.screenView notifyHeaderHeightChange:totalHeight];
 }
 
 - (void)notifyFinishTransitioning
@@ -1268,6 +1423,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // we don't want to send `scrollViewDidEndDecelerating` event to JS before the JS thread is ready
     return;
   }
+
+  if ([NSStringFromClass([view class]) isEqualToString:@"AVPlayerView"]) {
+    // Traversing through AVPlayerView is an uncommon edge case that causes the disappearing screen
+    // to an excessive traversal through all video player elements
+    // (e.g., for react-native-video, this includes all controls and additional video views).
+    // Thus, we want to avoid unnecessary traversals through these views.
+    return;
+  }
+
   if ([view isKindOfClass:[UIScrollView class]] &&
       ([[(UIScrollView *)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)])) {
     [[(UIScrollView *)view delegate] scrollViewDidEndDecelerating:(id)view];
@@ -1300,6 +1464,7 @@ RCT_EXPORT_VIEW_PROPERTY(transitionDuration, NSNumber)
 
 RCT_EXPORT_VIEW_PROPERTY(onAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDisappear, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onHeaderHeightChange, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onDismissed, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onNativeDismissCancelled, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
@@ -1387,6 +1552,7 @@ RCT_ENUM_CONVERTER(
       @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
       @"slide_from_right" : @(RNSScreenStackAnimationDefault),
       @"slide_from_left" : @(RNSScreenStackAnimationDefault),
+      @"ios" : @(RNSScreenStackAnimationDefault),
     }),
     RNSScreenStackAnimationDefault,
     integerValue)

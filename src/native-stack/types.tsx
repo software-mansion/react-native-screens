@@ -46,6 +46,10 @@ export type NativeStackNavigationEventMap = {
    * Event which fires when a swipe back is canceled on iOS.
    */
   gestureCancel: { data: undefined };
+  /**
+   * Event which fires when a header height gets changed.
+   */
+  headerHeightChange: { data: { headerHeight: number } };
 };
 
 export type NativeStackNavigationProp<
@@ -387,6 +391,7 @@ export type NativeStackNavigationOptions = {
    * - "slide_from_bottom" – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: ScreenProps['stackAnimation'];

@@ -61,6 +61,24 @@ namespace react = facebook::react;
   return [self topViewController];
 }
 
+- (void)viewDidLayoutSubviews
+{
+  [super viewDidLayoutSubviews];
+  if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
+    RNSScreen *screenController = (RNSScreen *)self.topViewController;
+    BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
+        (screenController.presentedViewController != nil &&
+         ![screenController.presentedViewController isBeingDismissed]);
+
+    // Calculate header height during simple transition from one screen to another.
+    // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
+    // header height, as it could have nested stack.
+    if (![screenController hasNestedStack] && isNotDismissingModal) {
+      [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
+    }
+  }
+}
+
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
   return [self topViewController].supportedInterfaceOrientations;

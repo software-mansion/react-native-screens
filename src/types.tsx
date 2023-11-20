@@ -33,7 +33,8 @@ export type StackAnimationTypes =
   | 'simple_push'
   | 'slide_from_bottom'
   | 'slide_from_right'
-  | 'slide_from_left';
+  | 'slide_from_left'
+  | 'ios';
 export type BlurEffectTypes =
   | 'extraLight'
   | 'light'
@@ -73,6 +74,10 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type HeaderHeightChangeEventType = {
+  headerHeight: number;
+};
+
 export type TransitionProgressEventType = {
   progress: number;
   closing: number;
@@ -107,6 +112,10 @@ export interface ScreenProps extends ViewProps {
    * Internal boolean used to not attach events used only by native-stack. It prevents non native-stack navigators from sending transition progress from their Screen components.
    */
   isNativeStack?: boolean;
+  /**
+   * Internal boolean used to detect if current header has large title on iOS.
+   */
+  hasLargeHeader?: boolean;
   /**
    * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
    * When `enableFreeze()` is run at the top of the application defaults to `true`.
@@ -178,6 +187,12 @@ export interface ScreenProps extends ViewProps {
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
+   * A callback that gets called when the header height has changed.
+   */
+  onHeaderHeightChange?: (
+    e: NativeSyntheticEvent<HeaderHeightChangeEventType>
+  ) => void;
   /**
    * A callback that gets called after swipe back is canceled.
    */
@@ -305,6 +320,7 @@ export interface ScreenProps extends ViewProps {
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: StackAnimationTypes;

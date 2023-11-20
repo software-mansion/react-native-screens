@@ -114,7 +114,7 @@ To configure react-navigation to use screens instead of plain RN Views for rende
 yarn add react-native-screens
 
 # if you use Expo managed workflow
-expo install react-native-screens
+npx expo install react-native-screens
 ```
 
 Just make sure that the version of [react-navigation](https://github.com/react-navigation/react-navigation) you are using is 2.14.0 or higher.

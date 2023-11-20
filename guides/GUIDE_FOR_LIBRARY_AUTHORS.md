@@ -203,6 +203,7 @@ Allows for the customization of how the given screen should appear/disappear whe
 - `"slide_from_bottom"` - slide in the new screen from bottom to top
 - `"slide_from_right"` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `"slide_from_left"` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+- `"ios"` - iOS like slide in animation (Android only, resolves to default transition on iOS)
 - `"none"` – the screen appears/disappears without an animation
 
 ### `stackPresentation`

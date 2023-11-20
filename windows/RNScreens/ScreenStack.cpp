@@ -35,6 +35,7 @@ void ScreenStack::removeAllChildren() {
 
 void ScreenStack::removeChildAt(int64_t index) {
   m_children.RemoveAt(static_cast<uint32_t>(index));
+  onChildModified(index);
 }
 
 void ScreenStack::replaceChild(
@@ -45,5 +46,20 @@ void ScreenStack::replaceChild(
     return;
 
   m_children.SetAt(index, newChild);
+  onChildModified(index);
+}
+
+void ScreenStack::onChildModified(int64_t index) {
+  // Was it the topmost item in the stack?
+  if (index >= m_children.Size() - 1) {
+    if (m_children.Size() == 0) {
+      // Nobody left
+      Content(nullptr);
+    } else {
+      // Focus on the top item
+      auto uiElement = m_children.GetAt(m_children.Size() - 1);
+      Content(uiElement);
+    }
+  }
 }
 } // namespace winrt::RNScreens::implementation

@@ -1,7 +1,9 @@
+import com.android.Version
+
 buildscript {
     ext {
-        rnsDefaultTargetSdkVersion = 31
-        rnsDefaultCompileSdkVersion = 31
+        rnsDefaultTargetSdkVersion = 34
+        rnsDefaultCompileSdkVersion = 34
         rnsDefaultMinSdkVersion = 21
         rnsDefaultKotlinVersion = '1.8.0'
     }
@@ -15,7 +17,7 @@ buildscript {
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:5.15.0"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.11.0"
     }
 }
 
@@ -45,7 +47,7 @@ def reactNativeArchitectures() {
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
-    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
+    def agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION
     if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
         namespace "com.swmansion.rnscreens"
     }
@@ -127,5 +129,5 @@ dependencies {
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.9.0'
-    implementation "androidx.core:core-ktx:1.5.0"
+    implementation "androidx.core:core-ktx:1.8.0"
 }
