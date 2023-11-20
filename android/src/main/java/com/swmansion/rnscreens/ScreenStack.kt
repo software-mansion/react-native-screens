@@ -10,6 +10,7 @@ import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
+import com.swmansion.rnscreens.R
 
 class ScreenStack(context: Context?) : ScreenContainer(context) {
     private val mStack = ArrayList<ScreenStackFragmentWrapper>()

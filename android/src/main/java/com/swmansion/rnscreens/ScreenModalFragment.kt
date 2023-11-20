@@ -16,6 +16,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.swmansion.rnscreens.bottomsheet.RNSBottomSheetDialog
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.recycle
 
@@ -24,7 +25,6 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     // Nested containers
     override val childScreenContainers = ArrayList<ScreenContainer>()
-
 
     private val bottomSheetDismissCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -59,7 +59,9 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+        val dialog = RNSBottomSheetDialog(requireContext(), this)
+
+        val bottomSheetDialog = dialog as BottomSheetDialog
 
         bottomSheetDialog.dismissWithAnimation = true
         bottomSheetDialog.behavior.apply {
@@ -68,6 +70,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 //            addBottomSheetCallback(bottomSheetDismissCallback)
         }
         bottomSheetDialog.setContentView(screen.recycle())
+
         return bottomSheetDialog
     }
 
@@ -176,10 +179,9 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     override fun onStop() {
         Log.d(TAG, "onStop")
-        container!!.onExternalFragmentRemoval(this)
+//        container!!.onExternalFragmentRemoval(this)
         super.onStop()
     }
-
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
