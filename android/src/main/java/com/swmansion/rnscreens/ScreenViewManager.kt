@@ -161,11 +161,17 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) = Unit
 
-    override fun setSheetGrabberVisible(view: Screen?, value: Boolean) = Unit
+    override fun setSheetGrabberVisible(view: Screen, value: Boolean) {
+        view.isSheetGrabberVisible = value
+    }
 
-    override fun setSheetCornerRadius(view: Screen?, value: Float) = Unit
+    override fun setSheetCornerRadius(view: Screen, value: Float) {
+        view.sheetCornerRadius = value
+    }
 
-    override fun setSheetExpandsWhenScrolledToEdge(view: Screen?, value: Boolean) = Unit
+    override fun setSheetExpandsWhenScrolledToEdge(view: Screen, value: Boolean) {
+        view.sheetExpandsWhenScrolledToEdge = value
+    }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
         return MapBuilder.of(

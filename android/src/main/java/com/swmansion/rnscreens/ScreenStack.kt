@@ -28,6 +28,19 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         performUpdatesNow()
     }
 
+    /**
+     * Notify stack that a fragment it manages has been removed externally w/o the stack knowledge.
+     * This happens e.g. on dialog fragment dismissal.
+     *
+     * TODO: Who should be responsible for firing events to JS?
+     *
+     * @param fragmentWrapper The dismissed fragment wrapper
+     */
+    fun onExternalFragmentRemoval(fragmentWrapper: ScreenStackFragmentWrapper) {
+        mStack.remove(fragmentWrapper)
+        mScreenFragments.remove(fragmentWrapper)
+    }
+
     override val topScreen: Screen?
         get() = mTopScreen?.screen
 

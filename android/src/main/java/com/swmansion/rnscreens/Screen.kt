@@ -39,6 +39,11 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     var isStatusBarAnimated: Boolean? = null
     private var mNativeBackButtonDismissalEnabled = true
 
+    // Props for controlling modal presentation
+    var isSheetGrabberVisible: Boolean = false
+    var sheetCornerRadius: Float? = null
+    var sheetExpandsWhenScrolledToEdge: Boolean = true
+
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the

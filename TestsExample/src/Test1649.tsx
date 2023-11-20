@@ -122,7 +122,16 @@ function SheetScreen({
   }
 
   return (
-    <View style={styles.centeredView}>
+    // <View
+    //   style={[
+    //     styles.containerView,
+    //     { backgroundColor: 'red' },
+    //     styles.centeredView,
+    //   ]}>
+    <View
+      style={{
+        backgroundColor: 'translucent',
+      }}>
       <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('First')}
@@ -213,6 +222,9 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     backgroundColor: 'red',
+  },
+  containerView: {
+    flex: 1,
   },
   centeredView: {
     justifyContent: 'center',

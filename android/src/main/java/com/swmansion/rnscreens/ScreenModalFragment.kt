@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewParent
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
@@ -20,6 +21,10 @@ import com.swmansion.rnscreens.ext.recycle
 
 class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
     override lateinit var screen: Screen
+
+    // Nested containers
+    override val childScreenContainers = ArrayList<ScreenContainer>()
+
 
     private val bottomSheetDismissCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -55,14 +60,14 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        bottomSheetDialog.setContentView(screen.recycle())
+
         bottomSheetDialog.dismissWithAnimation = true
         bottomSheetDialog.behavior.apply {
             isHideable = true
             isDraggable = true
-            state = BottomSheetBehavior.STATE_EXPANDED
-            addBottomSheetCallback(bottomSheetDismissCallback)
+//            addBottomSheetCallback(bottomSheetDismissCallback)
         }
+        bottomSheetDialog.setContentView(screen.recycle())
         return bottomSheetDialog
     }
 
@@ -70,51 +75,14 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = null
+    ): View? {
+        Log.i(TAG, "onCreateView")
+        return null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.i(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
-        requireDialog().setContentView(view)
-
-        val callback = object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    Log.i("ScreenModalFragment", "State change to hidden")
-                }
-            }
-
-            //            override fun onStateChanged(bottomSheet: View, newState: Int) {
-//                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-//                    val container = container
-//                    check(container is ScreenStack) { "ScreenModalFragment added to a non-stack container" }
-//                    container.dismiss(this@ScreenModalFragment)
-//                }
-//                println("STATE CHANGED TO $newState")
-//            }
-            override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
-        }
-
-//        val screen = (view as ViewGroup).children.first() as Screen
-//        screen.layoutParams = CoordinatorLayout.LayoutParams(
-//            FrameLayout.LayoutParams.MATCH_PARENT,
-//            FrameLayout.LayoutParams.MATCH_PARENT
-//        ).apply {
-//            behavior = BottomSheetBehavior<Screen>().apply {
-//                isHideable = true
-//                peekHeight = BottomSheetBehavior.PEEK_HEIGHT_AUTO
-// //                addBottomSheetCallback(callback)
-//            }
-//        }
-//
-//        val behavior: BottomSheetBehavior<Screen> = BottomSheetBehavior.from(screen)
-//        println("maxHeight ${behavior.maxHeight} peekHeight ${behavior.peekHeight} state ${behavior.state}")
-
-        if (view.parent != null) {
-            Log.e("ScreenModalFragment", "SCREEN HAS A NON NULL PARENT")
-        } else {
-            Log.e("ScreenModalFragment", "SCREEN DOES NOT HAVE A PARENT")
-        }
-        dialog?.setContentView(view)
     }
 
     // TODO: Consider two approaches:
@@ -132,39 +100,20 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         super.onCancel(dialog)
     }
 
-    override fun removeToolbar() {
-        TODO("Not yet implemented")
-    }
-
-    override fun setToolbar(toolbar: Toolbar) {
-        TODO("Not yet implemented")
-    }
-
-    override fun setToolbarShadowHidden(hidden: Boolean) {
-        TODO("Not yet implemented")
-    }
-
-    override fun setToolbarTranslucent(translucent: Boolean) {
-        TODO("Not yet implemented")
-    }
-
     override fun canNavigateBack(): Boolean {
         TODO("Not yet implemented")
     }
 
-    override val childScreenContainers: List<ScreenContainer>
-        get() = TODO("Not yet implemented")
-
     override fun addChildScreenContainer(container: ScreenContainer) {
-        TODO("Not yet implemented")
+        childScreenContainers.add(container)
     }
 
     override fun removeChildScreenContainer(container: ScreenContainer) {
-        TODO("Not yet implemented")
+        childScreenContainers.remove(container)
     }
 
     override fun onContainerUpdate() {
-//        TODO("Not yet implemented")
+        Log.d(TAG, "onContainerUpdate")
     }
 
     override fun onViewAnimationStart() {
@@ -176,11 +125,26 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     }
 
     override fun tryGetActivity(): Activity? {
-        TODO("Not yet implemented")
+        return requireActivity()
     }
 
     override fun tryGetContext(): ReactContext? {
-        TODO("Not yet implemented")
+        if (context is ReactContext) {
+            return context as ReactContext
+        }
+        if (screen.context is ReactContext) {
+            return screen.context as ReactContext
+        }
+        var parent: ViewParent? = screen.container
+        while (parent != null) {
+            if (parent is Screen) {
+                if (parent.context is ReactContext) {
+                    return parent.context as ReactContext
+                }
+            }
+            parent = parent.parent
+        }
+        return null
     }
 
     override fun canDispatchLifecycleEvent(event: ScreenFragment.ScreenLifecycleEvent): Boolean {
@@ -210,15 +174,46 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         TODO("Not yet implemented")
     }
 
+    override fun onStop() {
+        Log.d(TAG, "onStop")
+        container!!.onExternalFragmentRemoval(this)
+        super.onStop()
+    }
+
+
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy")
         super.onDestroy()
         val container = container
         if (container == null || !container.hasScreen(this)) {
             val screenContext = screen.context
             if (screenContext is ReactContext) {
+                Log.d(TAG, "onDestroy / sending ScreenDismissedEvent")
                 val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
-                UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
+                UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
+                    ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
             }
         }
+        childScreenContainers.clear()
+    }
+
+    override fun removeToolbar() {
+        throw IllegalStateException("Modal screens on Android do not support header right now")
+    }
+
+    override fun setToolbar(toolbar: Toolbar) {
+        throw IllegalStateException("Modal screens on Android do not support header right now")
+    }
+
+    override fun setToolbarShadowHidden(hidden: Boolean) {
+        throw IllegalStateException("Modal screens on Android do not support header right now")
+    }
+
+    override fun setToolbarTranslucent(translucent: Boolean) {
+        throw IllegalStateException("Modal screens on Android do not support header right now")
+    }
+
+    companion object {
+        val TAG = ScreenModalFragment::class.simpleName
     }
 }
