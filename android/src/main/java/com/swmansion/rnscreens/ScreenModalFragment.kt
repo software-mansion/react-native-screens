@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.swmansion.rnscreens.bottomsheet.RNSBottomSheetDialog
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.recycle
 
 class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
@@ -70,6 +71,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 //            addBottomSheetCallback(bottomSheetDismissCallback)
         }
         bottomSheetDialog.setContentView(screen.recycle())
+        screen.parentAsView()?.clipToOutline = true
 
         return bottomSheetDialog
     }

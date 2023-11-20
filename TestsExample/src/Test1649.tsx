@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
   const initialScreenOptions: NativeStackNavigationOptions = {
-    stackPresentation: 'formSheet',
+    stackPresentation: 'modal',
     sheetAllowedDetents: 'all',
     sheetLargestUndimmedDetent: 'medium',
     sheetGrabberVisible: false,
