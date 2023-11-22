@@ -115,6 +115,7 @@ namespace react = facebook::react;
   BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
+  BOOL _isUnmountedCtrInsideHierarchy;
 #ifdef RCT_NEW_ARCH_ENABLED
   UIView *_snapshot;
 #endif
@@ -454,8 +455,8 @@ namespace react = facebook::react;
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
-  // when there is no change we return immediately
-  if ([_controller.viewControllers isEqualToArray:controllers]) {
+  // when there is no change and the controller from controllers array is already mounted we return immediately
+  if ([_controller.viewControllers isEqualToArray:controllers] && !_isUnmountedCtrInsideHierarchy) {
     return;
   }
 
@@ -978,21 +979,28 @@ namespace react = facebook::react;
       @(index),
       @([childComponentView.superview tag]));
 
-  [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
-  ((RNSScreenView *)childComponentView).reactSuperview = self;
+  RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
+  [_reactSubviews insertObject:screenChildComponent atIndex:index];
+  screenChildComponent.reactSuperview = self;
+
   dispatch_async(dispatch_get_main_queue(), ^{
     [self maybeAddToParentAndUpdateContainer];
+    self->_isUnmountedCtrInsideHierarchy = NO;
   });
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  // We should only do a snapshot of a screen that is on the top.
-  // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
-  // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
-  // snapshot.
-  if (screenChildComponent.window != nil &&
+  _isUnmountedCtrInsideHierarchy = [_controller.viewControllers containsObject:screenChildComponent.controller];
+  // We should only do a snapshot of a screen if:
+  // (1) The screen that is disappearing is on the top,
+  // (2) The controller of a screen that is disappearing is not in the viewControllers array
+  // (e.g. the controller that is dissapearing WILL be in that array if we're rendering screen conditionally - we don't
+  // want to do a snapshot in that situation), (3) If you don't have 2 modals (since if you push 2 modals, second one is
+  // not a "child" of _controller). Also, when dissmised with a gesture, the screen already is not under the window, so
+  // we don't need to apply snapshot.
+  if (screenChildComponent.window != nil && !_isUnmountedCtrInsideHierarchy &&
       ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
        screenChildComponent == [_presentedModals.lastObject view])) {
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
