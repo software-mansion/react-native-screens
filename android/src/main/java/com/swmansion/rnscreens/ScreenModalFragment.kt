@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import RNSModalRootView
 import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
@@ -12,6 +13,7 @@ import android.view.ViewParent
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -60,8 +62,15 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
             isHideable = true
             isDraggable = true
         }
-        bottomSheetDialog.setContentView(screen.recycle())
-        screen.parentAsView()?.clipToOutline = true
+
+        val rootView = RNSModalRootView(screen.context, screen.reactEventDispatcher!!)
+        rootView.addView(screen.recycle())
+
+        bottomSheetDialog.setContentView(rootView)
+        rootView.parentAsView()?.clipToOutline = true
+
+//        bottomSheetDialog.setContentView(screen.recycle())
+//        screen.parentAsView()?.clipToOutline = true
 
         return bottomSheetDialog
     }
