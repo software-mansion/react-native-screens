@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, StyleSheet, View, Text, ScrollView, Modal } from 'react-native';
+import { Button, StyleSheet, View, Text, ScrollView } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -120,18 +120,6 @@ function SheetScreen({
       return 'all';
     }
   }
-
-  // return (
-  //   <View style={styles.centeredView}>
-  //     <Modal
-  //       animationType='fade'
-  //       transparent={true}
-  //       visible={true}
-  //       >
-  //       <Text>Some content</Text>
-  //     </Modal>
-  //   </View> 
-  // );
 
   return (
     <View style={[styles.containerView, { backgroundColor: 'green' }]}>
