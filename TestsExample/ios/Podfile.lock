@@ -1118,35 +1118,11 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNReanimated (3.5.4):
-    - DoubleConversion
-    - FBLazyVector
+  - RNReanimated (3.5.0):
     - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React-callinvoker
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
-    - React-Core/DevSupport
-    - React-Core/RCTWebSocket
-    - React-CoreModules
-    - React-cxxreact
-    - React-hermes
-    - React-jsi
-    - React-jsiexecutor
-    - React-jsinspector
-    - React-RCTActionSheet
-    - React-RCTAnimation
-    - React-RCTAppDelegate
-    - React-RCTBlob
-    - React-RCTImage
-    - React-RCTLinking
-    - React-RCTNetwork
-    - React-RCTSettings
-    - React-RCTText
     - ReactCommon/turbomodule/core
-    - Yoga
   - RNScreens (3.27.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1418,7 +1394,7 @@ SPEC CHECKSUMS:
   React-utils: 2e199c0f64d49f8ca4175d878e365d2701ad41f7
   ReactCommon: 82a6500a0906815f2e6079d6a3f226bd2f58e61d
   RNGestureHandler: 61bfdfc05db9b79dd61f894dcd29d3dcc6db3c02
-  RNReanimated: 437e6ddac19000900558b9f25a60a756dcb51f75
+  RNReanimated: 81a9a3cc53ebe892c86cbf251df4ab6a61cc15dd
   RNScreens: 5f4df9babb21d30723580377b5f52d9f9baf0005
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 1b395db8632a574e065f5e7f0f97f8f613675b64

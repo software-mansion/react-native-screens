@@ -19,9 +19,9 @@
     "postinstall-postinstall": "^2.1.0",
     "react": "18.2.0",
     "react-native": "0.73.0-rc.5",
-    "react-native-gesture-handler": "^2.12.1",
-    "react-native-reanimated": "^3.4.2",
-    "react-native-safe-area-context": "^4.7.1",
+    "react-native-gesture-handler": "^2.14.0",
+    "react-native-reanimated": "software-mansion/react-native-reanimated#c5913665dbed5dfbcf46ff84b0b3feef1196a8ac",
+    "react-native-safe-area-context": "^4.7.4",
     "react-native-screens": "link:../"
   },
   "devDependencies": {
