@@ -223,6 +223,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
                     }
                     Screen.SheetDetent.MEDIUM -> {
                         skipCollapsed = true
+                        // Temporary solution
                         state = BottomSheetBehavior.STATE_HALF_EXPANDED
                     }
                     Screen.SheetDetent.ALL -> {
