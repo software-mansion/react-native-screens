@@ -1,9 +1,9 @@
 package com.swmansion.rnscreens
 
 import RNSModalRootView
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.swmansion.rnscreens.bottomsheet.RNSBottomSheetDialog
@@ -30,8 +31,18 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     private val container: ScreenStack?
         get() = screen.container as? ScreenStack
 
+    /**
+     * Dialog instance. Note that we are responsible for creating the dialog.
+     * This member is valid after `onCreateDialog` method runs.
+     */
+    private lateinit var sheetDialog: BottomSheetDialog
+
+    /**
+     * Behaviour attached to bottom sheet dialog.
+     * This member is valid after `onCreateDialog` method runs.
+     */
     private val behavior
-        get() = (dialog as? BottomSheetDialog)?.behavior
+        get() = sheetDialog.behavior
 
     override val fragment: Fragment
         get() = this
@@ -48,45 +59,26 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        showsDialog = screen.stackPresentation == Screen.StackPresentation.MODAL
+        // Right now whole purpose of this Fragment is to be displayed as a dialog.
+        // I've experimented with setting false here, but could not get it to work.
+        showsDialog = true
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = RNSBottomSheetDialog(requireContext(), this)
-
-        val bottomSheetDialog = dialog as BottomSheetDialog
-
-        bottomSheetDialog.dismissWithAnimation = true
-        bottomSheetDialog.behavior.apply {
-            isHideable = true
-            isDraggable = true
-        }
+        configureDialogAndBehaviour()
 
         val rootView = RNSModalRootView(screen.reactContext, screen.reactEventDispatcher!!)
         rootView.addView(screen.recycle())
 
-        bottomSheetDialog.setContentView(rootView)
+        sheetDialog.setContentView(rootView)
         rootView.parentAsView()?.clipToOutline = true
 
-//        bottomSheetDialog.setContentView(screen.recycle())
-//        screen.parentAsView()?.clipToOutline = true
-
-        return bottomSheetDialog
+        return sheetDialog
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        Log.i(TAG, "onCreateView")
-        return null
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.i(TAG, "onViewCreated")
-        super.onViewCreated(view, savedInstanceState)
-    }
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? = null
 
     override fun dismissFromContainer() {
         check(container is ScreenStack)
@@ -94,13 +86,9 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         container.dismiss(this)
     }
 
-    override fun onCancel(dialog: DialogInterface) {
-        super.onCancel(dialog)
-    }
-
-    override fun canNavigateBack(): Boolean {
-        TODO("Not yet implemented")
-    }
+    // Modal can never be first on the stack
+    // TODO: What is exact semantic of this method?
+    override fun canNavigateBack(): Boolean = true
 
     override fun addChildScreenContainer(container: ScreenContainer) {
         childScreenContainers.add(container)
@@ -133,6 +121,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         if (screen.context is ReactContext) {
             return screen.context as ReactContext
         }
+
         var parent: ViewParent? = screen.container
         while (parent != null) {
             if (parent is Screen) {
@@ -142,6 +131,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
             }
             parent = parent.parent
         }
+
         return null
     }
 
@@ -154,8 +144,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     }
 
     override fun dispatchLifecycleEvent(
-        event: ScreenFragment.ScreenLifecycleEvent,
-        fragmentWrapper: ScreenFragmentWrapper
+        event: ScreenFragment.ScreenLifecycleEvent, fragmentWrapper: ScreenFragmentWrapper
     ) {
         TODO("Not yet implemented")
     }
@@ -208,6 +197,41 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     override fun setToolbarTranslucent(translucent: Boolean) {
         throw IllegalStateException("Modal screens on Android do not support header right now")
+    }
+
+    private fun configureDialogAndBehaviour(): BottomSheetDialog {
+        sheetDialog = RNSBottomSheetDialog(requireContext(), this)
+        sheetDialog.dismissWithAnimation = true
+
+        configureBehaviour()
+
+        return sheetDialog
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun configureBehaviour() {
+        val detent = screen.sheetDetent
+        behavior.apply {
+            isHideable = true
+            isDraggable = true
+            if (detent != null) {
+                when (detent) {
+                    Screen.SheetDetent.LARGE -> {
+                        skipCollapsed = true
+                        state = BottomSheetBehavior.STATE_EXPANDED
+                    }
+                    Screen.SheetDetent.MEDIUM -> {
+                        skipCollapsed = true
+                        state = BottomSheetBehavior.STATE_HALF_EXPANDED
+                    }
+                    Screen.SheetDetent.ALL -> {
+                        skipCollapsed = false
+                        state = BottomSheetBehavior.STATE_COLLAPSED
+                    }
+                }
+            }
+        }
+        behavior.shouldSkipHalfExpandedStateWhenDragging()
     }
 
     companion object {

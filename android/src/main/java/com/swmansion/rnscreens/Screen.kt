@@ -52,6 +52,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     var isSheetGrabberVisible: Boolean = false
     var sheetCornerRadius: Float? = null
     var sheetExpandsWhenScrolledToEdge: Boolean = true
+    var sheetDetent: SheetDetent? = null
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -295,5 +296,9 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
+    }
+
+    enum class SheetDetent {
+        MEDIUM, LARGE, ALL
     }
 }

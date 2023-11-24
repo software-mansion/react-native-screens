@@ -173,18 +173,24 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setSwipeDirection(view: Screen?, value: String?) = Unit
 
-    override fun setSheetAllowedDetents(view: Screen, value: String?) = Unit
+    @ReactProp(name = "sheetAllowedDetents")
+    override fun setSheetAllowedDetents(view: Screen, value: String?) {
+        view.sheetDetent = convertDetentStringToFraction(value)
+    }
 
     override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) = Unit
 
+    @ReactProp(name = "sheetGrabberVisible")
     override fun setSheetGrabberVisible(view: Screen, value: Boolean) {
         view.isSheetGrabberVisible = value
     }
 
+    @ReactProp(name = "sheetCornerRadius")
     override fun setSheetCornerRadius(view: Screen, value: Float) {
         view.sheetCornerRadius = value
     }
 
+    @ReactProp(name = "sheetExpandsWhenScrolledToEdge")
     override fun setSheetExpandsWhenScrolledToEdge(view: Screen, value: Boolean) {
         view.sheetExpandsWhenScrolledToEdge = value
     }
@@ -201,6 +207,14 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = mDelegate
+
+    private fun convertDetentStringToFraction(detent: String?): Screen.SheetDetent? = when (detent) {
+        "large" -> Screen.SheetDetent.LARGE
+        "medium" -> Screen.SheetDetent.MEDIUM
+        "all" -> Screen.SheetDetent.ALL
+        null -> null
+        else -> throw JSApplicationIllegalArgumentException("Unrecognized detent value $detent")
+    }
 
     companion object {
         const val REACT_CLASS = "RNSScreen"
