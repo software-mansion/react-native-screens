@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens
 
 import RNSModalRootView
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
@@ -77,7 +76,9 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? = null
 
     override fun dismissFromContainer() {
@@ -144,7 +145,8 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     }
 
     override fun dispatchLifecycleEvent(
-        event: ScreenFragment.ScreenLifecycleEvent, fragmentWrapper: ScreenFragmentWrapper
+        event: ScreenFragment.ScreenLifecycleEvent,
+        fragmentWrapper: ScreenFragmentWrapper
     ) {
         TODO("Not yet implemented")
     }
@@ -208,7 +210,6 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         return sheetDialog
     }
 
-    @SuppressLint("RestrictedApi")
     private fun configureBehaviour() {
         val detent = screen.sheetDetent
         behavior.apply {
@@ -231,7 +232,6 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
                 }
             }
         }
-        behavior.shouldSkipHalfExpandedStateWhenDragging()
     }
 
     companion object {
