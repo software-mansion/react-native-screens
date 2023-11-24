@@ -209,7 +209,7 @@ function SheetScreenWithScrollView({
   return (
     <>
       <View style={styles.centeredView}>
-        <ScrollView>
+        <ScrollView nestedScrollEnabled={true}>
           <SheetScreen navigation={navigation} />
           {[...Array(40).keys()].map(val => (
             <Text key={`${val}`}>Some component {val}</Text>
