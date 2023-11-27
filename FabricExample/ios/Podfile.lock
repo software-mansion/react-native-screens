@@ -1109,23 +1109,39 @@ PODS:
     - React-jsi (= 0.72.4)
     - React-logger (= 0.72.4)
     - React-perflogger (= 0.72.4)
-  - RNScreens (3.25.0):
-    - RCT-Folly
+  - RNScreens (3.27.0):
+    - hermes-engine
+    - RCT-Folly (= 2021.07.22.00)
     - RCTRequired
     - RCTTypeSafety
-    - React
     - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-NativeModulesApple
     - React-RCTFabric
+    - React-utils
+    - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 3.25.0)
-  - RNScreens/common (3.25.0):
-    - RCT-Folly
+    - RNScreens/common (= 3.27.0)
+    - Yoga
+  - RNScreens/common (3.27.0):
+    - hermes-engine
+    - RCT-Folly (= 2021.07.22.00)
     - RCTRequired
     - RCTTypeSafety
-    - React
     - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-NativeModulesApple
     - React-RCTFabric
+    - React-utils
+    - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
+    - Yoga
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -1351,7 +1367,7 @@ SPEC CHECKSUMS:
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
   React-RCTActionSheet: 02904b932b50e680f4e26e7a686b33ebf7ef3c00
   React-RCTAnimation: 88feaf0a85648fb8fd497ce749829774910276d6
-  React-RCTAppDelegate: 365227d2a737855924db21c5a810e39c353ef137
+  React-RCTAppDelegate: f37aef577ebffc4bc8dcef9833ebc980bfc1adac
   React-RCTBlob: 0dbc9e2a13d241b37d46b53e54630cbad1f0e141
   React-RCTFabric: 0d443ab3cc3f0af82442ec95747d503cee955f26
   React-RCTImage: b111645ab901f8e59fc68fbe31f5731bdbeef087
@@ -1365,7 +1381,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 4941cc1b3cf08b792fbf666342c9fc95f1969035
   React-utils: b79f2411931f9d3ea5781404dcbb2fa8a837e13a
   ReactCommon: 4b2bdcb50a3543e1c2b2849ad44533686610826d
-  RNScreens: cba72a26a6c967765a8388fe85f78e7771012ca1
+  RNScreens: 8e44ede8be80fbd17005680b7c86722a42d8dc73
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
