@@ -32,14 +32,14 @@ const config = {
       return acc;
     }, {}),
 
-    nodeModulesPaths: [path.join(__dirname, '../../')]
+    nodeModulesPaths: [path.join(__dirname, '../../')],
   },
 
   transformer: {
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
-        inlineRequires: false,
+        inlineRequires: true,
       },
     }),
   },
