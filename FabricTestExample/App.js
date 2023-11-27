@@ -94,5 +94,5 @@ import TestX from './src/TestX';
 enableFreeze(true);
 
 export default function App() {
-  return <Test1802 />;
+  return <Test42 />;
 }

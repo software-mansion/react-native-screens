@@ -115,7 +115,7 @@ namespace react = facebook::react;
   BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
-  BOOL _isUnmountedCtrInsideHierarchy;
+  BOOL _isViewRecycled;
 #ifdef RCT_NEW_ARCH_ENABLED
   UIView *_snapshot;
 #endif
@@ -455,8 +455,8 @@ namespace react = facebook::react;
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
 {
-  // when there is no change and the controller from controllers array is already mounted we return immediately
-  if ([_controller.viewControllers isEqualToArray:controllers] && !_isUnmountedCtrInsideHierarchy) {
+  // when there is no change and the view of the controller is not recycled we return immediately
+  if ([_controller.viewControllers isEqualToArray:controllers] && !_isViewRecycled) {
     return;
   }
 
@@ -468,7 +468,7 @@ namespace react = facebook::react;
   // when transition is ongoing, any updates made to the controller will not be reflected until the
   // transition is complete. In particular, when we push/pop view controllers we expect viewControllers
   // property to be updated immediately. Based on that property we then calculate future updates.
-  // When the transition is ongoing the property won't be updated immediatly. We therefore avoid
+  // When the transition is ongoing the property won't be updated immediately. We therefore avoid
   // making any updated when transition is ongoing and schedule updates for when the transition
   // is complete.
   if (_controller.transitionCoordinator != nil) {
@@ -493,6 +493,9 @@ namespace react = facebook::react;
 #else
   UIViewController *previousTop = _controller.viewControllers.lastObject;
 #endif
+  // We don't need to indicate if the view has been recycled, since we're after the mounting state of the
+  // recycled view.
+  _isViewRecycled = NO;
 
   // At the start we set viewControllers to contain a single UIViewController
   // instance. This is a workaround for header height adjustment bug (see comment
@@ -981,26 +984,33 @@ namespace react = facebook::react;
 
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   [_reactSubviews insertObject:screenChildComponent atIndex:index];
+
+  // Since the view may be recycled we don't want to remount snapshot to the hierarchy.
+  // Thus, we want to reset view to initial view and force `setPushViewControllers` to be called.
+  if ([NSStringFromClass([screenChildComponent.controller.view class]) isEqualToString:@"_UIReplicantView"]) {
+    [screenChildComponent.controller resetViewToScreen];
+    _isViewRecycled = true;
+  }
+
   screenChildComponent.reactSuperview = self;
 
   dispatch_async(dispatch_get_main_queue(), ^{
     [self maybeAddToParentAndUpdateContainer];
-    self->_isUnmountedCtrInsideHierarchy = NO;
+    self->_isViewRecycled = NO;
   });
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  _isUnmountedCtrInsideHierarchy = [_controller.viewControllers containsObject:screenChildComponent.controller];
   // We should only do a snapshot of a screen if:
   // (1) The screen that is disappearing is on the top,
-  // (2) The controller of a screen that is disappearing is not in the viewControllers array
+  // (2) The controller of a screen that is disappearing is not being recycled,
   // (e.g. the controller that is dissapearing WILL be in that array if we're rendering screen conditionally - we don't
   // want to do a snapshot in that situation), (3) If you don't have 2 modals (since if you push 2 modals, second one is
   // not a "child" of _controller). Also, when dissmised with a gesture, the screen already is not under the window, so
   // we don't need to apply snapshot.
-  if (screenChildComponent.window != nil && !_isUnmountedCtrInsideHierarchy &&
+  if (screenChildComponent.window != nil &&
       ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
        screenChildComponent == [_presentedModals.lastObject view])) {
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
