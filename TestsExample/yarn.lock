@@ -2709,9 +2709,9 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001541:
-  version "1.0.30001564"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001564.tgz#eaa8bbc58c0cbccdcb7b41186df39dd2ba591889"
-  integrity sha512-DqAOf+rhof+6GVx1y+xzbFPeOumfQnhYzVnZD6LAXijR77yPtm9mfOcqOnT3mpnJiZVT+kwLAFnRlZcIz+c6bg==
+  version "1.0.30001565"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001565.tgz#a528b253c8a2d95d2b415e11d8b9942acc100c4f"
+  integrity sha512-xrE//a3O7TP0vaJ8ikzkD2c2NgcVUvsEe2IvFTntV4Yd1Z9FVzh+gW+enX96L0psrbaFMcVcH2l90xNuGDWc8w==
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -2780,9 +2780,9 @@ cli-cursor@^3.1.0:
     restore-cursor "^3.1.0"
 
 cli-spinners@^2.5.0:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.9.1.tgz#9c0b9dad69a6d47cbb4333c14319b060ed395a35"
-  integrity sha512-jHgecW0pxkonBJdrKsqxgRX9AcG+u/5k0Q7WPDfi8AogLAdwxEkyYYNWwZ5GvVFoFx2uiY1eNcSK00fh+1+FyQ==
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.9.2.tgz#1773a8f4b9c4d6ac31563df53b3fc1d79462fe41"
+  integrity sha512-ywqV+5MmyL4E7ybXgKys4DugZbX0FC6LnwrhjuykIjnK9k8OQacQ7axGKnjDXWNhns0xot3bZI5h55H8yo9cJg==
 
 cliui@^6.0.0:
   version "6.0.0"
@@ -3110,9 +3110,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
-  version "1.4.593"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.593.tgz#f71b157f7382f3d3a164f73ff2da772d4b3fd984"
-  integrity sha512-c7+Hhj87zWmdpmjDONbvNKNo24tvmD4mjal1+qqTYTrlF0/sNpAcDlU0Ki84ftA/5yj3BF2QhSGEC0Rky6larg==
+  version "1.4.594"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.594.tgz#f69f207fba80735a44a988df42f3f439115d0515"
+  integrity sha512-xT1HVAu5xFn7bDfkjGQi9dNpMqGchUkebwf1GL7cZN32NSwwlHRPMSDJ1KN6HkS0bWUtndbSQZqvpQftKG2uFQ==
 
 emittery@^0.13.1:
   version "0.13.1"

@@ -31,16 +31,18 @@ const config = {
       acc[name] = path.join(__dirname, 'node_modules', name);
       return acc;
     }, {}),
+
+    nodeModulesPaths: [path.join(__dirname, '../../')]
   },
-  //
-  // transformer: {
-  //   getTransformOptions: async () => ({
-  //     transform: {
-  //       experimentalImportSupport: false,
-  //       inlineRequires: true,
-  //     },
-  //   }),
-  // },
+
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
+    }),
+  },
 };
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
