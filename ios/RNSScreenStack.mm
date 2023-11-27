@@ -982,9 +982,10 @@ namespace react = facebook::react;
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
   [_reactSubviews insertObject:screenChildComponent atIndex:index];
 
-  // Since the view may be recycled we don't want to remount snapshot to the hierarchy.
+  // Since the view may be recycled (it won't be type of RNSScreenView and instead
+  // it will be represented as UIReplicantView) we don't want to remount snapshot to the hierarchy.
   // Thus, we want to reset view to initial view and force `setPushViewControllers` to be called.
-  if ([NSStringFromClass([screenChildComponent.controller.view class]) isEqualToString:@"_UIReplicantView"]) {
+  if (![screenChildComponent.controller.view isKindOfClass:[RNSScreenView class]]) {
     [screenChildComponent.controller resetViewToScreen];
     _isViewRecycled = YES;
   }
