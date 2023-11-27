@@ -493,9 +493,6 @@ namespace react = facebook::react;
 #else
   UIViewController *previousTop = _controller.viewControllers.lastObject;
 #endif
-  // We don't need to indicate if the view has been recycled, since we're after the mounting state of the
-  // recycled view.
-  _isViewRecycled = NO;
 
   // At the start we set viewControllers to contain a single UIViewController
   // instance. This is a workaround for header height adjustment bug (see comment
@@ -989,13 +986,15 @@ namespace react = facebook::react;
   // Thus, we want to reset view to initial view and force `setPushViewControllers` to be called.
   if ([NSStringFromClass([screenChildComponent.controller.view class]) isEqualToString:@"_UIReplicantView"]) {
     [screenChildComponent.controller resetViewToScreen];
-    _isViewRecycled = true;
+    _isViewRecycled = YES;
   }
 
   screenChildComponent.reactSuperview = self;
 
   dispatch_async(dispatch_get_main_queue(), ^{
     [self maybeAddToParentAndUpdateContainer];
+    // We don't need to indicate if the view has been recycled, since we're after the mounting state of the
+    // recycled view.
     self->_isViewRecycled = NO;
   });
 }
@@ -1003,13 +1002,10 @@ namespace react = facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  // We should only do a snapshot of a screen if:
-  // (1) The screen that is disappearing is on the top,
-  // (2) The controller of a screen that is disappearing is not being recycled,
-  // (e.g. the controller that is dissapearing WILL be in that array if we're rendering screen conditionally - we don't
-  // want to do a snapshot in that situation), (3) If you don't have 2 modals (since if you push 2 modals, second one is
-  // not a "child" of _controller). Also, when dissmised with a gesture, the screen already is not under the window, so
-  // we don't need to apply snapshot.
+  // We should only do a snapshot of a screen that is on the top.
+  // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
+  // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
+  // snapshot.
   if (screenChildComponent.window != nil &&
       ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
        screenChildComponent == [_presentedModals.lastObject view])) {
