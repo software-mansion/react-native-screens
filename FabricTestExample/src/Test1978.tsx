@@ -45,7 +45,7 @@ const Home3 = () => (
 
 const Stack = createNativeStackNavigator();
 
-const TestX = () => {
+const Test1978 = () => {
   const [hasChangedState, setHasChangedState] = useState(true);
 
   return (
@@ -87,4 +87,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TestX;
+export default Test1978;

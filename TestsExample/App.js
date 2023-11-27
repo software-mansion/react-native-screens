@@ -92,10 +92,10 @@ import Test1791 from './src/Test1791';
 import Test1802 from './src/Test1802';
 import Test1844 from './src/Test1844';
 import Test1864 from './src/Test1864';
-import TestX from './src/TestX';
+import Test1978 from './src/Test1978';
 
 enableFreeze(true);
 
 export default function App() {
-  return <TestX />;
+  return <Test42 />;
 }
