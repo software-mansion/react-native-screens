@@ -23,3 +23,4 @@ class MainActivity : ReactActivity() {
             fabricEnabled
         )
 }
+
