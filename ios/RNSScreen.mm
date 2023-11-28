@@ -89,7 +89,6 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
-  NSLog(@"RNSScreenView alloc at %p with VC at %p", self, _controller);
 }
 
 - (UIViewController *)reactViewController
@@ -896,7 +895,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     _initialView = (RNSScreenView *)view;
 #endif
   }
-  NSLog(@"RNSScreen created at %p", self);
   return self;
 }
 
@@ -1154,7 +1152,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
       _previousFirstResponder = responder;
     }
   }
-  NSLog(@"RNSScreen %p moving to parent VG: %p", self, parent);
 }
 
 - (id)findFirstResponder:(UIView *)parent
