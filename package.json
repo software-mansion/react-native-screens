@@ -14,7 +14,7 @@
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "npm login && release-it",
-    "prepare": "bob build"
+    "prepare": "bob build && husky install"
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
