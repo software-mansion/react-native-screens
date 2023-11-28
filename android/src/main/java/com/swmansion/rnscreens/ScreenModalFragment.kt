@@ -67,6 +67,16 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         configureDialogAndBehaviour()
 
         val rootView = RNSModalRootView(screen.reactContext, screen.reactEventDispatcher!!)
+
+//        val dragHandle = BottomSheetDragHandleView(requireContext()).apply {
+//            layoutParams = LayoutParams(
+//                LayoutParams.MATCH_PARENT,
+//                LayoutParams.WRAP_CONTENT
+//            )
+//        }
+//
+//        rootView.addView(dragHandle)
+
         rootView.addView(screen.recycle())
 
         sheetDialog.setContentView(rootView)
@@ -204,6 +214,8 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     private fun configureDialogAndBehaviour(): BottomSheetDialog {
         sheetDialog = RNSBottomSheetDialog(requireContext(), this)
         sheetDialog.dismissWithAnimation = true
+        sheetDialog.setCanceledOnTouchOutside(false)
+        sheetDialog?.window?.setDimAmount(0F)
 
         configureBehaviour()
 
