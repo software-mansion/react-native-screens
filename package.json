@@ -22,9 +22,9 @@
   "source": "src/index",
   "types": "lib/typescript/index",
   "files": [
-    "src",
-    "lib",
+    "src/",
     "common/",
+    "lib/",
     "native-stack/",
     "reanimated/",
     "android/src/main/AndroidManifest.xml",
@@ -40,8 +40,6 @@
     "react-native.config.js",
     "README.md",
     "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__",
     "!android/src/main/java/com/swmansion/rnscreens/LifecycleHelper.kt"
   ],
   "repository": {
