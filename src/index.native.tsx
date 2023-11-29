@@ -45,18 +45,18 @@ const isPlatformSupported =
 
 let ENABLE_SCREENS = isPlatformSupported;
 
-function enableScreens(shouldEnableScreens = true): void {
+const enableScreens = (shouldEnableScreens = true) => {
   ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
     console.error(
       `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
     );
   }
-}
+};
 
 let ENABLE_FREEZE = false;
 
-function enableFreeze(shouldEnableReactFreeze = true): void {
+const enableFreeze = (shouldEnableReactFreeze = true) => {
   const minor = parseInt(version.split('.')[1]); // eg. takes 66 from '0.66.0'
 
   // react-freeze requires react-native >=0.64, react-native from main is 0.0.0
@@ -67,14 +67,14 @@ function enableFreeze(shouldEnableReactFreeze = true): void {
   }
 
   ENABLE_FREEZE = shouldEnableReactFreeze;
-}
+};
 
 // const that tells if the library should use new implementation, will be undefined for older versions
 const shouldUseActivityState = true;
 
-function screensEnabled(): boolean {
+const screensEnabled = () => {
   return ENABLE_SCREENS;
-}
+};
 
 type SearchBarCommandsType = {
   blur: (
@@ -190,7 +190,7 @@ interface FreezeWrapperProps {
 
 // This component allows one more render before freezing the screen.
 // Allows activityState to reach the native side and useIsFocused to work correctly.
-function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
+const DelayedFreeze = ({ freeze, children }: FreezeWrapperProps) => {
   // flag used for determining whether freeze should be enabled
   const [freezeState, setFreezeState] = React.useState(false);
 
@@ -203,9 +203,9 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
   }
 
   return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
-}
+};
 
-function ScreenStack(props: ScreenStackProps) {
+const ScreenStack = (props: ScreenStackProps) => {
   const { children, ...rest } = props;
   const size = React.Children.count(children);
   // freezes all screens except the top one
@@ -227,7 +227,7 @@ function ScreenStack(props: ScreenStackProps) {
       {childrenWithFreeze}
     </ScreensNativeModules.NativeScreenStack>
   );
-}
+};
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
@@ -389,7 +389,7 @@ class InnerScreen extends React.Component<ScreenProps> {
   }
 }
 
-function ScreenContainer(props: ScreenContainerProps) {
+const ScreenContainer = (props: ScreenContainerProps) => {
   const { enabled = ENABLE_SCREENS, hasTwoStates, ...rest } = props;
 
   if (enabled && isPlatformSupported) {
@@ -399,9 +399,9 @@ function ScreenContainer(props: ScreenContainerProps) {
     return <ScreensNativeModules.NativeScreenContainer {...rest} />;
   }
   return <View {...rest} />;
-}
+};
 
-function FullWindowOverlay(props: { children: ReactNode }) {
+const FullWindowOverlay = (props: { children: ReactNode }) => {
   if (Platform.OS !== 'ios') {
     console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
     return <View {...props} />;
@@ -412,7 +412,7 @@ function FullWindowOverlay(props: { children: ReactNode }) {
       {props.children}
     </ScreensNativeModules.NativeFullWindowOverlay>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerSubview: {
