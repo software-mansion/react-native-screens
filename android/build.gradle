@@ -133,7 +133,7 @@ dependencies {
 
     constraints {
         implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1") {
-            because("for some reason, on older React Native versions this dependency conflicts with this library")
+            because("on older React Native versions this dependency conflicts with react-native-screens")
         }
     }
 }
