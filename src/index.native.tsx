@@ -566,9 +566,7 @@ class Screen extends React.Component<ScreenProps> {
   }
 }
 
-module.exports = {
-  // these are classes so they are not evaluated until used
-  // so no need to use getters for them
+export default {
   Screen,
   ScreenContainer,
   ScreenContext,
@@ -576,19 +574,15 @@ module.exports = {
   InnerScreen,
   SearchBar,
   FullWindowOverlay,
-
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;
   },
-
   get NativeScreenContainer() {
     return ScreensNativeModules.NativeScreenContainer;
   },
-
   get NativeScreenNavigationContainer() {
     return ScreensNativeModules.NativeScreenNavigationContainer;
   },
-
   get ScreenStackHeaderConfig() {
     return ScreensNativeModules.NativeScreenStackHeaderConfig;
   },
@@ -598,20 +592,16 @@ module.exports = {
   get SearchBarCommands() {
     return ScreensNativeModules.NativeSearchBarCommands;
   },
-  // these are functions and will not be evaluated until used
-  // so no need to use getters for them
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderCenterView,
   ScreenStackHeaderSearchBarView,
-
   enableScreens,
   enableFreeze,
   screensEnabled,
   shouldUseActivityState,
   useTransitionProgress,
-
   isSearchBarAvailableForCurrentPlatform,
   isNewBackTitleImplementation,
   executeNativeBackPress,
