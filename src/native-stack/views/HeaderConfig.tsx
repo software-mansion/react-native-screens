@@ -21,7 +21,7 @@ type Props = NativeStackNavigationOptions & {
   route: Route<string>;
 };
 
-export default function HeaderConfig({
+const HeaderConfig = ({
   backButtonImage,
   backButtonInCustomView,
   direction,
@@ -48,7 +48,7 @@ export default function HeaderConfig({
   route,
   searchBar,
   title,
-}: Props): JSX.Element {
+}: Props): JSX.Element => {
   const { colors } = useTheme();
   const tintColor = headerTintColor ?? colors.primary;
 
@@ -170,4 +170,6 @@ export default function HeaderConfig({
       ) : null}
     </ScreenStackHeaderConfig>
   );
-}
+};
+
+export default HeaderConfig;
