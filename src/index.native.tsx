@@ -37,6 +37,7 @@ import {
   executeNativeBackPress,
 } from './utils';
 
+// Native components
 import ScreenNativeComponent from './fabric/ScreenNativeComponent';
 import ScreenContainerNativeComponent from './fabric/ScreenContainerNativeComponent';
 import ScreenNavigationContainerNativeComponent from './fabric/ScreenNavigationContainerNativeComponent';
@@ -335,7 +336,11 @@ const ScreenContainer = (props: ScreenContainerProps) => {
 
   if (enabled && isPlatformSupported) {
     if (hasTwoStates) {
-      return <NativeScreenNavigationContainer {...rest} />;
+      const ScreenNavigationContainer =
+        Platform.OS === 'ios'
+          ? NativeScreenNavigationContainer
+          : NativeScreenContainer;
+      return <ScreenNavigationContainer {...rest} />;
     }
     return <NativeScreenContainer {...rest} />;
   }
@@ -465,6 +470,19 @@ const ScreenStackHeaderSearchBarView = (
   />
 );
 
+// context to be used when the user wants to use enhanced implementation
+// e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
+const ScreenContext = React.createContext(InnerScreen);
+
+class Screen extends React.Component<ScreenProps> {
+  static contextType = ScreenContext;
+
+  render() {
+    const ScreenWrapper = (this.context || InnerScreen) as React.ElementType;
+    return <ScreenWrapper {...this.props} />;
+  }
+}
+
 export type {
   StackPresentationTypes,
   StackAnimationTypes,
@@ -479,20 +497,7 @@ export type {
   SearchBarProps,
 };
 
-// context to be used when the user wants to use enhanced implementation
-// e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
-const ScreenContext = React.createContext(InnerScreen);
-
-class Screen extends React.Component<ScreenProps> {
-  static contextType = ScreenContext;
-
-  render() {
-    const ScreenWrapper = (this.context || InnerScreen) as React.ElementType;
-    return <ScreenWrapper {...this.props} />;
-  }
-}
-
-export default {
+export {
   Screen,
   ScreenContainer,
   ScreenContext,
@@ -500,13 +505,12 @@ export default {
   InnerScreen,
   SearchBar,
   FullWindowOverlay,
-
   NativeScreen,
+  NativeScreenContainer,
   NativeScreenNavigationContainer,
-  NativeScreenStackHeaderConfig,
-  NativeScreenStackHeaderSubview,
-  NativeSearchBarCommands,
-
+  NativeScreenStackHeaderConfig as ScreenStackHeaderConfig,
+  NativeScreenStackHeaderSubview as ScreenStackHeaderSubview,
+  NativeSearchBarCommands as SearchBarCommands,
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
