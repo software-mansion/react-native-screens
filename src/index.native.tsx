@@ -37,6 +37,17 @@ import {
   executeNativeBackPress,
 } from './utils';
 
+import ScreenNativeComponent from './fabric/ScreenNativeComponent';
+import ScreenContainerNativeComponent from './fabric/ScreenContainerNativeComponent';
+import ScreenNavigationContainerNativeComponent from './fabric/ScreenNavigationContainerNativeComponent';
+import ScreenStackNativeComponent from './fabric/ScreenStackNativeComponent';
+import ScreenStackHeaderConfigNativeComponent from './fabric/ScreenStackHeaderConfigNativeComponent';
+import ScreenStackHeaderSubviewNativeComponent from './fabric/ScreenStackHeaderSubviewNativeComponent';
+import SearchBarNativeComponent, {
+  Commands as SearchBarNativeCommands,
+} from './fabric/SearchBarNativeComponent';
+import FullWindowOverlayNativeComponent from './fabric/FullWindowOverlayNativeComponent';
+
 // web implementation is taken from `index.tsx`
 const isPlatformSupported =
   Platform.OS === 'ios' ||
@@ -77,111 +88,46 @@ const screensEnabled = () => {
 };
 
 type SearchBarCommandsType = {
-  blur: (
-    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>
-  ) => void;
-  focus: (
-    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>
-  ) => void;
-  clearText: (
-    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>
-  ) => void;
+  blur: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
+  focus: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
+  clearText: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
   toggleCancelButton: (
-    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>,
+    viewRef: React.ElementRef<typeof NativeSearchBar>,
     flag: boolean
   ) => void;
   setText: (
-    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>,
+    viewRef: React.ElementRef<typeof NativeSearchBar>,
     text: string
   ) => void;
 };
 
 // We initialize these lazily so that importing the module doesn't throw error when not linked
 // This is necessary coz libraries such as React Navigation import the library where it may not be enabled
-let NativeScreenValue: React.ComponentType<ScreenProps>;
-let NativeScreenContainerValue: React.ComponentType<ScreenContainerProps>;
-let NativeScreenNavigationContainerValue: React.ComponentType<ScreenContainerProps>;
-let NativeScreenStack: React.ComponentType<ScreenStackProps>;
-let NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps>;
-let NativeScreenStackHeaderSubview: React.ComponentType<
+const NativeScreen: React.ComponentType<ScreenProps> =
+  ScreenNativeComponent as any;
+const NativeScreenContainer: React.ComponentType<ScreenContainerProps> =
+  ScreenContainerNativeComponent as any;
+const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps> =
+  ScreenNavigationContainerNativeComponent as any;
+const NativeScreenStack: React.ComponentType<ScreenStackProps> =
+  ScreenStackNativeComponent as any;
+const NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
+  ScreenStackHeaderConfigNativeComponent as any;
+const NativeScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
->;
+> = ScreenStackHeaderSubviewNativeComponent as any;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
 
-let NativeSearchBar: React.ComponentType<SearchBarProps> &
-  typeof NativeSearchBarCommands;
-let NativeSearchBarCommands: SearchBarCommandsType;
+const NativeSearchBar: React.ComponentType<SearchBarProps> &
+  typeof NativeSearchBarCommands = SearchBarNativeComponent as any;
+const NativeSearchBarCommands: SearchBarCommandsType =
+  SearchBarNativeCommands as any;
 
-let NativeFullWindowOverlay: React.ComponentType<
+const NativeFullWindowOverlay: React.ComponentType<
   PropsWithChildren<{
     style: StyleProp<ViewStyle>;
   }>
->;
-
-const ScreensNativeModules = {
-  get NativeScreen() {
-    NativeScreenValue =
-      NativeScreenValue || require('./fabric/ScreenNativeComponent').default;
-    return NativeScreenValue;
-  },
-
-  get NativeScreenContainer() {
-    NativeScreenContainerValue =
-      NativeScreenContainerValue ||
-      require('./fabric/ScreenContainerNativeComponent').default;
-    return NativeScreenContainerValue;
-  },
-
-  get NativeScreenNavigationContainer() {
-    NativeScreenNavigationContainerValue =
-      NativeScreenNavigationContainerValue ||
-      (Platform.OS === 'ios'
-        ? require('./fabric/ScreenNavigationContainerNativeComponent').default
-        : this.NativeScreenContainer);
-    return NativeScreenNavigationContainerValue;
-  },
-
-  get NativeScreenStack() {
-    NativeScreenStack =
-      NativeScreenStack ||
-      require('./fabric/ScreenStackNativeComponent').default;
-    return NativeScreenStack;
-  },
-
-  get NativeScreenStackHeaderConfig() {
-    NativeScreenStackHeaderConfig =
-      NativeScreenStackHeaderConfig ||
-      require('./fabric/ScreenStackHeaderConfigNativeComponent').default;
-    return NativeScreenStackHeaderConfig;
-  },
-
-  get NativeScreenStackHeaderSubview() {
-    NativeScreenStackHeaderSubview =
-      NativeScreenStackHeaderSubview ||
-      require('./fabric/ScreenStackHeaderSubviewNativeComponent').default;
-    return NativeScreenStackHeaderSubview;
-  },
-
-  get NativeSearchBar() {
-    NativeSearchBar =
-      NativeSearchBar || require('./fabric/SearchBarNativeComponent').default;
-    return NativeSearchBar;
-  },
-
-  get NativeSearchBarCommands() {
-    NativeSearchBarCommands =
-      NativeSearchBarCommands ||
-      require('./fabric/SearchBarNativeComponent').Commands;
-    return NativeSearchBarCommands;
-  },
-
-  get NativeFullWindowOverlay() {
-    NativeFullWindowOverlay =
-      NativeFullWindowOverlay ||
-      require('./fabric/FullWindowOverlayNativeComponent').default;
-    return NativeFullWindowOverlay;
-  },
-};
+> = FullWindowOverlayNativeComponent as any;
 
 interface FreezeWrapperProps {
   freeze: boolean;
@@ -222,11 +168,7 @@ const ScreenStack = (props: ScreenStackProps) => {
     );
   });
 
-  return (
-    <ScreensNativeModules.NativeScreenStack {...rest}>
-      {childrenWithFreeze}
-    </ScreensNativeModules.NativeScreenStack>
-  );
+  return <NativeScreenStack {...rest}>{childrenWithFreeze}</NativeScreenStack>;
 };
 
 // Incomplete type, all accessible properties available at:
@@ -275,8 +217,7 @@ class InnerScreen extends React.Component<ScreenProps> {
 
     if (enabled && isPlatformSupported) {
       AnimatedNativeScreen =
-        AnimatedNativeScreen ||
-        Animated.createAnimatedComponent(ScreensNativeModules.NativeScreen);
+        AnimatedNativeScreen || Animated.createAnimatedComponent(NativeScreen);
 
       let {
         // Filter out active prop in this case because it is unused and
@@ -394,9 +335,9 @@ const ScreenContainer = (props: ScreenContainerProps) => {
 
   if (enabled && isPlatformSupported) {
     if (hasTwoStates) {
-      return <ScreensNativeModules.NativeScreenNavigationContainer {...rest} />;
+      return <NativeScreenNavigationContainer {...rest} />;
     }
-    return <ScreensNativeModules.NativeScreenContainer {...rest} />;
+    return <NativeScreenContainer {...rest} />;
   }
   return <View {...rest} />;
 };
@@ -407,10 +348,10 @@ const FullWindowOverlay = (props: { children: ReactNode }) => {
     return <View {...props} />;
   }
   return (
-    <ScreensNativeModules.NativeFullWindowOverlay
+    <NativeFullWindowOverlay
       style={{ position: 'absolute', width: '100%', height: '100%' }}>
       {props.children}
-    </ScreensNativeModules.NativeFullWindowOverlay>
+    </NativeFullWindowOverlay>
   );
 };
 
@@ -426,11 +367,9 @@ const styles = StyleSheet.create({
 });
 
 const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
-  <ScreensNativeModules.NativeScreenStackHeaderSubview
-    type="back"
-    style={styles.headerSubview}>
+  <NativeScreenStackHeaderSubview type="back" style={styles.headerSubview}>
     <Image resizeMode="center" fadeDuration={0} {...props} />
-  </ScreensNativeModules.NativeScreenStackHeaderSubview>
+  </NativeScreenStackHeaderSubview>
 );
 
 class SearchBar extends React.Component<SearchBarProps> {
@@ -453,33 +392,25 @@ class SearchBar extends React.Component<SearchBarProps> {
   }
 
   blur() {
-    this._callMethodWithRef(ref =>
-      ScreensNativeModules.NativeSearchBarCommands.blur(ref)
-    );
+    this._callMethodWithRef(ref => NativeSearchBarCommands.blur(ref));
   }
 
   focus() {
-    this._callMethodWithRef(ref =>
-      ScreensNativeModules.NativeSearchBarCommands.focus(ref)
-    );
+    this._callMethodWithRef(ref => NativeSearchBarCommands.focus(ref));
   }
 
   toggleCancelButton(flag: boolean) {
     this._callMethodWithRef(ref =>
-      ScreensNativeModules.NativeSearchBarCommands.toggleCancelButton(ref, flag)
+      NativeSearchBarCommands.toggleCancelButton(ref, flag)
     );
   }
 
   clearText() {
-    this._callMethodWithRef(ref =>
-      ScreensNativeModules.NativeSearchBarCommands.clearText(ref)
-    );
+    this._callMethodWithRef(ref => NativeSearchBarCommands.clearText(ref));
   }
 
   setText(text: string) {
-    this._callMethodWithRef(ref =>
-      ScreensNativeModules.NativeSearchBarCommands.setText(ref, text)
-    );
+    this._callMethodWithRef(ref => NativeSearchBarCommands.setText(ref, text));
   }
 
   render() {
@@ -490,19 +421,14 @@ class SearchBar extends React.Component<SearchBarProps> {
       return View as any as ReactNode;
     }
 
-    return (
-      <ScreensNativeModules.NativeSearchBar
-        {...this.props}
-        ref={this.nativeSearchBarRef}
-      />
-    );
+    return <NativeSearchBar {...this.props} ref={this.nativeSearchBarRef} />;
   }
 }
 
 const ScreenStackHeaderRightView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
-  <ScreensNativeModules.NativeScreenStackHeaderSubview
+  <NativeScreenStackHeaderSubview
     {...props}
     type="right"
     style={styles.headerSubview}
@@ -512,7 +438,7 @@ const ScreenStackHeaderRightView = (
 const ScreenStackHeaderLeftView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
-  <ScreensNativeModules.NativeScreenStackHeaderSubview
+  <NativeScreenStackHeaderSubview
     {...props}
     type="left"
     style={styles.headerSubview}
@@ -522,7 +448,7 @@ const ScreenStackHeaderLeftView = (
 const ScreenStackHeaderCenterView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
-  <ScreensNativeModules.NativeScreenStackHeaderSubview
+  <NativeScreenStackHeaderSubview
     {...props}
     type="center"
     style={styles.headerSubview}
@@ -532,7 +458,7 @@ const ScreenStackHeaderCenterView = (
 const ScreenStackHeaderSearchBarView = (
   props: React.PropsWithChildren<SearchBarProps>
 ): JSX.Element => (
-  <ScreensNativeModules.NativeScreenStackHeaderSubview
+  <NativeScreenStackHeaderSubview
     {...props}
     type="searchBar"
     style={styles.headerSubview}
@@ -574,24 +500,13 @@ export default {
   InnerScreen,
   SearchBar,
   FullWindowOverlay,
-  get NativeScreen() {
-    return ScreensNativeModules.NativeScreen;
-  },
-  get NativeScreenContainer() {
-    return ScreensNativeModules.NativeScreenContainer;
-  },
-  get NativeScreenNavigationContainer() {
-    return ScreensNativeModules.NativeScreenNavigationContainer;
-  },
-  get ScreenStackHeaderConfig() {
-    return ScreensNativeModules.NativeScreenStackHeaderConfig;
-  },
-  get ScreenStackHeaderSubview() {
-    return ScreensNativeModules.NativeScreenStackHeaderSubview;
-  },
-  get SearchBarCommands() {
-    return ScreensNativeModules.NativeSearchBarCommands;
-  },
+
+  NativeScreen,
+  NativeScreenNavigationContainer,
+  NativeScreenStackHeaderConfig,
+  NativeScreenStackHeaderSubview,
+  NativeSearchBarCommands,
+
   ScreenStackHeaderBackButtonImage,
   ScreenStackHeaderRightView,
   ScreenStackHeaderLeftView,
