@@ -12,24 +12,24 @@ class RNSScreenComponentDescriptor final
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
-  void adopt(ShadowNode::Unshared const &shadowNode) const override {
+  void adopt(ShadowNode& shadowNode) const override {
     react_native_assert(
-        std::dynamic_pointer_cast<RNSScreenShadowNode>(shadowNode));
-    auto screenShadowNode =
-        std::static_pointer_cast<RNSScreenShadowNode>(shadowNode);
+        dynamic_cast<RNSScreenShadowNode*>(&shadowNode));
+    auto& screenShadowNode =
+        static_cast<RNSScreenShadowNode&>(shadowNode);
 
     react_native_assert(
-        std::dynamic_pointer_cast<YogaLayoutableShadowNode>(screenShadowNode));
-    auto layoutableShadowNode =
-        std::static_pointer_cast<YogaLayoutableShadowNode>(screenShadowNode);
+        dynamic_cast<YogaLayoutableShadowNode*>(&screenShadowNode));
+    auto& layoutableShadowNode =
+        dynamic_cast<YogaLayoutableShadowNode&>(screenShadowNode);
 
     auto state =
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
-            shadowNode->getState());
+            shadowNode.getState());
     auto stateData = state->getData();
 
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode->setSize(
+      layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     }
 
