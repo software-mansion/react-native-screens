@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,7 +19,9 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.facebook.react.touch.ReactHitSlopView
 import com.facebook.react.uimanager.PixelUtil
+import com.facebook.react.uimanager.ReactCompoundViewGroup
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -258,7 +261,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private class ScreensCoordinatorLayout(
         context: Context,
         private val mFragment: ScreenFragment
-    ) : CoordinatorLayout(context) {
+    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
         private val mAnimationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation) {
@@ -313,6 +316,24 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             if (visibility != INVISIBLE) {
                 super.clearFocus()
             }
+        }
+
+        override fun reactTagForTouch(p0: Float, p1: Float): Int {
+            throw IllegalStateException("XD")
+        }
+
+        override fun interceptsTouchEvent(touchX: Float, touchY: Float): Boolean {
+            return false
+        }
+
+        override fun getHitSlopRect(): Rect? {
+            val screen: Screen = mFragment.screen
+//            left – The X coordinate of the left side of the rectangle
+//            top – The Y coordinate of the top of the rectangle i
+//            right – The X coordinate of the right side of the rectangle
+//            bottom – The Y coordinate of the bottom of the rectangle
+            return Rect(screen.x.toInt(), -screen.y.toInt(), screen.x.toInt() + screen.width, screen.y.toInt() + screen.height)
+
         }
     }
 

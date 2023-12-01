@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
 import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
@@ -151,6 +152,10 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         }
         this.activityState = activityState
         container?.notifyChildUpdate()
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return super.onInterceptTouchEvent(ev)
     }
 
     fun setScreenOrientation(screenOrientation: String?) {

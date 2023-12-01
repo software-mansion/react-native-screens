@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
   const initialScreenOptions: NativeStackNavigationOptions = {
-    stackPresentation: 'modal',
+    stackPresentation: 'formSheet',
     sheetAllowedDetents: 'all',
     sheetLargestUndimmedDetent: 'medium',
     sheetGrabberVisible: false,
@@ -77,6 +77,11 @@ function Second({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
+  const navigateToFirstCallback = () => {
+    console.log('Navigate to first callback called');
+    navigation.navigate('First');
+  };
+
   return (
     <View>
       <Button
@@ -89,7 +94,7 @@ function Second({
       />
       <Button
         title="Go back to first screen"
-        onPress={() => navigation.navigate('First')}
+        onPress={navigateToFirstCallback}
       />
     </View>
   );
