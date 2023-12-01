@@ -1,487 +1,51 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import React, { PropsWithChildren, ReactNode } from 'react';
-import {
-  Animated,
-  Image,
-  ImageProps,
-  Platform,
-  StyleProp,
-  StyleSheet,
-  UIManager,
-  View,
-  ViewProps,
-  ViewStyle,
-} from 'react-native';
-import { Freeze } from 'react-freeze';
-import { version } from 'react-native/package.json';
+export {
+  enableScreens,
+  enableFreeze,
+  screensEnabled,
+  freezeEnabled,
+  shouldUseActivityState,
+} from './core';
 
-import TransitionProgressContext from './TransitionProgressContext';
-import useTransitionProgress from './useTransitionProgress';
-import {
-  StackPresentationTypes,
-  StackAnimationTypes,
-  BlurEffectTypes,
-  ScreenReplaceTypes,
-  ScreenOrientationTypes,
-  HeaderSubviewTypes,
-  ScreenProps,
-  ScreenContainerProps,
-  ScreenStackProps,
-  ScreenStackHeaderConfigProps,
-  SearchBarProps,
-  SearchBarCommands,
-} from './types';
-import {
+export {
+  default as Screen,
+  NativeScreen,
+  InnerScreen,
+  ScreenContext,
+} from './components/Screen';
+
+export {
+  default as ScreenContainer,
+  NativeScreenContainer,
+  NativeScreenNavigationContainer,
+} from './components/ScreenContainer';
+
+export { default as ScreenStack } from './components/ScreenStack';
+
+export {
+  NativeScreenStackHeaderConfig as ScreenStackHeaderConfig,
+  NativeScreenStackHeaderSubview as ScreenStackHeaderSubview,
+  ScreenStackHeaderLeftView,
+  ScreenStackHeaderCenterView,
+  ScreenStackHeaderRightView,
+  ScreenStackHeaderBackButtonImage,
+  ScreenStackHeaderSearchBarView,
+} from './components/ScreenStackHeaderConfig';
+
+export {
+  default as SearchBar,
+  NativeSearchBar,
+  NativeSearchBarCommands as SearchBarCommands,
+} from './components/SearchBar';
+
+export { default as FullWindowOverlay } from './components/FullWindowOverlay';
+
+export {
   isSearchBarAvailableForCurrentPlatform,
   isNewBackTitleImplementation,
   executeNativeBackPress,
 } from './utils';
 
-// Native components
-import ScreenNativeComponent from './fabric/ScreenNativeComponent';
-import ScreenContainerNativeComponent from './fabric/ScreenContainerNativeComponent';
-import ScreenNavigationContainerNativeComponent from './fabric/ScreenNavigationContainerNativeComponent';
-import ScreenStackNativeComponent from './fabric/ScreenStackNativeComponent';
-import ScreenStackHeaderConfigNativeComponent from './fabric/ScreenStackHeaderConfigNativeComponent';
-import ScreenStackHeaderSubviewNativeComponent from './fabric/ScreenStackHeaderSubviewNativeComponent';
-import SearchBarNativeComponent, {
-  Commands as SearchBarNativeCommands,
-} from './fabric/SearchBarNativeComponent';
-import FullWindowOverlayNativeComponent from './fabric/FullWindowOverlayNativeComponent';
-
-// web implementation is taken from `index.tsx`
-const isPlatformSupported =
-  Platform.OS === 'ios' ||
-  Platform.OS === 'android' ||
-  Platform.OS === 'windows';
-
-let ENABLE_SCREENS = isPlatformSupported;
-
-const enableScreens = (shouldEnableScreens = true) => {
-  ENABLE_SCREENS = isPlatformSupported && shouldEnableScreens;
-  if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
-    console.error(
-      `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
-    );
-  }
-};
-
-let ENABLE_FREEZE = false;
-
-const enableFreeze = (shouldEnableReactFreeze = true) => {
-  const minor = parseInt(version.split('.')[1]); // eg. takes 66 from '0.66.0'
-
-  // react-freeze requires react-native >=0.64, react-native from main is 0.0.0
-  if (!(minor === 0 || minor >= 64) && shouldEnableReactFreeze) {
-    console.warn(
-      'react-freeze library requires at least react-native 0.64. Please upgrade your react-native version in order to use this feature.'
-    );
-  }
-
-  ENABLE_FREEZE = shouldEnableReactFreeze;
-};
-
-// const that tells if the library should use new implementation, will be undefined for older versions
-const shouldUseActivityState = true;
-
-const screensEnabled = () => {
-  return ENABLE_SCREENS;
-};
-
-type SearchBarCommandsType = {
-  blur: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
-  focus: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
-  clearText: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
-  toggleCancelButton: (
-    viewRef: React.ElementRef<typeof NativeSearchBar>,
-    flag: boolean
-  ) => void;
-  setText: (
-    viewRef: React.ElementRef<typeof NativeSearchBar>,
-    text: string
-  ) => void;
-};
-
-// We initialize these lazily so that importing the module doesn't throw error when not linked
-// This is necessary coz libraries such as React Navigation import the library where it may not be enabled
-const NativeScreen: React.ComponentType<ScreenProps> =
-  ScreenNativeComponent as any;
-const NativeScreenContainer: React.ComponentType<ScreenContainerProps> =
-  ScreenContainerNativeComponent as any;
-const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps> =
-  ScreenNavigationContainerNativeComponent as any;
-const NativeScreenStack: React.ComponentType<ScreenStackProps> =
-  ScreenStackNativeComponent as any;
-const NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
-  ScreenStackHeaderConfigNativeComponent as any;
-const NativeScreenStackHeaderSubview: React.ComponentType<
-  React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
-> = ScreenStackHeaderSubviewNativeComponent as any;
-let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
-
-const NativeSearchBar: React.ComponentType<SearchBarProps> &
-  typeof NativeSearchBarCommands = SearchBarNativeComponent as any;
-const NativeSearchBarCommands: SearchBarCommandsType =
-  SearchBarNativeCommands as any;
-
-const NativeFullWindowOverlay: React.ComponentType<
-  PropsWithChildren<{
-    style: StyleProp<ViewStyle>;
-  }>
-> = FullWindowOverlayNativeComponent as any;
-
-interface FreezeWrapperProps {
-  freeze: boolean;
-  children: React.ReactNode;
-}
-
-// This component allows one more render before freezing the screen.
-// Allows activityState to reach the native side and useIsFocused to work correctly.
-const DelayedFreeze = ({ freeze, children }: FreezeWrapperProps) => {
-  // flag used for determining whether freeze should be enabled
-  const [freezeState, setFreezeState] = React.useState(false);
-
-  if (freeze !== freezeState) {
-    // setImmediate is executed at the end of the JS execution block.
-    // Used here for changing the state right after the render.
-    setImmediate(() => {
-      setFreezeState(freeze);
-    });
-  }
-
-  return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
-};
-
-const ScreenStack = (props: ScreenStackProps) => {
-  const { children, ...rest } = props;
-  const size = React.Children.count(children);
-  // freezes all screens except the top one
-  const childrenWithFreeze = React.Children.map(children, (child, index) => {
-    // @ts-expect-error it's either SceneView in v6 or RouteView in v5
-    const { props, key } = child;
-    const descriptor = props?.descriptor ?? props?.descriptors?.[key];
-    const freezeEnabled = descriptor?.options?.freezeOnBlur ?? ENABLE_FREEZE;
-
-    return (
-      <DelayedFreeze freeze={freezeEnabled && size - index > 1}>
-        {child}
-      </DelayedFreeze>
-    );
-  });
-
-  return <NativeScreenStack {...rest}>{childrenWithFreeze}</NativeScreenStack>;
-};
-
-// Incomplete type, all accessible properties available at:
-// react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
-interface ViewConfig extends View {
-  viewConfig: {
-    validAttributes: {
-      style: {
-        display: boolean;
-      };
-    };
-  };
-}
-
-class InnerScreen extends React.Component<ScreenProps> {
-  private ref: React.ElementRef<typeof View> | null = null;
-  private closing = new Animated.Value(0);
-  private progress = new Animated.Value(0);
-  private goingForward = new Animated.Value(0);
-
-  setNativeProps(props: ScreenProps): void {
-    this.ref?.setNativeProps(props);
-  }
-
-  setRef = (ref: React.ElementRef<typeof View> | null): void => {
-    this.ref = ref;
-    this.props.onComponentRef?.(ref);
-  };
-
-  render() {
-    const {
-      enabled = ENABLE_SCREENS,
-      freezeOnBlur = ENABLE_FREEZE,
-      ...rest
-    } = this.props;
-
-    // To maintain default behaviour of formSheet stack presentation style & and to have resonable
-    // defaults for new medium-detent iOS API we need to set defaults here
-    const {
-      sheetAllowedDetents = 'large',
-      sheetLargestUndimmedDetent = 'all',
-      sheetGrabberVisible = false,
-      sheetCornerRadius = -1.0,
-      sheetExpandsWhenScrolledToEdge = true,
-    } = rest;
-
-    if (enabled && isPlatformSupported) {
-      AnimatedNativeScreen =
-        AnimatedNativeScreen || Animated.createAnimatedComponent(NativeScreen);
-
-      let {
-        // Filter out active prop in this case because it is unused and
-        // can cause problems depending on react-native version:
-        // https://github.com/react-navigation/react-navigation/issues/4886
-        active,
-        activityState,
-        children,
-        isNativeStack,
-        gestureResponseDistance,
-        onGestureCancel,
-        ...props
-      } = rest;
-
-      if (active !== undefined && activityState === undefined) {
-        console.warn(
-          'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
-        );
-        activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
-      }
-
-      const handleRef = (ref: ViewConfig) => {
-        if (ref?.viewConfig?.validAttributes?.style) {
-          ref.viewConfig.validAttributes.style = {
-            ...ref.viewConfig.validAttributes.style,
-            display: false,
-          };
-          this.setRef(ref);
-        }
-      };
-
-      return (
-        <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
-          <AnimatedNativeScreen
-            {...props}
-            activityState={activityState}
-            sheetAllowedDetents={sheetAllowedDetents}
-            sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
-            sheetGrabberVisible={sheetGrabberVisible}
-            sheetCornerRadius={sheetCornerRadius}
-            sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-            gestureResponseDistance={{
-              start: gestureResponseDistance?.start ?? -1,
-              end: gestureResponseDistance?.end ?? -1,
-              top: gestureResponseDistance?.top ?? -1,
-              bottom: gestureResponseDistance?.bottom ?? -1,
-            }}
-            // This prevents showing blank screen when navigating between multiple screens with freezing
-            // https://github.com/software-mansion/react-native-screens/pull/1208
-            ref={handleRef}
-            onTransitionProgress={
-              !isNativeStack
-                ? undefined
-                : Animated.event(
-                    [
-                      {
-                        nativeEvent: {
-                          progress: this.progress,
-                          closing: this.closing,
-                          goingForward: this.goingForward,
-                        },
-                      },
-                    ],
-                    { useNativeDriver: true }
-                  )
-            }
-            onGestureCancel={
-              onGestureCancel ??
-              (() => {
-                // for internal use
-              })
-            }>
-            {!isNativeStack ? ( // see comment of this prop in types.tsx for information why it is needed
-              children
-            ) : (
-              <TransitionProgressContext.Provider
-                value={{
-                  progress: this.progress,
-                  closing: this.closing,
-                  goingForward: this.goingForward,
-                }}>
-                {children}
-              </TransitionProgressContext.Provider>
-            )}
-          </AnimatedNativeScreen>
-        </DelayedFreeze>
-      );
-    } else {
-      // same reason as above
-      let {
-        active,
-        activityState,
-        style,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onComponentRef,
-        ...props
-      } = rest;
-
-      if (active !== undefined && activityState === undefined) {
-        activityState = active !== 0 ? 2 : 0;
-      }
-      return (
-        <Animated.View
-          style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
-          ref={this.setRef}
-          {...props}
-        />
-      );
-    }
-  }
-}
-
-const ScreenContainer = (props: ScreenContainerProps) => {
-  const { enabled = ENABLE_SCREENS, hasTwoStates, ...rest } = props;
-
-  if (enabled && isPlatformSupported) {
-    if (hasTwoStates) {
-      const ScreenNavigationContainer =
-        Platform.OS === 'ios'
-          ? NativeScreenNavigationContainer
-          : NativeScreenContainer;
-      return <ScreenNavigationContainer {...rest} />;
-    }
-    return <NativeScreenContainer {...rest} />;
-  }
-  return <View {...rest} />;
-};
-
-const FullWindowOverlay = (props: { children: ReactNode }) => {
-  if (Platform.OS !== 'ios') {
-    console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
-    return <View {...props} />;
-  }
-  return (
-    <NativeFullWindowOverlay
-      style={{ position: 'absolute', width: '100%', height: '100%' }}>
-      {props.children}
-    </NativeFullWindowOverlay>
-  );
-};
-
-const styles = StyleSheet.create({
-  headerSubview: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-
-const ScreenStackHeaderBackButtonImage = (props: ImageProps): JSX.Element => (
-  <NativeScreenStackHeaderSubview type="back" style={styles.headerSubview}>
-    <Image resizeMode="center" fadeDuration={0} {...props} />
-  </NativeScreenStackHeaderSubview>
-);
-
-class SearchBar extends React.Component<SearchBarProps> {
-  nativeSearchBarRef: React.RefObject<SearchBarCommands>;
-
-  constructor(props: SearchBarProps) {
-    super(props);
-    this.nativeSearchBarRef = React.createRef();
-  }
-
-  _callMethodWithRef(method: (ref: SearchBarCommands) => void) {
-    const ref = this.nativeSearchBarRef.current;
-    if (ref) {
-      method(ref);
-    } else {
-      console.warn(
-        'Reference to native search bar component has not been updated yet'
-      );
-    }
-  }
-
-  blur() {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.blur(ref));
-  }
-
-  focus() {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.focus(ref));
-  }
-
-  toggleCancelButton(flag: boolean) {
-    this._callMethodWithRef(ref =>
-      NativeSearchBarCommands.toggleCancelButton(ref, flag)
-    );
-  }
-
-  clearText() {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.clearText(ref));
-  }
-
-  setText(text: string) {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.setText(ref, text));
-  }
-
-  render() {
-    if (!isSearchBarAvailableForCurrentPlatform) {
-      console.warn(
-        'Importing SearchBar is only valid on iOS and Android devices.'
-      );
-      return View as any as ReactNode;
-    }
-
-    return <NativeSearchBar {...this.props} ref={this.nativeSearchBarRef} />;
-  }
-}
-
-const ScreenStackHeaderRightView = (
-  props: React.PropsWithChildren<ViewProps>
-): JSX.Element => (
-  <NativeScreenStackHeaderSubview
-    {...props}
-    type="right"
-    style={styles.headerSubview}
-  />
-);
-
-const ScreenStackHeaderLeftView = (
-  props: React.PropsWithChildren<ViewProps>
-): JSX.Element => (
-  <NativeScreenStackHeaderSubview
-    {...props}
-    type="left"
-    style={styles.headerSubview}
-  />
-);
-
-const ScreenStackHeaderCenterView = (
-  props: React.PropsWithChildren<ViewProps>
-): JSX.Element => (
-  <NativeScreenStackHeaderSubview
-    {...props}
-    type="center"
-    style={styles.headerSubview}
-  />
-);
-
-const ScreenStackHeaderSearchBarView = (
-  props: React.PropsWithChildren<SearchBarProps>
-): JSX.Element => (
-  <NativeScreenStackHeaderSubview
-    {...props}
-    type="searchBar"
-    style={styles.headerSubview}
-  />
-);
-
-// context to be used when the user wants to use enhanced implementation
-// e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
-const ScreenContext = React.createContext(InnerScreen);
-
-class Screen extends React.Component<ScreenProps> {
-  static contextType = ScreenContext;
-
-  render() {
-    const ScreenWrapper = (this.context || InnerScreen) as React.ElementType;
-    return <ScreenWrapper {...this.props} />;
-  }
-}
+export { default as useTransitionProgress } from './useTransitionProgress';
 
 export type {
   StackPresentationTypes,
@@ -495,33 +59,4 @@ export type {
   ScreenStackProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-};
-
-export {
-  Screen,
-  ScreenContainer,
-  ScreenContext,
-  ScreenStack,
-  InnerScreen,
-  SearchBar,
-  FullWindowOverlay,
-  NativeScreen,
-  NativeScreenContainer,
-  NativeScreenNavigationContainer,
-  NativeScreenStackHeaderConfig as ScreenStackHeaderConfig,
-  NativeScreenStackHeaderSubview as ScreenStackHeaderSubview,
-  NativeSearchBarCommands as SearchBarCommands,
-  ScreenStackHeaderBackButtonImage,
-  ScreenStackHeaderRightView,
-  ScreenStackHeaderLeftView,
-  ScreenStackHeaderCenterView,
-  ScreenStackHeaderSearchBarView,
-  enableScreens,
-  enableFreeze,
-  screensEnabled,
-  shouldUseActivityState,
-  useTransitionProgress,
-  isSearchBarAvailableForCurrentPlatform,
-  isNewBackTitleImplementation,
-  executeNativeBackPress,
-};
+} from './types';
