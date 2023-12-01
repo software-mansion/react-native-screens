@@ -9,7 +9,18 @@ import {
   SearchBarProps,
 } from './types';
 
+import { screensEnabled } from './core';
+
 export * from './types';
+
+export {
+  enableScreens,
+  enableFreeze,
+  screensEnabled,
+  freezeEnabled,
+  shouldUseActivityState,
+} from './core';
+
 export { default as useTransitionProgress } from './useTransitionProgress';
 export {
   isSearchBarAvailableForCurrentPlatform,
@@ -17,49 +28,31 @@ export {
   executeNativeBackPress,
 } from './utils';
 
-let ENABLE_SCREENS = true;
+const NativeScreen = (props: ScreenProps) => {
+  let {
+    active,
+    activityState,
+    style,
+    enabled = screensEnabled(),
+    ...rest
+  } = props;
 
-export function enableScreens(shouldEnableScreens = true): void {
-  ENABLE_SCREENS = shouldEnableScreens;
-}
-
-export function screensEnabled(): boolean {
-  return ENABLE_SCREENS;
-}
-
-// @ts-ignore function stub, freezing logic is located in index.native.tsx
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function enableFreeze(shouldEnableReactFreeze = true): void {
-  // noop
-}
-
-export class NativeScreen extends React.Component<ScreenProps> {
-  render(): JSX.Element {
-    let {
-      active,
-      activityState,
-      style,
-      enabled = ENABLE_SCREENS,
-      ...rest
-    } = this.props;
-
-    if (enabled) {
-      if (active !== undefined && activityState === undefined) {
-        activityState = active !== 0 ? 2 : 0; // change taken from index.native.tsx
-      }
-      return (
-        <View
-          // @ts-expect-error: hidden exists on web, but not in React Native
-          hidden={activityState === 0}
-          style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
-          {...rest}
-        />
-      );
+  if (enabled) {
+    if (active !== undefined && activityState === undefined) {
+      activityState = active !== 0 ? 2 : 0; // change taken from index.native.tsx
     }
-
-    return <View {...rest} />;
+    return (
+      <View
+        // @ts-expect-error: hidden exists on web, but not in React Native
+        hidden={activityState === 0}
+        style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
+        {...rest}
+      />
+    );
   }
-}
+
+  return <View {...rest} />;
+};
 
 export const Screen = Animated.createAnimatedComponent(NativeScreen);
 
@@ -115,5 +108,3 @@ export const SearchBar: React.ComponentType<SearchBarProps> = View;
 export const ScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 > = View;
-
-export const shouldUseActivityState = true;

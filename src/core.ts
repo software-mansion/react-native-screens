@@ -13,7 +13,12 @@ export const isNativePlatformSupported =
 let ENABLE_SCREENS = isNativePlatformSupported;
 
 export const enableScreens = (shouldEnableScreens = true) => {
-  ENABLE_SCREENS = isNativePlatformSupported && shouldEnableScreens;
+  ENABLE_SCREENS = shouldEnableScreens;
+
+  if (!isNativePlatformSupported) {
+    return;
+  }
+
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
     console.error(
       `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
@@ -24,6 +29,10 @@ export const enableScreens = (shouldEnableScreens = true) => {
 let ENABLE_FREEZE = false;
 
 export const enableFreeze = (shouldEnableReactFreeze = true) => {
+  if (!isNativePlatformSupported) {
+    return;
+  }
+
   const minor = parseInt(version.split('.')[1]); // eg. takes 66 from '0.66.0'
 
   // react-freeze requires react-native >=0.64, react-native from main is 0.0.0
