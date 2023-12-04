@@ -1,7 +1,13 @@
 package com.swmansion.common;
 
+import com.facebook.react.bridge.WritableArray;
+
+import javax.annotation.Nullable;
+
 public interface ScreenTransitionManager {
-    int[] startTransition(int stackTag);
-    void updateTransition(int stackTag, double progress);
-    void finishTransition(int stackTag, boolean canceled);
+    WritableArray startTransition(@Nullable Double reactTag);
+
+    boolean updateTransition(@Nullable Double reactTag, double progress);
+
+    boolean finishTransition(@Nullable Double reactTag, boolean canceled);
 }

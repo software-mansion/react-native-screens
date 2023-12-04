@@ -139,7 +139,7 @@
   ],
   "codegenConfig": {
     "name": "rnscreens",
-    "type": "components",
+    "type": "all",
     "jsSrcsDir": "./src/fabric",
     "android": {
       "javaPackageName": "com.swmansion.rnscreens"
