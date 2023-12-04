@@ -914,6 +914,20 @@ namespace react = facebook::react;
     BOOL isBackGesture = [panGestureRecognizer translationInView:panGestureRecognizer.view].x > 0 &&
         _controller.viewControllers.count > 1;
 
+    // Detects if we are currently at the top of the ScrollView and if the gesture is a swipe down.
+    // We consider this only if the scroll is more vertical than horizontal
+    UIScrollView *scrollView = (UIScrollView *)otherGestureRecognizer.view;
+    CGPoint translation = [panGestureRecognizer translationInView:panGestureRecognizer.view];
+    BOOL shouldDismissWithScrollDown =
+        abs(translation.y) > abs(translation.x) && translation.y > 0 && scrollView.contentOffset.y <= 0;
+    if (shouldDismissWithScrollDown) {
+      // If we detect a dismiss swipe, we cancel the other gesture recognizer and consider only the screen's one
+      // (To cancel a gesture, we need to disable and re-enable it)
+      [otherGestureRecognizer setEnabled:NO];
+      [otherGestureRecognizer setEnabled:YES];
+      return YES;
+    }
+
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan || isBackGesture) {
       return NO;
     }
