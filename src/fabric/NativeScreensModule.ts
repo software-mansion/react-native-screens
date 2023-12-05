@@ -10,4 +10,5 @@ export interface Spec extends TurboModule {
   finishTransition(reactTag: Int32 | null, canceled: boolean): boolean;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('RNSModule');
+// TODO: investigate why it throws with getEnforcing on Android
+export default TurboModuleRegistry.get<Spec>('RNSModule');
