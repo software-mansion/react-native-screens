@@ -2,6 +2,7 @@ import React from 'react';
 import { ScreenStackProps, freezeEnabled } from 'react-native-screens';
 import DelayedFreeze from './helpers/DelayedFreeze';
 
+// Native components
 import ScreenStackNativeComponent from '../fabric/ScreenStackNativeComponent';
 const NativeScreenStack: React.ComponentType<ScreenStackProps> =
   ScreenStackNativeComponent as any;

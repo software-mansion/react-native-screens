@@ -6,16 +6,15 @@ import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
 import { ScreenProps } from 'react-native-screens';
 
-// Native components
-import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
 import {
   freezeEnabled,
   isNativePlatformSupported,
   screensEnabled,
 } from '../core';
 
-// We initialize these lazily so that importing the module doesn't throw error when not linked
-// This is necessary coz libraries such as React Navigation import the library where it may not be enabled
+// Native components
+import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
+
 export const NativeScreen: React.ComponentType<ScreenProps> =
   ScreenNativeComponent as any;
 let AnimatedNativeScreen: React.ComponentType<ScreenProps>;

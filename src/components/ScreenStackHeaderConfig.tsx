@@ -6,6 +6,7 @@ import {
 } from 'react-native-screens';
 import { Image, ImageProps, StyleSheet, ViewProps } from 'react-native';
 
+// Native components
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
 import ScreenStackHeaderSubviewNativeComponent from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 

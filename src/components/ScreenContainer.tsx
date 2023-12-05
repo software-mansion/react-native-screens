@@ -3,6 +3,7 @@ import React from 'react';
 import { ScreenContainerProps } from 'react-native-screens';
 import { isNativePlatformSupported, screensEnabled } from '../core';
 
+// Native components
 import ScreenContainerNativeComponent from '../fabric/ScreenContainerNativeComponent';
 import ScreenNavigationContainerNativeComponent from '../fabric/ScreenNavigationContainerNativeComponent';
 

@@ -1,6 +1,7 @@
 import React, { PropsWithChildren, ReactNode } from 'react';
 import { Platform, StyleProp, View, ViewStyle } from 'react-native';
 
+// Native components
 import FullWindowOverlayNativeComponent from '../fabric/FullWindowOverlayNativeComponent';
 const NativeFullWindowOverlay: React.ComponentType<
   PropsWithChildren<{
