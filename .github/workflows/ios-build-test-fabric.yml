@@ -59,4 +59,4 @@ jobs:
 
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn ios
+        run: npx react-native run-ios --no-packager --simulator="iPhone 15"

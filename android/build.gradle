@@ -67,6 +67,9 @@ android {
     def agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION
     if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
         namespace "com.swmansion.rnscreens"
+        buildFeatures {
+            buildConfig true
+        }
     }
 
     // Used to override the NDK path/version on internal CI or by allowing
@@ -154,6 +157,12 @@ dependencies {
         // Include Reanimated as dependency to load the common interface
         implementation (rootProject.subprojects.find { it.name == 'react-native-reanimated' }) {
             exclude group:'com.facebook.fbjni' // resolves "Duplicate class com.facebook.jni.CppException"
+        }
+    }
+    
+    constraints {
+        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1") {
+            because("on older React Native versions this dependency conflicts with react-native-screens")
         }
     }
 }
