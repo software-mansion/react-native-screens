@@ -16,6 +16,7 @@
     "release": "npm login && release-it",
     "prepare": "bob build && husky install"
   },
+  "main": "lib/module/index",
   "module": "lib/module/index",
   "react-native": "src/index",
   "source": "src/index",
