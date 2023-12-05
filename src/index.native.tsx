@@ -1,3 +1,6 @@
+/*
+ * Core
+ */
 export {
   enableScreens,
   enableFreeze,
@@ -6,6 +9,9 @@ export {
   shouldUseActivityState,
 } from './core';
 
+/*
+ * RNS Components
+ */
 export {
   default as Screen,
   NativeScreen,
@@ -39,14 +45,23 @@ export {
 
 export { default as FullWindowOverlay } from './components/FullWindowOverlay';
 
+/*
+ * Utils
+ */
 export {
   isSearchBarAvailableForCurrentPlatform,
   isNewBackTitleImplementation,
   executeNativeBackPress,
 } from './utils';
 
+/*
+ * Hooks
+ */
 export { default as useTransitionProgress } from './useTransitionProgress';
 
+/*
+ * Types
+ */
 export type {
   StackPresentationTypes,
   StackAnimationTypes,
