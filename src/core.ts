@@ -1,5 +1,4 @@
 import { Platform, UIManager } from 'react-native';
-import { version } from 'react-native/package.json';
 
 // const that tells if the library should use new implementation, will be undefined for older versions
 export const shouldUseActivityState = true;
@@ -30,15 +29,6 @@ let ENABLE_FREEZE = false;
 export const enableFreeze = (shouldEnableReactFreeze = true) => {
   if (!isNativePlatformSupported) {
     return;
-  }
-
-  const minor = parseInt(version.split('.')[1]); // eg. takes 66 from '0.66.0'
-
-  // react-freeze requires react-native >=0.64, react-native from main is 0.0.0
-  if (!(minor === 0 || minor >= 64) && shouldEnableReactFreeze) {
-    console.warn(
-      'react-freeze library requires at least react-native 0.64. Please upgrade your react-native version in order to use this feature.'
-    );
   }
 
   ENABLE_FREEZE = shouldEnableReactFreeze;
