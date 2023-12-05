@@ -1,4 +1,3 @@
-// web implementation is taken from `index.tsx`
 import { Platform, UIManager } from 'react-native';
 import { version } from 'react-native/package.json';
 
