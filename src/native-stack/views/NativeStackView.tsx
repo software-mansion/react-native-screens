@@ -403,7 +403,8 @@ function NativeStackViewInner({
 }: Props): JSX.Element {
   const { key, routes } = state;
 
-  const topScreenOptions = descriptors[state.routes[state.index].key].options;
+  const currentRouteKey = routes[state.index].key;
+  const topScreenOptions = descriptors[currentRouteKey].options;
   const stackRef = React.useRef(null);
   const GestureDetector = React.useContext(GHContext);
 

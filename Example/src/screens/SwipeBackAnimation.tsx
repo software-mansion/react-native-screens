@@ -44,7 +44,7 @@ const ScreenC = ({ navigation }: ScreenCProps): JSX.Element => (
   </View>
 );
 
-const Stack = createNativeStackNavigator<StackParamList>() as any;
+const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
   <Stack.Navigator

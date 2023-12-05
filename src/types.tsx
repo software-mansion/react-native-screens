@@ -397,6 +397,7 @@ export interface ScreenStackProps extends ViewProps {
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  // stackRef is a container for Reanimated Ref, passed from NativeStack to GestureDetector
   stackRef?: React.MutableRefObject<React.Ref<View>>;
   ref?: React.MutableRefObject<React.Ref<View>>;
 }

@@ -87,8 +87,10 @@ const TransitionHandler = ({
   screenEdgeGesture,
   transitionAnimation: userTransitionAnimation,
 }: GestureProviderProps) => {
-  if (stackRef === undefined) {
-    throw new Error('[RNScreens] You have to specify `stackRef`');
+  if (stackRef === undefined || stackRef.current === undefined) {
+    throw new Error(
+      '[RNScreens] A required parameter `stackRef` was not specified.'
+    );
   }
   stackRef.current = useAnimatedRef();
   const sharedEvent = useSharedValue(DefaultEvent);
@@ -99,14 +101,16 @@ const TransitionHandler = ({
     transitionAnimation = userTransitionAnimation;
     if (!goBackGesture) {
       throw new Error(
-        '[RNScreens] You have to specify `goBackGesture` when using `transitionAnimation`'
+        '[RNScreens] You have to specify `goBackGesture` when using `transitionAnimation`.'
       );
     }
   } else {
     if (!!goBackGesture && SupportedGestures.includes(goBackGesture)) {
       transitionAnimation = AnimationForGesture[goBackGesture];
     } else if (goBackGesture !== undefined) {
-      throw new Error(`[RNScreens] Unknown goBackGesture: ${goBackGesture}`);
+      throw new Error(
+        `[RNScreens] Unknown goBackGesture parameter has been specified: ${goBackGesture}.`
+      );
     }
   }
   const screenTransitionConfig = makeMutable(
@@ -127,9 +131,6 @@ const TransitionHandler = ({
     true
   );
   const refCurrent = stackRef.current;
-  if (refCurrent === null) {
-    throw new Error('[RNScreens] You have to specify `stackRefWrapper`');
-  }
 
   function onStart(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
     'worklet';
