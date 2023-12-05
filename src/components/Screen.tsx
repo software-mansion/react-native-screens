@@ -53,7 +53,7 @@ export class InnerScreen extends React.Component<ScreenProps> {
       ...rest
     } = this.props;
 
-    // To maintain default behaviour of formSheet stack presentation style & and to have resonable
+    // To maintain default behavior of formSheet stack presentation style and to have reasonable
     // defaults for new medium-detent iOS API we need to set defaults here
     const {
       sheetAllowedDetents = 'large',
