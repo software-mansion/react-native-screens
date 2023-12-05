@@ -1,44 +1,50 @@
 package com.swmansion.rnscreens
 
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.UiThreadUtil
+import com.facebook.react.bridge.WritableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.common.ScreenTransitionManager
 import java.util.concurrent.atomic.AtomicBoolean
 
-@ReactModule(name = ScreensModule.REACT_CLASS)
-class ScreensModule(private val mReactContext: ReactApplicationContext) : ReactContextBaseJavaModule(
+
+@ReactModule(name = ScreensModule.NAME)
+class ScreensModule(private val mReactContext: ReactApplicationContext) : NativeScreensModuleSpec (
     mReactContext
 ), ScreenTransitionManager {
 
     private val isActiveTransition = AtomicBoolean(false)
 
     override fun getName(): String {
-        return REACT_CLASS
+        return NAME
     }
 
     @ReactMethod
-    override fun startTransition(reactTag: Int): IntArray {
-        return startTransitionUI(reactTag)
+    override fun startTransition(reactTag: Double?): WritableArray {
+        return startTransitionUI(reactTag?.toInt())
     }
 
     @ReactMethod
-    override fun updateTransition(reactTag: Int, progress: Double) {}
-
-    @ReactMethod
-    override fun finishTransition(reactTag: Int, canceled: Boolean) {
-        finishTransitionUI(reactTag, canceled)
+    override fun updateTransition(reactTag: Double?, progress: Double): Boolean {
+        return false
     }
 
-    private fun startTransitionUI(reactTag: Int): IntArray {
+    @ReactMethod
+    override fun finishTransition(reactTag: Double?, canceled: Boolean): Boolean {
+        return finishTransitionUI(reactTag?.toInt(), canceled)
+    }
+
+    private fun startTransitionUI(reactTag: Int?): WritableArray {
+        val result = Arguments.createArray()
         UiThreadUtil.assertOnUiThread()
-        if (isActiveTransition.get()) {
-            return intArrayOf(-1, -1)
+        if (isActiveTransition.get() || reactTag == null) {
+            result.pushInt(-1)
+            result.pushInt(-1)
+            return result
         }
-        val screenTags: IntArray = intArrayOf(-1, -1)
         val uiManager = UIManagerHelper.getUIManagerForReactTag(mReactContext, reactTag)
         val stack = uiManager?.resolveView(reactTag)
         if (stack is ScreenStack) {
@@ -47,17 +53,17 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : ReactC
             if (screensCount > 1) {
                 isActiveTransition.set(true)
                 stack.attachBelowTop()
-                screenTags[0] = fragments[screensCount - 1].screen.id
-                screenTags[1] = fragments[screensCount - 2].screen.id
+                result.pushInt(fragments[screensCount - 1].screen.id)
+                result.pushInt(fragments[screensCount - 2].screen.id)
             }
         }
-        return screenTags
+        return result
     }
 
-    private fun finishTransitionUI(reactTag: Int, canceled: Boolean) {
+    private fun finishTransitionUI(reactTag: Int?, canceled: Boolean): Boolean {
         UiThreadUtil.assertOnUiThread()
-        if (!isActiveTransition.get()) {
-            return
+        if (!isActiveTransition.get() || reactTag == null) {
+            return false
         }
         val uiManager = UIManagerHelper.getUIManagerForReactTag(mReactContext, reactTag)
         val stack = uiManager?.resolveView(reactTag)
@@ -69,9 +75,10 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : ReactC
             }
             isActiveTransition.set(false)
         }
+        return true
     }
 
     companion object {
-        const val REACT_CLASS = "RNSModule"
+        const val NAME = "RNSModule"
     }
 }

@@ -583,7 +583,9 @@ module.exports = {
   InnerScreen,
   SearchBar,
   FullWindowOverlay,
-  NativeScreensModule,
+  get NativeScreensModule() {
+    return NativeScreensModule;
+  },
 
   get NativeScreen() {
     return ScreensNativeModules.NativeScreen;

@@ -32,7 +32,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition : (nonnull NSNumber *)st
   return @([self _updateTransition:stackTag progress:progress]);
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)stackTag canceled : (bool)canceled)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)stackTag canceled : (BOOL)canceled)
 {
   return @([self _finishTransition:stackTag canceled:canceled]);
 }
@@ -102,5 +102,13 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
   }
   return view;
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+  return std::make_shared<facebook::react::NativeScreensModuleSpecJSI>(params);
+}
+#endif
 
 @end
