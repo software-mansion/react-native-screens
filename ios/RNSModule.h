@@ -5,6 +5,8 @@
 #import <React/RCTBridge.h>
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RNSModule : NSObject
 #ifdef RCT_NEW_ARCH_ENABLED
                        <NativeScreensModuleSpec>
@@ -12,8 +14,10 @@
                        <RCTBridgeModule>
 #endif
 
-- (nonnull NSArray<NSNumber *> *)_startTransition:(nonnull NSNumber *)stackTag;
-- (bool)_updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress;
-- (bool)_finishTransition:(nonnull NSNumber *)stackTag canceled:(bool)canceled;
+- (NSArray<NSNumber *> *)_startTransition:(NSNumber *)stackTag;
+- (bool)_updateTransition:(NSNumber *)stackTag progress:(double)progress;
+- (bool)_finishTransition:(NSNumber *)stackTag canceled:(bool)canceled;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -4,6 +4,8 @@
 #import <React/RCTUIManagerUtils.h>
 #import "RNSScreenStack.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation RNSModule {
   std::atomic<bool> isActiveTransition;
 }
@@ -22,17 +24,17 @@ RCT_EXPORT_MODULE()
   return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition : (nonnull NSNumber *)stackTag)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition : (NSNumber *)stackTag)
 {
   return [self _startTransition:stackTag];
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition : (nonnull NSNumber *)stackTag progress : (double)progress)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition : (NSNumber *)stackTag progress : (double)progress)
 {
   return @([self _updateTransition:stackTag progress:progress]);
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)stackTag canceled : (BOOL)canceled)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag canceled : (BOOL)canceled)
 {
   return @([self _finishTransition:stackTag canceled:canceled]);
 }
@@ -49,7 +51,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
   return view;
 }
 
-- (nonnull NSArray<NSNumber *> *)_startTransition:(nonnull NSNumber *)stackTag
+- (NSArray<NSNumber *> *)_startTransition:(NSNumber *)stackTag
 {
   RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
@@ -70,7 +72,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
   return screenTags;
 }
 
-- (bool)_updateTransition:(nonnull NSNumber *)stackTag progress:(double)progress
+- (bool)_updateTransition:(NSNumber *)stackTag progress:(double)progress
 {
   RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
@@ -81,7 +83,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
   return true;
 }
 
-- (bool)_finishTransition:(nonnull NSNumber *)stackTag canceled:(bool)canceled
+- (bool)_finishTransition:(NSNumber *)stackTag canceled:(bool)canceled
 {
   RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
@@ -93,7 +95,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
   return true;
 }
 
-- (RNSScreenStackView *)getStackView:(nonnull NSNumber *)stackTag
+- (RNSScreenStackView *)getStackView:(NSNumber *)stackTag
 {
   RNSScreenStackView *view = [self getScreenStackView:stackTag];
   if (![view isKindOfClass:[RNSScreenStackView class]]) {
@@ -112,3 +114,5 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (nonnull NSNumber *)st
 #endif
 
 @end
+
+NS_ASSUME_NONNULL_END

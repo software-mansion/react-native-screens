@@ -18,14 +18,11 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
 
     private val isActiveTransition = AtomicBoolean(false)
 
-    override fun getName(): String {
-        return NAME
-    }
+    override fun getName(): String = NAME
 
     @ReactMethod
-    override fun startTransition(reactTag: Double?): WritableArray {
-        return startTransitionUI(reactTag?.toInt())
-    }
+    override fun startTransition(reactTag: Double?): WritableArray
+        = startTransitionUI(reactTag?.toInt())
 
     @ReactMethod
     override fun updateTransition(reactTag: Double?, progress: Double): Boolean {
@@ -33,9 +30,8 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
     }
 
     @ReactMethod
-    override fun finishTransition(reactTag: Double?, canceled: Boolean): Boolean {
-        return finishTransitionUI(reactTag?.toInt(), canceled)
-    }
+    override fun finishTransition(reactTag: Double?, canceled: Boolean): Boolean
+        = finishTransitionUI(reactTag?.toInt(), canceled)
 
     private fun startTransitionUI(reactTag: Int?): WritableArray {
         val result = Arguments.createArray()
