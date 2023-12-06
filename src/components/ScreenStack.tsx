@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform, View } from 'react-native';
 import { ScreenStackProps, freezeEnabled } from 'react-native-screens';
 import DelayedFreeze from './helpers/DelayedFreeze';
 
@@ -28,4 +29,4 @@ const ScreenStack = (props: ScreenStackProps) => {
   return <NativeScreenStack {...rest}>{childrenWithFreeze}</NativeScreenStack>;
 };
 
-export default ScreenStack;
+export default Platform.OS !== 'web' ? ScreenStack : View;

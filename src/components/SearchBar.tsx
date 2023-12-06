@@ -4,7 +4,7 @@ import {
   SearchBarCommands,
   SearchBarProps,
 } from 'react-native-screens';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
 // Native components
 import SearchBarNativeComponent, {
@@ -83,4 +83,4 @@ class SearchBar extends React.Component<SearchBarProps> {
   }
 }
 
-export default SearchBar;
+export default Platform.OS !== 'web' ? SearchBar : View;

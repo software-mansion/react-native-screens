@@ -8,9 +8,11 @@ import ScreenContainerNativeComponent from '../fabric/ScreenContainerNativeCompo
 import ScreenNavigationContainerNativeComponent from '../fabric/ScreenNavigationContainerNativeComponent';
 
 export const NativeScreenContainer: React.ComponentType<ScreenContainerProps> =
-  ScreenContainerNativeComponent as any;
+  Platform.OS !== 'web' ? (ScreenContainerNativeComponent as any) : View;
 export const NativeScreenNavigationContainer: React.ComponentType<ScreenContainerProps> =
-  ScreenNavigationContainerNativeComponent as any;
+  Platform.OS !== 'web'
+    ? (ScreenNavigationContainerNativeComponent as any)
+    : View;
 
 const ScreenContainer = (props: ScreenContainerProps) => {
   const { enabled = screensEnabled(), hasTwoStates, ...rest } = props;

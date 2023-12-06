@@ -22,4 +22,8 @@ const FullWindowOverlay = (props: { children: ReactNode }) => {
   );
 };
 
-export default FullWindowOverlay;
+export default Platform.OS !== 'web'
+  ? FullWindowOverlay
+  : (View as React.ComponentType<{
+      children: ReactNode;
+    }>);
