@@ -1152,14 +1152,6 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
-- (instancetype)init
-{
-  if (self = [super init]) {
-    NSLog(@"RNSScreenStackManager instance created");
-  }
-  return self;
-}
-
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
