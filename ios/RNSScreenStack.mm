@@ -485,7 +485,6 @@ namespace react = facebook::react;
         [firstModalToBeDismissed isKindOfClass:[RNSScreen class]] &&
         ((RNSScreen *)firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone;
 
-    // Do we controll it?
     if ([_presentedModals containsObject:firstModalToBeDismissed]) {
       // We dismiss every VC that was presented by changeRootController VC or its descendant.
       // After the series of dismissals is completed we run completion block in which
