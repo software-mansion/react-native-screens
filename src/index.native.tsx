@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { PropsWithChildren, ReactNode } from 'react';
+import React, { useEffect, PropsWithChildren, ReactNode } from 'react';
 import {
   Animated,
   Image,
@@ -194,13 +194,14 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
   // flag used for determining whether freeze should be enabled
   const [freezeState, setFreezeState] = React.useState(false);
 
-  if (freeze !== freezeState) {
-    // setImmediate is executed at the end of the JS execution block.
-    // Used here for changing the state right after the render.
-    setImmediate(() => {
+  useEffect(() => {
+    const id = setImmediate(() => {
       setFreezeState(freeze);
     });
-  }
+    return () => {
+      clearImmediate(id);
+    }
+  }, [freeze])
 
   return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
 }
