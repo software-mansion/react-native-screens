@@ -10,24 +10,24 @@ import { Image, ImageProps, StyleSheet, ViewProps } from 'react-native';
 import ScreenStackHeaderConfigNativeComponent from '../fabric/ScreenStackHeaderConfigNativeComponent';
 import ScreenStackHeaderSubviewNativeComponent from '../fabric/ScreenStackHeaderSubviewNativeComponent';
 
-export const NativeScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
+export const ScreenStackHeaderConfig: React.ComponentType<ScreenStackHeaderConfigProps> =
   ScreenStackHeaderConfigNativeComponent as any;
-export const NativeScreenStackHeaderSubview: React.ComponentType<
+export const ScreenStackHeaderSubview: React.ComponentType<
   React.PropsWithChildren<ViewProps & { type?: HeaderSubviewTypes }>
 > = ScreenStackHeaderSubviewNativeComponent as any;
 
 export const ScreenStackHeaderBackButtonImage = (
   props: ImageProps
 ): JSX.Element => (
-  <NativeScreenStackHeaderSubview type="back" style={styles.headerSubview}>
+  <ScreenStackHeaderSubview type="back" style={styles.headerSubview}>
     <Image resizeMode="center" fadeDuration={0} {...props} />
-  </NativeScreenStackHeaderSubview>
+  </ScreenStackHeaderSubview>
 );
 
 export const ScreenStackHeaderRightView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
-  <NativeScreenStackHeaderSubview
+  <ScreenStackHeaderSubview
     {...props}
     type="right"
     style={styles.headerSubview}
@@ -37,7 +37,7 @@ export const ScreenStackHeaderRightView = (
 export const ScreenStackHeaderLeftView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
-  <NativeScreenStackHeaderSubview
+  <ScreenStackHeaderSubview
     {...props}
     type="left"
     style={styles.headerSubview}
@@ -47,7 +47,7 @@ export const ScreenStackHeaderLeftView = (
 export const ScreenStackHeaderCenterView = (
   props: React.PropsWithChildren<ViewProps>
 ): JSX.Element => (
-  <NativeScreenStackHeaderSubview
+  <ScreenStackHeaderSubview
     {...props}
     type="center"
     style={styles.headerSubview}
@@ -57,7 +57,7 @@ export const ScreenStackHeaderCenterView = (
 export const ScreenStackHeaderSearchBarView = (
   props: React.PropsWithChildren<SearchBarProps>
 ): JSX.Element => (
-  <NativeScreenStackHeaderSubview
+  <ScreenStackHeaderSubview
     {...props}
     type="searchBar"
     style={styles.headerSubview}

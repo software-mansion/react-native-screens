@@ -30,8 +30,8 @@ export {
 export { default as ScreenStack } from './components/ScreenStack';
 
 export {
-  NativeScreenStackHeaderConfig as ScreenStackHeaderConfig,
-  NativeScreenStackHeaderSubview as ScreenStackHeaderSubview,
+  ScreenStackHeaderConfig,
+  ScreenStackHeaderSubview,
   ScreenStackHeaderLeftView,
   ScreenStackHeaderCenterView,
   ScreenStackHeaderRightView,
