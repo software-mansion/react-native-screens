@@ -117,7 +117,9 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             Log.i("ScreenStackFragment", "Sheet state changed to $newState")
         }
 
-        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            Log.i("ScreenStackFragment", "onSlide $slideOffset")
+        }
     }
     
     override fun onStart() {
@@ -125,12 +127,16 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         super.onStart()
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view: ScreensCoordinatorLayout? =
+        val coordinatorLayout: ScreensCoordinatorLayout? =
             context?.let { ScreensCoordinatorLayout(it, this) }
 
 //        screen.layoutParams = CoordinatorLayout.LayoutParams(
@@ -153,9 +159,14 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 ScrollingViewBehavior()
             }
         }
+
         screen.clipToOutline = true
 
-        view?.addView(screen.recycle())
+//        if (screen.expectsDimmingViewUnderneath()) {
+//            coordinatorLayout?.setBackgroundColor(Color.argb(120, 0, 0, 0))
+//        }
+
+        coordinatorLayout?.addView(screen.recycle())
 
         if (screen.stackPresentation != Screen.StackPresentation.MODAL && screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
             mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
@@ -170,14 +181,35 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
 
 
-            view?.addView(mAppBarLayout)
+            coordinatorLayout?.addView(mAppBarLayout)
             if (mShadowHidden) {
                 mAppBarLayout?.targetElevation = 0f
             }
             mToolbar?.let { mAppBarLayout?.addView(it.recycle()) }
             setHasOptionsMenu(true)
         }
-        return view
+        return coordinatorLayout
+    }
+
+    fun addDimmingViewOnTop() {
+        val coordinator = screen.parent as ScreensCoordinatorLayout
+        val dimmingView = createDimmingView()
+        coordinator.addView(dimmingView)
+    }
+
+    fun removeDimmingViewFromTop() {
+        val coordinator = screen.parent as ScreensCoordinatorLayout
+        coordinator.removeViewAt(coordinator.childCount - 1)
+    }
+
+    private fun createDimmingView(): View {
+        return View(requireContext()).apply {
+            layoutParams = CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                CoordinatorLayout.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(Color.argb(120, 0, 0, 0))
+        }
     }
 
     override fun onStop() {
@@ -260,7 +292,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     private class ScreensCoordinatorLayout(
         context: Context,
-        private val mFragment: ScreenFragment
+        private val mFragment: ScreenStackFragment
     ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
         private val mAnimationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {
@@ -318,8 +350,8 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         }
 
-        override fun reactTagForTouch(p0: Float, p1: Float): Int {
-            throw IllegalStateException("XD")
+        override fun reactTagForTouch(touchX: Float, touchY: Float): Int {
+            throw IllegalStateException("Screen wrapper should never be asked for the view tag")
         }
 
         override fun interceptsTouchEvent(touchX: Float, touchY: Float): Boolean {
@@ -333,7 +365,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 //            right – The X coordinate of the right side of the rectangle
 //            bottom – The Y coordinate of the bottom of the rectangle
             return Rect(screen.x.toInt(), -screen.y.toInt(), screen.x.toInt() + screen.width, screen.y.toInt() + screen.height)
-
         }
     }
 
