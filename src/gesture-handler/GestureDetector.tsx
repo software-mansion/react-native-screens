@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dimensions } from 'react-native';
 import {
   GestureDetector,
@@ -16,6 +16,7 @@ import {
   makeMutable,
 } from 'react-native-reanimated';
 import type { GestureProviderProps } from 'src/native-stack/types';
+import { getShadowNodeWrapperAndTagFromRef, isFabric } from './fabricUtils';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -34,6 +35,19 @@ enum ScreenTransitionCommand {
   Update = 2,
   Finish = 3,
 }
+
+
+type RNScreensTurboModuleType = {
+  startTransition: (stackTag: number) => {
+    topScreenTag: number;
+    belowTopScreenTag: number;
+    canStartTransition: boolean;
+  };
+  updateTransition: (stackTag: number, progress: number) => void;
+  finishTransition: (stackTag: number, isCanceled: boolean) => void;
+}
+
+const RNScreensTurboModule: RNScreensTurboModuleType = (global as any).RNScreensTurboModule;
 
 const AnimationForGesture = {
   swipeRight: ScreenTransition.SwipeRight,
@@ -86,6 +100,8 @@ const TransitionHandler = ({
   goBackGesture,
   screenEdgeGesture,
   transitionAnimation: userTransitionAnimation,
+  screensRefHolder,
+  currentRouteKey,
 }: GestureProviderProps) => {
   if (stackRef === undefined || stackRef.current === undefined) {
     throw new Error(
@@ -130,28 +146,45 @@ const TransitionHandler = ({
     },
     true
   );
-  const refCurrent = stackRef.current;
+  const stackRefCurrent = stackRef.current;
+  const screenTagToNodeWrapperUI = makeMutable<any>({}, true);
+  const IS_FABRIC = isFabric();
+  useEffect(() => {
+    if (!IS_FABRIC) {
+      return;
+    }
+    const screenTagToNodeWrapper: any = {};
+    for (const key in screensRefHolder.current) {
+      const screenRef = screensRefHolder.current[key];
+      const screenData = getShadowNodeWrapperAndTagFromRef(screenRef.current);
+      screenTagToNodeWrapper[screenData.tag ?? ''] = screenData.shadowNodeWrapper;
+    }
+    screenTagToNodeWrapperUI.value = screenTagToNodeWrapper;
+  }, [currentRouteKey]);
 
   function onStart(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
     'worklet';
     sharedEvent.value = event;
     const transitionConfig = screenTransitionConfig.value;
-    const animatedRef = refCurrent;
+    const animatedRef = stackRefCurrent;
     if (!animatedRef) {
       throw new Error('[Reanimated] Unable to recognize stack ref.');
     }
     const stackTag = (animatedRef as () => number)();
-    const screenTags = global._manageScreenTransition(
-      ScreenTransitionCommand.Start,
-      stackTag,
-      null
-    );
-    if (!screenTags) {
+    const transitionData = RNScreensTurboModule.startTransition(stackTag);
+    if (transitionData.canStartTransition === false) {
       canPerformUpdates.value = false;
       return;
     }
-    transitionConfig.topScreenTag = screenTags.topScreenTag;
-    transitionConfig.belowTopScreenTag = screenTags.belowTopScreenTag;
+
+    if (IS_FABRIC) {
+      transitionConfig.topScreenTag = screenTagToNodeWrapperUI.value[transitionData.topScreenTag];
+      transitionConfig.belowTopScreenTag = screenTagToNodeWrapperUI.value[transitionData.belowTopScreenTag];
+    } else {
+      transitionConfig.topScreenTag = transitionData.topScreenTag;
+      transitionConfig.belowTopScreenTag = transitionData.belowTopScreenTag;
+    }
+
     transitionConfig.stackTag = stackTag;
     startingGesturePosition.value = event;
     const animatedRefMock = () => {
@@ -163,11 +196,7 @@ const TransitionHandler = ({
     }
     if (screenSize == null) {
       canPerformUpdates.value = false;
-      global._manageScreenTransition(
-        ScreenTransitionCommand.Finish,
-        stackTag,
-        true
-      );
+      RNScreensTurboModule.finishTransition(stackTag, true);
       return;
     }
     transitionConfig.screenDimensions = screenSize;
@@ -220,11 +249,7 @@ const TransitionHandler = ({
     }
     sharedEvent.value = event;
     const stackTag = screenTransitionConfig.value.stackTag;
-    global._manageScreenTransition(
-      ScreenTransitionCommand.Update,
-      stackTag,
-      progress
-    );
+    RNScreensTurboModule.updateTransition(stackTag, progress);
   }
 
   function onEnd(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
@@ -257,11 +282,7 @@ const TransitionHandler = ({
     }
     const stackTag = screenTransitionConfig.value.stackTag;
     screenTransitionConfig.value.onFinishAnimation = () => {
-      global._manageScreenTransition(
-        ScreenTransitionCommand.Finish,
-        stackTag,
-        isTransitionCanceled
-      );
+      RNScreensTurboModule.finishTransition(stackTag, isTransitionCanceled);
     };
     screenTransitionConfig.value.isTransitionCanceled = isTransitionCanceled;
     finishScreenTransition(screenTransitionConfig.value);

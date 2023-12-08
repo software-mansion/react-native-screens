@@ -31,6 +31,7 @@ def isNewArchitectureEnabled() {
 }
 
 def shouldUseCommonInterfaceFromReanimated() {
+    return true
     if (project.hasProperty("useCommonInterfaceFromReanimated")) {
         return project.useCommonInterfaceFromReanimated == "true"
     }
@@ -40,7 +41,7 @@ def shouldUseCommonInterfaceFromReanimated() {
         def json = new JsonSlurper().parseText(inputFile.text)
         def reanimatedVersion = json.version as String
         def (major, minor, patch) = reanimatedVersion.tokenize('.')
-        return Integer.parseInt(major) >= 3 && Integer.parseInt(minor) >= 6
+        return Integer.parseInt(major) >= 3 && Integer.parseInt(minor) >= 7
     } else {
         return false
     }
@@ -90,6 +91,19 @@ android {
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
+    }
+    buildFeatures {
+        prefab true
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
     }
     lintOptions {
         abortOnError false
@@ -103,7 +117,13 @@ android {
         // while there are more libraries copied in intermediates folder of the lib build directory, we exclude
         // only the ones that make the build fail (ideally we should only include librnscreens_modules but we
         // are only allowed to specify exclude patterns)
-        exclude "**/libreact_render*.so"
+        excludes = [
+                "META-INF",
+                "META-INF/**",
+                "**/libjsi.so",
+                "**/libc++_shared.so",
+                "**/libreact_render*.so"
+        ]
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"

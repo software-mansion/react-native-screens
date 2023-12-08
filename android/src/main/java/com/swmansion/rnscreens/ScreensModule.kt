@@ -16,6 +16,16 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
     mReactContext
 ), ScreenTransitionManager {
 
+    init {
+        System.loadLibrary("rnscreens")
+        val jsContext = reactApplicationContext.javaScriptContextHolder
+        if (jsContext != null) {
+            nativeInstall(jsContext.get())
+        };
+    }
+
+    private external fun nativeInstall(jsiPtr: Long)
+
     private val isActiveTransition = AtomicBoolean(false)
 
     override fun getName(): String = NAME

@@ -1,11 +1,14 @@
+import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
-import { View, StyleSheet, I18nManager } from 'react-native';
+import { View, StyleSheet, I18nManager, Button } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import { Button } from '../shared';
-
+import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
+import RNScreensModule from '../src/fabric/NativeScreensModule';
+console.log('RNScreensModule', RNScreensModule);
 type StackParamList = {
   ScreenA: undefined;
   ScreenB: undefined;
@@ -18,7 +21,10 @@ interface MainScreenProps {
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
-    <Button title="Go ScreenB" onPress={() => navigation.navigate('ScreenB')} />
+    <Button title="Go ScreenB" onPress={() => {
+      navigation.navigate('ScreenB')
+      // (RNScreensModule as any).install();
+      }} />
     <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
   </View>
 );
@@ -44,25 +50,31 @@ const ScreenC = ({ navigation }: ScreenCProps): JSX.Element => (
   </View>
 );
 
-const Stack = createNativeStackNavigator<StackParamList>() as any;
+const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
-  <Stack.Navigator
-    screenOptions={{
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-      stackAnimation: 'none',
-    }}>
-    <Stack.Screen name="ScreenA" component={MainScreen} />
-    <Stack.Screen
-      name="ScreenB"
-      component={ScreenB}
-      options={{
-        goBackGesture: 'twoDimensionalSwipe',
-      }}
-    />
-    <Stack.Screen name="ScreenC" component={ScreenC} />
-  </Stack.Navigator>
+  <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+    <GestureDetectorProvider>
+        <Stack.Navigator
+          screenOptions={{
+            headerHideBackButton: true,
+            direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+            stackAnimation: 'none',
+          }}>
+          <Stack.Screen name="ScreenA" component={MainScreen} />
+          <Stack.Screen
+            name="ScreenB"
+            component={ScreenB}
+            options={{
+              goBackGesture: 'twoDimensionalSwipe',
+            }}
+          />
+          <Stack.Screen name="ScreenC" component={ScreenC} />
+        </Stack.Navigator>
+    </GestureDetectorProvider>
+      </NavigationContainer>
+  </GestureHandlerRootView>
 );
 
 const styles = StyleSheet.create({

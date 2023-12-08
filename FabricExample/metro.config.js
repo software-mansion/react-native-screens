@@ -1,5 +1,5 @@
+/* eslint-disable import/no-commonjs */
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
-
 const path = require('path');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
 const escape = require('escape-string-regexp');
@@ -11,6 +11,8 @@ const modules = [
   '@react-navigation/native',
   '@react-navigation/stack',
   'react-native-safe-area-context',
+  'react-native-gesture-handler',
+  'react-native-reanimated',
   ...Object.keys(pack.peerDependencies),
 ];
 
@@ -23,7 +25,7 @@ const config = {
   resolver: {
     blacklistRE: exclusionList(
       modules.map(
-        m => new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`),
+        m => new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`)
       ),
     ),
 
@@ -31,7 +33,6 @@ const config = {
       acc[name] = path.join(__dirname, 'node_modules', name);
       return acc;
     }, {}),
-
     nodeModulesPaths: [path.join(__dirname, '../../')],
   },
 

@@ -1212,6 +1212,55 @@ PODS:
     - React-jsi (= 0.73.0-rc.8)
     - React-logger (= 0.73.0-rc.8)
     - React-perflogger (= 0.73.0-rc.8)
+  - RNGestureHandler (2.14.0):
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2022.05.16.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - RNReanimated (3.6.0):
+    - DoubleConversion
+    - FBLazyVector
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-callinvoker
+    - React-Codegen
+    - React-Core
+    - React-Core/DevSupport
+    - React-Core/RCTWebSocket
+    - React-CoreModules
+    - React-cxxreact
+    - React-hermes
+    - React-jsi
+    - React-jsiexecutor
+    - React-jsinspector
+    - React-RCTActionSheet
+    - React-RCTAnimation
+    - React-RCTBlob
+    - React-RCTFabric
+    - React-RCTImage
+    - React-RCTLinking
+    - React-RCTNetwork
+    - React-RCTSettings
+    - React-RCTText
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (3.27.0):
     - glog
     - hermes-engine
@@ -1331,6 +1380,8 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1454,6 +1505,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
@@ -1523,10 +1578,12 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 35c9a3ef676db4504e2ccc58a1cd3ac36ecdd174
   React-utils: fb39d9569cbc5ff2eec780fa61fcb67564d8c041
   ReactCommon: ba981e6218087b0334cbcff5fb66990058509eba
+  RNGestureHandler: 38016feaff9bd5d8282c78ddce37a89b3a1d595b
+  RNReanimated: 2ae27b27ce0bdf3bb82f41787fa1f910a7c3bb79
   RNScreens: 337f14824b345f5c4ff2ed623a70f3d2a577f38c
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: cf4acb53876762fd2bbaa796017ad2368f97d576
 
 PODFILE CHECKSUM: 1fee17be8bd762366c77cda48296ac78a173bde7
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.14.2
