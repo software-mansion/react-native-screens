@@ -14,6 +14,7 @@ export type SearchBarCommands = {
   clearText: () => void;
   toggleCancelButton: (show: boolean) => void;
   setText: (text: string) => void;
+  cancelSearch: () => void;
 };
 
 export type StackPresentationTypes =
