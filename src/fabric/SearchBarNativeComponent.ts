@@ -71,6 +71,7 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
     'clearText',
     'toggleCancelButton',
     'setText',
+    'cancelSearch',
   ],
 });
 
