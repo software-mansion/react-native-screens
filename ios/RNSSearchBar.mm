@@ -304,6 +304,14 @@ namespace react = facebook::react;
   [_controller.searchBar setText:text];
 }
 
+- (void)cancelSearch
+{
+#if !TARGET_OS_TV
+  [self searchBarCancelButtonClicked:_controller.searchBar];
+  _controller.active = NO;
+#endif
+}
+
 #pragma mark-- Fabric specific
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -443,6 +451,14 @@ RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
     [searchBar setText:text];
+  }];
+}
+
+RCT_EXPORT_METHOD(cancelSearch : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar cancelSearch];
   }];
 }
 
