@@ -4,7 +4,7 @@ project(rnscreens)
 
 add_library(rnscreens
     SHARED
-    ../cpp/test.cpp
+    ../cpp/RNScreensTurboModule.cpp
     ./src/main/cpp/jni-adapter.cpp
 )
 

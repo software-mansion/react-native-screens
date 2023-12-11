@@ -8,6 +8,7 @@ import com.facebook.react.bridge.WritableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.common.ScreenTransitionManager
+import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
 
@@ -15,6 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 class ScreensModule(private val mReactContext: ReactApplicationContext) : NativeScreensModuleSpec (
     mReactContext
 ), ScreenTransitionManager {
+
+    private var topScreenId: Int = -1
+    private val isActiveTransition = AtomicBoolean(false)
 
     init {
         System.loadLibrary("rnscreens")
@@ -26,13 +30,12 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
 
     private external fun nativeInstall(jsiPtr: Long)
 
-    private val isActiveTransition = AtomicBoolean(false)
-
     override fun getName(): String = NAME
 
     @ReactMethod
-    override fun startTransition(reactTag: Double?): WritableArray
-        = startTransitionUI(reactTag?.toInt())
+    override fun startTransition(reactTag: Double?): WritableArray {
+        return Arguments.createArray();
+    }
 
     @ReactMethod
     override fun updateTransition(reactTag: Double?, progress: Double): Boolean {
@@ -40,16 +43,15 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
     }
 
     @ReactMethod
-    override fun finishTransition(reactTag: Double?, canceled: Boolean): Boolean
-        = finishTransitionUI(reactTag?.toInt(), canceled)
+    override fun finishTransition(reactTag: Double?, canceled: Boolean): Boolean {
+        return true
+    }
 
-    private fun startTransitionUI(reactTag: Int?): WritableArray {
-        val result = Arguments.createArray()
+    private fun startTransitionUI(reactTag: Int?): IntArray {
+        val result = intArrayOf(-1, -1)
         UiThreadUtil.assertOnUiThread()
         if (isActiveTransition.get() || reactTag == null) {
-            result.pushInt(-1)
-            result.pushInt(-1)
-            return result
+            return intArrayOf(-1, -1)
         }
         val uiManager = UIManagerHelper.getUIManagerForReactTag(mReactContext, reactTag)
         val stack = uiManager?.resolveView(reactTag)
@@ -59,17 +61,34 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
             if (screensCount > 1) {
                 isActiveTransition.set(true)
                 stack.attachBelowTop()
-                result.pushInt(fragments[screensCount - 1].screen.id)
-                result.pushInt(fragments[screensCount - 2].screen.id)
+                topScreenId = fragments[screensCount - 1].screen.id
+                result[0] = topScreenId
+                result[1] = fragments[screensCount - 2].screen.id
             }
         }
         return result
     }
 
-    private fun finishTransitionUI(reactTag: Int?, canceled: Boolean): Boolean {
+    private fun updateTransitionUI(progress: Double) {
+        if (topScreenId == -1) {
+            return
+        }
+        val progressFloat = progress.toFloat();
+        val coalescingKey = (if (progressFloat == 0.0f) 1 else if (progressFloat == 1.0f) 2 else 3).toShort()
+        UIManagerHelper
+            .getEventDispatcherForReactTag(mReactContext, topScreenId)
+            ?.dispatchEvent(
+                ScreenTransitionProgressEvent(
+                    UIManagerHelper.getSurfaceId(mReactContext),
+                    topScreenId, progressFloat, true, true, coalescingKey
+                )
+            )
+    }
+
+    private fun finishTransitionUI(reactTag: Int?, canceled: Boolean) {
         UiThreadUtil.assertOnUiThread()
         if (!isActiveTransition.get() || reactTag == null) {
-            return false
+            return
         }
         val uiManager = UIManagerHelper.getUIManagerForReactTag(mReactContext, reactTag)
         val stack = uiManager?.resolveView(reactTag)
@@ -81,7 +100,6 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
             }
             isActiveTransition.set(false)
         }
-        return true
     }
 
     companion object {

@@ -30,13 +30,6 @@ declare global {
   };
 }
 
-enum ScreenTransitionCommand {
-  Start = 1,
-  Update = 2,
-  Finish = 3,
-}
-
-
 type RNScreensTurboModuleType = {
   startTransition: (stackTag: number) => {
     topScreenTag: number;
@@ -172,14 +165,15 @@ const TransitionHandler = ({
     }
     const stackTag = (animatedRef as () => number)();
     const transitionData = RNScreensTurboModule.startTransition(stackTag);
+    console.log('transitionData', transitionData);
     if (transitionData.canStartTransition === false) {
       canPerformUpdates.value = false;
       return;
     }
-
     if (IS_FABRIC) {
       transitionConfig.topScreenTag = screenTagToNodeWrapperUI.value[transitionData.topScreenTag];
       transitionConfig.belowTopScreenTag = screenTagToNodeWrapperUI.value[transitionData.belowTopScreenTag];
+      console.log(screenTagToNodeWrapperUI.value);
     } else {
       transitionConfig.topScreenTag = transitionData.topScreenTag;
       transitionConfig.belowTopScreenTag = transitionData.belowTopScreenTag;

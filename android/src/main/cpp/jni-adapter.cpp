@@ -1,22 +1,91 @@
+#include <array>
+#include <mutex>
 #include <jni.h>
 #include <jsi/jsi.h>
-#include "test.h"
+#include "RNScreensTurboModule.h"
 
 using namespace facebook;
 
-void install(jsi::Runtime& runtime) {
-    // add box2d api
-//    auto box2dApi = std::make_shared<Box2d::JSIBox2dApi>(runtime);
-//    auto box2dApiHostObject = jsi::Object::createFromHostObject(runtime, box2dApi);
-//    runtime.global().setProperty(runtime, "Box2dApi", std::move(box2dApiHostObject));
-}
+jobject globalThis;
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(JNIEnv *env, jobject thiz, jlong jsiPtr) {
     auto runtime = reinterpret_cast<jsi::Runtime*>(jsiPtr);
-    if (runtime) {
-         install(*runtime);
+    if (!runtime) {
+        return;
     }
-    RNScreens::Test::test();
+    jsi::Runtime &rt = *runtime;
+    globalThis = env->NewGlobalRef(thiz);
+    JavaVM* jvm;
+    env->GetJavaVM(&jvm);
+
+    auto rnScreensModule = std::make_shared<RNScreens::RNScreensTurboModule>(
+        [jvm](int stackTag) -> std::array<int, 2> {
+            JNIEnv* currentEnv;
+            if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
+                return {0, 0};
+            }
+            jclass javaClass = currentEnv->GetObjectClass(globalThis);
+            jmethodID methodID = currentEnv->GetMethodID(
+                javaClass,
+                "startTransitionUI",
+                "(Ljava/lang/Integer;)[I"
+            );
+            jclass integerClass = currentEnv->FindClass("java/lang/Integer");
+            jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
+            jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
+            jintArray resultArray = (jintArray) currentEnv->CallObjectMethod(
+                globalThis,
+                methodID,
+                integerArg
+            );
+            std::array<int, 2> stdArray = {-1, -1};
+            jint* elements = currentEnv->GetIntArrayElements(resultArray, nullptr);
+            if (elements != nullptr) {
+                stdArray[0] = elements[0];
+                stdArray[1] = elements[1];
+                currentEnv->ReleaseIntArrayElements(resultArray, elements, JNI_ABORT);
+            }
+            return stdArray;
+        },
+        [jvm](int stackTag, double progress){
+            JNIEnv* currentEnv;
+            if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
+                return;
+            }
+            jclass javaClass = currentEnv->GetObjectClass(globalThis);
+            jmethodID methodID = currentEnv->GetMethodID(
+                javaClass,
+                "updateTransitionUI",
+                "(D)V"
+            );
+            jclass integerClass = currentEnv->FindClass("java/lang/Integer");
+            jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
+            jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
+            currentEnv->CallVoidMethod(globalThis, methodID, integerArg, progress);
+        },
+        [jvm](int stackTag, bool canceled){
+            JNIEnv* currentEnv;
+            if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
+                return;
+            }
+            jclass javaClass = currentEnv->GetObjectClass(globalThis);
+            jmethodID methodID = currentEnv->GetMethodID(
+                javaClass,
+                "finishTransitionUI",
+                "(Ljava/lang/Integer;Z)V"
+            );
+            jclass integerClass = currentEnv->FindClass("java/lang/Integer");
+            jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
+            jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
+            currentEnv->CallVoidMethod(globalThis, methodID, integerArg, canceled);
+        }
+    );
+    auto rnScreensModuleHostObject = jsi::Object::createFromHostObject(rt, rnScreensModule);
+    rt.global().setProperty(
+        rt,
+        RNScreens::RNScreensTurboModule::MODULE_NAME,
+        std::move(rnScreensModuleHostObject)
+    );
 }
