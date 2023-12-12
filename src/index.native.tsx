@@ -230,9 +230,7 @@ function ScreenStack(props: ScreenStackProps) {
   });
 
   return (
-    <ScreensNativeModules.NativeScreenStack
-      {...rest}
-      ref={stackRef?.current as React.MutableRefObject<React.Ref<View>>}>
+    <ScreensNativeModules.NativeScreenStack {...rest} ref={stackRef}>
       {childrenWithFreeze}
     </ScreensNativeModules.NativeScreenStack>
   );

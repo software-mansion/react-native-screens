@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, findNodeHandle } from 'react-native';
 import {
   GestureDetector,
   Gesture,
@@ -7,7 +7,6 @@ import {
   GestureUpdateEvent,
 } from 'react-native-gesture-handler';
 import {
-  useAnimatedRef,
   useSharedValue,
   measure,
   startScreenTransition,
@@ -97,12 +96,11 @@ const TransitionHandler = ({
   screensRefHolder,
   currentRouteKey,
 }: GestureProviderProps) => {
-  if (stackRef === undefined || stackRef.current === undefined) {
+  if (stackRef === undefined) {
     throw new Error(
       '[RNScreens] A required parameter `stackRef` was not specified.'
     );
   }
-  stackRef.current = useAnimatedRef();
   const sharedEvent = useSharedValue(DefaultEvent);
   const startingGesturePosition = useSharedValue(DefaultEvent);
   const canPerformUpdates = useSharedValue(false);
@@ -140,10 +138,11 @@ const TransitionHandler = ({
     },
     true
   );
-  const stackRefCurrent = stackRef.current;
+  const stackTag = makeMutable(-1, true);
   const screenTagToNodeWrapperUI = makeMutable<any>({}, true);
   const IS_FABRIC = isFabric();
   useEffect(() => {
+    stackTag.value = findNodeHandle(stackRef.current as any) as number;
     if (!IS_FABRIC) {
       return;
     }
@@ -161,12 +160,7 @@ const TransitionHandler = ({
     'worklet';
     sharedEvent.value = event;
     const transitionConfig = screenTransitionConfig.value;
-    const animatedRef = stackRefCurrent;
-    if (!animatedRef) {
-      throw new Error('[Reanimated] Unable to recognize stack ref.');
-    }
-    const stackTag = (animatedRef as () => number)();
-    const transitionData = RNScreensTurboModule.startTransition(stackTag);
+    const transitionData = RNScreensTurboModule.startTransition(stackTag.value);
     if (transitionData.canStartTransition === false) {
       canPerformUpdates.value = false;
       return;
@@ -181,7 +175,7 @@ const TransitionHandler = ({
       transitionConfig.belowTopScreenTag = transitionData.belowTopScreenTag;
     }
 
-    transitionConfig.stackTag = stackTag;
+    transitionConfig.stackTag = stackTag.value;
     startingGesturePosition.value = event;
     const animatedRefMock = () => {
       return screenTransitionConfig.value.topScreenTag;
@@ -192,7 +186,7 @@ const TransitionHandler = ({
     }
     if (screenSize == null) {
       canPerformUpdates.value = false;
-      RNScreensTurboModule.finishTransition(stackTag, true);
+      RNScreensTurboModule.finishTransition(stackTag.value, true);
       return;
     }
     transitionConfig.screenDimensions = screenSize;

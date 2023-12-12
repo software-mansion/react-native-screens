@@ -56,7 +56,7 @@ RCT_EXPORT_MODULE()
   RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
   if (stackView == nil || isActiveTransition) {
-    return @[];
+    return @[ @(-1), @(-1) ];
   }
   NSArray<NSNumber *> *screenTags = @[ @(-1), @(-1) ];
   auto screens = stackView.reactViewController.childViewControllers;
