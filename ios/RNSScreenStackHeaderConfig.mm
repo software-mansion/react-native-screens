@@ -314,6 +314,7 @@ namespace react = facebook::react;
         if (subview.bridge) {
           imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
         } else {
+#ifdef RCT_NEW_ARCH_ENABLED
           // see more info why we do this in RNSScreen dispatchEventForAnimatedObserver
           id appDelegate = [[UIApplication sharedApplication] delegate];
           RCTModuleRegistry *moduleRegistry =
@@ -321,6 +322,7 @@ namespace react = facebook::react;
           if (moduleRegistry) {
             imageLoader = [moduleRegistry moduleForName:"RCTImageLoader" lazilyLoadIfNecessary:YES];
           }
+#endif // RCT_NEW_ARCH_ENABLED
         }
 
         image = [imageLoader.imageCache
