@@ -2,9 +2,12 @@
 
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenStack.h"
+#import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
+#import <React/RCTBridge+Private.h>
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
@@ -22,8 +25,6 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
-#import "RNSScreenStack.h"
-#import "RNSScreenStackHeaderConfig.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
@@ -38,7 +39,6 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSScreenView {
-  __weak RCTBridge *_bridge;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -47,6 +47,7 @@ namespace react = facebook::react;
 #else
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
+  __weak RCTBridge *_bridge;
 #endif
 }
 
@@ -61,8 +62,7 @@ namespace react = facebook::react;
   }
   return self;
 }
-#endif // RCT_NEW_ARCH_ENABLED
-
+#else
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
@@ -72,6 +72,7 @@ namespace react = facebook::react;
 
   return self;
 }
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)initCommonProps
 {
@@ -100,6 +101,25 @@ namespace react = facebook::react;
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
+}
+
+// taken from how RCTScrollViewComponentView handles sending event for Animated in bridgeless mode
+- (void)dispatchEventForAnimatedObserver:(id<RCTEvent>)event
+{
+  auto eventDispatcher = [[RCTBridge currentBridge] eventDispatcher];
+  if (eventDispatcher) {
+    [eventDispatcher sendEvent:event];
+  } else {
+    id appDelegate = [[UIApplication sharedApplication] delegate];
+    RCTModuleRegistry *moduleRegistry =
+        (RCTModuleRegistry *)[[appDelegate valueForKey:@"_reactHost"] valueForKey:@"_moduleRegistry"];
+    if (moduleRegistry) {
+      id<RCTEventDispatcherProtocol> legacyEventDispatcher = [moduleRegistry moduleForName:"EventDispatcher"
+                                                                     lazilyLoadIfNecessary:YES];
+
+      [legacyEventDispatcher notifyObserversOfEvent:event];
+    }
+  }
 }
 #endif
 
@@ -411,12 +431,12 @@ namespace react = facebook::react;
         ->onHeaderHeightChange(
             facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.headerHeight = headerHeight});
   }
-
+  // taken from how
   RNSHeaderHeightChangeEvent *event =
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+  [self dispatchEventForAnimatedObserver:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -511,7 +531,7 @@ namespace react = facebook::react;
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+  [self dispatchEventForAnimatedObserver:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
@@ -1509,10 +1529,13 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 }
 #endif // !TARGET_OS_TV
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
+#endif // RCT_NEW_ARCH_ENABLED
 
 + (BOOL)requiresMainQueueSetup
 {
