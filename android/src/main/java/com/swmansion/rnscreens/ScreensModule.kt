@@ -1,13 +1,9 @@
 package com.swmansion.rnscreens
 
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.UiThreadUtil
-import com.facebook.react.bridge.WritableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
-import com.swmansion.common.ScreenTransitionManager
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -15,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @ReactModule(name = ScreensModule.NAME)
 class ScreensModule(private val mReactContext: ReactApplicationContext) : NativeScreensModuleSpec (
     mReactContext
-), ScreenTransitionManager {
+) {
 
     private var topScreenId: Int = -1
     private val isActiveTransition = AtomicBoolean(false)
@@ -31,21 +27,6 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
     private external fun nativeInstall(jsiPtr: Long)
 
     override fun getName(): String = NAME
-
-    @ReactMethod
-    override fun startTransition(reactTag: Double?): WritableArray {
-        return Arguments.createArray();
-    }
-
-    @ReactMethod
-    override fun updateTransition(reactTag: Double?, progress: Double): Boolean {
-        return false
-    }
-
-    @ReactMethod
-    override fun finishTransition(reactTag: Double?, canceled: Boolean): Boolean {
-        return true
-    }
 
     private fun startTransitionUI(reactTag: Int?): IntArray {
         val result = intArrayOf(-1, -1)

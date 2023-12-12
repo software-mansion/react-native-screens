@@ -30,23 +30,6 @@ def isNewArchitectureEnabled() {
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
 
-def shouldUseCommonInterfaceFromReanimated() {
-    return true
-    if (project.hasProperty("useCommonInterfaceFromReanimated")) {
-        return project.useCommonInterfaceFromReanimated == "true"
-    }
-    def reanimated = rootProject.subprojects.find { it.name == 'react-native-reanimated' }
-    if (reanimated != null) {
-        def inputFile = new File(reanimated.projectDir, '../package.json')
-        def json = new JsonSlurper().parseText(inputFile.text)
-        def reanimatedVersion = json.version as String
-        def (major, minor, patch) = reanimatedVersion.tokenize('.')
-        return Integer.parseInt(major) >= 3 && Integer.parseInt(minor) >= 7
-    } else {
-        return false
-    }
-}
-
 // spotless is only accessible within react-native-screens repo
 if (project == rootProject) {
     apply from: 'spotless.gradle'
@@ -138,9 +121,6 @@ android {
                     "build/generated/source/codegen/java"
                 ]
             }
-            if (!shouldUseCommonInterfaceFromReanimated()) {
-                srcDirs += 'common/src/main/java'
-            }
         }
         res {
             if (safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion) >= 33) {
@@ -172,13 +152,6 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.9.0'
     implementation "androidx.core:core-ktx:1.8.0"
-
-    if (shouldUseCommonInterfaceFromReanimated()) {
-        // Include Reanimated as dependency to load the common interface
-        implementation (rootProject.subprojects.find { it.name == 'react-native-reanimated' }) {
-            exclude group:'com.facebook.fbjni' // resolves "Duplicate class com.facebook.jni.CppException"
-        }
-    }
     
     constraints {
         implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1") {

@@ -165,7 +165,6 @@ const TransitionHandler = ({
     }
     const stackTag = (animatedRef as () => number)();
     const transitionData = RNScreensTurboModule.startTransition(stackTag);
-    console.log('transitionData', transitionData);
     if (transitionData.canStartTransition === false) {
       canPerformUpdates.value = false;
       return;
@@ -173,7 +172,6 @@ const TransitionHandler = ({
     if (IS_FABRIC) {
       transitionConfig.topScreenTag = screenTagToNodeWrapperUI.value[transitionData.topScreenTag];
       transitionConfig.belowTopScreenTag = screenTagToNodeWrapperUI.value[transitionData.belowTopScreenTag];
-      console.log(screenTagToNodeWrapperUI.value);
     } else {
       transitionConfig.topScreenTag = transitionData.topScreenTag;
       transitionConfig.belowTopScreenTag = transitionData.belowTopScreenTag;

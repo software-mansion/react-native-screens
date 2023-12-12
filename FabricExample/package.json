@@ -15,7 +15,7 @@
     "react": "18.2.0",
     "react-native": "0.73.0-rc.8",
     "react-native-gesture-handler": "^2.14.0",
-    "react-native-reanimated": "file:../react-native-reanimated-3.6.0.tgz",
+    "react-native-reanimated": "file:../react-native-reanimated-3.7.0.tgz",
     "react-native-safe-area-context": "th3rdwave/react-native-safe-area-context#2917160fa30635751c42734f7fc40e7273ea0fe7",
     "react-native-screens": "link:../"
   },

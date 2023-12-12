@@ -12,15 +12,11 @@
 
 package com.swmansion.rnscreens;
 
-import com.facebook.proguard.annotations.DoNotStrip;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReactModuleWithSpec;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.turbomodule.core.interfaces.TurboModule;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class NativeScreensModuleSpec extends ReactContextBaseJavaModule implements ReactModuleWithSpec, TurboModule {
   public static final String NAME = "RNSModule";
@@ -33,16 +29,4 @@ public abstract class NativeScreensModuleSpec extends ReactContextBaseJavaModule
   public @Nonnull String getName() {
     return NAME;
   }
-
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  @DoNotStrip
-  public abstract WritableArray startTransition(@Nullable Double reactTag);
-
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  @DoNotStrip
-  public abstract boolean updateTransition(@Nullable Double reactTag, double progress);
-
-  @ReactMethod(isBlockingSynchronousMethod = true)
-  @DoNotStrip
-  public abstract boolean finishTransition(@Nullable Double reactTag, boolean canceled);
 }
