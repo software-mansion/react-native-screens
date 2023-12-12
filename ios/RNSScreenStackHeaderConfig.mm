@@ -310,7 +310,18 @@ namespace react = facebook::react;
         // in DEV MODE we try to load from cache (we use private API for that as it is not exposed
         // publically in headers).
         RCTImageSource *imageSource = [RNSScreenStackHeaderConfig imageSourceFromImageView:imageView];
-        RCTImageLoader *imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
+        RCTImageLoader *imageLoader;
+        if (subview.bridge) {
+          imageLoader = [subview.bridge moduleForClass:[RCTImageLoader class]];
+        } else {
+          // see more info why we do this in RNSScreen dispatchEventForAnimatedObserver
+          id appDelegate = [[UIApplication sharedApplication] delegate];
+          RCTModuleRegistry *moduleRegistry =
+              (RCTModuleRegistry *)[[appDelegate valueForKey:@"_reactHost"] valueForKey:@"_moduleRegistry"];
+          if (moduleRegistry) {
+            imageLoader = [moduleRegistry moduleForName:"RCTImageLoader" lazilyLoadIfNecessary:YES];
+          }
+        }
 
         image = [imageLoader.imageCache
             imageForUrl:imageSource.request.URL.absoluteString
