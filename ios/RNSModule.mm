@@ -1,8 +1,8 @@
 #import "RNSModule.h"
+#import <React/RCTBridge+Private.h>
 #import <React/RCTBridge.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
-#import <React/RCTBridge+Private.h>
 #import <React/RCTUtils.h>
 #include <jsi/jsi.h>
 #import "RNSScreenStack.h"
@@ -73,7 +73,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag c
   if (stackView == nil || isActiveTransition) {
     return @[];
   }
-  NSArray<NSNumber *> *screenTags = @[@(-1), @(-1)];
+  NSArray<NSNumber *> *screenTags = @[ @(-1), @(-1) ];
   auto screens = stackView.reactViewController.childViewControllers;
   unsigned long screenCount = [screens count];
   if (screenCount > 1) {
@@ -81,11 +81,11 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag c
     UIView *belowTopScreen = screens[screenCount - 2].view;
     belowTopScreen.transform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
     isActiveTransition = true;
-  #ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     screenTags = @[ @(topScreen.tag), @(belowTopScreen.tag) ];
-  #else
+#else
     screenTags = @[ topScreen.reactTag, belowTopScreen.reactTag ];
-  #endif // RCT_NEW_ARCH_ENABLED
+#endif // RCT_NEW_ARCH_ENABLED
   }
   [stackView startScreenTransition];
   return screenTags;
@@ -135,31 +135,23 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag c
 
 - (void)installHostObject
 {
-  RCTBridge* bridge = [RCTBridge currentBridge];
-  RCTCxxBridge* cxxBridge = (RCTCxxBridge*)bridge;
+  RCTBridge *bridge = [RCTBridge currentBridge];
+  RCTCxxBridge *cxxBridge = (RCTCxxBridge *)bridge;
   if (cxxBridge != nil) {
-    auto jsiRuntime = (jsi::Runtime*) cxxBridge.runtime;
+    auto jsiRuntime = (jsi::Runtime *)cxxBridge.runtime;
     if (jsiRuntime != nil) {
-      auto& runtime = *jsiRuntime;
+      auto &runtime = *jsiRuntime;
       __weak auto weakSelf = self;
       auto rnScreensModule = std::make_shared<RNScreens::RNScreensTurboModule>(
-        [weakSelf](int stackTag) -> std::array<int, 2> {
-          auto screensTags = [weakSelf innerStartTransition:@(stackTag)];
-          return {[screensTags[0] intValue], [screensTags[1] intValue]};
-        },
-        [weakSelf](int stackTag, double progress){
-          [weakSelf innerUpdateTransition:@(stackTag) progress:progress];
-        },
-        [weakSelf](int stackTag, bool canceled){
-          [weakSelf innerFinishTransition:@(stackTag) canceled:canceled];
-        }
-      );
+          [weakSelf](int stackTag) -> std::array<int, 2> {
+            auto screensTags = [weakSelf innerStartTransition:@(stackTag)];
+            return {[screensTags[0] intValue], [screensTags[1] intValue]};
+          },
+          [weakSelf](int stackTag, double progress) { [weakSelf innerUpdateTransition:@(stackTag) progress:progress]; },
+          [weakSelf](int stackTag, bool canceled) { [weakSelf innerFinishTransition:@(stackTag) canceled:canceled]; });
       auto rnScreensModuleHostObject = jsi::Object::createFromHostObject(runtime, rnScreensModule);
       runtime.global().setProperty(
-        runtime, 
-        RNScreens::RNScreensTurboModule::MODULE_NAME, 
-        std::move(rnScreensModuleHostObject)
-      );
+          runtime, RNScreens::RNScreensTurboModule::MODULE_NAME, std::move(rnScreensModuleHostObject));
     }
   }
 }

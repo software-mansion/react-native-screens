@@ -38,9 +38,10 @@ type RNScreensTurboModuleType = {
   };
   updateTransition: (stackTag: number, progress: number) => void;
   finishTransition: (stackTag: number, isCanceled: boolean) => void;
-}
+};
 
-const RNScreensTurboModule: RNScreensTurboModuleType = (global as any).RNScreensTurboModule;
+const RNScreensTurboModule: RNScreensTurboModuleType = (global as any)
+  .RNScreensTurboModule;
 
 const AnimationForGesture = {
   swipeRight: ScreenTransition.SwipeRight,
@@ -150,7 +151,8 @@ const TransitionHandler = ({
     for (const key in screensRefHolder.current) {
       const screenRef = screensRefHolder.current[key];
       const screenData = getShadowNodeWrapperAndTagFromRef(screenRef.current);
-      screenTagToNodeWrapper[screenData.tag ?? ''] = screenData.shadowNodeWrapper;
+      screenTagToNodeWrapper[screenData.tag ?? ''] =
+        screenData.shadowNodeWrapper;
     }
     screenTagToNodeWrapperUI.value = screenTagToNodeWrapper;
   }, [currentRouteKey]);
@@ -170,8 +172,10 @@ const TransitionHandler = ({
       return;
     }
     if (IS_FABRIC) {
-      transitionConfig.topScreenTag = screenTagToNodeWrapperUI.value[transitionData.topScreenTag];
-      transitionConfig.belowTopScreenTag = screenTagToNodeWrapperUI.value[transitionData.belowTopScreenTag];
+      transitionConfig.topScreenTag =
+        screenTagToNodeWrapperUI.value[transitionData.topScreenTag];
+      transitionConfig.belowTopScreenTag =
+        screenTagToNodeWrapperUI.value[transitionData.belowTopScreenTag];
     } else {
       transitionConfig.topScreenTag = transitionData.topScreenTag;
       transitionConfig.belowTopScreenTag = transitionData.belowTopScreenTag;
