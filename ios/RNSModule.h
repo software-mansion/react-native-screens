@@ -14,10 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
                        <RCTBridgeModule>
 #endif
 
-- (NSArray<NSNumber *> *)innerStartTransition:(NSNumber *)stackTag;
-- (bool)innerUpdateTransition:(NSNumber *)stackTag progress:(double)progress;
-- (bool)innerFinishTransition:(NSNumber *)stackTag canceled:(bool)canceled;
-
 @end
 
 NS_ASSUME_NONNULL_END

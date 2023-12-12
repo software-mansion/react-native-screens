@@ -39,21 +39,6 @@ RCT_EXPORT_MODULE()
   return NO;
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(startTransition : (NSNumber *)stackTag)
-{
-  return [self innerStartTransition:stackTag];
-}
-
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(updateTransition : (NSNumber *)stackTag progress : (double)progress)
-{
-  return @([self innerUpdateTransition:stackTag progress:progress]);
-}
-
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag canceled : (BOOL)canceled)
-{
-  return @([self innerFinishTransition:stackTag canceled:canceled]);
-}
-
 - (RNSScreenStackView *)getScreenStackView:(NSNumber *)reactTag
 {
   RCTAssertMainQueue();
@@ -66,7 +51,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag c
   return view;
 }
 
-- (NSArray<NSNumber *> *)innerStartTransition:(NSNumber *)stackTag
+- (NSArray<NSNumber *> *)startTransition:(NSNumber *)stackTag
 {
   RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
@@ -91,7 +76,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag c
   return screenTags;
 }
 
-- (bool)innerUpdateTransition:(NSNumber *)stackTag progress:(double)progress
+- (bool)updateTransition:(NSNumber *)stackTag progress:(double)progress
 {
   RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
@@ -102,7 +87,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag c
   return true;
 }
 
-- (bool)innerFinishTransition:(NSNumber *)stackTag canceled:(bool)canceled
+- (bool)finishTransition:(NSNumber *)stackTag canceled:(bool)canceled
 {
   RCTAssertMainQueue();
   RNSScreenStackView *stackView = [self getStackView:stackTag];
@@ -144,11 +129,11 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(finishTransition : (NSNumber *)stackTag c
       __weak auto weakSelf = self;
       auto rnScreensModule = std::make_shared<RNScreens::RNScreensTurboModule>(
           [weakSelf](int stackTag) -> std::array<int, 2> {
-            auto screensTags = [weakSelf innerStartTransition:@(stackTag)];
+            auto screensTags = [weakSelf startTransition:@(stackTag)];
             return {[screensTags[0] intValue], [screensTags[1] intValue]};
           },
-          [weakSelf](int stackTag, double progress) { [weakSelf innerUpdateTransition:@(stackTag) progress:progress]; },
-          [weakSelf](int stackTag, bool canceled) { [weakSelf innerFinishTransition:@(stackTag) canceled:canceled]; });
+          [weakSelf](int stackTag, double progress) { [weakSelf updateTransition:@(stackTag) progress:progress]; },
+          [weakSelf](int stackTag, bool canceled) { [weakSelf finishTransition:@(stackTag) canceled:canceled]; });
       auto rnScreensModuleHostObject = jsi::Object::createFromHostObject(runtime, rnScreensModule);
       runtime.global().setProperty(
           runtime, RNScreens::RNScreensTurboModule::MODULE_NAME, std::move(rnScreensModuleHostObject));
