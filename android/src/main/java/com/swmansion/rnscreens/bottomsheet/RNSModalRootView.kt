@@ -1,4 +1,5 @@
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.facebook.react.bridge.ReactContext
@@ -23,12 +24,21 @@ class RNSModalRootView(
             jsPointerDispatcher = JSPointerDispatcher(this)
         }
     }
-
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         if (changed) {
             // This view is used right now only in ScreenModalFragment, where it is injected
             // to view hierarchy as a parent of a Screen.
-            getChildAt(0).layout(l, t, r, b)
+            if (childCount > 1) {
+                val grabberWidthSpec = MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY)
+                val grabberHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+
+                val grabber = getChildAt(0)
+                grabber.measure(grabberWidthSpec, grabberHeightSpec)
+                grabber.layout(l, t, r, grabber.measuredHeight)
+                getChildAt(childCount - 1).layout(l, t + grabber.measuredHeight, r, b)
+            } else {
+                getChildAt(childCount - 1).layout(l, t, r, b)
+            }
         }
     }
 
@@ -82,5 +92,9 @@ class RNSModalRootView(
         // TODO: I need ThemedReactContext here.
         // TODO: Determine where it is initially created & verify its lifecycle
 //        reactContext?.reactApplicationContext?.handleException(RuntimeException(throwable))
+    }
+
+    companion object {
+        val TAG = RNSModalRootView::class.simpleName
     }
 }

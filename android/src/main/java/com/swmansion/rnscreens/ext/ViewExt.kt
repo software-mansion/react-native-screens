@@ -1,5 +1,7 @@
 package com.swmansion.rnscreens.ext
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
 
@@ -20,4 +22,12 @@ internal fun View.recycle(): View {
     // visibility back to VISIBLE in order for the fragment manager to animate in the view.
     this.visibility = View.VISIBLE
     return this
+}
+
+internal fun View.maybeBgColor(): Int? {
+    val bgDrawable = this.background
+    if (bgDrawable is ColorDrawable) {
+        return bgDrawable.color
+    }
+    return null
 }

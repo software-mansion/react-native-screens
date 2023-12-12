@@ -3,12 +3,15 @@ package com.swmansion.rnscreens
 import RNSModalRootView
 import android.app.Activity
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
+import android.widget.LinearLayout
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
@@ -16,6 +19,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetDragHandleView
 import com.swmansion.rnscreens.bottomsheet.RNSBottomSheetDialog
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.parentAsView
@@ -68,20 +72,20 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
         val rootView = RNSModalRootView(screen.reactContext, screen.reactEventDispatcher!!)
 
-//        val dragHandle = BottomSheetDragHandleView(requireContext()).apply {
-//            layoutParams = LayoutParams(
-//                LayoutParams.MATCH_PARENT,
-//                LayoutParams.WRAP_CONTENT
-//            )
-//        }
-//
-//        rootView.addView(dragHandle)
+        if (screen.isSheetGrabberVisible) {
+            val dragHandle = BottomSheetDragHandleView(requireContext()).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                )
+            }
+            rootView.addView(dragHandle)
+        }
 
         rootView.addView(screen.recycle())
 
         sheetDialog.setContentView(rootView)
         rootView.parentAsView()?.clipToOutline = true
-
         return sheetDialog
     }
 

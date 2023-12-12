@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
@@ -18,12 +19,16 @@ import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 
 @SuppressLint("ViewConstructor")
 class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(context) {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
+
+    val sheetBehavior: BottomSheetBehavior<Screen>?
+        get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
 
     val reactContext: ReactContext? = context
     val reactEventDispatcher: EventDispatcher?
@@ -52,8 +57,13 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     // Props for controlling modal presentation
     var isSheetGrabberVisible: Boolean = false
     var sheetCornerRadius: Float? = null
+        set(value) {
+            field = value
+            (fragment as? ScreenStackFragment)?.onSheetCornerRadiusChange()
+        }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
     var sheetDetent: SheetDetent? = null
+    var sheetLargestUndimmedState: Int = BottomSheetBehavior.STATE_HIDDEN
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs

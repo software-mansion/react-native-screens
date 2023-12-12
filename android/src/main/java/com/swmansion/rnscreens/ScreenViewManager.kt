@@ -12,6 +12,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
@@ -178,7 +179,13 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.sheetDetent = convertDetentStringToFraction(value)
     }
 
-    override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) = Unit
+    override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) {
+        view.sheetLargestUndimmedState = when (value) {
+            "large" -> BottomSheetBehavior.STATE_EXPANDED
+            "medium" -> BottomSheetBehavior.STATE_COLLAPSED
+            else -> BottomSheetBehavior.STATE_HIDDEN
+        }
+    }
 
     @ReactProp(name = "sheetGrabberVisible")
     override fun setSheetGrabberVisible(view: Screen, value: Boolean) {

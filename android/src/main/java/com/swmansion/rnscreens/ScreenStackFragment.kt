@@ -1,9 +1,12 @@
 package com.swmansion.rnscreens
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +20,7 @@ import android.view.animation.AnimationSet
 import android.view.animation.Transformation
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.touch.ReactHitSlopView
@@ -26,7 +30,11 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import com.google.android.material.bottomsheet.BottomSheetBehavior.PEEK_HEIGHT_AUTO
+import com.google.android.material.bottomsheet.BottomSheetDragHandleView
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.ext.maybeBgColor
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 
@@ -41,7 +49,9 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
-    val screenStack: ScreenStack
+    private lateinit var coordinatorLayout: ScreensCoordinatorLayout
+
+    private val screenStack: ScreenStack
         get() {
             val container = screen.container
             check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
@@ -109,6 +119,97 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
+    private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, initialState: Int) : BottomSheetCallback() {
+        private var needsDirectionUpdate = true
+        private var transparentColor = Color.argb(0, 0, 0, 0)
+        private var dimmedColor = Color.argb(128, 0, 0, 0)
+        private var lastStableState: Int = initialState
+        private var lastSlideOffset: Float = 0.0F
+        private var animDirection: AnimDirection = AnimDirection.UP
+        private var animator = ValueAnimator.ofArgb(transparentColor, dimmedColor).apply {
+            duration = 1
+            addUpdateListener {
+                viewToAnimate.setBackgroundColor(it.animatedValue as Int)
+            }
+        }
+
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == BottomSheetBehavior.STATE_DRAGGING || newState == BottomSheetBehavior.STATE_SETTLING) {
+                needsDirectionUpdate = true
+            } else {
+                lastStableState = newState
+            }
+//            if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+//                animator = createValueAnimator(directionFromLastState()).apply {
+//                    addUpdateListener {
+//                        viewToAnimate.setBackgroundColor(it.animatedValue as Int)
+//                    }
+//                }
+//            } else if (newState != BottomSheetBehavior.STATE_SETTLING) {
+//                if (animator != null) {
+//                    if (animator!!.isRunning) {
+//                        animator!!.pause()
+//                    }
+//                    animator = null
+//                }
+//                lastState = newState
+//            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            animDirection = if (slideOffset > lastSlideOffset) AnimDirection.UP else AnimDirection.DOWN
+            lastSlideOffset = slideOffset
+
+//            if (needsDirectionUpdate) {
+//                needsDirectionUpdate = false
+//                animator.setIntValues(viewToAnimate.maybeBgColor()!!, if (animDirection == AnimDirection.UP) dimmedColor else transparentColor)
+//            }
+
+            if (shouldAnimate()) {
+                animator!!.setCurrentFraction(slideOffset)
+            }
+        }
+
+        private fun createValueAnimator(direction: AnimDirection): ValueAnimator {
+            val (startValue, targetValue) = if (direction == AnimDirection.UP) { Pair(viewToAnimate.maybeBgColor()!!, dimmedColor) } else { Pair(viewToAnimate.maybeBgColor()!!, transparentColor) }
+            return ValueAnimator.ofArgb(startValue, targetValue).apply {
+                duration = 1  // Driven manually
+            }
+        }
+
+        private fun shouldAnimate(): Boolean {
+            return !(isStateLessEqualThan(lastStableState, screen.sheetLargestUndimmedState) && animDirection == AnimDirection.DOWN)
+//            return screen.sheetLargestUndimmedState > lastState
+        }
+
+        private fun directionFromLastState(): AnimDirection = if (lastStableState != BottomSheetBehavior.STATE_EXPANDED) {
+            AnimDirection.UP
+        } else {
+            AnimDirection.DOWN
+        }
+
+        enum class AnimDirection {
+            UP, DOWN
+        }
+
+        private fun isStateLessEqualThan(state: Int, otherState: Int): Boolean {
+            if (state == otherState) {
+                return true
+            }
+            if (state != BottomSheetBehavior.STATE_HALF_EXPANDED && otherState != BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                return state > otherState
+            }
+            if (state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                return otherState == BottomSheetBehavior.STATE_EXPANDED
+            }
+            if (state == BottomSheetBehavior.STATE_COLLAPSED) {
+                return otherState != BottomSheetBehavior.STATE_HIDDEN
+            }
+            return false
+        }
+    }
+
     private val bottomSheetCallback = object : BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
@@ -121,6 +222,14 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             Log.i("ScreenStackFragment", "onSlide $slideOffset")
         }
     }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        return super.onCreateAnimation(transit, enter, nextAnim)
+    }
+
+    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
+        return super.onCreateAnimator(transit, enter, nextAnim)
+    }
     
     override fun onStart() {
         mLastFocusedChild?.requestFocus()
@@ -131,13 +240,21 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         super.onResume()
     }
 
+    internal fun onSheetCornerRadiusChange() {
+        (screen.background as MaterialShapeDrawable).shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
+            setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+            setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+        }.build()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val coordinatorLayout: ScreensCoordinatorLayout? =
-            context?.let { ScreensCoordinatorLayout(it, this) }
+    ): View {
+        coordinatorLayout = ScreensCoordinatorLayout(requireContext(), this).apply {
+            setBackgroundColor(Color.argb(0, 0, 0, 0))
+        }
 
 //        screen.layoutParams = CoordinatorLayout.LayoutParams(
 //            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
@@ -148,12 +265,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         ).apply {
             behavior = if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
                 BottomSheetBehavior<FrameLayout>().apply {
-                    state = BottomSheetBehavior.STATE_HALF_EXPANDED
+                    state = BottomSheetBehavior.STATE_HIDDEN
                     addBottomSheetCallback(bottomSheetCallback)
+                    addBottomSheetCallback(AnimateDimmingViewCallback(screen, coordinatorLayout, state))
                     isHideable = true
                     isDraggable = true
-                    halfExpandedRatio = 0.5F
-                    peekHeight = PEEK_HEIGHT_AUTO
+                    isFitToContents = false
+                    halfExpandedRatio = 0.7F
+                    isHideable = true
+                    peekHeight = 400
                 }
             } else {
                 ScrollingViewBehavior()
@@ -161,12 +281,25 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         screen.clipToOutline = true
+        if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
+            attachShapeToScreen(screen)
+
+            if (screen.isSheetGrabberVisible) {
+                val grabberView = BottomSheetDragHandleView(requireContext()).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                }
+                coordinatorLayout.addView(grabberView)
+            }
+        }
 
 //        if (screen.expectsDimmingViewUnderneath()) {
-//            coordinatorLayout?.setBackgroundColor(Color.argb(120, 0, 0, 0))
+//            coordinatorLayout.setBackgroundColor(Color.argb(128, 0, 0, 0))
 //        }
 
-        coordinatorLayout?.addView(screen.recycle())
+        coordinatorLayout.addView(screen.recycle())
 
         if (screen.stackPresentation != Screen.StackPresentation.MODAL && screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
             mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
@@ -210,6 +343,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             )
             setBackgroundColor(Color.argb(120, 0, 0, 0))
         }
+    }
+
+    private fun attachShapeToScreen(screen: Screen) {
+        val shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
+            setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+            setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+        }.build()
+        val shape = MaterialShapeDrawable(shapeAppearanceModel)
+        screen.background = shape;
     }
 
     override fun onStop() {
@@ -318,6 +460,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
             val fakeAnimation = ScreensAnimation(mFragment).apply { duration = animation.duration }
+
+            if (mFragment.screen.stackPresentation == Screen.StackPresentation.FORM_SHEET && mFragment.isAdded) {
+                mFragment.screen.clearAnimation()
+            }
 
             if (animation is AnimationSet && !mFragment.isRemoving) {
                 animation.apply {
