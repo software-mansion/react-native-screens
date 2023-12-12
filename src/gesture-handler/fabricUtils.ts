@@ -13,10 +13,12 @@ export function isFabric() {
   return !!(global as localGlobal)._IS_FABRIC;
 }
 
-let findHostInstance_DEPRECATED: (ref: React.Component) => HostInstance | null = () => { return null; };
+let findHostInstance: (ref: React.Component) => HostInstance | null = () => {
+  return null;
+};
 if (isFabric()) {
   try {
-    findHostInstance_DEPRECATED =
+    findHostInstance =
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('react-native/Libraries/Renderer/shims/ReactFabric').findHostInstance_DEPRECATED;
   } catch (e) {
@@ -26,10 +28,8 @@ if (isFabric()) {
   }
 }
 
-export function getShadowNodeWrapperAndTagFromRef(
-  ref: React.Component
-) {
-  const hostInstance = findHostInstance_DEPRECATED(ref);
+export function getShadowNodeWrapperAndTagFromRef(ref: React.Component) {
+  const hostInstance = findHostInstance(ref);
   return {
     shadowNodeWrapper: hostInstance?._internalInstanceHandle.stateNode.node,
     tag: hostInstance?._nativeTag,

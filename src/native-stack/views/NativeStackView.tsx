@@ -264,11 +264,12 @@ const RouteView = ({
 
   const Screen = React.useContext(ScreenContext);
   const { dark } = useTheme();
-  
+
   const screenRef = React.useRef(null);
   React.useEffect(() => {
     screensRefHolder.current[route.key] = screenRef;
     return () => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete screensRefHolder.current[route.key];
     };
   });
