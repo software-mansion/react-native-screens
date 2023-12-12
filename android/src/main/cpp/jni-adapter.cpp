@@ -29,7 +29,7 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(JNIEnv *env, jobject th
             jclass javaClass = currentEnv->GetObjectClass(globalThis);
             jmethodID methodID = currentEnv->GetMethodID(
                 javaClass,
-                "startTransitionUI",
+                "startTransition",
                 "(Ljava/lang/Integer;)[I"
             );
             jclass integerClass = currentEnv->FindClass("java/lang/Integer");
@@ -40,14 +40,14 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(JNIEnv *env, jobject th
                 methodID,
                 integerArg
             );
-            std::array<int, 2> stdArray = {-1, -1};
+            std::array<int, 2> result = {-1, -1};
             jint* elements = currentEnv->GetIntArrayElements(resultArray, nullptr);
             if (elements != nullptr) {
-                stdArray[0] = elements[0];
-                stdArray[1] = elements[1];
+                result[0] = elements[0];
+                result[1] = elements[1];
                 currentEnv->ReleaseIntArrayElements(resultArray, elements, JNI_ABORT);
             }
-            return stdArray;
+            return result;
         },
         [jvm](int stackTag, double progress){
             JNIEnv* currentEnv;
@@ -57,13 +57,10 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(JNIEnv *env, jobject th
             jclass javaClass = currentEnv->GetObjectClass(globalThis);
             jmethodID methodID = currentEnv->GetMethodID(
                 javaClass,
-                "updateTransitionUI",
+                "updateTransition",
                 "(D)V"
             );
-            jclass integerClass = currentEnv->FindClass("java/lang/Integer");
-            jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
-            jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
-            currentEnv->CallVoidMethod(globalThis, methodID, integerArg, progress);
+            currentEnv->CallVoidMethod(globalThis, methodID, progress);
         },
         [jvm](int stackTag, bool canceled){
             JNIEnv* currentEnv;
@@ -73,7 +70,7 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(JNIEnv *env, jobject th
             jclass javaClass = currentEnv->GetObjectClass(globalThis);
             jmethodID methodID = currentEnv->GetMethodID(
                 javaClass,
-                "finishTransitionUI",
+                "finishTransition",
                 "(Ljava/lang/Integer;Z)V"
             );
             jclass integerClass = currentEnv->FindClass("java/lang/Integer");
@@ -88,4 +85,15 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(JNIEnv *env, jobject th
         RNScreens::RNScreensTurboModule::MODULE_NAME,
         std::move(rnScreensModuleHostObject)
     );
+}
+
+void JNICALL JNI_OnUnload(JavaVM *jvm, void *) {
+    JNIEnv *env;
+    if (jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        return;
+    }
+    if (globalThis != nullptr) {
+        env->DeleteGlobalRef(globalThis);
+        globalThis = nullptr;
+    }
 }

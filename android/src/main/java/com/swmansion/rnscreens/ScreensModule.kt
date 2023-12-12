@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.module.annotations.ReactModule
@@ -28,12 +29,14 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
 
     override fun getName(): String = NAME
 
-    private fun startTransitionUI(reactTag: Int?): IntArray {
-        val result = intArrayOf(-1, -1)
+    @DoNotStrip
+    private fun startTransition(reactTag: Int?): IntArray {
         UiThreadUtil.assertOnUiThread()
         if (isActiveTransition.get() || reactTag == null) {
             return intArrayOf(-1, -1)
         }
+        topScreenId = -1
+        val result = intArrayOf(-1, -1)
         val uiManager = UIManagerHelper.getUIManagerForReactTag(mReactContext, reactTag)
         val stack = uiManager?.resolveView(reactTag)
         if (stack is ScreenStack) {
@@ -50,7 +53,9 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
         return result
     }
 
-    private fun updateTransitionUI(progress: Double) {
+    @DoNotStrip
+    private fun updateTransition(progress: Double) {
+        UiThreadUtil.assertOnUiThread()
         if (topScreenId == -1) {
             return
         }
@@ -66,7 +71,8 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
             )
     }
 
-    private fun finishTransitionUI(reactTag: Int?, canceled: Boolean) {
+    @DoNotStrip
+    private fun finishTransition(reactTag: Int?, canceled: Boolean) {
         UiThreadUtil.assertOnUiThread()
         if (!isActiveTransition.get() || reactTag == null) {
             return
@@ -81,6 +87,7 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
             }
             isActiveTransition.set(false)
         }
+        topScreenId = -1
     }
 
     companion object {
