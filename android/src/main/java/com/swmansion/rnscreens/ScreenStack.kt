@@ -6,11 +6,11 @@ import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
+import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
-import com.swmansion.rnscreens.R
 
 class ScreenStack(context: Context?) : ScreenContainer(context) {
     private val mStack = ArrayList<ScreenStackFragmentWrapper>()
@@ -281,6 +281,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                     }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
+                if (newTop.screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
+                    it.add(id, DimmingFragment())
+                }
                 it.add(id, newTop.fragment)
             }
             mTopScreen = newTop as? ScreenStackFragmentWrapper
@@ -402,12 +405,12 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     companion object {
         private fun isTransparent(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL ||
-                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL ||
-                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET
+                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL ||
+                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
-                  fragmentWrapper.screen.stackAnimation === StackAnimation.IOS
+                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS
     }
 }

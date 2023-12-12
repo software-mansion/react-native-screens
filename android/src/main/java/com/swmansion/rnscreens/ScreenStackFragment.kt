@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
+import android.view.animation.AnimationUtils
 import android.view.animation.Transformation
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -139,32 +140,12 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             } else {
                 lastStableState = newState
             }
-//            if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-//                animator = createValueAnimator(directionFromLastState()).apply {
-//                    addUpdateListener {
-//                        viewToAnimate.setBackgroundColor(it.animatedValue as Int)
-//                    }
-//                }
-//            } else if (newState != BottomSheetBehavior.STATE_SETTLING) {
-//                if (animator != null) {
-//                    if (animator!!.isRunning) {
-//                        animator!!.pause()
-//                    }
-//                    animator = null
-//                }
-//                lastState = newState
-//            }
         }
 
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
             animDirection = if (slideOffset > lastSlideOffset) AnimDirection.UP else AnimDirection.DOWN
             lastSlideOffset = slideOffset
-
-//            if (needsDirectionUpdate) {
-//                needsDirectionUpdate = false
-//                animator.setIntValues(viewToAnimate.maybeBgColor()!!, if (animDirection == AnimDirection.UP) dimmedColor else transparentColor)
-//            }
 
             if (shouldAnimate()) {
                 animator!!.setCurrentFraction(slideOffset)
@@ -224,7 +205,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        return super.onCreateAnimation(transit, enter, nextAnim)
+        if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
+            return null
+        }
+        return if (enter) {
+            AnimationUtils.loadAnimation(context, R.anim.rns_fade_in)
+        } else {
+            AnimationUtils.loadAnimation(context, R.anim.rns_fade_out)
+        }
+//        return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
@@ -265,15 +254,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         ).apply {
             behavior = if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
                 BottomSheetBehavior<FrameLayout>().apply {
-                    state = BottomSheetBehavior.STATE_HIDDEN
+                    isHideable = true
+                    state = BottomSheetBehavior.STATE_COLLAPSED
                     addBottomSheetCallback(bottomSheetCallback)
                     addBottomSheetCallback(AnimateDimmingViewCallback(screen, coordinatorLayout, state))
-                    isHideable = true
                     isDraggable = true
                     isFitToContents = false
                     halfExpandedRatio = 0.7F
                     isHideable = true
-                    peekHeight = 400
+                    peekHeight = 800
                 }
             } else {
                 ScrollingViewBehavior()
@@ -462,6 +451,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             val fakeAnimation = ScreensAnimation(mFragment).apply { duration = animation.duration }
 
             if (mFragment.screen.stackPresentation == Screen.StackPresentation.FORM_SHEET && mFragment.isAdded) {
+                this.clearAnimation()
                 mFragment.screen.clearAnimation()
             }
 
