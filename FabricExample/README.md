@@ -3,7 +3,6 @@
 ## Installing & running application
 
 Before running application you need to install all dependencies. To do that:
-
 - In project's root directory run `yarn install`
 - In FabricExample directory run `yarn install`
 
