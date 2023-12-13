@@ -92,7 +92,7 @@ const TransitionHandler = ({
   stackRef,
   goBackGesture,
   screenEdgeGesture,
-  transitionAnimation: userTransitionAnimation,
+  transitionAnimation: customTransitionAnimation,
   screensRefHolder,
   currentRouteKey,
 }: GestureProviderProps) => {
@@ -105,8 +105,8 @@ const TransitionHandler = ({
   const startingGesturePosition = useSharedValue(DefaultEvent);
   const canPerformUpdates = useSharedValue(false);
   let transitionAnimation = ScreenTransition.SwipeRight;
-  if (userTransitionAnimation) {
-    transitionAnimation = userTransitionAnimation;
+  if (customTransitionAnimation) {
+    transitionAnimation = customTransitionAnimation;
     if (!goBackGesture) {
       throw new Error(
         '[RNScreens] You have to specify `goBackGesture` when using `transitionAnimation`.'
@@ -194,11 +194,10 @@ const TransitionHandler = ({
     canPerformUpdates.value = true;
   }
 
-  function onUpdate(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
+  function checkBoundaries(
+    event: GestureUpdateEvent<PanGestureHandlerEventPayload>
+  ) {
     'worklet';
-    if (!canPerformUpdates.value) {
-      return;
-    }
     if (goBackGesture === 'swipeRight' && event.translationX < 0) {
       event.translationX = 0;
     } else if (goBackGesture === 'swipeLeft' && event.translationX > 0) {
@@ -208,6 +207,12 @@ const TransitionHandler = ({
     } else if (goBackGesture === 'swipeUp' && event.translationY > 0) {
       event.translationY = 0;
     }
+  }
+
+  function computeProgress(
+    event: GestureUpdateEvent<PanGestureHandlerEventPayload>
+  ) {
+    'worklet';
     let progress = 0;
     if (goBackGesture === 'swipeRight') {
       const screenWidth = screenTransitionConfig.value.screenDimensions.width;
@@ -237,21 +242,28 @@ const TransitionHandler = ({
       const progressY = Math.abs(event.translationY / screenHeight / 2);
       progress = Math.max(progressX, progressY);
     }
+    return progress;
+  }
+
+  function onUpdate(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
+    'worklet';
+    if (!canPerformUpdates.value) {
+      return;
+    }
+    checkBoundaries(event);
+    const progress = computeProgress(event);
     sharedEvent.value = event;
     const stackTag = screenTransitionConfig.value.stackTag;
     RNScreensTurboModule.updateTransition(stackTag, progress);
   }
 
-  function onEnd(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
+  function checkIfTransitionCancelled(
+    distanceX: number,
+    requiredXDistance: number,
+    distanceY: number,
+    requiredYDistance: number
+  ) {
     'worklet';
-    if (!canPerformUpdates.value) {
-      return;
-    }
-    const screenSize = screenTransitionConfig.value.screenDimensions;
-    const distanceX = event.translationX + event.velocityX * 0.3;
-    const distanceY = event.translationY + event.velocityY * 0.3;
-    const requiredXDistance = screenSize.width / 2;
-    const requiredYDistance = screenSize.height / 2;
     let isTransitionCanceled = false;
     if (goBackGesture === 'swipeRight') {
       isTransitionCanceled = distanceX < requiredXDistance;
@@ -270,6 +282,25 @@ const TransitionHandler = ({
       const isCanceledVertically = Math.abs(distanceY) < requiredYDistance;
       isTransitionCanceled = isCanceledHorizontally && isCanceledVertically;
     }
+    return isTransitionCanceled;
+  }
+
+  function onEnd(event: GestureUpdateEvent<PanGestureHandlerEventPayload>) {
+    'worklet';
+    if (!canPerformUpdates.value) {
+      return;
+    }
+    const screenSize = screenTransitionConfig.value.screenDimensions;
+    const distanceX = event.translationX + event.velocityX * 0.3;
+    const distanceY = event.translationY + event.velocityY * 0.3;
+    const requiredXDistance = screenSize.width / 2;
+    const requiredYDistance = screenSize.height / 2;
+    const isTransitionCanceled = checkIfTransitionCancelled(
+      distanceX,
+      requiredXDistance,
+      distanceY,
+      requiredYDistance
+    );
     const stackTag = screenTransitionConfig.value.stackTag;
     screenTransitionConfig.value.onFinishAnimation = () => {
       RNScreensTurboModule.finishTransition(stackTag, isTransitionCanceled);
@@ -285,22 +316,23 @@ const TransitionHandler = ({
 
   if (screenEdgeGesture) {
     const HIT_SLOP_SIZE = 50;
+    const ACTIVATION_DISTANCE = 30;
     if (goBackGesture === 'swipeRight') {
       panGesture = panGesture
-        .activeOffsetX(20)
+        .activeOffsetX(ACTIVATION_DISTANCE)
         .hitSlop({ left: 0, top: 0, width: HIT_SLOP_SIZE });
     } else if (goBackGesture === 'swipeLeft') {
       panGesture = panGesture
-        .activeOffsetX(-20)
+        .activeOffsetX(-ACTIVATION_DISTANCE)
         .hitSlop({ right: 0, top: 0, width: HIT_SLOP_SIZE });
     } else if (goBackGesture === 'swipeDown') {
       panGesture = panGesture
-        .activeOffsetY(20)
+        .activeOffsetY(ACTIVATION_DISTANCE)
         .hitSlop({ top: 0, height: Dimensions.get('window').height * 0.2 });
       // workaround, because we don't have access to header height
     } else if (goBackGesture === 'swipeUp') {
       panGesture = panGesture
-        .activeOffsetY(-20)
+        .activeOffsetY(-ACTIVATION_DISTANCE)
         .hitSlop({ bottom: 0, height: HIT_SLOP_SIZE });
     }
   }

@@ -57,9 +57,11 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="ScreenB"
       component={ScreenB}
-      options={{
-        goBackGesture: 'twoDimensionalSwipe',
-      }}
+      options={
+        {
+          // goBackGesture: 'twoDimensionalSwipe',
+        }
+      }
     />
     <Stack.Screen name="ScreenC" component={ScreenC} />
   </Stack.Navigator>

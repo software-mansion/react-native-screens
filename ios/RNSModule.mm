@@ -71,8 +71,8 @@ RCT_EXPORT_MODULE()
 #else
     screenTags = @[ topScreen.reactTag, belowTopScreen.reactTag ];
 #endif // RCT_NEW_ARCH_ENABLED
+    [stackView startScreenTransition];
   }
-  [stackView startScreenTransition];
   return screenTags;
 }
 

@@ -664,13 +664,12 @@ namespace react = facebook::react;
   }
   BOOL shouldCancelDismiss = [self shouldCancelDismissFromView:(RNSScreenView *)fromVC.view
                                                         toView:(RNSScreenView *)toVC.view];
-  if (_customAnimation ||
-      screen != nil &&
-          // when preventing the native dismiss with back button, we have to return the animator.
-          // Also, we need to return the animator when full width swiping even if the animation is not custom,
-          // otherwise the screen will be just popped immediately due to no animation
-          ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
-           [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+  if (screen != nil &&
+      // when preventing the native dismiss with back button, we have to return the animator.
+      // Also, we need to return the animator when full width swiping even if the animation is not custom,
+      // otherwise the screen will be just popped immediately due to no animation
+      ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
+       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation] || _customAnimation)) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;

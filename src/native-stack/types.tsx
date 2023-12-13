@@ -455,7 +455,7 @@ export type NativeStackNavigationOptions = {
 
   goBackGesture?: GoBackGesture;
   transitionAnimation?: AnimatedScreenTransition;
-  screenEdgeGesture?: false;
+  screenEdgeGesture?: boolean;
 };
 
 export type NativeStackNavigatorProps =
@@ -521,5 +521,5 @@ export type GestureProviderProps = PropsWithChildren<{
   currentRouteKey: string;
   goBackGesture: GoBackGesture | undefined;
   transitionAnimation: AnimatedScreenTransition | undefined;
-  screenEdgeGesture: false | undefined;
+  screenEdgeGesture: boolean | undefined;
 }>;
