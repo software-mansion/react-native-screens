@@ -30,6 +30,7 @@
     "reanimated/",
     "android/src/main/AndroidManifest.xml",
     "android/src/main/java/",
+    "android/src/main/cpp/",
     "android/src/main/jni/",
     "android/src/main/res",
     "android/src/fabric/",
