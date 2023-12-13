@@ -124,8 +124,8 @@ const TransitionHandler = ({
   const screenTransitionConfig = makeMutable(
     {
       stackTag: -1,
-      belowTopScreenTag: -1,
-      topScreenTag: -1,
+      belowTopScreenId: -1,
+      topScreenId: -1,
       sharedEvent,
       startingGesturePosition,
       screenTransition: transitionAnimation,
@@ -166,19 +166,19 @@ const TransitionHandler = ({
       return;
     }
     if (IS_FABRIC) {
-      transitionConfig.topScreenTag =
+      transitionConfig.topScreenId =
         screenTagToNodeWrapperUI.value[transitionData.topScreenTag];
-      transitionConfig.belowTopScreenTag =
+      transitionConfig.belowTopScreenId =
         screenTagToNodeWrapperUI.value[transitionData.belowTopScreenTag];
     } else {
-      transitionConfig.topScreenTag = transitionData.topScreenTag;
-      transitionConfig.belowTopScreenTag = transitionData.belowTopScreenTag;
+      transitionConfig.topScreenId = transitionData.topScreenTag;
+      transitionConfig.belowTopScreenId = transitionData.belowTopScreenTag;
     }
 
     transitionConfig.stackTag = stackTag.value;
     startingGesturePosition.value = event;
     const animatedRefMock = () => {
-      return screenTransitionConfig.value.topScreenTag;
+      return screenTransitionConfig.value.topScreenId;
     };
     const screenSize = measure(animatedRefMock as any);
     if (screenSize == null) {
