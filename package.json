@@ -35,6 +35,7 @@
     "android/src/fabric/",
     "android/src/paper/",
     "android/build.gradle",
+    "android/CMakeLists.txt",
     "ios/",
     "cpp/",
     "windows/",
