@@ -36,6 +36,7 @@
     "android/src/paper/",
     "android/build.gradle",
     "ios/",
+    "cpp/",
     "windows/",
     "RNScreens.podspec",
     "react-native.config.js",
