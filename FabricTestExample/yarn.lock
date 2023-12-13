@@ -5702,9 +5702,10 @@ react-native-gesture-handler@^2.12.1:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
-"react-native-reanimated@file:../react-native-reanimated-3.7.0.tgz":
-  version "3.7.0"
-  resolved "file:../react-native-reanimated-3.7.0.tgz#98b6e6088aa2d805413403905c201ec15b9f61f2"
+react-native-reanimated@3.7.0-nightly-20231213-f3b16198a:
+  version "3.7.0-nightly-20231213-f3b16198a"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.7.0-nightly-20231213-f3b16198a.tgz#cd6cb597ee6c13c41bcd39b3c89165834809a23a"
+  integrity sha512-wNS5KgK8Xq/rh5eLK1d/CRME+lLFQtf5jTCs5KD0q3aXjaA4vXiXV8efScB442EtsnFb/PEdsmL1FAApakHiqQ==
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
