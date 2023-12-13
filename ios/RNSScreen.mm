@@ -243,11 +243,7 @@ namespace react = facebook::react;
   NSLog(@"AnimationDidStop");
   if (_displayLink != nil) {
     [_displayLink setPaused:YES];
-    //    [_displayLink invalidate];
   }
-  //  if (finished) {
-  //    [self updateBounds];
-  //  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
