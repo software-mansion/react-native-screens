@@ -307,7 +307,7 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={StyleSheet.absoluteFill}
+      style={[StyleSheet.absoluteFill, {}]}
       sheetAllowedDetents={sheetNativeDetents}
       sheetLargestUndimmedDetent={sheetNativeUndimmedDetent}
       sheetCustomLargestUndimmedDetent={sheetUserDefinedUndimmedDetent}
