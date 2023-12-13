@@ -158,23 +158,6 @@ namespace react = facebook::react;
 }
 #endif
 
-- (void)setBounds:(CGRect)bounds
-{
-  [super setBounds:bounds];
-  NSLog(@"setBounds (%f, %f), (%f, %f)", bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
-}
-
-- (void)setFrame:(CGRect)frame
-{
-  [super setFrame:frame];
-  if (self->_stackPresentation == RNSScreenStackPresentationFormSheet) {
-    //    NSLog(@"setFrame (%f, %f), (%f, %f)",
-    //          frame.origin.x, frame.origin.y,
-    //          frame.size.width, frame.size.height);
-    NSLog(@"setFrame (%f, %f)", frame.size.width, frame.size.height);
-  }
-}
-
 - (void)updateBounds
 {
 #ifdef RCT_NEW_ARCH_ENABLED
