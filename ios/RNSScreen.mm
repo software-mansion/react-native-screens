@@ -233,6 +233,8 @@ namespace react = facebook::react;
   if (_displayLink == nil) {
     _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+  } else if (_displayLink.isPaused) {
+    [_displayLink setPaused:NO];
   }
 }
 
@@ -240,7 +242,8 @@ namespace react = facebook::react;
 {
   NSLog(@"AnimationDidStop");
   if (_displayLink != nil) {
-    [_displayLink invalidate];
+    [_displayLink setPaused:YES];
+    //    [_displayLink invalidate];
   }
   //  if (finished) {
   //    [self updateBounds];
