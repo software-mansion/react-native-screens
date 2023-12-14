@@ -30,56 +30,6 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-@interface RNSScreenShadowView : RCTShadowView
-
-@property (nonatomic) BOOL isFormSheet;
-
-@end
-
-@implementation RNSScreenShadowView
-
-- (instancetype)init
-{
-  if (self = [super init]) {
-    self.isFormSheet = NO;
-  }
-  return self;
-}
-//
-//- (void)layoutWithMetrics:(RCTLayoutMetrics)layoutMetrics layoutContext:(RCTLayoutContext)layoutContext
-//{
-//  if (self.isFormSheet == YES) {
-//    // Lets make the frame (NOT CONTENT FRAME) artificially bigger
-//    CGRect oldFrame = self.layoutMetrics.frame;
-//    CGFloat newHeight = 1.3 * self.layoutMetrics.frame.size.height;
-//    self.layoutMetrics = {
-//      CGRectMake(oldFrame.origin.x, oldFrame.origin.y, oldFrame.size.width, newHeight),
-//      self.layoutMetrics.contentFrame,
-//      self.layoutMetrics.borderWidth,
-//      self.layoutMetrics.displayType,
-//      self.layoutMetrics.layoutDirection
-//    };
-//    if (!RCTLayoutMetricsEqualToLayoutMetrics(self.layoutMetrics, layoutMetrics)) {
-//      self.layoutMetrics = layoutMetrics;
-//      [layoutContext.affectedShadowViews addObject:self];
-//    }
-//  } else {
-//    [super layoutWithMetrics:layoutMetrics layoutContext:layoutContext];
-//  }
-//}
-//
-//- (void)layoutSubviewsWithContext:(RCTLayoutContext)layoutContext
-//{
-//  [super layoutSubviewsWithContext:layoutContext];
-////  if (self.isFormSheet == YES) {
-////    return;
-////  } else {
-////    [super layoutSubviewsWithContext:layoutContext];
-////  }
-//}
-
-@end
-
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
@@ -233,17 +183,9 @@ namespace react = facebook::react;
       _controller.modalPresentationStyle = UIModalPresentationFullScreen;
       break;
 #if !TARGET_OS_TV
-    case RNSScreenStackPresentationFormSheet: {
+    case RNSScreenStackPresentationFormSheet:
       _controller.modalPresentationStyle = UIModalPresentationFormSheet;
-      __weak RNSScreenView *weakSelf = self;
-      RCTExecuteOnUIManagerQueue(^{
-        RNSScreenView *strongSelf = weakSelf;
-        RNSScreenShadowView *shadowView =
-            (RNSScreenShadowView *)[strongSelf->_bridge.uiManager shadowViewForReactTag:strongSelf.reactTag];
-        shadowView.isFormSheet = YES;
-      });
       break;
-    }
 #endif
     case RNSScreenStackPresentationTransparentModal:
       _controller.modalPresentationStyle = UIModalPresentationOverFullScreen;
@@ -1679,11 +1621,6 @@ RCT_EXPORT_VIEW_PROPERTY(sheetCustomDetents, NSArray<NSNumber *> *);
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
-}
-
-- (RCTShadowView *)shadowView
-{
-  return [[RNSScreenShadowView alloc] init];
 }
 
 + (BOOL)requiresMainQueueSetup
