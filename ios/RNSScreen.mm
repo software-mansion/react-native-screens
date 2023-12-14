@@ -930,14 +930,9 @@ namespace react = facebook::react;
 {
   [super didSetProps:changedProps];
 #if !TARGET_OS_TV
-  if ([changedProps containsObject:@"stackPresentation"] &&
-      self.stackPresentation == RNSScreenStackPresentationFormSheet) {
-    //        if (_displayLink == nil) {
-    //          _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback)];
-    //          [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    //        }
+  if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    [self updateFormSheetPresentationStyle];
   }
-  [self updateFormSheetPresentationStyle];
 #endif // !TARGET_OS_TV
 }
 
