@@ -4,6 +4,8 @@ using namespace facebook;
 
 namespace RNScreens {
 
+constexpr const char MODULE_NAME[] = "RNScreensTurboModule";
+
 std::function<std::array<int, 2>(int)> RNScreensTurboModule::startTransitionBlock_;
 std::function<void(int, double)> RNScreensTurboModule::updateTransitionBlock_;
 std::function<void(int, bool)> RNScreensTurboModule::finishTransitionBlock_;
