@@ -6761,16 +6761,14 @@ react-native-restart@^0.0.27:
   resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.27.tgz#43aa8210312c9dfa5ec7bd4b2f35238ad7972b19"
   integrity sha512-8KScVICrXwcTSJ1rjWkqVTHyEKQIttm5AIMGSK1QG1+RS5owYlE4z/1DykOTdWfVl9l16FIk0w9Xzk9ZO6jxlA==
 
-react-native-safe-area-context@^4.7.1:
-  version "4.7.2"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.7.2.tgz#1673aa99b6a9235e7faaf5a248e69795d6e54e07"
-  integrity sha512-5fy/hRNJ7bI/U2SliOeKf0D80J4lXPc1NsRiNS7Xaz8YTnqlzWib1ViItkwKPfufe54YKzVBMmM32RpdzvO2gg==
+react-native-safe-area-context@^4.8.1:
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.8.1.tgz#b1edac9fc45b4f13b1bb6a0ed4154e9e5bb0d15c"
+  integrity sha512-gYoZyxKuWHfxXHTFGpkFKgfRHDAqTs+I/NZsiXdllMmIfOme25MGPHVmuHrA0Jq4rg189x/JiscFCv2IvDCC6A==
 
 "react-native-screens@link:..":
-  version "3.26.0"
-  dependencies:
-    react-freeze "^1.0.0"
-    warn-once "^0.1.0"
+  version "0.0.0"
+  uid ""
 
 react-native-vector-icons@^8.0.0:
   version "8.1.0"
