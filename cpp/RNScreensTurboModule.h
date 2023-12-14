@@ -12,7 +12,7 @@ class RNScreensTurboModule : public jsi::HostObject {
   static std::function<void(int, bool)> finishTransitionBlock_;
 
 public:
-  static constexpr const char MODULE_NAME[] = "RNScreensTurboModule";
+  static const char MODULE_NAME[];
 
   RNScreensTurboModule(
     std::function<std::array<int, 2>(int)> startTransitionBlock,
