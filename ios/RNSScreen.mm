@@ -30,6 +30,22 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
+@interface RNSScreenShadowView : RCTShadowView
+
+- (void)setSize:(CGSize)size;
+
+@end
+
+@implementation RNSScreenShadowView
+
+- (void)setSize:(CGSize)size
+{
+  [super setSize:size];
+  NSLog(@"SV %p setSize to (%lf, %lf)", self, size.width, size.height);
+}
+
+@end
+
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
@@ -127,14 +143,24 @@ namespace react = facebook::react;
     }
   }
 #else
+  //  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
+  //    return;
+  //  }
   CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
-  if (sizeAnimation) {
+  CAAnimation *rnsSheetAnimation = [self.layer animationForKey:@"rns_sheet_animation"];
+  if (sizeAnimation != nil && rnsSheetAnimation == nil) {
     CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
     callbackOnlyAnimation.duration = sizeAnimation.duration;
     callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
     callbackOnlyAnimation.delegate = self;
+    NSLog(@"RNSScreenView %p ADD ANIMATION", self);
     [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
   } else {
+    NSLog(
+        @"RNSScreenView %p REGULAR setSize on UIManager (%lf, %lf)",
+        self,
+        self.bounds.size.width,
+        self.bounds.size.height);
     [_bridge.uiManager setSize:self.bounds.size forView:self];
   }
 #endif
@@ -142,17 +168,29 @@ namespace react = facebook::react;
 
 - (void)displayLinkCallback
 {
-  CAAnimation *sizeAnimation = [self.layer animationForKey:@"rns_sheet_animation"];
-  CGRect bounds = self.layer.presentationLayer.bounds;
-  [_bridge.uiManager setSize:bounds.size forView:self];
+  //  CGSize size = self.layer.presentationLayer.frame.size;
+  //  NSNumber *reactTag = self.reactTag;
+  //  __weak RCTBridge *bridge = _bridge;
+  //
+  //  RCTExecuteOnUIManagerQueue(^{
+  //    RCTShadowView *shadowView = [bridge.uiManager shadowViewForReactTag:reactTag];
+  //    shadowView.size = size;
+  //  });
+  //  [_bridge.uiManager setSize:size forView:self];
+  auto layer = [self.layer presentationLayer];
+  CGSize size = [[layer valueForKeyPath:@"bounds.size"] CGSizeValue];
+  NSLog(@"RNSScreenView %p CALLBACK setSize on UIManager (%lf, %lf)", self, size.width, size.height);
+  [_bridge.uiManager setSize:size forView:self];
 }
 
 - (void)animationDidStart:(CAAnimation *)animation
 {
   if (_displayLink == nil) {
+    NSLog(@"RNSScreenView %p ENABLE DISPLAYLINK", self);
     _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
   } else if (_displayLink.isPaused) {
+    NSLog(@"RNSScreenView %p ENABLE DISPLAYLINK", self);
     [_displayLink setPaused:NO];
   }
 }
@@ -160,7 +198,9 @@ namespace react = facebook::react;
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
 {
   if (_displayLink != nil) {
+    NSLog(@"RNSScreenView %p DISABLE DISPLAYLINK", self);
     [_displayLink setPaused:YES];
+    [_bridge.uiManager setSize:self.bounds.size forView:self];
   }
 }
 
@@ -1684,7 +1724,16 @@ RCT_EXPORT_VIEW_PROPERTY(sheetCustomDetents, NSArray<NSNumber *> *);
 
 - (UIView *)view
 {
-  return [[RNSScreenView alloc] initWithBridge:self.bridge];
+  RNSScreenView *screenView = [[RNSScreenView alloc] initWithBridge:self.bridge];
+  NSLog(@"RNSScreenView CREATE %p", screenView);
+  return screenView;
+}
+
+- (RCTShadowView *)shadowView
+{
+  RCTShadowView *shadowView = [RNSScreenShadowView new];
+  NSLog(@"SV CREATE %p", shadowView);
+  return shadowView;
 }
 
 + (BOOL)requiresMainQueueSetup
