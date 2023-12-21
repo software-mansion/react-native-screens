@@ -1,5 +1,5 @@
 {
-  "main": "../lib/module/reanimated/index",
+  "main": "../lib/commonjs/reanimated/index",
   "module": "../lib/module/reanimated/index",
   "react-native": "../src/reanimated/index",
   "types": "../lib/typescript/reanimated/index.d.ts"
