@@ -21,7 +21,7 @@ type Props = NativeStackNavigationOptions & {
   route: Route<string>;
 };
 
-function HeaderConfig({
+export default function HeaderConfig({
   backButtonImage,
   backButtonInCustomView,
   direction,
@@ -172,5 +172,3 @@ function HeaderConfig({
     </ScreenStackHeaderConfig>
   );
 }
-
-export default HeaderConfig;
