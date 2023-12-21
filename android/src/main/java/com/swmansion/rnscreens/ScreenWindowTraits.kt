@@ -197,7 +197,6 @@ object ScreenWindowTraits {
         val screenForNavBarHidden = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_HIDDEN)
         val hidden = screenForNavBarHidden?.isNavigationBarHidden ?: false
 
-        WindowCompat.setDecorFitsSystemWindows(window, hidden)
         if (hidden) {
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
                 controller.hide(WindowInsetsCompat.Type.navigationBars())
