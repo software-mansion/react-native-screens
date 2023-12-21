@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Animated,
   NativeSyntheticEvent,
@@ -7,7 +8,6 @@ import {
   TextInputFocusEventData,
   ColorValue,
 } from 'react-native';
-import React from 'react';
 
 export type SearchBarCommands = {
   focus: () => void;
