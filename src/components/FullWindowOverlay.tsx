@@ -9,7 +9,7 @@ const NativeFullWindowOverlay: React.ComponentType<
   }>
 > = FullWindowOverlayNativeComponent as any;
 
-const FullWindowOverlay = (props: { children: ReactNode }) => {
+function FullWindowOverlay(props: { children: ReactNode }) {
   if (Platform.OS !== 'ios') {
     console.warn('Importing FullWindowOverlay is only valid on iOS devices.');
     return <View {...props} />;
@@ -20,6 +20,6 @@ const FullWindowOverlay = (props: { children: ReactNode }) => {
       {props.children}
     </NativeFullWindowOverlay>
   );
-};
+}
 
 export default FullWindowOverlay;

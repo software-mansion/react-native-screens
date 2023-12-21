@@ -10,7 +10,7 @@ export const isNativePlatformSupported =
 
 let ENABLE_SCREENS = isNativePlatformSupported;
 
-export const enableScreens = (shouldEnableScreens = true) => {
+export function enableScreens(shouldEnableScreens = true) {
   ENABLE_SCREENS = shouldEnableScreens;
 
   if (!isNativePlatformSupported) {
@@ -22,22 +22,22 @@ export const enableScreens = (shouldEnableScreens = true) => {
       `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
     );
   }
-};
+}
 
 let ENABLE_FREEZE = false;
 
-export const enableFreeze = (shouldEnableReactFreeze = true) => {
+export function enableFreeze(shouldEnableReactFreeze = true) {
   if (!isNativePlatformSupported) {
     return;
   }
 
   ENABLE_FREEZE = shouldEnableReactFreeze;
-};
+}
 
-export const screensEnabled = () => {
+export function screensEnabled() {
   return ENABLE_SCREENS;
-};
+}
 
-export const freezeEnabled = () => {
+export function freezeEnabled() {
   return ENABLE_FREEZE;
-};
+}

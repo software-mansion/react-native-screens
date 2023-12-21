@@ -7,7 +7,7 @@ import ScreenStackNativeComponent from '../fabric/ScreenStackNativeComponent';
 const NativeScreenStack: React.ComponentType<ScreenStackProps> =
   ScreenStackNativeComponent as any;
 
-const ScreenStack = (props: ScreenStackProps) => {
+function ScreenStack(props: ScreenStackProps) {
   const { children, ...rest } = props;
   const size = React.Children.count(children);
   // freezes all screens except the top one
@@ -26,6 +26,6 @@ const ScreenStack = (props: ScreenStackProps) => {
   });
 
   return <NativeScreenStack {...rest}>{childrenWithFreeze}</NativeScreenStack>;
-};
+}
 
 export default ScreenStack;

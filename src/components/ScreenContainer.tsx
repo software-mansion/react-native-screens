@@ -14,7 +14,7 @@ export const NativeScreenNavigationContainer: React.ComponentType<ScreenContaine
     ? (ScreenNavigationContainerNativeComponent as any)
     : View;
 
-const ScreenContainer = (props: ScreenContainerProps) => {
+function ScreenContainer(props: ScreenContainerProps) {
   const { enabled = screensEnabled(), hasTwoStates, ...rest } = props;
 
   if (enabled && isNativePlatformSupported) {
@@ -28,6 +28,6 @@ const ScreenContainer = (props: ScreenContainerProps) => {
     return <NativeScreenContainer {...rest} />;
   }
   return <View {...rest} />;
-};
+}
 
 export default ScreenContainer;

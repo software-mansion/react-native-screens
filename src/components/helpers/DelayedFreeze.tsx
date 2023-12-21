@@ -8,7 +8,7 @@ interface FreezeWrapperProps {
 
 // This component allows one more render before freezing the screen.
 // Allows activityState to reach the native side and useIsFocused to work correctly.
-const DelayedFreeze = ({ freeze, children }: FreezeWrapperProps) => {
+function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
   // flag used for determining whether freeze should be enabled
   const [freezeState, setFreezeState] = React.useState(false);
 
@@ -22,6 +22,6 @@ const DelayedFreeze = ({ freeze, children }: FreezeWrapperProps) => {
   }, [freeze]);
 
   return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
-};
+}
 
 export default DelayedFreeze;
