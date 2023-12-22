@@ -224,7 +224,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         transaction.commitNowAllowingStateLoss()
     }
 
-    fun detachTop() {
+    fun notifyTopDetached() {
         val top = topScreen as Screen
         if (context is ReactContext) {
             val surfaceId = UIManagerHelper.getSurfaceId(context)

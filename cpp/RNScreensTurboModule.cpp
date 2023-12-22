@@ -52,7 +52,7 @@ jsi::Value RNScreensTurboModule::startTransition(
   size_t count
 ) {
   if (count < 1) {
-    throw jsi::JSError(rt, "startTransition require 1 argument");
+    throw jsi::JSError(rt, "[RNScreens] `startTransition` method requires 1 argument.");
   }
   int stackTag = arguments[0].asNumber();
   auto screenTags = startTransitionBlock_(stackTag);
@@ -80,7 +80,7 @@ jsi::Value RNScreensTurboModule::updateTransition(
   size_t count
 ) {
   if (count < 2) {
-    throw jsi::JSError(rt, "updateTransition require 2 argument");
+    throw jsi::JSError(rt, "[RNScreens] `updateTransition` requires 2 arguments.");
   }
   int stackTag = arguments[0].asNumber();
   double progress = arguments[1].asNumber();
@@ -95,7 +95,7 @@ jsi::Value RNScreensTurboModule::finishTransition(
   size_t count
 ) {
   if (count < 2) {
-    throw jsi::JSError(rt, "finishTransition require 2 argument");
+    throw jsi::JSError(rt, "[RNScreens] `finishTransition` requires 2 arguments.");
   }
   int stackTag = arguments[0].asNumber();
   bool canceled = arguments[1].getBool();

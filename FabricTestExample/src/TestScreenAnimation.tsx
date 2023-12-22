@@ -23,7 +23,6 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
     <Button title="Go ScreenB" onPress={() => {
       navigation.navigate('ScreenB')
-      // (RNScreensModule as any).install();
       }} />
     <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
   </View>
@@ -59,7 +58,6 @@ const App = (): JSX.Element => (
         <Stack.Navigator
           screenOptions={{
             headerHideBackButton: true,
-            direction: I18nManager.isRTL ? 'rtl' : 'ltr',
             stackAnimation: 'none',
           }}>
           <Stack.Screen name="ScreenA" component={MainScreen} />

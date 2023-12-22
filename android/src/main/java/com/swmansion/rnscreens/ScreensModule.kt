@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
@@ -13,16 +14,21 @@ import java.util.concurrent.atomic.AtomicBoolean
 class ScreensModule(private val mReactContext: ReactApplicationContext) : NativeScreensModuleSpec (
     mReactContext
 ) {
-
     private var topScreenId: Int = -1
     private val isActiveTransition = AtomicBoolean(false)
 
     init {
-        System.loadLibrary("rnscreens")
-        val jsContext = reactApplicationContext.javaScriptContextHolder
-        if (jsContext != null) {
-            nativeInstall(jsContext.get())
-        };
+        try {
+            System.loadLibrary("rnscreens")
+            val jsContext = reactApplicationContext.javaScriptContextHolder
+            if (jsContext != null) {
+                nativeInstall(jsContext.get())
+            } else {
+                Log.e("[RNScreens]", "Could not install JSI bindings.")
+            }
+        } catch (exception: Exception) {
+            Log.w("[RNScreens]", "Could not load RNScreens module.")
+        }
     }
 
     private external fun nativeInstall(jsiPtr: Long)
@@ -60,7 +66,7 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
             return
         }
         val progressFloat = progress.toFloat();
-        val coalescingKey = (if (progressFloat == 0.0f) 1 else if (progressFloat == 1.0f) 2 else 3).toShort()
+        val coalescingKey = ScreenFragment.getCoalescingKey(progressFloat)
         UIManagerHelper
             .getEventDispatcherForReactTag(mReactContext, topScreenId)
             ?.dispatchEvent(
@@ -75,6 +81,10 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
     private fun finishTransition(reactTag: Int?, canceled: Boolean) {
         UiThreadUtil.assertOnUiThread()
         if (!isActiveTransition.get() || reactTag == null) {
+            Log.e(
+                "[RNScreens]",
+                "Unable to call `finishTransition` method before transition start."
+            )
             return
         }
         val uiManager = UIManagerHelper.getUIManagerForReactTag(mReactContext, reactTag)
@@ -83,7 +93,7 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
             if (canceled) {
                 stack.detachBelowTop()
             } else {
-                stack.detachTop()
+                stack.notifyTopDetached()
             }
             isActiveTransition.set(false)
         }

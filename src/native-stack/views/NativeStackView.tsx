@@ -160,14 +160,14 @@ const RouteView = ({
   index,
   navigation,
   stateKey,
-  screensRefHolder,
+  screensRefs,
 }: {
   descriptors: NativeStackDescriptorMap;
   route: NavigationRoute<ParamListBase, string>;
   index: number;
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
-  screensRefHolder: React.MutableRefObject<Record<string, any>>;
+  screensRefs: React.MutableRefObject<Record<string, any>>;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -267,10 +267,10 @@ const RouteView = ({
 
   const screenRef = React.useRef(null);
   React.useEffect(() => {
-    screensRefHolder.current[route.key] = screenRef;
+    screensRefs.current[route.key] = screenRef;
     return () => {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete screensRefHolder.current[route.key];
+      delete screensRefs.current[route.key];
     };
   });
 
@@ -418,7 +418,7 @@ function NativeStackViewInner({
   const currentRouteKey = routes[state.index].key;
   const topScreenOptions = descriptors[currentRouteKey].options;
   const stackRef = React.useRef(null);
-  const screensRefHolder = React.useRef<Record<string, any>>({});
+  const screensRefs = React.useRef<Record<string, any>>({});
   const GestureDetector = React.useContext(GHContext);
 
   return (
@@ -427,7 +427,7 @@ function NativeStackViewInner({
       goBackGesture={topScreenOptions?.goBackGesture}
       transitionAnimation={topScreenOptions?.transitionAnimation}
       screenEdgeGesture={topScreenOptions?.screenEdgeGesture ?? false}
-      screensRefHolder={screensRefHolder}
+      screensRefs={screensRefs}
       currentRouteKey={currentRouteKey}>
       <ScreenStack style={styles.container} stackRef={stackRef}>
         {routes.map((route, index) => (
@@ -438,7 +438,7 @@ function NativeStackViewInner({
             index={index}
             navigation={navigation}
             stateKey={key}
-            screensRefHolder={screensRefHolder}
+            screensRefs={screensRefs}
           />
         ))}
       </ScreenStack>

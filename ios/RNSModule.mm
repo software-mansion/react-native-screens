@@ -120,6 +120,11 @@ RCT_EXPORT_MODULE()
 
 - (void)installHostObject
 {
+  /* 
+   installHostObject method is called from constantsToExport and getTurboModule, 
+   because depending on the selected architecture, only one method will be called.
+   For `Paper`, it will be constantsToExport, and for `Fabric`, it will be getTurboModule.
+*/ 
   RCTBridge *bridge = [RCTBridge currentBridge];
   RCTCxxBridge *cxxBridge = (RCTCxxBridge *)bridge;
   if (cxxBridge != nil) {

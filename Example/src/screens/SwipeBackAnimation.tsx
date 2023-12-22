@@ -44,13 +44,12 @@ const ScreenC = ({ navigation }: ScreenCProps): JSX.Element => (
   </View>
 );
 
-const Stack = createNativeStackNavigator<StackParamList>() as any;
+const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
       headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
       stackAnimation: 'none',
     }}>
     <Stack.Screen name="ScreenA" component={MainScreen} />

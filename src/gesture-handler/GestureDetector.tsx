@@ -17,18 +17,6 @@ import {
 import type { GestureProviderProps } from 'src/native-stack/types';
 import { getShadowNodeWrapperAndTagFromRef, isFabric } from './fabricUtils';
 
-declare global {
-  // eslint-disable-next-line no-var
-  var _manageScreenTransition: (
-    command: number,
-    stackTag: number,
-    additionalParam: unknown
-  ) => {
-    topScreenTag: number;
-    belowTopScreenTag: number;
-  };
-}
-
 type RNScreensTurboModuleType = {
   startTransition: (stackTag: number) => {
     topScreenTag: number;
@@ -93,7 +81,7 @@ const TransitionHandler = ({
   goBackGesture,
   screenEdgeGesture,
   transitionAnimation: customTransitionAnimation,
-  screensRefHolder,
+  screensRefs,
   currentRouteKey,
 }: GestureProviderProps) => {
   if (stackRef === undefined) {
@@ -147,11 +135,14 @@ const TransitionHandler = ({
       return;
     }
     const screenTagToNodeWrapper: any = {};
-    for (const key in screensRefHolder.current) {
-      const screenRef = screensRefHolder.current[key];
+    for (const key in screensRefs.current) {
+      const screenRef = screensRefs.current[key];
       const screenData = getShadowNodeWrapperAndTagFromRef(screenRef.current);
-      screenTagToNodeWrapper[screenData.tag ?? ''] =
-        screenData.shadowNodeWrapper;
+      if (!!screenData.tag) {
+        screenTagToNodeWrapper[screenData.tag] = screenData.shadowNodeWrapper;
+      } else {
+        console.log('[RNScreens] Failed to find tag for screen');
+      }
     }
     screenTagToNodeWrapperUI.value = screenTagToNodeWrapper;
   }, [currentRouteKey]);
@@ -182,7 +173,7 @@ const TransitionHandler = ({
     };
     const screenSize = measure(animatedRefMock as any);
     if (screenSize == null) {
-      throw new Error('[Reanimated] Failed to measure screen.');
+      throw new Error('[RNScreens] Failed to measure screen.');
     }
     if (screenSize == null) {
       canPerformUpdates.value = false;

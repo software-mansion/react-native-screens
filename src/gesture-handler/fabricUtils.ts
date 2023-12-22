@@ -22,9 +22,7 @@ if (isFabric()) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('react-native/Libraries/Renderer/shims/ReactFabric').findHostInstance_DEPRECATED;
   } catch (e) {
-    throw new Error(
-      '[Reanimated] Cannot import `findHostInstance_DEPRECATED`.'
-    );
+    throw new Error('[RNScreens] Cannot import `findHostInstance_DEPRECATED`.');
   }
 }
 

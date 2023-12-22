@@ -474,16 +474,7 @@ export type NativeStackDescriptorMap = {
   [key: string]: NativeStackDescriptor;
 };
 
-// copy from Reanimated, to avoid strong dependency
-export type GoBackGesture =
-  | 'swipeRight'
-  | 'swipeLeft'
-  | 'swipeUp'
-  | 'swipeDown'
-  | 'verticalSwipe'
-  | 'horizontalSwipe'
-  | 'twoDimensionalSwipe';
-
+// copy from GestureHandler to avoid strong dependency
 export type PanGestureHandlerEventPayload = {
   x: number;
   y: number;
@@ -494,6 +485,16 @@ export type PanGestureHandlerEventPayload = {
   velocityX: number;
   velocityY: number;
 };
+
+// copy from Reanimated to avoid strong dependency
+export type GoBackGesture =
+  | 'swipeRight'
+  | 'swipeLeft'
+  | 'swipeUp'
+  | 'swipeDown'
+  | 'verticalSwipe'
+  | 'horizontalSwipe'
+  | 'twoDimensionalSwipe';
 
 export interface MeasuredDimensions {
   x: number;
@@ -517,7 +518,7 @@ export type AnimatedScreenTransition = {
 
 export type GestureProviderProps = PropsWithChildren<{
   stackRef: React.MutableRefObject<unknown>;
-  screensRefHolder: any;
+  screensRefs: any;
   currentRouteKey: string;
   goBackGesture: GoBackGesture | undefined;
   transitionAnimation: AnimatedScreenTransition | undefined;
