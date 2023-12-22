@@ -138,7 +138,7 @@ const TransitionHandler = ({
     for (const key in screensRefs.current) {
       const screenRef = screensRefs.current[key];
       const screenData = getShadowNodeWrapperAndTagFromRef(screenRef.current);
-      if (!!screenData.tag) {
+      if (screenData.tag) {
         screenTagToNodeWrapper[screenData.tag] = screenData.shadowNodeWrapper;
       } else {
         console.log('[RNScreens] Failed to find tag for screen');
@@ -263,9 +263,9 @@ const TransitionHandler = ({
     } else if (goBackGesture === 'horizontalSwipe') {
       isTransitionCanceled = Math.abs(distanceX) < requiredXDistance;
     } else if (goBackGesture === 'swipeUp') {
-      isTransitionCanceled = distanceY < requiredYDistance;
-    } else if (goBackGesture === 'swipeDown') {
       isTransitionCanceled = -distanceY < requiredYDistance;
+    } else if (goBackGesture === 'swipeDown') {
+      isTransitionCanceled = distanceY < requiredYDistance;
     } else if (goBackGesture === 'verticalSwipe') {
       isTransitionCanceled = Math.abs(distanceY) < requiredYDistance;
     } else if (goBackGesture === 'twoDimensionalSwipe') {
