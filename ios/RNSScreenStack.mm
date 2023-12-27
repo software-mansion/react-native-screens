@@ -698,6 +698,9 @@ namespace react = facebook::react;
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
+  if (_disableSwipeBack) {
+    return NO;
+  }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
 #if TARGET_OS_TV

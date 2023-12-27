@@ -77,7 +77,8 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(JNIEnv *env, jobject th
             jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
             jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
             currentEnv->CallVoidMethod(globalThis, methodID, integerArg, canceled);
-        }
+        },
+        [](int stackTag){}
     );
     auto rnScreensModuleHostObject = jsi::Object::createFromHostObject(rt, rnScreensModule);
     rt.global().setProperty(

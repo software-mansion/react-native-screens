@@ -6,18 +6,21 @@ namespace RNScreens {
 
 const char RNScreensTurboModule::MODULE_NAME[] = "RNScreensTurboModule";
 
-std::function<std::array<int, 2>(int)> RNScreensTurboModule::startTransitionBlock_;
-std::function<void(int, double)> RNScreensTurboModule::updateTransitionBlock_;
-std::function<void(int, bool)> RNScreensTurboModule::finishTransitionBlock_;
+std::function<std::array<int, 2>(int)> RNScreensTurboModule::startTransition_;
+std::function<void(int, double)> RNScreensTurboModule::updateTransition_;
+std::function<void(int, bool)> RNScreensTurboModule::finishTransition_;
+std::function<void(int)> RNScreensTurboModule::disableSwipeBackForTopScreen_;
 
 RNScreensTurboModule::RNScreensTurboModule(
-  std::function<std::array<int, 2>(int)> startTransitionBlock,
-  std::function<void(int, double)> updateTransitionBlock,
-  std::function<void(int, bool)> finishTransitionBlock
+  std::function<std::array<int, 2>(int)> startTransition,
+  std::function<void(int, double)> updateTransition,
+  std::function<void(int, bool)> finishTransition,
+  std::function<void(int)> disableSwipeBackForTopScreen
 ) {
-  startTransitionBlock_ = startTransitionBlock;
-  updateTransitionBlock_ = updateTransitionBlock;
-  finishTransitionBlock_ = finishTransitionBlock;
+  startTransition_ = startTransition;
+  updateTransition_ = updateTransition;
+  finishTransition_ = finishTransition;
+  disableSwipeBackForTopScreen_ = disableSwipeBackForTopScreen;
 }
 
 RNScreensTurboModule::~RNScreensTurboModule() {};
@@ -32,6 +35,9 @@ jsi::Value RNScreensTurboModule::get(jsi::Runtime& rt, const jsi::PropNameID& na
   else if (name.utf8(rt) == "finishTransition") {
     return jsi::Function::createFromHostFunction(rt, name, 2, finishTransition);
   }
+  else if (name.utf8(rt) == "disableSwipeBackForTopScreen") {
+    return jsi::Function::createFromHostFunction(rt, name, 1, disableSwipeBackForTopScreen);
+  }
   return jsi::Value::undefined();
 }
 
@@ -42,20 +48,16 @@ std::vector<jsi::PropNameID> RNScreensTurboModule::getPropertyNames(jsi::Runtime
   properties.push_back(jsi::PropNameID::forUtf8(rt, "startTransition"));
   properties.push_back(jsi::PropNameID::forUtf8(rt, "updateTransition"));
   properties.push_back(jsi::PropNameID::forUtf8(rt, "finishTransition"));
+  properties.push_back(jsi::PropNameID::forUtf8(rt, "disableSwipeBackForTopScreen"));
   return properties;
 }
 
-jsi::Value RNScreensTurboModule::startTransition(
-  jsi::Runtime &rt, 
-  const jsi::Value &thisValue,
-  const jsi::Value *arguments, 
-  size_t count
-) {
+JSI_HOST_FUNCTION(RNScreensTurboModule::startTransition) {
   if (count < 1) {
     throw jsi::JSError(rt, "[RNScreens] `startTransition` method requires 1 argument.");
   }
   int stackTag = arguments[0].asNumber();
-  auto screenTags = startTransitionBlock_(stackTag);
+  auto screenTags = startTransition_(stackTag);
   jsi::Object screenTagsObject(rt);
   jsi::Value topScreenTag, belowTopScreenTag, canStartTransition;
   if (screenTags[0] > -1) {
@@ -72,34 +74,33 @@ jsi::Value RNScreensTurboModule::startTransition(
   screenTagsObject.setProperty(rt, "canStartTransition", canStartTransition);
   return screenTagsObject;
 }
-  
-jsi::Value RNScreensTurboModule::updateTransition(
-  jsi::Runtime &rt, 
-  const jsi::Value &thisValue,
-  const jsi::Value *arguments, 
-  size_t count
-) {
+
+JSI_HOST_FUNCTION(RNScreensTurboModule::updateTransition) {
   if (count < 2) {
     throw jsi::JSError(rt, "[RNScreens] `updateTransition` requires 2 arguments.");
   }
   int stackTag = arguments[0].asNumber();
   double progress = arguments[1].asNumber();
-  updateTransitionBlock_(stackTag, progress);
+  updateTransition_(stackTag, progress);
   return jsi::Value::undefined();
 }
-  
-jsi::Value RNScreensTurboModule::finishTransition(
-  jsi::Runtime &rt, 
-  const jsi::Value &thisValue,
-  const jsi::Value *arguments, 
-  size_t count
-) {
+
+JSI_HOST_FUNCTION(RNScreensTurboModule::finishTransition) {
   if (count < 2) {
     throw jsi::JSError(rt, "[RNScreens] `finishTransition` requires 2 arguments.");
   }
   int stackTag = arguments[0].asNumber();
   bool canceled = arguments[1].getBool();
-  finishTransitionBlock_(stackTag, canceled);
+  finishTransition_(stackTag, canceled);
+  return jsi::Value::undefined();
+}
+
+JSI_HOST_FUNCTION(RNScreensTurboModule::disableSwipeBackForTopScreen) {
+if (count < 1) {
+    throw jsi::JSError(rt, "[RNScreens] `startTransition` method requires 1 argument.");
+  }
+  int stackTag = arguments[0].asNumber();
+  disableSwipeBackForTopScreen_(stackTag);
   return jsi::Value::undefined();
 }
 

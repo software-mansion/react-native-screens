@@ -95,8 +95,21 @@ RCT_EXPORT_MODULE()
     return false;
   }
   [stackView finishScreenTransition:canceled];
+  if (!canceled) {
+    stackView.disableSwipeBack = NO;
+  }
   isActiveTransition = false;
   return true;
+}
+
+- (void)disableSwipeBackForTopScreen:(NSNumber *)stackTag
+{
+  RCTAssertMainQueue();
+  RNSScreenStackView *stackView = [self getStackView:stackTag];
+  if (stackView == nil) {
+    return;
+  }
+  stackView.disableSwipeBack = YES;
 }
 
 - (RNSScreenStackView *)getStackView:(NSNumber *)stackTag
@@ -120,11 +133,11 @@ RCT_EXPORT_MODULE()
 
 - (void)installHostObject
 {
-  /* 
-   installHostObject method is called from constantsToExport and getTurboModule, 
+  /*
+   installHostObject method is called from constantsToExport and getTurboModule,
    because depending on the selected architecture, only one method will be called.
    For `Paper`, it will be constantsToExport, and for `Fabric`, it will be getTurboModule.
-*/ 
+*/
   RCTBridge *bridge = [RCTBridge currentBridge];
   RCTCxxBridge *cxxBridge = (RCTCxxBridge *)bridge;
   if (cxxBridge != nil) {
@@ -132,13 +145,23 @@ RCT_EXPORT_MODULE()
     if (jsiRuntime != nil) {
       auto &runtime = *jsiRuntime;
       __weak auto weakSelf = self;
+
+      const auto &startTransition = [weakSelf](int stackTag) -> std::array<int, 2> {
+        auto screensTags = [weakSelf startTransition:@(stackTag)];
+        return {[screensTags[0] intValue], [screensTags[1] intValue]};
+      };
+      const auto &updateTransition = [weakSelf](int stackTag, double progress) {
+        [weakSelf updateTransition:@(stackTag) progress:progress];
+      };
+      const auto &finishTransition = [weakSelf](int stackTag, bool canceled) {
+        [weakSelf finishTransition:@(stackTag) canceled:canceled];
+      };
+      const auto &disableSwipeBackForTopScreen = [weakSelf](int stackTag) {
+        [weakSelf disableSwipeBackForTopScreen:@(stackTag)];
+      };
+
       auto rnScreensModule = std::make_shared<RNScreens::RNScreensTurboModule>(
-          [weakSelf](int stackTag) -> std::array<int, 2> {
-            auto screensTags = [weakSelf startTransition:@(stackTag)];
-            return {[screensTags[0] intValue], [screensTags[1] intValue]};
-          },
-          [weakSelf](int stackTag, double progress) { [weakSelf updateTransition:@(stackTag) progress:progress]; },
-          [weakSelf](int stackTag, bool canceled) { [weakSelf finishTransition:@(stackTag) canceled:canceled]; });
+          startTransition, updateTransition, finishTransition, disableSwipeBackForTopScreen);
       auto rnScreensModuleHostObject = jsi::Object::createFromHostObject(runtime, rnScreensModule);
       runtime.global().setProperty(
           runtime, RNScreens::RNScreensTurboModule::MODULE_NAME, std::move(rnScreensModuleHostObject));

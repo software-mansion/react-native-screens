@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Dimensions, findNodeHandle } from 'react-native';
+import { Dimensions, Platform, findNodeHandle } from 'react-native';
 import {
   GestureDetector,
   Gesture,
@@ -13,6 +13,7 @@ import {
   finishScreenTransition,
   ScreenTransition,
   makeMutable,
+  runOnUI,
 } from 'react-native-reanimated';
 import type { GestureProviderProps } from 'src/native-stack/types';
 import { getShadowNodeWrapperAndTagFromRef, isFabric } from './fabricUtils';
@@ -25,6 +26,7 @@ type RNScreensTurboModuleType = {
   };
   updateTransition: (stackTag: number, progress: number) => void;
   finishTransition: (stackTag: number, isCanceled: boolean) => void;
+  disableSwipeBackForTopScreen: (stackTag: number) => void;
 };
 
 const RNScreensTurboModule: RNScreensTurboModuleType = (global as any)
@@ -130,11 +132,20 @@ const TransitionHandler = ({
   const screenTagToNodeWrapperUI = makeMutable<any>({}, true);
   const IS_FABRIC = isFabric();
   useEffect(() => {
+    if (!goBackGesture) {
+      return;
+    }
     stackTag.value = findNodeHandle(stackRef.current as any) as number;
+    if (Platform.OS === 'ios') {
+      runOnUI(() => {
+        RNScreensTurboModule.disableSwipeBackForTopScreen(stackTag.value);
+      })();
+    }
+
     if (!IS_FABRIC) {
       return;
     }
-    const screenTagToNodeWrapper: any = {};
+    const screenTagToNodeWrapper: Record<string, unknown> = {};
     for (const key in screensRefs.current) {
       const screenRef = screensRefs.current[key];
       const screenData = getShadowNodeWrapperAndTagFromRef(screenRef.current);
