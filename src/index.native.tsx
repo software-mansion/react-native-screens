@@ -94,6 +94,9 @@ type SearchBarCommandsType = {
     viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>,
     text: string
   ) => void;
+  cancelSearch: (
+    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>
+  ) => void;
 };
 
 // We initialize these lazily so that importing the module doesn't throw error when not linked
@@ -200,8 +203,8 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
     });
     return () => {
       clearImmediate(id);
-    }
-  }, [freeze])
+    };
+  }, [freeze]);
 
   return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
 }
@@ -480,6 +483,12 @@ class SearchBar extends React.Component<SearchBarProps> {
   setText(text: string) {
     this._callMethodWithRef(ref =>
       ScreensNativeModules.NativeSearchBarCommands.setText(ref, text)
+    );
+  }
+
+  cancelSearch() {
+    this._callMethodWithRef(ref =>
+      ScreensNativeModules.NativeSearchBarCommands.cancelSearch(ref)
     );
   }
 

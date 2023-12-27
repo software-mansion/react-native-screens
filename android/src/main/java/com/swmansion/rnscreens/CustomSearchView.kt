@@ -40,6 +40,11 @@ class CustomSearchView(context: Context, fragment: Fragment) : SearchView(contex
 
     fun setText(text: String) = setQuery(text, false)
 
+    fun cancelSearch() {
+        clearText()
+        setIconified(true)
+    }
+
     override fun setOnCloseListener(listener: OnCloseListener?) {
         mCustomOnCloseListener = listener
     }
