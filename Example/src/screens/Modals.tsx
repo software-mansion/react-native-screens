@@ -11,6 +11,7 @@ type StackParamList = {
   Modal: undefined;
   FullscreenModal: undefined;
   Alert: undefined;
+  ContainedModal: undefined;
 };
 
 interface MainScreenProps {
@@ -25,6 +26,10 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
       onPress={() => navigation.navigate('FullscreenModal')}
     />
     <Button title="Open alert" onPress={() => navigation.navigate('Alert')} />
+    <Button
+      title="Open contained modal"
+      onPress={() => navigation.navigate('ContainedModal')}
+    />
     <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
   </View>
 );
@@ -41,6 +46,10 @@ const ModalScreen = ({ navigation }: ModalScreenProps): JSX.Element => (
       onPress={() => navigation.push('FullscreenModal')}
     />
     <Button title="Open alert" onPress={() => navigation.navigate('Alert')} />
+    <Button
+      title="Open contained modal"
+      onPress={() => navigation.navigate('ContainedModal')}
+    />
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </View>
 );
@@ -67,6 +76,11 @@ const App = (): JSX.Element => (
       name="FullscreenModal"
       component={ModalScreen}
       options={{ stackPresentation: 'fullScreenModal' }}
+    />
+    <Stack.Screen
+      name="ContainedModal"
+      component={ModalScreen}
+      options={{ stackPresentation: 'containedModal' }}
     />
     <Stack.Screen
       name="Alert"
