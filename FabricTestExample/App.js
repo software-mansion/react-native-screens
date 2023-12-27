@@ -91,6 +91,7 @@ import Test1829 from './src/Test1829';
 import Test1844 from './src/Test1844';
 import Test1864 from './src/Test1864';
 import TestScreenAnimation from './src/TestScreenAnimation';
+import Test1981 from './src/Test1981';
 
 enableFreeze(true);
 

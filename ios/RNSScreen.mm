@@ -560,13 +560,19 @@ namespace react = facebook::react;
   }
 }
 
-- (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig
+- (nullable RNSScreenStackHeaderConfig *)findHeaderConfig
 {
+  // Fast path
+  if ([self.reactSubviews.lastObject isKindOfClass:RNSScreenStackHeaderConfig.class]) {
+    return (RNSScreenStackHeaderConfig *)self.reactSubviews.lastObject;
+  }
+
   for (UIView *view in self.reactSubviews) {
     if ([view isKindOfClass:RNSScreenStackHeaderConfig.class]) {
       return (RNSScreenStackHeaderConfig *)view;
     }
   }
+
   return nil;
 }
 
