@@ -177,7 +177,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
       <Button onPress={() => searchBarRef.current?.focus()} title="Focus" />
       <Button
         onPress={() => searchBarRef.current?.clearText()}
-        title="Clear Text"
+        title="Clear text"
       />
       <Button
         onPress={() => searchBarRef.current?.toggleCancelButton(true)}
@@ -186,6 +186,10 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
       <Button
         onPress={() => searchBarRef.current?.toggleCancelButton(false)}
         title="Hide cancel"
+      />
+      <Button
+        onPress={() => searchBarRef.current?.cancelSearch()}
+        title="Cancel search"
       />
       <Text style={styles.heading}>Other</Text>
       <Button
