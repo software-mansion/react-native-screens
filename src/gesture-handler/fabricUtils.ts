@@ -7,10 +7,10 @@ interface HostInstance {
   _nativeTag: number;
 }
 
-type localGlobal = typeof global & Record<string, unknown>;
+type LocalGlobal = typeof global & Record<string, unknown>;
 
 export function isFabric() {
-  return !!(global as localGlobal)._IS_FABRIC;
+  return !!(global as LocalGlobal)._IS_FABRIC;
 }
 
 let findHostInstance: (ref: React.Component) => HostInstance | null = () => {

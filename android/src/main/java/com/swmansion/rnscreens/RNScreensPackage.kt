@@ -45,7 +45,7 @@ class RNScreensPackage : TurboReactPackage() {
                 false, // needsEagerInit
                 true, // hasConstants
                 false, // isCxxModule
-                true // isTurboModule
+                isTurboModule
             )
             moduleInfos
         }

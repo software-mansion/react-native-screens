@@ -9,11 +9,10 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
-
 @ReactModule(name = ScreensModule.NAME)
-class ScreensModule(private val mReactContext: ReactApplicationContext) : NativeScreensModuleSpec (
-    mReactContext
-) {
+class ScreensModule(private val reactContext: ReactApplicationContext)
+    : NativeScreensModuleSpec(reactContext)
+{
     private var topScreenId: Int = -1
     private val isActiveTransition = AtomicBoolean(false)
 
@@ -43,7 +42,7 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
         }
         topScreenId = -1
         val result = intArrayOf(-1, -1)
-        val uiManager = UIManagerHelper.getUIManagerForReactTag(mReactContext, reactTag)
+        val uiManager = UIManagerHelper.getUIManagerForReactTag(reactContext, reactTag)
         val stack = uiManager?.resolveView(reactTag)
         if (stack is ScreenStack) {
             val fragments = stack.fragments
@@ -68,10 +67,10 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
         val progressFloat = progress.toFloat();
         val coalescingKey = ScreenFragment.getCoalescingKey(progressFloat)
         UIManagerHelper
-            .getEventDispatcherForReactTag(mReactContext, topScreenId)
+            .getEventDispatcherForReactTag(reactContext, topScreenId)
             ?.dispatchEvent(
                 ScreenTransitionProgressEvent(
-                    UIManagerHelper.getSurfaceId(mReactContext),
+                    UIManagerHelper.getSurfaceId(reactContext),
                     topScreenId, progressFloat, true, true, coalescingKey
                 )
             )
@@ -87,7 +86,7 @@ class ScreensModule(private val mReactContext: ReactApplicationContext) : Native
             )
             return
         }
-        val uiManager = UIManagerHelper.getUIManagerForReactTag(mReactContext, reactTag)
+        val uiManager = UIManagerHelper.getUIManagerForReactTag(reactContext, reactTag)
         val stack = uiManager?.resolveView(reactTag)
         if (stack is ScreenStack) {
             if (canceled) {

@@ -1,14 +1,13 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, StyleSheet, I18nManager, Button } from 'react-native';
+import { View, StyleSheet, Button } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
-import RNScreensModule from '../../src/fabric/NativeScreensModule';
-console.log('RNScreensModule', RNScreensModule);
+
 type StackParamList = {
   ScreenA: undefined;
   ScreenB: undefined;
