@@ -290,9 +290,10 @@ const TransitionHandler = ({
     if (!canPerformUpdates.value) {
       return;
     }
+    const velocityFactor = 0.3;
     const screenSize = screenTransitionConfig.value.screenDimensions;
-    const distanceX = event.translationX + event.velocityX * 0.3;
-    const distanceY = event.translationY + event.velocityY * 0.3;
+    const distanceX = event.translationX + event.velocityX * velocityFactor;
+    const distanceY = event.translationY + event.velocityY * velocityFactor;
     const requiredXDistance = screenSize.width / 2;
     const requiredYDistance = screenSize.height / 2;
     const isTransitionCanceled = checkIfTransitionCancelled(
