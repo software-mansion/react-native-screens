@@ -20,65 +20,75 @@ Java_com_swmansion_rnscreens_ScreensModule_nativeInstall(JNIEnv *env, jobject th
     JavaVM* jvm;
     env->GetJavaVM(&jvm);
 
-    auto rnScreensModule = std::make_shared<RNScreens::RNScreensTurboModule>(
-        [jvm](int stackTag) -> std::array<int, 2> {
-            JNIEnv* currentEnv;
-            if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
-                return {0, 0};
-            }
-            jclass javaClass = currentEnv->GetObjectClass(globalThis);
-            jmethodID methodID = currentEnv->GetMethodID(
+    const auto &startTransition = [jvm](int stackTag) -> std::array<int, 2> {
+        JNIEnv* currentEnv;
+        if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
+            return {0, 0};
+        }
+        jclass javaClass = currentEnv->GetObjectClass(globalThis);
+        jmethodID methodID = currentEnv->GetMethodID(
                 javaClass,
                 "startTransition",
                 "(Ljava/lang/Integer;)[I"
-            );
-            jclass integerClass = currentEnv->FindClass("java/lang/Integer");
-            jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
-            jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
-            jintArray resultArray = (jintArray) currentEnv->CallObjectMethod(
+        );
+        jclass integerClass = currentEnv->FindClass("java/lang/Integer");
+        jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
+        jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
+        jintArray resultArray = (jintArray) currentEnv->CallObjectMethod(
                 globalThis,
                 methodID,
                 integerArg
-            );
-            std::array<int, 2> result = {-1, -1};
-            jint* elements = currentEnv->GetIntArrayElements(resultArray, nullptr);
-            if (elements != nullptr) {
-                result[0] = elements[0];
-                result[1] = elements[1];
-                currentEnv->ReleaseIntArrayElements(resultArray, elements, JNI_ABORT);
-            }
-            return result;
-        },
-        [jvm](int stackTag, double progress){
-            JNIEnv* currentEnv;
-            if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
-                return;
-            }
-            jclass javaClass = currentEnv->GetObjectClass(globalThis);
-            jmethodID methodID = currentEnv->GetMethodID(
+        );
+        std::array<int, 2> result = {-1, -1};
+        jint* elements = currentEnv->GetIntArrayElements(resultArray, nullptr);
+        if (elements != nullptr) {
+            result[0] = elements[0];
+            result[1] = elements[1];
+            currentEnv->ReleaseIntArrayElements(resultArray, elements, JNI_ABORT);
+        }
+        return result;
+    };
+
+    const auto &updateTransition = [jvm](int stackTag, double progress){
+        JNIEnv* currentEnv;
+        if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
+            return;
+        }
+        jclass javaClass = currentEnv->GetObjectClass(globalThis);
+        jmethodID methodID = currentEnv->GetMethodID(
                 javaClass,
                 "updateTransition",
                 "(D)V"
-            );
-            currentEnv->CallVoidMethod(globalThis, methodID, progress);
-        },
-        [jvm](int stackTag, bool canceled){
-            JNIEnv* currentEnv;
-            if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
-                return;
-            }
-            jclass javaClass = currentEnv->GetObjectClass(globalThis);
-            jmethodID methodID = currentEnv->GetMethodID(
+        );
+        currentEnv->CallVoidMethod(globalThis, methodID, progress);
+    };
+
+    const auto &finishTransition = [jvm](int stackTag, bool canceled){
+        JNIEnv* currentEnv;
+        if (jvm->AttachCurrentThread(&currentEnv, nullptr) != JNI_OK) {
+            return;
+        }
+        jclass javaClass = currentEnv->GetObjectClass(globalThis);
+        jmethodID methodID = currentEnv->GetMethodID(
                 javaClass,
                 "finishTransition",
                 "(Ljava/lang/Integer;Z)V"
-            );
-            jclass integerClass = currentEnv->FindClass("java/lang/Integer");
-            jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
-            jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
-            currentEnv->CallVoidMethod(globalThis, methodID, integerArg, canceled);
-        },
-        [](int stackTag){}
+        );
+        jclass integerClass = currentEnv->FindClass("java/lang/Integer");
+        jmethodID integerConstructor = currentEnv->GetMethodID(integerClass, "<init>", "(I)V");
+        jobject integerArg = currentEnv->NewObject(integerClass, integerConstructor, stackTag);
+        currentEnv->CallVoidMethod(globalThis, methodID, integerArg, canceled);
+    };
+
+    const auto &disableSwipeBackForTopScreen = [](int _stackTag){
+        // no implementation for Android
+    };
+
+    auto rnScreensModule = std::make_shared<RNScreens::RNScreensTurboModule>(
+        startTransition,
+        updateTransition,
+        finishTransition,
+        disableSwipeBackForTopScreen
     );
     auto rnScreensModuleHostObject = jsi::Object::createFromHostObject(rt, rnScreensModule);
     rt.global().setProperty(
