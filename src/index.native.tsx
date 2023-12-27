@@ -4,6 +4,7 @@ import React, {
   PropsWithChildren,
   ReactNode,
   useEffect,
+  useRef,
 } from 'react';
 import {
   Animated,
@@ -213,7 +214,8 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
 }
 
 function ScreenStack(props: ScreenStackProps) {
-  const { children, stackRef, ...rest } = props;
+  const { children, gestureDetectorBridge, ...rest } = props;
+  const ref = useRef(null);
   const size = React.Children.count(children);
   // freezes all screens except the top one
   const childrenWithFreeze = React.Children.map(children, (child, index) => {
@@ -229,8 +231,13 @@ function ScreenStack(props: ScreenStackProps) {
     );
   });
 
+  useEffect(() => {
+    if (gestureDetectorBridge) {
+      gestureDetectorBridge.current.stackUseEffectCallback(ref);
+    }
+  });
   return (
-    <ScreensNativeModules.NativeScreenStack {...rest} ref={stackRef}>
+    <ScreensNativeModules.NativeScreenStack {...rest} ref={ref}>
       {childrenWithFreeze}
     </ScreensNativeModules.NativeScreenStack>
   );

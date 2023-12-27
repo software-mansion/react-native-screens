@@ -18,6 +18,7 @@ import {
   ColorValue,
 } from 'react-native';
 import {
+  GestureDetectorBridge,
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
@@ -517,8 +518,8 @@ export type AnimatedScreenTransition = {
 };
 
 export type GestureProviderProps = PropsWithChildren<{
-  stackRef: React.MutableRefObject<unknown>;
-  screensRefs: any;
+  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
+  screensRefs: Record<string, any>;
   currentRouteKey: string;
   goBackGesture: GoBackGesture | undefined;
   transitionAnimation: AnimatedScreenTransition | undefined;

@@ -79,18 +79,13 @@ const DefaultScreenDimensions = {
 
 const TransitionHandler = ({
   children,
-  stackRef,
+  gestureDetectorBridge,
   goBackGesture,
   screenEdgeGesture,
   transitionAnimation: customTransitionAnimation,
   screensRefs,
   currentRouteKey,
 }: GestureProviderProps) => {
-  if (stackRef === undefined) {
-    throw new Error(
-      '[RNScreens] A required parameter `stackRef` was not specified.'
-    );
-  }
   const sharedEvent = useSharedValue(DefaultEvent);
   const startingGesturePosition = useSharedValue(DefaultEvent);
   const canPerformUpdates = useSharedValue(false);
@@ -131,7 +126,8 @@ const TransitionHandler = ({
   const stackTag = makeMutable(-1, true);
   const screenTagToNodeWrapperUI = makeMutable<any>({}, true);
   const IS_FABRIC = isFabric();
-  useEffect(() => {
+
+  gestureDetectorBridge.current.stackUseEffectCallback = stackRef => {
     if (!goBackGesture) {
       return;
     }
@@ -141,8 +137,10 @@ const TransitionHandler = ({
         RNScreensTurboModule.disableSwipeBackForTopScreen(stackTag.value);
       })();
     }
+  };
 
-    if (!IS_FABRIC) {
+  useEffect(() => {
+    if (!IS_FABRIC || !goBackGesture) {
       return;
     }
     const screenTagToNodeWrapper: Record<string, unknown> = {};

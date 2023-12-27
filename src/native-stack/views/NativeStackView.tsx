@@ -9,6 +9,7 @@ import {
   StackPresentationTypes,
   ScreenContext,
   GHContext,
+  GestureDetectorBridge,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -417,19 +418,25 @@ function NativeStackViewInner({
 
   const currentRouteKey = routes[state.index].key;
   const topScreenOptions = descriptors[currentRouteKey].options;
-  const stackRef = React.useRef(null);
+  const gestureDetectorBridge = React.useRef<GestureDetectorBridge>({
+    stackUseEffectCallback: _stackRef => {
+      // override in GestureDetector
+    },
+  });
   const screensRefs = React.useRef<Record<string, any>>({});
   const GestureDetector = React.useContext(GHContext);
 
   return (
     <GestureDetector
-      stackRef={stackRef}
+      gestureDetectorBridge={gestureDetectorBridge}
       goBackGesture={topScreenOptions?.goBackGesture}
       transitionAnimation={topScreenOptions?.transitionAnimation}
       screenEdgeGesture={topScreenOptions?.screenEdgeGesture ?? false}
       screensRefs={screensRefs}
       currentRouteKey={currentRouteKey}>
-      <ScreenStack style={styles.container} stackRef={stackRef}>
+      <ScreenStack
+        style={styles.container}
+        gestureDetectorBridge={gestureDetectorBridge}>
         {routes.map((route, index) => (
           <RouteView
             key={route.key}
