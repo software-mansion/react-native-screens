@@ -517,9 +517,13 @@ export type AnimatedScreenTransition = {
   ) => Record<string, unknown>;
 };
 
+export type ScreensRefsHolder = React.MutableRefObject<
+  Record<string, React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>>
+>;
+
 export type GestureProviderProps = PropsWithChildren<{
   gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
-  screensRefs: Record<string, any>;
+  screensRefs: ScreensRefsHolder;
   currentRouteKey: string;
   goBackGesture: GoBackGesture | undefined;
   transitionAnimation: AnimatedScreenTransition | undefined;

@@ -1,3 +1,5 @@
+import { NativeStackNavigatorProps } from '../native-stack/types';
+
 interface HostInstance {
   _internalInstanceHandle: {
     stateNode: {
@@ -26,8 +28,10 @@ if (isFabric()) {
   }
 }
 
-export function getShadowNodeWrapperAndTagFromRef(ref: React.Component) {
-  const hostInstance = findHostInstance(ref);
+export function getShadowNodeWrapperAndTagFromRef(
+  ref: React.Ref<NativeStackNavigatorProps> | React.Component
+) {
+  const hostInstance = findHostInstance(ref as React.Component);
   return {
     shadowNodeWrapper: hostInstance?._internalInstanceHandle.stateNode.node,
     tag: hostInstance?._nativeTag,

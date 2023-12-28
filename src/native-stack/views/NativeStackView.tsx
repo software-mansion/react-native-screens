@@ -28,6 +28,8 @@ import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
+  NativeStackNavigatorProps,
+  ScreensRefsHolder,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
@@ -168,7 +170,7 @@ const RouteView = ({
   index: number;
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
-  screensRefs: React.MutableRefObject<Record<string, any>>;
+  screensRefs: ScreensRefsHolder;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -420,14 +422,18 @@ function NativeStackViewInner({
   const topScreenOptions = descriptors[currentRouteKey].options;
   const gestureDetectorBridge = React.useRef<GestureDetectorBridge>({
     stackUseEffectCallback: _stackRef => {
-      // override in GestureDetector
+      // this method will be override in GestureDetector
     },
   });
-  const screensRefs = React.useRef<Record<string, any>>({});
-  const GestureDetector = React.useContext(GHContext);
+  type RefHolder = Record<
+    string,
+    React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>
+  >;
+  const screensRefs = React.useRef<RefHolder>({});
+  const ScreenGestureDetector = React.useContext(GHContext);
 
   return (
-    <GestureDetector
+    <ScreenGestureDetector
       gestureDetectorBridge={gestureDetectorBridge}
       goBackGesture={topScreenOptions?.goBackGesture}
       transitionAnimation={topScreenOptions?.transitionAnimation}
@@ -449,7 +455,7 @@ function NativeStackViewInner({
           />
         ))}
       </ScreenStack>
-    </GestureDetector>
+    </ScreenGestureDetector>
   );
 }
 
