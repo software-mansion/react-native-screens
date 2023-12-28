@@ -34,6 +34,7 @@ function NativeStackNavigator({
     children,
     screenOptions,
   });
+
   // Starting from React Navigation v6, `native-stack` should be imported from
   // `@react-navigation/native-stack` rather than `react-native-screens/native-stack`
   React.useEffect(() => {

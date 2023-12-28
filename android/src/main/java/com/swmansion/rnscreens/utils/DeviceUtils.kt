@@ -8,4 +8,5 @@ object DeviceUtils {
     fun isPlatformAndroidTV(context: Context?): Boolean {
         return context?.packageManager?.hasSystemFeature(PackageManager.FEATURE_LEANBACK) == true
     }
+
 }
