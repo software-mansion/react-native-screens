@@ -29,6 +29,41 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
+@interface RNSScreenShadowView : RCTShadowView
+
+@end
+
+@implementation RNSScreenShadowView
+
+- (void)didSetProps:(NSArray<NSString *> *)changedProps
+{
+  [super didSetProps:changedProps];
+  self.top = YGValue{97.67, YGUnitPoint};
+}
+
+- (void)layoutWithMinimumSize:(CGSize)minimumSize
+                  maximumSize:(CGSize)maximumSize
+              layoutDirection:(UIUserInterfaceLayoutDirection)layoutDirection
+                layoutContext:(RCTLayoutContext)layoutContext
+{
+  [super layoutWithMinimumSize:minimumSize
+                   maximumSize:maximumSize
+               layoutDirection:layoutDirection
+                 layoutContext:layoutContext];
+}
+
+- (void)layoutSubviewsWithContext:(RCTLayoutContext)layoutContext
+{
+  [super layoutSubviewsWithContext:layoutContext];
+}
+
+- (void)layoutWithMetrics:(RCTLayoutMetrics)layoutMetrics layoutContext:(RCTLayoutContext)layoutContext
+{
+  [super layoutWithMetrics:layoutMetrics layoutContext:layoutContext];
+}
+
+@end
+
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
@@ -89,6 +124,7 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
+  NSLog(@"CREATE ScreenView %p", self);
 }
 
 - (UIViewController *)reactViewController
@@ -344,7 +380,7 @@ namespace react = facebook::react;
   }
   // we do it here too because at this moment the `parentViewController` is already not nil,
   // so if the parent is not UINavCtr, the frame will be updated to the correct one.
-  [self reactSetFrame:_reactFrame];
+//  [self reactSetFrame:_reactFrame];
 #endif
 }
 
@@ -843,13 +879,43 @@ namespace react = facebook::react;
   // any attempt of setting that via React props
 }
 
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"setFrame (%.2lf, %.2lf) %.2lf x %.2lf", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+  [super setFrame:frame];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+  NSLog(
+      @"setBounds (%.2lf, %.2lf) %.2lf x %.2lf",
+      bounds.origin.x,
+      bounds.origin.y,
+      bounds.size.width,
+      bounds.size.height);
+  [super setBounds:bounds];
+}
+
+- (void)setCenter:(CGPoint)center
+{
+  NSLog(@"setCenter (%.2lf, %.2lf)", center.x, center.y);
+  [super setCenter:center];
+}
+
 - (void)reactSetFrame:(CGRect)frame
 {
+  NSLog(
+      @"reactSetFrame (%.2lf, %.2lf) %.2lf x %.2lf",
+      frame.origin.x,
+      frame.origin.y,
+      frame.size.width,
+      frame.size.height);
   _reactFrame = frame;
-  UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
-    [super reactSetFrame:frame];
-  }
+  [super reactSetFrame:frame];
+  //  UIViewController *parentVC = self.reactViewController.parentViewController;
+  //  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
+  //    [super reactSetFrame:frame];
+  //  }
   // when screen is mounted under RNSNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
   // the controller. In that case we ignore react layout system from managing
@@ -1518,6 +1584,11 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
+}
+
+- (RCTShadowView *)shadowView
+{
+  return [[RNSScreenShadowView alloc] init];
 }
 
 + (BOOL)requiresMainQueueSetup
