@@ -44,6 +44,7 @@ export default function App(): JSX.Element {
           name="SheetScreen"
           component={SheetScreen}
           options={{
+            stackAnimation: 'slide_from_bottom',
             ...initialScreenOptions,
           }}
         />

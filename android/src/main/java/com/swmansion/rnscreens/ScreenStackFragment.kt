@@ -24,6 +24,7 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.commit
 import com.facebook.react.touch.ReactHitSlopView
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ReactCompoundViewGroup
@@ -35,6 +36,7 @@ import com.google.android.material.bottomsheet.BottomSheetDragHandleView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.ext.maybeBgColor
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -194,7 +196,14 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private val bottomSheetCallback = object : BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                this@ScreenStackFragment.dismissFromContainer()
+                if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
+                    parentFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        remove(this@ScreenStackFragment)
+                    }
+                } else {
+                    this@ScreenStackFragment.dismissFromContainer()
+                }
             }
             Log.i("ScreenStackFragment", "Sheet state changed to $newState")
         }
@@ -257,11 +266,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     isHideable = true
                     state = BottomSheetBehavior.STATE_COLLAPSED
                     addBottomSheetCallback(bottomSheetCallback)
-                    addBottomSheetCallback(AnimateDimmingViewCallback(screen, coordinatorLayout, state))
+//                    addBottomSheetCallback(AnimateDimmingViewCallback(screen, coordinatorLayout, state))
                     isDraggable = true
                     isFitToContents = false
                     halfExpandedRatio = 0.7F
-                    isHideable = true
                     peekHeight = 800
                 }
             } else {
@@ -313,27 +321,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return coordinatorLayout
     }
 
-    fun addDimmingViewOnTop() {
-        val coordinator = screen.parent as ScreensCoordinatorLayout
-        val dimmingView = createDimmingView()
-        coordinator.addView(dimmingView)
-    }
-
-    fun removeDimmingViewFromTop() {
-        val coordinator = screen.parent as ScreensCoordinatorLayout
-        coordinator.removeViewAt(coordinator.childCount - 1)
-    }
-
-    private fun createDimmingView(): View {
-        return View(requireContext()).apply {
-            layoutParams = CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                CoordinatorLayout.LayoutParams.MATCH_PARENT
-            )
-            setBackgroundColor(Color.argb(120, 0, 0, 0))
-        }
-    }
-
     private fun attachShapeToScreen(screen: Screen) {
         val shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
             setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
@@ -344,8 +331,9 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun onStop() {
-        if (DeviceUtils.isPlatformAndroidTV(context))
+        if (DeviceUtils.isPlatformAndroidTV(context)) {
             mLastFocusedChild = findLastFocusedChild()
+        }
 
         super.onStop()
     }

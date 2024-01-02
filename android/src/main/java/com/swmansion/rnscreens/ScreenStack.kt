@@ -24,6 +24,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     private var previousChildrenCount = 0
     var goingForward = false
 
+    /**
+     *
+     */
     fun dismiss(screenFragment: ScreenStackFragmentWrapper) {
         mDismissed.add(screenFragment)
         performUpdatesNow()
@@ -52,9 +55,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
             Screen.StackPresentation.MODAL -> ScreenModalFragment(screen)
+            Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
             else -> ScreenStackFragment(screen)
         }
-//    override fun adapt(screen: Screen): ScreenStackFragmentWrapper = ScreenStackFragment(screen)
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
@@ -281,9 +284,6 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                     }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
-                if (newTop.screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
-                    it.add(id, DimmingFragment())
-                }
                 it.add(id, newTop.fragment)
             }
             mTopScreen = newTop as? ScreenStackFragmentWrapper
