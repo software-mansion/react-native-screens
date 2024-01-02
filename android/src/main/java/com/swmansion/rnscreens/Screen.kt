@@ -236,7 +236,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
         val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
-            .takeIf { resolvedActionBarSize && headerConfig?.mIsHidden != true }
+            .takeIf { resolvedActionBarSize && headerConfig?.isHidden != true }
             ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
 
         val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
