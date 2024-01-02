@@ -13,17 +13,17 @@ class CustomSearchView(context: Context, fragment: Fragment) : SearchView(contex
         setOnSearchClickListener - https://developer.android.com/reference/android/widget/SearchView#setOnSearchClickListener(android.view.View.OnClickListener)
         setOnCloseListener - https://developer.android.com/reference/android/widget/SearchView#setOnCloseListener(android.widget.SearchView.OnCloseListener)
     */
-    private var mCustomOnCloseListener: OnCloseListener? = null
-    private var mCustomOnSearchClickedListener: OnClickListener? = null
+    private var onCloseListener: OnCloseListener? = null
+    private var onSearchClickedListener: OnClickListener? = null
 
-    private var mOnBackPressedCallback: OnBackPressedCallback =
+    private var onBackPressedCallback: OnBackPressedCallback =
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 isIconified = true
             }
         }
 
-    private val backPressOverrider = FragmentBackPressOverrider(fragment, mOnBackPressedCallback)
+    private val backPressOverrider = FragmentBackPressOverrider(fragment, onBackPressedCallback)
 
     var overrideBackAction: Boolean
         set(value) {
@@ -46,11 +46,11 @@ class CustomSearchView(context: Context, fragment: Fragment) : SearchView(contex
     }
 
     override fun setOnCloseListener(listener: OnCloseListener?) {
-        mCustomOnCloseListener = listener
+        onCloseListener = listener
     }
 
     override fun setOnSearchClickListener(listener: OnClickListener?) {
-        mCustomOnSearchClickedListener = listener
+        onSearchClickedListener = listener
     }
 
     override fun onAttachedToWindow() {
@@ -67,12 +67,12 @@ class CustomSearchView(context: Context, fragment: Fragment) : SearchView(contex
 
     init {
         super.setOnSearchClickListener { v ->
-            mCustomOnSearchClickedListener?.onClick(v)
+            onSearchClickedListener?.onClick(v)
             backPressOverrider.maybeAddBackCallback()
         }
 
         super.setOnCloseListener {
-            val result = mCustomOnCloseListener?.onClose() ?: false
+            val result = onCloseListener?.onClose() ?: false
             backPressOverrider.removeBackCallbackIfAdded()
             result
         }

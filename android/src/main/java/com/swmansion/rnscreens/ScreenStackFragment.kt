@@ -38,12 +38,12 @@ import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
-    private var mAppBarLayout: AppBarLayout? = null
-    private var mToolbar: Toolbar? = null
-    private var mShadowHidden = false
-    private var mIsTranslucent = false
+    private var appBarLayout: AppBarLayout? = null
+    private var toolbar: Toolbar? = null
+    private var isToolbarShadowHidden = false
+    private var isToolbarTranslucent = false
 
-    private var mLastFocusedChild: View? = null
+    private var lastFocusedChild: View? = null
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -67,37 +67,37 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun removeToolbar() {
-        mAppBarLayout?.let {
-            mToolbar?.let { toolbar ->
+        appBarLayout?.let {
+            toolbar?.let { toolbar ->
                 if (toolbar.parent === it) {
                     it.removeView(toolbar)
                 }
             }
         }
-        mToolbar = null
+        toolbar = null
     }
 
     override fun setToolbar(toolbar: Toolbar) {
-        mAppBarLayout?.addView(toolbar)
+        appBarLayout?.addView(toolbar)
         toolbar.layoutParams = AppBarLayout.LayoutParams(
             AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
         ).apply { scrollFlags = 0 }
-        mToolbar = toolbar
+        this.toolbar = toolbar
     }
 
     override fun setToolbarShadowHidden(hidden: Boolean) {
-        if (mShadowHidden != hidden) {
-            mAppBarLayout?.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
-            mShadowHidden = hidden
+        if (isToolbarShadowHidden != hidden) {
+            appBarLayout?.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
+            isToolbarShadowHidden = hidden
         }
     }
 
     override fun setToolbarTranslucent(translucent: Boolean) {
-        if (mIsTranslucent != translucent) {
+        if (isToolbarTranslucent != translucent) {
             val params = screen.layoutParams
             (params as CoordinatorLayout.LayoutParams).behavior =
                 if (translucent) null else ScrollingViewBehavior()
-            mIsTranslucent = translucent
+            isToolbarTranslucent = translucent
         }
     }
 
@@ -153,7 +153,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun onStart() {
-        mLastFocusedChild?.requestFocus()
+        lastFocusedChild?.requestFocus()
         super.onStart()
     }
 
@@ -221,7 +221,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         coordinatorLayout.addView(screen.recycle())
 
         if (screen.stackPresentation != Screen.StackPresentation.MODAL && screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
-            mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
+            appBarLayout = context?.let { AppBarLayout(it) }?.apply {
                 // By default AppBarLayout will have a background color set but since we cover the whole layout
                 // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
                 // role. On top of that it breaks screens animations when alfa offscreen compositing is off
@@ -232,11 +232,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 )
             }
 
-            coordinatorLayout?.addView(mAppBarLayout)
-            if (mShadowHidden) {
-                mAppBarLayout?.targetElevation = 0f
+            coordinatorLayout?.addView(appBarLayout)
+            if (isShadowHidden) {
+                appBarLayout?.targetElevation = 0f
             }
-            mToolbar?.let { mAppBarLayout?.addView(it.recycle()) }
+            toolbar?.let { appBarLayout?.addView(it.recycle()) }
             setHasOptionsMenu(true)
         }
         return coordinatorLayout

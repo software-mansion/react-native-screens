@@ -24,10 +24,10 @@ import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
-    private val mDelegate: ViewManagerDelegate<Screen>
+    private val delegate: ViewManagerDelegate<Screen>
 
     init {
-        mDelegate = RNSScreenManagerDelegate<Screen, ScreenViewManager>(this)
+        delegate = RNSScreenManagerDelegate<Screen, ScreenViewManager>(this)
     }
 
     override fun getName() = REACT_CLASS
@@ -213,7 +213,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
     )
 
-    protected override fun getDelegate(): ViewManagerDelegate<Screen> = mDelegate
+    protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate
 
     private fun convertDetentStringToFraction(detent: String?): Screen.SheetDetent? = when (detent) {
         "large" -> Screen.SheetDetent.LARGE
