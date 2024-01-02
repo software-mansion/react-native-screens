@@ -501,15 +501,27 @@ namespace react = facebook::react;
     }
   }
 
-  // changeRootController does not have presentedViewController but it does not mean that no modals are in presentation,
-  // so we need to find top-level controller manually
+  // changeRootController does not have presentedViewController but it does not mean that no modals are in presentation;
+  // modals could be presented by another stack (nested / outer), third-party view controller or they could be using
+  // UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in the last case
+  // for some reason system asks top-level (react root) vc to present instead of our stack, despite the fact that
+  // `definesPresentationContext` returns `YES` for UINavigationController.
+  // So we first need to find top-level controller manually:
   UIViewController *reactRootVc = [self findReactRootViewController];
   UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
 
   if (topMostVc != reactRootVc) {
     changeRootController = topMostVc;
+
+    // Here we handle just the simplest case where the top level VC was dismissed. In any more complex
+    // scenario we will still have problems, see: https://github.com/software-mansion/react-native-screens/issues/1813
+    if ([_presentedModals containsObject:topMostVc] && ![controllers containsObject:topMostVc]) {
+      [changeRootController dismissViewControllerAnimated:YES completion:finish];
+      return;
+    }
   }
 
+  // We didn't detect any controllers for dismissal, thus we start presenting new VCs
   finish();
 }
 
