@@ -25,7 +25,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     var goingForward = false
 
     /**
+     * Marks given fragment as to-be-dismissed and performs updates on container
      *
+     * @param fragmentWrapper to-be-dismissed wrapper
      */
     fun dismiss(screenFragment: ScreenStackFragmentWrapper) {
         mDismissed.add(screenFragment)
