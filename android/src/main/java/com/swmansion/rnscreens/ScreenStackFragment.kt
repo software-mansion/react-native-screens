@@ -1,12 +1,10 @@
 package com.swmansion.rnscreens
 
 import android.animation.Animator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,7 +19,6 @@ import android.view.animation.AnimationUtils
 import android.view.animation.Transformation
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.commit
@@ -37,7 +34,6 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingFragment
-import com.swmansion.rnscreens.ext.maybeBgColor
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 
@@ -122,77 +118,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
-    private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, initialState: Int) : BottomSheetCallback() {
-        private var needsDirectionUpdate = true
-        private var transparentColor = Color.argb(0, 0, 0, 0)
-        private var dimmedColor = Color.argb(128, 0, 0, 0)
-        private var lastStableState: Int = initialState
-        private var lastSlideOffset: Float = 0.0F
-        private var animDirection: AnimDirection = AnimDirection.UP
-        private var animator = ValueAnimator.ofArgb(transparentColor, dimmedColor).apply {
-            duration = 1
-            addUpdateListener {
-                viewToAnimate.setBackgroundColor(it.animatedValue as Int)
-            }
-        }
-
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (newState == BottomSheetBehavior.STATE_DRAGGING || newState == BottomSheetBehavior.STATE_SETTLING) {
-                needsDirectionUpdate = true
-            } else {
-                lastStableState = newState
-            }
-        }
-
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
-        override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            animDirection = if (slideOffset > lastSlideOffset) AnimDirection.UP else AnimDirection.DOWN
-            lastSlideOffset = slideOffset
-
-            if (shouldAnimate()) {
-                animator!!.setCurrentFraction(slideOffset)
-            }
-        }
-
-        private fun createValueAnimator(direction: AnimDirection): ValueAnimator {
-            val (startValue, targetValue) = if (direction == AnimDirection.UP) { Pair(viewToAnimate.maybeBgColor()!!, dimmedColor) } else { Pair(viewToAnimate.maybeBgColor()!!, transparentColor) }
-            return ValueAnimator.ofArgb(startValue, targetValue).apply {
-                duration = 1  // Driven manually
-            }
-        }
-
-        private fun shouldAnimate(): Boolean {
-            return !(isStateLessEqualThan(lastStableState, screen.sheetLargestUndimmedState) && animDirection == AnimDirection.DOWN)
-//            return screen.sheetLargestUndimmedState > lastState
-        }
-
-        private fun directionFromLastState(): AnimDirection = if (lastStableState != BottomSheetBehavior.STATE_EXPANDED) {
-            AnimDirection.UP
-        } else {
-            AnimDirection.DOWN
-        }
-
-        enum class AnimDirection {
-            UP, DOWN
-        }
-
-        private fun isStateLessEqualThan(state: Int, otherState: Int): Boolean {
-            if (state == otherState) {
-                return true
-            }
-            if (state != BottomSheetBehavior.STATE_HALF_EXPANDED && otherState != BottomSheetBehavior.STATE_HALF_EXPANDED) {
-                return state > otherState
-            }
-            if (state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
-                return otherState == BottomSheetBehavior.STATE_EXPANDED
-            }
-            if (state == BottomSheetBehavior.STATE_COLLAPSED) {
-                return otherState != BottomSheetBehavior.STATE_HIDDEN
-            }
-            return false
-        }
-    }
-
     private val bottomSheetCallback = object : BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
@@ -208,9 +133,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             Log.i("ScreenStackFragment", "Sheet state changed to $newState")
         }
 
-        override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            Log.i("ScreenStackFragment", "onSlide $slideOffset")
-        }
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
@@ -228,7 +151,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
         return super.onCreateAnimator(transit, enter, nextAnim)
     }
-    
+
     override fun onStart() {
         mLastFocusedChild?.requestFocus()
         super.onStart()
@@ -266,7 +189,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     isHideable = true
                     state = BottomSheetBehavior.STATE_COLLAPSED
                     addBottomSheetCallback(bottomSheetCallback)
-//                    addBottomSheetCallback(AnimateDimmingViewCallback(screen, coordinatorLayout, state))
                     isDraggable = true
                     isFitToContents = false
                     halfExpandedRatio = 0.7F
@@ -310,7 +232,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 )
             }
 
-
             coordinatorLayout?.addView(mAppBarLayout)
             if (mShadowHidden) {
                 mAppBarLayout?.targetElevation = 0f
@@ -327,7 +248,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
         }.build()
         val shape = MaterialShapeDrawable(shapeAppearanceModel)
-        screen.background = shape;
+        screen.background = shape
     }
 
     override fun onStop() {
