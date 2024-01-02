@@ -521,7 +521,7 @@ namespace react = facebook::react;
     }
   }
 
-  // We didn't detect any controllers for dismissal, thus we start presenting new vcs
+  // We didn't detect any controllers for dismissal, thus we start presenting new VCs
   finish();
 }
 
