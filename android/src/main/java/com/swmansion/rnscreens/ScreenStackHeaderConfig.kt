@@ -24,7 +24,7 @@ import com.swmansion.rnscreens.events.HeaderDetachedEvent
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
-    var isHidden = false
+    var isHeaderHidden = false  // named this way to avoid conflict with platform's isHidden
     private var headerTopInset: Int? = null
     private var title: String? = null
     private var titleColor = 0
@@ -148,7 +148,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }
 
-        if (isHidden) {
+        if (isHeaderHidden) {
             if (toolbar.parent != null) {
                 screenFragment?.removeToolbar()
             }
@@ -359,7 +359,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     }
 
     fun setHidden(hidden: Boolean) {
-        isHidden = hidden
+        isHeaderHidden = hidden
     }
 
     fun setTranslucent(translucent: Boolean) {
