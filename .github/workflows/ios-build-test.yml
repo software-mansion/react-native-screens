@@ -17,6 +17,7 @@ on:
 jobs:
   build:
     runs-on: macos-12
+    timeout-minutes: 60
     env:
       WORKING_DIRECTORY: TestsExample
     concurrency:
@@ -25,10 +26,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: Use Node.js 16
+      - name: Use Node.js 18
         uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 18
           cache: 'yarn'
           cache-dependency-path: 'TestsExample/yarn.lock'
       - name: Install node dependencies
@@ -51,4 +52,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn ios
+        run: npx react-native run-ios --no-packager --simulator="iPhone 15"

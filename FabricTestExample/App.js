@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 
-import {enableFreeze} from 'react-native-screens';
+import { enableFreeze } from 'react-native-screens';
 
 import Test42 from './src/Test42';
 import Test111 from './src/Test111';
@@ -83,9 +83,15 @@ import Test1473 from './src/Test1473';
 import Test1476 from './src/Test1476';
 import Test1646 from './src/Test1646';
 import Test1649 from './src/Test1649';
+import Test1671 from './src/Test1671';
 import Test1683 from './src/Test1683';
 import Test1726 from './src/Test1726';
+import Test1802 from './src/Test1802';
 import Test1819 from './src/Test1819';
+import Test1829 from './src/Test1829';
+import Test1844 from './src/Test1844';
+import Test1864 from './src/Test1864';
+import Test1981 from './src/Test1981';
 
 enableFreeze(true);
 

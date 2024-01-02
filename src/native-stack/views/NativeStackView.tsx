@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, StyleSheet, View, ViewProps } from 'react-native';
+import { Animated, Platform, StyleSheet, View, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
@@ -22,7 +22,6 @@ import {
   useSafeAreaFrame,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-
 import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
@@ -31,7 +30,9 @@ import {
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
 import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
+import getStatusBarHeight from '../utils/getStatusBarHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
+import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -100,23 +101,40 @@ const MaybeNestedStack = ({
       ]}
       // @ts-ignore Wrong props passed to View
       stackPresentation={stackPresentation}
-    >
+      // This view must *not* be flattened.
+      // See https://github.com/software-mansion/react-native-screens/pull/1825
+      // for detailed explanation.
+      collapsable={false}>
       {children}
     </Container>
   );
 
-  const topInset = useSafeAreaInsets().top;
   const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
+  const isStatusBarTranslucent = options.statusBarTranslucent ?? false;
+  const statusBarHeight = getStatusBarHeight(
+    topInset,
+    dimensions,
+    isStatusBarTranslucent
+  );
+
+  const hasLargeHeader = options.headerLargeTitle ?? false;
+
   const headerHeight = getDefaultHeaderHeight(
     dimensions,
-    topInset,
-    stackPresentation
+    statusBarHeight,
+    stackPresentation,
+    hasLargeHeader
   );
 
   if (isHeaderInModal) {
     return (
       <ScreenStack style={styles.container}>
-        <Screen enabled isNativeStack style={StyleSheet.absoluteFill}>
+        <Screen
+          enabled
+          isNativeStack
+          hasLargeHeader={hasLargeHeader}
+          style={StyleSheet.absoluteFill}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -205,18 +223,42 @@ const RouteView = ({
     stackPresentation = 'push';
   }
 
+  const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
+  const isStatusBarTranslucent = options.statusBarTranslucent ?? false;
+  const statusBarHeight = getStatusBarHeight(
+    topInset,
+    dimensions,
+    isStatusBarTranslucent
+  );
+
+  const hasLargeHeader = options.headerLargeTitle ?? false;
+
+  const defaultHeaderHeight = getDefaultHeaderHeight(
+    dimensions,
+    statusBarHeight,
+    stackPresentation,
+    hasLargeHeader
+  );
+
+  const parentHeaderHeight = React.useContext(HeaderHeightContext);
   const isHeaderInPush = isAndroid
     ? headerShown
     : stackPresentation === 'push' && headerShown !== false;
 
-  const dimensions = useSafeAreaFrame();
-  const topInset = useSafeAreaInsets().top;
-  const headerHeight = getDefaultHeaderHeight(
-    dimensions,
-    topInset,
-    stackPresentation
-  );
-  const parentHeaderHeight = React.useContext(HeaderHeightContext);
+  const staticHeaderHeight =
+    isHeaderInPush !== false ? defaultHeaderHeight : parentHeaderHeight ?? 0;
+
+  // We need to ensure the first retrieved header height will be cached and set in animatedHeaderHeight.
+  // We're caching the header height here, as on iOS native side events are not always coming to the JS on first notify.
+  // TODO: Check why first event is not being received once it is cached on the native side.
+  const cachedAnimatedHeaderHeight = React.useRef(defaultHeaderHeight);
+  const animatedHeaderHeight = React.useRef(
+    new Animated.Value(staticHeaderHeight, {
+      useNativeDriver: true,
+    })
+  ).current;
+
   const Screen = React.useContext(ScreenContext);
 
   const { dark } = useTheme();
@@ -226,6 +268,7 @@ const RouteView = ({
       key={route.key}
       enabled
       isNativeStack
+      hasLargeHeader={hasLargeHeader}
       style={StyleSheet.absoluteFill}
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
@@ -292,7 +335,19 @@ const RouteView = ({
           target: route.key,
         });
       }}
-      onDismissed={(e) => {
+      onHeaderHeightChange={e => {
+        const headerHeight = e.nativeEvent.headerHeight;
+
+        if (cachedAnimatedHeaderHeight.current !== headerHeight) {
+          // Currently, we're setting value by Animated#setValue, because we want to cache animated value.
+          // Also, in React Native 0.72 there was a bug on Fabric causing a large delay between the screen transition,
+          // which should not occur.
+          // TODO: Check if it's possible to replace animated#setValue to Animated#event.
+          animatedHeaderHeight.setValue(headerHeight);
+          cachedAnimatedHeaderHeight.current = headerHeight;
+        }
+      }}
+      onDismissed={e => {
         navigation.emit({
           type: 'dismiss',
           target: route.key,
@@ -307,21 +362,30 @@ const RouteView = ({
           target: stateKey,
         });
       }}
-    >
-      <HeaderHeightContext.Provider
-        value={
-          isHeaderInPush !== false ? headerHeight : parentHeaderHeight ?? 0
-        }
-      >
-        <HeaderConfig {...options} route={route} headerShown={isHeaderInPush} />
-        <MaybeNestedStack
-          options={options}
-          route={route}
-          stackPresentation={stackPresentation}
-        >
-          {renderScene()}
-        </MaybeNestedStack>
-      </HeaderHeightContext.Provider>
+      onGestureCancel={() => {
+        navigation.emit({
+          type: 'gestureCancel',
+          target: route.key,
+        });
+      }}>
+      <AnimatedHeaderHeightContext.Provider value={animatedHeaderHeight}>
+        <HeaderHeightContext.Provider value={staticHeaderHeight}>
+          <MaybeNestedStack
+            options={options}
+            route={route}
+            stackPresentation={stackPresentation}>
+            {renderScene()}
+          </MaybeNestedStack>
+          {/* HeaderConfig must not be first child of a Screen.
+           See https://github.com/software-mansion/react-native-screens/pull/1825
+           for detailed explanation */}
+          <HeaderConfig
+            {...options}
+            route={route}
+            headerShown={isHeaderInPush}
+          />
+        </HeaderHeightContext.Provider>
+      </AnimatedHeaderHeightContext.Provider>
     </Screen>
   );
 };

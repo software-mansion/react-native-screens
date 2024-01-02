@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import {
+  HeaderHeightChangeEventType,
   InnerScreen,
   ScreenProps,
   TransitionProgressEventType,
@@ -9,6 +10,13 @@ import {
 // @ts-ignore file to be used only if `react-native-reanimated` available in the project
 import Animated, { useEvent, useSharedValue } from 'react-native-reanimated';
 import ReanimatedTransitionProgressContext from './ReanimatedTransitionProgressContext';
+import {
+  useSafeAreaFrame,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import getDefaultHeaderHeight from '../native-stack/utils/getDefaultHeaderHeight';
+import getStatusBarHeight from '../native-stack/utils/getStatusBarHeight';
+import ReanimatedHeaderHeightContext from './ReanimatedHeaderHeightContext';
 
 const AnimatedScreen = Animated.createAnimatedComponent(
   InnerScreen as unknown as React.ComponentClass
@@ -24,6 +32,28 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   ScreenProps
 >((props, ref) => {
   const { children, ...rest } = props;
+  const { stackPresentation = 'push', hasLargeHeader } = rest;
+
+  const dimensions = useSafeAreaFrame();
+  const topInset = useSafeAreaInsets().top;
+  const isStatusBarTranslucent = rest.statusBarTranslucent ?? false;
+  const statusBarHeight = getStatusBarHeight(
+    topInset,
+    dimensions,
+    isStatusBarTranslucent
+  );
+
+  // Default header height, normally used in `useHeaderHeight` hook.
+  // Here, it is used for returning a default value for shared value.
+  const defaultHeaderHeight = getDefaultHeaderHeight(
+    dimensions,
+    statusBarHeight,
+    stackPresentation,
+    hasLargeHeader
+  );
+
+  const cachedHeaderHeight = React.useRef(defaultHeaderHeight);
+  const headerHeight = useSharedValue(defaultHeaderHeight);
 
   const progress = useSharedValue(0);
   const closing = useSharedValue(0);
@@ -51,17 +81,34 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : 'topTransitionProgress',
         ]
       )}
-      {...rest}
-    >
-      <ReanimatedTransitionProgressContext.Provider
-        value={{
-          progress: progress,
-          closing: closing,
-          goingForward: goingForward,
-        }}
-      >
-        {children}
-      </ReanimatedTransitionProgressContext.Provider>
+      onHeaderHeightChangeReanimated={useEvent(
+        (event: HeaderHeightChangeEventType) => {
+          'worklet';
+          if (event.headerHeight !== cachedHeaderHeight.current) {
+            headerHeight.value = event.headerHeight;
+            cachedHeaderHeight.current = event.headerHeight;
+          }
+        },
+        [
+          // @ts-ignore wrong type
+          Platform.OS === 'android'
+            ? 'onHeaderHeightChange'
+            : ENABLE_FABRIC
+            ? 'onHeaderHeightChange'
+            : 'topHeaderHeightChange',
+        ]
+      )}
+      {...rest}>
+      <ReanimatedHeaderHeightContext.Provider value={headerHeight}>
+        <ReanimatedTransitionProgressContext.Provider
+          value={{
+            progress,
+            closing,
+            goingForward,
+          }}>
+          {children}
+        </ReanimatedTransitionProgressContext.Provider>
+      </ReanimatedHeaderHeightContext.Provider>
     </AnimatedScreen>
   );
 });

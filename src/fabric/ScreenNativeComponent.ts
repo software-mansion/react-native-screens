@@ -21,6 +21,10 @@ type TransitionProgressEvent = Readonly<{
   goingForward: Int32;
 }>;
 
+type HeaderHeightChangeEvent = Readonly<{
+  headerHeight: Double;
+}>;
+
 type GestureResponseDistanceType = Readonly<{
   start: Float;
   end: Float;
@@ -46,7 +50,8 @@ type StackAnimation =
   | 'slide_from_right'
   | 'slide_from_left'
   | 'slide_from_bottom'
-  | 'fade_from_bottom';
+  | 'fade_from_bottom'
+  | 'ios';
 
 type SwipeDirection = 'vertical' | 'horizontal';
 
@@ -61,7 +66,9 @@ export interface NativeProps extends ViewProps {
   onNativeDismissCancelled?: BubblingEventHandler<ScreenDismissedEvent>;
   onWillAppear?: BubblingEventHandler<ScreenEvent>;
   onWillDisappear?: BubblingEventHandler<ScreenEvent>;
+  onHeaderHeightChange?: BubblingEventHandler<HeaderHeightChangeEvent>;
   onTransitionProgress?: BubblingEventHandler<TransitionProgressEvent>;
+  onGestureCancel?: BubblingEventHandler<ScreenEvent>;
   sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>;
   sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>;
   sheetGrabberVisible?: WithDefault<boolean, false>;

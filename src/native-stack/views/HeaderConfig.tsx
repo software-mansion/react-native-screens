@@ -140,8 +140,7 @@ export default function HeaderConfig({
       topInsetEnabled={headerTopInsetEnabled}
       translucent={headerTranslucent === true}
       onAttached={handleAttached}
-      onDetached={handleDetached}
-    >
+      onDetached={handleDetached}>
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>
           {headerRight({ tintColor })}

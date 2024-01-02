@@ -1,28 +1,22 @@
 import React from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  View,
-  Text,
-} from 'react-native';
+import { StyleSheet, ScrollView, TextInput, View, Text } from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const LoginScreen = (props) => {
+const LoginScreen = props => {
   return (
     <>
       <TextInput
-        style={{fontSize: 20}}
+        style={{ fontSize: 20 }}
         autoCompleteType={'username'}
         importantForAutofill={'yes'}
         placeholder={'Username'}
       />
       <TextInput
-        style={{fontSize: 20}}
+        style={{ fontSize: 20 }}
         autoCompleteType={'password'}
         importantForAutofill={'yes'}
         placeholder={'Password'}
@@ -41,13 +35,13 @@ const LoginScreen = (props) => {
       </TouchableOpacity>
       <ScrollView>
         <TextInput
-          style={{fontSize: 20}}
+          style={{ fontSize: 20 }}
           autoCompleteType={'username'}
           importantForAutofill={'yes'}
           placeholder={'Username'}
         />
         <TextInput
-          style={{fontSize: 20}}
+          style={{ fontSize: 20 }}
           autoCompleteType={'password'}
           importantForAutofill={'yes'}
           placeholder={'Password'}
@@ -58,7 +52,7 @@ const LoginScreen = (props) => {
   );
 };
 
-const HomeScreen = (props) => {
+const HomeScreen = props => {
   return (
     <View
       style={{

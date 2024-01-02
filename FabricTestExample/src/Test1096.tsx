@@ -1,7 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 
 import { Button, StyleSheet, View, Modal } from 'react-native';
-import {FullWindowOverlay} from 'react-native-screens';
+import { FullWindowOverlay } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -25,8 +26,7 @@ function Home({
       <Modal
         animationType="slide"
         visible={isShowModal}
-        presentationStyle="pageSheet"
-      >
+        presentationStyle="pageSheet">
         <View style={styles.container}>
           <Button
             title="dismiss rn modal"
@@ -34,7 +34,13 @@ function Home({
           />
         </View>
       </Modal>
-      <FullWindowOverlay style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center'}}>
+      <FullWindowOverlay
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+        }}>
         <View style={styles.box} />
         <Button title="click me" onPress={() => console.warn('clicked')} />
       </FullWindowOverlay>

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Button, Text, View, StyleSheet} from 'react-native';
-import {NavigationContainer as NavigationContainerNative} from '@react-navigation/native';
+import { Button, Text, View, StyleSheet } from 'react-native';
+import { NavigationContainer as NavigationContainerNative } from '@react-navigation/native';
 
 // remember to change prop names in ScreenGroup && ModalGroup
 // import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
@@ -11,7 +11,7 @@ import {
 
 const NativeStack = createNativeStackNavigator();
 
-function ScreenA({navigation}) {
+function ScreenA({ navigation }) {
   return (
     <View
       style={{
@@ -20,7 +20,7 @@ function ScreenA({navigation}) {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <Text style={{color: 'white'}}>
+      <Text style={{ color: 'white' }}>
         ScreenA, with backgroundColor: 'blue'
       </Text>
       <Button
@@ -31,7 +31,7 @@ function ScreenA({navigation}) {
   );
 }
 
-function ScreenB({navigation}) {
+function ScreenB({ navigation }) {
   return (
     <View
       style={{
@@ -60,9 +60,8 @@ function ModalA(props: Props) {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <View style={{backgroundColor: 'white'}}>
-
-      <Text>ModalA, with opacity and backgroundColor</Text>
+      <View style={{ backgroundColor: 'white' }}>
+        <Text>ModalA, with opacity and backgroundColor</Text>
         <Text>
           At ModalA, we still can gesture swipe the screenB back to screenA,{' '}
         </Text>
@@ -72,57 +71,78 @@ function ModalA(props: Props) {
   );
 }
 
-const StackBuilder = (configs: any, groupOptions?: NativeStackNavigationOptions) => {
+const StackBuilder = (
+  configs: any,
+  groupOptions?: NativeStackNavigationOptions,
+) => {
   return () => (
     <NativeStack.Group screenOptions={groupOptions}>
       {configs.map(config => {
         const { options, ...anyConfig } = config;
-        const { statusBarStyle, statusBarAnimation, statusBarHidden, ...anyOption } = options || {};
-        return <NativeStack.Screen key={config.name} {...anyConfig} options={anyOption} />;
+        const {
+          statusBarStyle,
+          statusBarAnimation,
+          statusBarHidden,
+          ...anyOption
+        } = options || {};
+        return (
+          <NativeStack.Screen
+            key={config.name}
+            {...anyConfig}
+            options={anyOption}
+          />
+        );
       })}
     </NativeStack.Group>
   );
 };
 
-const ScreenGroup = StackBuilder([
+const ScreenGroup = StackBuilder(
+  [
+    {
+      name: 'screenA',
+      component: ScreenA,
+    },
+    {
+      name: 'screenB',
+      component: ScreenB,
+    },
+  ],
   {
-    name: 'screenA',
-    component: ScreenA,
+    // headerShadowVisible: false,
+    headerTintColor: 'black',
+    headerBackTitleVisible: false,
+    gestureEnabled: true,
+    contentStyle: { backgroundColor: 'white' },
+
+    // prop for @react-navigation/native-stack
+    // fullScreenGestureEnabled: true,
+
+    // prop for react-native-screens/native-stack
+    fullScreenSwipeEnabled: true,
   },
+);
+
+const ModalGroup = StackBuilder(
+  [
+    {
+      name: 'modalA',
+      component: ModalA,
+      options: { animation: 'fade' },
+    },
+  ],
   {
-    name: 'screenB',
-    component: ScreenB,
-  }], {
-  // headerShadowVisible: false,
-  headerTintColor: 'black',
-  headerBackTitleVisible: false,
-  gestureEnabled: true,
-  contentStyle: { backgroundColor: 'white' },
+    headerShown: false,
 
-  // prop for @react-navigation/native-stack
-  // fullScreenGestureEnabled: true,
+    // props for @react-navigation/native-stack
+    // animation: 'fade_from_bottom',
+    // presentation: 'containedTransparentModal',
 
-  // prop for react-native-screens/native-stack
-  fullScreenSwipeEnabled: true,
-});
-
-
-const ModalGroup = StackBuilder([
-  {
-    name: 'modalA',
-    component: ModalA,
-    options: { animation: 'fade' },
-  }], {
-  headerShown: false,
-
-  // props for @react-navigation/native-stack
-  // animation: 'fade_from_bottom',
-  // presentation: 'containedTransparentModal',
-
-  // props for react-native-screens/native-stack
-  stackAnimation: 'fade_from_bottom',
-  stackPresentation: 'containedTransparentModal',
-});
+    // props for react-native-screens/native-stack
+    stackAnimation: 'fade_from_bottom',
+    stackPresentation: 'containedTransparentModal',
+  },
+);
 
 export default function TestModalPresentation() {
   return (

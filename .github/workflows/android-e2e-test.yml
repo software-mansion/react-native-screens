@@ -7,7 +7,7 @@ on:
       - 'android/**'
       - 'common/**'
       - 'Example/**'
-      - 'TestsExample/**'
+      - 'src/**'
   push:
     branches:
       - main
@@ -24,14 +24,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
-      - name: Use Node.js 16
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
+      - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'yarn'
       - name: Install root node dependencies
         run: yarn install

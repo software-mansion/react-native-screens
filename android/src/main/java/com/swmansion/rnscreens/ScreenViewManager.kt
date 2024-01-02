@@ -4,6 +4,8 @@ import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.ReactStylesDiffMap
+import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -11,6 +13,7 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
+import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -32,6 +35,18 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())
+    }
+
+    override fun updateState(
+        view: Screen,
+        props: ReactStylesDiffMap?,
+        stateWrapper: StateWrapper?
+    ): Any? {
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // fabricViewStateManager should never be null in Fabric. The null check is only for Paper's empty impl.
+            view.fabricViewStateManager?.setStateWrapper(stateWrapper)
+        }
+        return super.updateState(view, props, stateWrapper)
     }
 
     @ReactProp(name = "activityState")
@@ -72,6 +87,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
             "slide_from_left" -> Screen.StackAnimation.SLIDE_FROM_LEFT
             "slide_from_bottom" -> Screen.StackAnimation.SLIDE_FROM_BOTTOM
             "fade_from_bottom" -> Screen.StackAnimation.FADE_FROM_BOTTOM
+            "ios" -> Screen.StackAnimation.IOS
             else -> throw JSApplicationIllegalArgumentException("Unknown animation type $animation")
         }
     }
@@ -166,24 +182,16 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setSheetExpandsWhenScrolledToEdge(view: Screen?, value: Boolean) = Unit
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
-        return MapBuilder.of(
-            ScreenDismissedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDismissed"),
-            ScreenWillAppearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onWillAppear"),
-            ScreenAppearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onAppear"),
-            ScreenWillDisappearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onWillDisappear"),
-            ScreenDisappearEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onDisappear"),
-            HeaderBackButtonClickedEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
-            ScreenTransitionProgressEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onTransitionProgress")
-        )
-    }
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
+        ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
+        ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),
+        ScreenAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onAppear"),
+        ScreenWillDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillDisappear"),
+        ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
+        HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
+        HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
+        ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
+    )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = mDelegate
 

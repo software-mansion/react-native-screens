@@ -287,6 +287,7 @@ How the given screen should appear/disappear when pushed or popped at the top of
 - `slide_from_bottom` – performs a slide from bottom animation
 - `slide_from_right` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
 - `slide_from_left` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+- `ios` - iOS like slide in animation (Android only, resolves to default transition on iOS)
 - `none` - the screen appears/disappears without an animation.
 
 Defaults to `default`.
@@ -561,7 +562,6 @@ React.useLayoutEffect(() => {
 
 A callback that gets called when search bar is closing
 
-
 #### `onFocus`
 
 A callback that gets called when search bar has received focus.
@@ -580,6 +580,18 @@ Text displayed when search field is empty.
 
 Defaults to an empty string.
 
+#### `placement` (iOS only)
+
+Position of the search bar
+   
+Supported values:
+ 
+* `automatic` - the search bar is placed according to current layout
+* `inline` - the search bar is placed on the trailing edge of navigation bar
+* `stacked` - the search bar is placed below the other content in navigation bar
+
+Defaults to `stacked`
+  
 #### `textColor`
 
 The search field text color.
@@ -604,6 +616,7 @@ A React ref to imperatively modify search bar. Supported actions:
 *  `blur` - remove focus from search bar
 *  `clearText` - clear text in search bar
 *  `setText` - set search bar's content to given string
+*  `cancelSearch` - cancel search in search bar.
 *  `toggleCancelButton` (iOS only) - toggle cancel button display near search bar.
 
 ### Events
@@ -739,10 +752,25 @@ navigation.popToTop();
 
 ### Measuring header's height
 
-To measure header's height, you can use `useHeaderHeight` hook.
+To measure header's height, you can use the `useHeaderHeight`, `useAnimatedHeaderHeight` or `useReanimatedHeaderHeight` hook.
+- `useHeaderHeight` returns the static header's height. The value provided by this hook changes when screen appears, when there's a change in header options or screen orientation.
+  Use this hook if you're sure your header height won't change dynamically, or when the screen is heavy.
+- `useAnimatedHeaderHeight` dynamically calculates the header's height. The value provided by this hook changes with every view layout (such as shrinking a large header into small one with a ScrollView). It returns an Animated.Value. 
+  Please beware of using this hook in heavy components, as it may result in performance issues.
+- `useReanimatedHeaderHeight` also dynamically calculates the header's height but uses React Native Reanimated under the hood. It returns an Animated.SharedValue.
+  Make sure to wrap your Stack.Navigator with `ReanimatedScreenProvider` before using this hook.
+
+We recommend using `useReanimatedHeaderHeight` rather than `useAnimatedHeaderHeight`. See [Shared Values vs Animated.Value](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/shared-values/#shared-values-vs-animatedvalue) section in React Native Reanimated's documentation for full comparison.
 
 ```tsx
+// for using useHeaderHeight
 import {useHeaderHeight} from 'react-native-screens/native-stack';
+
+// for using useAnimatedHeaderHeight
+import {useAnimatedHeaderHeight} from 'react-native-screens/native-stack';
+
+// for using useReanimatedHeaderHeight
+import {useReanimatedHeaderHeight} from 'react-native-screens/reanimated';
 ```
 
 ## Example

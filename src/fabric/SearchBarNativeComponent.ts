@@ -17,6 +17,8 @@ type ChangeTextEvent = Readonly<{
   text?: string;
 }>;
 
+type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
+
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 interface NativeProps extends ViewProps {
@@ -28,6 +30,7 @@ interface NativeProps extends ViewProps {
   hideWhenScrolling?: boolean;
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
+  placement?: WithDefault<SearchBarPlacement, 'stacked'>;
   obscureBackground?: boolean;
   hideNavigationBar?: boolean;
   cancelButtonText?: string;
@@ -58,6 +61,7 @@ interface NativeCommands {
     flag: boolean
   ) => void;
   setText: (viewRef: React.ElementRef<ComponentType>, text: string) => void;
+  cancelSearch: (viewRef: React.ElementRef<ComponentType>) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
@@ -67,6 +71,7 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
     'clearText',
     'toggleCancelButton',
     'setText',
+    'cancelSearch',
   ],
 });
 

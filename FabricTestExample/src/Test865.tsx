@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text, Button} from 'react-native';
+import { View, Text, Button } from 'react-native';
 
-import {NavigationContainer, ParamListBase} from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -14,8 +14,8 @@ const First = ({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) => (
-  <View style={{flex: 1, justifyContent: 'center'}}>
-    <Text style={{paddingBottom: 24, textAlign: 'center'}}>Screen 1</Text>
+  <View style={{ flex: 1, justifyContent: 'center' }}>
+    <Text style={{ paddingBottom: 24, textAlign: 'center' }}>Screen 1</Text>
     <Button
       title="PUSH TO SCREEN 2"
       onPress={() => navigation.push('Screen2')}
@@ -28,8 +28,8 @@ const Second = ({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) => (
-  <View style={{flex: 1, justifyContent: 'center'}}>
-    <Text style={{paddingBottom: 24, textAlign: 'center'}}>Screen 2</Text>
+  <View style={{ flex: 1, justifyContent: 'center' }}>
+    <Text style={{ paddingBottom: 24, textAlign: 'center' }}>Screen 2</Text>
     <Button
       title="PUSH TO SCREEN 3"
       onPress={() => navigation.push('Screen3')}
@@ -42,13 +42,13 @@ const Third = ({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) => (
-  <View style={{flex: 1, justifyContent: 'center'}}>
-    <Text style={{paddingBottom: 24, textAlign: 'center'}}>Screen 3</Text>
+  <View style={{ flex: 1, justifyContent: 'center' }}>
+    <Text style={{ paddingBottom: 24, textAlign: 'center' }}>Screen 3</Text>
     <Button
       title="RESET TO SCREEN 1 WITH INDEX OF 0"
       onPress={() =>
         navigation.reset({
-          routes: [{name: 'Screen1'}],
+          routes: [{ name: 'Screen1' }],
           index: 0,
         })
       }

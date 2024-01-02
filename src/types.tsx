@@ -5,6 +5,7 @@ import {
   View,
   TargetedEvent,
   TextInputFocusEventData,
+  ColorValue,
 } from 'react-native';
 
 export type SearchBarCommands = {
@@ -13,6 +14,7 @@ export type SearchBarCommands = {
   clearText: () => void;
   toggleCancelButton: (show: boolean) => void;
   setText: (text: string) => void;
+  cancelSearch: () => void;
 };
 
 export type StackPresentationTypes =
@@ -32,7 +34,8 @@ export type StackAnimationTypes =
   | 'simple_push'
   | 'slide_from_bottom'
   | 'slide_from_right'
-  | 'slide_from_left';
+  | 'slide_from_left'
+  | 'ios';
 export type BlurEffectTypes =
   | 'extraLight'
   | 'light'
@@ -72,6 +75,10 @@ export type HeaderSubviewTypes =
   | 'center'
   | 'searchBar';
 
+export type HeaderHeightChangeEventType = {
+  headerHeight: number;
+};
+
 export type TransitionProgressEventType = {
   progress: number;
   closing: number;
@@ -86,6 +93,7 @@ export type GestureResponseDistanceType = {
 };
 
 export type SheetDetentTypes = 'medium' | 'large' | 'all';
+export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 export interface ScreenProps extends ViewProps {
   active?: 0 | 1 | Animated.AnimatedInterpolation<number>;
@@ -105,6 +113,10 @@ export interface ScreenProps extends ViewProps {
    * Internal boolean used to not attach events used only by native-stack. It prevents non native-stack navigators from sending transition progress from their Screen components.
    */
   isNativeStack?: boolean;
+  /**
+   * Internal boolean used to detect if current header has large title on iOS.
+   */
+  hasLargeHeader?: boolean;
   /**
    * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
    * When `enableFreeze()` is run at the top of the application defaults to `true`.
@@ -155,7 +167,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  navigationBarColor?: string;
+  navigationBarColor?: ColorValue;
   /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
@@ -176,6 +188,16 @@ export interface ScreenProps extends ViewProps {
    * The callback takes the number of dismissed screens as an argument since iOS 14 native header back button can pop more than 1 screen at a time.
    */
   onDismissed?: (e: NativeSyntheticEvent<{ dismissCount: number }>) => void;
+  /**
+   * A callback that gets called when the header height has changed.
+   */
+  onHeaderHeightChange?: (
+    e: NativeSyntheticEvent<HeaderHeightChangeEventType>
+  ) => void;
+  /**
+   * A callback that gets called after swipe back is canceled.
+   */
+  onGestureCancel?: (e: NativeSyntheticEvent<null>) => void;
   /**
    * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
@@ -250,13 +272,15 @@ export interface ScreenProps extends ViewProps {
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `true`.
+   *
+   * @platform ios
    */
   sheetExpandsWhenScrolledToEdge?: boolean;
   /**
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * If set to non-negative value it will try to render sheet with provided radius, else ti will apply system default.
+   * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
    *
    * If left unset system default is used.
    *
@@ -297,6 +321,7 @@ export interface ScreenProps extends ViewProps {
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: StackAnimationTypes;
@@ -321,7 +346,7 @@ export interface ScreenProps extends ViewProps {
    *
    * @platform android
    */
-  statusBarColor?: string;
+  statusBarColor?: ColorValue;
   /**
    * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */
@@ -383,7 +408,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of the navigation header.
    */
-  backgroundColor?: string;
+  backgroundColor?: ColorValue;
   /**
    * Title to display in the back button.
    * @platform ios.
@@ -416,7 +441,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of items rendered on the header. This includes back icon, back text (iOS only) and title text. If you want the title to have different color use titleColor property.
    */
-  color?: string;
+  color?: ColorValue;
   /**
    * Whether the stack should be in rtl or ltr form.
    */
@@ -450,12 +475,12 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Controls the color of the navigation header when the edge of any scrollable content reaches the matching edge of the navigation bar.
    */
-  largeTitleBackgroundColor?: string;
+  largeTitleBackgroundColor?: ColorValue;
   /**
    * Customize the color to be used for the large title. By default uses the titleColor property.
    * @platform ios
    */
-  largeTitleColor?: string;
+  largeTitleColor?: ColorValue;
   /**
    * Customize font family to be used for the large title.
    * @platform ios
@@ -490,7 +515,7 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
   /**
    * Allows for setting text color of the title.
    */
-  titleColor?: string;
+  titleColor?: ColorValue;
   /**
    * Customize font family to be used for the title.
    */
@@ -528,6 +553,7 @@ export interface SearchBarProps {
    * * `blur` - removes focus from the search bar
    * * `clearText` - removes any text present in the search bar input field
    * * `setText` - sets the search bar's content to given value
+   * * `cancelSearch` - cancel search in search bar.
    * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
    */
   ref?: React.RefObject<SearchBarCommands>;
@@ -545,13 +571,13 @@ export interface SearchBarProps {
   /**
    * The search field background color
    */
-  barTintColor?: string;
+  barTintColor?: ColorValue;
   /**
    * The color for the cursor caret and cancel button text.
    *
    * @platform ios
    */
-  tintColor?: string;
+  tintColor?: ColorValue;
   /**
    * The text to be used instead of default `Cancel` button text
    *
@@ -584,7 +610,7 @@ export interface SearchBarProps {
    */
   inputType?: 'text' | 'phone' | 'number' | 'email';
   /**
-   * Indicates whether to to obscure the underlying content
+   * Indicates whether to obscure the underlying content
    */
   obscureBackground?: boolean;
   /**
@@ -630,21 +656,35 @@ export interface SearchBarProps {
    */
   placeholder?: string;
   /**
+   * Position of the search bar
+   *
+   * Supported values:
+   *
+   * * `automatic` - the search bar is placed according to current layout
+   * * `inline` - the search bar is placed on the trailing edge of navigation bar
+   * * `stacked` - the search bar is placed below the other content in navigation bar
+   *
+   * Defaults to `stacked`
+   *
+   * @platform iOS (>= 16.0)
+   */
+  placement?: SearchBarPlacement;
+  /**
    * The search field text color
    */
-  textColor?: string;
+  textColor?: ColorValue;
   /**
    * The search hint text color
    *
    * @plaform android
    */
-  hintTextColor?: string;
+  hintTextColor?: ColorValue;
   /**
    * The search and close icon color shown in the header
    *
    * @plaform android
    */
-  headerIconColor?: string;
+  headerIconColor?: ColorValue;
   /**
    * Show the search hint icon when search bar is focused
    *

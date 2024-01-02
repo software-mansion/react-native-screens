@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
-import {Button, NativeSyntheticEvent, ScrollView} from 'react-native';
+import { Button, NativeSyntheticEvent, ScrollView } from 'react-native';
 import {
   NavigationContainer,
   NavigationProp,
@@ -10,7 +10,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from 'react-native-screens/native-stack';
-import {SearchBarProps, SearchBarCommands} from 'react-native-screens';
+import { SearchBarProps, SearchBarCommands } from 'react-native-screens';
 
 const AppStack = createNativeStackNavigator();
 
@@ -30,7 +30,7 @@ export default function App(): JSX.Element {
   );
 }
 
-function First({navigation}: NativeStackScreenProps<ParamListBase>) {
+function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
   const searchBarRef = React.useRef<SearchBarCommands>();
 
   React.useEffect(() => {
@@ -50,7 +50,8 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
-    onChangeText: (e: NativeSyntheticEvent<{text: string}>) =>
+    placement: 'stacked',
+    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
       setSearch(e.nativeEvent.text),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),
@@ -91,10 +92,8 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
         onPress={() => searchBarRef.current?.focus()}
       />
       {items
-        .filter(
-          (item) => item.toLowerCase().indexOf(search.toLowerCase()) !== -1,
-        )
-        .map((item) => (
+        .filter(item => item.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+        .map(item => (
           <Button
             title={item}
             key={item}
@@ -119,7 +118,7 @@ function First({navigation}: NativeStackScreenProps<ParamListBase>) {
   );
 }
 
-function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
+function Second({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
@@ -134,7 +133,7 @@ function Second({navigation}: {navigation: NavigationProp<ParamListBase>}) {
   );
 }
 
-function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
+function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   const searchBarRef = React.useRef<SearchBarCommands>();
 
   const searchBarProps: SearchBarProps = {
@@ -146,19 +145,19 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
     hideNavigationBar: false,
     autoCapitalize: 'sentences',
     placeholder: 'Some text',
-    onChangeText: (e: NativeSyntheticEvent<{text: string}>) => console.warn(`Text changed to ${e.nativeEvent.text}`),
+    onChangeText: (e: NativeSyntheticEvent<{ text: string }>) =>
+      console.warn(`Text changed to ${e.nativeEvent.text}`),
     onCancelButtonPress: () => console.warn('Cancel button pressed'),
     onSearchButtonPress: () => console.warn('Search button pressed'),
     onFocus: () => console.warn('onFocus event'),
     onBlur: () => console.warn('onBlur event'),
-  }
+  };
 
   React.useEffect(() => {
     navigation.setOptions({
-      searchBar: searchBarProps
-    })
+      searchBar: searchBarProps,
+    });
   }, [navigation]);
-
 
   return (
     <ScrollView
@@ -172,7 +171,7 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
         title="Focus search bar"
         onPress={() => searchBarRef.current?.focus()}
       />
-      <Button 
+      <Button
         title="Remove focus from search bar"
         onPress={() => searchBarRef.current?.blur()}
       />
@@ -193,6 +192,10 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
         onPress={() => searchBarRef.current?.setText('sometext')}
       />
       <Button
+        title="Cancel search"
+        onPress={() => searchBarRef.current?.cancelSearch()}
+      />
+      <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('First')}
       />
@@ -201,5 +204,5 @@ function Third({navigation}: {navigation: NavigationProp<ParamListBase>}) {
         onPress={() => searchBarRef.current?.focus()}
       />
     </ScrollView>
-  )
+  );
 }

@@ -29,6 +29,9 @@ For most people using an app built from the react-native template, that means ed
 You should add this code, which specifically discards any Activity state persisted during the Activity restart process, to avoid inconsistencies that lead to crashes.
 Please note that the override code should not be placed inside `MainActivityDelegate`, but rather directly in `MainActivity`.
 
+<details open>
+<summary>Java</summary>
+
 ```java
 import android.os.Bundle;
 
@@ -47,6 +50,25 @@ public class MainActivity extends ReactActivity {
     }
 }
 ```
+</details>
+
+<details>
+<summary>Kotlin</summary>
+
+```kotlin
+import android.os.Bundle;
+
+class MainActivity: ReactActivity() {
+
+    //...code
+
+    //react-native-screens override
+    override fun onCreate(savedInstanceState: Bundle?) {
+      super.onCreate(null);
+    }
+}
+```
+</details>
 
 For people that must handle cases like this, there is [a more detailed discussion of the difficulties in a series of related comments](https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704633).
 
@@ -114,7 +136,7 @@ To configure react-navigation to use screens instead of plain RN Views for rende
 yarn add react-native-screens
 
 # if you use Expo managed workflow
-expo install react-native-screens
+npx expo install react-native-screens
 ```
 
 Just make sure that the version of [react-navigation](https://github.com/react-navigation/react-navigation) you are using is 2.14.0 or higher.

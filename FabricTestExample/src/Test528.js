@@ -1,23 +1,18 @@
-import React, {useLayoutEffect} from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  Alert,
-} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import React, { useLayoutEffect } from 'react';
+import { View, Text, Pressable, Alert } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
 const CustomHeaderRight = () => {
   return (
     <Pressable
       onPress={() => Alert.alert('hi')}
-      style={{backgroundColor: 'orange'}}>
+      style={{ backgroundColor: 'orange' }}>
       <Text>Custom Button</Text>
     </Pressable>
   );
 };
-const Screen1 = (props) => {
+const Screen1 = props => {
   useLayoutEffect(() => {
     props.navigation.setOptions({
       headerRight: () => <CustomHeaderRight />,
@@ -56,14 +51,8 @@ const Stack = createNativeStackNavigator();
 const Router = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Screen1"
-        component={Screen1}
-      />
-      <Stack.Screen
-        name="Screen2"
-        component={Screen2}
-      />
+      <Stack.Screen name="Screen1" component={Screen1} />
+      <Stack.Screen name="Screen2" component={Screen2} />
     </Stack.Navigator>
   );
 };

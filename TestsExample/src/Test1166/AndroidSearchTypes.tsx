@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Button, View} from 'react-native';
-import {ParamListBase} from '@react-navigation/native';
+import { Button, View } from 'react-native';
+import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -10,22 +10,22 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <Stack.Navigator screenOptions={{stackAnimation: 'none'}}>
+    <Stack.Navigator screenOptions={{ stackAnimation: 'none' }}>
       <Stack.Screen name="First" component={First} />
       <Stack.Screen
         name="number"
         component={Second}
-        options={{searchBar: {autoFocus: true, inputType: 'number'}}}
+        options={{ searchBar: { autoFocus: true, inputType: 'number' } }}
       />
       <Stack.Screen
         name="email"
         component={Second}
-        options={{searchBar: {autoFocus: true, inputType: 'email'}}}
+        options={{ searchBar: { autoFocus: true, inputType: 'email' } }}
       />
       <Stack.Screen
         name="phone"
         component={Second}
-        options={{searchBar: {autoFocus: true, inputType: 'phone'}}}
+        options={{ searchBar: { autoFocus: true, inputType: 'phone' } }}
       />
     </Stack.Navigator>
   );
@@ -39,7 +39,7 @@ function First({
   React.useLayoutEffect(() => {
     function HeaderSearchButtons() {
       return (
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <Button title="N" onPress={() => navigation.navigate('number')} />
           <Button title="E" onPress={() => navigation.navigate('email')} />
           <Button title="P" onPress={() => navigation.navigate('phone')} />
@@ -53,7 +53,7 @@ function First({
     });
   }, [navigation]);
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF', padding: 12}}>
+    <View style={{ flex: 1, backgroundColor: '#FFF', padding: 12 }}>
       <Button title="Number" onPress={() => navigation.navigate('number')} />
       <Button title="Email" onPress={() => navigation.navigate('email')} />
       <Button title="Phone" onPress={() => navigation.navigate('phone')} />
@@ -68,7 +68,7 @@ function Second({
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   return (
-    <View style={{flex: 1, backgroundColor: '#FFF', padding: 12}}>
+    <View style={{ flex: 1, backgroundColor: '#FFF', padding: 12 }}>
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );

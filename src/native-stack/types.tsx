@@ -10,7 +10,12 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
+import {
+  ImageSourcePropType,
+  StyleProp,
+  ViewStyle,
+  ColorValue,
+} from 'react-native';
 import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
@@ -37,6 +42,14 @@ export type NativeStackNavigationEventMap = {
    * Event which fires when a transition animation ends.
    */
   transitionEnd: { data: { closing: boolean } };
+  /**
+   * Event which fires when a swipe back is canceled on iOS.
+   */
+  gestureCancel: { data: undefined };
+  /**
+   * Event which fires when a header height gets changed.
+   */
+  headerHeightChange: { data: { headerHeight: number } };
 };
 
 export type NativeStackNavigationProp<
@@ -153,7 +166,7 @@ export type NativeStackNavigationOptions = {
   /**
    * Function which returns a React Element to display in the center of the header.
    */
-  headerCenter?: (props: { tintColor?: string }) => React.ReactNode;
+  headerCenter?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Boolean indicating whether to hide the back button in header.
    */
@@ -169,7 +182,7 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   headerLargeStyle?: {
-    backgroundColor?: string;
+    backgroundColor?: ColorValue;
   };
   /**
    * Boolean to set native property to prefer large title header (like in iOS setting).
@@ -198,16 +211,16 @@ export type NativeStackNavigationOptions = {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
+    color?: ColorValue;
   };
   /**
    * Function which returns a React Element to display on the left side of the header.
    */
-  headerLeft?: (props: { tintColor?: string }) => React.ReactNode;
+  headerLeft?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Function which returns a React Element to display on the right side of the header.
    */
-  headerRight?: (props: { tintColor?: string }) => React.ReactNode;
+  headerRight?: (props: { tintColor?: ColorValue }) => React.ReactNode;
   /**
    * Whether to show the header.
    */
@@ -218,13 +231,13 @@ export type NativeStackNavigationOptions = {
    * - blurEffect
    */
   headerStyle?: {
-    backgroundColor?: string;
+    backgroundColor?: ColorValue;
     blurEffect?: ScreenStackHeaderConfigProps['blurEffect'];
   };
   /**
    * Tint color for the header. Changes the color of back button and title.
    */
-  headerTintColor?: string;
+  headerTintColor?: ColorValue;
   /**
    * String to display in the header as title. Defaults to scene `title`.
    */
@@ -240,7 +253,7 @@ export type NativeStackNavigationOptions = {
     fontFamily?: string;
     fontSize?: number;
     fontWeight?: string;
-    color?: string;
+    color?: ColorValue;
   };
   /**
    * A flag to that lets you opt out of insetting the header. You may want to
@@ -280,7 +293,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  navigationBarColor?: string;
+  navigationBarColor?: ColorValue;
   /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
@@ -329,13 +342,15 @@ export type NativeStackNavigationOptions = {
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `true`.
+   *
+   * @platform ios
    */
   sheetExpandsWhenScrolledToEdge?: boolean;
   /**
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * If set to non-negative value it will try to render sheet with provided radius, else ti will apply system default.
+   * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
    *
    * If left unset system default is used.
    *
@@ -376,6 +391,7 @@ export type NativeStackNavigationOptions = {
    * - "slide_from_bottom" – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
    * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
   stackAnimation?: ScreenProps['stackAnimation'];
@@ -400,7 +416,7 @@ export type NativeStackNavigationOptions = {
    *
    * @platform android
    */
-  statusBarColor?: string;
+  statusBarColor?: ColorValue;
   /**
    * Whether the status bar should be hidden on this screen. Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `false`.
    */

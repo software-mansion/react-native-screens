@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 function First() {
   const NestedStack = createBottomTabNavigator();
@@ -24,7 +24,7 @@ function First() {
   );
 }
 
-function SecondScreen({navigation}) {
+function SecondScreen({ navigation }) {
   return (
     <View style={styles.verticalContainer}>
       <View style={styles.centeredContainer}>
@@ -61,7 +61,7 @@ function SecondScreen({navigation}) {
   );
 }
 
-function ThirdScreen({navigation}) {
+function ThirdScreen({ navigation }) {
   return (
     <View style={styles.verticalContainer}>
       <View style={styles.centeredContainer}>
@@ -79,7 +79,7 @@ function ThirdScreen({navigation}) {
   );
 }
 
-function NestedFirst({navigation}) {
+function NestedFirst({ navigation }) {
   return (
     <View style={styles.verticalContainer}>
       <View style={styles.centeredContainer}>
@@ -116,7 +116,7 @@ function NestedFirst({navigation}) {
   );
 }
 
-function NestedSecond({navigation}) {
+function NestedSecond({ navigation }) {
   return (
     <View style={styles.verticalContainer}>
       <View style={styles.centeredContainer}>
@@ -165,7 +165,7 @@ export default function App() {
           animationEnabled: true,
           transparentCard: true,
           cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
-          headerStyle: {backgroundColor: 'red'},
+          headerStyle: { backgroundColor: 'red' },
           gestureEnabled: true,
           cardOverlayEnabled: true,
         }}>
