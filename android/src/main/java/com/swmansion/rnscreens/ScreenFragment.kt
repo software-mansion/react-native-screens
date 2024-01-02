@@ -36,11 +36,13 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     // if we call empty constructor, there is no screen to be assigned so not sure why it is suggested
     @Suppress("JoinDeclarationAndAssignment")
     override lateinit var screen: Screen
-    private val mChildScreenContainers: MutableList<ScreenContainer> = ArrayList()
+
+    override val childScreenContainers: MutableList<ScreenContainer> = ArrayList()
+
     private var shouldUpdateOnResume = false
     // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
     // due to progress value being already 0.0f
-    private var mProgress = -1f
+    private var transitionProgress = -1f
 
     // those 2 vars are needed since sometimes the events would be dispatched twice in child containers
     // (should only happen if parent has `NONE` animation) and we don't need too complicated logic.
@@ -152,9 +154,6 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         return null
     }
 
-    override val childScreenContainers: List<ScreenContainer>
-        get() = mChildScreenContainers
-
     override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = when (event) {
         ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
         ScreenLifecycleEvent.Appear -> canDispatchAppear
@@ -213,7 +212,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     }
 
     override fun dispatchLifecycleEventInChildContainers(event: ScreenLifecycleEvent) {
-        mChildScreenContainers.filter { it.screenCount > 0 }.forEach {
+        childScreenContainers.filter { it.screenCount > 0 }.forEach {
             it.topScreen?.fragmentWrapper?.let { fragment -> dispatchLifecycleEvent(event, fragment) }
         }
     }
@@ -228,14 +227,14 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
 
     override fun dispatchTransitionProgressEvent(alpha: Float, closing: Boolean) {
         if (this is ScreenStackFragment) {
-            if (mProgress != alpha) {
-                mProgress = max(0.0f, min(1.0f, alpha))
+            if (transitionProgress != alpha) {
+                transitionProgress = max(0.0f, min(1.0f, alpha))
                 /* We want value of 0 and 1 to be always dispatched so we base coalescing key on the progress:
                  - progress is 0 -> key 1
                  - progress is 1 -> key 2
                  - progress is between 0 and 1 -> key 3
              */
-                val coalescingKey = (if (mProgress == 0.0f) 1 else if (mProgress == 1.0f) 2 else 3).toShort()
+                val coalescingKey = (if (transitionProgress == 0.0f) 1 else if (transitionProgress == 1.0f) 2 else 3).toShort()
                 val container: ScreenContainer? = screen.container
                 val goingForward = if (container is ScreenStack) container.goingForward else false
                 val screenContext = screen.context as ReactContext
@@ -244,7 +243,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                     ?.dispatchEvent(
                         ScreenTransitionProgressEvent(
                             UIManagerHelper.getSurfaceId(screenContext),
-                            screen.id, mProgress, closing, goingForward, coalescingKey
+                            screen.id, transitionProgress, closing, goingForward, coalescingKey
                         )
                     )
             }
@@ -252,11 +251,11 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     }
 
     override fun addChildScreenContainer(container: ScreenContainer) {
-        mChildScreenContainers.add(container)
+        childScreenContainers.add(container)
     }
 
     override fun removeChildScreenContainer(container: ScreenContainer) {
-        mChildScreenContainers.remove(container)
+        childScreenContainers.remove(container)
     }
 
     override fun onViewAnimationStart() {
@@ -307,7 +306,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                     ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
             }
         }
-        mChildScreenContainers.clear()
+        childScreenContainers.clear()
     }
 
     companion object {
