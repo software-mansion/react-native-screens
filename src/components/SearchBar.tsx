@@ -28,6 +28,7 @@ type SearchBarCommandsType = {
     viewRef: React.ElementRef<typeof NativeSearchBar>,
     text: string
   ) => void;
+  cancelSearch: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
 };
 
 class SearchBar extends React.Component<SearchBarProps> {
@@ -69,6 +70,10 @@ class SearchBar extends React.Component<SearchBarProps> {
 
   setText(text: string) {
     this._callMethodWithRef(ref => NativeSearchBarCommands.setText(ref, text));
+  }
+
+  cancelSearch() {
+    this._callMethodWithRef(ref => NativeSearchBarCommands.cancelSearch(ref));
   }
 
   render() {

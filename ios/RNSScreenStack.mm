@@ -908,8 +908,8 @@ namespace react = facebook::react;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
   if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
-    // headerConfig should be the first subview of the topmost screen
-    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
+    RNSScreenView *topMostScreen = (RNSScreenView *)_reactSubviews.lastObject;
+    UIView *headerConfig = topMostScreen.findHeaderConfig;
     if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
       UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
       if (headerHitTestResult != nil) {

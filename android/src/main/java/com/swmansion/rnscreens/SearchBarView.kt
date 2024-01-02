@@ -150,6 +150,10 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         text?.let { screenStackFragment?.searchView?.setText(it) }
     }
 
+    fun handleCancelSearchJsRequest() {
+       screenStackFragment?.searchView?.cancelSearch() 
+    }
+
     private fun setToolbarElementsVisibility(visibility: Int) {
         for (i in 0..(headerConfig?.configSubviewsCount?.minus(1) ?: 0)) {
             val subview = headerConfig?.getConfigSubview(i)
