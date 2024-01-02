@@ -400,6 +400,7 @@ Allowed imperative actions on search bar are:
 - `blur` - Function to remove focus from search bar.
 - `clearText` - Function to clear text in search bar.
 - `setText` - Function to set search bar's text to given value.
+- `cancelSearch` - Function to cancel search in search bar.
 - `toggleCancelButton` - Function toggle cancel button display near search bar. (iOS only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:

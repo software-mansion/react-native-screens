@@ -5722,19 +5722,19 @@ react-native-reanimated@^3.6.0:
     convert-source-map "^2.0.0"
     invariant "^2.2.4"
 
-react-native-safe-area-context@^4.7.4:
-  version "4.7.4"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.7.4.tgz#3dd8438971e70043d76f2428ede75b8a9639265e"
-  integrity sha512-3LR3DCq9pdzlbq6vsHGWBFehXAKDh2Ljug6jWhLWs1QFuJHM6AS2+mH2JfKlB2LqiSFZOBcZfHQFz0sGaA3uqg==
+react-native-safe-area-context@^4.8.1:
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.8.1.tgz#b1edac9fc45b4f13b1bb6a0ed4154e9e5bb0d15c"
+  integrity sha512-gYoZyxKuWHfxXHTFGpkFKgfRHDAqTs+I/NZsiXdllMmIfOme25MGPHVmuHrA0Jq4rg189x/JiscFCv2IvDCC6A==
 
 "react-native-screens@link:..":
   version "0.0.0"
   uid ""
 
-react-native@0.73.0-rc.6:
-  version "0.73.0-rc.6"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.73.0-rc.6.tgz#5467d2995d9199d6308c7ddc42cf9d810534e6cb"
-  integrity sha512-dSJ/Eg5B2PsQl0np1LsCNyaL1dnFA24LWdTzzEm7gls/2lFe5sz2vZJxKDegV2wti5GWKnVQSr2HOsLO0m1rBw==
+react-native@0.73.0:
+  version "0.73.0"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.73.0.tgz#553bce5ed4bd3d9f71014127bd687133562c5049"
+  integrity sha512-ya7wu/L8BeATv2rtXZDToYyD9XuTTDCByi8LvJGr6GKSXcmokkCRMGAiTEZfPkq7+nhVmbasjtoAJDuMRYfudQ==
   dependencies:
     "@jest/create-cache-key-function" "^29.6.3"
     "@react-native-community/cli" "12.1.1"
