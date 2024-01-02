@@ -191,7 +191,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
     }
 
     protected fun createTransaction(): FragmentTransaction {
-        return requireNotNull(fragmentManager) { "mFragmentManager is null when creating transaction" }
+        return requireNotNull(fragmentManager) { "fragment manager is null when creating transaction" }
             .beginTransaction()
             .setReorderingAllowed(true)
     }
@@ -316,7 +316,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
             // detach screens that are no longer active
             val orphaned: MutableSet<Fragment> = HashSet(
                 requireNotNull(fragmentManager) {
-                    "mFragmentManager is null when performing update in ScreenContainer"
+                    "fragment manager is null when performing update in ScreenContainer"
                 }.fragments
             )
             for (fragmentWrapper in screenWrappers) {
