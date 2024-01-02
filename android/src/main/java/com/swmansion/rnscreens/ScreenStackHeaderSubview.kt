@@ -7,8 +7,8 @@ import com.facebook.react.views.view.ReactViewGroup
 
 @SuppressLint("ViewConstructor")
 class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context) {
-    private var mReactWidth = 0
-    private var mReactHeight = 0
+    private var reactWidth = 0
+    private var reactHeight = 0
     var type = Type.RIGHT
 
     val config: ScreenStackHeaderConfig?
@@ -19,15 +19,15 @@ class ScreenStackHeaderSubview(context: ReactContext?) : ReactViewGroup(context)
             MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
         ) {
             // dimensions provided by react
-            mReactWidth = MeasureSpec.getSize(widthMeasureSpec)
-            mReactHeight = MeasureSpec.getSize(heightMeasureSpec)
+            reactWidth = MeasureSpec.getSize(widthMeasureSpec)
+            reactHeight = MeasureSpec.getSize(heightMeasureSpec)
             val parent = parent
             if (parent != null) {
                 forceLayout()
                 (parent as View).requestLayout()
             }
         }
-        setMeasuredDimension(mReactWidth, mReactHeight)
+        setMeasuredDimension(reactWidth, reactHeight)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) = Unit
