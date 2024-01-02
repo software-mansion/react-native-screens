@@ -27,7 +27,7 @@ import kotlin.math.min
 
 open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     enum class ScreenLifecycleEvent {
-        Appear, WillAppear, Disappear, WillDisappear
+        DID_APPEAR, WILL_APPEAR, DID_DISAPPEAR, WILL_DISAPPEAR
     }
 
     override val fragment: Fragment
@@ -155,38 +155,38 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     }
 
     override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = when (event) {
-        ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear
-        ScreenLifecycleEvent.Appear -> canDispatchAppear
-        ScreenLifecycleEvent.WillDisappear -> !canDispatchWillAppear
-        ScreenLifecycleEvent.Disappear -> !canDispatchAppear
+        ScreenLifecycleEvent.WILL_APPEAR -> canDispatchWillAppear
+        ScreenLifecycleEvent.DID_APPEAR -> canDispatchAppear
+        ScreenLifecycleEvent.WILL_DISAPPEAR -> !canDispatchWillAppear
+        ScreenLifecycleEvent.DID_DISAPPEAR -> !canDispatchAppear
     }
 
     override fun updateLastEventDispatched(event: ScreenLifecycleEvent) {
         when (event) {
-            ScreenLifecycleEvent.WillAppear -> canDispatchWillAppear = false
-            ScreenLifecycleEvent.Appear -> canDispatchAppear = false
-            ScreenLifecycleEvent.WillDisappear -> canDispatchWillAppear = true
-            ScreenLifecycleEvent.Disappear -> canDispatchAppear = true
+            ScreenLifecycleEvent.WILL_APPEAR -> canDispatchWillAppear = false
+            ScreenLifecycleEvent.DID_APPEAR -> canDispatchAppear = false
+            ScreenLifecycleEvent.WILL_DISAPPEAR -> canDispatchWillAppear = true
+            ScreenLifecycleEvent.DID_DISAPPEAR -> canDispatchAppear = true
         }
     }
 
     private fun dispatchOnWillAppear() {
-        dispatchLifecycleEvent(ScreenLifecycleEvent.WillAppear, this)
+        dispatchLifecycleEvent(ScreenLifecycleEvent.WILL_APPEAR, this)
         dispatchTransitionProgressEvent(0.0f, false)
     }
 
     private fun dispatchOnAppear() {
-        dispatchLifecycleEvent(ScreenLifecycleEvent.Appear, this)
+        dispatchLifecycleEvent(ScreenLifecycleEvent.DID_APPEAR, this)
         dispatchTransitionProgressEvent(1.0f, false)
     }
 
     private fun dispatchOnWillDisappear() {
-        dispatchLifecycleEvent(ScreenLifecycleEvent.WillDisappear, this)
+        dispatchLifecycleEvent(ScreenLifecycleEvent.WILL_DISAPPEAR, this)
         dispatchTransitionProgressEvent(0.0f, true)
     }
 
     private fun dispatchOnDisappear() {
-        dispatchLifecycleEvent(ScreenLifecycleEvent.Disappear, this)
+        dispatchLifecycleEvent(ScreenLifecycleEvent.DID_DISAPPEAR, this)
         dispatchTransitionProgressEvent(1.0f, true)
     }
 
@@ -197,10 +197,10 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                 fragmentWrapper.updateLastEventDispatched(event)
                 val surfaceId = UIManagerHelper.getSurfaceId(it)
                 val lifecycleEvent: Event<*> = when (event) {
-                    ScreenLifecycleEvent.WillAppear -> ScreenWillAppearEvent(surfaceId, it.id)
-                    ScreenLifecycleEvent.Appear -> ScreenAppearEvent(surfaceId, it.id)
-                    ScreenLifecycleEvent.WillDisappear -> ScreenWillDisappearEvent(surfaceId, it.id)
-                    ScreenLifecycleEvent.Disappear -> ScreenDisappearEvent(surfaceId, it.id)
+                    ScreenLifecycleEvent.WILL_APPEAR -> ScreenWillAppearEvent(surfaceId, it.id)
+                    ScreenLifecycleEvent.DID_APPEAR -> ScreenAppearEvent(surfaceId, it.id)
+                    ScreenLifecycleEvent.WILL_DISAPPEAR -> ScreenWillDisappearEvent(surfaceId, it.id)
+                    ScreenLifecycleEvent.DID_DISAPPEAR -> ScreenDisappearEvent(surfaceId, it.id)
                 }
                 val screenContext = screen.context as ReactContext
                 val eventDispatcher: EventDispatcher? =
