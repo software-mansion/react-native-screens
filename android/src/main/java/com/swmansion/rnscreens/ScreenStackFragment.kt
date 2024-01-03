@@ -332,16 +332,16 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     private class ScreensCoordinatorLayout(
         context: Context,
-        private val mFragment: ScreenStackFragment
+        private val fragment: ScreenStackFragment
     ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
-        private val mAnimationListener: Animation.AnimationListener =
+        private val animationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation) {
-                    mFragment.onViewAnimationStart()
+                    fragment.onViewAnimationStart()
                 }
 
                 override fun onAnimationEnd(animation: Animation) {
-                    mFragment.onViewAnimationEnd()
+                    fragment.onViewAnimationEnd()
                 }
 
                 override fun onAnimationRepeat(animation: Animation) {}
@@ -357,17 +357,17 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             // and also this is not necessary when going back since the lifecycle methods
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
-            val fakeAnimation = ScreensAnimation(mFragment).apply { duration = animation.duration }
+            val fakeAnimation = ScreensAnimation(fragment).apply { duration = animation.duration }
 
-            if (mFragment.screen.stackPresentation == Screen.StackPresentation.FORM_SHEET && mFragment.isAdded) {
+            if (fragment.screen.stackPresentation == Screen.StackPresentation.FORM_SHEET && fragment.isAdded) {
                 this.clearAnimation()
-                mFragment.screen.clearAnimation()
+                fragment.screen.clearAnimation()
             }
 
-            if (animation is AnimationSet && !mFragment.isRemoving) {
+            if (animation is AnimationSet && !fragment.isRemoving) {
                 animation.apply {
                     addAnimation(fakeAnimation)
-                    setAnimationListener(mAnimationListener)
+                    setAnimationListener(animationListener)
                 }.also {
                     super.startAnimation(it)
                 }
@@ -375,7 +375,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 AnimationSet(true).apply {
                     addAnimation(animation)
                     addAnimation(fakeAnimation)
-                    setAnimationListener(mAnimationListener)
+                    setAnimationListener(animationListener)
                 }.also {
                     super.startAnimation(it)
                 }
@@ -404,7 +404,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         override fun getHitSlopRect(): Rect? {
-            val screen: Screen = mFragment.screen
+            val screen: Screen = fragment.screen
 //            left – The X coordinate of the left side of the rectangle
 //            top – The Y coordinate of the top of the rectangle i
 //            right – The X coordinate of the right side of the rectangle
