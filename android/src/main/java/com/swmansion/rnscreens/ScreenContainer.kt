@@ -105,7 +105,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
 
     open fun removeScreen(wrapper: ScreenFragmentWrapper) {
         wrapper.screen.container = null
-        mScreenFragments.remove(wrapper)
+        screenWrappers.remove(wrapper)
         onScreenChanged()
     }
 

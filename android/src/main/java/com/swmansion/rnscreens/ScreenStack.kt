@@ -43,15 +43,15 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
      * @param fragmentWrapper The dismissed fragment wrapper
      */
     fun onExternalFragmentRemoval(fragmentWrapper: ScreenStackFragmentWrapper) {
-        mStack.remove(fragmentWrapper)
-        mScreenFragments.remove(fragmentWrapper)
+        stack.remove(fragmentWrapper)
+        screenWrappers.remove(fragmentWrapper)
     }
 
     override val topScreen: Screen?
         get() = topScreenWrapper?.screen
 
     val rootScreen: Screen
-        get() = mScreenFragments.firstOrNull { !mDismissed.contains(it) }?.screen
+        get() = screenWrappers.firstOrNull { !dismissedWrappers.contains(it) }?.screen
             ?: throw IllegalStateException("Stack has no root screen set")
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
@@ -101,8 +101,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         super.hasScreen(screenFragmentWrapper) && !dismissedWrappers.contains(screenFragmentWrapper)
 
     fun onScreenDismissed(wrapper: ScreenStackFragmentWrapper) {
-        mScreenFragments.remove(wrapper)
-        mStack.remove(wrapper)
+        screenWrappers.remove(wrapper)
+        stack.remove(wrapper)
     }
 
     override fun onUpdate() {
@@ -141,14 +141,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                 val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
                 shouldUseOpenAnimation = containsTopScreen || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
-<<<<<<< HEAD
-                stackAnimation =
-                    if (shouldUseOpenAnimation) newTop.screen.stackAnimation else mTopScreen?.screen?.stackAnimation
-            } else if (mTopScreen == null && newTop != null) {
-=======
                 stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
             } else if (topScreenWrapper == null && newTop != null) {
->>>>>>> main
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering
                 stackAnimation = StackAnimation.NONE
@@ -254,16 +248,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             }
 
             // remove all screens previously on stack
-<<<<<<< HEAD
-            for (fragmentWrapper in mStack) {
-                if (!mScreenFragments.contains(fragmentWrapper) || mDismissed.contains(
-                        fragmentWrapper
-                    )
-                ) {
-=======
             for (fragmentWrapper in stack) {
                 if (!screenWrappers.contains(fragmentWrapper) || dismissedWrappers.contains(fragmentWrapper)) {
->>>>>>> main
                     it.remove(fragmentWrapper.fragment)
                 }
             }
@@ -313,12 +299,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         if (screenWrappers.size > 1 && visibleBottom != null) {
             topScreenWrapper?.let {
                 if (isTransparent(it)) {
-<<<<<<< HEAD
-                    val screenFragmentsBeneathTop =
-                        mScreenFragments.slice(0 until mScreenFragments.size - 1).asReversed()
-=======
                     val screenFragmentsBeneathTop = screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
->>>>>>> main
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {
                         fragmentWrapper.screen.changeAccessibilityMode(
