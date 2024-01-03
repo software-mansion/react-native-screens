@@ -23,6 +23,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
+import com.google.android.material.R as MaterialR
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
@@ -73,7 +74,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         if (screen.headerType.isCollapsing) {
             toolbar.layoutParams = CollapsingToolbarLayout.LayoutParams(
                 CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,
-                R.attr.actionBarSize.resolveAttribute(toolbar.context)
+                android.R.attr.actionBarSize.resolveAttribute(toolbar.context)
             ).apply {
                 collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
             }
@@ -202,8 +203,8 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         val resolvedSize = when (screen.headerType) {
-            Screen.HeaderType.Medium -> R.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
-            Screen.HeaderType.Large -> R.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
+            Screen.HeaderType.Medium -> MaterialR.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
+            Screen.HeaderType.Large -> MaterialR.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
             else -> CoordinatorLayout.LayoutParams.WRAP_CONTENT
         }
 
@@ -219,9 +220,9 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     private fun createCollapsingToolbarLayout() {
         val toolbarStyle = when (screen.headerType) {
-            Screen.HeaderType.Large -> R.attr.collapsingToolbarLayoutLargeStyle
-            Screen.HeaderType.Medium -> R.attr.collapsingToolbarLayoutMediumStyle
-            else -> R.attr.collapsingToolbarLayoutStyle
+            Screen.HeaderType.Large -> MaterialR.attr.collapsingToolbarLayoutLargeStyle
+            Screen.HeaderType.Medium -> MaterialR.attr.collapsingToolbarLayoutMediumStyle
+            else -> MaterialR.attr.collapsingToolbarLayoutStyle
         }
 
         collapsingToolbarLayout = context?.let { CollapsingToolbarLayout(it, null, toolbarStyle) }?.apply {
