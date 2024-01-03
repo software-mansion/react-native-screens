@@ -50,7 +50,8 @@ type StackAnimation =
   | 'slide_from_right'
   | 'slide_from_left'
   | 'slide_from_bottom'
-  | 'fade_from_bottom';
+  | 'fade_from_bottom'
+  | 'ios';
 
 type SwipeDirection = 'vertical' | 'horizontal';
 

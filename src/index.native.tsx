@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, { PropsWithChildren, ReactNode } from 'react';
+import React, { useEffect, PropsWithChildren, ReactNode } from 'react';
 import {
   Animated,
   Image,
   ImageProps,
   Platform,
-  requireNativeComponent,
   StyleProp,
   StyleSheet,
   UIManager,
@@ -95,6 +94,9 @@ type SearchBarCommandsType = {
     viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>,
     text: string
   ) => void;
+  cancelSearch: (
+    viewRef: React.ElementRef<typeof ScreensNativeModules.NativeSearchBar>
+  ) => void;
 };
 
 // We initialize these lazily so that importing the module doesn't throw error when not linked
@@ -137,28 +139,29 @@ const ScreensNativeModules = {
     NativeScreenNavigationContainerValue =
       NativeScreenNavigationContainerValue ||
       (Platform.OS === 'ios'
-        ? requireNativeComponent('RNSScreenNavigationContainer')
+        ? require('./fabric/ScreenNavigationContainerNativeComponent').default
         : this.NativeScreenContainer);
     return NativeScreenNavigationContainerValue;
   },
 
   get NativeScreenStack() {
     NativeScreenStack =
-      NativeScreenStack || requireNativeComponent('RNSScreenStack');
+      NativeScreenStack ||
+      require('./fabric/ScreenStackNativeComponent').default;
     return NativeScreenStack;
   },
 
   get NativeScreenStackHeaderConfig() {
     NativeScreenStackHeaderConfig =
       NativeScreenStackHeaderConfig ||
-      requireNativeComponent('RNSScreenStackHeaderConfig');
+      require('./fabric/ScreenStackHeaderConfigNativeComponent').default;
     return NativeScreenStackHeaderConfig;
   },
 
   get NativeScreenStackHeaderSubview() {
     NativeScreenStackHeaderSubview =
       NativeScreenStackHeaderSubview ||
-      requireNativeComponent('RNSScreenStackHeaderSubview');
+      require('./fabric/ScreenStackHeaderSubviewNativeComponent').default;
     return NativeScreenStackHeaderSubview;
   },
 
@@ -167,6 +170,7 @@ const ScreensNativeModules = {
       NativeSearchBar || require('./fabric/SearchBarNativeComponent').default;
     return NativeSearchBar;
   },
+
   get NativeSearchBarCommands() {
     NativeSearchBarCommands =
       NativeSearchBarCommands ||
@@ -176,7 +180,8 @@ const ScreensNativeModules = {
 
   get NativeFullWindowOverlay() {
     NativeFullWindowOverlay =
-      NativeFullWindowOverlay || requireNativeComponent('RNSFullWindowOverlay');
+      NativeFullWindowOverlay ||
+      require('./fabric/FullWindowOverlayNativeComponent').default;
     return NativeFullWindowOverlay;
   },
 };
@@ -192,13 +197,14 @@ function DelayedFreeze({ freeze, children }: FreezeWrapperProps) {
   // flag used for determining whether freeze should be enabled
   const [freezeState, setFreezeState] = React.useState(false);
 
-  if (freeze !== freezeState) {
-    // setImmediate is executed at the end of the JS execution block.
-    // Used here for changing the state right after the render.
-    setImmediate(() => {
+  useEffect(() => {
+    const id = setImmediate(() => {
       setFreezeState(freeze);
     });
-  }
+    return () => {
+      clearImmediate(id);
+    };
+  }, [freeze]);
 
   return <Freeze freeze={freeze ? freezeState : false}>{children}</Freeze>;
 }
@@ -477,6 +483,12 @@ class SearchBar extends React.Component<SearchBarProps> {
   setText(text: string) {
     this._callMethodWithRef(ref =>
       ScreensNativeModules.NativeSearchBarCommands.setText(ref, text)
+    );
+  }
+
+  cancelSearch() {
+    this._callMethodWithRef(ref =>
+      ScreensNativeModules.NativeSearchBarCommands.cancelSearch(ref)
     );
   }
 

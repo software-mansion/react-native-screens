@@ -147,6 +147,9 @@ namespace react = facebook::react;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
   if (vc != nil && (nextVC == vc || isInFullScreenModal || isPresentingVC)) {
     [RNSScreenStackHeaderConfig updateViewController:self.screenView.controller withConfig:self animated:YES];
+    // As the header might have change in `updateViewController` we need to ensure that header height
+    // returned by the `onHeaderHeightChange` event is correct.
+    [self.screenView.controller calculateAndNotifyHeaderHeightChangeIsModal:NO];
   }
 }
 
@@ -353,6 +356,11 @@ namespace react = facebook::react;
                     withConfig:(RNSScreenStackHeaderConfig *)config
 {
   [self updateViewController:vc withConfig:config animated:animated];
+  // As the header might have change in `updateViewController` we need to ensure that header height
+  // returned by the `onHeaderHeightChange` event is correct.
+  if ([vc isKindOfClass:[RNSScreen class]]) {
+    [(RNSScreen *)vc calculateAndNotifyHeaderHeightChangeIsModal:NO];
+  }
 }
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
@@ -567,6 +575,8 @@ namespace react = facebook::react;
 #endif
   }
 #if !TARGET_OS_TV
+  // Workaround for the wrong rotation of back button arrow in RTL mode.
+  navitem.hidesBackButton = true;
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
@@ -623,6 +633,13 @@ namespace react = facebook::react;
       }
     }
   }
+
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
+    // Position the contents in the navigation bar, regarding to the direction.
+    for (UIView *view in navctr.navigationBar.subviews) {
+      view.semanticContentAttribute = config.direction;
+    }
+  });
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)

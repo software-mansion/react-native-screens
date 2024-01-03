@@ -2,9 +2,53 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-fabric_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+platform = new_arch_enabled ? "11.0" : "9.0"
+source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : "ios/**/*.{h,m,mm}"
 
 folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32'
+
+# Helper class to avoid clashing with Cocoapods install_dependencies function
+class RNScreensDependencyHelper
+  # Helper class to add the Common subspec
+  def self.add_common_subspec(s, new_arch_enabled)
+    unless new_arch_enabled
+      return
+    end
+
+    s.subspec "common" do |ss|
+      ss.source_files         = "common/cpp/**/*.{cpp,h}"
+      ss.header_dir           = "rnscreens"
+      ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
+    end
+  end
+
+  # Function to support older versions of React Native which do not provide the
+  # install_modules_dependencies function
+  def self.install_dependencies(s, new_arch_enabled)
+    if new_arch_enabled
+      s.pod_target_xcconfig = {
+        'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost" "$(PODS_ROOT)/boost-for-react-native"  "$(PODS_ROOT)/RCT-Folly"',
+        "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
+      }
+
+      s.compiler_flags  = folly_compiler_flags + ' ' + '-DRCT_NEW_ARCH_ENABLED'
+
+      s.dependency "React"
+      s.dependency "React-RCTFabric"
+      s.dependency "React-Codegen"
+      s.dependency "RCT-Folly"
+      s.dependency "RCTRequired"
+      s.dependency "RCTTypeSafety"
+      s.dependency "ReactCommon/turbomodule/core"
+
+      self.add_common_subspec(s, new_arch_enabled)
+    else
+      s.dependency "React-Core"
+      s.dependency "React-RCTImage"
+    end
+  end
+end
 
 Pod::Spec.new do |s|
   s.name         = "RNScreens"
@@ -15,39 +59,16 @@ Pod::Spec.new do |s|
                    DESC
   s.homepage     = "https://github.com/software-mansion/react-native-screens"
   s.license      = "MIT"
-  # s.license    = { :type => "MIT", :file => "FILE_LICENSE" }
   s.author       = { "author" => "author@domain.cn" }
-  s.platforms    = { :ios => "9.0", :tvos => "11.0" }
+  s.platforms    = { :ios => platform, :tvos => "11.0" }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
+  s.source_files = source_files
+  s.requires_arc = true
 
-  if fabric_enabled
-    s.pod_target_xcconfig = {
-      'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost" "$(PODS_ROOT)/boost-for-react-native"  "$(PODS_ROOT)/RCT-Folly"',
-      "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
-    }
-    s.platforms       = { ios: '11.0', tvos: '11.0' }
-    s.compiler_flags  = folly_compiler_flags + ' ' + '-DRCT_NEW_ARCH_ENABLED'
-    s.source_files    = 'ios/**/*.{h,m,mm,cpp}'
-    s.requires_arc    = true
-  
-    s.dependency "React"
-    s.dependency "React-RCTFabric"
-    s.dependency "React-Codegen"
-    s.dependency "RCT-Folly"
-    s.dependency "RCTRequired"
-    s.dependency "RCTTypeSafety"
-    s.dependency "ReactCommon/turbomodule/core"
-  
-    s.subspec "common" do |ss|
-      ss.source_files         = "common/cpp/**/*.{cpp,h}"
-      ss.header_dir           = "rnscreens"
-      ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
-    end
-  else 
-    s.source_files = "ios/**/*.{h,m,mm}"
-    s.requires_arc = true
-  
-    s.dependency "React-Core"
-    s.dependency "React-RCTImage"
+  if defined?(install_modules_dependencies()) != nil
+    install_modules_dependencies(s)
+    RNScreensDependencyHelper.add_common_subspec(s, new_arch_enabled)
+  else
+    RNScreensDependencyHelper.install_dependencies(s, new_arch_enabled)
   end
 end

@@ -50,6 +50,9 @@ android {
     def agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION
     if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
         namespace "com.swmansion.rnscreens"
+        buildFeatures {
+            buildConfig true
+        }
     }
 
     // Used to override the NDK path/version on internal CI or by allowing
@@ -124,10 +127,16 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.fragment:fragment-ktx:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.fragment:fragment:1.3.6'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.9.0'
-    implementation "androidx.core:core-ktx:1.10.1"
+    implementation "androidx.core:core-ktx:1.8.0"
+
+    constraints {
+        implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1") {
+            because("on older React Native versions this dependency conflicts with react-native-screens")
+        }
+    }
 }

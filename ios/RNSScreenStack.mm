@@ -66,12 +66,15 @@ namespace react = facebook::react;
   [super viewDidLayoutSubviews];
   if ([self.topViewController isKindOfClass:[RNSScreen class]]) {
     RNSScreen *screenController = (RNSScreen *)self.topViewController;
+    BOOL isNotDismissingModal = screenController.presentedViewController == nil ||
+        (screenController.presentedViewController != nil &&
+         ![screenController.presentedViewController isBeingDismissed]);
 
     // Calculate header height during simple transition from one screen to another.
     // If RNSScreen includes a navigation controller of type RNSNavigationController, it should not calculate
     // header height, as it could have nested stack.
-    if (![screenController hasNestedStack]) {
-      [(RNSScreen *)self.topViewController calculateAndNotifyHeaderHeightChangeIsModal:NO];
+    if (![screenController hasNestedStack] && isNotDismissingModal) {
+      [screenController calculateAndNotifyHeaderHeightChangeIsModal:NO];
     }
   }
 }
@@ -320,6 +323,38 @@ namespace react = facebook::react;
   }
 }
 
++ (UIViewController *)findTopMostPresentedViewControllerFromViewController:(UIViewController *)controller
+{
+  auto presentedVc = controller;
+  while (presentedVc.presentedViewController != nil) {
+    presentedVc = presentedVc.presentedViewController;
+  }
+  return presentedVc;
+}
+
+- (UIViewController *)findReactRootViewController
+{
+  UIView *parent = self;
+  while (parent) {
+    parent = parent.reactSuperview;
+    if (parent.isReactRootView) {
+      return parent.reactViewController;
+    }
+  }
+  return nil;
+}
+
+- (UIViewController *)lastFromPresentedViewControllerChainStartingFrom:(UIViewController *)vc
+{
+  UIViewController *lastNonNullVc = vc;
+  UIViewController *lastVc = vc.presentedViewController;
+  while (lastVc != nil) {
+    lastNonNullVc = lastVc;
+    lastVc = lastVc.presentedViewController;
+  }
+  return lastNonNullVc;
+}
+
 - (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // prevent re-entry
@@ -346,9 +381,15 @@ namespace react = facebook::react;
   NSMutableArray<UIViewController *> *newControllers = [NSMutableArray arrayWithArray:controllers];
   [newControllers removeObjectsInArray:_presentedModals];
 
-  // find bottom-most controller that should stay on the stack for the duration of transition
+  // We need to find bottom-most view controller that should stay on the stack
+  // for the duration of transition. There are couple of scenarios:
+  // (1) No modals are presented or all modals were presented by this RNSNavigationController,
+  // (2) There are modals presented by other RNSNavigationControllers (nested/outer)
+
+  // Last controller that is common for both _presentedModals & controllers
+  __block UIViewController *changeRootController = _controller;
+  // Last common controller index + 1
   NSUInteger changeRootIndex = 0;
-  UIViewController *changeRootController = _controller;
   for (NSUInteger i = 0; i < MIN(_presentedModals.count, controllers.count); i++) {
     if (_presentedModals[i] == controllers[i]) {
       changeRootController = controllers[i];
@@ -400,6 +441,7 @@ namespace react = facebook::react;
       return;
     } else {
       UIViewController *previous = changeRootController;
+
       for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
         UIViewController *next = controllers[i];
         BOOL lastModal = (i == controllers.count - 1);
@@ -437,16 +479,50 @@ namespace react = facebook::react;
     }
   };
 
-  if (changeRootController.presentedViewController != nil &&
-      [_presentedModals containsObject:changeRootController.presentedViewController]) {
+  UIViewController *firstModalToBeDismissed = changeRootController.presentedViewController;
+  if (firstModalToBeDismissed != nil) {
     BOOL shouldAnimate = changeRootIndex == controllers.count &&
-        [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
-        ((RNSScreen *)changeRootController.presentedViewController).screenView.stackAnimation !=
-            RNSScreenStackAnimationNone;
-    [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
-  } else {
-    finish();
+        [firstModalToBeDismissed isKindOfClass:[RNSScreen class]] &&
+        ((RNSScreen *)firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone;
+
+    if ([_presentedModals containsObject:firstModalToBeDismissed]) {
+      // We dismiss every VC that was presented by changeRootController VC or its descendant.
+      // After the series of dismissals is completed we run completion block in which
+      // we present modals on top of changeRootController (which may be the this stack VC)
+      [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
+      return;
+    }
+
+    UIViewController *lastModalVc = [self lastFromPresentedViewControllerChainStartingFrom:firstModalToBeDismissed];
+
+    if (lastModalVc != firstModalToBeDismissed) {
+      [lastModalVc dismissViewControllerAnimated:shouldAnimate completion:finish];
+      return;
+    }
   }
+
+  // changeRootController does not have presentedViewController but it does not mean that no modals are in presentation;
+  // modals could be presented by another stack (nested / outer), third-party view controller or they could be using
+  // UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in the last case
+  // for some reason system asks top-level (react root) vc to present instead of our stack, despite the fact that
+  // `definesPresentationContext` returns `YES` for UINavigationController.
+  // So we first need to find top-level controller manually:
+  UIViewController *reactRootVc = [self findReactRootViewController];
+  UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
+
+  if (topMostVc != reactRootVc) {
+    changeRootController = topMostVc;
+
+    // Here we handle just the simplest case where the top level VC was dismissed. In any more complex
+    // scenario we will still have problems, see: https://github.com/software-mansion/react-native-screens/issues/1813
+    if ([_presentedModals containsObject:topMostVc] && ![controllers containsObject:topMostVc]) {
+      [changeRootController dismissViewControllerAnimated:YES completion:finish];
+      return;
+    }
+  }
+
+  // We didn't detect any controllers for dismissal, thus we start presenting new VCs
+  finish();
 }
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
@@ -844,8 +920,8 @@ namespace react = facebook::react;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
   if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
-    // headerConfig should be the first subview of the topmost screen
-    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
+    RNSScreenView *topMostScreen = (RNSScreenView *)_reactSubviews.lastObject;
+    UIView *headerConfig = topMostScreen.findHeaderConfig;
     if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
       UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
       if (headerHitTestResult != nil) {

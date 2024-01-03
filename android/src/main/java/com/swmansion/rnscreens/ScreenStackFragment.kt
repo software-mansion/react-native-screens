@@ -25,15 +25,15 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
-    private var mAppBarLayout: AppBarLayout? = null
-    private var mToolbar: Toolbar? = null
+    private var appBarLayout: AppBarLayout? = null
+    private var toolbar: Toolbar? = null
     var mCollapsingToolbarLayout: CollapsingToolbarLayout? = null
 
-    private var mShadowHidden = false
-    private var mIsTranslucent = false
+    private var isToolbarShadowHidden = false
+    private var isToolbarTranslucent = false
     private var mIsToolbarHidden = false
 
-    private var mLastFocusedChild: View? = null
+    private var lastFocusedChild: View? = null
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
@@ -51,30 +51,23 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         mIsToolbarHidden = true
 
         // Cleanup all views from toolbar and collapsingToolbarLayout
-        mToolbar?.removeAllViews()
+        toolbar?.removeAllViews()
         mCollapsingToolbarLayout?.removeAllViews()
 
-        mAppBarLayout?.let { appBarLayout ->
+        appBarLayout?.let { appBarLayout ->
             mCollapsingToolbarLayout?.let { collapsingToolbar ->
                 if (collapsingToolbar.parent === appBarLayout) {
                     appBarLayout.removeView(collapsingToolbar)
                 }
             }
-
-            // As AppBarLayout may have dimensions of expanded medium / large header,
-            // We need to change its layout params to `WRAP_CONTENT`.
-            appBarLayout.layoutParams = CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            )
         }
 
-        mToolbar = null
+        toolbar = null
         mCollapsingToolbarLayout = null
     }
 
    override fun setToolbar(toolbar: Toolbar) {
-        mToolbar = toolbar
+        toolbar = toolbar
         mIsToolbarHidden = false
 
         if (screen.headerType.isCollapsing) {
@@ -89,34 +82,35 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         createCollapsingToolbarLayout()
         mCollapsingToolbarLayout?.apply {
             addView(toolbar)
-            mAppBarLayout?.addView(this)
+            appBarLayout?.addView(this)
         }
 
         // As `setToolbar` may be called after changing header's visibility,
         // we need to apply correction to layoutParams with proper dimensions.
-        mAppBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
+        appBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
             CoordinatorLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(toolbar.context)
         )
     }
 
     override fun setToolbarShadowHidden(hidden: Boolean) {
-        if (mShadowHidden != hidden) {
-            mAppBarLayout?.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
-            mShadowHidden = hidden
+        if (isToolbarShadowHidden != hidden) {
+            appBarLayout?.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
+            isToolbarShadowHidden = hidden
         }
     }
 
     override fun setToolbarTranslucent(translucent: Boolean) {
-        if (mIsTranslucent != translucent) {
+        if (isToolbarTranslucent != translucent) {
             val params = screen.layoutParams
             (params as CoordinatorLayout.LayoutParams).behavior =
                 if (translucent) null else ScrollingViewBehavior()
 
-            mIsTranslucent = translucent
+            isToolbarTranslucent = translucent
         }
     }
 
     override fun onContainerUpdate() {
+        super.onContainerUpdate()
         screen.headerConfig?.onUpdate()
     }
 
@@ -133,7 +127,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun onStart() {
-        mLastFocusedChild?.requestFocus()
+        lastFocusedChild?.requestFocus()
         super.onStart()
     }
 
@@ -147,11 +141,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
-        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
+        ).apply { behavior = if (isToolbarTranslucent) null else ScrollingViewBehavior() }
 
         view?.addView(recycleView(screen))
 
-        mAppBarLayout = context?.let { AppBarLayout(it) }?.apply {
+        appBarLayout = context?.let { AppBarLayout(it) }?.apply {
             // By default AppBarLayout will have a background color set but since we cover the whole layout
             // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
             // role. On top of that it breaks screens animations when alfa offscreen compositing is off
@@ -175,10 +169,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         }
 
-        mAppBarLayout?.let { view?.addView(it) }
+        appBarLayout?.let { view?.addView(it) }
 
-        if (mShadowHidden) {
-            mAppBarLayout?.targetElevation = 0f
+        if (isToolbarShadowHidden) {
+            appBarLayout?.targetElevation = 0f
         }
 
         setHasOptionsMenu(true)
@@ -187,7 +181,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     override fun onStop() {
         if (DeviceUtils.isPlatformAndroidTV(context))
-            mLastFocusedChild = findLastFocusedChild()
+            lastFocusedChild = findLastFocusedChild()
 
         super.onStop()
     }

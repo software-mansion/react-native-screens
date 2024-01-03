@@ -25,28 +25,28 @@ import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
-    private val mConfigSubviews = ArrayList<ScreenStackHeaderSubview>(3)
+    private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
+    var isHeaderHidden = false  // named this way to avoid conflict with platform's isHidden
     private var headerTopInset: Int? = null
-    private var mTitle: String? = null
-    private var mTitleColor = 0
-    private var mTitleFontFamily: String? = null
-    private var mDirection: String? = null
-    private var mTitleFontSize = 0f
-    private var mTitleFontWeight = 0
-    private var mBackgroundColor: Int? = null
-    private var mIsHidden = false
-    private var mIsBackButtonHidden = false
-    private var mIsShadowHidden = false
-    private var mDestroyed = false
-    private var mBackButtonInCustomView = false
-    private var mIsTopInsetEnabled = true
-    private var mIsTranslucent = false
-    private var mTintColor = 0
-    private var mIsAttachedToWindow = false
-    private val mDefaultStartInset: Int
-    private val mDefaultStartInsetWithNavigation: Int
-    private val mBackClickListener = OnClickListener {
+    private var title: String? = null
+    private var titleColor = 0
+    private var titleFontFamily: String? = null
+    private var direction: String? = null
+    private var titleFontSize = 0f
+    private var titleFontWeight = 0
+    private var backgroundColor: Int? = null
+    private var isBackButtonHidden = false
+    private var isShadowHidden = false
+    private var isDestroyed = false
+    private var backButtonInCustomView = false
+    private var isTopInsetEnabled = true
+    private var isTranslucent = false
+    private var tintColor = 0
+    private var isAttachedToWindow = false
+    private val defaultStartInset: Int
+    private val defaultStartInsetWithNavigation: Int
+    private val backClickListener = OnClickListener {
         screenFragment?.let {
             val stack = screenStack
             if (stack != null && stack.rootScreen == it.screen) {
@@ -73,12 +73,12 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     }
 
     fun destroy() {
-        mDestroyed = true
+        isDestroyed = true
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        mIsAttachedToWindow = true
+        isAttachedToWindow = true
         val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderAttachedEvent(surfaceId, id))
@@ -96,7 +96,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        mIsAttachedToWindow = false
+        isAttachedToWindow = false
         val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderDetachedEvent(surfaceId, id))
@@ -104,8 +104,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     private val screen: Screen?
         get() = parent as? Screen
+
     private val screenStack: ScreenStack?
         get() = screen?.container as? ScreenStack
+
     val screenFragment: ScreenStackFragment?
         get() {
             val screen = parent
@@ -124,15 +126,15 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         val stack = screenStack
         val isTop = stack == null || stack.topScreen == parent
 
-        if (!mIsAttachedToWindow || !isTop || mDestroyed) {
+        if (!isAttachedToWindow || !isTop || isDestroyed) {
             return
         }
 
         val activity = screenFragment?.activity as AppCompatActivity? ?: return
-        if (mDirection != null) {
-            if (mDirection == "rtl") {
+        if (direction != null) {
+            if (direction == "rtl") {
                 toolbar.layoutDirection = LAYOUT_DIRECTION_RTL
-            } else if (mDirection == "ltr") {
+            } else if (direction == "ltr") {
                 toolbar.layoutDirection = LAYOUT_DIRECTION_LTR
             }
         }
@@ -151,7 +153,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }
 
-        if (mIsHidden) {
+        if (isHeaderHidden) {
             screenFragment?.removeToolbar()
             return
         }
@@ -161,7 +163,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         val layoutParams = toolbar.layoutParams as CollapsingToolbarLayout.LayoutParams
-        if (mIsTopInsetEnabled) {
+        if (isTopInsetEnabled) {
             headerTopInset.let {
                 layoutParams.topMargin = it ?: 0
                 collapsingToolbarLayout?.setContentScrimColor(Color.TRANSPARENT)
@@ -185,34 +187,34 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         // reset startWithNavigation inset which corresponds to the distance between navigation icon and
         // title. If title isn't set we clear that value few lines below to give more space to custom
         // center-mounted views.
-        toolbar.contentInsetStartWithNavigation = mDefaultStartInsetWithNavigation
-        toolbar.setContentInsetsRelative(mDefaultStartInset, mDefaultStartInset)
+        toolbar.contentInsetStartWithNavigation = defaultStartInsetWithNavigation
+        toolbar.setContentInsetsRelative(defaultStartInset, defaultStartInset)
 
         // hide back button
         actionBar.setDisplayHomeAsUpEnabled(
-            screenFragment?.canNavigateBack() == true && !mIsBackButtonHidden
+            screenFragment?.canNavigateBack() == true && !isBackButtonHidden
         )
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
         // navigation click listener. The default behavior set in the wrapper is to call into
         // menu options handlers, but we prefer the back handling logic to stay here instead.
-        toolbar.setNavigationOnClickListener(mBackClickListener)
+        toolbar.setNavigationOnClickListener(backClickListener)
 
         // shadow
-        screenFragment?.setToolbarShadowHidden(mIsShadowHidden)
+        screenFragment?.setToolbarShadowHidden(isShadowHidden)
 
         // translucent
-        screenFragment?.setToolbarTranslucent(mIsTranslucent)
+        screenFragment?.setToolbarTranslucent(isTranslucent)
 
         // title
-        actionBar.title = mTitle
-        collapsingToolbarLayout?.title = mTitle
+        actionBar.title = title
+        collapsingToolbarLayout?.title = title
         collapsingToolbarLayout?.isTitleEnabled = screen?.headerType?.isCollapsing == true
 
         // centering title
         toolbar.isTitleCentered = screen?.headerType == Screen.HeaderType.CenterAligned
 
-        if (TextUtils.isEmpty(mTitle)) {
+        if (TextUtils.isEmpty(title)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
             // views. When it is set to default it'd take up additional distance from the back button
             // which would impact the position of custom header views rendered at the center.
@@ -220,38 +222,38 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         val titleTextView = titleTextView
-        if (mTitleColor != 0) {
-            toolbar.setTitleTextColor(mTitleColor)
-            collapsingToolbarLayout?.setCollapsedTitleTextColor(mTitleColor)
-            collapsingToolbarLayout?.setExpandedTitleTextColor(ColorStateList.valueOf(mTitleColor))
+        if (titleColor != 0) {
+            toolbar.setTitleTextColor(titleColor)
+            collapsingToolbarLayout?.setCollapsedTitleTextColor(titleColor)
+            collapsingToolbarLayout?.setExpandedTitleTextColor(ColorStateList.valueOf(titleColor))
         }
 
         if (titleTextView != null) {
-            if (mTitleFontFamily != null || mTitleFontWeight > 0) {
+            if (titleFontFamily != null || titleFontWeight > 0) {
                 val titleTypeface = ReactTypefaceUtils.applyStyles(
-                    null, 0, mTitleFontWeight, mTitleFontFamily, context.assets
+                    null, 0, titleFontWeight, titleFontFamily, context.assets
                 )
                 titleTextView.typeface = titleTypeface
                 collapsingToolbarLayout?.setCollapsedTitleTypeface(titleTypeface)
                 collapsingToolbarLayout?.setExpandedTitleTypeface(titleTypeface)
             }
 
-            if (mTitleFontSize > 0) {
-                titleTextView.textSize = mTitleFontSize
+            if (titleFontSize > 0) {
+                titleTextView.textSize = titleFontSize
                 // TODO: Add property for changing expandedTitleTextSize
-                collapsingToolbarLayout?.collapsedTitleTextSize = mTitleFontSize
+                collapsingToolbarLayout?.collapsedTitleTextSize = titleFontSize
             }
         }
 
         // background
-        mBackgroundColor?.let {
+        backgroundColor?.let {
             toolbar.setBackgroundColor(it)
             collapsingToolbarLayout?.setBackgroundColor(it)
         }
 
         // color
-        if (mTintColor != 0) {
-            toolbar.navigationIcon?.setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP)
+        if (tintColor != 0) {
+            toolbar.navigationIcon?.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
         }
 
         // subviews
@@ -262,9 +264,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
         var i = 0
-        val size = mConfigSubviews.size
+        val size = configSubviews.size
         while (i < size) {
-            val view = mConfigSubviews[i]
+            val view = configSubviews[i]
             val type = view.type
             if (type === ScreenStackHeaderSubview.Type.BACK) {
                 // we special case BACK button header config type as we don't add it as a view into toolbar
@@ -282,7 +284,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                 ScreenStackHeaderSubview.Type.LEFT -> {
                     // when there is a left item we need to disable navigation icon by default
                     // we also hide title as there is no other way to display left side items
-                    if (!mBackButtonInCustomView) {
+                    if (!backButtonInCustomView) {
                         toolbar.navigationIcon = null
                     }
                     toolbar.title = null
@@ -305,28 +307,28 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     }
 
     private fun maybeUpdate() {
-        if (parent != null && !mDestroyed) {
+        if (parent != null && !isDestroyed) {
             onUpdate()
         }
     }
 
-    fun getConfigSubview(index: Int): ScreenStackHeaderSubview = mConfigSubviews[index]
+    fun getConfigSubview(index: Int): ScreenStackHeaderSubview = configSubviews[index]
 
     val configSubviewsCount: Int
-        get() = mConfigSubviews.size
+        get() = configSubviews.size
 
     fun removeConfigSubview(index: Int) {
-        mConfigSubviews.removeAt(index)
+        configSubviews.removeAt(index)
         maybeUpdate()
     }
 
     fun removeAllConfigSubviews() {
-        mConfigSubviews.clear()
+        configSubviews.clear()
         maybeUpdate()
     }
 
     fun addConfigSubview(child: ScreenStackHeaderSubview, index: Int) {
-        mConfigSubviews.add(index, child)
+        configSubviews.add(index, child)
         maybeUpdate()
     }
 
@@ -344,59 +346,59 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         }
 
     fun setTitle(title: String?) {
-        mTitle = title
+        this.title = title
     }
 
     fun setTitleFontFamily(titleFontFamily: String?) {
-        mTitleFontFamily = titleFontFamily
+        this.titleFontFamily = titleFontFamily
     }
 
     fun setTitleFontWeight(fontWeightString: String?) {
-        mTitleFontWeight = ReactTypefaceUtils.parseFontWeight(fontWeightString)
+        titleFontWeight = ReactTypefaceUtils.parseFontWeight(fontWeightString)
     }
 
     fun setTitleFontSize(titleFontSize: Float) {
-        mTitleFontSize = titleFontSize
+        this.titleFontSize = titleFontSize
     }
 
     fun setTitleColor(color: Int) {
-        mTitleColor = color
+        titleColor = color
     }
 
     fun setTintColor(color: Int) {
-        mTintColor = color
+        tintColor = color
     }
 
     fun setTopInsetEnabled(topInsetEnabled: Boolean) {
-        mIsTopInsetEnabled = topInsetEnabled
+        isTopInsetEnabled = topInsetEnabled
     }
 
     fun setBackgroundColor(color: Int?) {
-        mBackgroundColor = color
+        backgroundColor = color
     }
 
     fun setHideShadow(hideShadow: Boolean) {
-        mIsShadowHidden = hideShadow
+        isShadowHidden = hideShadow
     }
 
     fun setHideBackButton(hideBackButton: Boolean) {
-        mIsBackButtonHidden = hideBackButton
+        isBackButtonHidden = hideBackButton
     }
 
     fun setHidden(hidden: Boolean) {
-        mIsHidden = hidden
+        isHeaderHidden = hidden
     }
 
     fun setTranslucent(translucent: Boolean) {
-        mIsTranslucent = translucent
+        isTranslucent = translucent
     }
 
     fun setBackButtonInCustomView(backButtonInCustomView: Boolean) {
-        mBackButtonInCustomView = backButtonInCustomView
+        this.backButtonInCustomView = backButtonInCustomView
     }
 
     fun setDirection(direction: String?) {
-        mDirection = direction
+        this.direction = direction
     }
 
     private class DebugMenuToolbar(context: Context, config: ScreenStackHeaderConfig) : CustomToolbar(context, config) {
@@ -412,12 +414,12 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     init {
         visibility = GONE
         toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
-        mDefaultStartInset = toolbar.contentInsetStart
-        mDefaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
+        defaultStartInset = toolbar.contentInsetStart
+        defaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 
         // set primary color as background by default
         val tv = TypedValue()
-        if (context.theme.resolveAttribute(R.attr.colorPrimary, tv, true)) {
+        if (context.theme.resolveAttribute(android.R.attr.colorPrimary, tv, true)) {
             toolbar.setBackgroundColor(tv.data)
         }
         toolbar.clipChildren = false

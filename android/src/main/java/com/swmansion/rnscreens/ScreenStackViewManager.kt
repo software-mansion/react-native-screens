@@ -14,10 +14,10 @@ import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 
 @ReactModule(name = ScreenStackViewManager.REACT_CLASS)
 class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackManagerInterface<ScreenStack> {
-    private val mDelegate: ViewManagerDelegate<ScreenStack>
+    private val delegate: ViewManagerDelegate<ScreenStack>
 
     init {
-        mDelegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
+        delegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
     }
 
     override fun getName() = REACT_CLASS
@@ -63,7 +63,7 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
 
     override fun needsCustomLayoutForChildren() = true
 
-    protected override fun getDelegate(): ViewManagerDelegate<ScreenStack> = mDelegate
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenStack> = delegate
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
         StackFinishTransitioningEvent.EVENT_NAME to mutableMapOf("registrationName" to "onFinishTransitioning")

@@ -9,14 +9,10 @@ class SearchBarChangeTextEvent(
     viewId: Int,
     private val text: String?,
 ) : Event<ScreenAppearEvent>(surfaceId, viewId) {
-    override fun getEventName(): String {
-        return EVENT_NAME
-    }
+    override fun getEventName(): String = EVENT_NAME
 
-    override fun getCoalescingKey(): Short {
-        // All events for a given view can be coalesced.
-        return 0
-    }
+    // All events for a given view can be coalesced.
+    override fun getCoalescingKey(): Short = 0
 
     override fun getEventData(): WritableMap? = Arguments.createMap().apply {
         putString("text", text)
