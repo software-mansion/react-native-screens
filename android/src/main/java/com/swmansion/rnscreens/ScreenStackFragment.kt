@@ -140,9 +140,9 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             return null
         }
         return if (enter) {
-            AnimationUtils.loadAnimation(context, R.anim.rns_fade_in)
+            AnimationUtils.loadAnimation(context, R.anim.rns_slide_in_from_bottom)
         } else {
-            AnimationUtils.loadAnimation(context, R.anim.rns_fade_out)
+            AnimationUtils.loadAnimation(context, R.anim.rns_slide_out_to_bottom)
         }
 //        return super.onCreateAnimation(transit, enter, nextAnim)
     }
@@ -225,9 +225,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     private fun attachShapeToScreen(screen: Screen) {
+        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F)
         val shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
-            setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
-            setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+            setTopLeftCorner(CornerFamily.ROUNDED, cornerSize)
+            setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
         }.build()
         val shape = MaterialShapeDrawable(shapeAppearanceModel)
         screen.background = shape

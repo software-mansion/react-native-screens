@@ -16,7 +16,7 @@ export default function App(): JSX.Element {
     sheetAllowedDetents: 'all',
     sheetLargestUndimmedDetent: 'medium',
     sheetGrabberVisible: false,
-    sheetCornerRadius: 30,
+    sheetCornerRadius: 16,
     sheetExpandsWhenScrolledToEdge: true,
   };
 
@@ -44,7 +44,7 @@ export default function App(): JSX.Element {
           name="SheetScreen"
           component={SheetScreen}
           options={{
-            stackAnimation: 'slide_from_bottom',
+            // stackAnimation: 'slide_from_bottom',
             ...initialScreenOptions,
           }}
         />

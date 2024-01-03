@@ -33,8 +33,8 @@ import com.swmansion.rnscreens.ext.maybeBgColor
 
 class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragment(), LifecycleEventObserver, ScreenStackFragmentWrapper,
     Animation.AnimationListener {
-    private lateinit var dimmingView: FrameLayout
-    private lateinit var containerView: FrameLayout
+    private lateinit var dimmingView: DimmingView
+    private lateinit var containerView: GestureTransparentFrameLayout
 
     private var dimmingViewCallback: BottomSheetCallback? = null
 
@@ -46,17 +46,18 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
         nestedFragment.fragment.lifecycle.addObserver(this)
     }
 
-    private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, initialState: Int) : BottomSheetBehavior.BottomSheetCallback() {
+    private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, initialState: Int) : BottomSheetCallback() {
         private var needsDirectionUpdate = true
+        private var dimmedAlpha = 0.6F
         private var transparentColor = Color.argb(0, 0, 0, 0)
-        private var dimmedColor = Color.argb(128, 0, 0, 0)
+        private var dimmedColor = Color.argb(230, 0, 0, 0)
         private var lastStableState: Int = initialState
         private var lastSlideOffset: Float = 0.0F
         private var animDirection: AnimDirection = AnimDirection.UP
-        private var animator = ValueAnimator.ofArgb(transparentColor, dimmedColor).apply {
+        private var animator = ValueAnimator.ofFloat(0F, dimmedAlpha).apply {
             duration = 1
             addUpdateListener {
-                viewToAnimate.setBackgroundColor(it.animatedValue as Int)
+                viewToAnimate.alpha = it.animatedValue as Float
             }
         }
 
@@ -74,8 +75,9 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
             animDirection = if (slideOffset > lastSlideOffset) AnimDirection.UP else AnimDirection.DOWN
             lastSlideOffset = slideOffset
 
+//            screen.sheetBehavior?.
             if (shouldAnimate()) {
-                animator!!.setCurrentFraction(slideOffset)
+                animator!!.setCurrentFraction(slideOffset / 0.2F)
             }
         }
 
@@ -136,6 +138,7 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
         super.onStart()
         childFragmentManager.commit(allowStateLoss = true) {
             setReorderingAllowed(true)
+//            setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_slide_out_to_bottom)
             add(requireView().id, nestedFragment.fragment, null)
         }
     }
@@ -153,7 +156,6 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
                 dimmingViewCallback?.let {
                     nestedFragment.screen.sheetBehavior?.removeBottomSheetCallback(it)
                 }
-
                 dismissFromContainer()
             }
             else -> {}
@@ -173,7 +175,7 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
     }
 
     private fun initContainerView() {
-        containerView = FrameLayout(requireContext()).apply {
+        containerView = GestureTransparentFrameLayout(requireContext()).apply {
             // These do not guarantee fullscreen width & height, TODO: find a way to guarantee that
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -185,14 +187,12 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
     }
 
     private fun initDimmingView() {
-        dimmingView = FrameLayout(requireContext()).apply {
+        dimmingView = DimmingView(requireContext(), 0.6F).apply {
             // These do not guarantee fullscreen width & height, TODO: find a way to guarantee that
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            setBackgroundColor(Color.BLACK)
-            alpha = 0.6F
         }
     }
 
