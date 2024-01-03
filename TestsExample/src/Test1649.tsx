@@ -16,7 +16,7 @@ export default function App(): JSX.Element {
     sheetAllowedDetents: 'all',
     sheetLargestUndimmedDetent: 'medium',
     sheetGrabberVisible: false,
-    sheetCornerRadius: -1,
+    sheetCornerRadius: 30,
     sheetExpandsWhenScrolledToEdge: true,
   };
 
