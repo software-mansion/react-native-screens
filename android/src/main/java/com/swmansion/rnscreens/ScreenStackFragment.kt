@@ -233,7 +233,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
 
             coordinatorLayout?.addView(appBarLayout)
-            if (isShadowHidden) {
+            if (isToolbarShadowHidden) {
                 appBarLayout?.targetElevation = 0f
             }
             toolbar?.let { appBarLayout?.addView(it.recycle()) }
@@ -253,7 +253,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     override fun onStop() {
         if (DeviceUtils.isPlatformAndroidTV(context)) {
-            mLastFocusedChild = findLastFocusedChild()
+            lastFocusedChild = findLastFocusedChild()
         }
 
         super.onStop()
