@@ -120,7 +120,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             return null
         }
     private val collapsingToolbarLayout: CollapsingToolbarLayout?
-        get() = screenFragment?.mCollapsingToolbarLayout
+        get() = screenFragment?.collapsingToolbarLayout
 
     fun onUpdate() {
         val stack = screenStack

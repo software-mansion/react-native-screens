@@ -27,11 +27,11 @@ import com.swmansion.rnscreens.utils.DeviceUtils
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
-    var mCollapsingToolbarLayout: CollapsingToolbarLayout? = null
+    var collapsingToolbarLayout: CollapsingToolbarLayout? = null
 
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
-    private var mIsToolbarHidden = false
+    private var isToolbarHidden = false
 
     private var lastFocusedChild: View? = null
 
@@ -47,15 +47,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         )
     }
 
-   override fun removeToolbar() {
-        mIsToolbarHidden = true
+    override fun removeToolbar() {
+        isToolbarHidden = true
 
         // Cleanup all views from toolbar and collapsingToolbarLayout
         toolbar?.removeAllViews()
-        mCollapsingToolbarLayout?.removeAllViews()
+        collapsingToolbarLayout?.removeAllViews()
 
         appBarLayout?.let { appBarLayout ->
-            mCollapsingToolbarLayout?.let { collapsingToolbar ->
+            collapsingToolbarLayout?.let { collapsingToolbar ->
                 if (collapsingToolbar.parent === appBarLayout) {
                     appBarLayout.removeView(collapsingToolbar)
                 }
@@ -63,12 +63,12 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         toolbar = null
-        mCollapsingToolbarLayout = null
+        collapsingToolbarLayout = null
     }
 
-   override fun setToolbar(toolbar: Toolbar) {
-        toolbar = toolbar
-        mIsToolbarHidden = false
+    override fun setToolbar(toolbar: Toolbar) {
+        this.toolbar = toolbar
+        isToolbarHidden = false
 
         if (screen.headerType.isCollapsing) {
             toolbar.layoutParams = CollapsingToolbarLayout.LayoutParams(
@@ -80,7 +80,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         createCollapsingToolbarLayout()
-        mCollapsingToolbarLayout?.apply {
+        collapsingToolbarLayout?.apply {
             addView(toolbar)
             appBarLayout?.addView(this)
         }
@@ -164,7 +164,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
 
             fitsSystemWindows = true
-            mCollapsingToolbarLayout?.let {
+            collapsingToolbarLayout?.let {
                 addView(recycleView(it))
             }
         }
@@ -197,7 +197,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     private fun getHeightOfToolbar(context: Context): Int {
-        if (mIsToolbarHidden) {
+        if (isToolbarHidden) {
             return CoordinatorLayout.LayoutParams.WRAP_CONTENT
         }
 
@@ -224,7 +224,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             else -> R.attr.collapsingToolbarLayoutStyle
         }
 
-        mCollapsingToolbarLayout = context?.let { CollapsingToolbarLayout(it, null, toolbarStyle) }?.apply {
+        collapsingToolbarLayout = context?.let { CollapsingToolbarLayout(it, null, toolbarStyle) }?.apply {
             layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT)
                 .apply {
                     scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
