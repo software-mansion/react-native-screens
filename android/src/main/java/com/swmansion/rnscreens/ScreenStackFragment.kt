@@ -1,6 +1,5 @@
 package com.swmansion.rnscreens
 
-import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
@@ -148,19 +147,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 //        return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
-    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
-        return super.onCreateAnimator(transit, enter, nextAnim)
-    }
-
-    override fun onStart() {
-        lastFocusedChild?.requestFocus()
-        super.onStart()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
     internal fun onSheetCornerRadiusChange() {
         (screen.background as MaterialShapeDrawable).shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
             setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
@@ -214,10 +200,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         }
 
-//        if (screen.expectsDimmingViewUnderneath()) {
-//            coordinatorLayout.setBackgroundColor(Color.argb(128, 0, 0, 0))
-//        }
-
         coordinatorLayout.addView(screen.recycle())
 
         if (screen.stackPresentation != Screen.StackPresentation.MODAL && screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
@@ -232,7 +214,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 )
             }
 
-            coordinatorLayout?.addView(appBarLayout)
+            coordinatorLayout.addView(appBarLayout)
             if (isToolbarShadowHidden) {
                 appBarLayout?.targetElevation = 0f
             }
@@ -358,11 +340,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
             val fakeAnimation = ScreensAnimation(fragment).apply { duration = animation.duration }
-
-            if (fragment.screen.stackPresentation == Screen.StackPresentation.FORM_SHEET && fragment.isAdded) {
-                this.clearAnimation()
-                fragment.screen.clearAnimation()
-            }
 
             if (animation is AnimationSet && !fragment.isRemoving) {
                 animation.apply {
