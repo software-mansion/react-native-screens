@@ -27,7 +27,6 @@ import com.google.android.material.R as MaterialR
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
-    private var toolbar: Toolbar? = null
     var collapsingToolbarLayout: CollapsingToolbarLayout? = null
 
     private var isToolbarShadowHidden = false
@@ -52,7 +51,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         isToolbarHidden = true
 
         // Cleanup all views from toolbar and collapsingToolbarLayout
-        toolbar?.removeAllViews()
         collapsingToolbarLayout?.removeAllViews()
 
         appBarLayout?.let { appBarLayout ->
@@ -63,12 +61,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         }
 
-        toolbar = null
         collapsingToolbarLayout = null
     }
 
     override fun setToolbar(toolbar: Toolbar) {
-        this.toolbar = toolbar
         isToolbarHidden = false
 
         if (screen.headerType.isCollapsing) {
