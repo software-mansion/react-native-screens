@@ -14,7 +14,7 @@ export default function App(): JSX.Element {
   const initialScreenOptions: NativeStackNavigationOptions = {
     stackPresentation: 'formSheet',
     sheetAllowedDetents: 'all',
-    sheetLargestUndimmedDetent: 'medium',
+    sheetLargestUndimmedDetent: 'large',
     sheetGrabberVisible: false,
     sheetCornerRadius: 16,
     sheetExpandsWhenScrolledToEdge: true,

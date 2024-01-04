@@ -179,6 +179,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.sheetDetent = convertDetentStringToFraction(value)
     }
 
+    @ReactProp(name = "sheetLargestUndimmedDetent")
     override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) {
         view.sheetLargestUndimmedState = when (value) {
             "large" -> BottomSheetBehavior.STATE_EXPANDED

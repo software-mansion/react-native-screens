@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
 import com.facebook.react.uimanager.events.EventDispatcher
+import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
 import com.swmansion.rnscreens.events.ScreenDisappearEvent
@@ -273,7 +275,11 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         // since we subscribe to parent's animation start/end and dispatch events in child from there
         // check for `isTransitioning` should be enough since the child's animation should take only
         // 20ms due to always being `StackAnimation.NONE` when nested stack being pushed
-        val parent = parentFragment
+        val parent = if (parentFragment is DimmingFragment) {
+            parentFragment?.parentFragment
+        } else {
+            parentFragment
+        }
         if (parent == null || (parent is ScreenFragment && !parent.isTransitioning)) {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
@@ -289,6 +295,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                     if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
                 }
             } else {
+                Log.d(TAG, "dispatchViewAnimationEvent(animationEnd: $animationEnd)")
                 if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
             }
         }
@@ -297,6 +304,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     override fun onDestroy() {
         super.onDestroy()
         val container = screen.container
+        Log.d(TAG, "onDestroy")
         if (container == null || !container.hasScreen(this)) {
             // we only send dismissed even when the screen has been removed from its container
             val screenContext = screen.context
@@ -308,5 +316,9 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
             }
         }
         childScreenContainers.clear()
+    }
+
+    companion object {
+        const val TAG = "ScreenFragment"
     }
 }

@@ -173,7 +173,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             behavior = if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
                 BottomSheetBehavior<FrameLayout>().apply {
                     isHideable = true
-                    state = BottomSheetBehavior.STATE_COLLAPSED
+                    state = screen.sheetInitialDetent
                     addBottomSheetCallback(bottomSheetCallback)
                     isDraggable = true
                     isFitToContents = false

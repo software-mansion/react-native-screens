@@ -3,9 +3,7 @@ package com.swmansion.rnscreens.bottomsheet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactCompoundViewGroup

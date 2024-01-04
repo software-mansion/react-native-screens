@@ -225,11 +225,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                     }
                 }
             }
-//            if (shouldUseOpenAnimation) {
-//                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//            } else {
-//                it.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-//            }
+
             // animation logic end
             goingForward = shouldUseOpenAnimation
 

@@ -20,6 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.swmansion.rnscreens.R
@@ -29,9 +30,10 @@ import com.swmansion.rnscreens.ScreenFragment
 import com.swmansion.rnscreens.ScreenFragmentWrapper
 import com.swmansion.rnscreens.ScreenStack
 import com.swmansion.rnscreens.ScreenStackFragmentWrapper
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.maybeBgColor
 
-class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragment(), LifecycleEventObserver, ScreenStackFragmentWrapper,
+class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), LifecycleEventObserver, ScreenStackFragmentWrapper,
     Animation.AnimationListener {
     private lateinit var dimmingView: DimmingView
     private lateinit var containerView: GestureTransparentFrameLayout
@@ -49,11 +51,10 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
     private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, initialState: Int) : BottomSheetCallback() {
         private var needsDirectionUpdate = true
         private var dimmedAlpha = 0.6F
-        private var transparentColor = Color.argb(0, 0, 0, 0)
-        private var dimmedColor = Color.argb(230, 0, 0, 0)
         private var lastStableState: Int = initialState
         private var lastSlideOffset: Float = 0.0F
         private var animDirection: AnimDirection = AnimDirection.UP
+        private var largestUndimmedOffset: Float = 0F
         private var animator = ValueAnimator.ofFloat(0F, dimmedAlpha).apply {
             duration = 1
             addUpdateListener {
@@ -64,6 +65,13 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_DRAGGING || newState == BottomSheetBehavior.STATE_SETTLING) {
                 needsDirectionUpdate = true
+                largestUndimmedOffset = when (screen.sheetLargestUndimmedState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> -1F
+                    BottomSheetBehavior.STATE_COLLAPSED -> 0F
+                    BottomSheetBehavior.STATE_EXPANDED -> 1F
+                    else -> -1F
+                }
+                screen.sheetBehavior?.calculateSlideOffset()
             } else {
                 lastStableState = newState
             }
@@ -75,22 +83,22 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
             animDirection = if (slideOffset > lastSlideOffset) AnimDirection.UP else AnimDirection.DOWN
             lastSlideOffset = slideOffset
 
-//            screen.sheetBehavior?.
-            if (shouldAnimate()) {
-                animator!!.setCurrentFraction(slideOffset / 0.2F)
+            if (largestUndimmedOffset != -1F && slideOffset > largestUndimmedOffset) {
+                animator!!.setCurrentFraction(slideOffset)
             }
-        }
-
-        private fun createValueAnimator(direction: AnimDirection): ValueAnimator {
-            val (startValue, targetValue) = if (direction == AnimDirection.UP) { Pair(viewToAnimate.maybeBgColor()!!, dimmedColor) } else { Pair(viewToAnimate.maybeBgColor()!!, transparentColor) }
-            return ValueAnimator.ofArgb(startValue, targetValue).apply {
-                duration = 1  // Driven manually
-            }
+//            if (shouldAnimate()) {
+//                animator!!.setCurrentFraction(slideOffset)
+//            }
         }
 
         private fun shouldAnimate(): Boolean {
             return !(isStateLessEqualThan(lastStableState, screen.sheetLargestUndimmedState) && animDirection == AnimDirection.DOWN)
 //            return screen.sheetLargestUndimmedState > lastState
+        }
+
+        private fun goesUpwardFromLargestUndimmed(): Boolean {
+
+            return false
         }
 
         private fun directionFromLastState(): AnimDirection = if (lastStableState != BottomSheetBehavior.STATE_EXPANDED) {
@@ -103,21 +111,6 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
             UP, DOWN
         }
 
-        private fun isStateLessEqualThan(state: Int, otherState: Int): Boolean {
-            if (state == otherState) {
-                return true
-            }
-            if (state != BottomSheetBehavior.STATE_HALF_EXPANDED && otherState != BottomSheetBehavior.STATE_HALF_EXPANDED) {
-                return state > otherState
-            }
-            if (state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
-                return otherState == BottomSheetBehavior.STATE_EXPANDED
-            }
-            if (state == BottomSheetBehavior.STATE_COLLAPSED) {
-                return otherState != BottomSheetBehavior.STATE_HIDDEN
-            }
-            return false
-        }
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
@@ -130,6 +123,11 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
         savedInstanceState: Bundle?
     ): View {
         initViewHierarchy()
+        if (isStateLessEqualThan(screen.sheetInitialDetent, screen.sheetLargestUndimmedState)) {
+            dimmingView.alpha = 0.0F
+        } else {
+            dimmingView.alpha = 0.6F
+        }
         return containerView
     }
 
@@ -156,16 +154,21 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
                 dimmingViewCallback?.let {
                     nestedFragment.screen.sheetBehavior?.removeBottomSheetCallback(it)
                 }
-                dismissFromContainer()
+                selfDismiss(emitDismissedEvent = true)
             }
             else -> {}
         }
     }
 
-    private fun dismissWithAnimation() {
-        val animation = AnimationUtils.loadAnimation(context, R.anim.rns_fade_out)
-        animation.setAnimationListener(this)
-        requireView().startAnimation(animation)
+    private fun selfDismiss(emitDismissedEvent: Boolean = false) {
+        if (emitDismissedEvent) {
+            val reactContext = nestedFragment.screen.reactContext
+            val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
+            UIManagerHelper
+                .getEventDispatcherForReactTag(reactContext, screen.id)
+                ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
+        }
+        dismissFromContainer()
     }
 
     private fun initViewHierarchy() {
@@ -290,5 +293,21 @@ class DimmingFragment(private val nestedFragment: ScreenFragmentWrapper) : Fragm
 
     companion object {
         const val TAG = "DimmingFragment"
+
+        fun isStateLessEqualThan(state: Int, otherState: Int): Boolean {
+            if (state == otherState) {
+                return true
+            }
+            if (state != BottomSheetBehavior.STATE_HALF_EXPANDED && otherState != BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                return state > otherState
+            }
+            if (state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+                return otherState == BottomSheetBehavior.STATE_EXPANDED
+            }
+            if (state == BottomSheetBehavior.STATE_COLLAPSED) {
+                return otherState != BottomSheetBehavior.STATE_HIDDEN
+            }
+            return false
+        }
     }
 }
