@@ -59,7 +59,7 @@ type ReplaceAnimation = 'pop' | 'push';
 
 type SheetDetentTypes = 'large' | 'medium' | 'all';
 
-type HeaderType = 'center-aligned' | 'small' | 'medium' | 'large';
+type HeaderType = 'small' | 'medium' | 'large';
 
 export interface NativeProps extends ViewProps {
   onAppear?: BubblingEventHandler<ScreenEvent>;

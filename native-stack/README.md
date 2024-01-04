@@ -155,7 +155,6 @@ Style object for header large title. Supported properties:
 
 The type of the header. Defaults to `small`. Possible values are:
 
-- `center-aligned` - Small header with centered title.
 - `small`
 - `medium`
 - `large`
@@ -189,6 +188,16 @@ Tint color for the header. Changes the color of the back button and title.
 #### `headerTitle`
 
 String to be used by the header as title string. Defaults to scene `title`.
+
+#### `headerTitleAlign`
+
+Alignment of the title on the header. Possible values are:
+
+- `left` - aligns title to the left side of the header.
+- `center` - aligns title to the center on the header.
+
+Defaults to `left` on platforms other than iOS.
+Not supported on iOS. It's always `center` on iOS and cannot be changed.
 
 #### `headerTitleStyle`
 

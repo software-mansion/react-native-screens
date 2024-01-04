@@ -40,6 +40,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private var isShadowHidden = false
     private var isDestroyed = false
     private var backButtonInCustomView = false
+    private var isTitleCentered = false
     private var isTopInsetEnabled = true
     private var isTranslucent = false
     private var tintColor = 0
@@ -213,7 +214,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         collapsingToolbarLayout?.isTitleEnabled = screen?.headerType?.isCollapsing == true
 
         // centering title
-        toolbar.isTitleCentered = screen?.headerType == Screen.HeaderType.CenterAligned
+        toolbar.isTitleCentered = isTitleCentered
 
         if (TextUtils.isEmpty(title)) {
             // if title is empty we set start  navigation inset to 0 to give more space to custom rendered
@@ -348,6 +349,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
     fun setTitle(title: String?) {
         this.title = title
+    }
+
+    fun setTitleCentered(titleCentered: Boolean) {
+        isTitleCentered = titleCentered
     }
 
     fun setTitleFontFamily(titleFontFamily: String?) {

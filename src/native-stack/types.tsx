@@ -219,7 +219,6 @@ export type NativeStackNavigationOptions = {
    * Defaults to `small`.
    *
    * Available values:
-   * - `center-aligned` - the title of the header will be centered.
    * - `small` - sets small size of header.
    * - `medium` - sets medium size of header.
    * - `large` - sets large size of header.
@@ -228,7 +227,7 @@ export type NativeStackNavigationOptions = {
    * For the best experience of using `medium` and `large` header types it is recommended to have Material 3 bundled into the application.
    * @platform android
    */
-  headerType?: 'center-aligned' | 'small' | 'medium' | 'large';
+  headerType?: 'small' | 'medium' | 'large';
   /**
    * Function which returns a React Element to display on the left side of the header.
    */
@@ -258,6 +257,14 @@ export type NativeStackNavigationOptions = {
    * String to display in the header as title. Defaults to scene `title`.
    */
   headerTitle?: string;
+  /**
+   * How to align the the header title.
+   * Defaults to `left` on platforms other than iOS.
+   *
+   * Not supported on iOS. It's always `center` on iOS and cannot be changed.
+   * @platform android
+   */
+  headerTitleAlign?: 'left' | 'center';
   /**
    * Style object for header title. Supported properties:
    * - fontFamily

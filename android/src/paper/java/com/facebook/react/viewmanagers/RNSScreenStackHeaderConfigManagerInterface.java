@@ -31,6 +31,7 @@ public interface RNSScreenStackHeaderConfigManagerInterface<T extends View> {
   void setLargeTitleColor(T view, @Nullable Integer value);
   void setTranslucent(T view, boolean value);
   void setTitle(T view, @Nullable String value);
+  void setTitleAlign(T view, @Nullable String value);
   void setTitleFontFamily(T view, @Nullable String value);
   void setTitleFontSize(T view, int value);
   void setTitleFontWeight(T view, @Nullable String value);

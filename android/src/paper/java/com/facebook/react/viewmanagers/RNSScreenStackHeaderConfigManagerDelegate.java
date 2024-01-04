@@ -76,6 +76,9 @@ public class RNSScreenStackHeaderConfigManagerDelegate<T extends View, U extends
       case "title":
         mViewManager.setTitle(view, value == null ? null : (String) value);
         break;
+      case "titleAlign":
+        mViewManager.setTitleAlign(view, value == null ? null : (String) value);
+        break;
       case "titleFontFamily":
         mViewManager.setTitleFontFamily(view, value == null ? null : (String) value);
         break;

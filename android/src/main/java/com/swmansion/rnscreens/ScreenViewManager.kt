@@ -95,7 +95,6 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     @ReactProp(name = "headerType")
     override fun setHeaderType(view: Screen, type: String?) {
         view.headerType = when (type) {
-            "center-aligned" -> Screen.HeaderType.CenterAligned
             "medium" -> Screen.HeaderType.Medium
             "large" -> Screen.HeaderType.Large
             else -> Screen.HeaderType.Small

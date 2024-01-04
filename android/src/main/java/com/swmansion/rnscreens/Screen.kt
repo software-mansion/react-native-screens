@@ -272,7 +272,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     }
 
     enum class HeaderType(val isCollapsing: Boolean) {
-        CenterAligned(false),
         Small(false),
         Medium(true),
         Large(true);

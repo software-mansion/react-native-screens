@@ -203,7 +203,6 @@ export interface ScreenProps extends ViewProps {
    * Defaults to `small`.
    *
    * Available values:
-   * - `center-aligned` - the title of the header will be centered.
    * - `small` - sets small size of header.
    * - `medium` - sets medium size of header.
    * - `large` - sets large size of header.
@@ -212,7 +211,7 @@ export interface ScreenProps extends ViewProps {
    * It is also recommended to have Material 3 bundled into the application for the best experience of using `medium` and `large` header types.
    * @platform android
    */
-  headerType?: 'center-aligned' | 'small' | 'medium' | 'large';
+  headerType?: 'small' | 'medium' | 'large';
   /**
    * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
@@ -527,6 +526,11 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * String that can be displayed in the header as a fallback for `headerTitle`.
    */
   title?: string;
+  /**
+   * Allows for aligning the title on the header.
+   * @platform android
+   */
+  titleAlign?: 'left' | 'center';
   /**
    * Allows for setting text color of the title.
    */
