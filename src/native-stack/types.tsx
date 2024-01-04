@@ -262,8 +262,7 @@ export type NativeStackNavigationOptions = {
    * - `left` - aligns title to the left side of the header.
    * - `center` - aligns title to the center on the header.
    *
-   * Defaults to `left` on platforms other than iOS.
-   * Not supported on iOS. It's always `center` on iOS and cannot be changed.
+   * Defaults to `left`. On iOS it's always `center` and cannot be changed.
    * @platform android
    */
   headerTitleAlign?: 'left' | 'center';

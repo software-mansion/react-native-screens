@@ -163,6 +163,20 @@ export interface ScreenProps extends ViewProps {
    */
   nativeBackButtonDismissalEnabled?: boolean;
   /**
+   * Sets the type of the header. Only supported on Android.
+   * Defaults to `small`.
+   *
+   * Available values:
+   * - `small` - sets small size of header.
+   * - `medium` - sets medium size of header.
+   * - `large` - sets large size of header.
+   *
+   * For medium and large headers to collapse on scroll, the content of the screen should be wrapped in a `ScrollView` with property `nestedScrollEnabled` set to true.
+   * It is also recommended to have Material 3 bundled into the application for the best experience of using `medium` and `large` header types.
+   * @platform android
+   */
+  headerType?: 'small' | 'medium' | 'large';
+  /**
    * Sets the navigation bar color. Defaults to initial status bar color.
    *
    * @platform android
@@ -198,20 +212,6 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called after swipe back is canceled.
    */
   onGestureCancel?: (e: NativeSyntheticEvent<null>) => void;
-  /**
-   * Customize the type of the header. Only supported on Android.
-   * Defaults to `small`.
-   *
-   * Available values:
-   * - `small` - sets small size of header.
-   * - `medium` - sets medium size of header.
-   * - `large` - sets large size of header.
-   *
-   * For medium and large headers to collapse on scroll, the content of the screen should be wrapped in a `ScrollView` with property `nestedScrollEnabled` set to true.
-   * It is also recommended to have Material 3 bundled into the application for the best experience of using `medium` and `large` header types.
-   * @platform android
-   */
-  headerType?: 'small' | 'medium' | 'large';
   /**
    * An internal callback that gets called when the native header back button is clicked on Android and `enableNativeBackButtonDismissal` is set to `false`. It dismises the screen using `navigation.pop()`.
    *
