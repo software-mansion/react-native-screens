@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -295,7 +294,6 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                     if (animationEnd) dispatchOnAppear() else dispatchOnWillAppear()
                 }
             } else {
-                Log.d(TAG, "dispatchViewAnimationEvent(animationEnd: $animationEnd)")
                 if (animationEnd) dispatchOnDisappear() else dispatchOnWillDisappear()
             }
         }
@@ -304,8 +302,8 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     override fun onDestroy() {
         super.onDestroy()
         val container = screen.container
-        Log.d(TAG, "onDestroy")
-        if (container == null || !container.hasScreen(this)) {
+//        Log.d(TAG, "onDestroy")
+        if (container == null || !container.hasScreen(this.screen.fragmentWrapper)) {
             // we only send dismissed even when the screen has been removed from its container
             val screenContext = screen.context
             if (screenContext is ReactContext) {

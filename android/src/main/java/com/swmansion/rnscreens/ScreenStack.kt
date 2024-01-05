@@ -113,6 +113,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         var visibleBottom: ScreenFragmentWrapper? =
             null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
+//        for (wrapper in screenWrappers.reversed()) {
+//
+//        }
         for (i in screenWrappers.indices.reversed()) {
             val screen = getScreenFragmentWrapperAt(i)
             if (!dismissedWrappers.contains(screen)) {

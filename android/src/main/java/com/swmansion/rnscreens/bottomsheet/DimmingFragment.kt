@@ -161,14 +161,14 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
     }
 
     private fun selfDismiss(emitDismissedEvent: Boolean = false) {
-        if (emitDismissedEvent) {
-            val reactContext = nestedFragment.screen.reactContext
-            val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
-            UIManagerHelper
-                .getEventDispatcherForReactTag(reactContext, screen.id)
-                ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
-        }
         if (!this.isRemoving) {
+            if (emitDismissedEvent) {
+                val reactContext = nestedFragment.screen.reactContext
+                val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
+                UIManagerHelper
+                    .getEventDispatcherForReactTag(reactContext, screen.id)
+                    ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
+            }
             dismissFromContainer()
         }
     }
