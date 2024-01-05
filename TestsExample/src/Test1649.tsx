@@ -55,6 +55,14 @@ export default function App(): JSX.Element {
             ...initialScreenOptions,
           }}
         />
+        <Stack.Screen
+          name="Third"
+          component={Third}
+          options={{
+            // stackPresentation: 'modal',
+            fullScreenSwipeEnabled: true,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -81,6 +89,34 @@ function Second({
   const navigateToFirstCallback = () => {
     console.log('Navigate to first callback called');
     navigation.navigate('First');
+  };
+
+  return (
+    <View>
+      <Button
+        title="Open the sheet"
+        onPress={() => navigation.navigate('SheetScreen')}
+      />
+      <Button
+        title="Open the sheet with ScrollView"
+        onPress={() => navigation.navigate('SheetScreenWithScrollView')}
+      />
+      <Button
+        title="Go back to first screen"
+        onPress={navigateToFirstCallback}
+      />
+    </View>
+  );
+}
+
+function Third({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
+  const navigateToFirstCallback = () => {
+    console.log('Navigate Back');
+    navigation.goBack();
   };
 
   return (
@@ -136,6 +172,10 @@ function SheetScreen({
       <Button
         title="Tap me for the second screen"
         onPress={() => navigation.navigate('Second')}
+      />
+      <Button
+        title="Tap me for the third screen"
+        onPress={() => navigation.navigate('Third')}
       />
       <Button
         title="Change the corner radius"

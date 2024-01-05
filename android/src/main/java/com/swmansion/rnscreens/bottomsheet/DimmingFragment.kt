@@ -168,7 +168,9 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
                 .getEventDispatcherForReactTag(reactContext, screen.id)
                 ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
         }
-        dismissFromContainer()
+        if (!this.isRemoving) {
+            dismissFromContainer()
+        }
     }
 
     private fun initViewHierarchy() {

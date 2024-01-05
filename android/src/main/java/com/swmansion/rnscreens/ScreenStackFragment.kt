@@ -167,6 +167,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 //            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
 //        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
 
+//        val displayMetrics = DisplayMetrics()
+//        WindowManager.defaultDisplay.getMetrics(displayMetrics)
+//        val height = displayMetrics.heightPixels
+//        val width = displayMetrics.widthPixels
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply {
