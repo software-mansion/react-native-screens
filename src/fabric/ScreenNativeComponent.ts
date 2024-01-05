@@ -71,9 +71,11 @@ export interface NativeProps extends ViewProps {
   onGestureCancel?: BubblingEventHandler<ScreenEvent>;
   sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>;
   sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>;
+  sheetCustomLargestUndimmedDetent?: WithDefault<Int32, -1>;
   sheetGrabberVisible?: WithDefault<boolean, false>;
   sheetCornerRadius?: WithDefault<Float, -1.0>;
   sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>;
+  sheetCustomDetents?: number[];
   customAnimationOnSwipe?: boolean;
   fullScreenSwipeEnabled?: boolean;
   homeIndicatorHidden?: boolean;

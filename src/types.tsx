@@ -93,6 +93,7 @@ export type GestureResponseDistanceType = {
 };
 
 export type SheetDetentTypes = 'medium' | 'large' | 'all';
+
 export type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 export interface ScreenProps extends ViewProps {
@@ -287,6 +288,27 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   sheetCornerRadius?: number;
+  /**
+   * Array of real numbers in range [0, 1], each of which describes detent as a fraction
+   * of maximum detent height.
+   *
+   * This array *must* be sorted in ascending order.
+   *
+   * This prop takes precedence over `sheetAllowedDetents` if both are set.
+   *
+   * Defaults to an empty array.
+   *
+   * @platform ios
+   */
+  sheetCustomDetents?: number[];
+  /**
+   * Index of largest detent level in `sheetCustomDetents` array which should not have dimming view underneath.
+   *
+   * Takes precedence over `sheetLargestUndimmedDetent` if both are set.
+   *
+   * @platform ios
+   */
+  sheetCustomLargestUndimmedDetent?: number;
   /**
    * Boolean indicating whether the sheet shows a grabber at the top.
    * Works only when `stackPresentation` is set to `formSheet`.

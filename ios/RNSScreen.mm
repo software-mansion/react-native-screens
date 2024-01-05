@@ -22,6 +22,7 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
+#import <React/RCTUIManagerUtils.h>
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -31,14 +32,15 @@ namespace react = facebook::react;
 
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
-    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
+    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
 #else
-    <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
+    <UIAdaptivePresentationControllerDelegate, RCTInvalidating, CAAnimationDelegate>
 #endif
 @end
 
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
+  CADisplayLink *_displayLink;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -88,7 +90,10 @@ namespace react = facebook::react;
   _hasHomeIndicatorHiddenSet = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
+  _sheetCustomDetents = [NSArray array];
+  _sheetCustomLargestUndimmedDetent = nil;
 #endif // !TARGET_OS_TV
+  _displayLink = nil;
 }
 
 - (UIViewController *)reactViewController
@@ -107,14 +112,56 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
-    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
-    _state->updateState(std::move(newState));
-    UINavigationController *navctr = _controller.navigationController;
-    [navctr.view setNeedsLayout];
+    CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
+    if (sizeAnimation != nil && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
+      CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
+      callbackOnlyAnimation.duration = sizeAnimation.duration;
+      callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
+      callbackOnlyAnimation.delegate = self;
+      [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
+    } else {
+      auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
+      _state->updateState(std::move(newState));
+      UINavigationController *navctr = _controller.navigationController;
+      [navctr.view setNeedsLayout];
+    }
   }
 #else
-  [_bridge.uiManager setSize:self.bounds.size forView:self];
+  CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
+  if (sizeAnimation) {
+    CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
+    callbackOnlyAnimation.duration = sizeAnimation.duration;
+    callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
+    callbackOnlyAnimation.delegate = self;
+    [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
+  } else {
+    [_bridge.uiManager setSize:self.bounds.size forView:self];
+  }
 #endif
+}
+
+- (void)displayLinkCallback
+{
+  CAAnimation *sizeAnimation = [self.layer animationForKey:@"rns_sheet_animation"];
+  CGRect bounds = self.layer.presentationLayer.bounds;
+  [_bridge.uiManager setSize:bounds.size forView:self];
+}
+
+- (void)animationDidStart:(CAAnimation *)animation
+{
+  if (_displayLink == nil) {
+    _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback)];
+    [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+  } else if (_displayLink.isPaused) {
+    [_displayLink setPaused:NO];
+  }
+}
+
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
+{
+  if (_displayLink != nil) {
+    [_displayLink setPaused:YES];
+  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
@@ -604,58 +651,167 @@ namespace react = facebook::react;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
+- (void)setPropertyForSheet:(UISheetPresentationController *)sheet
+                  withBlock:(void (^)(void))block
+                    animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (animate) {
+    [sheet animateChanges:block];
+  } else {
+    block();
+  }
+}
+
+- (void)setAllowedDetentsForSheet:(UISheetPresentationController *)sheet
+                               to:(NSArray<UISheetPresentationControllerDetent *> *)detents
+                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  [self setPropertyForSheet:sheet
+                  withBlock:^{
+                    sheet.detents = detents;
+                  }
+                    animate:animate];
+}
+
+- (void)setSelectedDetentForSheet:(UISheetPresentationController *)sheet
+                               to:(UISheetPresentationControllerDetentIdentifier)detent
+                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (sheet.selectedDetentIdentifier != detent) {
+    [self setPropertyForSheet:sheet
+                    withBlock:^{
+                      sheet.selectedDetentIdentifier = detent;
+                    }
+                      animate:animate];
+  }
+}
+
+- (void)setCornerRadiusForSheet:(UISheetPresentationController *)sheet
+                             to:(CGFloat)radius
+                        animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (sheet.preferredCornerRadius != radius) {
+    [self setPropertyForSheet:sheet
+                    withBlock:^{
+                      sheet.preferredCornerRadius =
+                          radius < 0 ? UISheetPresentationControllerAutomaticDimension : radius;
+                    }
+                      animate:animate];
+  }
+}
+
+- (void)setGrabberVisibleForSheet:(UISheetPresentationController *)sheet
+                               to:(BOOL)visible
+                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (sheet.prefersGrabberVisible != visible) {
+    [self setPropertyForSheet:sheet
+                    withBlock:^{
+                      sheet.prefersGrabberVisible = visible;
+                    }
+                      animate:animate];
+  }
+}
+
+- (void)setLargestUndimmedDetentForSheet:(UISheetPresentationController *)sheet
+                                      to:(UISheetPresentationControllerDetentIdentifier)detent
+                                 animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (sheet.largestUndimmedDetentIdentifier != detent) {
+    [self setPropertyForSheet:sheet
+                    withBlock:^{
+                      sheet.largestUndimmedDetentIdentifier = detent;
+                    }
+                      animate:animate];
+  }
+}
+
 #if !TARGET_OS_TV
 /**
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
  * guarantee that values of all related props had been updated earlier.
  */
-- (void)updatePresentationStyle
+- (void)updateFormSheetPresentationStyle
 {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
   if (@available(iOS 15.0, *)) {
     UISheetPresentationController *sheet = _controller.sheetPresentationController;
-    if (_stackPresentation == RNSScreenStackPresentationFormSheet && sheet != nil) {
-      sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
-      sheet.prefersGrabberVisible = _sheetGrabberVisible;
-      sheet.preferredCornerRadius =
-          _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
-
-      if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
-        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
-      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
-        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
-        sheet.largestUndimmedDetentIdentifier = nil;
-      } else {
-        RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
+    if (_stackPresentation != RNSScreenStackPresentationFormSheet || sheet == nil) {
+      return;
+    }
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+    if (_sheetCustomDetents.count > 0) {
+      if (@available(iOS 16.0, *)) {
+        [self setAllowedDetentsForSheet:sheet to:[self detentsFromMaxHeightFractions:_sheetCustomDetents] animate:NO];
       }
-
+    } else
+#endif // Check for iOS >= 16
+    {
       if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
-        sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
-        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
-          [sheet animateChanges:^{
-            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
-          }];
-        }
+        [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
+        [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
       } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
-        sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
-        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
-          [sheet animateChanges:^{
-            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-          }];
-        }
+        [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.largeDetent ] animate:YES];
+        [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
       } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
-        sheet.detents =
-            @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent ];
-      } else {
-        RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
+        [self setAllowedDetentsForSheet:sheet
+                                     to:@[
+                                       UISheetPresentationControllerDetent.mediumDetent,
+                                       UISheetPresentationControllerDetent.largeDetent
+                                     ]
+                                animate:YES];
       }
     }
+
+    sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
+    [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
+    [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
+
+    int detentIndex = _sheetCustomLargestUndimmedDetent != nil ? _sheetCustomLargestUndimmedDetent.intValue : -1;
+    if (detentIndex != -1 && _sheetCustomDetents.count > 0) {
+      if (detentIndex >= 0 && detentIndex < _sheetCustomDetents.count) {
+        [self setLargestUndimmedDetentForSheet:sheet to:_sheetCustomLargestUndimmedDetent.stringValue animate:YES];
+      } else {
+        [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+      }
+    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
+      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
+    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
+      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
+      [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+    } else {
+      RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
+    }
   }
-#endif // Check for max allowed iOS version
+#endif // Check for iOS >= 15
 }
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
+    API_AVAILABLE(ios(16.0))
+{
+  NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
+      [NSMutableArray arrayWithCapacity:fractions.count];
+  int detentIndex = 0;
+  for (NSNumber *frac in fractions) {
+    NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
+    [customDetents addObject:[UISheetPresentationControllerDetent
+                                 customDetentWithIdentifier:ident
+                                                   resolver:^CGFloat(
+                                                       id<UISheetPresentationControllerDetentResolutionContext> ctx) {
+                                                     return ctx.maximumDetentValue * frac.floatValue;
+                                                   }]];
+    ++detentIndex;
+  }
+  return customDetents;
+}
+#endif // Check for iOS >= 16
+
 #endif // !TARGET_OS_TV
 
 #pragma mark - Fabric specific
@@ -792,6 +948,16 @@ namespace react = facebook::react;
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
   }
 
+  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
+    if (newScreenProps.sheetCustomDetents != oldScreenProps.sheetCustomDetents) {
+      [self setSheetCustomDetents:[RNSConvert arrayFromVector:newScreenProps.sheetCustomDetents]];
+    }
+    if (newScreenProps.sheetCustomLargestUndimmedDetent != oldScreenProps.sheetCustomLargestUndimmedDetent) {
+      [self
+          setSheetCustomLargestUndimmedDetent:[NSNumber numberWithInt:newScreenProps.sheetCustomLargestUndimmedDetent]];
+    }
+  }
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -822,7 +988,7 @@ namespace react = facebook::react;
 {
   [super finalizeUpdates:updateMask];
 #if !TARGET_OS_TV
-  [self updatePresentationStyle];
+  [self updateFormSheetPresentationStyle];
 #endif // !TARGET_OS_TV
 }
 
@@ -833,7 +999,9 @@ namespace react = facebook::react;
 {
   [super didSetProps:changedProps];
 #if !TARGET_OS_TV
-  [self updatePresentationStyle];
+  if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    [self updateFormSheetPresentationStyle];
+  }
 #endif // !TARGET_OS_TV
 }
 
@@ -861,6 +1029,9 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _controller = nil;
+  if (_displayLink != nil) {
+    [_displayLink invalidate];
+  }
 }
 #endif
 
@@ -1487,9 +1658,11 @@ RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 
 RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, RNSScreenDetentType);
 RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, RNSScreenDetentType);
+RCT_EXPORT_VIEW_PROPERTY(sheetCustomLargestUndimmedDetent, NSNumber *);
 RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(sheetCustomDetents, NSArray<NSNumber *> *);
 #endif
 
 #if !TARGET_OS_TV

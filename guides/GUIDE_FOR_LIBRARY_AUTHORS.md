@@ -143,6 +143,7 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+
 ### `sheetAllowedDetents` (iOS only)
 
 Describes heights where a sheet can rest. 
@@ -171,6 +172,24 @@ Works only when `stackPresentation` is set to `formSheet`.
 If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
 
 Defaults to system default.
+
+### `sheetCustomDetents` (iOS only)
+
+Array of real numbers in range [0, 1], each of which describes detent as a fraction
+of maximum detent height.
+
+This array *must* be sorted in ascending order.
+
+This prop takes precedence over `sheetAllowedDetents` if both are set.
+
+Defaults to an empty array.
+
+### `sheetCustomLargestUndimmedDetent` (iOS only)
+
+Index of largest detent level in `sheetCustomDetents` array which should not have
+dimming view underneath.
+
+This prop takes precedence over `sheetLargestUndimmedDetent` if both are set.
 
 ### `sheetGrabberVisible` (iOS only)
 

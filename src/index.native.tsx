@@ -272,9 +272,11 @@ class InnerScreen extends React.Component<ScreenProps> {
     const {
       sheetAllowedDetents = 'large',
       sheetLargestUndimmedDetent = 'all',
+      sheetCustomLargestUndimmedDetent = -1,
       sheetGrabberVisible = false,
       sheetCornerRadius = -1.0,
       sheetExpandsWhenScrolledToEdge = true,
+      sheetCustomDetents = [],
     } = rest;
 
     if (enabled && isPlatformSupported) {
@@ -319,9 +321,11 @@ class InnerScreen extends React.Component<ScreenProps> {
             activityState={activityState}
             sheetAllowedDetents={sheetAllowedDetents}
             sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+            sheetCustomLargestUndimmedDetent={sheetCustomLargestUndimmedDetent}
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
+            sheetCustomDetents={sheetCustomDetents}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,

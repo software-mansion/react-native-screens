@@ -327,17 +327,23 @@ export type NativeStackNavigationOptions = {
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * This prop can be set either to string value:
+   *
+   * - `large` - only large detent level will be allowed (exact detent is defined by system)
+   * - `medium` - only medium detent level will be allowed (exact detent is defined by system)
+   * - `all` - all detent levels will be allowed (exact detents are defined by system)
+   *
+   * or to an array of real numbers in range [0, 1], each of which describes detent
+   * as a fraction of maximum detent height.
+   *
+   * Please note that the array *must* be sorted in ascending order.
+   *
    * Defaults to `large`.
-   *
-   * Available values:
-   *
-   * - `large` - only large detent level will be allowed
-   * - `medium` - only medium detent level will be allowed
-   * - `all` - all detent levels will be allowed
    *
    * @platform ios
    */
-  sheetAllowedDetents?: SheetDetentTypes;
+  sheetAllowedDetents?: SheetDetentTypes | number[];
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -375,11 +381,14 @@ export type NativeStackNavigationOptions = {
    * - `medium` - the view underneath will be dimmed only when detent level is `large`
    * - `all` - the view underneath will be dimmed for any detent level
    *
+   * In case `sheetAllowedDetents` prop is set to an array of numbers, this prop can be set to an index of that array,
+   * indicating last detent level without dimming view underneath.
+   *
    * Defaults to `all`.
    *
    * @platform ios
    */
-  sheetLargestUndimmedDetent?: SheetDetentTypes;
+  sheetLargestUndimmedDetent?: SheetDetentTypes | number;
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
