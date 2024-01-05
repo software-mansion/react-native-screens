@@ -58,6 +58,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     var sheetDetent: SheetDetent? = null
     var sheetLargestUndimmedState: Int = BottomSheetBehavior.STATE_HIDDEN
     var sheetInitialDetent: Int = BottomSheetBehavior.STATE_COLLAPSED
+    var sheetClosesWhenTouchOutside = true
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs

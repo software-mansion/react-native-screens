@@ -14,7 +14,7 @@ export default function App(): JSX.Element {
   const initialScreenOptions: NativeStackNavigationOptions = {
     stackPresentation: 'formSheet',
     sheetAllowedDetents: 'all',
-    sheetLargestUndimmedDetent: 'large',
+    sheetLargestUndimmedDetent: 'medium',
     sheetGrabberVisible: false,
     sheetCornerRadius: 16,
     sheetExpandsWhenScrolledToEdge: true,
@@ -114,9 +114,10 @@ function Third({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
-  const navigateToFirstCallback = () => {
+  const navigateToSecondCallback = () => {
     console.log('Navigate Back');
     navigation.goBack();
+    navigation.navigate('Second');
   };
 
   return (
@@ -130,8 +131,8 @@ function Third({
         onPress={() => navigation.navigate('SheetScreenWithScrollView')}
       />
       <Button
-        title="Go back to first screen"
-        onPress={navigateToFirstCallback}
+        title="Go back to second screen"
+        onPress={navigateToSecondCallback}
       />
     </View>
   );
@@ -175,7 +176,10 @@ function SheetScreen({
       />
       <Button
         title="Tap me for the third screen"
-        onPress={() => navigation.navigate('Third')}
+        onPress={() => {
+          // navigation.goBack();
+          navigation.navigate('Third');
+        }}
       />
       <Button
         title="Change the corner radius"

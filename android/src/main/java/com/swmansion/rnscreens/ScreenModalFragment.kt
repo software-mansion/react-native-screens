@@ -218,7 +218,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     private fun configureDialogAndBehaviour(): BottomSheetDialog {
         sheetDialog = RNSBottomSheetDialog(requireContext(), this)
         sheetDialog.dismissWithAnimation = true
-        sheetDialog.setCanceledOnTouchOutside(false)
+        sheetDialog.setCanceledOnTouchOutside(screen.sheetClosesWhenTouchOutside)
 //        sheetDialog?.window?.setDimAmount(0F)
 
         configureBehaviour()

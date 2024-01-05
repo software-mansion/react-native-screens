@@ -14,8 +14,8 @@ class DimmingView(context: Context, initialAlpha: Float = 0.6F) : ViewGroup(cont
     private var blockGestures = initialAlpha > 0F
 
     init {
-        alpha = initialAlpha
         setBackgroundColor(Color.BLACK)
+        alpha = initialAlpha
     }
 
     override fun setAlpha(alpha: Float) {
@@ -26,7 +26,14 @@ class DimmingView(context: Context, initialAlpha: Float = 0.6F) : ViewGroup(cont
     // This view group is not supposed to have any children, however we need it to be a view group
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) = Unit
 
-    override fun onTouchEvent(event: MotionEvent?) = blockGestures
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        return blockGestures
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return super.onInterceptTouchEvent(ev)
+    }
 
     override fun reactTagForTouch(p0: Float, p1: Float): Int {
         throw IllegalStateException("$TAG should never be asked for the view tag")

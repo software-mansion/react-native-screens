@@ -1,5 +1,4 @@
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.facebook.react.bridge.ReactContext
@@ -24,6 +23,7 @@ class RNSModalRootView(
             jsPointerDispatcher = JSPointerDispatcher(this)
         }
     }
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         if (changed) {
             // This view is used right now only in ScreenModalFragment, where it is injected
