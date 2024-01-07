@@ -178,7 +178,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setSheetAllowedDetents(view: Screen, value: ReadableArray?) {
         view.sheetDetents.clear()
 
-        if (value == null) {
+        if (value == null || value.size() == 0) {
             view.sheetDetents.add(1.0)
             return
         }
