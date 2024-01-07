@@ -34,10 +34,6 @@ class DimmingView(context: Context, initialAlpha: Float = 0.6F) : ViewGroup(cont
         return blockGestures
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return super.onInterceptTouchEvent(ev)
-    }
-
     override fun reactTagForTouch(p0: Float, p1: Float): Int {
         throw IllegalStateException("$TAG should never be asked for the view tag")
     }

@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -31,7 +30,6 @@ import com.swmansion.rnscreens.ScreenFragmentWrapper
 import com.swmansion.rnscreens.ScreenStack
 import com.swmansion.rnscreens.ScreenStackFragmentWrapper
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
-import com.swmansion.rnscreens.ext.maybeBgColor
 
 class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), LifecycleEventObserver, ScreenStackFragmentWrapper,
     Animation.AnimationListener {
@@ -123,7 +121,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
         savedInstanceState: Bundle?
     ): View {
         initViewHierarchy()
-        if (isStateLessEqualThan(screen.sheetInitialDetent, screen.sheetLargestUndimmedState)) {
+        if (isStateLessEqualThan(screen.sheetInitialState, screen.sheetLargestUndimmedState)) {
             dimmingView.alpha = 0.0F
         } else {
             dimmingView.alpha = 0.6F

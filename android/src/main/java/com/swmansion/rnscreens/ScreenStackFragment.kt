@@ -167,23 +167,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 //            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
 //        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
 
-//        val displayMetrics = DisplayMetrics()
-//        WindowManager.defaultDisplay.getMetrics(displayMetrics)
-//        val height = displayMetrics.heightPixels
-//        val width = displayMetrics.widthPixels
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply {
             behavior = if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
-                BottomSheetBehavior<FrameLayout>().apply {
-                    isHideable = true
-                    state = screen.sheetInitialDetent
-                    addBottomSheetCallback(bottomSheetCallback)
-                    isDraggable = true
-                    isFitToContents = false
-                    halfExpandedRatio = 0.7F
-                    peekHeight = 800
-                }
+                createAndConfigureBottomSheetBehaviour()
             } else {
                 ScrollingViewBehavior()
             }
@@ -226,6 +214,35 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             setHasOptionsMenu(true)
         }
         return coordinatorLayout
+    }
+
+    private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<FrameLayout> {
+        val displayMetrics = context?.resources?.displayMetrics
+        val mockDetentCount = 3
+        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
+
+        val behavior = BottomSheetBehavior<FrameLayout>().apply {
+            isHideable = true
+            isDraggable = true
+            state = screen.sheetInitialState
+            addBottomSheetCallback(bottomSheetCallback)
+            peekHeight = (0.7 * displayMetrics.heightPixels).toInt()
+        }
+
+//        when (mockDetentCount) {
+//            1 -> behavior.apply {
+//                isFitToContents = true
+//                peekHeight = (1.0 * displayMetrics.heightPixels).toInt()
+//            }
+//            2 -> behavior.apply {
+//
+//            }
+//            3 -> behavior.apply {
+//
+//            }
+//        }
+
+        return behavior
     }
 
     private fun attachShapeToScreen(screen: Screen) {

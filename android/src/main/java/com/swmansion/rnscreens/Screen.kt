@@ -57,7 +57,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     var sheetExpandsWhenScrolledToEdge: Boolean = true
     var sheetDetent: SheetDetent? = null
     var sheetLargestUndimmedState: Int = BottomSheetBehavior.STATE_HIDDEN
-    var sheetInitialDetent: Int = BottomSheetBehavior.STATE_COLLAPSED
+    var sheetInitialState: Int = BottomSheetBehavior.STATE_COLLAPSED
     var sheetClosesWhenTouchOutside = true
 
     init {
