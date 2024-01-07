@@ -12,6 +12,7 @@ package com.facebook.react.viewmanagers;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.facebook.react.bridge.ColorPropConverter;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.BaseViewManagerDelegate;
 import com.facebook.react.uimanager.BaseViewManagerInterface;
@@ -24,10 +25,10 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
       case "sheetAllowedDetents":
-        mViewManager.setSheetAllowedDetents(view, (String) value);
+        mViewManager.setSheetAllowedDetents(view, (ReadableArray) value);
         break;
       case "sheetLargestUndimmedDetent":
-        mViewManager.setSheetLargestUndimmedDetent(view, (String) value);
+        mViewManager.setSheetLargestUndimmedDetent(view, value == null ? -1 : ((Double) value).intValue());
         break;
       case "sheetGrabberVisible":
         mViewManager.setSheetGrabberVisible(view, value == null ? false : (boolean) value);
