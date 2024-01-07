@@ -3,15 +3,12 @@ package com.swmansion.rnscreens
 import RNSModalRootView
 import android.app.Activity
 import android.app.Dialog
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
-import android.widget.LinearLayout
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.ReactContext
@@ -227,26 +224,37 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     }
 
     private fun configureBehaviour() {
-        val detent = screen.sheetDetent
+        val displayMetrics = context?.resources?.displayMetrics
+        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
+
         behavior.apply {
             isHideable = true
             isDraggable = true
-            if (detent != null) {
-                when (detent) {
-                    Screen.SheetDetent.LARGE -> {
-                        skipCollapsed = true
-                        state = BottomSheetBehavior.STATE_EXPANDED
-                    }
-                    Screen.SheetDetent.MEDIUM -> {
-                        skipCollapsed = true
-                        // Temporary solution
-                        state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                    }
-                    Screen.SheetDetent.ALL -> {
-                        skipCollapsed = false
-                        state = BottomSheetBehavior.STATE_COLLAPSED
-                    }
-                }
+        }
+
+        if (screen.sheetDetents.count() == 1) {
+            behavior.apply {
+                state = BottomSheetBehavior.STATE_EXPANDED
+                skipCollapsed = true
+                isFitToContents = true
+                maxHeight = (screen.sheetDetents.first() * displayMetrics.heightPixels).toInt()
+            }
+        } else if (screen.sheetDetents.count() == 2) {
+            behavior.apply {
+                state = BottomSheetBehavior.STATE_COLLAPSED
+                skipCollapsed = false
+                isFitToContents = true
+                peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
+                maxHeight = (screen.sheetDetents[1] * displayMetrics.heightPixels).toInt()
+            }
+        } else {
+            behavior.apply {
+                state = BottomSheetBehavior.STATE_COLLAPSED
+                skipCollapsed= false
+                isFitToContents = false
+                peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
+                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
+                halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
             }
         }
     }

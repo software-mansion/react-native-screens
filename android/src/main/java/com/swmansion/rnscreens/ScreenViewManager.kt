@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -12,7 +13,6 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNSScreenManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenManagerInterface
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.events.HeaderBackButtonClickedEvent
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.ScreenAppearEvent
@@ -175,17 +175,24 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setSwipeDirection(view: Screen?, value: String?) = Unit
 
     @ReactProp(name = "sheetAllowedDetents")
-    override fun setSheetAllowedDetents(view: Screen, value: String?) {
-        view.sheetDetent = convertDetentStringToFraction(value)
+    override fun setSheetAllowedDetents(view: Screen, value: ReadableArray?) {
+        view.sheetDetents.clear()
+
+        if (value == null) {
+            view.sheetDetents.add(1.0)
+            return
+        }
+
+        IntProgression.fromClosedRange(0, value.size() - 1, 1)
+            .asSequence()
+            .map { idx -> value.getDouble(idx) }
+            .toCollection(view.sheetDetents)
     }
 
     @ReactProp(name = "sheetLargestUndimmedDetent")
-    override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) {
-        view.sheetLargestUndimmedState = when (value) {
-            "large" -> BottomSheetBehavior.STATE_EXPANDED
-            "medium" -> BottomSheetBehavior.STATE_COLLAPSED
-            else -> BottomSheetBehavior.STATE_HIDDEN
-        }
+    override fun setSheetLargestUndimmedDetent(view: Screen, value: Int) {
+        check(value in -1..2) { "sheetLargestUndimmedDetent on Android supports values between -1 and 2" }
+        view.sheetLargestUndimmedState = value
     }
 
     @ReactProp(name = "sheetGrabberVisible")
@@ -215,14 +222,6 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate
-
-    private fun convertDetentStringToFraction(detent: String?): Screen.SheetDetent? = when (detent) {
-        "large" -> Screen.SheetDetent.LARGE
-        "medium" -> Screen.SheetDetent.MEDIUM
-        "all" -> Screen.SheetDetent.ALL
-        null -> null
-        else -> throw JSApplicationIllegalArgumentException("Unrecognized detent value $detent")
-    }
 
     companion object {
         const val REACT_CLASS = "RNSScreen"

@@ -55,8 +55,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             (fragment as? ScreenStackFragment)?.onSheetCornerRadiusChange()
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
-    var sheetDetent: SheetDetent? = null
-    var sheetLargestUndimmedState: Int = BottomSheetBehavior.STATE_HIDDEN
+    var sheetDetents = ArrayList<Double>().apply { add(1.0) }
+    var sheetLargestUndimmedState: Int = -1
     var sheetInitialState: Int = BottomSheetBehavior.STATE_COLLAPSED
     var sheetClosesWhenTouchOutside = true
 
@@ -298,9 +298,5 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
-    }
-
-    enum class SheetDetent {
-        MEDIUM, LARGE, ALL
     }
 }

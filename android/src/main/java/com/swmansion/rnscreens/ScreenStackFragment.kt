@@ -117,7 +117,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
-    private val bottomSheetCallback = object : BottomSheetCallback() {
+    private val bottomSheetOnSwipedDownCallback = object : BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                 if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
@@ -218,16 +218,47 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<FrameLayout> {
         val displayMetrics = context?.resources?.displayMetrics
-        val mockDetentCount = 3
         check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
 
         val behavior = BottomSheetBehavior<FrameLayout>().apply {
             isHideable = true
             isDraggable = true
-            state = screen.sheetInitialState
-            addBottomSheetCallback(bottomSheetCallback)
-            peekHeight = (0.7 * displayMetrics.heightPixels).toInt()
+            addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
         }
+
+        if (screen.sheetDetents.count() == 1) {
+            behavior.apply {
+                state = BottomSheetBehavior.STATE_EXPANDED
+                skipCollapsed = true
+                isFitToContents = true
+                maxHeight = (screen.sheetDetents.first() * displayMetrics.heightPixels).toInt()
+            }
+        } else if (screen.sheetDetents.count() == 2) {
+            behavior.apply {
+                state = BottomSheetBehavior.STATE_COLLAPSED
+                skipCollapsed = false
+                isFitToContents = true
+                peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
+                maxHeight = (screen.sheetDetents[1] * displayMetrics.heightPixels).toInt()
+            }
+        } else {
+            behavior.apply {
+                state = BottomSheetBehavior.STATE_COLLAPSED
+                skipCollapsed= false
+                isFitToContents = false
+                peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
+                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
+                halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+            }
+        }
+
+//        val behavior = BottomSheetBehavior<FrameLayout>().apply {
+//            isHideable = true
+//            isDraggable = true
+//            state = screen.sheetInitialState
+//            addBottomSheetCallback(bottomSheetCallback)
+//            peekHeight = (0.7 * displayMetrics.heightPixels).toInt()
+//        }
 
 //        when (mockDetentCount) {
 //            1 -> behavior.apply {
