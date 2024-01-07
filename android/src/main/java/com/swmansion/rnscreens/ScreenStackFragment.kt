@@ -163,15 +163,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             setBackgroundColor(Color.argb(0, 0, 0, 0))
         }
 
-//        screen.layoutParams = CoordinatorLayout.LayoutParams(
-//            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
-//        ).apply { behavior = if (mIsTranslucent) null else ScrollingViewBehavior() }
-
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply {
             behavior = if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
                 createAndConfigureBottomSheetBehaviour()
+            } else if (isToolbarTranslucent) {
+                null
             } else {
                 ScrollingViewBehavior()
             }
@@ -244,34 +242,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         } else {
             behavior.apply {
                 state = BottomSheetBehavior.STATE_COLLAPSED
-                skipCollapsed= false
+                skipCollapsed = false
                 isFitToContents = false
                 peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
                 maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
                 halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
             }
         }
-
-//        val behavior = BottomSheetBehavior<FrameLayout>().apply {
-//            isHideable = true
-//            isDraggable = true
-//            state = screen.sheetInitialState
-//            addBottomSheetCallback(bottomSheetCallback)
-//            peekHeight = (0.7 * displayMetrics.heightPixels).toInt()
-//        }
-
-//        when (mockDetentCount) {
-//            1 -> behavior.apply {
-//                isFitToContents = true
-//                peekHeight = (1.0 * displayMetrics.heightPixels).toInt()
-//            }
-//            2 -> behavior.apply {
-//
-//            }
-//            3 -> behavior.apply {
-//
-//            }
-//        }
 
         return behavior
     }
