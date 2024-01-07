@@ -192,7 +192,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     @ReactProp(name = "sheetLargestUndimmedDetent")
     override fun setSheetLargestUndimmedDetent(view: Screen, value: Int) {
         check(value in -1..2) { "sheetLargestUndimmedDetent on Android supports values between -1 and 2" }
-        view.sheetLargestUndimmedState = value
+        view.sheetLargestUndimmedDetentIndex = value
     }
 
     @ReactProp(name = "sheetGrabberVisible")

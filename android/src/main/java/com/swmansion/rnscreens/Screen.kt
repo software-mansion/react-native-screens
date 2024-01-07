@@ -56,8 +56,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
     var sheetDetents = ArrayList<Double>().apply { add(1.0) }
-    var sheetLargestUndimmedState: Int = -1
-    var sheetInitialState: Int = BottomSheetBehavior.STATE_COLLAPSED
+    var sheetLargestUndimmedDetentIndex: Int = -1
+    var sheetInitialDetentIndex: Int = 0
     var sheetClosesWhenTouchOutside = true
 
     init {
@@ -298,5 +298,29 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
+    }
+
+    companion object {
+        fun sheetStateFromScreen(index: Int, detentCount: Int): Int = when (detentCount) {
+            1 -> when (index) {
+                -1 -> BottomSheetBehavior.STATE_HIDDEN
+                0 -> BottomSheetBehavior.STATE_EXPANDED
+                else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+            }
+            2 -> when (index) {
+                -1 -> BottomSheetBehavior.STATE_HIDDEN
+                0 -> BottomSheetBehavior.STATE_COLLAPSED
+                1 -> BottomSheetBehavior.STATE_EXPANDED
+                else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+            }
+            3 -> when (index) {
+                -1 -> BottomSheetBehavior.STATE_HIDDEN
+                0 -> BottomSheetBehavior.STATE_COLLAPSED
+                1 -> BottomSheetBehavior.STATE_HALF_EXPANDED
+                2 -> BottomSheetBehavior.STATE_EXPANDED
+                else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+            }
+            else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+        }
     }
 }

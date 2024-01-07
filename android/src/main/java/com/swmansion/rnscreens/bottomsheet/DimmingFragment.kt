@@ -47,12 +47,11 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
     }
 
     private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, initialState: Int) : BottomSheetCallback() {
-        private var needsDirectionUpdate = true
         private var dimmedAlpha = 0.6F
         private var lastStableState: Int = initialState
         private var lastSlideOffset: Float = 0.0F
         private var animDirection: AnimDirection = AnimDirection.UP
-        private var largestUndimmedOffset: Float = 0F
+        private var largestUndimmedOffset: Float = computeOffsetFromUndimmedIndex(screen.sheetLargestUndimmedDetentIndex)
         private var animator = ValueAnimator.ofFloat(0F, dimmedAlpha).apply {
             duration = 1
             addUpdateListener {
@@ -62,14 +61,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_DRAGGING || newState == BottomSheetBehavior.STATE_SETTLING) {
-                needsDirectionUpdate = true
-                largestUndimmedOffset = when (screen.sheetLargestUndimmedState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> -1F
-                    BottomSheetBehavior.STATE_COLLAPSED -> 0F
-                    BottomSheetBehavior.STATE_EXPANDED -> 1F
-                    else -> -1F
-                }
-                screen.sheetBehavior?.calculateSlideOffset()
+                largestUndimmedOffset = computeOffsetFromUndimmedIndex(screen.sheetLargestUndimmedDetentIndex)
             } else {
                 lastStableState = newState
             }
@@ -84,31 +76,35 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
             if (largestUndimmedOffset != -1F && slideOffset > largestUndimmedOffset) {
                 animator!!.setCurrentFraction(slideOffset)
             }
-//            if (shouldAnimate()) {
-//                animator!!.setCurrentFraction(slideOffset)
-//            }
         }
 
-        private fun shouldAnimate(): Boolean {
-            return !(isStateLessEqualThan(lastStableState, screen.sheetLargestUndimmedState) && animDirection == AnimDirection.DOWN)
-//            return screen.sheetLargestUndimmedState > lastState
-        }
-
-        private fun goesUpwardFromLargestUndimmed(): Boolean {
-
-            return false
-        }
-
-        private fun directionFromLastState(): AnimDirection = if (lastStableState != BottomSheetBehavior.STATE_EXPANDED) {
-            AnimDirection.UP
-        } else {
-            AnimDirection.DOWN
+        private fun computeOffsetFromUndimmedIndex(index: Int): Float {
+            return when (screen.sheetDetents.size) {
+                1 -> when (index) {
+                    -1 -> -1F
+                    0 -> 1F
+                    else -> -1F
+                }
+                2 -> when (index) {
+                    -1 -> -1F
+                    0 -> 0F
+                    1 -> 1F
+                    else -> -1F
+                }
+                3 -> when (index) {
+                    -1 -> -1F
+                    0 -> 0F
+                    1 -> screen.sheetBehavior!!.halfExpandedRatio
+                    2 -> 1F
+                    else -> -1F
+                }
+                else -> -1F
+            }
         }
 
         enum class AnimDirection {
             UP, DOWN
         }
-
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
@@ -121,7 +117,8 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
         savedInstanceState: Bundle?
     ): View {
         initViewHierarchy()
-        if (isStateLessEqualThan(screen.sheetInitialState, screen.sheetLargestUndimmedState)) {
+        val detentCount = screen.sheetDetents.size
+        if (isStateLessEqualThan(Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, detentCount), Screen.sheetStateFromScreen(screen.sheetLargestUndimmedDetentIndex, detentCount))) {
             dimmingView.alpha = 0.0F
         } else {
             dimmingView.alpha = 0.6F
