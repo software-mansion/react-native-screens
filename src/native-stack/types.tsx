@@ -20,7 +20,6 @@ import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-  SheetDetentTypes,
 } from 'react-native-screens';
 
 export type NativeStackNavigationEventMap = {
@@ -327,17 +326,14 @@ export type NativeStackNavigationOptions = {
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
-   * Defaults to `large`.
    *
-   * Available values:
+   * Heights should be described as fraction (a number from [0, 1] interval) of screen height / maximum detent height.
    *
-   * - `large` - only large detent level will be allowed
-   * - `medium` - only medium detent level will be allowed
-   * - `all` - all detent levels will be allowed
+   * Please note that the array **must** be sorted in ascending order.
    *
-   * @platform ios
+   * Defaults to `[1.0]` literal.
    */
-  sheetAllowedDetents?: SheetDetentTypes;
+  sheetAllowedDetents?: ScreenProps['sheetAllowedDetents'];
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -367,19 +363,14 @@ export type NativeStackNavigationOptions = {
   sheetGrabberVisible?: boolean;
   /**
    * The largest sheet detent for which a view underneath won't be dimmed.
-   * Works only when `stackPresentation` is se tto `formSheet`.
+   * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * If this prop is set to:
+   * This prop can be set to an number, which indicates index of detent in `sheetAllowedDetents` array for which
+   * there won't be a dimming view beneath the sheet.
    *
-   * - `large` - the view underneath won't be dimmed at any detent level
-   * - `medium` - the view underneath will be dimmed only when detent level is `large`
-   * - `all` - the view underneath will be dimmed for any detent level
-   *
-   * Defaults to `all`.
-   *
-   * @platform ios
+   * Defaults to `-1`, indicating that the dimming view should be always present.
    */
-  sheetLargestUndimmedDetent?: SheetDetentTypes;
+  sheetLargestUndimmedDetent?: ScreenProps['sheetLargestUndimmedDetent'];
   /**
    * How the screen should appear/disappear when pushed or popped at the top of the stack.
    * The following values are currently supported:
