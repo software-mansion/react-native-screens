@@ -111,6 +111,10 @@ function useHeaderOptions(
 }
 
 function SettingsSwitcher({ navigation }: SettingsScreenProps) {
+  const { currentValue: headerType, component: headerTypeSetting } =
+    useHeaderOptions('header type', 'large', ['large', 'medium', 'small']);
+  const { currentValue: headerTitleAlign, component: headerTitleAlignSetting } =
+    useHeaderOptions('title align', 'left', ['left', 'center']);
   const { currentValue: backgroundColor, component: bgColorSetting } =
     useHeaderOptions('background color', 'white', [
       'white',
@@ -138,21 +142,27 @@ function SettingsSwitcher({ navigation }: SettingsScreenProps) {
     navigation.setOptions({
       headerStyle: { backgroundColor },
       headerTitleStyle: { color: textColor },
+      headerTitleAlign,
       headerHideShadow: hideShadow,
       headerShown,
       headerTranslucent,
+      headerType,
     });
   }, [
     navigation,
+    headerType,
     backgroundColor,
     textColor,
     hideShadow,
     headerShown,
     headerTranslucent,
+    headerTitleAlign,
   ]);
 
   return (
     <View style={styles.settingSection}>
+      {headerTypeSetting}
+      {headerTitleAlignSetting}
       {bgColorSetting}
       {textColorSetting}
       {hideShadowSetting}
@@ -274,7 +284,8 @@ export default function App() {
             name="Settings"
             component={Settings}
             options={{
-              headerType: 'large',
+              headerTitle: 'Settings',
+              headerType: 'medium',
             }}
           />
           <Stack.Screen

@@ -34,7 +34,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     var isGestureEnabled = true
     var screenOrientation: Int? = null
         private set
-    var headerType = HeaderType.Small
     var isStatusBarAnimated: Boolean? = null
 
     init {
@@ -203,6 +202,12 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             }
             field = statusBarColor
             fragmentWrapper?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
+        }
+
+    var headerType = HeaderType.Small
+        set(headerType) {
+            field = headerType
+            headerConfig?.onUpdate()
         }
 
     var navigationBarColor: Int? = null

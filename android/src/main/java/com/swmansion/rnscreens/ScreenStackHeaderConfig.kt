@@ -160,6 +160,12 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             return
         }
 
+        // Reattach the header, when the developer tries to change the header type
+        if (screenStackHeader?.loadedHeaderType != screen?.headerType) {
+            screenStackHeader?.updateHeaderType()
+            screenFragment?.removeToolbar()
+        }
+
         if (toolbar.parent == null) {
             screenFragment?.setToolbar(toolbar)
         }

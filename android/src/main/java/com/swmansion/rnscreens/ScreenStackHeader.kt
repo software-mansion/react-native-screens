@@ -12,6 +12,7 @@ import com.google.android.material.R as MaterialR
 class ScreenStackHeader(val screen: Screen) {
     var toolbar: CustomToolbar? = null
     var collapsingToolbarLayout: CollapsingToolbarLayout? = null
+    var loadedHeaderType = screen.headerType
 
     fun recreateToolbar() {
         if (screen.headerType.isCollapsing) {
@@ -26,6 +27,10 @@ class ScreenStackHeader(val screen: Screen) {
         collapsingToolbarLayout = createCollapsingToolbarLayout().apply {
             addView(toolbar)
         }
+    }
+
+    fun updateHeaderType() {
+        loadedHeaderType = screen.headerType
     }
 
     fun removeToolbar() {
