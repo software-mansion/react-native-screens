@@ -21,14 +21,12 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.google.android.material.R as MaterialR
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
-    private var toolbar: Toolbar? = null
-    var collapsingToolbarLayout: CollapsingToolbarLayout? = null
+    var screenStackHeader = ScreenStackHeader(screen)
 
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
@@ -51,20 +49,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     override fun removeToolbar() {
         isToolbarHidden = true
 
-        // Cleanup all views from toolbar and collapsingToolbarLayout
-        toolbar?.removeAllViews()
-        collapsingToolbarLayout?.removeAllViews()
-
         appBarLayout?.let { appBarLayout ->
-            collapsingToolbarLayout?.let { collapsingToolbar ->
+            screenStackHeader.collapsingToolbarLayout?.let { collapsingToolbar ->
                 if (collapsingToolbar.parent === appBarLayout) {
                     appBarLayout.removeView(collapsingToolbar)
                 }
             }
         }
 
-        toolbar = null
-        collapsingToolbarLayout = null
+        screenStackHeader.removeToolbar()
 
         // As AppBarLayout may have dimensions of expanded medium / large header,
         // We need to change its layout params to `WRAP_CONTENT`.
@@ -75,21 +68,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun setToolbar(toolbar: Toolbar) {
-        this.toolbar = toolbar
         isToolbarHidden = false
+        screenStackHeader.toolbar = toolbar as CustomToolbar
+        screenStackHeader.recreateToolbar()
 
-        if (screen.headerType.isCollapsing) {
-            toolbar.layoutParams = CollapsingToolbarLayout.LayoutParams(
-                CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,
-                android.R.attr.actionBarSize.resolveAttribute(toolbar.context)
-            ).apply {
-                collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
-            }
-        }
-
-        createCollapsingToolbarLayout()
-        collapsingToolbarLayout?.apply {
-            addView(toolbar)
+        screenStackHeader.collapsingToolbarLayout?.apply {
             appBarLayout?.addView(this)
         }
 
@@ -172,7 +155,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
 
             fitsSystemWindows = true
-            collapsingToolbarLayout?.let {
+            screenStackHeader.collapsingToolbarLayout?.let {
                 addView(recycleView(it))
             }
         }
@@ -222,23 +205,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             Screen.HeaderType.Medium -> if (resolvedSize != -1) resolvedSize else PixelUtil.toPixelFromDIP(112f).toInt()
             Screen.HeaderType.Large -> if (resolvedSize != -1) resolvedSize else PixelUtil.toPixelFromDIP(152f).toInt()
             else -> resolvedSize
-        }
-    }
-
-    private fun createCollapsingToolbarLayout() {
-        val toolbarStyle = when (screen.headerType) {
-            Screen.HeaderType.Large -> MaterialR.attr.collapsingToolbarLayoutLargeStyle
-            Screen.HeaderType.Medium -> MaterialR.attr.collapsingToolbarLayoutMediumStyle
-            else -> MaterialR.attr.collapsingToolbarLayoutStyle
-        }
-
-        collapsingToolbarLayout = context?.let { CollapsingToolbarLayout(it, null, toolbarStyle) }?.apply {
-            layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT)
-                .apply {
-                    scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-                }
-
-            fitsSystemWindows = true
         }
     }
 

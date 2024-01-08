@@ -121,8 +121,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             return null
         }
 
-    private val collapsingToolbarLayout: CollapsingToolbarLayout?
-        get() = screenFragment?.collapsingToolbarLayout
+    private val screenStackHeader: ScreenStackHeader?
+        get() = screenFragment?.screenStackHeader
 
     fun onUpdate() {
         val stack = screenStack
@@ -168,7 +168,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         if (isTopInsetEnabled) {
             headerTopInset.let {
                 layoutParams.topMargin = it ?: 0
-                collapsingToolbarLayout?.setContentScrimColor(Color.TRANSPARENT)
+                screenStackHeader?.collapsingToolbarLayout?.setContentScrimColor(Color.TRANSPARENT)
             }
         } else {
             if (layoutParams.topMargin > 0) {
@@ -210,8 +210,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // title
         actionBar.title = title
-        collapsingToolbarLayout?.title = title
-        collapsingToolbarLayout?.isTitleEnabled = screen?.headerType?.isCollapsing == true
+        screenStackHeader?.collapsingToolbarLayout?.title = title
+        screenStackHeader?.collapsingToolbarLayout?.isTitleEnabled = screen?.headerType?.isCollapsing == true
 
         // centering title
         toolbar.isTitleCentered = isTitleCentered
@@ -226,8 +226,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         val titleTextView = titleTextView
         if (titleColor != 0) {
             toolbar.setTitleTextColor(titleColor)
-            collapsingToolbarLayout?.setCollapsedTitleTextColor(titleColor)
-            collapsingToolbarLayout?.setExpandedTitleTextColor(ColorStateList.valueOf(titleColor))
+            screenStackHeader?.collapsingToolbarLayout?.setCollapsedTitleTextColor(titleColor)
+            screenStackHeader?.collapsingToolbarLayout?.setExpandedTitleTextColor(ColorStateList.valueOf(titleColor))
         }
 
         if (titleTextView != null) {
@@ -236,21 +236,21 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                     null, 0, titleFontWeight, titleFontFamily, context.assets
                 )
                 titleTextView.typeface = titleTypeface
-                collapsingToolbarLayout?.setCollapsedTitleTypeface(titleTypeface)
-                collapsingToolbarLayout?.setExpandedTitleTypeface(titleTypeface)
+                screenStackHeader?.collapsingToolbarLayout?.setCollapsedTitleTypeface(titleTypeface)
+                screenStackHeader?.collapsingToolbarLayout?.setExpandedTitleTypeface(titleTypeface)
             }
 
             if (titleFontSize > 0) {
                 titleTextView.textSize = titleFontSize
                 // TODO: Add property for changing expandedTitleTextSize
-                collapsingToolbarLayout?.collapsedTitleTextSize = titleFontSize
+                screenStackHeader?.collapsingToolbarLayout?.collapsedTitleTextSize = titleFontSize
             }
         }
 
         // background
         backgroundColor?.let {
             toolbar.setBackgroundColor(it)
-            collapsingToolbarLayout?.setBackgroundColor(it)
+            screenStackHeader?.collapsingToolbarLayout?.setBackgroundColor(it)
         }
 
         // color
@@ -291,7 +291,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                     }
                     toolbar.title = null
                     // Hide title of collapsed toolbar when its type is set to medium / large.
-                    collapsingToolbarLayout?.setCollapsedTitleTextColor(Color.TRANSPARENT)
+                    screenStackHeader?.collapsingToolbarLayout?.setCollapsedTitleTextColor(Color.TRANSPARENT)
                     params.gravity = Gravity.START
                 }
                 ScreenStackHeaderSubview.Type.RIGHT -> params.gravity = Gravity.END
@@ -420,6 +420,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     init {
         visibility = GONE
         toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
+        screenStackHeader?.toolbar = toolbar
+
         defaultStartInset = toolbar.contentInsetStart
         defaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 
