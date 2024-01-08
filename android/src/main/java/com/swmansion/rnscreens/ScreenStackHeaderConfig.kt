@@ -209,9 +209,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         screenFragment?.setToolbarTranslucent(isTranslucent)
 
         // title
-        actionBar.title = title
-        screenStackHeader?.collapsingToolbarLayout?.title = title
-        screenStackHeader?.collapsingToolbarLayout?.isTitleEnabled = screen?.headerType?.isCollapsing == true
+        screenStackHeader?.title = title
 
         // centering title
         toolbar.isTitleCentered = isTitleCentered
@@ -225,9 +223,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         val titleTextView = titleTextView
         if (titleColor != 0) {
-            toolbar.setTitleTextColor(titleColor)
-            screenStackHeader?.collapsingToolbarLayout?.setCollapsedTitleTextColor(titleColor)
-            screenStackHeader?.collapsingToolbarLayout?.setExpandedTitleTextColor(ColorStateList.valueOf(titleColor))
+            screenStackHeader?.titleTextColor = titleColor
         }
 
         if (titleTextView != null) {
@@ -236,21 +232,19 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                     null, 0, titleFontWeight, titleFontFamily, context.assets
                 )
                 titleTextView.typeface = titleTypeface
-                screenStackHeader?.collapsingToolbarLayout?.setCollapsedTitleTypeface(titleTypeface)
-                screenStackHeader?.collapsingToolbarLayout?.setExpandedTitleTypeface(titleTypeface)
+                screenStackHeader?.titleTypeface = titleTypeface
             }
 
             if (titleFontSize > 0) {
                 titleTextView.textSize = titleFontSize
                 // TODO: Add property for changing expandedTitleTextSize
-                screenStackHeader?.collapsingToolbarLayout?.collapsedTitleTextSize = titleFontSize
+                screenStackHeader?.fontSize = titleFontSize
             }
         }
 
         // background
         backgroundColor?.let {
-            toolbar.setBackgroundColor(it)
-            screenStackHeader?.collapsingToolbarLayout?.setBackgroundColor(it)
+            screenStackHeader?.backgroundColor = it
         }
 
         // color
@@ -420,8 +414,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     init {
         visibility = GONE
         toolbar = if (BuildConfig.DEBUG) DebugMenuToolbar(context, this) else CustomToolbar(context, this)
-        screenStackHeader?.toolbar = toolbar
-
         defaultStartInset = toolbar.contentInsetStart
         defaultStartInsetWithNavigation = toolbar.contentInsetStartWithNavigation
 

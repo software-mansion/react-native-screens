@@ -1,7 +1,10 @@
 package com.swmansion.rnscreens
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
+import android.graphics.Typeface
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.R as MaterialR
@@ -32,6 +35,45 @@ class ScreenStackHeader(val screen: Screen) {
         toolbar = null
         collapsingToolbarLayout = null
     }
+
+    var title = toolbar?.title
+        set(title) {
+            val activity = screen.fragment?.activity as AppCompatActivity? ?: return
+            val actionBar = activity.supportActionBar
+
+            field = title
+            actionBar?.title = title
+            collapsingToolbarLayout?.title = title
+            collapsingToolbarLayout?.isTitleEnabled = screen.headerType.isCollapsing
+        }
+
+    var titleTextColor = 0
+        set(titleColor) {
+            field = titleColor
+            toolbar?.setTitleTextColor(titleColor)
+            collapsingToolbarLayout?.setCollapsedTitleTextColor(titleColor)
+            collapsingToolbarLayout?.setExpandedTitleTextColor(ColorStateList.valueOf(titleColor))
+        }
+
+    var titleTypeface: Typeface? = null
+        set(titleTypeface) {
+            field = titleTypeface
+            collapsingToolbarLayout?.setCollapsedTitleTypeface(titleTypeface)
+            collapsingToolbarLayout?.setExpandedTitleTypeface(titleTypeface)
+        }
+
+    var fontSize: Float = collapsingToolbarLayout?.collapsedTitleTextSize ?: 0f
+        set(fontSize) {
+            field = fontSize
+            collapsingToolbarLayout?.collapsedTitleTextSize = fontSize
+        }
+
+    var backgroundColor: Int = 0
+        set(backgroundColor) {
+            field = backgroundColor
+            toolbar?.setBackgroundColor(backgroundColor)
+            collapsingToolbarLayout?.setBackgroundColor(backgroundColor)
+        }
 
     private fun createCollapsingToolbarLayout(): CollapsingToolbarLayout {
         val toolbarStyle = when (screen.headerType) {
