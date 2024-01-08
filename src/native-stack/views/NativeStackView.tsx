@@ -201,17 +201,6 @@ const RouteView = ({
     stackPresentation = 'push',
   } = options;
 
-  const headerTypePreviousRef = React.useRef(headerType);
-
-  React.useEffect(() => {
-    warnOnce(
-      isAndroid && headerTypePreviousRef.current !== headerType,
-      `Changing header type on currently shown Screen is not supported yet.`
-    );
-
-    headerTypePreviousRef.current = headerType;
-  }, [headerType]);
-
   if (swipeDirection === 'vertical') {
     // for `vertical` direction to work, we need to set `fullScreenSwipeEnabled` to `true`
     // so the screen can be dismissed from any point on screen.
