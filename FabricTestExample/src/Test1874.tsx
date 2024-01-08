@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react';
 import {
+  Button,
   Image,
   ScrollView,
   StyleSheet,
@@ -7,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -76,6 +77,7 @@ const SCREEN_SETTINGS: Record<string, SettingProps> = {
 
 type StackParamList = {
   Settings: undefined;
+  SettingDetails: undefined;
 };
 
 interface SettingsScreenProps {
@@ -108,7 +110,7 @@ function useHeaderOptions(
   return { currentValue, component };
 }
 
-function Settings({ navigation }: SettingsScreenProps) {
+function SettingsSwitcher({ navigation }: SettingsScreenProps) {
   const { currentValue: backgroundColor, component: bgColorSetting } =
     useHeaderOptions('background color', 'white', [
       'white',
@@ -150,15 +152,21 @@ function Settings({ navigation }: SettingsScreenProps) {
   ]);
 
   return (
+    <View style={styles.settingSection}>
+      {bgColorSetting}
+      {textColorSetting}
+      {hideShadowSetting}
+      {headerShownSetting}
+      {headerTranslucentSetting}
+    </View>
+  );
+}
+
+function Settings({ navigation }: SettingsScreenProps) {
+  return (
     <ScrollView nestedScrollEnabled={true}>
       <WelcomeSection />
-      <View style={styles.settingSection}>
-        {bgColorSetting}
-        {textColorSetting}
-        {hideShadowSetting}
-        {headerShownSetting}
-        {headerTranslucentSetting}
-      </View>
+      <SettingsSwitcher navigation={navigation} />
       <View style={styles.settingSection}>
         {Object.values(CONNECTION_SETTINGS).map((setting, i) => (
           <SettingElement
@@ -211,9 +219,13 @@ function SettingElement({
   title: string;
   isLast: boolean;
 }): JSX.Element {
+  const navigation = useNavigation();
+
   return (
     <>
-      <TouchableOpacity style={styles.settingItem}>
+      <TouchableOpacity
+        style={styles.settingItem}
+        onPress={() => navigation.navigate('SettingDetails')}>
         <Text style={styles.settingLabel}>{emoji}</Text>
         <Text style={styles.settingLabel}>{title}</Text>
       </TouchableOpacity>
@@ -223,6 +235,16 @@ function SettingElement({
         </View>
       )}
     </>
+  );
+}
+
+function SettingDetail({ navigation }: SettingsScreenProps): JSX.Element {
+  return (
+    <View style={styles.settingDetail}>
+      <Text style={styles.settingDetailLabel}>I am the detail screen!</Text>
+      <SettingsSwitcher navigation={navigation} />
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
   );
 }
 
@@ -246,10 +268,23 @@ export default function App() {
         <Stack.Navigator
           screenOptions={{
             headerLargeTitle: true, // fallback for iOS
-            headerType: 'large',
             headerRight: navigationWalter,
           }}>
-          <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen
+            name="Settings"
+            component={Settings}
+            options={{
+              headerType: 'large',
+            }}
+          />
+          <Stack.Screen
+            name="SettingDetails"
+            component={SettingDetail}
+            options={{
+              headerTitle: 'Setting Details',
+              headerType: 'small',
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
@@ -289,5 +324,14 @@ const styles = StyleSheet.create({
   settingLabel: {
     fontSize: 20,
     marginRight: 16,
+  },
+  settingDetail: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+  },
+  settingDetailLabel: {
+    fontSize: 30,
+    marginBottom: 16,
   },
 });
