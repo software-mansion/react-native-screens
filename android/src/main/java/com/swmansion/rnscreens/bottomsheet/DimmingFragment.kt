@@ -5,7 +5,6 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,10 +30,15 @@ import com.swmansion.rnscreens.ScreenStack
 import com.swmansion.rnscreens.ScreenStackFragmentWrapper
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 
-class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), LifecycleEventObserver, ScreenStackFragmentWrapper,
+class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
+    Fragment(),
+    LifecycleEventObserver,
+    ScreenStackFragmentWrapper,
     Animation.AnimationListener {
     private lateinit var dimmingView: DimmingView
     private lateinit var containerView: GestureTransparentFrameLayout
+
+    private val maxAlpha: Float = 0.6F
 
     private var dimmingViewCallback: BottomSheetCallback? = null
 
@@ -46,13 +50,11 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
         nestedFragment.fragment.lifecycle.addObserver(this)
     }
 
-    private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, initialState: Int) : BottomSheetCallback() {
-        private var dimmedAlpha = 0.6F
-        private var lastStableState: Int = initialState
-        private var lastSlideOffset: Float = 0.0F
-        private var animDirection: AnimDirection = AnimDirection.UP
-        private var largestUndimmedOffset: Float = computeOffsetFromUndimmedIndex(screen.sheetLargestUndimmedDetentIndex)
-        private var animator = ValueAnimator.ofFloat(0F, dimmedAlpha).apply {
+    private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, val maxAlpha: Float) : BottomSheetCallback() {
+        private var largestUndimmedOffset: Float = computeOffsetFromDetentIndex(screen.sheetLargestUndimmedDetentIndex)
+        private var firstDimmedOffset: Float = computeOffsetFromDetentIndex((screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(0, screen.sheetDetents.count() - 1))
+        private var intervalLength = firstDimmedOffset - largestUndimmedOffset
+        private var animator = ValueAnimator.ofFloat(0F, maxAlpha).apply {
             duration = 1
             addUpdateListener {
                 viewToAnimate.alpha = it.animatedValue as Float
@@ -61,24 +63,24 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
 
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_DRAGGING || newState == BottomSheetBehavior.STATE_SETTLING) {
-                largestUndimmedOffset = computeOffsetFromUndimmedIndex(screen.sheetLargestUndimmedDetentIndex)
-            } else {
-                lastStableState = newState
+                largestUndimmedOffset = computeOffsetFromDetentIndex(screen.sheetLargestUndimmedDetentIndex)
+                firstDimmedOffset = computeOffsetFromDetentIndex((screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(0, screen.sheetDetents.count() - 1))
+                assert(firstDimmedOffset >= largestUndimmedOffset) { "fdo: $firstDimmedOffset, luo: $largestUndimmedOffset" }
+                intervalLength = firstDimmedOffset - largestUndimmedOffset
+            } else if (newState != BottomSheetBehavior.STATE_HIDDEN) {
             }
         }
 
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            Log.i(TAG, "onSlide $slideOffset")
-            animDirection = if (slideOffset > lastSlideOffset) AnimDirection.UP else AnimDirection.DOWN
-            lastSlideOffset = slideOffset
 
-            if (largestUndimmedOffset != -1F && slideOffset > largestUndimmedOffset) {
-                animator!!.setCurrentFraction(slideOffset)
+            if (largestUndimmedOffset < slideOffset && slideOffset < firstDimmedOffset) {
+                val fraction = (slideOffset - largestUndimmedOffset) / intervalLength
+                animator!!.setCurrentFraction(fraction)
             }
         }
 
-        private fun computeOffsetFromUndimmedIndex(index: Int): Float {
+        private fun computeOffsetFromDetentIndex(index: Int): Float {
             return when (screen.sheetDetents.size) {
                 1 -> when (index) {
                     -1 -> -1F
@@ -101,10 +103,6 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
                 else -> -1F
             }
         }
-
-        enum class AnimDirection {
-            UP, DOWN
-        }
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
@@ -117,13 +115,15 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
         savedInstanceState: Bundle?
     ): View {
         initViewHierarchy()
-        val detentCount = screen.sheetDetents.size
-        if (isStateLessEqualThan(Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, detentCount), Screen.sheetStateFromScreen(screen.sheetLargestUndimmedDetentIndex, detentCount))) {
+        return containerView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (screen.sheetInitialDetentIndex <= screen.sheetLargestUndimmedDetentIndex) {
             dimmingView.alpha = 0.0F
         } else {
-            dimmingView.alpha = 0.6F
+            dimmingView.alpha = maxAlpha
         }
-        return containerView
     }
 
     override fun onStart() {
@@ -140,7 +140,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
         when (event) {
             Lifecycle.Event.ON_START -> {
                 nestedFragment.screen.sheetBehavior?.let {
-                    dimmingViewCallback = AnimateDimmingViewCallback(nestedFragment.screen, dimmingView, it.state)
+                    dimmingViewCallback = AnimateDimmingViewCallback(nestedFragment.screen, dimmingView, maxAlpha)
                     it.addBottomSheetCallback(dimmingViewCallback!!)
                 }
             }
@@ -187,7 +187,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) : Fragment(), L
     }
 
     private fun initDimmingView() {
-        dimmingView = DimmingView(requireContext(), 0.6F).apply {
+        dimmingView = DimmingView(requireContext(), maxAlpha).apply {
             // These do not guarantee fullscreen width & height, TODO: find a way to guarantee that
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
