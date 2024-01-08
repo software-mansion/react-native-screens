@@ -233,7 +233,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         } else if (screen.sheetDetents.count() == 2) {
             behavior.apply {
-                state = BottomSheetBehavior.STATE_COLLAPSED
+                state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
                 skipCollapsed = false
                 isFitToContents = true
                 peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
@@ -241,11 +241,12 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         } else {
             behavior.apply {
-                state = BottomSheetBehavior.STATE_COLLAPSED
+                state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
                 skipCollapsed = false
                 isFitToContents = false
                 peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
-                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
+//                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
+                expandedOffset = ((1 - screen.sheetDetents[2]) * displayMetrics.heightPixels).toInt()
                 halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
             }
         }
