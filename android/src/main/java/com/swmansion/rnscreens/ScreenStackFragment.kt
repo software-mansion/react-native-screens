@@ -27,6 +27,7 @@ import com.google.android.material.R as MaterialR
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
+    private var toolbar: Toolbar? = null
     var collapsingToolbarLayout: CollapsingToolbarLayout? = null
 
     private var isToolbarShadowHidden = false
@@ -51,6 +52,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         isToolbarHidden = true
 
         // Cleanup all views from toolbar and collapsingToolbarLayout
+        toolbar?.removeAllViews()
         collapsingToolbarLayout?.removeAllViews()
 
         appBarLayout?.let { appBarLayout ->
@@ -61,10 +63,19 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         }
 
+        toolbar = null
         collapsingToolbarLayout = null
+
+        // As AppBarLayout may have dimensions of expanded medium / large header,
+        // We need to change its layout params to `WRAP_CONTENT`.
+        appBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
+            CoordinatorLayout.LayoutParams.MATCH_PARENT,
+            CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun setToolbar(toolbar: Toolbar) {
+        this.toolbar = toolbar
         isToolbarHidden = false
 
         if (screen.headerType.isCollapsing) {
