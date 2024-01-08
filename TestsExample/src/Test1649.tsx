@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 export default function App(): JSX.Element {
   const initialScreenOptions: NativeStackNavigationOptions = {
     stackPresentation: 'formSheet',
-    sheetAllowedDetents: [0.5],
+    sheetAllowedDetents: [0.4, 0.6, 0.9],
     sheetLargestUndimmedDetent: 0,
     sheetGrabberVisible: false,
     sheetCornerRadius: 48,
