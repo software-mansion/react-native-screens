@@ -278,8 +278,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             ?.dispatchEvent(HeaderHeightChangeEvent(id, totalHeight))
     }
 
-    internal fun expectsDimmingViewUnderneath(): Boolean = stackPresentation == StackPresentation.FORM_SHEET
-
     enum class StackPresentation {
         PUSH, MODAL, TRANSPARENT_MODAL, FORM_SHEET
     }
