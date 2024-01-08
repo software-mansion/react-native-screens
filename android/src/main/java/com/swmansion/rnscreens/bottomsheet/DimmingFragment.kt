@@ -149,13 +149,13 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 dimmingViewCallback?.let {
                     nestedFragment.screen.sheetBehavior?.removeBottomSheetCallback(it)
                 }
-                selfDismiss(emitDismissedEvent = true)
+                dismissSelf(emitDismissedEvent = true)
             }
             else -> {}
         }
     }
 
-    private fun selfDismiss(emitDismissedEvent: Boolean = false) {
+    private fun dismissSelf(emitDismissedEvent: Boolean = false) {
         if (!this.isRemoving) {
             if (emitDismissedEvent) {
                 val reactContext = nestedFragment.screen.reactContext
@@ -195,7 +195,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
             )
             setOnClickListener {
                 if (screen.sheetClosesWhenTouchOutside) {
-                    selfDismiss(true)
+                    dismissSelf(true)
                 }
             }
         }
