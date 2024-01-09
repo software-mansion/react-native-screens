@@ -31,6 +31,7 @@ import com.google.android.material.bottomsheet.BottomSheetDragHandleView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.CustomOutlineProvider
 import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
@@ -174,9 +175,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         }
 
-        screen.clipToOutline = true
         if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
-            attachShapeToScreen(screen)
+            attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
+            screen.outlineProvider = CustomOutlineProvider(PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F))
+            screen.clipToOutline = true
 
             if (screen.isSheetGrabberVisible) {
                 val grabberView = BottomSheetDragHandleView(requireContext()).apply {
