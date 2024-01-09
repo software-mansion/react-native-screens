@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, StyleSheet, View, Text, ScrollView } from 'react-native';
+import { TouchableOpacity, GestureHandlerRootView, Gesture, TextInput } from 'react-native-gesture-handler';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -13,58 +14,60 @@ const Stack = createNativeStackNavigator();
 export default function App(): JSX.Element {
   const initialScreenOptions: NativeStackNavigationOptions = {
     stackPresentation: 'formSheet',
-    sheetAllowedDetents: [0.4, 0.6, 0.9],
+    sheetAllowedDetents: [0.45, 0.86],
     sheetLargestUndimmedDetent: 0,
     sheetGrabberVisible: false,
-    sheetCornerRadius: 48,
+    sheetCornerRadius: 20,
     sheetExpandsWhenScrolledToEdge: true,
   };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          // headerRight: () => <View style={styles.headerView} />,
-          headerTitleStyle: {
-            color: 'cyan',
-          },
-          headerShown: true,
-          headerHideBackButton: false,
-        }}>
-        <Stack.Screen name="First" component={First} />
-        <Stack.Screen
-          name="Second"
-          component={Second}
-          options={{
-            // stackPresentation: 'modal',
-            fullScreenSwipeEnabled: true,
-          }}
-        />
-        <Stack.Screen
-          name="SheetScreen"
-          component={SheetScreen}
-          options={{
-            // stackAnimation: 'slide_from_bottom',
-            ...initialScreenOptions,
-          }}
-        />
-        <Stack.Screen
-          name="SheetScreenWithScrollView"
-          component={SheetScreenWithScrollView}
-          options={{
-            ...initialScreenOptions,
-          }}
-        />
-        <Stack.Screen
-          name="Third"
-          component={Third}
-          options={{
-            // stackPresentation: 'modal',
-            fullScreenSwipeEnabled: true,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            // headerRight: () => <View style={styles.headerView} />,
+            headerTitleStyle: {
+              color: 'cyan',
+            },
+            headerShown: true,
+            headerHideBackButton: false,
+          }}>
+          <Stack.Screen name="First" component={First} />
+          <Stack.Screen
+            name="Second"
+            component={Second}
+            options={{
+              // stackPresentation: 'modal',
+              fullScreenSwipeEnabled: true,
+            }}
+          />
+          <Stack.Screen
+            name="SheetScreen"
+            component={SheetScreen}
+            options={{
+              // stackAnimation: 'slide_from_bottom',
+              ...initialScreenOptions,
+            }}
+          />
+          <Stack.Screen
+            name="SheetScreenWithScrollView"
+            component={SheetScreenWithScrollView}
+            options={{
+              ...initialScreenOptions,
+            }}
+          />
+          <Stack.Screen
+            name="Third"
+            component={Third}
+            options={{
+              // stackPresentation: 'modal',
+              fullScreenSwipeEnabled: true,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 
@@ -105,6 +108,9 @@ function Second({
         title="Go back to first screen"
         onPress={navigateToFirstCallback}
       />
+      <TouchableOpacity onPress={() => console.log('GH Button clicked')}>
+        <Text>GH BUTTON</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -164,8 +170,11 @@ function SheetScreen({
     }
   }
 
+  const ref = React.useRef(null);
+
   return (
     <View style={[styles.containerView, { backgroundColor: 'green' }]}>
+      <TextInput value={'hello'} ref={ref} />
       <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('First')}
@@ -175,10 +184,11 @@ function SheetScreen({
         onPress={() => navigation.navigate('Second')}
       />
       <Button
-        title="Tap me for the third screen"
+        title="Tap me for the third screen / blur"
         onPress={() => {
           // navigation.goBack();
-          navigation.navigate('Third');
+          // navigation.navigate('Third');
+          ref?.current?.blur();
         }}
       />
       <Button
