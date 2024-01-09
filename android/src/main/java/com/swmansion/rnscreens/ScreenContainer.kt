@@ -203,24 +203,24 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
     }
 
     fun attachBelowTop() {
-        if (mScreenFragments.size < 2) {
+        if (screenWrappers.size < 2) {
             throw RuntimeException("[RNScreens] Unable to run transition for less than 2 screens.")
         }
         val transaction = createTransaction()
         val top = topScreen as Screen
         // we have to reattach topScreen so it is on top of the one below
         detachScreen(transaction, top.fragment as Fragment)
-        attachScreen(transaction, mScreenFragments[mScreenFragments.size - 2].fragment)
+        attachScreen(transaction, screenWrappers[screenWrappers.size - 2].fragment)
         attachScreen(transaction, top.fragment as Fragment)
         transaction.commitNowAllowingStateLoss()
     }
 
     fun detachBelowTop() {
-        if (mScreenFragments.size < 2) {
+        if (screenWrappers.size < 2) {
             throw RuntimeException("[RNScreens] Unable to run transition for less than 2 screens.")
         }
         val transaction = createTransaction()
-        detachScreen(transaction, mScreenFragments[mScreenFragments.size - 2].fragment)
+        detachScreen(transaction, screenWrappers[screenWrappers.size - 2].fragment)
         transaction.commitNowAllowingStateLoss()
     }
 

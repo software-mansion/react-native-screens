@@ -32,7 +32,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         get() = topScreenWrapper?.screen
 
     val fragments: ArrayList<ScreenStackFragmentWrapper>
-        get() = mStack
+        get() = stack
 
     val rootScreen: Screen
         get() {
