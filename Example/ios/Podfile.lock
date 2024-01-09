@@ -491,7 +491,7 @@ PODS:
     - React-perflogger (= 0.72.4)
   - RNGestureHandler (2.13.1):
     - React-Core
-  - RNReanimated (3.7.0-nightly-20231213-f3b16198a):
+  - RNReanimated (3.7.0-nightly-20240109-9e2c33716):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - ReactCommon/turbomodule/core
@@ -740,7 +740,7 @@ SPEC CHECKSUMS:
   React-utils: b79f2411931f9d3ea5781404dcbb2fa8a837e13a
   ReactCommon: 4b2bdcb50a3543e1c2b2849ad44533686610826d
   RNGestureHandler: 38aa38413896620338948fbb5c90579a7b1c3fde
-  RNReanimated: ee1091acc552699d9b1c09efd6727a5fdeebab17
+  RNReanimated: 0f8173d46f45c2f690c416dff10206832631571d
   RNScreens: 975abd21a20b6ebd26563e5ab86b30250569c182
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
