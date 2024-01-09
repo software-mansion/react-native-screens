@@ -256,7 +256,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     private fun attachShapeToScreen(screen: Screen) {
-        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F)
         val shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
 //            setTopLeftCorner(CornerFamily.ROUNDED, cornerSize)
 //            setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
