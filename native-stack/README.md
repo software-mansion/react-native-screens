@@ -616,6 +616,7 @@ A React ref to imperatively modify search bar. Supported actions:
 *  `blur` - remove focus from search bar
 *  `clearText` - clear text in search bar
 *  `setText` - set search bar's content to given string
+*  `cancelSearch` - cancel search in search bar.
 *  `toggleCancelButton` (iOS only) - toggle cancel button display near search bar.
 
 ### Events

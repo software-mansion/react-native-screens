@@ -15,6 +15,7 @@ export type SearchBarCommands = {
   clearText: () => void;
   toggleCancelButton: (show: boolean) => void;
   setText: (text: string) => void;
+  cancelSearch: () => void;
 };
 
 export type StackPresentationTypes =
@@ -561,6 +562,7 @@ export interface SearchBarProps {
    * * `blur` - removes focus from the search bar
    * * `clearText` - removes any text present in the search bar input field
    * * `setText` - sets the search bar's content to given value
+   * * `cancelSearch` - cancel search in search bar.
    * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
    */
   ref?: React.RefObject<SearchBarCommands>;
