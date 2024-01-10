@@ -8,6 +8,8 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
+  GHContext,
+  GestureDetectorBridge,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -26,6 +28,8 @@ import {
   NativeStackDescriptorMap,
   NativeStackNavigationHelpers,
   NativeStackNavigationOptions,
+  NativeStackNavigatorProps,
+  ScreensRefsHolder,
 } from '../types';
 import HeaderConfig from './HeaderConfig';
 import SafeAreaProviderCompat from '../utils/SafeAreaProviderCompat';
@@ -159,12 +163,14 @@ const RouteView = ({
   index,
   navigation,
   stateKey,
+  screensRefs,
 }: {
   descriptors: NativeStackDescriptorMap;
   route: NavigationRoute<ParamListBase, string>;
   index: number;
   navigation: NativeStackNavigationHelpers;
   stateKey: string;
+  screensRefs: ScreensRefsHolder;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
@@ -260,12 +266,21 @@ const RouteView = ({
   ).current;
 
   const Screen = React.useContext(ScreenContext);
-
   const { dark } = useTheme();
+
+  const screenRef = React.useRef(null);
+  React.useEffect(() => {
+    screensRefs.current[route.key] = screenRef;
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete screensRefs.current[route.key];
+    };
+  });
 
   return (
     <Screen
       key={route.key}
+      ref={screenRef}
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
@@ -403,19 +418,44 @@ function NativeStackViewInner({
 }: Props): JSX.Element {
   const { key, routes } = state;
 
+  const currentRouteKey = routes[state.index].key;
+  const topScreenOptions = descriptors[currentRouteKey].options;
+  const gestureDetectorBridge = React.useRef<GestureDetectorBridge>({
+    stackUseEffectCallback: _stackRef => {
+      // this method will be override in GestureDetector
+    },
+  });
+  type RefHolder = Record<
+    string,
+    React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>
+  >;
+  const screensRefs = React.useRef<RefHolder>({});
+  const ScreenGestureDetector = React.useContext(GHContext);
+
   return (
-    <ScreenStack style={styles.container}>
-      {routes.map((route, index) => (
-        <RouteView
-          key={route.key}
-          descriptors={descriptors}
-          route={route}
-          index={index}
-          navigation={navigation}
-          stateKey={key}
-        />
-      ))}
-    </ScreenStack>
+    <ScreenGestureDetector
+      gestureDetectorBridge={gestureDetectorBridge}
+      goBackGesture={topScreenOptions?.goBackGesture}
+      transitionAnimation={topScreenOptions?.transitionAnimation}
+      screenEdgeGesture={topScreenOptions?.screenEdgeGesture ?? false}
+      screensRefs={screensRefs}
+      currentRouteKey={currentRouteKey}>
+      <ScreenStack
+        style={styles.container}
+        gestureDetectorBridge={gestureDetectorBridge}>
+        {routes.map((route, index) => (
+          <RouteView
+            key={route.key}
+            descriptors={descriptors}
+            route={route}
+            index={index}
+            navigation={navigation}
+            stateKey={key}
+            screensRefs={screensRefs}
+          />
+        ))}
+      </ScreenStack>
+    </ScreenGestureDetector>
   );
 }
 

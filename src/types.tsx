@@ -7,6 +7,7 @@ import {
   TextInputFocusEventData,
   ColorValue,
 } from 'react-native';
+import { NativeStackNavigatorProps } from './native-stack/types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -392,12 +393,20 @@ export interface ScreenContainerProps extends ViewProps {
   hasTwoStates?: boolean;
 }
 
+export interface GestureDetectorBridge {
+  stackUseEffectCallback: (
+    stackRef: React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>
+  ) => void;
+}
+
 export interface ScreenStackProps extends ViewProps {
   children?: React.ReactNode;
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  gestureDetectorBridge?: React.MutableRefObject<GestureDetectorBridge>;
+  ref?: React.MutableRefObject<React.Ref<View>>;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {

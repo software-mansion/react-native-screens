@@ -681,7 +681,7 @@ namespace react = facebook::react;
       // Also, we need to return the animator when full width swiping even if the animation is not custom,
       // otherwise the screen will be just popped immediately due to no animation
       ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
-       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation] || _customAnimation)) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -710,6 +710,9 @@ namespace react = facebook::react;
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
+  if (_disableSwipeBack) {
+    return NO;
+  }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
 #if TARGET_OS_TV
@@ -1031,6 +1034,33 @@ namespace react = facebook::react;
     self->_hasLayout = YES;
     [self maybeAddToParentAndUpdateContainer];
   });
+}
+
+- (void)startScreenTransition
+{
+  if (_interactionController == nil) {
+    _customAnimation = YES;
+    _interactionController = [UIPercentDrivenInteractiveTransition new];
+    [_controller popViewControllerAnimated:YES];
+  }
+}
+
+- (void)updateScreenTransition:(double)progress
+{
+  [_interactionController updateInteractiveTransition:progress];
+}
+
+- (void)finishScreenTransition:(BOOL)canceled
+{
+  _customAnimation = NO;
+  if (canceled) {
+    [_interactionController updateInteractiveTransition:0.0];
+    [_interactionController cancelInteractiveTransition];
+  } else {
+    [_interactionController updateInteractiveTransition:1.0];
+    [_interactionController finishInteractiveTransition];
+  }
+  _interactionController = nil;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
