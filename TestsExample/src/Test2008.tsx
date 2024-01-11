@@ -1,10 +1,13 @@
 import React from 'react';
 import { Text, View, SafeAreaView, StyleSheet, Pressable } from 'react-native';
-import { createNativeStackNavigator, NativeStackNavigationProp, } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import {
   NavigationContainer,
   useNavigation,
-  ParamListBase
+  ParamListBase,
   type NavigationProp,
 } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -112,10 +115,10 @@ function Modal({
 }
 
 function TransparentModal({
-    navigation,
-  }: {
-    navigation: NativeStackNavigationProp<ParamListBase>;
-  }) {
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
   return (
     <View style={styles.innerModal}>
       <Text>Transparent Modal</Text>
@@ -132,10 +135,10 @@ function TransparentModal({
 }
 
 function ContainedTransparentModal({
-    navigation,
-  }: {
-    navigation: NativeStackNavigationProp<ParamListBase>;
-  }) {
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
   return (
     <View style={styles.innerModal}>
       <Text>Contained Transparent Modal</Text>
