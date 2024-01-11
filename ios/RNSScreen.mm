@@ -1247,7 +1247,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // That's because the modal did not find a child VC that has an orientation set,
     // and it doesn't itself have an orientation set. Hence, we fallback to the standard behavior.
     // Please keep in mind that this behavior might be wrong and could lead to undiscovered bugs.
-    // For more information, see https://github.com/software-mansion/react-native-screens/pull/X.
+    // For more information, see https://github.com/software-mansion/react-native-screens/pull/2008.
   }
 
   UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
