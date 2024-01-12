@@ -2,7 +2,10 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Path
+import android.graphics.RectF
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +27,7 @@ import androidx.fragment.app.commit
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
+import com.facebook.react.views.view.ReactViewBackgroundDrawable
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -176,19 +180,19 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
-            attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
+//            attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
 //            screen.outlineProvider = CustomOutlineProvider(PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F))
             screen.clipToOutline = true
 
-            if (screen.isSheetGrabberVisible) {
-                val grabberView = BottomSheetDragHandleView(requireContext()).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                }
-                coordinatorLayout.addView(grabberView)
-            }
+//            if (screen.isSheetGrabberVisible) {
+//                val grabberView = BottomSheetDragHandleView(requireContext()).apply {
+//                    layoutParams = ViewGroup.LayoutParams(
+//                        ViewGroup.LayoutParams.MATCH_PARENT,
+//                        ViewGroup.LayoutParams.WRAP_CONTENT
+//                    )
+//                }
+//                coordinatorLayout.addView(grabberView)
+//            }
         }
 
         coordinatorLayout.addView(screen.recycle())
@@ -256,17 +260,25 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     private fun attachShapeToScreen(screen: Screen) {
-        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F)
+//        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F)
 //        val shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
 //            setTopLeftCorner(CornerFamily.ROUNDED, cornerSize)
 //            setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
 //        }.build()
 //        val shape = MaterialShapeDrawable(shapeAppearanceModel)
 //        screen.background = shape
-        screen.background = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadii = FloatArray(8) { i -> if (i < 4) cornerSize else 0F }
-        }
+//        screen.background = GradientDrawable().apply {
+//            shape = GradientDrawable.RECTANGLE
+////            cornerRadii = FloatArray(8) { i -> if (i < 4) cornerSize else 0F }
+//            cornerRadius = cornerSize
+//        }
+        // TODO(@kkafar): It looks like this finally works with ReactViewBackgroundDrawable,
+        // however it should also work with GradientDrawable, but for some reason it does not on API < 33
+        // (tested on 31)
+//        screen.background = ReactViewBackgroundDrawable(requireContext()).apply {
+//            setRadius(cornerSize, 1)
+//            setRadius(cornerSize, 0)
+//        }
     }
 
     override fun onStop() {
@@ -429,6 +441,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         override fun getPointerEvents(): PointerEvents {
             return PointerEvents.BOX_NONE
         }
+
     }
 
     private class ScreensAnimation(private val mFragment: ScreenFragment) : Animation() {
