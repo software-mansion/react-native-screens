@@ -437,7 +437,7 @@ function NativeStackViewInner({
     warnOnce(
       // Check if ScreenGestureDetector returns default value for context
       ScreenGestureDetector.name !== 'GHWrapper' && goBackGesture !== undefined,
-      `Cannot detect ScreenGestureDetector in a screen that uses goBackGesture. Please make sure your navigator is wrapped in ScreenGestureDetector.`
+      `Cannot detect GestureDetectorProvider in a screen that uses goBackGesture. Please make sure your navigator is wrapped in GestureDetectorProvider.`
     );
   });
 
