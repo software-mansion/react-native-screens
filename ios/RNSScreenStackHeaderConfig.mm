@@ -528,7 +528,7 @@ namespace react = facebook::react;
 
     // When backBarButtonItem's title is null, back menu will use value
     // of backButtonTitle
-    [backBarButtonItem setTitle:nil];
+    [backBarButtonItem setTitle:@" "];
     prevItem.backButtonTitle = resolvedBackTitle;
   }
   prevItem.backBarButtonItem = backBarButtonItem;
