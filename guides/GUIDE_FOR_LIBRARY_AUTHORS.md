@@ -75,6 +75,14 @@ Whether the keyboard should hide when swiping to the previous screen. Defaults t
 
 Whether the home indicator should be hidden on this screen. Defaults to `false`.
 
+#### `hidden` (iOS only)
+
+If a screen is marked `hidden`, the resources will be retained, but it will not be rendered
+in the stack. This is to support iOS picture-in-picture, where you have a video overlay originating
+on a screen, and even when popping the screen off the stack the resources need to be retained
+(not garbage collected), so that the video can continue playing. Additionally, this allows the
+screen to be "un-hidden" (visually, pushed back onto the stack) when the user taps on the overlay video.
+
 ### `nativeBackButtonDismissalEnabled` (Android only)
 
 Boolean indicating whether, when the Android default back button is clicked, the `pop` action should be performed on the native side or on the JS side to be able to prevent it.

@@ -81,6 +81,7 @@ namespace react = facebook::react;
   _gestureEnabled = YES;
   _replaceAnimation = RNSScreenReplaceAnimationPop;
   _dismissed = NO;
+  _hidden = NO;
   _hasStatusBarStyleSet = NO;
   _hasStatusBarAnimationSet = NO;
   _hasStatusBarHiddenSet = NO;
@@ -197,6 +198,12 @@ namespace react = facebook::react;
       // Default
       break;
   }
+}
+
+- (void)setHidden:(BOOL)hidden
+{
+  _hidden = hidden;
+  _dismissed = NO;
 }
 
 - (void)setGestureEnabled:(BOOL)gestureEnabled
@@ -698,6 +705,7 @@ namespace react = facebook::react;
   // TODO: Make sure that there is no edge case when this should be uncommented
   // _controller=nil;
   _dismissed = NO;
+  _hidden = NO;
   _state.reset();
   _touchHandler = nil;
 
@@ -721,6 +729,8 @@ namespace react = facebook::react;
   [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
 
   [self setGestureEnabled:newScreenProps.gestureEnabled];
+
+  [self setHidden:newScreenProps.hidden];
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
 
@@ -1472,6 +1482,7 @@ RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(hidden, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(hideKeyboardOnSwipe, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
