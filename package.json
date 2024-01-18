@@ -122,18 +122,6 @@
     "android/**/*.kt": "yarn format-android",
     "ios/**/*.{h,m,mm,cpp}": "yarn format-ios"
   },
-  "eslintIgnore": [
-    "node_modules/",
-    "lib/"
-  ],
-  "codegenConfig": {
-    "name": "rnscreens",
-    "type": "all",
-    "jsSrcsDir": "./src/fabric",
-    "android": {
-      "javaPackageName": "com.swmansion.rnscreens"
-    }
-  },
   "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
@@ -147,5 +135,17 @@
         }
       ]
     ]
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "codegenConfig": {
+    "name": "rnscreens",
+    "type": "all",
+    "jsSrcsDir": "./src/fabric",
+    "android": {
+      "javaPackageName": "com.swmansion.rnscreens"
+    }
   }
 }
