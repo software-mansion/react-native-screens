@@ -434,12 +434,15 @@ function NativeStackViewInner({
   const ScreenGestureDetector = React.useContext(GHContext);
 
   React.useEffect(() => {
-    warnOnce(
-      // Check if ScreenGestureDetector returns default value for context
-      ScreenGestureDetector.name !== 'GHWrapper' && goBackGesture !== undefined,
-      'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.'
-    );
-  });
+    if (
+      ScreenGestureDetector.name !== 'GHWrapper' &&
+      goBackGesture !== undefined
+    ) {
+      console.warn(
+        'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.'
+      );
+    }
+  }, [ScreenGestureDetector.name, goBackGesture]);
 
   return (
     <ScreenGestureDetector
