@@ -13,6 +13,6 @@ class HeaderBackButtonClickedEvent(surfaceId: Int, viewId: Int) : Event<ScreenAp
     override fun getEventData(): WritableMap? = Arguments.createMap()
 
     companion object {
-        const val EVENT_NAME = "topHeaderBackButtonClickedEvent"
+        const val EVENT_NAME = "topHeaderBackButtonClicked"
     }
 }
