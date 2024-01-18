@@ -11,10 +11,10 @@ import com.facebook.react.viewmanagers.RNSScreenStackHeaderSubviewManagerInterfa
 
 @ReactModule(name = ScreenStackHeaderSubviewManager.REACT_CLASS)
 class ScreenStackHeaderSubviewManager : ViewGroupManager<ScreenStackHeaderSubview>(), RNSScreenStackHeaderSubviewManagerInterface<ScreenStackHeaderSubview> {
-    private val mDelegate: ViewManagerDelegate<ScreenStackHeaderSubview>
+    private val delegate: ViewManagerDelegate<ScreenStackHeaderSubview>
 
     init {
-        mDelegate = RNSScreenStackHeaderSubviewManagerDelegate<ScreenStackHeaderSubview, ScreenStackHeaderSubviewManager>(this)
+        delegate = RNSScreenStackHeaderSubviewManagerDelegate<ScreenStackHeaderSubview, ScreenStackHeaderSubviewManager>(this)
     }
 
     override fun getName() = REACT_CLASS
@@ -33,7 +33,7 @@ class ScreenStackHeaderSubviewManager : ViewGroupManager<ScreenStackHeaderSubvie
         }
     }
 
-    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderSubview> = mDelegate
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderSubview> = delegate
 
     companion object {
         const val REACT_CLASS = "RNSScreenStackHeaderSubview"

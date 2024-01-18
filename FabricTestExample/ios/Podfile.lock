@@ -1231,7 +1231,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (3.6.0):
+  - RNReanimated (3.7.0-nightly-20240109-9e2c33716):
     - glog
     - hermes-engine
     - RCT-Folly (= 2022.05.16.00)
@@ -1506,7 +1506,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: 26fad476bfa736552bbfa698a06cc530475c1505
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
+  DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 39ba45baf4e398618f8b3a4bb6ba8fcdb7fc2133
   Flipper: c7a0093234c4bdd456e363f2f19b2e4b27652d44
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
@@ -1517,7 +1517,7 @@ SPEC CHECKSUMS:
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   FlipperKit: 37525a5d056ef9b93d1578e04bc3ea1de940094f
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
+  glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 7cea8d9de082031f5e81d491d1e346e4eeca1699
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
@@ -1568,11 +1568,11 @@ SPEC CHECKSUMS:
   React-utils: 42708ea436853045ef1eaff29996813d9fbbe209
   ReactCommon: 851280fb976399ca1aabc74cc2c3612069ea70a2
   RNGestureHandler: 38016feaff9bd5d8282c78ddce37a89b3a1d595b
-  RNReanimated: 513822d418b77dc528cbc7a4e6621fcb29a5c1ea
-  RNScreens: f7b8bb892b4957f6f91e5dfd9a191e7f13ce8baa
+  RNReanimated: c70748905d6263c7591f7e20356635ce13c9e522
+  RNScreens: 42f2b81fffc251443d43275f495073ab965ba0d9
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  Yoga: 20d6a900dcc8d61d5e3b799bbf627cc34474a8c4
+  Yoga: 44003f970aa541b79dfdd59cf236fda41bd5890f
 
 PODFILE CHECKSUM: f0682954c3112ba9068a9640979866030d94959c
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.14.3

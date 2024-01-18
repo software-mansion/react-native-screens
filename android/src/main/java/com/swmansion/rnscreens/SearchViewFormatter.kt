@@ -8,8 +8,8 @@ import androidx.appcompat.R
 import androidx.appcompat.widget.SearchView
 
 class SearchViewFormatter(var searchView: SearchView) {
-    private var mDefaultTextColor: Int? = null
-    private var mDefaultTintBackground: Drawable? = null
+    private var defaultTextColor: Int? = null
+    private var defaultTintBackground: Drawable? = null
 
     private val searchEditText
         get() = searchView.findViewById<View>(R.id.search_src_text) as? EditText
@@ -21,10 +21,10 @@ class SearchViewFormatter(var searchView: SearchView) {
         get() = searchView.findViewById<ImageView>(R.id.search_close_btn)
 
     fun setTextColor(textColor: Int?) {
-        val currentDefaultTextColor = mDefaultTextColor
+        val currentDefaultTextColor = defaultTextColor
         if (textColor != null) {
-            if (mDefaultTextColor == null) {
-                mDefaultTextColor = searchEditText?.textColors?.defaultColor
+            if (defaultTextColor == null) {
+                defaultTextColor = searchEditText?.textColors?.defaultColor
             }
             searchEditText?.setTextColor(textColor)
         } else if (currentDefaultTextColor != null) {
@@ -33,10 +33,10 @@ class SearchViewFormatter(var searchView: SearchView) {
     }
 
     fun setTintColor(tintColor: Int?) {
-        val currentDefaultTintColor = mDefaultTintBackground
+        val currentDefaultTintColor = defaultTintBackground
         if (tintColor != null) {
-            if (mDefaultTintBackground == null) {
-                mDefaultTintBackground = searchTextPlate.background
+            if (defaultTintBackground == null) {
+                defaultTintBackground = searchTextPlate.background
             }
             searchTextPlate.setBackgroundColor(tintColor)
         } else if (currentDefaultTintColor != null) {
