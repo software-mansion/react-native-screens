@@ -48,6 +48,16 @@ export {
 export { default as FullWindowOverlay } from './components/FullWindowOverlay';
 
 /*
+ * Modules
+ */
+export { default as NativeScreensModule } from './fabric/NativeScreensModule';
+
+/*
+ * Gesture Handler
+ */
+export { GHContext } from './gesture-handler';
+
+/*
  * Utils
  */
 export {

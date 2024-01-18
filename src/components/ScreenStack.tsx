@@ -8,7 +8,8 @@ const NativeScreenStack: React.ComponentType<ScreenStackProps> =
   ScreenStackNativeComponent as any;
 
 function ScreenStack(props: ScreenStackProps) {
-  const { children, ...rest } = props;
+  const { children, gestureDetectorBridge, ...rest } = props;
+  const ref = React.useRef(null);
   const size = React.Children.count(children);
   // freezes all screens except the top one
   const childrenWithFreeze = React.Children.map(children, (child, index) => {
@@ -25,7 +26,16 @@ function ScreenStack(props: ScreenStackProps) {
     );
   });
 
-  return <NativeScreenStack {...rest}>{childrenWithFreeze}</NativeScreenStack>;
+  React.useEffect(() => {
+    if (gestureDetectorBridge) {
+      gestureDetectorBridge.current.stackUseEffectCallback(ref);
+    }
+  });
+  return (
+    <NativeScreenStack {...rest} ref={ref}>
+      {childrenWithFreeze}
+    </NativeScreenStack>
+  );
 }
 
 export default ScreenStack;
