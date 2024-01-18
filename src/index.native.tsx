@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import React, {
-  Fragment,
-  PropsWithChildren,
-  ReactNode,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { PropsWithChildren, ReactNode, useEffect, useRef } from 'react';
 import {
   Animated,
   Image,
@@ -581,7 +575,9 @@ export type {
 const ScreenContext = React.createContext(InnerScreen);
 
 // context to be used when the user wants full screen swipe (see `gesture-handler` folder in repo)
-const GHContext = React.createContext(Fragment);
+const GHContext = React.createContext(
+  (props: { children: React.ReactNode }) => <>{props.children}</>
+);
 
 class Screen extends React.Component<ScreenProps> {
   static contextType = ScreenContext;
