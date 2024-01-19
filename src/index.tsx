@@ -55,7 +55,7 @@ export { default as NativeScreensModule } from './fabric/NativeScreensModule';
 /*
  * Gesture Handler
  */
-export { GHContext } from './gesture-handler';
+export { GHContext } from './gesture-handler/context/GHContext';
 
 /*
  * Utils
