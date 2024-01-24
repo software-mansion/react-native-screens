@@ -653,8 +653,8 @@ namespace react = facebook::react;
     // Because `layoutSubviews` method is also called on grabbing the modal,
     // we don't want to update the frame when modal is being dismissed.
     // We also want to get the frame in correct position. In the best case, it
-    // will be modal's superview (UITransitionView), which frame is being changed correctly.
-    // Otherwise, we will fallback to the bounds of the ScreenStack.
+    // should be modal's superview (UITransitionView), which frame is being changed correctly.
+    // Otherwise, when superview is nil, we will fallback to the bounds of the ScreenStack.
     BOOL isModalBeingDismissed = [modal isKindOfClass:[RNSScreen class]] && ((RNSScreen *)modal).isBeingDismissed;
     CGRect correctFrame = modal.view.superview != nil ? modal.view.superview.frame : self.bounds;
 
