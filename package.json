@@ -20,7 +20,7 @@
   "module": "lib/module/index",
   "react-native": "src/index",
   "source": "src/index",
-  "types": "lib/typescript/index",
+  "types": "lib/typescript/index.d.ts",
   "files": [
     "src/",
     "common/",
@@ -71,7 +71,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/eslint-parser": "7.22.15",
-    "@react-native-community/bob": "^0.17.1",
     "@react-native-community/cli": "^11.3.6",
     "@react-native-community/cli-platform-android": "^11.3.6",
     "@react-native-community/cli-platform-ios": "^11.3.6",
@@ -102,6 +101,7 @@
     "react": "18.2.0",
     "react-dom": "^18.2.0",
     "react-native": "0.72.4",
+    "react-native-builder-bob": "^0.23.2",
     "react-native-gesture-handler": "^2.13.3",
     "react-native-reanimated": "3.7.0-nightly-20240109-9e2c33716",
     "react-native-safe-area-context": "^4.8.1",
@@ -122,7 +122,7 @@
     "android/**/*.kt": "yarn format-android",
     "ios/**/*.{h,m,mm,cpp}": "yarn format-ios"
   },
-  "@react-native-community/bob": {
+  "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
     "targets": [

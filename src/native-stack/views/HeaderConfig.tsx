@@ -165,6 +165,7 @@ export default function HeaderConfig({
       {isSearchBarAvailableForCurrentPlatform &&
       processedSearchBarOptions !== undefined ? (
         <ScreenStackHeaderSearchBarView>
+          {/* @ts-ignore Skip incorrect error about incompatible ref types */}
           <SearchBar {...processedSearchBarOptions} />
         </ScreenStackHeaderSearchBarView>
       ) : null}

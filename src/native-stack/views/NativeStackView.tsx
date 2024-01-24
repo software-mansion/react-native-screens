@@ -419,7 +419,8 @@ function NativeStackViewInner({
   const { key, routes } = state;
 
   const currentRouteKey = routes[state.index].key;
-  const topScreenOptions = descriptors[currentRouteKey].options;
+  const { goBackGesture, transitionAnimation, screenEdgeGesture } =
+    descriptors[currentRouteKey].options;
   const gestureDetectorBridge = React.useRef<GestureDetectorBridge>({
     stackUseEffectCallback: _stackRef => {
       // this method will be override in GestureDetector
@@ -432,12 +433,23 @@ function NativeStackViewInner({
   const screensRefs = React.useRef<RefHolder>({});
   const ScreenGestureDetector = React.useContext(GHContext);
 
+  React.useEffect(() => {
+    if (
+      ScreenGestureDetector.name !== 'GHWrapper' &&
+      goBackGesture !== undefined
+    ) {
+      console.warn(
+        'Cannot detect GestureDetectorProvider in a screen that uses `goBackGesture`. Make sure your navigator is wrapped in GestureDetectorProvider.'
+      );
+    }
+  }, [ScreenGestureDetector.name, goBackGesture]);
+
   return (
     <ScreenGestureDetector
       gestureDetectorBridge={gestureDetectorBridge}
-      goBackGesture={topScreenOptions?.goBackGesture}
-      transitionAnimation={topScreenOptions?.transitionAnimation}
-      screenEdgeGesture={topScreenOptions?.screenEdgeGesture ?? false}
+      goBackGesture={goBackGesture}
+      transitionAnimation={transitionAnimation}
+      screenEdgeGesture={screenEdgeGesture ?? false}
       screensRefs={screensRefs}
       currentRouteKey={currentRouteKey}>
       <ScreenStack

@@ -69,6 +69,7 @@ export interface NativeProps extends ViewProps {
   onHeaderHeightChange?: BubblingEventHandler<HeaderHeightChangeEvent>;
   onTransitionProgress?: BubblingEventHandler<TransitionProgressEvent>;
   onGestureCancel?: BubblingEventHandler<ScreenEvent>;
+  onHeaderBackButtonClicked?: BubblingEventHandler<ScreenEvent>;
   sheetAllowedDetents?: WithDefault<SheetDetentTypes, 'large'>;
   sheetLargestUndimmedDetent?: WithDefault<SheetDetentTypes, 'all'>;
   sheetGrabberVisible?: WithDefault<boolean, false>;
@@ -96,7 +97,6 @@ export interface NativeProps extends ViewProps {
   navigationBarColor?: ColorValue;
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
-  onHeaderBackButtonClicked?: BubblingEventHandler<ScreenEvent>;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {
