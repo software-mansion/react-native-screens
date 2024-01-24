@@ -648,11 +648,13 @@ namespace react = facebook::react;
   _controller.view.frame = self.bounds;
 
   // We need to update the bounds of the modal views here, since
-  // for contained modals they are not updated by modals themselves,
-  // when no other modal has been dismissed yet.
+  // for contained modals they are not updated by modals themselves.
   for (UIViewController *modal in _presentedModals) {
-    if (!CGRectEqualToRect(modal.view.frame, self.bounds)) {
-      modal.view.frame = self.bounds;
+    BOOL isModalBeingDismissed = [modal isKindOfClass:[RNSScreen class]] && ((RNSScreen *)modal).isBeingDismissed;
+    CGRect correctFrame = modal.view.superview != nil ? modal.view.superview.frame : self.bounds;
+
+    if (!CGRectEqualToRect(modal.view.frame, correctFrame) && !isModalBeingDismissed) {
+      modal.view.frame = correctFrame;
     }
   }
 }
