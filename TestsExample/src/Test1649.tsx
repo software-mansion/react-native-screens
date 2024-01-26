@@ -25,19 +25,20 @@ type NavProp = {
 
 const Stack = createNativeStackNavigator();
 
-const initialAllowedDetentsArray = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+// const initialAllowedDetentsArray = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+const initialAllowedDetentsArray = [0.3, 0.6, 0.9];
 
 /// Sheet options
 // const allowedDetentsAtom = jotai.atom<SheetDetent>('all');
 // const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>('all');
 
 const allowedDetentsAtom = jotai.atom<SheetDetent>(initialAllowedDetentsArray);
-const largestUndimmedDetentAtom = jotai.atom<SheetUndimmedDetent>(3);
+const largestUndimmedDetentAtom = jotai.atom<SheetUndimmedDetent>(1);
 
 // const allowedDetentsAtom = jotai.atom<SheetDetent>([0.7]);
 // const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>(0);
 
-const grabberVisibleAtom = jotai.atom(false);
+const grabberVisibleAtom = jotai.atom(true);
 const cornerRadiusAtom = jotai.atom(-1);
 const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
 
@@ -80,6 +81,7 @@ export default function App(): JSX.Element {
           name="SheetScreen"
           component={SheetScreen}
           options={{
+            headerShown: false,
             ...initialScreenOptions,
           }}
         />
@@ -87,6 +89,7 @@ export default function App(): JSX.Element {
           name="SheetScreenWithScrollView"
           component={SheetScreenWithScrollView}
           options={{
+            headerShown: false,
             ...initialScreenOptions,
           }}
         />
@@ -175,7 +178,7 @@ function SheetScreen({ navigation }: NavProp) {
   }
 
   return (
-    <View style={styles.centeredView}>
+    <View style={[styles.centeredView, { marginTop: 15 }]}>
       <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('Home')}
@@ -200,7 +203,7 @@ function SheetScreen({ navigation }: NavProp) {
         }}
       />
       <Text>detent: {allowedDetents}</Text>
-      <Button
+      {/*<Button
         title="Change largest undimmed detent"
         onPress={() => {
           const newDetentLevel = nextUndimmedDetentLevel(largestUndimmedDetent);
@@ -223,7 +226,7 @@ function SheetScreen({ navigation }: NavProp) {
         onPress={() => {
           setGrabberVisible(!grabberVisible);
         }}
-      />
+      />*/}
     </View>
   );
 }
@@ -267,6 +270,7 @@ const styles = StyleSheet.create({
   centeredView: {
     justifyContent: 'center',
     alignItems: 'center',
+    // flex: 1,
   },
   bordered: {
     borderColor: 'black',
