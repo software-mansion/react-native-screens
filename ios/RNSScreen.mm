@@ -69,6 +69,7 @@ namespace react = facebook::react;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
   BOOL _allowSizeUpdate;
+  CGSize _oldSize;
 #endif
 }
 
@@ -113,8 +114,10 @@ namespace react = facebook::react;
   _sheetCustomDetents = [NSArray array];
   _sheetCustomLargestUndimmedDetent = nil;
 #endif // !TARGET_OS_TV
-  _displayLink = nil;
   _allowSizeUpdate = YES;
+  _oldSize = CGSizeZero;
+
+  _displayLink = nil;
 }
 
 - (UIViewController *)reactViewController
@@ -128,6 +131,13 @@ namespace react = facebook::react;
   return _reactSubviews;
 }
 #endif
+
+- (void)layoutSubviews
+{
+  //  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
+  //    [_bridge.uiManager setSize:self.bounds.size forView:self];
+  //  }
+}
 
 - (void)updateBounds
 {
@@ -169,9 +179,17 @@ namespace react = facebook::react;
   //        self.bounds.size.width,
   //        self.bounds.size.height);
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    _oldSize = self.bounds.size;
     [_bridge.uiManager setSize:self.bounds.size forView:self];
     return;
   }
+
+  CAAnimation *droppingAnimation = [self.layer animationForKey:@"bounds.size"];
+  if (!droppingAnimation) {
+    [_bridge.uiManager setSize:self.bounds.size forView:self];
+  }
+
+  return;
 
   //  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
   //    [_bridge.uiManager setSize:self.bounds.size forView:self];
@@ -231,6 +249,21 @@ namespace react = facebook::react;
 
 - (void)displayLinkCallback
 {
+  //  CGSize newSize = _controller.sheetPresentationController.containerView.layer.presentationLayer.frame.size;
+  //  CGSize newSize = [[_controller.sheetPresentationController.containerView.layer.presentationLayer
+  //  valueForKeyPath:@"frame.size"] CGSizeValue];
+  CGSize newSize = self.layer.presentationLayer.bounds.size;
+  NSLog(
+      @"RNSScreenView %p displayLink setSize on UIManager %@ %@",
+      self,
+      NSStringFromCGSize(_oldSize),
+      NSStringFromCGSize(newSize));
+
+  if (!CGSizeEqualToSize(_oldSize, newSize)) {
+    _oldSize = newSize;
+    [_bridge.uiManager setSize:newSize forView:self];
+    return;
+  }
   //  CGSize size = self.layer.presentationLayer.frame.size;
   //  NSNumber *reactTag = self.reactTag;
   //  __weak RCTBridge *bridge = _bridge;
@@ -307,6 +340,8 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
     case RNSScreenStackPresentationFormSheet:
       _controller.modalPresentationStyle = UIModalPresentationFormSheet;
+      _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback)];
+      [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
       break;
 #endif
     case RNSScreenStackPresentationTransparentModal:
