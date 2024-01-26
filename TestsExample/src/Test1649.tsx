@@ -46,7 +46,7 @@ const largestUndimmedDetentAtom = jotai.atom<number>(3);
 // const allowedDetentsAtom = jotai.atom<SheetDetent>([0.7]);
 // const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>(0);
 
-const grabberVisibleAtom = jotai.atom(false);
+const grabberVisibleAtom = jotai.atom(true);
 const cornerRadiusAtom = jotai.atom(-1);
 const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
 
@@ -360,6 +360,7 @@ const styles = StyleSheet.create({
   centeredView: {
     justifyContent: 'center',
     alignItems: 'center',
+    // flex: 1,
   },
   bordered: {
     borderColor: 'black',
