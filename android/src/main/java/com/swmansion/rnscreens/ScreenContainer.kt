@@ -14,7 +14,9 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.ActivityState
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
 
 open class ScreenContainer(context: Context?) : ViewGroup(context) {
     @JvmField
@@ -198,6 +200,38 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
 
     private fun attachScreen(transaction: FragmentTransaction, fragment: Fragment) {
         transaction.add(id, fragment)
+    }
+
+    fun attachBelowTop() {
+        if (screenWrappers.size < 2) {
+            throw RuntimeException("[RNScreens] Unable to run transition for less than 2 screens.")
+        }
+        val transaction = createTransaction()
+        val top = topScreen as Screen
+        // we have to reattach topScreen so it is on top of the one below
+        detachScreen(transaction, top.fragment as Fragment)
+        attachScreen(transaction, screenWrappers[screenWrappers.size - 2].fragment)
+        attachScreen(transaction, top.fragment as Fragment)
+        transaction.commitNowAllowingStateLoss()
+    }
+
+    fun detachBelowTop() {
+        if (screenWrappers.size < 2) {
+            throw RuntimeException("[RNScreens] Unable to run transition for less than 2 screens.")
+        }
+        val transaction = createTransaction()
+        detachScreen(transaction, screenWrappers[screenWrappers.size - 2].fragment)
+        transaction.commitNowAllowingStateLoss()
+    }
+
+    fun notifyTopDetached() {
+        val top = topScreen as Screen
+        if (context is ReactContext) {
+            val surfaceId = UIManagerHelper.getSurfaceId(context)
+            UIManagerHelper
+                .getEventDispatcherForReactTag(context as ReactContext, top.id)
+                ?.dispatchEvent(ScreenDismissedEvent(surfaceId, top.id))
+        }
     }
 
     private fun detachScreen(transaction: FragmentTransaction, fragment: Fragment) {
