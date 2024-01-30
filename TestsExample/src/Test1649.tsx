@@ -134,10 +134,20 @@ export default function App(): JSX.Element {
 
 function Home({ navigation }: NavProp) {
   return (
+    <>
     <Button
       title="Tap me for the second screen"
       onPress={() => navigation.navigate('Second')}
     />
+    <Button
+      title="Tap me for the second screen"
+      onPress={() => navigation.navigate('Second')}
+    />
+    <Button
+      title="Tap me for the second screen"
+      onPress={() => navigation.navigate('Second')}
+    />
+    </>
   );
 }
 
