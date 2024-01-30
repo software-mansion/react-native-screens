@@ -44,6 +44,33 @@ namespace react = facebook::react;
   NSLog(@"SV %p setSize to (%lf, %lf)", self, size.width, size.height);
 }
 
+- (void)didSetProps:(NSArray<NSString *> *)changedProps
+{
+  [super didSetProps:changedProps];
+  //  self.top = YGValue{97.67, YGUnitPoint};
+}
+
+- (void)layoutWithMinimumSize:(CGSize)minimumSize
+                  maximumSize:(CGSize)maximumSize
+              layoutDirection:(UIUserInterfaceLayoutDirection)layoutDirection
+                layoutContext:(RCTLayoutContext)layoutContext
+{
+  [super layoutWithMinimumSize:minimumSize
+                   maximumSize:maximumSize
+               layoutDirection:layoutDirection
+                 layoutContext:layoutContext];
+}
+
+- (void)layoutSubviewsWithContext:(RCTLayoutContext)layoutContext
+{
+  [super layoutSubviewsWithContext:layoutContext];
+}
+
+- (void)layoutWithMetrics:(RCTLayoutMetrics)layoutMetrics layoutContext:(RCTLayoutContext)layoutContext
+{
+  [super layoutWithMetrics:layoutMetrics layoutContext:layoutContext];
+}
+
 @end
 
 @interface RNSScreenView ()
@@ -169,32 +196,60 @@ namespace react = facebook::react;
   //        self.bounds.size.width,
   //        self.bounds.size.height);
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    NSLog(@"RNSScreenView %p PUSH frame on UIManager %@", self, NSStringFromCGRect(self.frame));
     [_bridge.uiManager setSize:self.bounds.size forView:self];
     return;
   }
 
-  //  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
-  //    [_bridge.uiManager setSize:self.bounds.size forView:self];
-  //    return;
-  //  }
-  //  return;
-
+  //  _allowSizeUpdate = NO;
   CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
-  CAAnimation *rnsSheetAnimation = [self.layer animationForKey:@"rns_sheet_animation"];
-  if (sizeAnimation == nil && rnsSheetAnimation == nil) {
-    NSLog(@"RNSScreenView %p W/O ANIM setSize on UIManager %@", self, NSStringFromCGSize(self.bounds.size));
-    [_bridge.uiManager setSize:self.bounds.size forView:self];
+
+  if (sizeAnimation == nil) {
+    if (self.bounds.size.height > self.layer.presentationLayer.bounds.size.height) {
+      CGSize fullHeightSize = CGSizeMake(self.bounds.size.width, 708);
+      [_bridge.uiManager setSize:fullHeightSize forView:self];
+    }
+
+    // If there is no animation, the sheet is most likely being dragged, we do not want to schedule
+    // react layout here, as it would be calculated over few frames and returned outdated values for our subviews.
     return;
   }
 
-  if (rnsSheetAnimation == nil) {
-    CABasicAnimation *callbackAnimation = [CABasicAnimation new];
-    //    callbackAnimation.duration = 100.0;
-    callbackAnimation.duration = sizeAnimation.duration;
-    callbackAnimation.beginTime = sizeAnimation.beginTime;
-    callbackAnimation.delegate = self;
-    [self.layer addAnimation:callbackAnimation forKey:@"rns_sheet_animation"];
+  // If there is an animation, that means the sheet is most likely settling to stable position.
+  // We want to know when the animation ends. We can't rely on sheet delgate callback, as the sheet could not be
+  // changing position, but only returning to the same state it was dragged from, in such case the sheet won't change
+  // the detent. Moreover in the moment the delegate callback is being called, the view does not have updated
+  // information on its frame size (even in presentation layer! yeah, this is strange). Thus the approach is to set
+  // dummy animation which should end in the same moment the original animation does and register as its delegate to
+  // receive callbacks.
+
+  // First we check whether we have already scheduled an animation. In such case we do nothing!
+  CABasicAnimation *rnsSheetDummyAnimation = [self.layer animationForKey:@"rns_sheet_anim"];
+  if (rnsSheetDummyAnimation != nil) {
+    return;
   }
+
+  rnsSheetDummyAnimation = [CABasicAnimation new];
+  rnsSheetDummyAnimation.duration = sizeAnimation.duration;
+  rnsSheetDummyAnimation.beginTime = sizeAnimation.beginTime;
+  rnsSheetDummyAnimation.delegate = self;
+  [self.layer addAnimation:rnsSheetDummyAnimation forKey:@"rns_sheet_anim"];
+
+//  CAAnimation *rnsSheetAnimation = [self.layer animationForKey:@"rns_sheet_animation"];
+//  if (sizeAnimation == nil && rnsSheetAnimation == nil) {
+//    NSLog(@"RNSScreenView %p W/O ANIM setSize on UIManager %@", self, NSStringFromCGSize(self.bounds.size));
+//    [_bridge.uiManager setSize:self.bounds.size forView:self];
+//    return;
+//  }
+//
+//  if (rnsSheetAnimation == nil) {
+//    CABasicAnimation *callbackAnimation = [CABasicAnimation new];
+//    //    callbackAnimation.duration = 100.0;
+//    callbackAnimation.duration = sizeAnimation.duration;
+//    callbackAnimation.beginTime = sizeAnimation.beginTime;
+//    callbackAnimation.delegate = self;
+//    [self.layer addAnimation:callbackAnimation forKey:@"rns_sheet_animation"];
+//  }
 
 //  if (_allowSizeUpdate) {
 //    _allowSizeUpdate = NO;
@@ -248,14 +303,19 @@ namespace react = facebook::react;
 
 - (void)animationDidStart:(CAAnimation *)animation
 {
-  if (self.bounds.size.height > self.layer.presentationLayer.bounds.size.height) {
-    NSLog(
-        @"RNSScreenView %p ANIM START setSize on UIManager %@ %@",
-        self,
-        NSStringFromCGSize(self.bounds.size),
-        NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
-    [_bridge.uiManager setSize:self.bounds.size forView:self];
-  }
+  NSLog(
+      @"RNSScreenView %p ANIM START setSize on UIManager %@ %@",
+      self,
+      NSStringFromCGSize(self.bounds.size),
+      NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
+  //  if (self.bounds.size.height > self.layer.presentationLayer.bounds.size.height) {
+  //    NSLog(
+  //        @"RNSScreenView %p ANIM START setSize on UIManager %@ %@",
+  //        self,
+  //        NSStringFromCGSize(self.bounds.size),
+  //        NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
+  //    [_bridge.uiManager setSize:self.bounds.size forView:self];
+  //  }
   //    NSLog(@"RNSScreenView %p ANIM START setSize on UIManager %@ %@", self, NSStringFromCGSize(self.bounds.size),
   //    NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
   //    [_bridge.uiManager setSize:self.bounds.size forView:self];
@@ -1128,13 +1188,21 @@ namespace react = facebook::react;
   // any attempt of setting that via React props
 }
 
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"RNSScreenView %p setFrame %@", self, NSStringFromCGRect(frame));
+  [super setFrame:frame];
+}
+
 - (void)reactSetFrame:(CGRect)frame
 {
+  NSLog(@"RNSScreenView %p reactSetFrame %@", self, NSStringFromCGRect(frame));
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super reactSetFrame:frame];
   }
+  //  [super reactSetFrame:frame];
   // when screen is mounted under RNSNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
   // the controller. In that case we ignore react layout system from managing

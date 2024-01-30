@@ -107,16 +107,26 @@ export default function App(): JSX.Element {
 
 function Home({ navigation }: NavProp) {
   return (
+    <>
     <Button
       title="Tap me for the second screen"
       onPress={() => navigation.navigate('Second')}
     />
+    <Button
+      title="Tap me for the second screen"
+      onPress={() => navigation.navigate('Second')}
+    />
+    <Button
+      title="Tap me for the second screen"
+      onPress={() => navigation.navigate('Second')}
+    />
+    </>
   );
 }
 
 function Second({ navigation }: NavProp) {
   return (
-    <>
+    <View style={{backgroundColor: 'lightcoral', flex: 1}}>
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -129,7 +139,7 @@ function Second({ navigation }: NavProp) {
         title="Open the sheet with text input (keyboard interaction)"
         onPress={() => navigation.navigate('SheetScreenWithTextInput')}
       />
-    </>
+    </View>
   );
 }
 
