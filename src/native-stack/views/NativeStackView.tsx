@@ -93,7 +93,10 @@ const MaybeNestedStack = ({
   const content = (
     <Container
       style={[
-        styles.container,
+        stackPresentation !== 'formSheet'
+          ? styles.absolutFill
+          : styles.absolutFillNoBottom,
+        styles.absolutFillNoBottom,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,
@@ -291,7 +294,7 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={[StyleSheet.absoluteFill, { backgroundColor: 'white' }]}
+      style={[StyleSheet.absoluteFill, { backgroundColor: 'darkolivegreen' }]}
       sheetAllowedDetents={sheetNativeDetents}
       sheetLargestUndimmedDetent={sheetNativeUndimmedDetent}
       sheetCustomLargestUndimmedDetent={sheetUserDefinedUndimmedDetent}
@@ -454,5 +457,18 @@ export default function NativeStackView(props: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  absolutFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  absolutFillNoBottom: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
 });
