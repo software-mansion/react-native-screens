@@ -56,7 +56,7 @@ jobs:
           target: default
           profile: pixel_2
           ram-size: '4096M'
-          disk-size: '10G'
+          disk-size: '4G'
           disable-animations: false
           avd-name: e2e_emulator
           arch: x86_64
