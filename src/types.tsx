@@ -6,6 +6,8 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 
 export type SearchBarCommands = {
@@ -254,6 +256,7 @@ export interface ScreenProps extends ViewProps {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenOrientationTypes;
+  screenStyle?: StyleProp<ViewStyle>;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
