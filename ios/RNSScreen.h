@@ -3,6 +3,7 @@
 
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
+#import "ScreenSrollableContentWrapper.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
