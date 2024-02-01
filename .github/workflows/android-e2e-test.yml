@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 jobs:
   test:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: Example
@@ -30,6 +30,11 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
       - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
@@ -44,10 +49,10 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
       - name: Run emulator and tests
-        uses: reactivecircus/android-emulator-runner@v2.30.1
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
-          api-level: 33
+          api-level: 31
           target: default
           profile: pixel_2
           ram-size: '4096M'
