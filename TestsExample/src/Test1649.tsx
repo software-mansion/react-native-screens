@@ -78,6 +78,8 @@ export default function App(): JSX.Element {
     sheetExpandsWhenScrolledToEdge: false,
   });
 
+  // return <RawScreenHome />;
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
@@ -135,18 +137,18 @@ export default function App(): JSX.Element {
 function Home({ navigation }: NavProp) {
   return (
     <>
-    <Button
-      title="Tap me for the second screen"
-      onPress={() => navigation.navigate('Second')}
-    />
-    <Button
-      title="Tap me for the second screen"
-      onPress={() => navigation.navigate('Second')}
-    />
-    <Button
-      title="Tap me for the second screen"
-      onPress={() => navigation.navigate('Second')}
-    />
+      <Button
+        title="Tap me for the second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
+      <Button
+        title="Tap me for the second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
+      <Button
+        title="Tap me for the second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
     </>
   );
 }
@@ -358,6 +360,50 @@ function SheetScreenWithTextInput({ navigation }: NavProp) {
   );
 }
 
+function RawScreenHome() {
+  const [modalVisible, setModalVisible] = React.useState(true);
+
+  return (
+    <View style={[styles.absoluteFill, { marginTop: 100 }]}>
+      <ScreenStack>
+        <Screen style={[styles.absoluteFill, { backgroundColor: 'red' }]}>
+          <View>
+            <Button
+              title="Show modal"
+              onPress={() => setModalVisible(true)}
+              color="white"
+            />
+            <Text>Sometext</Text>
+          </View>
+        </Screen>
+        <Screen
+          style={[styles.absoluteFill, { backgroundColor: 'tomato' }]}
+          stackPresentation="formSheet"
+          sheetCustomDetents={[0.3, 0.6, 0.9]}
+          sheetExpandsWhenScrolledToEdge={true}
+          sheetGrabberVisible>
+          <View
+            style={[
+              styles.absoluteFillNoBottom,
+              { backgroundColor: 'darkorange', marginTop: 15 },
+            ]}>
+            <View style={styles.centeredView}>
+              <Button
+                title="Hide modal"
+                onPress={() => setModalVisible(false)}
+                color="white"
+              />
+              {[...Array(200).keys()].map(i => (
+                <Text key={i}>Sometext</Text>
+              ))}
+            </View>
+          </View>
+        </Screen>
+      </ScreenStack>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   headerView: {
     height: 20,
@@ -371,6 +417,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // flex: 1,
+  },
+  absoluteFillNoBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    // bottom: 0,
+    backgroundColor: 'firebrick',
+  },
+  absoluteFill: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'teal',
   },
   bordered: {
     borderColor: 'black',
