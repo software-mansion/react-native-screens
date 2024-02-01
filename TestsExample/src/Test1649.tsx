@@ -15,6 +15,8 @@ import {
 } from 'react-native-screens/native-stack';
 import * as jotai from 'jotai';
 
+import { ScreenStack, Screen } from 'react-native-screens';
+
 type SheetDetent = NativeStackNavigationOptions['sheetAllowedDetents'];
 type SheetUndimmedDetent =
   NativeStackNavigationOptions['sheetLargestUndimmedDetent'];
@@ -57,6 +59,8 @@ export default function App(): JSX.Element {
     stackPresentation: 'formSheet',
     ...sheetOptions,
   };
+
+  // return <RawScreenHome />;
 
   return (
     <NavigationContainer>
@@ -108,25 +112,25 @@ export default function App(): JSX.Element {
 function Home({ navigation }: NavProp) {
   return (
     <>
-    <Button
-      title="Tap me for the second screen"
-      onPress={() => navigation.navigate('Second')}
-    />
-    <Button
-      title="Tap me for the second screen"
-      onPress={() => navigation.navigate('Second')}
-    />
-    <Button
-      title="Tap me for the second screen"
-      onPress={() => navigation.navigate('Second')}
-    />
+      <Button
+        title="Tap me for the second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
+      <Button
+        title="Tap me for the second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
+      <Button
+        title="Tap me for the second screen"
+        onPress={() => navigation.navigate('Second')}
+      />
     </>
   );
 }
 
 function Second({ navigation }: NavProp) {
   return (
-    <View style={{backgroundColor: 'lightcoral', flex: 1}}>
+    <View style={{ backgroundColor: 'lightcoral', flex: 1 }}>
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -188,7 +192,11 @@ function SheetScreen({ navigation }: NavProp) {
   }
 
   return (
-    <View style={[styles.centeredView, { marginTop: 15 }]}>
+    <View
+      style={[
+        styles.centeredView,
+        { marginTop: 15, backgroundColor: 'darkorange' },
+      ]}>
       <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('Home')}
@@ -244,7 +252,7 @@ function SheetScreen({ navigation }: NavProp) {
 function SheetScreenWithScrollView({ navigation }: NavProp) {
   return (
     <>
-      <View style={styles.centeredView}>
+      <View style={styles.absoluteFillNoBottom}>
         <ScrollView>
           <SheetScreen navigation={navigation} />
           {[...Array(40).keys()].map(val => (
@@ -271,6 +279,50 @@ function SheetScreenWithTextInput({ navigation }: NavProp) {
   );
 }
 
+function RawScreenHome() {
+  const [modalVisible, setModalVisible] = React.useState(true);
+
+  return (
+    <View style={[styles.absoluteFill, { marginTop: 100 }]}>
+      <ScreenStack>
+        <Screen style={[styles.absoluteFill, { backgroundColor: 'red' }]}>
+          <View>
+            <Button
+              title="Show modal"
+              onPress={() => setModalVisible(true)}
+              color="white"
+            />
+            <Text>Sometext</Text>
+          </View>
+        </Screen>
+        <Screen
+          style={[styles.absoluteFill, { backgroundColor: 'tomato' }]}
+          stackPresentation="formSheet"
+          sheetCustomDetents={[0.3, 0.6, 0.9]}
+          sheetExpandsWhenScrolledToEdge={true}
+          sheetGrabberVisible>
+          <View
+            style={[
+              styles.absoluteFillNoBottom,
+              { backgroundColor: 'darkorange', marginTop: 15 },
+            ]}>
+            <View style={styles.centeredView}>
+              <Button
+                title="Hide modal"
+                onPress={() => setModalVisible(false)}
+                color="white"
+              />
+              {[...Array(200).keys()].map(i => (
+                <Text key={i}>Sometext</Text>
+              ))}
+            </View>
+          </View>
+        </Screen>
+      </ScreenStack>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   headerView: {
     height: 20,
@@ -281,6 +333,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // flex: 1,
+  },
+  absoluteFillNoBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    // bottom: 0,
+    backgroundColor: 'firebrick',
+  },
+  absoluteFill: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'teal',
   },
   bordered: {
     borderColor: 'black',
