@@ -338,9 +338,11 @@ namespace react = facebook::react;
     [self setPlaceholder:RCTNSStringFromStringNilIfEmpty(newScreenProps.placeholder)];
   }
 
+#if !TARGET_OS_VISION
   if (oldScreenProps.autoCapitalize != newScreenProps.autoCapitalize) {
     [self setAutoCapitalize:[RNSConvert UITextAutocapitalizationTypeFromCppEquivalent:newScreenProps.autoCapitalize]];
   }
+#endif
 
   if (oldScreenProps.tintColor != newScreenProps.tintColor) {
     [self setTintColor:RCTUIColorFromSharedColor(newScreenProps.tintColor)];
