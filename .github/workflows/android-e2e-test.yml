@@ -49,7 +49,7 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: 33
           target: default
-          profile: pixel_2
+          profile: pixel_7
           ram-size: '4096M'
           disk-size: '10G'
           disable-animations: false
