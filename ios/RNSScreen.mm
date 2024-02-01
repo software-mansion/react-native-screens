@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RCTScrollView.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenWindowTraits.h"
@@ -145,33 +146,30 @@ namespace react = facebook::react;
   _displayLink = nil;
   _allowSizeUpdate = YES;
   _hasActiveAnimation = NO;
-  _contentScrollWrapper = [ScreenSrollableContentWrapper new];
-  [self addSubview:_contentScrollWrapper];
-  //  [_contentScrollWrapper setHidden:NO];
-  //  [_contentScrollWrapper setFrame:CGRectMake(0, 0, 393, 258.667)];
-  //  [_contentScrollWrapper setContentSize:CGSizeMake(393, 258.667)];
-
-  self.translatesAutoresizingMaskIntoConstraints = true;
-
-  _contentScrollWrapper.translatesAutoresizingMaskIntoConstraints = false;
-
-  [NSLayoutConstraint activateConstraints:@[
-    [_contentScrollWrapper.topAnchor constraintEqualToAnchor:self.topAnchor],
-    [_contentScrollWrapper.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
-    [_contentScrollWrapper.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-    [_contentScrollWrapper.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
-  ]];
-
-  RNSScreenView __weak *weakSelf = self;
-  _contentScrollWrapper.onLayout = ^(CGRect scrollViewFrame) {
-    [weakSelf updateScrollViewContentSizeWithOriginalFrame:scrollViewFrame];
-  };
+  //  _contentScrollWrapper = [ScreenSrollableContentWrapper new];
+  //  [self addSubview:_contentScrollWrapper];
+  //
+  //  self.translatesAutoresizingMaskIntoConstraints = true;
+  //
+  //  _contentScrollWrapper.translatesAutoresizingMaskIntoConstraints = false;
+  //
+  //  [NSLayoutConstraint activateConstraints:@[
+  //    [_contentScrollWrapper.topAnchor constraintEqualToAnchor:self.topAnchor],
+  //    [_contentScrollWrapper.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+  //    [_contentScrollWrapper.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+  //    [_contentScrollWrapper.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
+  //  ]];
+  //
+  //  RNSScreenView __weak *weakSelf = self;
+  //  _contentScrollWrapper.onLayout = ^(CGRect scrollViewFrame) {
+  //    [weakSelf updateScrollViewContentSizeWithOriginalFrame:scrollViewFrame];
+  //  };
 }
 
 - (void)updateScrollViewContentSizeWithOriginalFrame:(CGRect)scrollViewFrame
 {
   NSLog(@"RNSScreenView %p scrollViewLayoutCallback frame %@", self, NSStringFromCGRect(self.frame));
-  [_contentScrollWrapper setContentSize:scrollViewFrame.size];
+  //  [_contentScrollWrapper setContentSize:scrollViewFrame.size];
 }
 
 - (void)layoutSubviews
@@ -235,6 +233,24 @@ namespace react = facebook::react;
   NSLog(@"RNSScreenView %p updateBounds frame %@", self, NSStringFromCGRect(self.frame));
   //  [_contentScrollWrapper setContentSize:self.frame.size];
   [_bridge.uiManager setSize:self.bounds.size forView:self];
+
+  UIView *firstChild = self;
+  while (firstChild != nil) {
+    if ([firstChild isKindOfClass:RCTScrollView.class]) {
+      break;
+    }
+    if (firstChild.subviews.count > 0) {
+      firstChild = firstChild.subviews[0];
+    } else {
+      break;
+    }
+  }
+
+  if ([firstChild isKindOfClass:RCTScrollView.class]) {
+    [firstChild setFrame:self.frame];
+    [firstChild addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
+  }
+
   return;
 
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
@@ -325,6 +341,17 @@ namespace react = facebook::react;
   //        self.bounds.size.width,
   //        self.bounds.size.height);
   //      [_bridge.uiManager setSize:self.layer.presentationLayer.bounds.size forView:self];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+                       context:(void *)context
+{
+  UIView *scrollview = (UIView *)object;
+  if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
+    [scrollview setFrame:self.frame];
+  }
 }
 
 - (void)displayLinkCallback
@@ -569,12 +596,13 @@ namespace react = facebook::react;
 - (void)addSubview:(UIView *)view
 {
   if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-    if (view == _contentScrollWrapper) {
-      [super addSubview:_contentScrollWrapper];
-      return;
-    }
-    [[self ensureContentScrollWrapper] addSubview:view];
-    //    [super addSubview:view];
+    //    if (view == _contentScrollWrapper) {
+    //      [super addSubview:_contentScrollWrapper];
+    //      return;
+    //    }
+    //    [[self ensureContentScrollWrapper] addSubview:view];
+
+    [super addSubview:view];
   } else {
     ((RNSScreenStackHeaderConfig *)view).screenView = self;
   }
