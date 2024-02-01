@@ -7,6 +7,8 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 
@@ -256,6 +258,7 @@ export interface ScreenProps extends ViewProps {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenOrientationTypes;
+  screenStyle?: StyleProp<ViewStyle>;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.

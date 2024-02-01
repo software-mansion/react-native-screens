@@ -73,7 +73,7 @@ const MaybeNestedStack = ({
   children: React.ReactNode;
 }) => {
   const { colors } = useTheme();
-  const { headerShown = true, contentStyle } = options;
+  const { headerShown = true, contentStyle, screenStyle = null } = options;
 
   const Screen = React.useContext(ScreenContext);
 
@@ -97,10 +97,10 @@ const MaybeNestedStack = ({
   const content = (
     <Container
       style={[
+        // styles.container,
         stackPresentation !== 'formSheet'
-          ? styles.absolutFill
+          ? styles.container
           : styles.absolutFillNoBottom,
-        styles.absolutFillNoBottom,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,
@@ -142,7 +142,7 @@ const MaybeNestedStack = ({
           enabled
           isNativeStack
           hasLargeHeader={hasLargeHeader}
-          style={StyleSheet.absoluteFill}>
+          style={[StyleSheet.absoluteFill, screenStyle]}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -202,6 +202,7 @@ const RouteView = ({
     transitionDuration,
     freezeOnBlur,
     footerComponent,
+    screenStyle = null,
   } = options;
 
   let sheetUserDefinedDetents: number[];
@@ -310,7 +311,7 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={[StyleSheet.absoluteFill, { backgroundColor: 'darkolivegreen' }]}
+      style={[StyleSheet.absoluteFill, screenStyle]}
       sheetAllowedDetents={sheetNativeDetents}
       sheetLargestUndimmedDetent={sheetNativeUndimmedDetent}
       sheetCustomLargestUndimmedDetent={sheetUserDefinedUndimmedDetent}
