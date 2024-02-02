@@ -172,24 +172,22 @@ namespace react = facebook::react;
   NSLog(@"RNSScreenView %p updateBounds frame %@", self, NSStringFromCGRect(self.frame));
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 
-  UIView *firstChild = self;
-  while (firstChild != nil) {
-    if ([firstChild isKindOfClass:RCTScrollView.class]) {
-      break;
-    }
-    if (firstChild.subviews.count > 0) {
-      firstChild = firstChild.subviews[0];
-    } else {
-      break;
-    }
+  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    return;
   }
 
-  if ([firstChild isKindOfClass:RCTScrollView.class]) {
-    [firstChild setFrame:self.frame];
-    [firstChild addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
-  }
+  // In case of form sheet presentation we
 
-  return;
+  // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
+  // It might be necessary in case someone doesn't want its scroll view to span over whole
+  // height of the sheet.
+  UIView *scrollView = [self findDirectLineDescendantRCTScrollView];
+  if (scrollView != nil) {
+    [scrollView setFrame:self.frame];
+    // We pass 0 as options, as we are not interested in receiving updated bounds value,
+    // we are going to overwrite it anyway.
+    [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
+  }
 #endif
 }
 
@@ -665,6 +663,19 @@ namespace react = facebook::react;
     }
   }
 
+  return nil;
+}
+
+/// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
+- (nullable RCTScrollView *)findDirectLineDescendantRCTScrollView
+{
+  UIView *firstSubview = self;
+  while (firstSubview.subviews.count > 0) {
+    firstSubview = firstSubview.subviews[0];
+    if ([firstSubview isKindOfClass:RCTScrollView.class]) {
+      return (RCTScrollView *)firstSubview;
+    }
+  }
   return nil;
 }
 
