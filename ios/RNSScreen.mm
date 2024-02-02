@@ -87,9 +87,6 @@ namespace react = facebook::react;
 
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
-  CADisplayLink *_displayLink;
-  BOOL _hasActiveAnimation;
-  ScreenSrollableContentWrapper *_contentScrollWrapper;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -98,7 +95,6 @@ namespace react = facebook::react;
 #else
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
-  BOOL _allowSizeUpdate;
 #endif
 }
 
@@ -143,40 +139,6 @@ namespace react = facebook::react;
   _sheetCustomDetents = [NSArray array];
   _sheetCustomLargestUndimmedDetent = nil;
 #endif // !TARGET_OS_TV
-  _displayLink = nil;
-  _allowSizeUpdate = YES;
-  _hasActiveAnimation = NO;
-  //  _contentScrollWrapper = [ScreenSrollableContentWrapper new];
-  //  [self addSubview:_contentScrollWrapper];
-  //
-  //  self.translatesAutoresizingMaskIntoConstraints = true;
-  //
-  //  _contentScrollWrapper.translatesAutoresizingMaskIntoConstraints = false;
-  //
-  //  [NSLayoutConstraint activateConstraints:@[
-  //    [_contentScrollWrapper.topAnchor constraintEqualToAnchor:self.topAnchor],
-  //    [_contentScrollWrapper.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
-  //    [_contentScrollWrapper.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-  //    [_contentScrollWrapper.trailingAnchor constraintEqualToAnchor:self.trailingAnchor]
-  //  ]];
-  //
-  //  RNSScreenView __weak *weakSelf = self;
-  //  _contentScrollWrapper.onLayout = ^(CGRect scrollViewFrame) {
-  //    [weakSelf updateScrollViewContentSizeWithOriginalFrame:scrollViewFrame];
-  //  };
-}
-
-- (void)updateScrollViewContentSizeWithOriginalFrame:(CGRect)scrollViewFrame
-{
-  NSLog(@"RNSScreenView %p scrollViewLayoutCallback frame %@", self, NSStringFromCGRect(self.frame));
-  //  [_contentScrollWrapper setContentSize:scrollViewFrame.size];
-}
-
-- (void)layoutSubviews
-{
-  [super layoutSubviews];
-  //  NSLog(@"RNSScreenView %p layoutSubviews frame %@", self, NSStringFromCGRect(self.frame));
-  //  [_contentScrollWrapper setContentSize:self.frame.size];
 }
 
 - (UIViewController *)reactViewController
@@ -210,26 +172,6 @@ namespace react = facebook::react;
     }
   }
 #else
-  //  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
-  //    return;
-  //  }
-  //  CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
-  //  CAAnimation *rnsSheetAnimation = [self.layer animationForKey:@"rns_sheet_animation"];
-  //    if (sizeAnimation != nil && self.layer.presentationLayer.bounds.size.height > self.bounds.size.height) {
-  //    if (sizeAnimation != nil) {
-  //  if (sizeAnimation != nil && rnsSheetAnimation == nil) {
-  //    CABasicAnimation *callbackOnlyAnimation = [CABasicAnimation new];
-  //    callbackOnlyAnimation.duration = sizeAnimation.duration;
-  //    callbackOnlyAnimation.beginTime = sizeAnimation.beginTime;
-  //    callbackOnlyAnimation.delegate = self;
-  //    NSLog(@"RNSScreenView %p ADD ANIMATION", self);
-  //    [self.layer addAnimation:callbackOnlyAnimation forKey:@"rns_sheet_animation"];
-  //  } else {
-  //    NSLog(
-  //        @"RNSScreenView %p REGULAR setSize on UIManager (%lf, %lf)",
-  //        self,
-  //        self.bounds.size.width,
-  //        self.bounds.size.height);
   NSLog(@"RNSScreenView %p updateBounds frame %@", self, NSStringFromCGRect(self.frame));
   //  [_contentScrollWrapper setContentSize:self.frame.size];
   [_bridge.uiManager setSize:self.bounds.size forView:self];
