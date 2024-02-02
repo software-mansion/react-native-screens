@@ -31,49 +31,6 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-@interface RNSScreenShadowView : RCTShadowView
-
-- (void)setSize:(CGSize)size;
-
-@end
-
-@implementation RNSScreenShadowView
-
-- (void)setSize:(CGSize)size
-{
-  NSLog(@"SV %p setSize to %@", self, NSStringFromCGSize(size));
-  [super setSize:size];
-}
-
-- (void)didSetProps:(NSArray<NSString *> *)changedProps
-{
-  [super didSetProps:changedProps];
-  //  self.top = YGValue{97.67, YGUnitPoint};
-}
-
-- (void)layoutWithMinimumSize:(CGSize)minimumSize
-                  maximumSize:(CGSize)maximumSize
-              layoutDirection:(UIUserInterfaceLayoutDirection)layoutDirection
-                layoutContext:(RCTLayoutContext)layoutContext
-{
-  [super layoutWithMinimumSize:minimumSize
-                   maximumSize:maximumSize
-               layoutDirection:layoutDirection
-                 layoutContext:layoutContext];
-}
-
-- (void)layoutSubviewsWithContext:(RCTLayoutContext)layoutContext
-{
-  [super layoutSubviewsWithContext:layoutContext];
-}
-
-- (void)layoutWithMetrics:(RCTLayoutMetrics)layoutMetrics layoutContext:(RCTLayoutContext)layoutContext
-{
-  [super layoutWithMetrics:layoutMetrics layoutContext:layoutContext];
-}
-
-@end
-
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
@@ -1776,13 +1733,6 @@ RCT_EXPORT_VIEW_PROPERTY(sheetCustomDetents, NSArray<NSNumber *> *);
   RNSScreenView *screenView = [[RNSScreenView alloc] initWithBridge:self.bridge];
   NSLog(@"RNSScreenView CREATE %p", screenView);
   return screenView;
-}
-
-- (RCTShadowView *)shadowView
-{
-  RCTShadowView *shadowView = [RNSScreenShadowView new];
-  NSLog(@"SV CREATE %p", shadowView);
-  return shadowView;
 }
 
 + (BOOL)requiresMainQueueSetup
