@@ -176,7 +176,16 @@ namespace react = facebook::react;
     return;
   }
 
-  // In case of form sheet presentation we
+  // In case of formSheet stack presentation, to mitigate view flickering
+  // (see PR with description of this problem: https://github.com/software-mansion/react-native-screens/pull/1870)
+  // we do not set `bottom: 0` in JS for wrapper of the screen content, causing React to not set
+  // strict frame every time the sheet size is updated by the code above. This approach leads however to
+  // situation where (if present) scrollview does not know its view port size resulting in buggy behaviour.
+  // That's exactly the issue we are handling below. We look for a scroll view down the view hierarchy (only going
+  // through first subviews, as the OS does something similar e.g. when looking for scrollview for large header
+  // interaction) and we set its frame to the sheet size. **This is not perfect**, as the content might jump when items
+  // are added/removed to/from the scroll view, but it's the best we got rn. See
+  // https://github.com/software-mansion/react-native-screens/pull/1852
 
   // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
   // It might be necessary in case someone doesn't want its scroll view to span over whole
