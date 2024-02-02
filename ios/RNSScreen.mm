@@ -41,8 +41,8 @@ namespace react = facebook::react;
 
 - (void)setSize:(CGSize)size
 {
+  NSLog(@"SV %p setSize to %@", self, NSStringFromCGSize(size));
   [super setSize:size];
-  NSLog(@"SV %p setSize to (%lf, %lf)", self, size.width, size.height);
 }
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
@@ -78,10 +78,7 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
 #else
-    <UIAdaptivePresentationControllerDelegate,
-     RCTInvalidating,
-     CAAnimationDelegate,
-     UISheetPresentationControllerDelegate>
+    <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 #endif
 @end
 
@@ -173,7 +170,6 @@ namespace react = facebook::react;
   }
 #else
   NSLog(@"RNSScreenView %p updateBounds frame %@", self, NSStringFromCGRect(self.frame));
-  //  [_contentScrollWrapper setContentSize:self.frame.size];
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 
   UIView *firstChild = self;
@@ -194,95 +190,7 @@ namespace react = facebook::react;
   }
 
   return;
-
-  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
-    NSLog(@"RNSScreenView %p PUSH frame on UIManager %@", self, NSStringFromCGRect(self.frame));
-    [_bridge.uiManager setSize:self.bounds.size forView:self];
-    return;
-  }
-
-  //  _allowSizeUpdate = NO;
-  CAAnimation *sizeAnimation = [self.layer animationForKey:@"bounds.size"];
-  //  _hasActiveAnimation = YES;
-
-  if (sizeAnimation == nil) {
-    //    if (self.bounds.size.height > self.layer.presentationLayer.bounds.size.height) {
-    //      CGSize fullHeightSize = CGSizeMake(self.bounds.size.width, 708);
-    //      [_bridge.uiManager setSize:fullHeightSize forView:self];
-    //    }
-
-    // If there is no animation, the sheet is most likely being dragged, we do not want to schedule
-    // react layout here, as it would be calculated over few frames and returned outdated values for our subviews.
-    return;
-  }
-
-  // If there is an animation, that means the sheet is most likely settling to stable position.
-  // We want to know when the animation ends. We can't rely on sheet delgate callback, as the sheet could not be
-  // changing position, but only returning to the same state it was dragged from, in such case the sheet won't change
-  // the detent. Moreover in the moment the delegate callback is being called, the view does not have updated
-  // information on its frame size (even in presentation layer! yeah, this is strange). Thus the approach is to set
-  // dummy animation which should end in the same moment the original animation does and register as its delegate to
-  // receive callbacks.
-
-  // First we check whether we have already scheduled an animation. In such case we do nothing!
-  CABasicAnimation *rnsSheetDummyAnimation = [self.layer animationForKey:@"rns_sheet_anim"];
-  if (rnsSheetDummyAnimation != nil) {
-    return;
-  }
-
-  rnsSheetDummyAnimation = [CABasicAnimation new];
-  rnsSheetDummyAnimation.duration = sizeAnimation.duration;
-  rnsSheetDummyAnimation.beginTime = sizeAnimation.beginTime;
-  rnsSheetDummyAnimation.delegate = self;
-  [self.layer addAnimation:rnsSheetDummyAnimation forKey:@"rns_sheet_anim"];
-
-//  CAAnimation *rnsSheetAnimation = [self.layer animationForKey:@"rns_sheet_animation"];
-//  if (sizeAnimation == nil && rnsSheetAnimation == nil) {
-//    NSLog(@"RNSScreenView %p W/O ANIM setSize on UIManager %@", self, NSStringFromCGSize(self.bounds.size));
-//    [_bridge.uiManager setSize:self.bounds.size forView:self];
-//    return;
-//  }
-//
-//  if (rnsSheetAnimation == nil) {
-//    CABasicAnimation *callbackAnimation = [CABasicAnimation new];
-//    //    callbackAnimation.duration = 100.0;
-//    callbackAnimation.duration = sizeAnimation.duration;
-//    callbackAnimation.beginTime = sizeAnimation.beginTime;
-//    callbackAnimation.delegate = self;
-//    [self.layer addAnimation:callbackAnimation forKey:@"rns_sheet_animation"];
-//  }
-
-//  if (_allowSizeUpdate) {
-//    _allowSizeUpdate = NO;
-//    NSLog(
-//      @"RNSScreenView %p ALLOWED setSize on UIManager (%lf, %lf)",
-//      self,
-//      self.bounds.size.width,
-//      self.bounds.size.height);
-//    [_bridge.uiManager setSize:self.bounds.size forView:self];
-//  }
-//  }
 #endif
-}
-
-- (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
-    (UISheetPresentationController *)sheetPresentationController
-{
-  NSLog(
-      @"RNSScreenView %p DELEGATE setSize on UIManager %@ %@",
-      self,
-      NSStringFromCGSize(self.bounds.size),
-      NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
-  //  _allowSizeUpdate = YES;
-  //  CGSize newBounds = self.layer.presentationLayer.bounds.size;
-  ////  NSLog();
-  //    NSLog(
-  //        @"RNSScreenView %p DELEGATE setSize on UIManager %@ (%lf, %lf)",
-  //        self,
-  //        NSStringFromCGSize(newBounds),
-  //        self.bounds.size.width,
-  //        self.bounds.size.height);
-  //      [_bridge.uiManager setSize:self.layer.presentationLayer.bounds.size forView:self];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -294,69 +202,6 @@ namespace react = facebook::react;
   if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
     [scrollview setFrame:self.frame];
   }
-}
-
-- (void)displayLinkCallback
-{
-  //  CGSize size = self.layer.presentationLayer.frame.size;
-  //  NSNumber *reactTag = self.reactTag;
-  //  __weak RCTBridge *bridge = _bridge;
-  //
-  //  RCTExecuteOnUIManagerQueue(^{
-  //    RCTShadowView *shadowView = [bridge.uiManager shadowViewForReactTag:reactTag];
-  //    shadowView.size = size;
-  //  });
-  //  [_bridge.uiManager setSize:size forView:self];
-  //  auto layer = [self.layer presentationLayer];
-  //  CGSize size = [[layer valueForKeyPath:@"bounds.size"] CGSizeValue];
-  //  NSLog(@"RNSScreenView %p CALLBACK setSize on UIManager (%lf, %lf)", self, size.width, size.height);
-  //  [_bridge.uiManager setSize:size forView:self];
-}
-
-- (void)animationDidStart:(CAAnimation *)animation
-{
-  NSLog(
-      @"RNSScreenView %p ANIM START setSize on UIManager %@ %@",
-      self,
-      NSStringFromCGSize(self.bounds.size),
-      NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
-  //  if (self.bounds.size.height > self.layer.presentationLayer.bounds.size.height) {
-  //    NSLog(
-  //        @"RNSScreenView %p ANIM START setSize on UIManager %@ %@",
-  //        self,
-  //        NSStringFromCGSize(self.bounds.size),
-  //        NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
-  //    [_bridge.uiManager setSize:self.bounds.size forView:self];
-  //  }
-  //    NSLog(@"RNSScreenView %p ANIM START setSize on UIManager %@ %@", self, NSStringFromCGSize(self.bounds.size),
-  //    NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
-  //    [_bridge.uiManager setSize:self.bounds.size forView:self];
-  //    [_bridge.uiManager setSize:self.layer.presentationLayer.bounds.size forView:self];
-  //  if (_displayLink == nil) {
-  //    NSLog(@"RNSScreenView %p ENABLE DISPLAYLINK", self);
-  //    _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback)];
-  //    [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-  //  } else if (_displayLink.isPaused) {
-  //    NSLog(@"RNSScreenView %p ENABLE DISPLAYLINK", self);
-  //    [_displayLink setPaused:NO];
-  //  }
-}
-
-- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished
-{
-  _hasActiveAnimation = NO;
-  NSLog(
-      @"RNSScreenView %p ANIM STOP setSize on UIManager %@ %@",
-      self,
-      NSStringFromCGSize(self.bounds.size),
-      NSStringFromCGSize(self.layer.presentationLayer.bounds.size));
-  [_bridge.uiManager setSize:self.bounds.size forView:self];
-  //    [_bridge.uiManager setSize:self.layer.presentationLayer.bounds.size forView:self];
-  //  if (_displayLink != nil) {
-  //    NSLog(@"RNSScreenView %p DISABLE DISPLAYLINK", self);
-  //    [_displayLink setPaused:YES];
-  //    [_bridge.uiManager setSize:self.bounds.size forView:self];
-  //  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
@@ -522,14 +367,6 @@ namespace react = facebook::react;
   return _reactSuperview;
 }
 
-- (UIScrollView *)ensureContentScrollWrapper
-{
-  if (_contentScrollWrapper == nil) {
-    _contentScrollWrapper = [UIScrollView new];
-  }
-  return _contentScrollWrapper;
-}
-
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex
 {
   [super insertReactSubview:subview atIndex:atIndex];
@@ -538,12 +375,6 @@ namespace react = facebook::react;
 - (void)addSubview:(UIView *)view
 {
   if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
-    //    if (view == _contentScrollWrapper) {
-    //      [super addSubview:_contentScrollWrapper];
-    //      return;
-    //    }
-    //    [[self ensureContentScrollWrapper] addSubview:view];
-
     [super addSubview:view];
   } else {
     ((RNSScreenStackHeaderConfig *)view).screenView = self;
@@ -955,7 +786,6 @@ namespace react = facebook::react;
     if (_stackPresentation != RNSScreenStackPresentationFormSheet || sheet == nil) {
       return;
     }
-    sheet.delegate = self;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
     if (_sheetCustomDetents.count > 0) {
@@ -1229,9 +1059,7 @@ namespace react = facebook::react;
 - (void)setFrame:(CGRect)frame
 {
   NSLog(@"RNSScreenView %p setFrame %@", self, NSStringFromCGRect(frame));
-  if (!_hasActiveAnimation) {
-    [super setFrame:frame];
-  }
+  [super setFrame:frame];
 }
 
 - (void)reactSetFrame:(CGRect)frame
@@ -1254,9 +1082,6 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _controller = nil;
-  if (_displayLink != nil) {
-    [_displayLink invalidate];
-  }
 }
 #endif
 
