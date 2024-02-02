@@ -832,7 +832,7 @@ namespace react = facebook::react;
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
 }
