@@ -41,6 +41,7 @@ namespace react = facebook::react;
 
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
+  __weak RCTScrollView *_sheetsScrollView;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -93,6 +94,7 @@ namespace react = facebook::react;
   _sheetCustomDetents = [NSArray array];
   _sheetCustomLargestUndimmedDetent = nil;
 #endif // !TARGET_OS_TV
+  _sheetsScrollView = nil;
 }
 
 - (UIViewController *)reactViewController
@@ -147,12 +149,17 @@ namespace react = facebook::react;
   // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
   // It might be necessary in case someone doesn't want its scroll view to span over whole
   // height of the sheet.
-  UIView *scrollView = [self findDirectLineDescendantRCTScrollView];
-  if (scrollView != nil) {
-    [scrollView setFrame:self.frame];
+  RCTScrollView *scrollView = [self findDirectLineDescendantRCTScrollView];
+  if (_sheetsScrollView != scrollView) {
+    [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    _sheetsScrollView = scrollView;
+
     // We pass 0 as options, as we are not interested in receiving updated bounds value,
     // we are going to overwrite it anyway.
     [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
+  }
+  if (scrollView != nil) {
+    [scrollView setFrame:self.frame];
   }
 #endif
 }
@@ -162,6 +169,7 @@ namespace react = facebook::react;
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context
 {
+  NSLog(@"OBSERVE VALUE FOR KEY PATH");
   UIView *scrollview = (UIView *)object;
   if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
     [scrollview setFrame:self.frame];
@@ -1053,6 +1061,7 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _controller = nil;
+  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
 #endif
 
