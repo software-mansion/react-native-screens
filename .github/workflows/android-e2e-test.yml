@@ -60,4 +60,7 @@ jobs:
         if: ${{ failure() }}
         with:
           name: android-fail-screen-shoots
-          path: ${{ env.WORKING_DIRECTORY }}/artifacts
+          path: |
+            ${{ env.WORKING_DIRECTORY }}/artifacts
+            ${{ env.WORKING_DIRECTORY }}/android/app/build/outputs/apk/androidTest/release/app-release-androidTest.apk
+            ${{ env.WORKING_DIRECTORY }}/android/app/build/outputs/apk/release/app-release.apk
