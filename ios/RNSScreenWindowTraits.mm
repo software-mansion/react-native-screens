@@ -25,42 +25,15 @@
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [UIView animateWithDuration:0.4
                    animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-                     if (@available(iOS 13, *)) {
-                       UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-                       if (firstWindow != nil) {
-                         [[firstWindow rootViewController] setNeedsStatusBarAppearanceUpdate];
-                       }
-                     } else
-#endif
-                     {
-                       [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
-                     }
-                   }];
+    [RCTKeyWindow().rootViewController setNeedsStatusBarAppearanceUpdate];
+  }];
 #endif
 }
 
 + (void)updateHomeIndicatorAutoHidden
 {
 #if !TARGET_OS_TV
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13, *)) {
-    UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-    if (firstWindow != nil) {
-      [[firstWindow rootViewController] setNeedsUpdateOfHomeIndicatorAutoHidden];
-    }
-  } else
-#endif
-  {
-    if (@available(iOS 11.0, *)) {
-#if !TARGET_OS_VISION
-      [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsUpdateOfHomeIndicatorAutoHidden];
-#endif
-    }
-  }
+  [RCTKeyWindow().rootViewController setNeedsUpdateOfHomeIndicatorAutoHidden];
 #endif
 }
 
@@ -138,19 +111,8 @@
 {
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   dispatch_async(dispatch_get_main_queue(), ^{
-    UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskAllButUpsideDown;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-    if (@available(iOS 13, *)) {
-      UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-      if (firstWindow != nil) {
-        orientationMask = [firstWindow rootViewController].supportedInterfaceOrientations;
-      }
-    } else
-#endif
-    {
-      orientationMask = UIApplication.sharedApplication.keyWindow.rootViewController.supportedInterfaceOrientations;
-    }
+    UIInterfaceOrientationMask orientationMask = [RCTKeyWindow().rootViewController supportedInterfaceOrientations];
+    
     UIInterfaceOrientation currentDeviceOrientation =
         [RNSScreenWindowTraits interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
     UIInterfaceOrientation currentInterfaceOrientation = [RNSScreenWindowTraits interfaceOrientation];
@@ -221,11 +183,7 @@
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
-    UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-    if (firstWindow == nil) {
-      return UIInterfaceOrientationUnknown;
-    }
-    UIWindowScene *windowScene = firstWindow.windowScene;
+    UIWindowScene *windowScene = RCTKeyWindow().windowScene;
     if (windowScene == nil) {
       return UIInterfaceOrientationUnknown;
     }
