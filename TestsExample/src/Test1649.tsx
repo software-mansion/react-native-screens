@@ -42,7 +42,7 @@ const largestUndimmedDetentAtom = jotai.atom<SheetUndimmedDetent>(1);
 
 const grabberVisibleAtom = jotai.atom(true);
 const cornerRadiusAtom = jotai.atom(-1);
-const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
+const expandsWhenScrolledToEdgeAtom = jotai.atom(true);
 
 const sheetOptionsAtom = jotai.atom(get => ({
   sheetAllowedDetents: get(allowedDetentsAtom),
@@ -72,6 +72,9 @@ export default function App(): JSX.Element {
           },
           headerShown: true,
           headerHideBackButton: false,
+          contentStyle: {
+            backgroundColor: 'darkorange',
+          },
         }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
@@ -86,6 +89,10 @@ export default function App(): JSX.Element {
           component={SheetScreen}
           options={{
             headerShown: false,
+            stackPresentation: 'formSheet',
+            screenStyle: {
+              backgroundColor: 'blue',
+            },
             ...initialScreenOptions,
           }}
         />
@@ -101,6 +108,9 @@ export default function App(): JSX.Element {
           name="SheetScreenWithTextInput"
           component={SheetScreenWithTextInput}
           options={{
+            screenStyle: {
+              backgroundColor: 'firebrick',
+            },
             ...initialScreenOptions,
           }}
         />
@@ -221,30 +231,6 @@ function SheetScreen({ navigation }: NavProp) {
         }}
       />
       <Text>detent: {allowedDetents}</Text>
-      {/*<Button
-        title="Change largest undimmed detent"
-        onPress={() => {
-          const newDetentLevel = nextUndimmedDetentLevel(largestUndimmedDetent);
-          setLargestUndimmedDetent(newDetentLevel);
-        }}
-      />
-      <Text>largestUndimmedDetent: {largestUndimmedDetent}</Text>
-      <Button
-        title="Toggle sheetExpandsWhenScrolledToEdge"
-        onPress={() => {
-          setExpandsWhenScrolledToEdge(!expandsWhenScrolledToEdge);
-        }}
-      />
-      <Text>
-        sheetExpandsWhenScrolledToEdge:{' '}
-        {expandsWhenScrolledToEdge ? 'true' : 'false'}
-      </Text>
-      <Button
-        title="Toggle grabber visibility"
-        onPress={() => {
-          setGrabberVisible(!grabberVisible);
-        }}
-      />*/}
     </View>
   );
 }
@@ -252,16 +238,22 @@ function SheetScreen({ navigation }: NavProp) {
 function SheetScreenWithScrollView({ navigation }: NavProp) {
   return (
     <>
-      <View style={styles.absoluteFillNoBottom}>
         <ScrollView>
           <SheetScreen navigation={navigation} />
-          {[...Array(40).keys()].map(val => (
+          {[...Array(99).keys()].map(val => (
             <Text key={`${val}`}>Some component {val}</Text>
           ))}
         </ScrollView>
-      </View>
     </>
   );
+
+  // return (
+  //   <>
+  //     {[...Array(80).keys()].map(val => (
+  //       <Text key={`${val}`}>Some component {val}</Text>
+  //     ))}
+  //   </>
+  // );
 }
 
 function SheetScreenWithTextInput({ navigation }: NavProp) {
@@ -332,6 +324,7 @@ const styles = StyleSheet.create({
   centeredView: {
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'firebrick',
     // flex: 1,
   },
   absoluteFillNoBottom: {
