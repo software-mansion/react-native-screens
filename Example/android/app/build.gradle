@@ -116,7 +116,6 @@ android {
 }
 
 dependencies {
-    androidTestImplementation(project(path: ":detox"))
     androidTestImplementation('com.wix:detox:+') {
         // Both rn-screens and detox are using this class
         // https://github.com/wix/Detox/issues/2848
