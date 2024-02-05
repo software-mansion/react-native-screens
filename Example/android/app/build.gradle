@@ -121,6 +121,7 @@ dependencies {
         exclude group: 'com.google.android.material'
     }
     implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation 'com.facebook.soloader:soloader:0.10.4+'
   
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
