@@ -48,7 +48,7 @@ const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
 const grabberVisibleAtom = jotai.atom(true);
 const cornerRadiusAtom = jotai.atom(-1);
-const expandsWhenScrolledToEdgeAtom = jotai.atom(false);
+const expandsWhenScrolledToEdgeAtom = jotai.atom(true);
 
 const sheetOptionsAtom = jotai.atom(get => ({
   sheetAllowedDetents: get(allowedDetentsAtom),
@@ -336,13 +336,20 @@ function SheetScreenWithScrollView({ navigation }: NavProp) {
       <View style={styles.centeredView}>
         <ScrollView nestedScrollEnabled={true}>
           <SheetScreen navigation={navigation} />
-          {[...Array(40).keys()].map(val => (
+          {[...Array(99).keys()].map(val => (
             <Text key={`${val}`}>Some component {val}</Text>
           ))}
         </ScrollView>
-      </View>
     </>
   );
+
+  // return (
+  //   <>
+  //     {[...Array(80).keys()].map(val => (
+  //       <Text key={`${val}`}>Some component {val}</Text>
+  //     ))}
+  //   </>
+  // );
 }
 
 function SheetScreenWithTextInput({ navigation }: NavProp) {
@@ -416,6 +423,7 @@ const styles = StyleSheet.create({
   centeredView: {
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'firebrick',
     // flex: 1,
   },
   absoluteFillNoBottom: {
