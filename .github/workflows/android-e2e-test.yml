@@ -47,14 +47,15 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
-          api-level: 31
+          api-level: 29
           target: default
-          profile: pixel_2
+          profile: pixel_4a
           ram-size: '4096M'
           disk-size: '5G'
           disable-animations: false
           avd-name: e2e_emulator
           arch: arm64-v8a
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: yarn test-e2e-android
       - uses: actions/upload-artifact@v3
         if: ${{ failure() }}
