@@ -8,6 +8,7 @@ on:
       - 'ios/**'
       - 'common/**'
       - 'Example/**'
+      - 'src/**'
   push:
     branches:
       - main

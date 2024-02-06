@@ -5,25 +5,25 @@ import androidx.fragment.app.Fragment
 
 class FragmentBackPressOverrider(
     private val fragment: Fragment,
-    private val mOnBackPressedCallback: OnBackPressedCallback
+    private val onBackPressedCallback: OnBackPressedCallback
 ) {
-    private var mIsBackCallbackAdded: Boolean = false
+    private var isCallbackAdded: Boolean = false
     var overrideBackAction: Boolean = true
 
     fun maybeAddBackCallback() {
-        if (!mIsBackCallbackAdded && overrideBackAction) {
+        if (!isCallbackAdded && overrideBackAction) {
             fragment.activity?.onBackPressedDispatcher?.addCallback(
                 fragment,
-                mOnBackPressedCallback
+                onBackPressedCallback
             )
-            mIsBackCallbackAdded = true
+            isCallbackAdded = true
         }
     }
 
     fun removeBackCallbackIfAdded() {
-        if (mIsBackCallbackAdded) {
-            mOnBackPressedCallback.remove()
-            mIsBackCallbackAdded = false
+        if (isCallbackAdded) {
+            onBackPressedCallback.remove()
+            isCallbackAdded = false
         }
     }
 }
