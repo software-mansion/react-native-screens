@@ -55,7 +55,7 @@ jobs:
           api-level: 33
           profile: pixel_6
           ram-size: '4096M'
-          disk-size: '5G'
+          disk-size: '2G'
           disable-animations: false
           avd-name: e2e_emulator
           arch: x86_64
@@ -63,7 +63,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: ${{ failure() }}
         with:
-          name: android-fail-screen-shoots
+          name: android-fail-screen-shots
           path: |
             ${{ env.WORKING_DIRECTORY }}/artifacts
             ${{ env.WORKING_DIRECTORY }}/android/app/build/outputs/apk/androidTest/release/app-release-androidTest.apk
