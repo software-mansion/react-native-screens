@@ -30,6 +30,5 @@ allprojects {
         maven {
             url("$rootDir/../node_modules/detox/Detox-android")
         }
-        google()
     }
 }
