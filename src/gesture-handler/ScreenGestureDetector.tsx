@@ -24,7 +24,7 @@ import {
   getAnimationForTransition,
 } from './constraints';
 
-const EmptyGestureHandler = Gesture.Tap();
+const EmptyGestureHandler = Gesture.Fling();
 
 const ScreenGestureDetector = ({
   children,
