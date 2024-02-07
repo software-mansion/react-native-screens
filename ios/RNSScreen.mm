@@ -107,7 +107,8 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
-    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
+    CGFloat headerHeight = [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
+      auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), RCTPointFromCGPoint(CGPointMake(0, headerHeight))};
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];

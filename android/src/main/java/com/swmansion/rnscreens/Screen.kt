@@ -65,9 +65,9 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             val width = r - l
             val height = b - t
 
-            calculateHeaderHeight()
+            val headerHeight = calculateHeaderHeight()
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height)
+                updateScreenSizeFabric(width, height, headerHeight.first)
             } else {
                 updateScreenSizePaper(width, height)
             }
@@ -229,7 +229,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
     var nativeBackButtonDismissalEnabled: Boolean = true
 
-    private fun calculateHeaderHeight() {
+    private fun calculateHeaderHeight(): Pair<Double, Double> {
         val actionBarTv = TypedValue()
         val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
 
@@ -248,6 +248,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         val totalHeight = actionBarHeight + statusBarHeight
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderHeightChangeEvent(id, totalHeight))
+
+        return actionBarHeight to statusBarHeight
     }
 
     enum class StackPresentation {
