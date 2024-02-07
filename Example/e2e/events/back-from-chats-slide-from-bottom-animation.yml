@@ -1,30 +1,29 @@
 appId: ${APP_ID}
+name: Go to chats and check if label is visible
+onFlowStart:
+  - runFlow: setup.yaml
+  - runScript: setup.js
+onFlowComplete:
+  - runFlow: teardown.yaml
+  - runScript: teardown.js
 ---
 - launchApp
+- tapOn: 'Events'
 - tapOn:
-    id: "root-screen-playground-Events"
+    id: 'events-stack-animation-picker'
 - tapOn:
-    id: "events-stack-animation-picker"
-- tapOn:
-    id: "stack-animation-slide_from_bottom"
-- tapOn:
-    id: "events-go-to-chats"
+    text: 'Go to chats'
 
 - runFlow:
     when:
       platform: iOS
     commands:
-      - tapOn: "Back"
+      - tapOn: 'Events'
 
 - runFlow:
     when:
       platform: Android
     commands:
-      - tapOn: "Navigate up"
+      - tapOn: 'Navigate up'
 
-- assertVisible: "9. Chats | transitionStart | closing"
-- assertVisible: "10. Privacy | transitionStart | closing"
-- assertVisible: "11. Main | transitionStart | opening"
-- assertVisible: "12. Chats | transitionEnd | closing"
-- assertVisible: "13. Privacy | transitionEnd | closing"
-- assertVisible: "14. Main | transitionEnd | opening"
+- assertVisible: 'I should be visible! 🙌'

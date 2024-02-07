@@ -2,25 +2,25 @@ appId: ${APP_ID}
 ---
 - launchApp
 - tapOn:
-    id: "root-screen-playground-Events"
+    id: 'root-screen-playground-Events'
 - tapOn:
-    id: "events-go-to-chats"
+    id: 'events-go-to-chats'
 
 - runFlow:
-      when:
-          platform: iOS
-      commands:
-          - tapOn: "Back"
+    when:
+      platform: iOS
+    commands:
+      - tapOn: 'Events'
 
 - runFlow:
-      when:
-          platform: Android
-      commands:
-          - tapOn: "Navigate up"
+    when:
+      platform: Android
+    commands:
+      - tapOn: 'Navigate up'
 
-- assertVisible: "9. Chats | transitionStart | closing"
-- assertVisible: "10. Privacy | transitionStart | closing"
-- assertVisible: "11. Main | transitionStart | opening"
-- assertVisible: "12. Chats | transitionEnd | closing"
-- assertVisible: "13. Privacy | transitionEnd | closing"
-- assertVisible: "14. Main | transitionEnd | opening"
+- assertVisible: '9. Chats | transitionStart | closing'
+- assertVisible: '10. Privacy | transitionStart | closing'
+- assertVisible: '11. Main | transitionStart | opening'
+- assertVisible: '12. Chats | transitionEnd | closing'
+- assertVisible: '13. Privacy | transitionEnd | closing'
+- assertVisible: '14. Main | transitionEnd | opening'

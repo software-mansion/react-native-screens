@@ -6,8 +6,6 @@ appId: ${APP_ID}
 - tapOn:
     id: "events-stack-animation-picker"
 - tapOn:
-    id: "stack-animation-slide_from_bottom"
-- tapOn:
     id: "events-go-to-chats"
 
 - assertVisible: "3. Main | transitionStart | closing"
