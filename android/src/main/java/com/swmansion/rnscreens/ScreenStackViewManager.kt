@@ -12,6 +12,7 @@ import com.facebook.react.viewmanagers.RNSScreenStackManagerDelegate
 import com.facebook.react.viewmanagers.RNSScreenStackManagerInterface
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 
+
 @ReactModule(name = ScreenStackViewManager.REACT_CLASS)
 class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackManagerInterface<ScreenStack> {
     private val mDelegate: ViewManagerDelegate<ScreenStack>
@@ -30,29 +31,8 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
     }
 
     override fun removeViewAt(parent: ScreenStack, index: Int) {
-        prepareOutTransition(parent.getScreenAt(index))
+        parent.prepareOutTransition(parent.getScreenAt(index))
         parent.removeScreenAt(index)
-    }
-
-    private fun prepareOutTransition(screen: Screen?) {
-        startTransitionRecursive(screen)
-    }
-
-    private fun startTransitionRecursive(parent: ViewGroup?) {
-        parent?.let {
-            for (i in 0 until it.childCount) {
-                val child = it.getChildAt(i)
-                child?.let { view -> it.startViewTransition(view) }
-                if (child is ScreenStackHeaderConfig) {
-                    // we want to start transition on children of the toolbar too,
-                    // which is not a child of ScreenStackHeaderConfig
-                    startTransitionRecursive(child.toolbar)
-                }
-                if (child is ViewGroup) {
-                    startTransitionRecursive(child)
-                }
-            }
-        }
     }
 
     override fun getChildCount(parent: ScreenStack) = parent.screenCount

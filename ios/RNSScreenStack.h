@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)markChildUpdated;
 - (void)didUpdateChildren;
++ (bool)shouldBeRecycled;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

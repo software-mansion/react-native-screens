@@ -121,6 +121,7 @@ namespace react = facebook::react;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
 - (instancetype)initWithFrame:(CGRect)frame;
++ (bool)shouldBeRecycled;
 #endif
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;

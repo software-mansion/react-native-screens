@@ -805,6 +805,11 @@ namespace react = facebook::react;
   // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
 }
 
++ (bool)shouldBeRecycled
+{
+  return false;
+}
+
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];

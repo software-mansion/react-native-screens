@@ -42,6 +42,7 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     private var mNavigationBarHidden: Boolean? = null
     var isStatusBarAnimated: Boolean? = null
     private var mNativeBackButtonDismissalEnabled = true
+    var isBeingDismissed: Boolean = false
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs

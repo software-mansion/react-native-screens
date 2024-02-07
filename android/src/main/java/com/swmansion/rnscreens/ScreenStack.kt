@@ -2,14 +2,21 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
+import java.util.ArrayList
 import java.util.Collections
-import kotlin.collections.ArrayList
+import java.util.HashMap
 import kotlin.collections.HashSet
+import com.facebook.react.bridge.ViewMutationsListener
+import com.facebook.react.uimanager.UIManagerModule
+import com.facebook.react.fabric.mounting.mountitems.IntBufferMountItem
+import com.facebook.react.fabric.mounting.mountitems.InstructionType
 
 class ScreenStack(context: Context?) : ScreenContainer(context) {
     private val mStack = ArrayList<ScreenStackFragmentWrapper>()
@@ -22,6 +29,50 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
     var goingForward = false
+
+    init {
+        val viewMutationsListener : ViewMutationsListener = object : ViewMutationsListener {
+            override fun willMountViewMutations(
+                mutations: ArrayList<IntBufferMountItem>
+            ) {
+                mutations.forEach {
+                    if(it.instructionType == InstructionType.REMOVE) {
+                    val view = it.view
+                    if (view is Screen) {
+                        prepareOutTransition(view)
+                    }
+                }
+                }
+            }
+        }
+        (context as ReactContext).getNativeModule(UIManagerModule::class.java)?.addViewMutationsListener(
+            viewMutationsListener
+            )
+    }
+
+    fun prepareOutTransition(screen: Screen) {
+        if (!screen.isBeingDismissed) {
+            screen.isBeingDismissed = true
+            startTransitionRecursive(screen)
+        }
+    }
+
+    private fun startTransitionRecursive(parent: ViewGroup?) {
+        parent?.let {
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                child?.let { view -> it.startViewTransition(view) }
+                if (child is ScreenStackHeaderConfig) {
+                    // we want to start transition on children of the toolbar too,
+                    // which is not a child of ScreenStackHeaderConfig
+                    startTransitionRecursive(child.toolbar)
+                }
+                if (child is ViewGroup) {
+                    startTransitionRecursive(child)
+                }
+            }
+        }
+    }
 
     fun dismiss(screenFragment: ScreenStackFragmentWrapper) {
         mDismissed.add(screenFragment)

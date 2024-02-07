@@ -50,7 +50,7 @@ const Screen2 = () => {
 const Stack = createNativeStackNavigator();
 const Router = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{stackAnimation: 'slide_from_bottom'}}>
       <Stack.Screen name="Screen1" component={Screen1} />
       <Stack.Screen name="Screen2" component={Screen2} />
     </Stack.Navigator>
