@@ -164,7 +164,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         savedInstanceState: Bundle?
     ): View {
         coordinatorLayout = ScreensCoordinatorLayout(requireContext(), this).apply {
-            setBackgroundColor(Color.argb(0, 0, 0, 0))
+//            setBackgroundColor(Color.argb(0, 0, 0, 0))
         }
 
         screen.layoutParams = CoordinatorLayout.LayoutParams(
@@ -180,7 +180,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
-//            attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
+            attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
 //            screen.outlineProvider = CustomOutlineProvider(PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F))
             screen.clipToOutline = true
 
@@ -260,13 +260,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     private fun attachShapeToScreen(screen: Screen) {
-//        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F)
-//        val shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
-//            setTopLeftCorner(CornerFamily.ROUNDED, cornerSize)
-//            setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
-//        }.build()
-//        val shape = MaterialShapeDrawable(shapeAppearanceModel)
-//        screen.background = shape
+        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F)
+        val shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
+            setTopLeftCorner(CornerFamily.ROUNDED, cornerSize)
+            setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
+        }.build()
+        val shape = MaterialShapeDrawable(shapeAppearanceModel)
+        screen.background = shape
 //        screen.background = GradientDrawable().apply {
 //            shape = GradientDrawable.RECTANGLE
 ////            cornerRadii = FloatArray(8) { i -> if (i < 4) cornerSize else 0F }

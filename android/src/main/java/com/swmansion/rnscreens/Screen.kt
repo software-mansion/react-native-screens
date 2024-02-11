@@ -3,12 +3,8 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
 import android.os.Parcelable
-import android.util.Log
 import android.util.SparseArray
 import android.util.TypedValue
 import android.view.MotionEvent
@@ -285,51 +281,51 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     }
 
     override fun drawChild(canvas: Canvas, child: View?, drawingTime: Long): Boolean {
-        if (stackPresentation == StackPresentation.FORM_SHEET && sheetCornerRadius > 0F) {
-            Log.d("Screen", "onDraw inside")
-            val borderRadius = PixelUtil.toPixelFromDIP(sheetCornerRadius)
-            val path = Path()
-            path.rewind()
-            path.addRoundRect(
-                RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
-                floatArrayOf(
-                    borderRadius, borderRadius,
-                    borderRadius, borderRadius,
-                    0F, 0F,
-                    0F, 0F,
-                ),
-                Path.Direction.CCW
-            )
-            val paint = Paint()
-            paint.style = Paint.Style.FILL
-            paint.color = Color.BLACK
-            canvas.drawPath(path, paint)
-        }
+//        if (stackPresentation == StackPresentation.FORM_SHEET && sheetCornerRadius > 0F) {
+//            Log.d("Screen", "onDraw inside")
+//            val borderRadius = PixelUtil.toPixelFromDIP(sheetCornerRadius)
+//            val path = Path()
+//            path.rewind()
+//            path.addRoundRect(
+//                RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
+//                floatArrayOf(
+//                    borderRadius, borderRadius,
+//                    borderRadius, borderRadius,
+//                    0F, 0F,
+//                    0F, 0F,
+//                ),
+//                Path.Direction.CCW
+//            )
+//            val paint = Paint()
+//            paint.style = Paint.Style.FILL
+//            paint.color = Color.BLACK
+//            canvas.drawPath(path, paint)
+//        }
         return super.drawChild(canvas, child, drawingTime)
     }
 
     override fun dispatchDraw(canvas: Canvas) {
-        if (stackPresentation == StackPresentation.FORM_SHEET && sheetCornerRadius > 0F) {
-            Log.d("Screen", "onDraw inside")
-            val borderRadius = PixelUtil.toPixelFromDIP(sheetCornerRadius)
-            val path = Path()
-            path.rewind()
-            path.addRoundRect(
-                RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
-                floatArrayOf(
-                    borderRadius, borderRadius,
-                    borderRadius, borderRadius,
-                    0F, 0F,
-                    0F, 0F,
-                ),
-                Path.Direction.CW
-            )
-//            val paint = Paint()
-//            paint.setColor(Color.RED)
-//            paint.style = Paint.Style.FILL_AND_STROKE
-//            canvas.drawPath(path, paint)
-            canvas.clipPath(path)
-        }
+//        if (stackPresentation == StackPresentation.FORM_SHEET && sheetCornerRadius > 0F) {
+//            Log.d("Screen", "onDraw inside")
+//            val borderRadius = PixelUtil.toPixelFromDIP(sheetCornerRadius)
+//            val path = Path()
+//            path.rewind()
+//            path.addRoundRect(
+//                RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
+//                floatArrayOf(
+//                    borderRadius, borderRadius,
+//                    borderRadius, borderRadius,
+//                    0F, 0F,
+//                    0F, 0F,
+//                ),
+//                Path.Direction.CW
+//            )
+// //            val paint = Paint()
+// //            paint.setColor(Color.RED)
+// //            paint.style = Paint.Style.FILL_AND_STROKE
+// //            canvas.drawPath(path, paint)
+//            canvas.clipPath(path)
+//        }
         super.dispatchDraw(canvas)
     }
 
