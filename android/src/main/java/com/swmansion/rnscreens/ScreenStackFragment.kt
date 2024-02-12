@@ -153,8 +153,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 outlineAmbientShadowColor = Color.BLACK
                 outlineSpotShadowColor = Color.BLACK
             }
-
-            fitsSystemWindows = true
+            
             screenStackHeader.collapsingToolbarLayout?.let {
                 addView(recycleView(it))
             }
