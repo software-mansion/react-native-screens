@@ -296,8 +296,10 @@ class ScreenStack(
                             }
                     }
                     // when first visible screen found, make all screens after that visible
-                    it.add(id, fragmentWrapper.fragment).runOnCommit {
-                        top?.screen?.bringToFront()
+                    if (!fragmentWrapper.fragment.isAdded) {
+                        it.add(id, fragmentWrapper.fragment).runOnCommit {
+                            top?.screen?.bringToFront()
+                        }
                     }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
