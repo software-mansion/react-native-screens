@@ -8,6 +8,7 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.ViewParent
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -114,6 +115,7 @@ object ScreenWindowTraits {
                     val decorView = activity.window.decorView
                     if (translucent) {
                         ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
+                            Log.w("ScreenWindowTraits", "onApplyWindowInsetsListener Callback")
                             val defaultInsets = ViewCompat.onApplyWindowInsets(v, insets)
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -141,8 +143,15 @@ object ScreenWindowTraits {
                                 )
                             }
                         }
+//                        ViewCompat.requestApplyInsets(decorView)
                     } else {
                         ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
+//                        ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
+//                            ViewCompat.onApplyWindowInsets(v, insets)
+////                            insets
+//                            WindowInsetsCompat.CONSUMED
+//                        }
+//                        ViewCompat.requestApplyInsets(decorView)
                     }
                     ViewCompat.requestApplyInsets(decorView)
                 }

@@ -4,15 +4,21 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.os.Build
 import android.os.Parcelable
+import android.util.Log
 import android.util.SparseArray
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
+import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
@@ -61,6 +67,44 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     var sheetLargestUndimmedDetentIndex: Int = -1
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesWhenTouchOutside = true
+    val insetCallback = @RequiresApi(Build.VERSION_CODES.R)
+    object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+        var startBottom = 0
+        var endBottom = 0
+
+        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+            startBottom = this@Screen.bottom
+            Log.w(TAG, "inset onPrepare, sbottom $startBottom, ebottom: $endBottom")
+        }
+
+        override fun onStart(
+            animation: WindowInsetsAnimationCompat,
+            bounds: WindowInsetsAnimationCompat.BoundsCompat
+        ): WindowInsetsAnimationCompat.BoundsCompat {
+            endBottom = this@Screen.bottom
+            endBottom = 1541
+            Log.w(TAG, "inset onStart, sbottom: $startBottom, ebottom: $endBottom, diff: ${startBottom - endBottom}")
+            this@Screen.translationY = (startBottom - endBottom).toFloat()
+            return bounds
+        }
+
+        override fun onProgress(
+            insets: WindowInsetsCompat,
+            runningAnimations: MutableList<WindowInsetsAnimationCompat>
+        ): WindowInsetsCompat {
+
+//            val t = runningAnimations.first().interpolatedFraction
+//            Log.w(TAG, "inset onProgress $t")
+//            val offset = (startBottom - endBottom) * (1 - t)
+//            this@Screen.translationY = offset
+            return insets
+        }
+
+        override fun onEnd(animation: WindowInsetsAnimationCompat) {
+            Log.w(TAG, "inset onEnd ${this@Screen.bottom}")
+            super.onEnd(animation)
+        }
+    }
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -74,6 +118,41 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         // Setting params this way is not the most elegant way to solve this problem but workarounds it
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
+
+        this.fitsSystemWindows = true
+//        val rootView = reactContext!!.currentActivity!!.window.decorView.rootView
+        val rootView = reactContext!!.currentActivity!!.window.decorView
+
+//        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v, insets ->
+//            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+//            val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+//            val screenBottom = this@Screen.bottom
+//            Log.w(TAG, "inset onApplyWindowInsetsCallback $imeBottomInset, $screenBottom")
+//
+//            if (isImeVisible && this.stackPresentation == StackPresentation.FORM_SHEET) {
+//                Log.w(TAG, "inset onApplyWindowInsetsCallback UPDATE PADDING to $imeBottomInset, $screenBottom")
+//                this.updatePadding(bottom = imeBottomInset)
+//            }
+//            insets
+//        }
+
+//        ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
+//            Log.w(TAG, "inset onApplyWindowInsetsCallback")
+//            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+//            val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+//
+//            if (isImeVisible && this.stackPresentation == StackPresentation.FORM_SHEET) {
+//                Log.w(TAG, "inset onApplyWindowInsetsCallback UPDATE PADDING")
+//                this.updatePadding(bottom = imeBottomInset)
+//            }
+//            insets
+//        }
+
+//        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {
+        return super.onApplyWindowInsets(insets)
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
@@ -376,6 +455,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     }
 
     companion object {
+        const val TAG = "Screen"
+
         fun sheetStateFromScreen(index: Int, detentCount: Int): Int = when (detentCount) {
             1 -> when (index) {
                 -1 -> BottomSheetBehavior.STATE_HIDDEN

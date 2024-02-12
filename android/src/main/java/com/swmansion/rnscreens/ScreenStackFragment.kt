@@ -23,6 +23,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.commit
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
@@ -365,6 +366,12 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         private val fragment: ScreenStackFragment
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context), ReactPointerEventsView {
+
+        init {
+//            this.fitsSystemWindows = true
+//            ViewCompat.setOnApplyWindowInsetsListener(this, null)
+        }
+
         private val animationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation) {

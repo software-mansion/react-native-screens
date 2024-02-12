@@ -5,6 +5,7 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,6 +77,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
 
             if (largestUndimmedOffset < slideOffset && slideOffset < firstDimmedOffset) {
                 val fraction = (slideOffset - largestUndimmedOffset) / intervalLength
+                Log.w(TAG, "$fraction")
                 animator!!.setCurrentFraction(fraction)
             }
         }
@@ -107,6 +109,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return AnimationUtils.loadAnimation(context, if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out)
+//        return null;
     }
 
     override fun onCreateView(

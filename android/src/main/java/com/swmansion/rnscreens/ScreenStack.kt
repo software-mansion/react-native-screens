@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -57,8 +58,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
 //            Screen.StackPresentation.MODAL -> ScreenModalFragment(screen)
-//            Screen.StackPresentation.MODAL, Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
-            Screen.StackPresentation.MODAL, Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen)
+            Screen.StackPresentation.MODAL, Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
+//            Screen.StackPresentation.MODAL, Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen)
             else -> ScreenStackFragment(screen)
         }
 
@@ -117,6 +118,17 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
 //        for (wrapper in screenWrappers.reversed()) {
 //
 //        }
+
+        Log.w(TAG, "onUpdate")
+        screenWrappers.withIndex().forEach { (i, wrapper) ->
+            Log.i(TAG, "Wrapper: $i $wrapper")
+        }
+        stack.withIndex().forEach { (i, wrapper) ->
+            Log.i(TAG, "Stack: $i $wrapper")
+        }
+
+
+
         for (i in screenWrappers.indices.reversed()) {
             val screen = getScreenFragmentWrapperAt(i)
             if (!dismissedWrappers.contains(screen)) {
@@ -400,10 +412,13 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     }
 
     companion object {
+        const val TAG = "ScreenStack"
+
         private fun isTransparent(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL ||
                 fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL ||
-                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET
+                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET ||
+                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.PUSH
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
