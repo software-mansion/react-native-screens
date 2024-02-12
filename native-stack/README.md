@@ -191,7 +191,7 @@ String to be used by the header as title string. Defaults to scene `title`.
 
 #### `headerTitleAlign` (Android only)
 
-Alignment of the title on the header. Possible values are:
+Alignment of the header title. Possible values are:
 
 - `left` - aligns title to the left side of the header.
 - `center` - aligns title to the center on the header.
