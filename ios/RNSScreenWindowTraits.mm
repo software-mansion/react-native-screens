@@ -4,7 +4,7 @@
 
 @implementation RNSScreenWindowTraits
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 + (void)assertViewControllerBasedStatusBarAppearenceSet
 {
   static dispatch_once_t once;
@@ -25,8 +25,8 @@
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [UIView animateWithDuration:0.4
                    animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
-    [RCTKeyWindow().rootViewController setNeedsStatusBarAppearanceUpdate];
-  }];
+                     [RCTKeyWindow().rootViewController setNeedsStatusBarAppearanceUpdate];
+                   }];
 #endif
 }
 
@@ -112,7 +112,7 @@
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   dispatch_async(dispatch_get_main_queue(), ^{
     UIInterfaceOrientationMask orientationMask = [RCTKeyWindow().rootViewController supportedInterfaceOrientations];
-    
+
     UIInterfaceOrientation currentDeviceOrientation =
         [RNSScreenWindowTraits interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
     UIInterfaceOrientation currentInterfaceOrientation = [RNSScreenWindowTraits interfaceOrientation];
