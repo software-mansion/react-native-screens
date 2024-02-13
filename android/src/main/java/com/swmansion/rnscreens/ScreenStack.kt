@@ -51,6 +51,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     override val topScreen: Screen?
         get() = topScreenWrapper?.screen
 
+    val fragments: ArrayList<ScreenStackFragmentWrapper>
+        get() = stack
+
     val rootScreen: Screen
         get() = screenWrappers.firstOrNull { !dismissedWrappers.contains(it) }?.screen
             ?: throw IllegalStateException("Stack has no root screen set")

@@ -231,12 +231,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         if (this is ScreenStackFragment) {
             if (transitionProgress != alpha) {
                 transitionProgress = max(0.0f, min(1.0f, alpha))
-                /* We want value of 0 and 1 to be always dispatched so we base coalescing key on the progress:
-                 - progress is 0 -> key 1
-                 - progress is 1 -> key 2
-                 - progress is between 0 and 1 -> key 3
-             */
-                val coalescingKey = (if (transitionProgress == 0.0f) 1 else if (transitionProgress == 1.0f) 2 else 3).toShort()
+                val coalescingKey = getCoalescingKey(transitionProgress)
                 val container: ScreenContainer? = screen.container
                 val goingForward = if (container is ScreenStack) container.goingForward else false
                 val screenContext = screen.context as ReactContext
@@ -318,5 +313,14 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
 
     companion object {
         const val TAG = "ScreenFragment"
+
+        fun getCoalescingKey(progress: Float): Short {
+            /* We want value of 0 and 1 to be always dispatched so we base coalescing key on the progress:
+                 - progress is 0 -> key 1
+                 - progress is 1 -> key 2
+                 - progress is between 0 and 1 -> key 3
+             */
+            return (if (progress == 0.0f) 1 else if (progress == 1.0f) 2 else 3).toShort()
+        }
     }
 }

@@ -22,6 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)markChildUpdated;
 - (void)didUpdateChildren;
+- (void)startScreenTransition;
+- (void)updateScreenTransition:(double)progress;
+- (void)finishScreenTransition:(BOOL)canceled;
+
+@property (nonatomic) BOOL customAnimation;
+@property (nonatomic) BOOL disableSwipeBack;
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #else

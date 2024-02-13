@@ -1,4 +1,5 @@
 import com.android.Version
+import groovy.json.JsonSlurper
 
 buildscript {
     ext {
@@ -73,6 +74,19 @@ android {
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
+    }
+    buildFeatures {
+        prefab true
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
     }
     lintOptions {
         abortOnError false
@@ -86,7 +100,13 @@ android {
         // while there are more libraries copied in intermediates folder of the lib build directory, we exclude
         // only the ones that make the build fail (ideally we should only include librnscreens_modules but we
         // are only allowed to specify exclude patterns)
-        exclude "**/libreact_render*.so"
+        excludes = [
+                "META-INF",
+                "META-INF/**",
+                "**/libjsi.so",
+                "**/libc++_shared.so",
+                "**/libreact_render*.so"
+        ]
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"
@@ -101,7 +121,6 @@ android {
                     "build/generated/source/codegen/java"
                 ]
             }
-
         }
         res {
             if (safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion) >= 33) {
