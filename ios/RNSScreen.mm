@@ -832,9 +832,6 @@ namespace react = facebook::react;
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
-  if ([changedProps containsObject:@"stackPresentation"]) {
-    NSLog(@"RNSScreen %p has set stackPresentation to: %ld", self.controller, self.stackPresentation);
-  }
 #if !TARGET_OS_TV
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
@@ -903,7 +900,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RCT_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
-    NSLog(@"RNSScreen %p created with RNSScreenView %p", self, self.view);
   }
   return self;
 }
@@ -1229,10 +1225,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
-    NSLog(
-        @"RNSScreen %p found that presentedViewController is of class RNSScreen %p",
-        self,
-        self.presentedViewController);
     lastViewController = self.presentedViewController;
 
     // In case of fullScreenModal we want to ask for orientation specifically the screen underneath,
@@ -1351,25 +1343,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-  NSLog(@"RNSScreen %p supportedInterfaceOrientations", self);
   UIViewController *vc = [self findChildVCForConfigAndTrait:RNSWindowTraitOrientation includingModals:YES];
 
   if ([vc isKindOfClass:[RNSScreen class]]) {
-    UIInterfaceOrientationMask mask = ((RNSScreen *)vc).screenView.screenOrientation;
-    NSLog(
-        @"RNSScreen %p supportedInterfaceOrientations found vc %p with orientation %ld; self?: %d",
-        self,
-        vc,
-        mask,
-        self == vc);
     return ((RNSScreen *)vc).screenView.screenOrientation;
   }
-  NSLog(
-      @"RNSScreen %p supportedInterfaceOrientations found vc %p with orientation %ld; self?: %d",
-      self,
-      vc,
-      UIInterfaceOrientationMaskAllButUpsideDown,
-      self == vc);
   return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
