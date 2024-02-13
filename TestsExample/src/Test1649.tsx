@@ -18,7 +18,7 @@ export default function App(): JSX.Element {
     sheetLargestUndimmedDetent: 0,
     sheetGrabberVisible: false,
     sheetCornerRadius: 20,
-    sheetExpandsWhenScrolledToEdge: true,
+    sheetExpandsWhenScrolledToEdge: false,
   };
 
   return (
@@ -47,6 +47,8 @@ export default function App(): JSX.Element {
             component={SheetScreen}
             options={{
               // stackAnimation: 'slide_from_bottom',
+              stackAnimation: 'none',
+              stackPresentation: 'formSheet',
               ...initialScreenOptions,
             }}
           />
@@ -95,7 +97,7 @@ function Second({
   };
 
   return (
-    <View>
+    <View style={{backgroundColor: 'orchid', flex: 1}}>
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -173,8 +175,17 @@ function SheetScreen({
   const ref = React.useRef(null);
 
   return (
-    <View style={[styles.containerView, { backgroundColor: 'green' }]}>
-      <TextInput value={'hello'} ref={ref} />
+    <View style={[styles.containerView, { backgroundColor: 'firebrick' }]}>
+      <TextInput
+        style={{
+          backgroundColor: 'lightblue',
+          paddingHorizontal: 5,
+          margin: 5,
+          borderRadius: 5,
+        }}
+        value={'hello'}
+        ref={ref}
+      />
       <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('First')}
@@ -187,8 +198,7 @@ function SheetScreen({
         title="Tap me for the third screen / blur"
         onPress={() => {
           // navigation.goBack();
-          // navigation.navigate('Third');
-          ref?.current?.blur();
+          navigation.navigate('Third');
         }}
       />
       <Button
@@ -272,7 +282,7 @@ const styles = StyleSheet.create({
   headerView: {
     height: 20,
     width: 20,
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
   },
   containerView: {
     flex: 1,
