@@ -4,7 +4,8 @@
     "paths": {
       "react-native-screens": ["./src"],
       "react-native-screens/native-stack": ["./src/native-stack/index.tsx"],
-      "react-native-screens/reanimated": ["src/reanimated/index.tsx"]
+      "react-native-screens/reanimated": ["src/reanimated/index.tsx"],
+      "react-native-screens/gesture-handler": ["src/gesture-handler/index.tsx"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

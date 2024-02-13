@@ -1,4 +1,4 @@
-/* eslint-disable import/no-commonjs */
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const path = require('path');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
@@ -12,10 +12,11 @@ const modules = [
   '@react-navigation/stack',
   'react-native-reanimated',
   'react-native-safe-area-context',
+  'react-native-gesture-handler',
   ...Object.keys(pack.peerDependencies),
 ];
 
-module.exports = {
+const config = {
   projectRoot: __dirname,
   watchFolders: [root],
 
@@ -32,6 +33,8 @@ module.exports = {
       acc[name] = path.join(__dirname, 'node_modules', name);
       return acc;
     }, {}),
+
+    nodeModulesPaths: [path.join(__dirname, '../../')],
   },
 
   transformer: {
@@ -43,3 +46,5 @@ module.exports = {
     }),
   },
 };
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);

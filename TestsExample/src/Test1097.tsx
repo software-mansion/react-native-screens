@@ -192,6 +192,10 @@ function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
         onPress={() => searchBarRef.current?.setText('sometext')}
       />
       <Button
+        title="Cancel search"
+        onPress={() => searchBarRef.current?.cancelSearch()}
+      />
+      <Button
         title="Tap me for the first screen"
         onPress={() => navigation.navigate('First')}
       />

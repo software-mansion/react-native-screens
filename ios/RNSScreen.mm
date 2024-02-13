@@ -560,13 +560,19 @@ namespace react = facebook::react;
   }
 }
 
-- (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig
+- (nullable RNSScreenStackHeaderConfig *)findHeaderConfig
 {
+  // Fast path
+  if ([self.reactSubviews.lastObject isKindOfClass:RNSScreenStackHeaderConfig.class]) {
+    return (RNSScreenStackHeaderConfig *)self.reactSubviews.lastObject;
+  }
+
   for (UIView *view in self.reactSubviews) {
     if ([view isKindOfClass:RNSScreenStackHeaderConfig.class]) {
       return (RNSScreenStackHeaderConfig *)view;
     }
   }
+
   return nil;
 }
 
@@ -1238,15 +1244,28 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
           self,
           modalScreen.screenView.stackPresentation);
     }
+
+    if (!includingModals) {
+      return nil;
+    }
+
     // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
     // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
     // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
-    return !includingModals
-        ? nil
-        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
-            ?: lastViewController;
+    UIViewController *modalOrChild = [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait
+                                                                                   includingModals:includingModals];
+    if (modalOrChild != nil) {
+      return modalOrChild;
+    }
+
+    // if searched VC was not found, we don't want to search for configs of child VCs any longer,
+    // and we don't want to rely on lastViewController.
+    // That's because the modal did not find a child VC that has an orientation set,
+    // and it doesn't itself have an orientation set. Hence, we fallback to the standard behavior.
+    // Please keep in mind that this behavior might be wrong and could lead to undiscovered bugs.
+    // For more information, see https://github.com/software-mansion/react-native-screens/pull/2008.
   }
 
   UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
