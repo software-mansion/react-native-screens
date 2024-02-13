@@ -893,7 +893,6 @@ namespace react = facebook::react;
 {
   [self emitOnFinishTransitioningEvent];
   [RNSScreenWindowTraits updateWindowTraits];
-  [self setNeedsLayout];
 }
 #endif
 
