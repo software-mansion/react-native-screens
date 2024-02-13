@@ -143,16 +143,9 @@ object ScreenWindowTraits {
                                 )
                             }
                         }
-//                        ViewCompat.requestApplyInsets(decorView)
                     } else {
                         Log.w("ScreenWindowTraits", "Removing listener")
                         ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
-//                        ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
-//                            ViewCompat.onApplyWindowInsets(v, insets)
-////                            insets
-//                            WindowInsetsCompat.CONSUMED
-//                        }
-//                        ViewCompat.requestApplyInsets(decorView)
                     }
                     ViewCompat.requestApplyInsets(decorView)
                 }

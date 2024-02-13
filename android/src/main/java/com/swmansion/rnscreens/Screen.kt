@@ -21,6 +21,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
@@ -102,6 +103,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 //            endBottom = 1541
             Log.w(TAG, "inset onStart, sbottom: $startBottom, ebottom: $endBottom, diff: ${startBottom - endBottom}")
             this@Screen.translationY = (startBottom - endBottom).toFloat()
+//            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
 
             ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
             ViewCompat.requestApplyInsets(decorView)
@@ -116,6 +118,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             val t = runningAnimations.first().interpolatedFraction
             val offset = (startBottom - endBottom) * (1 - t)
             this@Screen.translationY = offset
+//            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
             Log.w(TAG, "inset onProgress $t -> $offset, bottom: ${this@Screen.bottom}")
 
             return insets
@@ -159,7 +162,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 //            insets
 //        }
 
-        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
+//        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {

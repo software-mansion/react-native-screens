@@ -369,7 +369,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
         init {
 //            this.fitsSystemWindows = true
-//            ViewCompat.setOnApplyWindowInsetsListener(this, null)
         }
 
         private val animationListener: Animation.AnimationListener =
