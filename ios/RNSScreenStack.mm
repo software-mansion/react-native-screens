@@ -81,17 +81,7 @@ namespace react = facebook::react;
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-  NSLog(@"RNSScreenStack %p supportedInterfaceOrientations", self);
-  UIViewController *topViewController = [self topViewController];
-  UIInterfaceOrientationMask mask = topViewController.supportedInterfaceOrientations;
-  NSLog(
-      @"RNSScreenStack %p supportedInterfaceOrientations topVC: %@ with orientation mask: %ld",
-      self,
-      topViewController,
-      mask);
-  return mask;
-
-  //  return [self topViewController].supportedInterfaceOrientations;
+  return [self topViewController].supportedInterfaceOrientations;
 }
 
 - (UIViewController *)childViewControllerForHomeIndicatorAutoHidden

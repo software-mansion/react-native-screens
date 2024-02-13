@@ -27,22 +27,8 @@
 
 - (UIInterfaceOrientationMask)reactNativeScreensSupportedInterfaceOrientations
 {
-  NSLog(@"UIVC + RNS: Looking for child RNSViewController");
   UIViewController *childVC = [self findChildRNSScreensViewController];
-  if (childVC != nil) {
-    UIInterfaceOrientationMask mask = childVC.supportedInterfaceOrientations;
-    NSLog(
-        @"UIVC + RNS %p found child VC for supported interface orientations: %@, with orientation mask %ld",
-        self,
-        childVC,
-        mask);
-    return mask;
-  } else {
-    NSLog(@"UIVC + RNS %p did NOT found child VC for supported interface orientations", self);
-    return [self reactNativeScreensSupportedInterfaceOrientations];
-  }
-
-  //  return childVC ? childVC.supportedInterfaceOrientations : [self reactNativeScreensSupportedInterfaceOrientations];
+  return childVC ? childVC.supportedInterfaceOrientations : [self reactNativeScreensSupportedInterfaceOrientations];
 }
 
 - (UIViewController *)reactNativeScreensChildViewControllerForHomeIndicatorAutoHidden
