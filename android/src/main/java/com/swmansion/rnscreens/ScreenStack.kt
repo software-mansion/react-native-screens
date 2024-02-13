@@ -336,6 +336,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
+            // On Android sdk 33 and above the animation is different and requires draw reordering.
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
