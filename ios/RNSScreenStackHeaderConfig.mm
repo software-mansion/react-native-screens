@@ -227,7 +227,7 @@ namespace react = facebook::react;
       [navbar setTitleTextAttributes:attrs];
     }
 
-#if !TARGET_OS_T && !TARGET_OS_VISIONV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
     if (@available(iOS 11.0, *)) {
       if (config.largeTitle &&
           (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight ||
