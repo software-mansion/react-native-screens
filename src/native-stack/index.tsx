@@ -21,6 +21,8 @@ export { default as AnimatedHeaderHeightContext } from './utils/AnimatedHeaderHe
  * Types
  */
 export type {
+  AnimatedScreenTransition,
+  GoBackGesture,
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
   NativeStackScreenProps,
