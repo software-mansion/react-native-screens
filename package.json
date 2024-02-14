@@ -22,11 +22,10 @@
     "architectures-consistency-check": "node ./scripts/codegen-check-consistency.js",
     "sync-architectures": "node ./scripts/codegen-sync-archs.js"
   },
-  "main": "lib/commonjs/index",
-  "module": "lib/module/index",
+  "main": "src/index",
+  "module": "src/index",
   "react-native": "src/index",
   "source": "src/index",
-  "types": "lib/typescript/index.d.ts",
   "files": [
     "src/",
     "common/",
