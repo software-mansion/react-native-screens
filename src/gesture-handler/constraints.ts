@@ -1,11 +1,11 @@
 import { ScreenTransition } from 'react-native-reanimated';
-import {
+import type {
   AnimatedScreenTransition,
   GoBackGesture,
   PanGestureHandlerEventPayload,
 } from '../native-stack/types';
 import { AnimationForGesture } from './defaults';
-import { GestureUpdateEvent } from 'react-native-gesture-handler';
+import type { GestureUpdateEvent } from 'react-native-gesture-handler';
 
 const SupportedGestures = [
   'swipeRight',

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
+import type {
   HeaderSubviewTypes,
   ScreenStackHeaderConfigProps,
   SearchBarProps,

@@ -22,7 +22,7 @@ import {
   checkIfTransitionCancelled,
   getAnimationForTransition,
 } from './constraints';
-import { GestureProviderProps } from '../types';
+import type { GestureProviderProps } from '../types';
 
 const EmptyGestureHandler = Gesture.Fling();
 
@@ -60,7 +60,9 @@ const ScreenGestureDetector = ({
   const screenTagToNodeWrapperUI = makeMutable<Record<string, any>>({});
   const IS_FABRIC = isFabric();
 
-  gestureDetectorBridge.current.stackUseEffectCallback = stackRef => {
+  gestureDetectorBridge.current.stackUseEffectCallback = (
+    stackRef: React.RefObject<any>
+  ) => {
     if (!goBackGesture) {
       return;
     }

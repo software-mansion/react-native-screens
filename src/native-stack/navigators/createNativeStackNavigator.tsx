@@ -10,7 +10,7 @@ import {
   useNavigationBuilder,
 } from '@react-navigation/native';
 import * as React from 'react';
-import {
+import type {
   NativeStackNavigationEventMap,
   NativeStackNavigationOptions,
   NativeStackNavigatorProps,

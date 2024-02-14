@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Animated } from 'react-native';
+import type { Animated } from 'react-native';
 
 const AnimatedHeaderHeightContext = React.createContext<
   Animated.Value | undefined

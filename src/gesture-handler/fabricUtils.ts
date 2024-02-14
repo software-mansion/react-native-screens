@@ -1,6 +1,6 @@
 'use strict';
 
-import { View } from 'react-native';
+import type { View } from 'react-native';
 
 /* eslint-disable */
 

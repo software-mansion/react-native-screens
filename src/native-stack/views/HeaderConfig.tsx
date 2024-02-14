@@ -15,7 +15,7 @@ import {
   ScreenStackHeaderSearchBarView,
 } from '../../components/ScreenStackHeaderConfig';
 import SearchBar from '../../components/SearchBar';
-import { NativeStackNavigationOptions } from '../types';
+import type { NativeStackNavigationOptions } from '../types';
 import { useBackPressSubscription } from '../utils/useBackPressSubscription';
 import { processFonts } from './FontProcessor';
 import warnOnce from 'warn-once';

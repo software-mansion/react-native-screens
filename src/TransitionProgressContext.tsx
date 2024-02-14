@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Animated } from 'react-native';
+import type { Animated } from 'react-native';
 
 type TransitionProgressContextBody = {
   progress: Animated.Value;

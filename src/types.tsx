@@ -1,5 +1,5 @@
-import React from 'react';
-import {
+import type React from 'react';
+import type {
   Animated,
   NativeSyntheticEvent,
   ViewProps,
@@ -8,7 +8,7 @@ import {
   TextInputFocusEventData,
   ColorValue,
 } from 'react-native';
-import { NativeStackNavigatorProps } from './native-stack/types';
+import type { NativeStackNavigatorProps } from './native-stack/types';
 
 export type SearchBarCommands = {
   focus: () => void;

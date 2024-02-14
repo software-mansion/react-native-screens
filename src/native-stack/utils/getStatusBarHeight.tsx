@@ -1,4 +1,4 @@
-import { Rect } from 'react-native-safe-area-context';
+import type { Rect } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 
 export default function getStatusBarHeight(

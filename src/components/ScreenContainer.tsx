@@ -2,7 +2,7 @@
 
 import { Platform, View } from 'react-native';
 import React from 'react';
-import { ScreenContainerProps } from '../types';
+import type { ScreenContainerProps } from '../types';
 import { isNativePlatformSupported, screensEnabled } from '../core';
 
 // Native components
