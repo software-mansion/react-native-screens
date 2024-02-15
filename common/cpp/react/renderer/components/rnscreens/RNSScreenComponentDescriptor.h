@@ -28,9 +28,13 @@ class RNSScreenComponentDescriptor final
             shadowNode.getState());
     auto stateData = state->getData();
 
-    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setSize(
-          Size{stateData.frameSize.width, stateData.frameSize.height});
+    // Instead of setting the screen size explicitly, we can let yoga calculate it and instead
+    // cut the bottom part out using padding to make sure that content size + header size
+    // doesn't exceed the viewport size. The drawback of this approach is that the size of the 
+    // screen component will be too large by a header. This means that calling measure on the
+    // screen component will return wrong height.
+    if (stateData.contentOffset.y != 0) {
+      layoutableShadowNode.setPadding({.bottom = stateData.contentOffset.y});
     }
 
     ConcreteComponentDescriptor::adopt(shadowNode);

@@ -318,7 +318,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         // The exception to this rule is `updateImmediately` which is triggered by actions
         // not connected to React view hierarchy changes, but rather internal events
         needsUpdate = true
-        (context as? ReactContext)?.runOnUiQueueThread {
+        (context.applicationContext as? ReactContext)?.runOnUiQueueThread {
             // We schedule the update here because LayoutAnimations of `react-native-reanimated`
             // sometimes attach/detach screens after the layout block of `ScreensShadowNode` has
             // already run, and we want to update the container then too. In the other cases,

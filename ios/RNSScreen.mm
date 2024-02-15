@@ -108,7 +108,7 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
     CGFloat headerHeight = [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
-      auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), RCTPointFromCGPoint(CGPointMake(0, headerHeight))};
+    auto newState = react::RNSScreenState{RCTPointFromCGPoint(CGPointMake(0, headerHeight))};
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
@@ -1117,12 +1117,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   // does not have header and we don't want to count status bar. If there's no navigation controller for the view we
   // just want to return status bar height (if it's hidden, it will simply return 0).
   if (navctr == nil || navctr.isNavigationBarHidden) {
-    if (isModal) {
       return 0;
-    } else {
-      CGSize statusBarSize = [self getStatusBarHeightIsModal:isModal];
-      return MIN(statusBarSize.width, statusBarSize.height);
-    }
   }
 
   CGFloat navbarHeight = navctr.navigationBar.frame.size.height;

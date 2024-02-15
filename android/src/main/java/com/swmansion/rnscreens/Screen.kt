@@ -65,9 +65,9 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             val width = r - l
             val height = b - t
 
-            val headerHeight = calculateHeaderHeight()
+            val headerHeight = if (container is ScreenStack) calculateHeaderHeight().first else 0.0
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height, headerHeight.first)
+                updateHeaderSizeFabric(headerHeight)
             } else {
                 updateScreenSizePaper(width, height)
             }
