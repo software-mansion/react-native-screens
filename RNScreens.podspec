@@ -60,7 +60,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/software-mansion/react-native-screens"
   s.license      = "MIT"
   s.author       = { "author" => "author@domain.cn" }
-  s.platforms    = { :ios => platform, :tvos => "11.0" }
+  s.platforms    = { :ios => platform, :tvos => "11.0", :visionos => "1.0" }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
   s.requires_arc = true
