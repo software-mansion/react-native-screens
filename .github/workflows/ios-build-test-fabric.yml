@@ -40,7 +40,7 @@ jobs:
         run: yarn
 
       - name: Install Ruby gems
-        run: gem install 'cocoapods:1.14.3'
+        run: gem install cocoapods -v 1.15.2
 
       - name: Install pods
         id: install_pods
