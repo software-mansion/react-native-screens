@@ -181,9 +181,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
 
         if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
-            attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
-//            screen.outlineProvider = CustomOutlineProvider(PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F))
             screen.clipToOutline = true
+            attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
+            screen.elevation = 20f
+//            screen.outlineProvider = CustomOutlineProvider(PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F))
 
 //            if (screen.isSheetGrabberVisible) {
 //                val grabberView = BottomSheetDragHandleView(requireContext()).apply {
