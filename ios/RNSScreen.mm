@@ -1112,7 +1112,8 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
 
   // If there's no navigation controller for the modal (or the navigation bar is hidden), we simply don't want to
-  // return header height, as modal possibly does not have header and we don't want to count status bar.
+  // return header height, as modal possibly does not have header when navigation controller is nil,
+  // and we don't want to count status bar if navigation bar is hidden (inset could be negative).
   if (navctr == nil || navctr.isNavigationBarHidden) {
     return 0;
   }
