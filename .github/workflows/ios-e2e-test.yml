@@ -39,6 +39,8 @@ jobs:
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
+      - name: Install Ruby gems
+        run: gem install 'cocoapods:1.14.3'
       - name: Install pods
         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
         run: pod install
