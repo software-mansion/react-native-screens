@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Button, StyleSheet, View, Text, ScrollView } from 'react-native';
-import { TouchableOpacity, GestureHandlerRootView, Gesture, TextInput } from 'react-native-gesture-handler';
+import {
+  TouchableOpacity,
+  GestureHandlerRootView,
+  Gesture,
+  TextInput,
+} from 'react-native-gesture-handler';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -12,14 +17,14 @@ import { SheetDetentTypes } from 'react-native-screens';
 const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
-  const initialScreenOptions: NativeStackNavigationOptions = {
+  const [sheetOptions, _] = React.useState<NativeStackNavigationOptions>({
     stackPresentation: 'formSheet',
-    sheetAllowedDetents: [0.45, 0.86],
+    sheetAllowedDetents: [0.45, 0.9],
     sheetLargestUndimmedDetent: 0,
     sheetGrabberVisible: false,
     sheetCornerRadius: 20,
     sheetExpandsWhenScrolledToEdge: false,
-  };
+  });
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -49,14 +54,14 @@ export default function App(): JSX.Element {
               // stackAnimation: 'slide_from_bottom',
               stackAnimation: 'none',
               stackPresentation: 'formSheet',
-              ...initialScreenOptions,
+              ...sheetOptions,
             }}
           />
           <Stack.Screen
             name="SheetScreenWithScrollView"
             component={SheetScreenWithScrollView}
             options={{
-              ...initialScreenOptions,
+              ...sheetOptions,
             }}
           />
           <Stack.Screen
@@ -97,7 +102,7 @@ function Second({
   };
 
   return (
-    <View style={{backgroundColor: 'orchid', flex: 1}}>
+    <View style={{ backgroundColor: 'white', flex: 1 }}>
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -156,7 +161,6 @@ function SheetScreen({
   const [largestUndimmedDetent, sheetLargestUndimmedDetent] =
     React.useState<SheetDetentTypes>('all');
   const [isGrabberVisible, setIsGrabberVisible] = React.useState(false);
-  // navigation
   const [shouldExpand, setShouldExpand] = React.useState(true);
 
   function nextDetentLevel(currDetent: SheetDetentTypes): SheetDetentTypes {
@@ -175,7 +179,7 @@ function SheetScreen({
   const ref = React.useRef(null);
 
   return (
-    <View style={[styles.containerView, { backgroundColor: 'firebrick' }]}>
+    <View style={[styles.containerView, { backgroundColor: 'white' }]}>
       <TextInput
         style={{
           backgroundColor: 'lightblue',
