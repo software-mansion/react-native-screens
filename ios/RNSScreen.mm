@@ -229,7 +229,7 @@ namespace react = facebook::react;
   }
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
   _hasStatusBarStyleSet = YES;
@@ -604,7 +604,7 @@ namespace react = facebook::react;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 /**
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
@@ -821,7 +821,7 @@ namespace react = facebook::react;
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
 }
@@ -832,7 +832,7 @@ namespace react = facebook::react;
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
 }
@@ -1065,7 +1065,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (CGSize)getStatusBarHeightIsModal:(BOOL)isModal
 {
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
@@ -1505,7 +1505,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #endif
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 // See:
 // 1. https://github.com/software-mansion/react-native-screens/pull/1543
 // 2. https://github.com/software-mansion/react-native-screens/pull/1596

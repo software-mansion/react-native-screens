@@ -92,7 +92,7 @@ namespace react = facebook::react;
 
 @end
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 @interface RNSScreenEdgeGestureRecognizer : UIScreenEdgePanGestureRecognizer
 @end
 
@@ -150,7 +150,7 @@ namespace react = facebook::react;
   _presentedModals = [NSMutableArray new];
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
   // we have to initialize viewControllers with a non empty array for
@@ -731,7 +731,7 @@ namespace react = facebook::react;
   }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
-#if TARGET_OS_TV
+#if TARGET_OS_TV || TARGET_OS_VISION
   [self cancelTouchesInParent];
   return YES;
 #else
@@ -774,7 +774,7 @@ namespace react = facebook::react;
 #endif // TARGET_OS_TV
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
@@ -951,7 +951,7 @@ namespace react = facebook::react;
   return [super hitTest:point withEvent:event];
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 
 - (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
