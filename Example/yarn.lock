@@ -4860,6 +4860,20 @@ jest-environment-emit@^1.0.5:
     strip-ansi "^6.0.0"
     tslib "^2.5.3"
 
+jest-environment-emit@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/jest-environment-emit/-/jest-environment-emit-1.0.5.tgz#e6f33451f98b88ccd48e9e1188bb535880f03c1b"
+  integrity sha512-OsQ08AhYxkkyDBTIow+9ogNmJheQIGWQKp0Nku+1ToLWjAj2Pd6LmypN8HgUIqYHs4HFcqkQ25kaf1qExmoZpg==
+  dependencies:
+    bunyamin "^1.5.0"
+    bunyan "^2.0.5"
+    bunyan-debug-stream "^3.1.0"
+    funpermaproxy "^1.1.0"
+    lodash.merge "^4.6.2"
+    node-ipc "9.2.1"
+    strip-ansi "^6.0.0"
+    tslib "^2.5.3"
+
 jest-environment-node@^29.2.1, jest-environment-node@^29.6.4:
   version "29.6.4"
   resolved "https://registry.yarnpkg.com/jest-environment-node/-/jest-environment-node-29.6.4.tgz#4ce311549afd815d3cafb49e60a1e4b25f06d29f"
