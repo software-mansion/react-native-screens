@@ -11,6 +11,7 @@ To learn about how to use `react-native-screens` with Fabric architecture, head 
 - [x] iOS
 - [x] Android
 - [x] tvOS
+- [x] visionOS
 - [x] Windows
 - [x] Web
 
@@ -105,6 +106,7 @@ Screens are already integrated with the React Native's most popular navigation l
 
 | library version | react-native version |
 | ------- | -------------------- |
+| 3.30.0+ | 0.68.0+              |
 | 3.14.0+ | 0.64.0+              |
 | 3.0.0+  | 0.62.0+              |
 | 2.0.0+  | 0.60.0+              |
