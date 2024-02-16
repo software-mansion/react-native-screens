@@ -123,6 +123,7 @@
   };
 }
 
+#if !TARGET_OS_VISION
 + (UITextAutocapitalizationType)UITextAutocapitalizationTypeFromCppEquivalent:
     (react::RNSSearchBarAutoCapitalize)autoCapitalize
 {
@@ -137,6 +138,7 @@
       return UITextAutocapitalizationTypeNone;
   }
 }
+#endif
 
 + (RNSSearchBarPlacement)RNSScreenSearchBarPlacementFromCppEquivalent:(react::RNSSearchBarPlacement)placement
 {
