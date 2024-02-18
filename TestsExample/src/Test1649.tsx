@@ -3,7 +3,6 @@ import { Button, StyleSheet, View, Text, ScrollView } from 'react-native';
 import {
   TouchableOpacity,
   GestureHandlerRootView,
-  Gesture,
   TextInput,
 } from 'react-native-gesture-handler';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
@@ -15,6 +14,14 @@ import {
 import { SheetDetentTypes } from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
+
+function Footer() {
+  return (
+    <View style={{ backgroundColor: 'red', margin: 0 }}>
+      <Text>SomeContent</Text>
+    </View>
+  );
+}
 
 export default function App(): JSX.Element {
   const [sheetOptions, _] = React.useState<NativeStackNavigationOptions>({
@@ -44,6 +51,7 @@ export default function App(): JSX.Element {
             component={Second}
             options={{
               // stackPresentation: 'modal',
+              footerComponent: Footer,
               fullScreenSwipeEnabled: true,
             }}
           />
@@ -54,6 +62,7 @@ export default function App(): JSX.Element {
               // stackAnimation: 'slide_from_bottom',
               stackAnimation: 'none',
               stackPresentation: 'formSheet',
+              footerComponent: Footer,
               ...sheetOptions,
             }}
           />
@@ -178,87 +187,93 @@ function SheetScreen({
 
   const ref = React.useRef(null);
 
+  React.useLayoutEffect(() => {
+
+  }, []);
+
   return (
     <View style={[styles.containerView, { backgroundColor: 'white' }]}>
-      <TextInput
-        style={{
-          backgroundColor: 'lightblue',
-          paddingHorizontal: 5,
-          margin: 5,
-          borderRadius: 5,
-        }}
-        value={'hello'}
-        ref={ref}
-      />
-      <Button
-        title="Tap me for the first screen"
-        onPress={() => navigation.navigate('First')}
-      />
-      <Button
-        title="Tap me for the second screen"
-        onPress={() => navigation.navigate('Second')}
-      />
-      <Button
-        title="Tap me for the third screen / blur"
-        onPress={() => {
-          // navigation.goBack();
-          navigation.navigate('Third');
-        }}
-      />
-      <Button
-        title="Change the corner radius"
-        onPress={() => {
-          const newRadius = radius >= 150 ? -1.0 : radius + 50;
-          setRadius(newRadius);
-          navigation.setOptions({
-            sheetCornerRadius: newRadius,
-          });
-        }}
-      />
-      <Text>radius: {radius}</Text>
-      <Button
-        title="Change detent level"
-        onPress={() => {
-          const newDetentLevel = nextDetentLevel(detent);
-          setDetent(newDetentLevel);
-          navigation.setOptions({
-            sheetAllowedDetents: newDetentLevel,
-          });
-        }}
-      />
-      <Text>detent: {detent}</Text>
-      <Button
-        title="Change largest undimmed detent"
-        onPress={() => {
-          const newDetentLevel = nextDetentLevel(largestUndimmedDetent);
-          sheetLargestUndimmedDetent(newDetentLevel);
-          navigation.setOptions({
-            sheetLargestUndimmedDetent: newDetentLevel,
-          });
-        }}
-      />
-      <Text>largestUndimmedDetent: {largestUndimmedDetent}</Text>
-      <Button
-        title="Toggle sheetExpandsWhenScrolledToEdge"
-        onPress={() => {
-          setShouldExpand(!shouldExpand);
-          navigation.setOptions({
-            sheetExpandsWhenScrolledToEdge: !shouldExpand,
-          });
-        }}
-      />
-      <Text>
-        sheetExpandsWhenScrolledToEdge: {shouldExpand ? 'true' : 'false'}
-      </Text>
-      <Button
-        title="Toggle grabber visibility"
-        onPress={() => {
-          setIsGrabberVisible(!isGrabberVisible);
-          navigation.setOptions({
-            sheetGrabberVisible: !isGrabberVisible,
-          });
-        }}
-      />
+      <View>
+        <TextInput
+          style={{
+            backgroundColor: 'lightblue',
+            paddingHorizontal: 5,
+            margin: 5,
+            borderRadius: 5,
+          }}
+          value={'hello'}
+          ref={ref}
+        />
+        <Button
+          title="Tap me for the first screen"
+          onPress={() => navigation.navigate('First')}
+        />
+        <Button
+          title="Tap me for the second screen"
+          onPress={() => navigation.navigate('Second')}
+        />
+        <Button
+          title="Tap me for the third screen / blur"
+          onPress={() => {
+            // navigation.goBack();
+            navigation.navigate('Third');
+          }}
+        />
+        <Button
+          title="Change the corner radius"
+          onPress={() => {
+            const newRadius = radius >= 150 ? -1.0 : radius + 50;
+            setRadius(newRadius);
+            navigation.setOptions({
+              sheetCornerRadius: newRadius,
+            });
+          }}
+        />
+        <Text>radius: {radius}</Text>
+        <Button
+          title="Change detent level"
+          onPress={() => {
+            const newDetentLevel = nextDetentLevel(detent);
+            setDetent(newDetentLevel);
+            navigation.setOptions({
+              sheetAllowedDetents: newDetentLevel,
+            });
+          }}
+        />
+        <Text>detent: {detent}</Text>
+        <Button
+          title="Change largest undimmed detent"
+          onPress={() => {
+            const newDetentLevel = nextDetentLevel(largestUndimmedDetent);
+            sheetLargestUndimmedDetent(newDetentLevel);
+            navigation.setOptions({
+              sheetLargestUndimmedDetent: newDetentLevel,
+            });
+          }}
+        />
+        <Text>largestUndimmedDetent: {largestUndimmedDetent}</Text>
+        <Button
+          title="Toggle sheetExpandsWhenScrolledToEdge"
+          onPress={() => {
+            setShouldExpand(!shouldExpand);
+            navigation.setOptions({
+              sheetExpandsWhenScrolledToEdge: !shouldExpand,
+            });
+          }}
+        />
+        <Text>
+          sheetExpandsWhenScrolledToEdge: {shouldExpand ? 'true' : 'false'}
+        </Text>
+        <Button
+          title="Toggle grabber visibility"
+          onPress={() => {
+            setIsGrabberVisible(!isGrabberVisible);
+            navigation.setOptions({
+              sheetGrabberVisible: !isGrabberVisible,
+            });
+          }}
+        />
+      </View>
     </View>
   );
 }

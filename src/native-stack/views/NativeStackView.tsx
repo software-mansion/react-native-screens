@@ -37,6 +37,7 @@ import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../utils/getStatusBarHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
+import FooterComponent from './FooterComponent';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -196,6 +197,7 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
+    footerComponent,
   } = options;
 
   let {
@@ -405,6 +407,11 @@ const RouteView = ({
             route={route}
             headerShown={isHeaderInPush}
           />
+          {footerComponent && (
+            <FooterComponent>
+              {footerComponent()}
+            </FooterComponent>
+          )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>
     </Screen>

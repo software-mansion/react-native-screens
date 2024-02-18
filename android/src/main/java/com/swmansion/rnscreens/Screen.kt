@@ -180,6 +180,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        Log.w(TAG, "onLayout to $width, $height")
         if (changed) {
             val width = r - l
             val height = b - t
@@ -195,6 +196,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
     private fun updateScreenSizePaper(width: Int, height: Int) {
         val reactContext = context as ReactContext
+        Log.w(TAG, "updateScreenSize to $width, $height")
         reactContext.runOnNativeModulesQueueThread(
             object : GuardedRunnable(reactContext) {
                 override fun runGuarded() {

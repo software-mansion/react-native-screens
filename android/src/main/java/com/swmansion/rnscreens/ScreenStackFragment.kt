@@ -134,7 +134,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     this@ScreenStackFragment.dismissFromContainer()
                 }
             }
-            Log.i("ScreenStackFragment", "Sheet state changed to $newState")
+            Log.i("ScreenStackFragment", "Sheet state changed to $newState, sheetSize: ${bottomSheet.width}, ${bottomSheet.height}")
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
