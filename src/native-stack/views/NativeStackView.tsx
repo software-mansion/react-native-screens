@@ -8,7 +8,6 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
-  SheetDetentTypes,
   GHContext,
   GestureDetectorBridge,
 } from 'react-native-screens';
@@ -206,26 +205,6 @@ const RouteView = ({
     screenStyle = null,
   } = options;
 
-  let sheetUserDefinedDetents: number[];
-  let sheetNativeDetents: SheetDetentTypes;
-  if (Array.isArray(sheetAllowedDetents)) {
-    sheetUserDefinedDetents = sheetAllowedDetents;
-    sheetNativeDetents = 'large';
-  } else {
-    sheetUserDefinedDetents = [];
-    sheetNativeDetents = sheetAllowedDetents;
-  }
-
-  let sheetUserDefinedUndimmedDetent: number;
-  let sheetNativeUndimmedDetent: SheetDetentTypes;
-  if (typeof sheetLargestUndimmedDetent === 'number') {
-    sheetNativeUndimmedDetent = 'large';
-    sheetUserDefinedUndimmedDetent = sheetLargestUndimmedDetent;
-  } else {
-    sheetNativeUndimmedDetent = sheetLargestUndimmedDetent;
-    sheetUserDefinedUndimmedDetent = -1;
-  }
-
   let {
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
@@ -313,13 +292,11 @@ const RouteView = ({
       isNativeStack
       hasLargeHeader={hasLargeHeader}
       style={[StyleSheet.absoluteFill, screenStyle]}
-      sheetAllowedDetents={sheetNativeDetents}
-      sheetLargestUndimmedDetent={sheetNativeUndimmedDetent}
-      sheetCustomLargestUndimmedDetent={sheetUserDefinedUndimmedDetent}
+      sheetAllowedDetents={sheetAllowedDetents}
+      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
       sheetGrabberVisible={sheetGrabberVisible}
       sheetCornerRadius={sheetCornerRadius}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-      sheetCustomDetents={sheetUserDefinedDetents}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
