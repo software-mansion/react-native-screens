@@ -1,183 +1,285 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Text, Pressable, Dimensions } from 'react-native';
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  I18nManager,
-  Platform,
-  StatusBar,
-} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
-import RNRestart from 'react-native-restart';
-
-import { ListItem, SettingsSwitch } from './src/shared';
-
-import SimpleNativeStack from './src/screens/SimpleNativeStack';
-import SwipeBackAnimation from './src/screens/SwipeBackAnimation';
-import StackPresentation from './src/screens/StackPresentation';
-import HeaderOptions from './src/screens/HeaderOptions';
-import StatusBarExample from './src/screens/StatusBar';
-import Animations from './src/screens/Animations';
-import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
-import Modals from './src/screens/Modals';
-import Orientation from './src/screens/Orientation';
-import SearchBar from './src/screens/SearchBar';
-import Events from './src/screens/Events';
-import Gestures from './src/screens/Gestures';
-
-import { enableFreeze } from 'react-native-screens';
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
+import Animated, {
+  AnimatedScreenTransition,
+  Easing,
+} from 'react-native-reanimated';
 import { GestureDetectorProvider } from 'react-native-screens/gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-enableFreeze();
-
-if (Platform.OS === 'android') {
-  StatusBar.setTranslucent(true);
-}
-
-const SCREENS: Record<
-  string,
-  {
-    title: string;
-    component: () => JSX.Element;
-    type: 'example' | 'playground';
-  }
-> = {
-  SimpleNativeStack: {
-    title: 'Simple Native Stack',
-    component: SimpleNativeStack,
-    type: 'example',
-  },
-  SwipeBackAnimation: {
-    title: 'Swipe Back Animation',
-    component: SwipeBackAnimation,
-    type: 'example',
-  },
-  StackPresentation: {
-    title: 'Stack Presentation',
-    component: StackPresentation,
-    type: 'example',
-  },
-  BottomTabsAndStack: {
-    title: 'Bottom tabs and native stack',
-    component: BottomTabsAndStack,
-    type: 'example',
-  },
-  Modals: {
-    title: 'Modals',
-    component: Modals,
-    type: 'example',
-  },
-  HeaderOptions: {
-    title: 'Header Options',
-    component: HeaderOptions,
-    type: 'playground',
-  },
-  StatusBar: {
-    title: 'Status bar',
-    component: StatusBarExample,
-    type: 'playground',
-  },
-  Animations: {
-    title: 'Animations',
-    component: Animations,
-    type: 'playground',
-  },
-  Orientation: {
-    title: 'Orientation',
-    component: Orientation,
-    type: 'playground',
-  },
-  SearchBar: {
-    title: 'Search bar',
-    component: SearchBar,
-    type: 'playground',
-  },
-  Events: {
-    title: 'Events',
-    component: Events,
-    type: 'playground',
-  },
-  Gestures: {
-    title: 'Gestures',
-    component: Gestures,
-    type: 'playground',
-  },
-};
-
-type RootStackParamList = {
+type StackParamList = {
   Main: undefined;
-} & {
-  [P in keyof typeof SCREENS]: undefined;
+  ScreenA: undefined;
+  ScreenB: undefined;
+  ScreenC: undefined;
+  ScreenD: undefined;
 };
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
 
 interface MainScreenProps {
-  navigation: StackNavigationProp<RootStackParamList, 'Main'>;
+  navigation: NativeStackNavigationProp<StackParamList, 'ScreenA'>;
 }
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
-  <ScrollView testID="root-screen-examples-scrollview">
-    <SettingsSwitch
-      style={styles.switch}
-      label="Right to left"
-      value={I18nManager.isRTL}
-      onValueChange={() => {
-        I18nManager.forceRTL(!I18nManager.isRTL);
-        RNRestart.Restart();
-      }}
-    />
-    <Text style={styles.label} testID="root-screen-examples-header">
-      Examples
-    </Text>
-    {Object.keys(SCREENS)
-      .filter(name => SCREENS[name].type === 'example')
-      .map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-example-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-        />
-      ))}
-    <Text style={styles.label}>Playgrounds</Text>
-    {Object.keys(SCREENS)
-      .filter(name => SCREENS[name].type === 'playground')
-      .map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-playground-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-        />
-      ))}
-  </ScrollView>
+  <View style={styles.container}>
+    <Text style={[styles.header, {}]}>Screen Transitions</Text>
+    <View style={styles.row}>
+      <Animated.View
+        style={[styles.box, styles.boxA]}
+        sharedTransitionTag="screenA">
+        <Pressable
+          onPress={() => navigation.navigate('ScreenA')}
+          style={styles.pressable}>
+          <Animated.Text
+            style={styles.label}
+            sharedTransitionTag="screenA-label">
+            Swipe UP
+          </Animated.Text>
+        </Pressable>
+      </Animated.View>
+      <Animated.View
+        style={[styles.box, styles.boxB]}
+        sharedTransitionTag="screenB">
+        <Pressable
+          onPress={() => navigation.navigate('ScreenB')}
+          style={styles.pressable}>
+          <Animated.Text
+            style={styles.label}
+            sharedTransitionTag="screenB-label">
+            Swipe RIGHT
+          </Animated.Text>
+        </Pressable>
+      </Animated.View>
+    </View>
+    <View style={styles.row}>
+      <Animated.View
+        style={[styles.box, styles.boxC]}
+        sharedTransitionTag="screenC">
+        <Pressable
+          onPress={() => navigation.navigate('ScreenC')}
+          style={styles.pressable}>
+          <Animated.Text
+            style={styles.label}
+            sharedTransitionTag="screenC-label">
+            Swipe DOWN
+          </Animated.Text>
+        </Pressable>
+      </Animated.View>
+      <Animated.View
+        style={[styles.box, styles.boxD]}
+        sharedTransitionTag="screenD">
+        <Pressable
+          onPress={() => navigation.navigate('ScreenD')}
+          style={styles.pressable}>
+          <Animated.Text
+            style={styles.label}
+            sharedTransitionTag="screenD-label">
+            Swipe LEFT
+          </Animated.Text>
+        </Pressable>
+      </Animated.View>
+    </View>
+  </View>
 );
 
-const ExampleApp = (): JSX.Element => (
+const ScreenA = (): JSX.Element => {
+  const [tag, setTag] = React.useState('screenA');
+
+  useEffect(() => {
+    setTag('');
+    return () => {
+      setTag('screenA');
+    };
+  });
+
+  return (
+    <Animated.View
+      style={[styles.screen, styles.boxA]}
+      sharedTransitionTag={tag}>
+      <Animated.Text
+        style={styles.label}
+        sharedTransitionTag={tag && `${tag}-label`}>
+        Swipe UP
+      </Animated.Text>
+    </Animated.View>
+  );
+};
+
+const ScreenB = (): JSX.Element => {
+  const [tag, setTag] = React.useState('screenB');
+
+  useEffect(() => {
+    setTag('');
+    return () => {
+      setTag('screenB');
+    };
+  });
+
+  return (
+    <Animated.View
+      style={[styles.screen, styles.boxB]}
+      sharedTransitionTag={tag}>
+      <Animated.Text
+        style={styles.label}
+        sharedTransitionTag={tag && `${tag}-label`}>
+        Swipe RIGHT
+      </Animated.Text>
+    </Animated.View>
+  );
+};
+
+const ScreenC = (): JSX.Element => {
+  const [tag, setTag] = React.useState('screenC');
+
+  useEffect(() => {
+    setTag('');
+    return () => {
+      setTag('screenC');
+    };
+  });
+
+  return (
+    <Animated.View
+      style={[styles.screen, styles.boxC]}
+      sharedTransitionTag={tag}>
+      <Animated.Text
+        style={styles.label}
+        sharedTransitionTag={tag && `${tag}-label`}>
+        Swipe DOWN
+      </Animated.Text>
+    </Animated.View>
+  );
+};
+
+const ScreenD = (): JSX.Element => {
+  const [tag, setTag] = React.useState('screenD');
+
+  useEffect(() => {
+    setTag('');
+    return () => {
+      setTag('screenD');
+    };
+  });
+
+  return (
+    <Animated.View
+      style={[styles.screen, styles.boxD]}
+      sharedTransitionTag={tag}>
+      <Animated.Text
+        style={styles.label}
+        sharedTransitionTag={tag && `${tag}-label`}>
+        Swipe LEFT
+      </Animated.Text>
+    </Animated.View>
+  );
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
+
+const SwipeUp: AnimatedScreenTransition = {
+  topScreenFrame: event => {
+    'worklet';
+    return {
+      transform: [{ translateY: event.translationY }],
+    };
+  },
+  belowTopScreenFrame: (event, screenSize) => {
+    'worklet';
+    const progress = Math.abs(event.translationY / screenSize.height);
+    return {
+      transform: [{ scale: 0.7 + 0.3 * progress }],
+    };
+  },
+};
+
+const SwipeRight: AnimatedScreenTransition = {
+  topScreenFrame: (event, screenSize) => {
+    'worklet';
+    const progress = Math.abs(event.translationX / screenSize.width);
+
+    return {
+      transform: [
+        { translateX: event.translationX },
+        { rotate: 20 * progress + 'deg' },
+      ],
+      opacity: Easing.out(Easing.ease)(1 - progress),
+    };
+  },
+  belowTopScreenFrame: (event, screenSize) => {
+    'worklet';
+    const progress = Math.abs(event.translationX / screenSize.width);
+    return {
+      transform: [{ rotate: `${progress * 360}deg` }],
+    };
+  },
+};
+
+const SwipeLeft: AnimatedScreenTransition = {
+  topScreenFrame: (event, screenSize) => {
+    'worklet';
+    const progress = Math.abs(event.translationX / screenSize.width);
+
+    return {
+      transform: [
+        { translateX: event.translationX },
+        { rotate: -20 * progress + 'deg' },
+      ],
+      opacity: Easing.out(Easing.ease)(1 - progress),
+    };
+  },
+  belowTopScreenFrame: () => {
+    'worklet';
+    return {};
+  },
+};
+
+const App = (): JSX.Element => (
   <GestureHandlerRootView style={{ flex: 1 }}>
     <GestureDetectorProvider>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+            headerShown: false,
+            // headerLargeTitle: true,
+            stackAnimation: 'fade',
+            statusBarStyle: 'light',
           }}>
+          <Stack.Screen name="Main" component={MainScreen} />
           <Stack.Screen
-            name="Main"
-            options={{ title: '📱 React Native Screens Examples' }}
-            component={MainScreen}
+            name="ScreenA"
+            component={ScreenA}
+            options={{
+              transitionAnimation: SwipeUp,
+              goBackGesture: 'swipeUp',
+            }}
           />
-          {Object.keys(SCREENS).map(name => (
-            <Stack.Screen
-              key={name}
-              name={name}
-              getComponent={() => SCREENS[name].component}
-              options={{ headerShown: false }}
-            />
-          ))}
+          <Stack.Screen
+            name="ScreenB"
+            component={ScreenB}
+            options={{
+              transitionAnimation: SwipeRight,
+              goBackGesture: 'swipeRight',
+            }}
+          />
+          <Stack.Screen
+            name="ScreenC"
+            component={ScreenC}
+            options={{
+              goBackGesture: 'swipeDown',
+            }}
+          />
+          <Stack.Screen
+            name="ScreenD"
+            component={ScreenD}
+            options={{
+              transitionAnimation: SwipeLeft,
+              goBackGesture: 'swipeLeft',
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureDetectorProvider>
@@ -185,15 +287,57 @@ const ExampleApp = (): JSX.Element => (
 );
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: 15,
-    color: 'black',
-    margin: 10,
-    marginTop: 15,
+  container: {
+    flex: 1,
+    backgroundColor: '#232736',
+    justifyContent: 'center',
+    borderRadius: 20,
   },
-  switch: {
-    marginTop: 15,
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+  },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 24,
+    marginHorizontal: 10,
+    color: '#EEF0FF',
+    marginBottom: 10,
+  },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 24,
+    marginHorizontal: 10,
+    color: '#001A72',
+  },
+  box: {
+    height: 250,
+    width: Dimensions.get('window').width / 2 - 20,
+    margin: 10,
+    borderRadius: 12,
+  },
+  boxA: {
+    backgroundColor: '#C49FFE',
+  },
+  boxB: {
+    backgroundColor: '#6FCEF5',
+  },
+  boxC: {
+    backgroundColor: '#FF8B88',
+  },
+  boxD: {
+    backgroundColor: '#7ADEAD',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  pressable: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
-export default ExampleApp;
+export default App;

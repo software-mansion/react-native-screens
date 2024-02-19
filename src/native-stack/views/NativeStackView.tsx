@@ -46,7 +46,7 @@ if (__DEV__) {
   const DebugContainer = (
     props: ViewProps & { stackPresentation: StackPresentationTypes }
   ) => {
-    const { stackPresentation, ...rest } = props;
+    const { stackPresentation, style, ...rest } = props;
     if (Platform.OS === 'ios' && stackPresentation !== 'push') {
       return (
         <AppContainer>
@@ -54,7 +54,9 @@ if (__DEV__) {
         </AppContainer>
       );
     }
-    return <View {...rest} />;
+    return (
+      <View {...rest} style={[style, { backgroundColor: 'transparent' }]} />
+    );
   };
   // @ts-ignore Wrong props
   Container = DebugContainer;
@@ -284,7 +286,7 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={StyleSheet.absoluteFill}
+      style={[StyleSheet.absoluteFill, { backgroundColor: 'transparent' }]}
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
       sheetGrabberVisible={sheetGrabberVisible}
@@ -482,5 +484,6 @@ export default function NativeStackView(props: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
 });

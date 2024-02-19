@@ -14,6 +14,12 @@
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
+- (UIView *)createRootViewWithBridge:(RCTBridge *)bridge moduleName:(NSString *)moduleName initProps:(NSDictionary *)initProps {
+  UIView *rootView = [super createRootViewWithBridge:bridge moduleName:moduleName initProps:initProps];
+  rootView.backgroundColor = [UIColor colorWithRed: 0.14 green: 0.15 blue: 0.21 alpha: 1.00];
+  return rootView;
+}
+
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
