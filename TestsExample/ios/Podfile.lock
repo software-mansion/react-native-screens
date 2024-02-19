@@ -944,7 +944,7 @@ PODS:
   - React-Mapbuffer (0.73.0):
     - glog
     - React-debug
-  - react-native-safe-area-context (4.8.1):
+  - react-native-safe-area-context (4.9.0):
     - React-Core
   - React-nativeconfig (0.73.0)
   - React-NativeModulesApple (0.73.0):
@@ -1113,11 +1113,11 @@ PODS:
     - React-jsi (= 0.73.0)
     - React-logger (= 0.73.0)
     - React-perflogger (= 0.73.0)
-  - RNGestureHandler (2.14.0):
+  - RNGestureHandler (2.15.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNReanimated (3.6.0):
+  - RNReanimated (3.7.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1371,7 +1371,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 9f6fb9ed9f03a0fb961ab8dc2e0e0ee0dc729e77
   React-logger: 008caec0d6a587abc1e71be21bfac5ba1662fe6a
   React-Mapbuffer: 58fe558faf52ecde6705376700f848d0293d1cef
-  react-native-safe-area-context: cd1169d797a2ef722a00bfc5af10748d5b6c94f9
+  react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   React-nativeconfig: a063483672b8add47a4875b0281e202908ff6747
   React-NativeModulesApple: 169506a5fd708ab22811f76ee06a976595c367a1
   React-perflogger: b61e5db8e5167f5e70366e820766c492847c082e
@@ -1392,8 +1392,8 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 77543c74df984ce56c09d49d427149c53784aaf6
   React-utils: 42708ea436853045ef1eaff29996813d9fbbe209
   ReactCommon: 851280fb976399ca1aabc74cc2c3612069ea70a2
-  RNGestureHandler: 61bfdfc05db9b79dd61f894dcd29d3dcc6db3c02
-  RNReanimated: e7abe58f02a10c8b619db32b6bf33507420a9f86
+  RNGestureHandler: deda62b8339496ba721a45e0f3e2d7a319932cee
+  RNReanimated: 7d6d32f238f914f13d9d6fb45c0aef557f7f901e
   RNScreens: d5ebd3115fba92d04c2727bda678635942b45301
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 44003f970aa541b79dfdd59cf236fda41bd5890f
