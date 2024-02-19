@@ -332,24 +332,15 @@ function SheetScreen({
 
 function SheetScreenWithScrollView({ navigation }: NavProp) {
   return (
-    <>
-      <View style={styles.centeredView}>
-        <ScrollView nestedScrollEnabled={true}>
-          <SheetScreen navigation={navigation} />
-          {[...Array(99).keys()].map(val => (
-            <Text key={`${val}`}>Some component {val}</Text>
-          ))}
-        </ScrollView>
-    </>
+    <View style={styles.centeredView}>
+      <ScrollView nestedScrollEnabled={true}>
+        <SheetScreen navigation={navigation} />
+        {[...Array(99).keys()].map(val => (
+          <Text key={`${val}`}>Some component {val}</Text>
+        ))}
+      </ScrollView>
+    </View>
   );
-
-  // return (
-  //   <>
-  //     {[...Array(80).keys()].map(val => (
-  //       <Text key={`${val}`}>Some component {val}</Text>
-  //     ))}
-  //   </>
-  // );
 }
 
 function SheetScreenWithTextInput({ navigation }: NavProp) {

@@ -98,9 +98,9 @@ const MaybeNestedStack = ({
     <Container
       style={[
         // styles.container,
-        stackPresentation !== 'formSheet'
-          ? styles.container
-          : styles.absolutFillNoBottom,
+        stackPresentation === 'formSheet' && Platform.OS === 'ios'
+          ? styles.absoluteFillNoBottom
+          : styles.container,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,
@@ -205,26 +205,6 @@ const RouteView = ({
     screenStyle = null,
   } = options;
 
-  let sheetUserDefinedDetents: number[];
-  let sheetNativeDetents: SheetDetentTypes;
-  if (Array.isArray(sheetAllowedDetents)) {
-    sheetUserDefinedDetents = sheetAllowedDetents;
-    sheetNativeDetents = 'large';
-  } else {
-    sheetUserDefinedDetents = [];
-    sheetNativeDetents = sheetAllowedDetents;
-  }
-
-  let sheetUserDefinedUndimmedDetent: number;
-  let sheetNativeUndimmedDetent: SheetDetentTypes;
-  if (typeof sheetLargestUndimmedDetent === 'number') {
-    sheetNativeUndimmedDetent = 'large';
-    sheetUserDefinedUndimmedDetent = sheetLargestUndimmedDetent;
-  } else {
-    sheetNativeUndimmedDetent = sheetLargestUndimmedDetent;
-    sheetUserDefinedUndimmedDetent = -1;
-  }
-
   let {
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
@@ -312,13 +292,11 @@ const RouteView = ({
       isNativeStack
       hasLargeHeader={hasLargeHeader}
       style={[StyleSheet.absoluteFill, screenStyle]}
-      sheetAllowedDetents={sheetNativeDetents}
-      sheetLargestUndimmedDetent={sheetNativeUndimmedDetent}
-      sheetCustomLargestUndimmedDetent={sheetUserDefinedUndimmedDetent}
+      sheetAllowedDetents={sheetAllowedDetents}
+      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
       sheetGrabberVisible={sheetGrabberVisible}
       sheetCornerRadius={sheetCornerRadius}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
-      sheetCustomDetents={sheetUserDefinedDetents}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
@@ -435,9 +413,7 @@ const RouteView = ({
             headerShown={isHeaderInPush}
           />
           {footerComponent && (
-            <FooterComponent>
-              {footerComponent()}
-            </FooterComponent>
+            <FooterComponent>{footerComponent()}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>
@@ -523,14 +499,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  absolutFill: {
+  absoluteFill: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
   },
-  absolutFillNoBottom: {
+  absoluteFillNoBottom: {
     position: 'absolute',
     top: 0,
     left: 0,
