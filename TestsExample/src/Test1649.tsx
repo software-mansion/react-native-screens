@@ -367,50 +367,6 @@ function SheetScreenWithTextInput({ navigation }: NavProp) {
   );
 }
 
-function RawScreenHome() {
-  const [modalVisible, setModalVisible] = React.useState(true);
-
-  return (
-    <View style={[styles.absoluteFill, { marginTop: 100 }]}>
-      <ScreenStack>
-        <Screen style={[styles.absoluteFill, { backgroundColor: 'red' }]}>
-          <View>
-            <Button
-              title="Show modal"
-              onPress={() => setModalVisible(true)}
-              color="white"
-            />
-            <Text>Sometext</Text>
-          </View>
-        </Screen>
-        <Screen
-          style={[styles.absoluteFill, { backgroundColor: 'tomato' }]}
-          stackPresentation="formSheet"
-          sheetCustomDetents={[0.3, 0.6, 0.9]}
-          sheetExpandsWhenScrolledToEdge={true}
-          sheetGrabberVisible>
-          <View
-            style={[
-              styles.absoluteFillNoBottom,
-              { backgroundColor: 'darkorange', marginTop: 15 },
-            ]}>
-            <View style={styles.centeredView}>
-              <Button
-                title="Hide modal"
-                onPress={() => setModalVisible(false)}
-                color="white"
-              />
-              {[...Array(200).keys()].map(i => (
-                <Text key={i}>Sometext</Text>
-              ))}
-            </View>
-          </View>
-        </Screen>
-      </ScreenStack>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   headerView: {
     height: 20,
