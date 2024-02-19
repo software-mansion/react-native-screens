@@ -8,6 +8,7 @@ import {
   ScreenStack,
   StackPresentationTypes,
   ScreenContext,
+  SheetDetentTypes,
   GHContext,
   GestureDetectorBridge,
 } from 'react-native-screens';
@@ -73,7 +74,7 @@ const MaybeNestedStack = ({
   children: React.ReactNode;
 }) => {
   const { colors } = useTheme();
-  const { headerShown = true, contentStyle } = options;
+  const { headerShown = true, contentStyle, screenStyle = null } = options;
 
   const Screen = React.useContext(ScreenContext);
 
@@ -97,7 +98,10 @@ const MaybeNestedStack = ({
   const content = (
     <Container
       style={[
-        styles.container,
+        // styles.container,
+        stackPresentation !== 'formSheet'
+          ? styles.container
+          : styles.absolutFillNoBottom,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,
@@ -139,7 +143,7 @@ const MaybeNestedStack = ({
           enabled
           isNativeStack
           hasLargeHeader={hasLargeHeader}
-          style={StyleSheet.absoluteFill}>
+          style={[StyleSheet.absoluteFill, screenStyle]}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -174,6 +178,7 @@ const RouteView = ({
   screensRefs: ScreensRefsHolder;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
+
   const {
     gestureEnabled,
     headerShown,
@@ -198,7 +203,28 @@ const RouteView = ({
     transitionDuration,
     freezeOnBlur,
     footerComponent,
+    screenStyle = null,
   } = options;
+
+  let sheetUserDefinedDetents: number[];
+  let sheetNativeDetents: SheetDetentTypes;
+  if (Array.isArray(sheetAllowedDetents)) {
+    sheetUserDefinedDetents = sheetAllowedDetents;
+    sheetNativeDetents = 'large';
+  } else {
+    sheetUserDefinedDetents = [];
+    sheetNativeDetents = sheetAllowedDetents;
+  }
+
+  let sheetUserDefinedUndimmedDetent: number;
+  let sheetNativeUndimmedDetent: SheetDetentTypes;
+  if (typeof sheetLargestUndimmedDetent === 'number') {
+    sheetNativeUndimmedDetent = 'large';
+    sheetUserDefinedUndimmedDetent = sheetLargestUndimmedDetent;
+  } else {
+    sheetNativeUndimmedDetent = sheetLargestUndimmedDetent;
+    sheetUserDefinedUndimmedDetent = -1;
+  }
 
   let {
     customAnimationOnSwipe,
@@ -286,12 +312,14 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={StyleSheet.absoluteFill}
-      sheetAllowedDetents={sheetAllowedDetents}
-      sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
+      style={[StyleSheet.absoluteFill, screenStyle]}
+      sheetAllowedDetents={sheetNativeDetents}
+      sheetLargestUndimmedDetent={sheetNativeUndimmedDetent}
+      sheetCustomLargestUndimmedDetent={sheetUserDefinedUndimmedDetent}
       sheetGrabberVisible={sheetGrabberVisible}
       sheetCornerRadius={sheetCornerRadius}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
+      sheetCustomDetents={sheetUserDefinedDetents}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
@@ -408,9 +436,7 @@ const RouteView = ({
             headerShown={isHeaderInPush}
           />
           {footerComponent && (
-            <FooterComponent>
-              {footerComponent()}
-            </FooterComponent>
+            <FooterComponent>{footerComponent()}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>
@@ -495,5 +521,18 @@ export default function NativeStackView(props: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  absolutFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  absolutFillNoBottom: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
 });

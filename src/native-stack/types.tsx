@@ -325,6 +325,7 @@ export type NativeStackNavigationOptions = {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenProps['screenOrientation'];
+  screenStyle?: StyleProp<ViewStyle>;
   /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */

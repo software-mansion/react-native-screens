@@ -7,6 +7,8 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
 
@@ -256,6 +258,7 @@ export interface ScreenProps extends ViewProps {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenOrientationTypes;
+  screenStyle?: StyleProp<ViewStyle>;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -286,6 +289,27 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   sheetCornerRadius?: number;
+  /**
+   * Array of real numbers in range [0, 1], each of which describes detent as a fraction
+   * of maximum detent height.
+   *
+   * This array *must* be sorted in ascending order.
+   *
+   * This prop takes precedence over `sheetAllowedDetents` if both are set.
+   *
+   * Defaults to an empty array.
+   *
+   * @platform ios
+   */
+  sheetCustomDetents?: number[];
+  /**
+   * Index of largest detent level in `sheetCustomDetents` array which should not have dimming view underneath.
+   *
+   * Takes precedence over `sheetLargestUndimmedDetent` if both are set.
+   *
+   * @platform ios
+   */
+  sheetCustomLargestUndimmedDetent?: number;
   /**
    * Boolean indicating whether the sheet shows a grabber at the top.
    * Works only when `stackPresentation` is set to `formSheet`.

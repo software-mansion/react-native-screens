@@ -97,6 +97,8 @@
       return RNSScreenDetentTypeLarge;
     case react::RNSScreenSheetAllowedDetents::Medium:
       return RNSScreenDetentTypeMedium;
+    case react::RNSScreenSheetAllowedDetents::Custom:
+      return RNSScreenDetentTypeCustom;
   }
 }
 
@@ -148,6 +150,15 @@
     case react::RNSSearchBarPlacement::Inline:
       return RNSSearchBarPlacementInline;
   }
+}
+
++ (NSMutableArray<NSNumber *> *)arrayFromVector:(const std::vector<CGFloat> &)vector
+{
+  NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
+  for (CGFloat val : vector) {
+    [array addObject:[NSNumber numberWithFloat:val]];
+  }
+  return array;
 }
 
 @end
