@@ -61,13 +61,13 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        if (changed) {
+        if (container is ScreenStack && changed) {
             val width = r - l
             val height = b - t
 
-            val headerHeight = calculateHeaderHeight()
+            val headerHeight = calculateHeaderHeight().first
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height, headerHeight.first)
+                updateScreenSizeFabric(width, height, headerHeight)
             } else {
                 updateScreenSizePaper(width, height)
             }
@@ -244,10 +244,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             ?.let { (context.resources::getDimensionPixelSize)(it) }
             ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
             ?: 0.0
-
-        val totalHeight = actionBarHeight + statusBarHeight
-        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(id, totalHeight))
 
         return actionBarHeight to statusBarHeight
     }
