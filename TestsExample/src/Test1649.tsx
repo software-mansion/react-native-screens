@@ -20,31 +20,18 @@ import {
 } from 'react-native-screens/native-stack';
 import * as jotai from 'jotai';
 
-type SheetDetent = number[];
-
 type NavProp = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
-type SheetOptions = {
-  sheetAllowedDetents: SheetDetent;
-  sheetLargestUndimmedDetent: number;
-  sheetGrabberVisible: boolean;
-  sheetCornerRadius: number;
-  sheetExpandsWhenScrolledToEdge: boolean;
-};
-
 /// Sheet options
-// const allowedDetentsAtom = jotai.atom<SheetDetent>('all');
-// const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>('all');
-
-const allowedDetentsAtom = jotai.atom<SheetDetent>([
+const allowedDetentsAtom = jotai.atom<number[]>([
   0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
 ]);
 const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
-// const allowedDetentsAtom = jotai.atom<SheetDetent>([0.7]);
-// const largestUndimmedDetentAtom = jotai.atom<SheetDetentTypes | number>(0);
+// const allowedDetentsAtom = jotai.atom<number[]>([0.7]);
+// const largestUndimmedDetentAtom = jotai.atom<number>(-1);
 
 const grabberVisibleAtom = jotai.atom(true);
 const cornerRadiusAtom = jotai.atom(-1);
@@ -69,14 +56,16 @@ function Footer() {
 }
 
 export default function App(): JSX.Element {
-  const [sheetOptions, _] = React.useState<NativeStackNavigationOptions>({
-    stackPresentation: 'formSheet',
-    sheetAllowedDetents: [0.45, 0.9],
-    sheetLargestUndimmedDetent: 0,
-    sheetGrabberVisible: false,
-    sheetCornerRadius: 20,
-    sheetExpandsWhenScrolledToEdge: false,
-  });
+  const sheetOptions = jotai.useAtomValue(sheetOptionsAtom);
+
+  // const [sheetOptions, _] = React.useState<NativeStackNavigationOptions>({
+  //   stackPresentation: 'formSheet',
+  //   sheetAllowedDetents: [0.45, 0.9],
+  //   sheetLargestUndimmedDetent: 0,
+  //   sheetGrabberVisible: false,
+  //   sheetCornerRadius: 20,
+  //   sheetExpandsWhenScrolledToEdge: false,
+  // });
 
   // return <RawScreenHome />;
 
@@ -97,8 +86,6 @@ export default function App(): JSX.Element {
             name="Second"
             component={Second}
             options={{
-              // stackPresentation: 'modal',
-              footerComponent: Footer,
               fullScreenSwipeEnabled: true,
             }}
           />
@@ -106,9 +93,10 @@ export default function App(): JSX.Element {
             name="SheetScreen"
             component={SheetScreen}
             options={{
-              // stackAnimation: 'slide_from_bottom',
-              stackAnimation: 'none',
               stackPresentation: 'formSheet',
+              screenStyle: {
+                backgroundColor: 'white',
+              },
               footerComponent: Footer,
               ...sheetOptions,
             }}
@@ -117,6 +105,8 @@ export default function App(): JSX.Element {
             name="SheetScreenWithScrollView"
             component={SheetScreenWithScrollView}
             options={{
+              headerShown: false,
+              stackPresentation: 'formSheet',
               ...sheetOptions,
             }}
           />
@@ -239,10 +229,6 @@ function SheetScreen({
 
   const ref = React.useRef(null);
 
-  React.useLayoutEffect(() => {
-
-  }, []);
-
   return (
     <View style={[styles.containerView, { backgroundColor: 'white' }]}>
       <View>
@@ -332,14 +318,12 @@ function SheetScreen({
 
 function SheetScreenWithScrollView({ navigation }: NavProp) {
   return (
-    <View style={styles.centeredView}>
-      <ScrollView nestedScrollEnabled={true}>
-        <SheetScreen navigation={navigation} />
-        {[...Array(99).keys()].map(val => (
-          <Text key={`${val}`}>Some component {val}</Text>
-        ))}
-      </ScrollView>
-    </View>
+    <ScrollView nestedScrollEnabled={true}>
+      <SheetScreen navigation={navigation} />
+      {[...Array(99).keys()].map(val => (
+        <Text key={`${val}`}>Some component {val}</Text>
+      ))}
+    </ScrollView>
   );
 }
 
