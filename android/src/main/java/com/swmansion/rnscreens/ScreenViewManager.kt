@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -69,7 +70,8 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
     override fun setStackPresentation(view: Screen, presentation: String?) {
         view.stackPresentation = when (presentation) {
             "push" -> Screen.StackPresentation.PUSH
-            "modal", "containedModal", "fullScreenModal", "formSheet" ->
+            "formSheet" -> Screen.StackPresentation.FORM_SHEET
+            "modal", "containedModal", "fullScreenModal" ->
                 Screen.StackPresentation.MODAL
             "transparentModal", "containedTransparentModal" ->
                 Screen.StackPresentation.TRANSPARENT_MODAL
@@ -172,15 +174,41 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setSwipeDirection(view: Screen?, value: String?) = Unit
 
-    override fun setSheetAllowedDetents(view: Screen, value: String?) = Unit
+    @ReactProp(name = "sheetAllowedDetents")
+    override fun setSheetAllowedDetents(view: Screen, value: ReadableArray?) {
+        view.sheetDetents.clear()
 
-    override fun setSheetLargestUndimmedDetent(view: Screen, value: String?) = Unit
+        if (value == null || value.size() == 0) {
+            view.sheetDetents.add(1.0)
+            return
+        }
 
-    override fun setSheetGrabberVisible(view: Screen?, value: Boolean) = Unit
+        IntProgression.fromClosedRange(0, value.size() - 1, 1)
+            .asSequence()
+            .map { idx -> value.getDouble(idx) }
+            .toCollection(view.sheetDetents)
+    }
 
-    override fun setSheetCornerRadius(view: Screen?, value: Float) = Unit
+    @ReactProp(name = "sheetLargestUndimmedDetent")
+    override fun setSheetLargestUndimmedDetent(view: Screen, value: Int) {
+        check(value in -1..2) { "sheetLargestUndimmedDetent on Android supports values between -1 and 2" }
+        view.sheetLargestUndimmedDetentIndex = value
+    }
 
-    override fun setSheetExpandsWhenScrolledToEdge(view: Screen?, value: Boolean) = Unit
+    @ReactProp(name = "sheetGrabberVisible")
+    override fun setSheetGrabberVisible(view: Screen, value: Boolean) {
+        view.isSheetGrabberVisible = value
+    }
+
+    @ReactProp(name = "sheetCornerRadius")
+    override fun setSheetCornerRadius(view: Screen, value: Float) {
+        view.sheetCornerRadius = value
+    }
+
+    @ReactProp(name = "sheetExpandsWhenScrolledToEdge")
+    override fun setSheetExpandsWhenScrolledToEdge(view: Screen, value: Boolean) {
+        view.sheetExpandsWhenScrolledToEdge = value
+    }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
         ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),

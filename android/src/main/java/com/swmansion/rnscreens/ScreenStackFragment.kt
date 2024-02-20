@@ -2,8 +2,13 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Path
+import android.graphics.RectF
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -12,13 +17,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
+import android.view.animation.AnimationUtils
 import android.view.animation.Transformation
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.commit
 import com.facebook.react.uimanager.PixelUtil
+import com.facebook.react.uimanager.PointerEvents
+import com.facebook.react.uimanager.ReactPointerEventsView
+import com.facebook.react.views.view.ReactViewBackgroundDrawable
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetDragHandleView
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
+import com.swmansion.rnscreens.bottomsheet.DimmingFragment
+import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
@@ -31,6 +51,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
+
+    private lateinit var coordinatorLayout: ScreensCoordinatorLayout
+
+    private val screenStack: ScreenStack
+        get() {
+            val container = screen.container
+            check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
+            return container
+        }
 
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super(screenView)
@@ -93,48 +122,170 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
-    override fun onStart() {
-        lastFocusedChild?.requestFocus()
-        super.onStart()
+    private val bottomSheetOnSwipedDownCallback = object : BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
+                    parentFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        remove(this@ScreenStackFragment)
+                    }
+                } else {
+                    this@ScreenStackFragment.dismissFromContainer()
+                }
+            }
+            Log.i("ScreenStackFragment", "Sheet state changed to $newState")
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        if (screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
+            return null
+        }
+        return if (enter) {
+            AnimationUtils.loadAnimation(context, R.anim.rns_slide_in_from_bottom)
+        } else {
+            AnimationUtils.loadAnimation(context, R.anim.rns_slide_out_to_bottom)
+        }
+//        return super.onCreateAnimation(transit, enter, nextAnim)
+    }
+
+    internal fun onSheetCornerRadiusChange() {
+        (screen.background as MaterialShapeDrawable).shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
+            setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+            setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+        }.build()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view: ScreensCoordinatorLayout? =
-            context?.let { ScreensCoordinatorLayout(it, this) }
+    ): View {
+        coordinatorLayout = ScreensCoordinatorLayout(requireContext(), this).apply {
+//            setBackgroundColor(Color.argb(0, 0, 0, 0))
+        }
 
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
-        ).apply { behavior = if (isToolbarTranslucent) null else ScrollingViewBehavior() }
-
-        view?.addView(recycleView(screen))
-
-        appBarLayout = context?.let { AppBarLayout(it) }?.apply {
-            // By default AppBarLayout will have a background color set but since we cover the whole layout
-            // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
-            // role. On top of that it breaks screens animations when alfa offscreen compositing is off
-            // (which is the default)
-            setBackgroundColor(Color.TRANSPARENT)
-            layoutParams = AppBarLayout.LayoutParams(
-                AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-            )
+        ).apply {
+            behavior = if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
+                createAndConfigureBottomSheetBehaviour()
+            } else if (isToolbarTranslucent) {
+                null
+            } else {
+                ScrollingViewBehavior()
+            }
         }
 
-        view?.addView(appBarLayout)
-        if (isToolbarShadowHidden) {
-            appBarLayout?.targetElevation = 0f
+        if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
+            attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
+//            screen.outlineProvider = CustomOutlineProvider(PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F))
+            screen.clipToOutline = true
+
+//            if (screen.isSheetGrabberVisible) {
+//                val grabberView = BottomSheetDragHandleView(requireContext()).apply {
+//                    layoutParams = ViewGroup.LayoutParams(
+//                        ViewGroup.LayoutParams.MATCH_PARENT,
+//                        ViewGroup.LayoutParams.WRAP_CONTENT
+//                    )
+//                }
+//                coordinatorLayout.addView(grabberView)
+//            }
         }
-        toolbar?.let { appBarLayout?.addView(recycleView(it)) }
-        setHasOptionsMenu(true)
-        return view
+
+        coordinatorLayout.addView(screen.recycle())
+
+        if (screen.stackPresentation != Screen.StackPresentation.MODAL && screen.stackPresentation != Screen.StackPresentation.FORM_SHEET) {
+            appBarLayout = context?.let { AppBarLayout(it) }?.apply {
+                // By default AppBarLayout will have a background color set but since we cover the whole layout
+                // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
+                // role. On top of that it breaks screens animations when alfa offscreen compositing is off
+                // (which is the default)
+                setBackgroundColor(Color.TRANSPARENT)
+                layoutParams = AppBarLayout.LayoutParams(
+                    AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+
+            coordinatorLayout.addView(appBarLayout)
+            if (isToolbarShadowHidden) {
+                appBarLayout?.targetElevation = 0f
+            }
+            toolbar?.let { appBarLayout?.addView(it.recycle()) }
+            setHasOptionsMenu(true)
+        }
+        return coordinatorLayout
+    }
+
+    private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<FrameLayout> {
+        val displayMetrics = context?.resources?.displayMetrics
+        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
+
+        val behavior = BottomSheetBehavior<FrameLayout>().apply {
+            isHideable = true
+            isDraggable = true
+            addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
+        }
+
+        if (screen.sheetDetents.count() == 1) {
+            behavior.apply {
+                state = BottomSheetBehavior.STATE_EXPANDED
+                skipCollapsed = true
+                isFitToContents = true
+                maxHeight = (screen.sheetDetents.first() * displayMetrics.heightPixels).toInt()
+            }
+        } else if (screen.sheetDetents.count() == 2) {
+            behavior.apply {
+                state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+                skipCollapsed = false
+                isFitToContents = true
+                peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
+                maxHeight = (screen.sheetDetents[1] * displayMetrics.heightPixels).toInt()
+            }
+        } else {
+            behavior.apply {
+                state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+                skipCollapsed = false
+                isFitToContents = false
+                peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
+//                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
+                expandedOffset = ((1 - screen.sheetDetents[2]) * displayMetrics.heightPixels).toInt()
+                halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+            }
+        }
+
+        return behavior
+    }
+
+    private fun attachShapeToScreen(screen: Screen) {
+        val cornerSize = PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F)
+        val shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
+            setTopLeftCorner(CornerFamily.ROUNDED, cornerSize)
+            setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
+        }.build()
+        val shape = MaterialShapeDrawable(shapeAppearanceModel)
+        screen.background = shape
+//        screen.background = GradientDrawable().apply {
+//            shape = GradientDrawable.RECTANGLE
+////            cornerRadii = FloatArray(8) { i -> if (i < 4) cornerSize else 0F }
+//            cornerRadius = cornerSize
+//        }
+        // TODO(@kkafar): It looks like this finally works with ReactViewBackgroundDrawable,
+        // however it should also work with GradientDrawable, but for some reason it does not on API < 33
+        // (tested on 31)
+//        screen.background = ReactViewBackgroundDrawable(requireContext()).apply {
+//            setRadius(cornerSize, 1)
+//            setRadius(cornerSize, 0)
+//        }
     }
 
     override fun onStop() {
-        if (DeviceUtils.isPlatformAndroidTV(context))
+        if (DeviceUtils.isPlatformAndroidTV(context)) {
             lastFocusedChild = findLastFocusedChild()
+        }
 
         super.onStop()
     }
@@ -206,24 +357,28 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
-    override fun dismiss() {
-        val container: ScreenContainer? = screen.container
-        check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
-        container.dismiss(this)
+    override fun dismissFromContainer() {
+        screenStack.dismiss(this)
     }
 
     private class ScreensCoordinatorLayout(
         context: Context,
-        private val mFragment: ScreenFragment
-    ) : CoordinatorLayout(context) {
-        private val mAnimationListener: Animation.AnimationListener =
+        private val fragment: ScreenStackFragment
+//    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
+    ) : CoordinatorLayout(context), ReactPointerEventsView {
+
+        init {
+//            this.fitsSystemWindows = true
+        }
+
+        private val animationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation) {
-                    mFragment.onViewAnimationStart()
+                    fragment.onViewAnimationStart()
                 }
 
                 override fun onAnimationEnd(animation: Animation) {
-                    mFragment.onViewAnimationEnd()
+                    fragment.onViewAnimationEnd()
                 }
 
                 override fun onAnimationRepeat(animation: Animation) {}
@@ -239,12 +394,12 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             // and also this is not necessary when going back since the lifecycle methods
             // are correctly dispatched then.
             // We also add fakeAnimation to the set of animations, which sends the progress of animation
-            val fakeAnimation = ScreensAnimation(mFragment).apply { duration = animation.duration }
+            val fakeAnimation = ScreensAnimation(fragment).apply { duration = animation.duration }
 
-            if (animation is AnimationSet && !mFragment.isRemoving) {
+            if (animation is AnimationSet && !fragment.isRemoving) {
                 animation.apply {
                     addAnimation(fakeAnimation)
-                    setAnimationListener(mAnimationListener)
+                    setAnimationListener(animationListener)
                 }.also {
                     super.startAnimation(it)
                 }
@@ -252,7 +407,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 AnimationSet(true).apply {
                     addAnimation(animation)
                     addAnimation(fakeAnimation)
-                    setAnimationListener(mAnimationListener)
+                    setAnimationListener(animationListener)
                 }.also {
                     super.startAnimation(it)
                 }
@@ -271,6 +426,28 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 super.clearFocus()
             }
         }
+
+//        override fun reactTagForTouch(touchX: Float, touchY: Float): Int {
+//            throw IllegalStateException("Screen wrapper should never be asked for the view tag")
+//        }
+//
+//        override fun interceptsTouchEvent(touchX: Float, touchY: Float): Boolean {
+//            return false
+//        }
+//
+//        override fun getHitSlopRect(): Rect? {
+//            val screen: Screen = fragment.screen
+// //            left – The X coordinate of the left side of the rectangle
+// //            top – The Y coordinate of the top of the rectangle i
+// //            right – The X coordinate of the right side of the rectangle
+// //            bottom – The Y coordinate of the bottom of the rectangle
+//            return Rect(screen.x.toInt(), -screen.y.toInt(), screen.x.toInt() + screen.width, screen.y.toInt() + screen.height)
+//        }
+
+        override fun getPointerEvents(): PointerEvents {
+            return PointerEvents.BOX_NONE
+        }
+
     }
 
     private class ScreensAnimation(private val mFragment: ScreenFragment) : Animation() {

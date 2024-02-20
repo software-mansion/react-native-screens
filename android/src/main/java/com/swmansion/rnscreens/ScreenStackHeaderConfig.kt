@@ -50,14 +50,14 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
                 val parentFragment = it.parentFragment
                 if (parentFragment is ScreenStackFragment) {
                     if (parentFragment.screen.nativeBackButtonDismissalEnabled) {
-                        parentFragment.dismiss()
+                        parentFragment.dismissFromContainer()
                     } else {
                         parentFragment.dispatchHeaderBackButtonClickedEvent()
                     }
                 }
             } else {
                 if (it.screen.nativeBackButtonDismissalEnabled) {
-                    it.dismiss()
+                    it.dismissFromContainer()
                 } else {
                     it.dispatchHeaderBackButtonClickedEvent()
                 }

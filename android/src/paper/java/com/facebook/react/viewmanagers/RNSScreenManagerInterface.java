@@ -11,11 +11,12 @@ package com.facebook.react.viewmanagers;
 
 import android.view.View;
 import androidx.annotation.Nullable;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
 public interface RNSScreenManagerInterface<T extends View> {
-  void setSheetAllowedDetents(T view, @Nullable String value);
-  void setSheetLargestUndimmedDetent(T view, @Nullable String value);
+  void setSheetAllowedDetents(T view, @Nullable ReadableArray value);
+  void setSheetLargestUndimmedDetent(T view, int value);
   void setSheetGrabberVisible(T view, boolean value);
   void setSheetCornerRadius(T view, float value);
   void setSheetExpandsWhenScrolledToEdge(T view, boolean value);
