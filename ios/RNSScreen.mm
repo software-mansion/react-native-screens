@@ -91,8 +91,6 @@ namespace react = facebook::react;
   _hasHomeIndicatorHiddenSet = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
-  _sheetCustomDetents = [NSArray array];
-  _sheetCustomLargestUndimmedDetent = nil;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
 }
@@ -764,35 +762,59 @@ namespace react = facebook::react;
  */
 - (void)updateFormSheetPresentationStyle
 {
+  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    return;
+  }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+  int sheetLUDLimitExclusive = _sheetAllowedDetents.count;
+  bool systemDetentsInUse = false;
   if (@available(iOS 15.0, *)) {
     UISheetPresentationController *sheet = _controller.sheetPresentationController;
-    if (_stackPresentation != RNSScreenStackPresentationFormSheet || sheet == nil) {
+    if (sheet == nil) {
       return;
     }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
-    if (_sheetCustomDetents.count > 0) {
+    if (_sheetAllowedDetents.count > 0) {
       if (@available(iOS 16.0, *)) {
-        [self setAllowedDetentsForSheet:sheet to:[self detentsFromMaxHeightFractions:_sheetCustomDetents] animate:NO];
+        [self setAllowedDetentsForSheet:sheet to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents] animate:NO];
       }
     } else
 #endif // Check for iOS >= 16
     {
-      if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
-        [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
-        [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
-        [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.largeDetent ] animate:YES];
-        [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
+      systemDetentsInUse = true;
+      if (_sheetAllowedDetents.count == 0) {
         [self setAllowedDetentsForSheet:sheet
                                      to:@[
                                        UISheetPresentationControllerDetent.mediumDetent,
                                        UISheetPresentationControllerDetent.largeDetent
                                      ]
                                 animate:YES];
+      } else if (_sheetAllowedDetents.count >= 2) {
+        float first = _sheetAllowedDetents[0].floatValue;
+        float second = _sheetAllowedDetents[1].floatValue;
+        sheetLUDLimitExclusive = 2;
+
+        if (first < second) {
+          [self setAllowedDetentsForSheet:sheet
+                                       to:@[
+                                         UISheetPresentationControllerDetent.mediumDetent,
+                                         UISheetPresentationControllerDetent.largeDetent
+                                       ]
+                                  animate:YES];
+        } else {
+          RCTLogError(@"The values in sheetAllowedDetents array must be sorted");
+        }
+      } else {
+        float first = _sheetAllowedDetents[0].floatValue;
+        if (first < 1.0) {
+          [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
+        } else {
+          [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.largeDetent ] animate:YES];
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        }
       }
     }
 
@@ -800,22 +822,45 @@ namespace react = facebook::react;
     [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
     [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
 
-    int detentIndex = _sheetCustomLargestUndimmedDetent != nil ? _sheetCustomLargestUndimmedDetent.intValue : -1;
-    if (detentIndex != -1 && _sheetCustomDetents.count > 0) {
-      if (detentIndex >= 0 && detentIndex < _sheetCustomDetents.count) {
-        [self setLargestUndimmedDetentForSheet:sheet to:_sheetCustomLargestUndimmedDetent.stringValue animate:YES];
-      } else {
-        [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
-      }
-    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
-      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
-    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
-      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
-    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
+    int detentIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
+    detentIndex = detentIndex >= sheetLUDLimitExclusive ? detentIndex - 1 : detentIndex;
+    if (detentIndex == -1) {
       [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+    } else if (detentIndex >= 0) {
+      if (systemDetentsInUse) {
+        if (sheetLUDLimitExclusive == 0 || (sheetLUDLimitExclusive == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
+          [self setLargestUndimmedDetentForSheet:sheet
+                                              to:UISheetPresentationControllerDetentIdentifierMedium
+                                         animate:YES];
+        } else {
+          [self setLargestUndimmedDetentForSheet:sheet
+                                              to:UISheetPresentationControllerDetentIdentifierLarge
+                                         animate:YES];
+        }
+      } else {
+        [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:detentIndex].stringValue animate:YES];
+      }
     } else {
-      RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
+      RCTLogError(@"Value of sheetLargestUndimmedDetent prop must be >= -1");
     }
+
+    //    if (detentIndex != -1 && _sheetAllowedDetents.count > 0) {
+    //      if (detentIndex >= 0 && detentIndex < _sheetAllowedDetents.count) {
+    //        [self setLargestUndimmedDetentForSheet:sheet to:_sheetLargestUndimmedDetent.stringValue animate:YES];
+    //      } else {
+    //        [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+    //      }
+    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
+    //      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium
+    //      animate:YES];
+    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
+    //      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge
+    //      animate:YES];
+    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
+    //      [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+    //    } else {
+    //      RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
+    //    }
   }
 #endif // Check for iOS >= 15
 }
@@ -1705,13 +1750,11 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 
-RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, RNSScreenDetentType);
-RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, RNSScreenDetentType);
-RCT_EXPORT_VIEW_PROPERTY(sheetCustomLargestUndimmedDetent, NSNumber *);
+RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, NSArray<NSNumber *> *);
+RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, NSNumber *);
 RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
-RCT_EXPORT_VIEW_PROPERTY(sheetCustomDetents, NSArray<NSNumber *> *);
 #endif
 
 #if !TARGET_OS_TV
