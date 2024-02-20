@@ -142,7 +142,21 @@
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
       if (@available(iOS 16.0, *)) {
         NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
-        UIWindowScene *scene = (UIWindowScene *)array[0];
+
+        // when an app supports multiple scenes (e.g. CarPlay), it is possible that
+        // UIWindowScene is not the first scene, or it may not be present at all
+        UIWindowScene *scene = nil;
+        for (id connectedScene in array) {
+          if ([connectedScene isKindOfClass:[UIWindowScene class]]) {
+            scene = connectedScene;
+            break;
+          }
+        }
+
+        if (scene == nil) {
+          return;
+        }
+
         UIWindowSceneGeometryPreferencesIOS *geometryPreferences =
             [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask];
         [scene requestGeometryUpdateWithPreferences:geometryPreferences
