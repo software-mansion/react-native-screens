@@ -14,14 +14,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 type StackParamList = {
   Main: undefined;
-  ScreenA: undefined;
-  ScreenB: undefined;
-  ScreenC: undefined;
-  ScreenD: undefined;
+  Story: undefined;
 };
 
 interface MainScreenProps {
-  navigation: NativeStackNavigationProp<StackParamList, 'ScreenA'>;
+  navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
@@ -30,210 +27,62 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
     <View style={styles.row}>
       <Animated.View
         style={[styles.box, styles.boxA]}
-        sharedTransitionTag="screenA">
+        sharedTransitionTag="story">
         <Pressable
-          onPress={() => navigation.navigate('ScreenA')}
-          style={styles.pressable}>
-          <Animated.Text
-            style={styles.label}
-            sharedTransitionTag="screenA-label">
-            Swipe UP
-          </Animated.Text>
-        </Pressable>
-      </Animated.View>
-      <Animated.View
-        style={[styles.box, styles.boxB]}
-        sharedTransitionTag="screenB">
-        <Pressable
-          onPress={() => navigation.navigate('ScreenB')}
-          style={styles.pressable}>
-          <Animated.Text
-            style={styles.label}
-            sharedTransitionTag="screenB-label">
-            Swipe RIGHT
-          </Animated.Text>
-        </Pressable>
-      </Animated.View>
-    </View>
-    <View style={styles.row}>
-      <Animated.View
-        style={[styles.box, styles.boxC]}
-        sharedTransitionTag="screenC">
-        <Pressable
-          onPress={() => navigation.navigate('ScreenC')}
-          style={styles.pressable}>
-          <Animated.Text
-            style={styles.label}
-            sharedTransitionTag="screenC-label">
-            Swipe DOWN
-          </Animated.Text>
-        </Pressable>
-      </Animated.View>
-      <Animated.View
-        style={[styles.box, styles.boxD]}
-        sharedTransitionTag="screenD">
-        <Pressable
-          onPress={() => navigation.navigate('ScreenD')}
-          style={styles.pressable}>
-          <Animated.Text
-            style={styles.label}
-            sharedTransitionTag="screenD-label">
-            Swipe LEFT
-          </Animated.Text>
-        </Pressable>
+          onPress={() => navigation.navigate('Story')}
+          style={styles.pressable}></Pressable>
       </Animated.View>
     </View>
   </View>
 );
 
-const ScreenA = (): JSX.Element => {
-  const [tag, setTag] = React.useState('screenA');
+const StoryScreen = (): JSX.Element => {
+  const [tag, setTag] = React.useState('story');
 
   useEffect(() => {
     setTag('');
     return () => {
-      setTag('screenA');
+      setTag('story');
     };
   });
 
   return (
     <Animated.View
       style={[styles.screen, styles.boxA]}
-      sharedTransitionTag={tag}>
-      <Animated.Text
-        style={styles.label}
-        sharedTransitionTag={tag && `${tag}-label`}>
-        Swipe UP
-      </Animated.Text>
-    </Animated.View>
-  );
-};
-
-const ScreenB = (): JSX.Element => {
-  const [tag, setTag] = React.useState('screenB');
-
-  useEffect(() => {
-    setTag('');
-    return () => {
-      setTag('screenB');
-    };
-  });
-
-  return (
-    <Animated.View
-      style={[styles.screen, styles.boxB]}
-      sharedTransitionTag={tag}>
-      <Animated.Text
-        style={styles.label}
-        sharedTransitionTag={tag && `${tag}-label`}>
-        Swipe RIGHT
-      </Animated.Text>
-    </Animated.View>
-  );
-};
-
-const ScreenC = (): JSX.Element => {
-  const [tag, setTag] = React.useState('screenC');
-
-  useEffect(() => {
-    setTag('');
-    return () => {
-      setTag('screenC');
-    };
-  });
-
-  return (
-    <Animated.View
-      style={[styles.screen, styles.boxC]}
-      sharedTransitionTag={tag}>
-      <Animated.Text
-        style={styles.label}
-        sharedTransitionTag={tag && `${tag}-label`}>
-        Swipe DOWN
-      </Animated.Text>
-    </Animated.View>
-  );
-};
-
-const ScreenD = (): JSX.Element => {
-  const [tag, setTag] = React.useState('screenD');
-
-  useEffect(() => {
-    setTag('');
-    return () => {
-      setTag('screenD');
-    };
-  });
-
-  return (
-    <Animated.View
-      style={[styles.screen, styles.boxD]}
-      sharedTransitionTag={tag}>
-      <Animated.Text
-        style={styles.label}
-        sharedTransitionTag={tag && `${tag}-label`}>
-        Swipe LEFT
-      </Animated.Text>
-    </Animated.View>
+      sharedTransitionTag={tag}></Animated.View>
   );
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const SwipeUp: AnimatedScreenTransition = {
-  topScreenFrame: event => {
+const SwipeDown: AnimatedScreenTransition = {
+  topScreenFrame: (event, screenSize) => {
     'worklet';
+    const x = Math.abs(event.translationY / screenSize.height);
+    const h = screenSize.height;
+    const scaleY = (((98 - h) / 0.75) * x + h) / h;
+    const scaleY2 =
+      ((0 - 0.115) / (1 - 0.75)) * x + (0.115 * 1 - 0 * 0.75) / (1 - 0.75);
     return {
-      transform: [{ translateY: event.translationY }],
+      transform: [
+        { translateY: (h / 2) * x },
+        {
+          scaleY: x < 0.75 ? scaleY : scaleY2,
+        },
+        { scaleX: 1 - x },
+      ],
+      borderRadius: 250 * x - 250 * x * x,
+      overflow: 'hidden',
+      borderWidth: 0,
+      borderColor: 'transparent',
     };
   },
   belowTopScreenFrame: (event, screenSize) => {
     'worklet';
-    const progress = Math.abs(event.translationY / screenSize.height);
+    const x = Math.abs(event.translationY / screenSize.height);
     return {
-      transform: [{ scale: 0.7 + 0.3 * progress }],
+      transform: [{ scale: 0.3 * x + 0.7 }],
     };
-  },
-};
-
-const SwipeRight: AnimatedScreenTransition = {
-  topScreenFrame: (event, screenSize) => {
-    'worklet';
-    const progress = Math.abs(event.translationX / screenSize.width);
-
-    return {
-      transform: [
-        { translateX: event.translationX },
-        { rotate: 20 * progress + 'deg' },
-      ],
-      opacity: Easing.out(Easing.ease)(1 - progress),
-    };
-  },
-  belowTopScreenFrame: (event, screenSize) => {
-    'worklet';
-    const progress = Math.abs(event.translationX / screenSize.width);
-    return {
-      transform: [{ rotate: `${progress * 360}deg` }],
-    };
-  },
-};
-
-const SwipeLeft: AnimatedScreenTransition = {
-  topScreenFrame: (event, screenSize) => {
-    'worklet';
-    const progress = Math.abs(event.translationX / screenSize.width);
-
-    return {
-      transform: [
-        { translateX: event.translationX },
-        { rotate: -20 * progress + 'deg' },
-      ],
-      opacity: Easing.out(Easing.ease)(1 - progress),
-    };
-  },
-  belowTopScreenFrame: () => {
-    'worklet';
-    return {};
   },
 };
 
@@ -250,34 +99,11 @@ const App = (): JSX.Element => (
           }}>
           <Stack.Screen name="Main" component={MainScreen} />
           <Stack.Screen
-            name="ScreenA"
-            component={ScreenA}
+            name="Story"
+            component={StoryScreen}
             options={{
-              transitionAnimation: SwipeUp,
-              goBackGesture: 'swipeUp',
-            }}
-          />
-          <Stack.Screen
-            name="ScreenB"
-            component={ScreenB}
-            options={{
-              transitionAnimation: SwipeRight,
-              goBackGesture: 'swipeRight',
-            }}
-          />
-          <Stack.Screen
-            name="ScreenC"
-            component={ScreenC}
-            options={{
+              transitionAnimation: SwipeDown,
               goBackGesture: 'swipeDown',
-            }}
-          />
-          <Stack.Screen
-            name="ScreenD"
-            component={ScreenD}
-            options={{
-              transitionAnimation: SwipeLeft,
-              goBackGesture: 'swipeLeft',
             }}
           />
         </Stack.Navigator>
@@ -289,7 +115,7 @@ const App = (): JSX.Element => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#232736',
+    backgroundColor: '#000',
     justifyContent: 'center',
     borderRadius: 20,
   },
@@ -297,7 +123,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 20,
+    // borderRadius: 20,
   },
   header: {
     fontWeight: 'bold',
@@ -313,22 +139,13 @@ const styles = StyleSheet.create({
     color: '#001A72',
   },
   box: {
-    height: 250,
-    width: Dimensions.get('window').width / 2 - 20,
+    height: 100,
+    width: 100,
     margin: 10,
-    borderRadius: 12,
+    borderRadius: 50,
   },
   boxA: {
     backgroundColor: '#C49FFE',
-  },
-  boxB: {
-    backgroundColor: '#6FCEF5',
-  },
-  boxC: {
-    backgroundColor: '#FF8B88',
-  },
-  boxD: {
-    backgroundColor: '#7ADEAD',
   },
   row: {
     flexDirection: 'row',
