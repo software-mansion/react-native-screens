@@ -227,7 +227,7 @@ namespace react = facebook::react;
       [navbar setTitleTextAttributes:attrs];
     }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
     if (@available(iOS 11.0, *)) {
       if (config.largeTitle &&
           (config.largeTitleFontFamily || config.largeTitleFontSize || config.largeTitleFontWeight ||
@@ -397,9 +397,12 @@ namespace react = facebook::react;
   if (config.titleFontFamily || config.titleFontSize || config.titleFontWeight || config.titleColor) {
     NSMutableDictionary *attrs = [NSMutableDictionary new];
 
+    // Ignore changing header title color on visionOS
+#if !TARGET_OS_VISION
     if (config.titleColor) {
       attrs[NSForegroundColorAttributeName] = config.titleColor;
     }
+#endif
 
     NSString *family = config.titleFontFamily ?: nil;
     NSNumber *size = config.titleFontSize ?: @17;
@@ -422,9 +425,12 @@ namespace react = facebook::react;
       config.largeTitleColor || config.titleColor) {
     NSMutableDictionary *largeAttrs = [NSMutableDictionary new];
 
+    // Ignore changing header title color on visionOS
+#if !TARGET_OS_VISION
     if (config.largeTitleColor || config.titleColor) {
       largeAttrs[NSForegroundColorAttributeName] = config.largeTitleColor ? config.largeTitleColor : config.titleColor;
     }
+#endif
 
     NSString *largeFamily = config.largeTitleFontFamily ?: nil;
     NSNumber *largeSize = config.largeTitleFontSize ?: @34;
