@@ -25,10 +25,13 @@ type NavProp = {
 };
 
 /// Sheet options
-const allowedDetentsAtom = jotai.atom<number[]>([
-  0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-]);
-const largestUndimmedDetentAtom = jotai.atom<number>(3);
+// const allowedDetentsAtom = jotai.atom<number[]>([
+//   0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
+// ]);
+// const largestUndimmedDetentAtom = jotai.atom<number>(3);
+
+const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.9]);
+const largestUndimmedDetentAtom = jotai.atom<number>(0);
 
 // const allowedDetentsAtom = jotai.atom<number[]>([0.7]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(-1);
@@ -93,6 +96,7 @@ export default function App(): JSX.Element {
             name="SheetScreen"
             component={SheetScreen}
             options={{
+              headerShown: false,
               stackPresentation: 'formSheet',
               screenStyle: {
                 backgroundColor: 'white',
@@ -143,9 +147,7 @@ function Home({ navigation }: NavProp) {
   );
 }
 
-function Second({
-  navigation,
-}: NavProp) {
+function Second({ navigation }: NavProp) {
   const navigateToFirstCallback = () => {
     console.log('Navigate to first callback called');
     navigation.navigate('First');
@@ -231,7 +233,7 @@ function SheetScreen({
 
   return (
     <View style={[styles.containerView, { backgroundColor: 'white' }]}>
-      <View>
+      <View style={{ paddingTop: 10 }}>
         <TextInput
           style={{
             backgroundColor: 'lightblue',
