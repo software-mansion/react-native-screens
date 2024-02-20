@@ -165,8 +165,9 @@ const App = (): JSX.Element => (
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
-            stackAnimation: 'fade',
+            stackAnimation: 'fade', // just not default, the transition animation is handled by SETs anyway
             statusBarStyle: 'light',
+            transitionDuration: 200,
             contentStyle: { backgroundColor: 'transparent' },
           }}>
           <Stack.Screen name="Main" component={MainScreen} />
