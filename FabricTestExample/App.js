@@ -93,7 +93,7 @@ import Test1864 from './src/Test1864';
 import TestScreenAnimation from './src/TestScreenAnimation';
 import Test1981 from './src/Test1981';
 import Test2008 from './src/Test2008';
-import Test from './src/Test';
+import Test2028 from './src/Test2028';
 
 enableFreeze(true);
 

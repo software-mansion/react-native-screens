@@ -38,13 +38,13 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSScreenView {
-  __weak RCTBridge *_bridge;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
 #else
+  __weak RCTBridge *_bridge;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
 #endif
@@ -61,8 +61,7 @@ namespace react = facebook::react;
   }
   return self;
 }
-#endif // RCT_NEW_ARCH_ENABLED
-
+#else
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
@@ -72,6 +71,7 @@ namespace react = facebook::react;
 
   return self;
 }
+#endif  // RCT_NEW_ARCH_ENABLED
 
 - (void)initCommonProps
 {
@@ -1529,10 +1529,13 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 }
 #endif // !TARGET_OS_TV
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
+#endif
 
 + (BOOL)requiresMainQueueSetup
 {
