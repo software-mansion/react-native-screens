@@ -14,6 +14,7 @@ import com.facebook.react.ReactRootView
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.modules.core.ChoreographerCompat
 import com.facebook.react.modules.core.ReactChoreographer
+import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.ActivityState
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
@@ -318,14 +319,10 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         // The exception to this rule is `updateImmediately` which is triggered by actions
         // not connected to React view hierarchy changes, but rather internal events
         needsUpdate = true
-        (context.applicationContext as? ReactContext)?.runOnUiQueueThread {
-            // We schedule the update here because LayoutAnimations of `react-native-reanimated`
-            // sometimes attach/detach screens after the layout block of `ScreensShadowNode` has
-            // already run, and we want to update the container then too. In the other cases,
-            // this code will do nothing since it will run after the UIBlock when `mNeedUpdate`
-            // will already be false.
+        (context as ThemedReactContext).reactApplicationContext.runOnUiQueueThread {
             performUpdates()
         }
+
     }
 
     protected fun performUpdatesNow() {
