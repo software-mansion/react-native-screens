@@ -6,11 +6,16 @@
 //
 
 #import <React/RCTViewManager.h>
+#import <UIKit/UIKit.h>
 #import "RCTView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^OnLayoutCallback)(CGRect frame);
+
 @interface RNSScreenFooter : RCTView
+
+@property (nonatomic, copy, nullable) OnLayoutCallback onLayout;
 
 @end
 

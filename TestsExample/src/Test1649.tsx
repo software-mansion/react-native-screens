@@ -52,7 +52,11 @@ const Stack = createNativeStackNavigator();
 
 function Footer() {
   return (
-    <View style={{ backgroundColor: 'red', margin: 0 }}>
+    <View style={{ backgroundColor: 'red', position: 'absolute', left: 0, top: 0, right: 0 }}>
+      <Text>SomeContent</Text>
+      <Text>SomeContent</Text>
+      <Text>SomeContent</Text>
+      <Text>SomeContent</Text>
       <Text>SomeContent</Text>
     </View>
   );

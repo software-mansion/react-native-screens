@@ -24,6 +24,7 @@
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -42,6 +43,8 @@ namespace react = facebook::react;
 @implementation RNSScreenView {
   __weak RCTBridge *_bridge;
   __weak RCTScrollView *_sheetsScrollView;
+  __weak RNSScreenFooter *_footer;
+  CGSize _keyboardSize;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -93,6 +96,9 @@ namespace react = facebook::react;
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
+  _footer = nil;
+
+  self.translatesAutoresizingMaskIntoConstraints = true;
 }
 
 - (UIViewController *)reactViewController
@@ -106,6 +112,24 @@ namespace react = facebook::react;
   return _reactSubviews;
 }
 #endif
+
+- (void)setKeyboardSize:(CGSize)size
+{
+  _keyboardSize = size;
+}
+
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+  if (_footer != nil && _footer.subviews.count > 0) {
+    CGPoint footerOrigin = _footer.frame.origin;
+    CGSize targetFooterSize = _footer.subviews[0].frame.size;
+    //    footerOrigin.y -= targetFooterSize.height + ((RCTView *)_footer.subviews[0]).reactCompoundInsets.bottom;
+    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width, targetFooterSize.height);
+    NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame));
+    _footer.frame = newFooterFrame;
+  }
+}
 
 - (void)updateBounds
 {
@@ -126,7 +150,7 @@ namespace react = facebook::react;
     }
   }
 #else
-  NSLog(@"RNSScreenView %p updateBounds frame %@", self, NSStringFromCGRect(self.frame));
+  //  NSLog(@"RNSScreenView %p updateBounds frame %@", self, NSStringFromCGRect(self.frame));
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
@@ -342,8 +366,37 @@ namespace react = facebook::react;
   [super insertReactSubview:subview atIndex:atIndex];
 }
 
+- (void)repositionFooter:(CGRect)footerFrame
+{
+  if (_footer == nil) {
+    return;
+  }
+
+  //  [_footer setFrame:CGRectMake(_footer.frame.origin.x,
+  //                               _footer.frame.origin.y,
+  //                               _footer.frame.size.width,
+  //                               _footer.frame.size.height)];
+  //
+}
+
 - (void)addSubview:(UIView *)view
 {
+  if ([view isKindOfClass:RNSScreenFooter.class]) {
+    _footer = (RNSScreenFooter *)view;
+    _footer.onLayout = ^(CGRect frame) {
+      [self repositionFooter:frame];
+    };
+
+    //    [NSLayoutConstraint activateConstraints:@[
+    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeBottom
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0],
+    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeLeft
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
+    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeRight
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
+    //    ]];
+  }
+
   if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     [super addSubview:view];
   } else {
@@ -1088,13 +1141,13 @@ namespace react = facebook::react;
 
 - (void)setFrame:(CGRect)frame
 {
-  NSLog(@"RNSScreenView %p setFrame %@", self, NSStringFromCGRect(frame));
+  //  NSLog(@"RNSScreenView %p setFrame %@", self, NSStringFromCGRect(frame));
   [super setFrame:frame];
 }
 
 - (void)reactSetFrame:(CGRect)frame
 {
-  NSLog(@"RNSScreenView %p reactSetFrame %@", self, NSStringFromCGRect(frame));
+  //  NSLog(@"RNSScreenView %p reactSetFrame %@", self, NSStringFromCGRect(frame));
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
@@ -1156,6 +1209,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return self;
 }
 
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+}
+
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -1182,6 +1243,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(keyboardWillShow:)
+                                               name:UIKeyboardWillShowNotification
+                                             object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(keyboardWillHide:)
+                                               name:UIKeyboardWillHideNotification
+                                             object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

@@ -9,7 +9,7 @@ export default function FooterComponent({ children }: FooterProps) {
   return (
     <ScreenFooter
       collapsable={false}
-      style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}>
+      style={{ position: 'absolute', left: 0, right: 0 }}>
       {children}
     </ScreenFooter>
   );
