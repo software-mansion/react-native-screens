@@ -320,6 +320,11 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         // not connected to React view hierarchy changes, but rather internal events
         needsUpdate = true
         (context as ThemedReactContext).reactApplicationContext.runOnUiQueueThread {
+            // We schedule the update here because LayoutAnimations of `react-native-reanimated`
+            // sometimes attach/detach screens after the layout block of `ScreensShadowNode` has
+            // already run, and we want to update the container then too. In the other cases,
+            // this code will do nothing since it will run after the UIBlock when `mNeedUpdate`
+            // will already be false.
             performUpdates()
         }
 
