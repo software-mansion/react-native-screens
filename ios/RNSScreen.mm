@@ -115,6 +115,7 @@ namespace react = facebook::react;
 
 - (void)setKeyboardSize:(CGSize)size
 {
+  NSLog(@"Setting keyboard size to %@", NSStringFromCGSize(size));
   _keyboardSize = size;
 }
 
@@ -1211,10 +1212,13 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
+  CGRect rect = ((NSValue *)(notification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
+  [self.screenView setKeyboardSize:rect.size];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
+  [self.screenView setKeyboardSize:CGSizeZero];
 }
 
 // TODO: Find out why this is executed when screen is going out
