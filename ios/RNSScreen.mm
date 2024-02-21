@@ -124,7 +124,7 @@ namespace react = facebook::react;
   if (_footer != nil && _footer.subviews.count > 0) {
     CGPoint footerOrigin = _footer.frame.origin;
     CGSize targetFooterSize = _footer.subviews[0].frame.size;
-    //    footerOrigin.y -= targetFooterSize.height + ((RCTView *)_footer.subviews[0]).reactCompoundInsets.bottom;
+    footerOrigin.y -= targetFooterSize.height + ((RCTView *)_footer.subviews[0]).reactCompoundInsets.bottom;
     CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width, targetFooterSize.height);
     NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame));
     _footer.frame = newFooterFrame;
