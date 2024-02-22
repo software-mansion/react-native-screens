@@ -1,3 +1,4 @@
+#import <Foundation/NSValue.h>
 #import <UIKit/UIKit.h>
 
 #import "RCTScrollView.h"
@@ -38,6 +39,9 @@ namespace react = facebook::react;
 #else
     <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
 #endif
+
+- (void)updateFooterLayout;
+
 @end
 
 @implementation RNSScreenView {
@@ -117,19 +121,44 @@ namespace react = facebook::react;
 {
   NSLog(@"Setting keyboard size to %@", NSStringFromCGSize(size));
   _keyboardSize = size;
+  //  [self updateFooterLayout];
+}
+
+- (void)animateFooterWithClosingKeyboard:(NSNotification *)keyboardNotification
+{
+  // When keyboard is opening it works nice out-of-the-box
+  NSNumber *duration = keyboardNotification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+  UIViewAnimationOptions options = (UIViewAnimationOptions)(
+      [[keyboardNotification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue] << 16);
+  CGRect endFrame = ((NSValue *)(keyboardNotification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
+
+  [UIView animateWithDuration:[duration doubleValue]
+                        delay:0.0
+                      options:options
+                   animations:^{
+                     [self updateFooterLayout];
+                   }
+                   completion:nil];
+}
+
+- (void)updateFooterLayout
+{
+  if (_footer != nil && _footer.subviews.count > 0) {
+    CGPoint footerOrigin = _footer.frame.origin;
+    CGSize targetFooterSize = _footer.subviews[0].frame.size;
+    RCTView *child = (RCTView *)_footer.subviews[0];
+    footerOrigin.y -= targetFooterSize.height + child.reactCompoundInsets.bottom - child.reactPaddingInsets.bottom +
+        _keyboardSize.height;
+    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width, targetFooterSize.height);
+    NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame));
+    _footer.frame = newFooterFrame;
+  }
 }
 
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-  if (_footer != nil && _footer.subviews.count > 0) {
-    CGPoint footerOrigin = _footer.frame.origin;
-    CGSize targetFooterSize = _footer.subviews[0].frame.size;
-    footerOrigin.y -= targetFooterSize.height + ((RCTView *)_footer.subviews[0]).reactCompoundInsets.bottom;
-    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width, targetFooterSize.height);
-    NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame));
-    _footer.frame = newFooterFrame;
-  }
+  [self updateFooterLayout];
 }
 
 - (void)updateBounds
@@ -1214,11 +1243,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   CGRect rect = ((NSValue *)(notification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
   [self.screenView setKeyboardSize:rect.size];
+  [self.screenView updateFooterLayout];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
   [self.screenView setKeyboardSize:CGSizeZero];
+  //  [self.screenView updateFooterLayout];
+  [self.screenView animateFooterWithClosingKeyboard:notification];
 }
 
 // TODO: Find out why this is executed when screen is going out
