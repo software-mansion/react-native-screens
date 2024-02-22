@@ -342,6 +342,16 @@ export type NativeStackNavigationOptions = {
    */
   sheetAllowedDetents?: ScreenProps['sheetAllowedDetents'];
   /**
+   * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
+   *
+   * Not dynamic.
+   *
+   * Defaults to `24`.
+   * 
+   * @platform Android
+   */
+  sheetElevation?: number;
+  /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `true`.
