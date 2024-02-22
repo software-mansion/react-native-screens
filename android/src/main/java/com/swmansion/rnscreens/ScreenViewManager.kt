@@ -157,6 +157,11 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.nativeBackButtonDismissalEnabled = nativeBackButtonDismissalEnabled
     }
 
+    @ReactProp(name = "sheetElevation")
+    override fun setSheetElevation(view: Screen?, value: Int) {
+        view?.sheetElevation = value.toFloat()
+    }
+
     // these props are not available on Android, however we must override their setters
     override fun setFullScreenSwipeEnabled(view: Screen?, value: Boolean) = Unit
 

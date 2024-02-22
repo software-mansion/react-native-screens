@@ -69,6 +69,9 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     var sheetLargestUndimmedDetentIndex: Int = -1
     var sheetInitialDetentIndex: Int = 0
     var sheetClosesWhenTouchOutside = true
+
+    var sheetElevation: Float = 24F
+
     val insetCallback = @RequiresApi(Build.VERSION_CODES.R)
     object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
         var startBottom = 0
