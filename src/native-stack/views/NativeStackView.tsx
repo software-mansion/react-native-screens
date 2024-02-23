@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Animated, Platform, StyleSheet, View, ViewProps } from 'react-native';
+import { Animated, Platform, StyleSheet, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
@@ -10,6 +10,7 @@ import {
   ScreenContext,
   GHContext,
   GestureDetectorBridge,
+  ScreenContentWrapper,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -41,7 +42,7 @@ import FooterComponent from './FooterComponent';
 
 const isAndroid = Platform.OS === 'android';
 
-let Container = View;
+let Container = ScreenContentWrapper;
 
 if (__DEV__) {
   const DebugContainer = (
@@ -51,11 +52,11 @@ if (__DEV__) {
     if (Platform.OS === 'ios' && stackPresentation !== 'push') {
       return (
         <AppContainer>
-          <View {...rest} />
+          <ScreenContentWrapper {...rest} />
         </AppContainer>
       );
     }
-    return <View {...rest} />;
+    return <ScreenContentWrapper {...rest} />;
   };
   // @ts-ignore Wrong props
   Container = DebugContainer;
@@ -98,9 +99,7 @@ const MaybeNestedStack = ({
     <Container
       style={[
         // styles.container,
-        stackPresentation === 'formSheet' && Platform.OS === 'ios'
-          ? styles.absoluteFillNoBottom
-          : styles.container,
+        stackPresentation === 'formSheet' ? (Platform.OS === 'ios' ? styles.absoluteFillNoBottom : null) : styles.container,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,
@@ -183,7 +182,6 @@ const RouteView = ({
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetAllowedDetents = [1.0],
     sheetLargestUndimmedDetent = -1,
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
@@ -206,12 +204,17 @@ const RouteView = ({
   } = options;
 
   let {
+    sheetAllowedDetents = [1.0],
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
   } = options;
+
+  if (sheetAllowedDetents === 'fitToContents') {
+    sheetAllowedDetents = [-1];
+  }
 
   if (swipeDirection === 'vertical') {
     // for `vertical` direction to work, we need to set `fullScreenSwipeEnabled` to `true`

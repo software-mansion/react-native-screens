@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
@@ -36,6 +37,13 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())
+    }
+
+    override fun addView(parent: Screen?, child: View?, index: Int) {
+        super.addView(parent, child, index)
+        if (child is ScreenContentWrapper) {
+            parent!!.registerLayoutCallbackForWrapper(child)
+        }
     }
 
     override fun updateState(

@@ -340,7 +340,7 @@ export type NativeStackNavigationOptions = {
    *
    * Defaults to `[1.0]` literal.
    */
-  sheetAllowedDetents?: ScreenProps['sheetAllowedDetents'];
+  sheetAllowedDetents?: ScreenProps['sheetAllowedDetents'] | 'fitToContents';
   /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *

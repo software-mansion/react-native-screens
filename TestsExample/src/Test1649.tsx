@@ -30,14 +30,15 @@ type NavProp = {
 // ]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
-const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.9]);
+// const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.9]);
+const allowedDetentsAtom = jotai.atom<number[]>([0.4]);
 const largestUndimmedDetentAtom = jotai.atom<number>(0);
 
 // const allowedDetentsAtom = jotai.atom<number[]>([0.7]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(-1);
 
 const grabberVisibleAtom = jotai.atom(true);
-const cornerRadiusAtom = jotai.atom(-1);
+const cornerRadiusAtom = jotai.atom(24);
 const expandsWhenScrolledToEdgeAtom = jotai.atom(true);
 
 const sheetOptionsAtom = jotai.atom(get => ({
@@ -52,7 +53,7 @@ const Stack = createNativeStackNavigator();
 
 function Footer() {
   return (
-    <View style={{ backgroundColor: 'red', position: 'absolute', left: 0, top: 0, right: 0 }}>
+    <View style={{ backgroundColor: 'red' }}>
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>
@@ -102,10 +103,12 @@ export default function App(): JSX.Element {
             options={{
               headerShown: false,
               stackPresentation: 'formSheet',
+              sheetElevation: 24,
               screenStyle: {
-                backgroundColor: 'white',
+                backgroundColor: 'firebrick',
+                flex: undefined,
               },
-              footerComponent: Footer,
+              // footerComponent: Footer,
               ...sheetOptions,
             }}
           />
@@ -236,7 +239,7 @@ function SheetScreen({
   const ref = React.useRef(null);
 
   return (
-    <View style={[styles.containerView, { backgroundColor: 'white' }]}>
+    <View style={[{ backgroundColor: 'green' }]}>
       <View style={{ paddingTop: 10 }}>
         <TextInput
           style={{
@@ -245,7 +248,7 @@ function SheetScreen({
             margin: 5,
             borderRadius: 5,
           }}
-          value={'hello'}
+          placeholder="hello"
           ref={ref}
         />
         <Button

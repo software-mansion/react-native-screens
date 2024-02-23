@@ -108,7 +108,6 @@ object ScreenWindowTraits {
         val translucent = screenForTranslucent?.isStatusBarTranslucent ?: false
         UiThreadUtil.runOnUiThread(
             object : GuardedRunnable(context) {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 override fun runGuarded() {
                     // If the status bar is translucent hook into the window insets calculations
                     // and consume all the top insets so no padding will be added under the status bar.

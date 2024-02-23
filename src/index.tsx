@@ -52,6 +52,11 @@ export {
   NativeScreenFooter,
 } from './components/ScreenFooter';
 
+export {
+  default as ScreenContentWrapper,
+  NativeScreenContentWrapper,
+} from './components/ScreenContentWrapper';
+
 /*
  * Modules
  */

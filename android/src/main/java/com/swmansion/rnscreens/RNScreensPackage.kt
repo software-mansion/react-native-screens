@@ -23,6 +23,7 @@ class RNScreensPackage : TurboReactPackage() {
             ScreenStackHeaderSubviewManager(),
             SearchBarManager(),
             ScreenFooterManager(),
+            ScreenContentWrapperManager(),
         )
 
     override fun getModule(

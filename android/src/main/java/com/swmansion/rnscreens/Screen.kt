@@ -22,6 +22,7 @@ import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.core.view.get
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
@@ -31,9 +32,10 @@ import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
+import com.swmansion.rnscreens.utils.findMaxChildrenHeightInStraightLine
 
 @SuppressLint("ViewConstructor")
-class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
+class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
@@ -168,6 +170,27 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 //        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
     }
 
+    override fun onLayoutCallback(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        val width = right - left
+        val height = bottom - top
+
+        if (sheetDetents.count() == 1 && sheetDetents.first() == -1.0)  {
+            sheetBehavior?.let {
+                it.maxHeight = height
+            }
+        }
+
+    }
+
+    fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
+        wrapper.delegate = this
+
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+    }
+
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {
         return super.onApplyWindowInsets(insets)
     }
@@ -195,6 +218,12 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
                 updateScreenSizePaper(width, height)
             }
         }
+
+//        sheetBehavior?.let {
+//            if (it.maxHeight == 0) {
+//                it.maxHeight = findMaxChildrenHeightInStraightLine(this, skip = 1)
+//            }
+//        }
     }
 
     private fun updateScreenSizePaper(width: Int, height: Int) {

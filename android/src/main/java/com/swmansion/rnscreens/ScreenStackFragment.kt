@@ -40,6 +40,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
+import kotlin.math.max
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
@@ -221,11 +222,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return coordinatorLayout
     }
 
-    private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<FrameLayout> {
+    private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
         val displayMetrics = context?.resources?.displayMetrics
         check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
 
-        val behavior = BottomSheetBehavior<FrameLayout>().apply {
+        val behavior = BottomSheetBehavior<Screen>().apply {
             isHideable = true
             isDraggable = true
             addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
