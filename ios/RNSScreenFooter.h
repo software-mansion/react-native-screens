@@ -1,10 +1,3 @@
-//
-//  RNSScreenFooter.h
-//  RNScreens
-//
-//  Created by Kacper Kafara on 20/02/2024.
-//
-
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
 #import "RCTView.h"
