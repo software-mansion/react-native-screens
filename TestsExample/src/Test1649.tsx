@@ -31,7 +31,10 @@ type NavProp = {
 // const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
 // const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.9]);
-const allowedDetentsAtom = jotai.atom<number[]>([0.4]);
+const allowedDetentsAtom =
+  jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
+    'fitToContents',
+  );
 const largestUndimmedDetentAtom = jotai.atom<number>(0);
 
 // const allowedDetentsAtom = jotai.atom<number[]>([0.7]);
