@@ -49,13 +49,13 @@ if (__DEV__) {
     props: ViewProps & { stackPresentation: StackPresentationTypes }
   ) => {
     const { stackPresentation, ...rest } = props;
-    // if (Platform.OS === 'ios' && stackPresentation !== 'push') {
-    //   return (
-    //     <AppContainer>
-    //       <ScreenContentWrapper {...rest} />
-    //     </AppContainer>
-    //   );
-    // }
+    if (Platform.OS === 'ios' && stackPresentation !== 'push' && stackPresentation !== 'formSheet') {
+      return (
+        <AppContainer>
+          <ScreenContentWrapper {...rest} />
+        </AppContainer>
+      );
+    }
     return <ScreenContentWrapper {...rest} />;
   };
   // @ts-ignore Wrong props
