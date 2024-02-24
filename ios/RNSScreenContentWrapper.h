@@ -4,7 +4,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RNSScreenContentWrapper;
+
+@protocol RNSScreenContentWrapperDelegate <NSObject>
+
+- (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr;
+
+@end
+
 @interface RNSScreenContentWrapper : RCTView
+
+@property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
 
 @end
 

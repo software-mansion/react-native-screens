@@ -54,14 +54,14 @@
 {
   NSLog(@"Adding constraints between %@ and %@", self, _parent);
   if (_parent != nil) {
-    [NSLayoutConstraint activateConstraints:@[
-      [NSLayoutConstraint constraintWithItem:self
-                                   attribute:NSLayoutAttributeBottom
-                                   relatedBy:NSLayoutRelationEqual
-                                      toItem:_parent
-                                   attribute:NSLayoutAttributeBottom
-                                  multiplier:1.0
-                                    constant:0.0],
+//    [NSLayoutConstraint activateConstraints:@[
+//      [NSLayoutConstraint constraintWithItem:self
+//                                   attribute:NSLayoutAttributeBottom
+//                                   relatedBy:NSLayoutRelationEqual
+//                                      toItem:_parent
+//                                   attribute:NSLayoutAttributeBottom
+//                                  multiplier:1.0
+//                                    constant:0.0],
       //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft
       //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeLeft multiplier:1.0
       //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight
@@ -76,8 +76,8 @@
       //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
       //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeTop
       //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0],
-    ]];
-    [self setNeedsLayout];
+//    ]];
+//    [self setNeedsLayout];
   }
 }
 

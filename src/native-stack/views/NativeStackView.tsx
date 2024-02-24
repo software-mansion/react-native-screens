@@ -49,13 +49,13 @@ if (__DEV__) {
     props: ViewProps & { stackPresentation: StackPresentationTypes }
   ) => {
     const { stackPresentation, ...rest } = props;
-    if (Platform.OS === 'ios' && stackPresentation !== 'push') {
-      return (
-        <AppContainer>
-          <ScreenContentWrapper {...rest} />
-        </AppContainer>
-      );
-    }
+    // if (Platform.OS === 'ios' && stackPresentation !== 'push') {
+    //   return (
+    //     <AppContainer>
+    //       <ScreenContentWrapper {...rest} />
+    //     </AppContainer>
+    //   );
+    // }
     return <ScreenContentWrapper {...rest} />;
   };
   // @ts-ignore Wrong props
@@ -98,8 +98,10 @@ const MaybeNestedStack = ({
   const content = (
     <Container
       style={[
+        // stackPresentation === 'formSheet' && Platform.OS === 'ios' ? styles.absoluteFillNoBottom : styles.container,
         // styles.container,
         stackPresentation === 'formSheet' ? (Platform.OS === 'ios' ? styles.absoluteFillNoBottom : null) : styles.container,
+        // stackPresentation === 'formSheet' && Platform.OS === 'ios' ? styles.absoluteFillNoBottom : styles.container,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,

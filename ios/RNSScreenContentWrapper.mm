@@ -2,6 +2,14 @@
 
 @implementation RNSScreenContentWrapper
 
+- (void)reactSetFrame:(CGRect)frame
+{
+  [super reactSetFrame:frame];
+  if (self.delegate != nil) {
+    [self.delegate reactDidSetFrame:frame forContentWrapper:self];
+  }
+}
+
 @end
 
 @implementation RNSScreenContentWrapperManager

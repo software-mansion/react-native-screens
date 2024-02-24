@@ -5,6 +5,7 @@
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenWindowTraits.h"
+#import "RNSScreenContentWrapper.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -37,7 +38,7 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
 #else
-    <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
+    <UIAdaptivePresentationControllerDelegate, RNSScreenContentWrapperDelegate, RCTInvalidating>
 #endif
 
 - (void)updateFooterLayout;
@@ -49,6 +50,7 @@ namespace react = facebook::react;
   __weak RCTScrollView *_sheetsScrollView;
   __weak RNSScreenFooter *_footer;
   CGSize _keyboardSize;
+  BOOL _didSetSheetAllowedDetentsOnController;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -101,8 +103,8 @@ namespace react = facebook::react;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
   _footer = nil;
-
-  self.translatesAutoresizingMaskIntoConstraints = true;
+  _didSetSheetAllowedDetentsOnController = NO;
+//  self.translatesAutoresizingMaskIntoConstraints = true;
 }
 
 - (UIViewController *)reactViewController
@@ -127,38 +129,38 @@ namespace react = facebook::react;
 - (void)animateFooterWithClosingKeyboard:(NSNotification *)keyboardNotification
 {
   // When keyboard is opening it works nice out-of-the-box
-  NSNumber *duration = keyboardNotification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
-  UIViewAnimationOptions options = (UIViewAnimationOptions)(
-      [[keyboardNotification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue] << 16);
-  CGRect endFrame = ((NSValue *)(keyboardNotification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
-
-  [UIView animateWithDuration:[duration doubleValue]
-                        delay:0.0
-                      options:options
-                   animations:^{
-                     [self updateFooterLayout];
-                   }
-                   completion:nil];
+  //  NSNumber *duration = keyboardNotification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+  //  UIViewAnimationOptions options = (UIViewAnimationOptions)(
+  //      [[keyboardNotification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue] << 16);
+  //  CGRect endFrame = ((NSValue *)(keyboardNotification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
+  //
+  //  [UIView animateWithDuration:[duration doubleValue]
+  //                        delay:0.0
+  //                      options:options
+  //                   animations:^{
+  //                     [self updateFooterLayout];
+  //                   }
+  //                   completion:nil];
 }
 
 - (void)updateFooterLayout
 {
-  if (_footer != nil && _footer.subviews.count > 0) {
-    CGPoint footerOrigin = _footer.frame.origin;
-    CGSize targetFooterSize = _footer.subviews[0].frame.size;
-    RCTView *child = (RCTView *)_footer.subviews[0];
-    footerOrigin.y -= targetFooterSize.height + child.reactCompoundInsets.bottom - child.reactPaddingInsets.bottom +
-        _keyboardSize.height;
-    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width, targetFooterSize.height);
-    NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame));
-    _footer.frame = newFooterFrame;
-  }
+//  if (_footer != nil && _footer.subviews.count > 0) {
+//    CGPoint footerOrigin = _footer.frame.origin;
+//    CGSize targetFooterSize = _footer.subviews[0].frame.size;
+//    RCTView *child = (RCTView *)_footer.subviews[0];
+//    footerOrigin.y -= targetFooterSize.height + child.reactCompoundInsets.bottom - child.reactPaddingInsets.bottom +
+//        _keyboardSize.height;
+//    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width, targetFooterSize.height);
+//    NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame));
+//    _footer.frame = newFooterFrame;
+//  }
 }
 
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-  [self updateFooterLayout];
+  //  [self updateFooterLayout];
 }
 
 - (void)updateBounds
@@ -409,13 +411,41 @@ namespace react = facebook::react;
   //
 }
 
+/// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
+- (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr
+{
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _didSetSheetAllowedDetentsOnController == YES) {
+    return;
+  }
+  
+  _didSetSheetAllowedDetentsOnController = YES;
+  
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+  if (@available(iOS 16.0, *)) {
+    // Sheet controller should be already in place, TODO: explain why
+    UISheetPresentationController *sheetController = _controller.sheetPresentationController;
+    if (sheetController == nil) {
+      RCTLogError(@"[RNScreens] sheetPresentationController is null when attempting to set allowed detents");
+      return;
+    }
+    
+    if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == -1) {
+      auto detents = [self detensFromMaxHeights:@[[NSNumber numberWithFloat:reactFrame.size.height]]];
+      [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
+    }
+  }
+#endif // Check for iOS >= 16
+  
+}
+
 - (void)addSubview:(UIView *)view
 {
   if ([view isKindOfClass:RNSScreenFooter.class]) {
     _footer = (RNSScreenFooter *)view;
-    _footer.onLayout = ^(CGRect frame) {
-      [self repositionFooter:frame];
-    };
+    //    _footer.onLayout = ^(CGRect frame) {
+    //      [self updateFooterLayout];
+    //    };
 
     //    [NSLayoutConstraint activateConstraints:@[
     //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeBottom
@@ -425,6 +455,11 @@ namespace react = facebook::react;
     //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeRight
     //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
     //    ]];
+  }
+  
+  if ([view isKindOfClass:RNSScreenContentWrapper.class] && self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    auto contentWrapper = (RNSScreenContentWrapper *)view;
+    contentWrapper.delegate = self;
   }
 
   if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
@@ -861,7 +896,12 @@ namespace react = facebook::react;
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
     if (_sheetAllowedDetents.count > 0) {
       if (@available(iOS 16.0, *)) {
-        [self setAllowedDetentsForSheet:sheet to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents] animate:NO];
+        if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == -1) {
+          // We do not set anything here, we will set once React computed layout of our React's children, namely RNSScreenContentWrapper,
+          // which in case of formSheet presentation style does have exactly the same frame as actual content.
+        } else {
+          [self setAllowedDetentsForSheet:sheet to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents] animate:NO];
+        }
       }
     } else
 #endif // Check for iOS >= 16
@@ -891,7 +931,9 @@ namespace react = facebook::react;
         }
       } else {
         float first = _sheetAllowedDetents[0].floatValue;
-        if (first < 1.0) {
+        if (first == -1) {
+          RCTLogError(@"Unsupported on iOS versions below 16");
+        } else if (first < 1.0) {
           [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
           [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
         } else {
@@ -962,12 +1004,38 @@ namespace react = facebook::react;
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     return ctx.maximumDetentValue * frac.floatValue;
+                                                         if (frac.integerValue == -1) {
+                                                           return 100;
+                                                         } else {
+                                                           return ctx.maximumDetentValue * frac.floatValue;
+                                                         }
                                                    }]];
     ++detentIndex;
   }
   return customDetents;
 }
+
+- (NSArray<UISheetPresentationControllerDetent *> *)detensFromMaxHeights:(NSArray<NSNumber *> *)maxHeights
+    API_AVAILABLE(ios(16.0))
+{
+  NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
+      [NSMutableArray arrayWithCapacity:maxHeights.count];
+  
+  int detentIndex = 0;
+  for (NSNumber *height in maxHeights) {
+    NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
+    [customDetents addObject:[UISheetPresentationControllerDetent
+                                 customDetentWithIdentifier:ident
+                                                   resolver:^CGFloat(
+                                                       id<UISheetPresentationControllerDetentResolutionContext> ctx) {
+                                                         return MIN(ctx.maximumDetentValue, height.floatValue);
+                                                   }]];
+    ++detentIndex;
+  }
+  return customDetents;
+}
+
+
 #endif // Check for iOS >= 16
 
 #endif // !TARGET_OS_TV
@@ -1280,14 +1348,14 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self setupProgressNotification];
   }
 
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(keyboardWillShow:)
-                                               name:UIKeyboardWillShowNotification
-                                             object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(keyboardWillHide:)
-                                               name:UIKeyboardWillHideNotification
-                                             object:nil];
+  //  [[NSNotificationCenter defaultCenter] addObserver:self
+  //                                           selector:@selector(keyboardWillShow:)
+  //                                               name:UIKeyboardWillShowNotification
+  //                                             object:nil];
+  //  [[NSNotificationCenter defaultCenter] addObserver:self
+  //                                           selector:@selector(keyboardWillHide:)
+  //                                               name:UIKeyboardWillHideNotification
+  //                                             object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
