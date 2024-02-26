@@ -276,7 +276,7 @@ export interface ScreenProps extends ViewProps {
    * Not dynamic.
    *
    * Defaults to `24`.
-   * 
+   *
    * @platform Android
    */
   sheetElevation?: number;
