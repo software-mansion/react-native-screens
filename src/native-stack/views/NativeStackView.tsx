@@ -49,7 +49,11 @@ if (__DEV__) {
     props: ViewProps & { stackPresentation: StackPresentationTypes }
   ) => {
     const { stackPresentation, ...rest } = props;
-    if (Platform.OS === 'ios' && stackPresentation !== 'push' && stackPresentation !== 'formSheet') {
+    if (
+      Platform.OS === 'ios' &&
+      stackPresentation !== 'push' &&
+      stackPresentation !== 'formSheet'
+    ) {
       return (
         <AppContainer>
           <ScreenContentWrapper {...rest} />
@@ -100,7 +104,11 @@ const MaybeNestedStack = ({
       style={[
         // stackPresentation === 'formSheet' && Platform.OS === 'ios' ? styles.absoluteFillNoBottom : styles.container,
         // styles.container,
-        stackPresentation === 'formSheet' ? (Platform.OS === 'ios' ? styles.absoluteFillNoBottom : null) : styles.container,
+        stackPresentation === 'formSheet'
+          ? Platform.OS === 'ios'
+            ? styles.absoluteFillNoBottom
+            : null
+          : styles.container,
         // stackPresentation === 'formSheet' && Platform.OS === 'ios' ? styles.absoluteFillNoBottom : styles.container,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
@@ -202,7 +210,6 @@ const RouteView = ({
     transitionDuration,
     freezeOnBlur,
     footerComponent,
-    screenStyle = null,
   } = options;
 
   let {
@@ -212,7 +219,13 @@ const RouteView = ({
     gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
+    screenStyle = null,
   } = options;
+
+  // We only want to allow backgroundColor for now
+  screenStyle = screenStyle
+    ? { backgroundColor: screenStyle.backgroundColor }
+    : null;
 
   if (sheetAllowedDetents === 'fitToContents') {
     sheetAllowedDetents = [-1];

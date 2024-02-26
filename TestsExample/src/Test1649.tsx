@@ -109,7 +109,6 @@ export default function App(): JSX.Element {
               sheetElevation: 24,
               screenStyle: {
                 backgroundColor: 'firebrick',
-                flex: undefined,
               },
               // footerComponent: Footer,
               ...sheetOptions,

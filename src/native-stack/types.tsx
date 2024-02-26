@@ -325,7 +325,7 @@ export type NativeStackNavigationOptions = {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenProps['screenOrientation'];
-  screenStyle?: StyleProp<ViewStyle>;
+  screenStyle?: { backgroundColor: ViewStyle['backgroundColor'] };
   /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */
@@ -347,7 +347,7 @@ export type NativeStackNavigationOptions = {
    * Not dynamic.
    *
    * Defaults to `24`.
-   * 
+   *
    * @platform Android
    */
   sheetElevation?: number;
