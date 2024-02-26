@@ -39,7 +39,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     private lateinit var dimmingView: DimmingView
     private lateinit var containerView: GestureTransparentFrameLayout
 
-    private val maxAlpha: Float = 0.6F
+    private val maxAlpha: Float = 0.15F
 
     private var dimmingViewCallback: BottomSheetCallback? = null
 
