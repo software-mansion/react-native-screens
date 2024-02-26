@@ -148,7 +148,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
 
-        this.fitsSystemWindows = true
+//        this.fitsSystemWindows = true
 //        val rootView = reactContext!!.currentActivity!!.window.decorView.rootView
         val rootView = reactContext!!.currentActivity!!.window.decorView
 //        val rootView = this
