@@ -34,11 +34,11 @@ class DimmingView(context: Context, initialAlpha: Float = 0.6F) : ViewGroup(cont
         return blockGestures
     }
 
-    override fun reactTagForTouch(p0: Float, p1: Float): Int {
+    override fun reactTagForTouch(x: Float, y: Float): Int {
         throw IllegalStateException("$TAG should never be asked for the view tag")
     }
 
-    override fun interceptsTouchEvent(p0: Float, p1: Float) = blockGestures
+    override fun interceptsTouchEvent(x: Float, y: Float) = blockGestures
 
     companion object {
         const val TAG = "DimmingView"

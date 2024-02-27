@@ -22,7 +22,6 @@ import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.core.view.get
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
@@ -32,7 +31,6 @@ import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
-import com.swmansion.rnscreens.utils.findMaxChildrenHeightInStraightLine
 
 @SuppressLint("ViewConstructor")
 class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenContentWrapper.OnLayoutCallback {
@@ -74,66 +72,66 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 
     var sheetElevation: Float = 24F
 
-    val insetCallback = @RequiresApi(Build.VERSION_CODES.R)
-    object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-        var startBottom = 0
-        var endBottom = 0
-        val decorView = reactContext!!.currentActivity!!.window.decorView
+    val insetCallback =
+        @RequiresApi(Build.VERSION_CODES.R)
+        object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+            var startBottom = 0
+            var endBottom = 0
+            val decorView = reactContext!!.currentActivity!!.window.decorView
 
-        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-            startBottom = this@Screen.bottom
-            Log.w(TAG, "inset onPrepare, sbottom $startBottom, ebottom: $endBottom")
+            override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                startBottom = this@Screen.bottom
+                Log.w(TAG, "inset onPrepare, sbottom $startBottom, ebottom: $endBottom")
 
-            ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
-                val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-                val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-                val screenBottom = this@Screen.bottom
-                Log.w(TAG, "inset onApplyWindowInsetsCallback bottomInset: $imeBottomInset, viewBottom: $screenBottom")
-                endBottom = imeBottomInset
+                ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
+                    val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+                    val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                    val screenBottom = this@Screen.bottom
+                    Log.w(TAG, "inset onApplyWindowInsetsCallback bottomInset: $imeBottomInset, viewBottom: $screenBottom")
+                    endBottom = imeBottomInset
 
-                if (isImeVisible && this@Screen.stackPresentation == StackPresentation.FORM_SHEET) {
+                    if (isImeVisible && this@Screen.stackPresentation == StackPresentation.FORM_SHEET) {
 //                    this@Screen.updatePadding(bottom = imeBottomInset)
-                    Log.w(TAG, "inset onApplyWindowInsetsCallback UPDATE BTM PADDING to $imeBottomInset, viewBottom: $screenBottom")
+                        Log.w(TAG, "inset onApplyWindowInsetsCallback UPDATE BTM PADDING to $imeBottomInset, viewBottom: $screenBottom")
+                    }
+                    insets
                 }
-                insets
+                ViewCompat.requestApplyInsets(decorView)
             }
-            ViewCompat.requestApplyInsets(decorView)
-        }
 
-        override fun onStart(
-            animation: WindowInsetsAnimationCompat,
-            bounds: WindowInsetsAnimationCompat.BoundsCompat
-        ): WindowInsetsAnimationCompat.BoundsCompat {
+            override fun onStart(
+                animation: WindowInsetsAnimationCompat,
+                bounds: WindowInsetsAnimationCompat.BoundsCompat,
+            ): WindowInsetsAnimationCompat.BoundsCompat {
 //            endBottom = this@Screen.bottom
 //            endBottom = 1541
-            Log.w(TAG, "inset onStart, sbottom: $startBottom, ebottom: $endBottom, diff: ${startBottom - endBottom}")
-            this@Screen.translationY = (startBottom - endBottom).toFloat()
+                Log.w(TAG, "inset onStart, sbottom: $startBottom, ebottom: $endBottom, diff: ${startBottom - endBottom}")
+                this@Screen.translationY = (startBottom - endBottom).toFloat()
 //            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
 
-            ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
-            ViewCompat.requestApplyInsets(decorView)
-            return bounds
-        }
+                ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
+                ViewCompat.requestApplyInsets(decorView)
+                return bounds
+            }
 
-        override fun onProgress(
-            insets: WindowInsetsCompat,
-            runningAnimations: MutableList<WindowInsetsAnimationCompat>
-        ): WindowInsetsCompat {
-
-            val t = runningAnimations.first().interpolatedFraction
-            val offset = (startBottom - endBottom) * (1 - t)
-            this@Screen.translationY = offset
+            override fun onProgress(
+                insets: WindowInsetsCompat,
+                runningAnimations: MutableList<WindowInsetsAnimationCompat>,
+            ): WindowInsetsCompat {
+                val t = runningAnimations.first().interpolatedFraction
+                val offset = (startBottom - endBottom) * (1 - t)
+                this@Screen.translationY = offset
 //            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
-            Log.w(TAG, "inset onProgress $t -> $offset, bottom: ${this@Screen.bottom}")
+                Log.w(TAG, "inset onProgress $t -> $offset, bottom: ${this@Screen.bottom}")
 
-            return insets
-        }
+                return insets
+            }
 
-        override fun onEnd(animation: WindowInsetsAnimationCompat) {
-            Log.w(TAG, "inset onEnd ${this@Screen.bottom}")
-            super.onEnd(animation)
+            override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                Log.w(TAG, "inset onEnd ${this@Screen.bottom}")
+                super.onEnd(animation)
+            }
         }
-    }
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -170,21 +168,27 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 //        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
     }
 
-    override fun onLayoutCallback(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    override fun onLayoutCallback(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
         val width = right - left
         val height = bottom - top
 
-        if (sheetDetents.count() == 1 && sheetDetents.first() == -1.0)  {
+        if (sheetDetents.count() == 1 && sheetDetents.first() == -1.0) {
             sheetBehavior?.let {
-                it.maxHeight = height
+                if (it.maxHeight != height) {
+                    it.maxHeight = height
+                }
             }
         }
-
     }
 
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
         wrapper.delegate = this
-
     }
 
     override fun onAttachedToWindow() {
@@ -205,7 +209,13 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         // ignore restoring instance state too as we are not saving anything anyways.
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
         Log.w(TAG, "onLayout to $width, $height")
         if (changed) {
             val width = r - l
@@ -226,7 +236,10 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 //        }
     }
 
-    private fun updateScreenSizePaper(width: Int, height: Int) {
+    private fun updateScreenSizePaper(
+        width: Int,
+        height: Int,
+    ) {
         val reactContext = context as ReactContext
         Log.w(TAG, "updateScreenSize to $width, $height")
         reactContext.runOnNativeModulesQueueThread(
@@ -236,7 +249,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
                         .getNativeModule(UIManagerModule::class.java)
                         ?.updateNodeSize(id, width, height)
                 }
-            })
+            },
+        )
     }
 
     val headerConfig: ScreenStackHeaderConfig?
@@ -258,7 +272,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         }
         super.setLayerType(
             if (transitioning && !isWebViewInScreen) LAYER_TYPE_HARDWARE else LAYER_TYPE_NONE,
-            null
+            null,
         )
     }
 
@@ -276,7 +290,10 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         return false
     }
 
-    override fun setLayerType(layerType: Int, paint: Paint?) {
+    override fun setLayerType(
+        layerType: Int,
+        paint: Paint?,
+    ) {
         // ignore - layer type is controlled by `transitioning` prop
     }
 
@@ -298,16 +315,17 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
             return
         }
         ScreenWindowTraits.applyDidSetOrientation()
-        this.screenOrientation = when (screenOrientation) {
-            "all" -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-            "portrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-            "portrait_up" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            "portrait_down" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-            "landscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            "landscape_left" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-            "landscape_right" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }
+        this.screenOrientation =
+            when (screenOrientation) {
+                "all" -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                "portrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                "portrait_up" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                "portrait_down" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                "landscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                "landscape_left" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                "landscape_right" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
 
         fragmentWrapper?.let { ScreenWindowTraits.setOrientation(this, it.tryGetActivity()) }
     }
@@ -347,7 +365,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
                 ScreenWindowTraits.setTranslucent(
                     this,
                     it.tryGetActivity(),
-                    it.tryGetContext()
+                    it.tryGetContext(),
                 )
             }
         }
@@ -392,22 +410,28 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
-        val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
-            .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true }
-            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
+        val actionBarHeight =
+            TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
+                .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true }
+                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
 
-        val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            .takeIf { it > 0 && isStatusBarHidden != true }
-            ?.let { (context.resources::getDimensionPixelSize)(it) }
-            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
-            ?: 0.0
+        val statusBarHeight =
+            context.resources.getIdentifier("status_bar_height", "dimen", "android")
+                .takeIf { it > 0 && isStatusBarHidden != true }
+                ?.let { (context.resources::getDimensionPixelSize)(it) }
+                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
+                ?: 0.0
 
         val totalHeight = actionBarHeight + statusBarHeight
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderHeightChangeEvent(id, totalHeight))
     }
 
-    override fun drawChild(canvas: Canvas, child: View?, drawingTime: Long): Boolean {
+    override fun drawChild(
+        canvas: Canvas,
+        child: View?,
+        drawingTime: Long,
+    ): Boolean {
 //        if (stackPresentation == StackPresentation.FORM_SHEET && sheetCornerRadius > 0F) {
 //            Log.d("Screen", "onDraw inside")
 //            val borderRadius = PixelUtil.toPixelFromDIP(sheetCornerRadius)
@@ -483,48 +507,75 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
     }
 
     enum class StackPresentation {
-        PUSH, MODAL, TRANSPARENT_MODAL, FORM_SHEET
+        PUSH,
+        MODAL,
+        TRANSPARENT_MODAL,
+        FORM_SHEET,
     }
 
     enum class StackAnimation {
-        DEFAULT, NONE, FADE, SLIDE_FROM_BOTTOM, SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT, FADE_FROM_BOTTOM, IOS
+        DEFAULT,
+        NONE,
+        FADE,
+        SLIDE_FROM_BOTTOM,
+        SLIDE_FROM_RIGHT,
+        SLIDE_FROM_LEFT,
+        FADE_FROM_BOTTOM,
+        IOS,
     }
 
     enum class ReplaceAnimation {
-        PUSH, POP
+        PUSH,
+        POP,
     }
 
     enum class ActivityState {
-        INACTIVE, TRANSITIONING_OR_BELOW_TOP, ON_TOP
+        INACTIVE,
+        TRANSITIONING_OR_BELOW_TOP,
+        ON_TOP,
     }
 
     enum class WindowTraits {
-        ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
+        ORIENTATION,
+        COLOR,
+        STYLE,
+        TRANSLUCENT,
+        HIDDEN,
+        ANIMATED,
+        NAVIGATION_BAR_COLOR,
+        NAVIGATION_BAR_HIDDEN,
     }
 
     companion object {
         const val TAG = "Screen"
 
-        fun sheetStateFromScreen(index: Int, detentCount: Int): Int = when (detentCount) {
-            1 -> when (index) {
-                -1 -> BottomSheetBehavior.STATE_HIDDEN
-                0 -> BottomSheetBehavior.STATE_EXPANDED
+        fun sheetStateFromScreen(
+            index: Int,
+            detentCount: Int,
+        ): Int =
+            when (detentCount) {
+                1 ->
+                    when (index) {
+                        -1 -> BottomSheetBehavior.STATE_HIDDEN
+                        0 -> BottomSheetBehavior.STATE_EXPANDED
+                        else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+                    }
+                2 ->
+                    when (index) {
+                        -1 -> BottomSheetBehavior.STATE_HIDDEN
+                        0 -> BottomSheetBehavior.STATE_COLLAPSED
+                        1 -> BottomSheetBehavior.STATE_EXPANDED
+                        else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+                    }
+                3 ->
+                    when (index) {
+                        -1 -> BottomSheetBehavior.STATE_HIDDEN
+                        0 -> BottomSheetBehavior.STATE_COLLAPSED
+                        1 -> BottomSheetBehavior.STATE_HALF_EXPANDED
+                        2 -> BottomSheetBehavior.STATE_EXPANDED
+                        else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
+                    }
                 else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
             }
-            2 -> when (index) {
-                -1 -> BottomSheetBehavior.STATE_HIDDEN
-                0 -> BottomSheetBehavior.STATE_COLLAPSED
-                1 -> BottomSheetBehavior.STATE_EXPANDED
-                else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
-            }
-            3 -> when (index) {
-                -1 -> BottomSheetBehavior.STATE_HIDDEN
-                0 -> BottomSheetBehavior.STATE_COLLAPSED
-                1 -> BottomSheetBehavior.STATE_HALF_EXPANDED
-                2 -> BottomSheetBehavior.STATE_EXPANDED
-                else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
-            }
-            else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
-        }
     }
 }
