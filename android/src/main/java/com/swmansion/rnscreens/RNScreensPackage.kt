@@ -41,10 +41,10 @@ class RNScreensPackage : TurboReactPackage() {
             moduleInfos[ScreensModule.NAME] = ReactModuleInfo(
                 ScreensModule.NAME,
                 ScreensModule.NAME,
-                false, // canOverrideExistingModule
-                false, // needsEagerInit
-                true, // hasConstants
-                false, // isCxxModule
+                false,  // canOverrideExistingModule
+                false,  // needsEagerInit
+                true,  // hasConstants
+                false,  // isCxxModule
                 isTurboModule
             )
             moduleInfos
