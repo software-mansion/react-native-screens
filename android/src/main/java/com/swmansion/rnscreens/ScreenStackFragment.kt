@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -32,6 +33,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
+import kotlin.math.max
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
@@ -213,13 +215,16 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return coordinatorLayout
     }
 
-    private fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
+    internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>): BottomSheetBehavior<Screen> {
         val displayMetrics = context?.resources?.displayMetrics
         check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
 
-        val behavior = BottomSheetBehavior<Screen>().apply {
+        val containerHeight = displayMetrics.heightPixels
+
+        behavior.apply {
             isHideable = true
             isDraggable = true
+            removeBottomSheetCallback(bottomSheetOnSwipedDownCallback)
             addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
         }
 
@@ -228,29 +233,47 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 state = BottomSheetBehavior.STATE_EXPANDED
                 skipCollapsed = true
                 isFitToContents = true
-                maxHeight = (screen.sheetDetents.first() * displayMetrics.heightPixels).toInt()
+                maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
             }
         } else if (screen.sheetDetents.count() == 2) {
             behavior.apply {
                 state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
                 skipCollapsed = false
                 isFitToContents = true
-                peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
-                maxHeight = (screen.sheetDetents[1] * displayMetrics.heightPixels).toInt()
+                peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
+                maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
             }
         } else {
             behavior.apply {
                 state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
                 skipCollapsed = false
                 isFitToContents = false
-                peekHeight = (screen.sheetDetents[0] * displayMetrics.heightPixels).toInt()
+                peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
 //                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
-                expandedOffset = ((1 - screen.sheetDetents[2]) * displayMetrics.heightPixels).toInt()
+                expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
                 halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
             }
         }
 
         return behavior
+    }
+
+    internal fun configureBottomSheetBehaviourForIme(behavior: BottomSheetBehavior<Screen>, imeHeight: Int): BottomSheetBehavior<Screen> {
+        behavior.apply {
+            state = BottomSheetBehavior.STATE_EXPANDED
+            skipCollapsed = true
+            isFitToContents = true
+            maxHeight = max(1, maxHeight - imeHeight)
+        }
+        return behavior
+    }
+
+    internal fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
+        val displayMetrics = context?.resources?.displayMetrics
+        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
+        val behavior = BottomSheetBehavior<Screen>()
+
+        return configureBottomSheetBehaviour(behavior)
     }
 
     private fun attachShapeToScreen(screen: Screen) {
@@ -260,7 +283,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             setTopRightCorner(CornerFamily.ROUNDED, cornerSize)
         }.build()
         val shape = MaterialShapeDrawable(shapeAppearanceModel)
-        shape.setTint(Color.TRANSPARENT)
+        shape.setTint((screen.background as? ColorDrawable?)?.color ?: Color.TRANSPARENT)
         screen.background = shape
 
 //        screen.background = GradientDrawable().apply {

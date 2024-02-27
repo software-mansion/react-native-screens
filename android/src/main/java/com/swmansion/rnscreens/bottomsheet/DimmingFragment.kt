@@ -13,6 +13,11 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.Insets
+import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -28,6 +33,7 @@ import com.swmansion.rnscreens.ScreenContainer
 import com.swmansion.rnscreens.ScreenFragment
 import com.swmansion.rnscreens.ScreenFragmentWrapper
 import com.swmansion.rnscreens.ScreenStack
+import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.ScreenStackFragmentWrapper
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 
@@ -35,20 +41,55 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     Fragment(),
     LifecycleEventObserver,
     ScreenStackFragmentWrapper,
-    Animation.AnimationListener {
+    Animation.AnimationListener,
+    OnApplyWindowInsetsListener {
     private lateinit var dimmingView: DimmingView
     private lateinit var containerView: GestureTransparentFrameLayout
 
     private val maxAlpha: Float = 0.15F
+    private val reactContext: ReactContext? = screen.reactContext
+
 
     private var dimmingViewCallback: BottomSheetCallback? = null
 
     private val container: ScreenStack?
         get() = screen.container as? ScreenStack
 
+
+    private val insetCallback = object : WindowInsetsAnimationCompat.Callback(
+        DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
+        val rootView = reactContext!!.currentActivity!!.window.decorView
+
+        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+            Log.w(TAG, "insetCallback:onPrepare")
+//            ViewCompat.setOnApplyWindowInsetsListener(rootView, this@DimmingFragment)
+//            ViewCompat.requestApplyInsets(rootView)
+        }
+
+        override fun onStart(
+            animation: WindowInsetsAnimationCompat,
+            bounds: WindowInsetsAnimationCompat.BoundsCompat,
+        ): WindowInsetsAnimationCompat.BoundsCompat {
+            Log.w(TAG, "insetCallback:onStart: ${bounds.lowerBound}, ${bounds.upperBound}")
+
+            ViewCompat.setOnApplyWindowInsetsListener(rootView, null)
+//            ViewCompat.requestApplyInsets(rootView)
+            return bounds
+        }
+
+        override fun onProgress(
+            insets: WindowInsetsCompat,
+            runningAnimations: MutableList<WindowInsetsAnimationCompat>,
+        ): WindowInsetsCompat = insets
+    }
+
     init {
         // We register for our child lifecycle as we want to know when it's dismissed via native gesture
         nestedFragment.fragment.lifecycle.addObserver(this)
+
+        val rootView = screen.reactContext!!.currentActivity!!.window.decorView;
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, this)
+//        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
     }
 
     private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, val maxAlpha: Float) : BottomSheetCallback() {
@@ -118,6 +159,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         savedInstanceState: Bundle?
     ): View {
         initViewHierarchy()
+//        ViewCompat.setOnApplyWindowInsetsListener(containerView, this)
         return containerView
     }
 
@@ -313,6 +355,52 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 return otherState != BottomSheetBehavior.STATE_HIDDEN
             }
             return false
+        }
+    }
+
+    override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
+        val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+        val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+        Log.w(TAG, "View $v received bottom inset $imeBottomInset ime: $isImeVisible")
+
+        if (isImeVisible) {
+            screen.sheetBehavior?.let {
+                (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviourForIme(it, imeBottomInset.bottom)
+            }
+            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            if (this.isRemoving) {
+                return insets
+            }
+            return WindowInsetsCompat
+                .Builder(insets)
+                .setInsets(
+                    WindowInsetsCompat.Type.navigationBars(),
+                    Insets.of(
+                        prevInsets.left,
+                        prevInsets.top,
+                        prevInsets.right,
+                        imeBottomInset.bottom
+                    )
+                )
+                .build()
+        } else {
+            screen.sheetBehavior?.let {
+                (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it)
+            }
+            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            return WindowInsetsCompat
+                .Builder(insets)
+                .setInsets(
+                    WindowInsetsCompat.Type.navigationBars(),
+                    Insets.of(
+                        prevInsets.left,
+                        prevInsets.top,
+                        prevInsets.right,
+                        0
+                    )
+                )
+                .build()
         }
     }
 }

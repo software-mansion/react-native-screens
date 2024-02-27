@@ -3,8 +3,10 @@ package com.swmansion.rnscreens.bottomsheet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewGroup
+import android.view.WindowInsets
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactCompoundViewGroup
 import com.facebook.react.uimanager.ReactPointerEventsView
@@ -45,4 +47,10 @@ class DimmingView(context: Context, initialAlpha: Float = 0.6F) : ViewGroup(cont
     }
 
     override fun getPointerEvents(): PointerEvents = if (blockGestures) PointerEvents.AUTO else PointerEvents.NONE
+
+
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {
+        Log.w(TAG, "onApplyWindowInsets")
+        return super.onApplyWindowInsets(insets)
+    }
 }
