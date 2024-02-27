@@ -1,21 +1,21 @@
 package com.swmansion.rnscreens.bottomsheet
 
-//import android.annotation.SuppressLint
-//import android.view.MotionEvent
-//import android.view.View
-//import com.facebook.react.bridge.ReactContext
-//import com.facebook.react.config.ReactFeatureFlags
-//import com.facebook.react.uimanager.JSPointerDispatcher
-//import com.facebook.react.uimanager.JSTouchDispatcher
-//import com.facebook.react.uimanager.RootView
-//import com.facebook.react.uimanager.events.EventDispatcher
-//import com.facebook.react.views.view.ReactViewGroup
+// import android.annotation.SuppressLint
+// import android.view.MotionEvent
+// import android.view.View
+// import com.facebook.react.bridge.ReactContext
+// import com.facebook.react.config.ReactFeatureFlags
+// import com.facebook.react.uimanager.JSPointerDispatcher
+// import com.facebook.react.uimanager.JSTouchDispatcher
+// import com.facebook.react.uimanager.RootView
+// import com.facebook.react.uimanager.events.EventDispatcher
+// import com.facebook.react.views.view.ReactViewGroup
 //
-//@SuppressLint("ViewConstructor")
-//class RNSModalRootView(
+// @SuppressLint("ViewConstructor")
+// class RNSModalRootView(
 //    val reactContext: ReactContext?,
 //    private val eventDispatcher: EventDispatcher
-//) : ReactViewGroup(reactContext), RootView {
+// ) : ReactViewGroup(reactContext), RootView {
 //    private val jsTouchDispatcher: JSTouchDispatcher = JSTouchDispatcher(this)
 //    private var jsPointerDispatcher: JSPointerDispatcher? = null
 //
@@ -93,10 +93,10 @@ package com.swmansion.rnscreens.bottomsheet
 //    override fun handleException(throwable: Throwable?) {
 //        // TODO: I need ThemedReactContext here.
 //        // TODO: Determine where it is initially created & verify its lifecycle
-////        reactContext?.reactApplicationContext?.handleException(RuntimeException(throwable))
+// //        reactContext?.reactApplicationContext?.handleException(RuntimeException(throwable))
 //    }
 //
 //    companion object {
 //        val TAG = RNSModalRootView::class.simpleName
 //    }
-//}
+// }

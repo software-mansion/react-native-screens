@@ -10,9 +10,8 @@ import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
 @ReactModule(name = ScreensModule.NAME)
-class ScreensModule(private val reactContext: ReactApplicationContext)
-    : NativeScreensModuleSpec(reactContext)
-{
+class ScreensModule(private val reactContext: ReactApplicationContext) :
+    NativeScreensModuleSpec(reactContext) {
     private var topScreenId: Int = -1
     private val isActiveTransition = AtomicBoolean(false)
 
@@ -64,7 +63,7 @@ class ScreensModule(private val reactContext: ReactApplicationContext)
         if (topScreenId == -1) {
             return
         }
-        val progressFloat = progress.toFloat();
+        val progressFloat = progress.toFloat()
         val coalescingKey = ScreenFragment.getCoalescingKey(progressFloat)
         UIManagerHelper
             .getEventDispatcherForReactTag(reactContext, topScreenId)

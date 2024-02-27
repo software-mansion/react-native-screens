@@ -130,8 +130,6 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             Log.i(TAG, "Stack: $i $wrapper")
         }
 
-
-
         for (i in screenWrappers.indices.reversed()) {
             val screen = getScreenFragmentWrapperAt(i)
             if (!dismissedWrappers.contains(screen)) {
@@ -421,7 +419,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL ||
                 fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL ||
                 fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET ||
-                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.PUSH
+                fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.PUSH
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||

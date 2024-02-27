@@ -2,11 +2,7 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Path
-import android.graphics.RectF
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,28 +15,23 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
 import android.view.animation.Transformation
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.commit
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactPointerEventsView
-import com.facebook.react.views.view.ReactViewBackgroundDrawable
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import com.google.android.material.bottomsheet.BottomSheetDragHandleView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingFragment
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
-import kotlin.math.max
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
@@ -274,7 +265,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
 //        screen.background = GradientDrawable().apply {
 //            shape = GradientDrawable.RECTANGLE
-////            cornerRadii = FloatArray(8) { i -> if (i < 4) cornerSize else 0F }
+// //            cornerRadii = FloatArray(8) { i -> if (i < 4) cornerSize else 0F }
 //            cornerRadius = cornerSize
 //        }
         // TODO(@kkafar): It looks like this finally works with ReactViewBackgroundDrawable,
@@ -451,7 +442,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         override fun getPointerEvents(): PointerEvents {
             return PointerEvents.BOX_NONE
         }
-
     }
 
     private class ScreensAnimation(private val mFragment: ScreenFragment) : Animation() {

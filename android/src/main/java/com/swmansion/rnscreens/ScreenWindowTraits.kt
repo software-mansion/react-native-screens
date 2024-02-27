@@ -3,7 +3,6 @@ package com.swmansion.rnscreens
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.graphics.Color

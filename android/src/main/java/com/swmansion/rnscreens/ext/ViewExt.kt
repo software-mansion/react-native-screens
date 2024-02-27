@@ -1,10 +1,8 @@
 package com.swmansion.rnscreens.ext
 
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
-import kotlin.math.max
 
 internal fun View.parentAsView() = this.parent as? View
 
@@ -32,4 +30,3 @@ internal fun View.maybeBgColor(): Int? {
     }
     return null
 }
-

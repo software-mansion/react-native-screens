@@ -1,12 +1,12 @@
 package com.swmansion.rnscreens.bottomsheet
 
-//import android.content.Context
-//import android.util.Log
-//import com.google.android.material.bottomsheet.BottomSheetDialog
-//import com.swmansion.rnscreens.ScreenModalFragment
-//import java.lang.ref.WeakReference
+// import android.content.Context
+// import android.util.Log
+// import com.google.android.material.bottomsheet.BottomSheetDialog
+// import com.swmansion.rnscreens.ScreenModalFragment
+// import java.lang.ref.WeakReference
 //
-//class RNSBottomSheetDialog(context: Context, fragment: ScreenModalFragment) : BottomSheetDialog(context) {
+// class RNSBottomSheetDialog(context: Context, fragment: ScreenModalFragment) : BottomSheetDialog(context) {
 //    private val fragmentRef: WeakReference<ScreenModalFragment> = WeakReference(fragment)
 //
 //    // There are various code paths leading to this method, however the one I'm concerned with
@@ -21,4 +21,4 @@ package com.swmansion.rnscreens.bottomsheet
 //    companion object {
 //        val TAG = RNSBottomSheetDialog::class.simpleName
 //    }
-//}
+// }

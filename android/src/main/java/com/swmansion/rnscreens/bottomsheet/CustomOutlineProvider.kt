@@ -13,7 +13,6 @@ class CustomOutlineProvider(val cornerRadius: Float) : ViewOutlineProvider() {
 //        ShapeDrawable
 //    }
 
-
     @SuppressLint("RestrictedApi")
     override fun getOutline(view: View?, outline: Outline?) {
         val rect = Rect()
@@ -22,7 +21,6 @@ class CustomOutlineProvider(val cornerRadius: Float) : ViewOutlineProvider() {
         outline?.setRoundRect(rect, cornerRadius)
 
         val drawable = GradientDrawable()
-
 
 //        DrawableUtils.setOutlineToPath(outline!!, path!!)
     }
