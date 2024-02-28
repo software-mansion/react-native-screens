@@ -12,13 +12,14 @@ import {
   ScrollView,
   // TextInput,
 } from 'react-native';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { NavigationContainer, ParamListBase, useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
 import * as jotai from 'jotai';
+import useFocusEffectIgnoreSheet from './hooks/useFocusEffectIgnoreSheet';
 
 type NavProp = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -30,11 +31,11 @@ type NavProp = {
 // ]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
-// const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.9]);
-const allowedDetentsAtom =
-  jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
-    'fitToContents',
-  );
+const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.9]);
+// const allowedDetentsAtom =
+//   jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
+//     'fitToContents',
+//   );
 const largestUndimmedDetentAtom = jotai.atom<number>(0);
 
 // const allowedDetentsAtom = jotai.atom<number[]>([0.7]);
@@ -173,6 +174,10 @@ function Second({ navigation }: NavProp) {
         onPress={() => navigation.navigate('SheetScreenWithScrollView')}
       />
       <Button
+        title="Open the Third screen"
+        onPress={() => navigation.navigate('Third')}
+      />
+      <Button
         title="Go back to first screen"
         onPress={navigateToFirstCallback}
       />
@@ -188,14 +193,71 @@ function Third({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
+  console.warn('ENTER Third');
+
+  const [bgColor, setBgColor] = React.useState('firebrick');
+
   const navigateToSecondCallback = () => {
     console.log('Navigate Back');
     navigation.goBack();
     navigation.navigate('Second');
   };
 
+  const navState = navigation.getState();
+  const routeInd = navState.index;
+  const routeName = navState.routes[navState.index].name;
+
+  console.log(`THIRD routeName: ${routeName}, routeInd: ${routeInd}`);
+
+  useFocusEffectIgnoreSheet(
+    React.useCallback(() => {
+      console.log('ACTUAL_CALLBACK called');
+      const handle = setInterval(() => {
+        console.log('SET_INTERVAL_CALLBACK called');
+        setBgColor(value => {
+          return value === 'firebrick' ? 'green' : 'firebrick';
+        });
+      }, 1500);
+
+      return () => {
+        console.log('ACTUAL_CALLBACK cleared');
+        clearInterval(handle);
+      };
+    }, [navigation]),
+    'SheetScreen',
+  );
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const handle = setInterval(() => {
+  //       console.log('Hellow from setInterval');
+  //       setBgColor(value => {
+  //         return value === 'firebrick' ? 'green' : 'firebrick';
+  //       });
+  //     }, 750);
+  //
+  //     return () => {
+  //       clearInterval(handle);
+  //     };
+  //   }, []),
+  // );
+
+  // React.useEffect(() => {
+  //   const handle = setInterval(() => {
+  //     console.log('Hellow from setInterval');
+  //     setBgColor(value => {
+  //       return value === 'firebrick' ? 'green' : 'firebrick';
+  //     });
+  //   }, 750);
+  //
+  //   return () => {
+  //     clearInterval(handle);
+  //   };
+  // }, []);
+
+  console.log('Third RENDERED');
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: bgColor }}>
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}

@@ -96,7 +96,8 @@ import Test1864 from './src/Test1864';
 import Test1981 from './src/Test1981';
 import Test2008 from './src/Test2008';
 
-enableFreeze(true);
+// enableFreeze(true);
+enableFreeze(false);
 
 export default function App() {
   return <Test1649 />;
