@@ -43,6 +43,7 @@ export {
   default as SearchBar,
   NativeSearchBar,
   NativeSearchBarCommands,
+  NativeSearchBarBackground,
 } from './components/SearchBar';
 
 export { default as FullWindowOverlay } from './components/FullWindowOverlay';

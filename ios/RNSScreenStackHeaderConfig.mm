@@ -618,9 +618,9 @@ namespace react = facebook::react;
         }
 
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
+          RNSSearchBar *searchBar = subview.subviews[0];
 #if !TARGET_OS_TV
           if (@available(iOS 11.0, *)) {
-            RNSSearchBar *searchBar = subview.subviews[0];
             navitem.searchController = searchBar.controller;
             navitem.hidesSearchBarWhenScrolling = searchBar.hideWhenScrolling;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
@@ -630,6 +630,8 @@ namespace react = facebook::react;
             }
 #endif /* Check for iOS 16.0 */
           }
+#else
+          [searchBar addSearchContainerToController:navctr.topViewController];
 #endif /* !TARGET_OS_TV */
         }
         break;

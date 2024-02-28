@@ -578,6 +578,7 @@ export interface SearchBarProps {
    * @platform android
    */
   autoFocus?: boolean;
+  background?: () => React.ReactNode;
   /**
    * The search field background color
    */
@@ -594,6 +595,10 @@ export interface SearchBarProps {
    * @platform ios
    */
   cancelButtonText?: string;
+  /**
+   * Pass SearchBarBackground component
+   */
+  children?: React.ReactNode;
   /**
    * Specifies whether the back button should close search bar's text input or not.
    *
@@ -702,4 +707,8 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean;
+}
+
+export interface SearchBarBackgroundProps extends ViewProps {
+  children?: React.ReactNode;
 }

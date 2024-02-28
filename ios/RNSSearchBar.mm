@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#import "RNSScreen.h"
 #import "RNSSearchBar.h"
 
 #import <React/RCTBridge.h>
@@ -22,6 +23,7 @@ namespace react = facebook::react;
 @implementation RNSSearchBar {
   __weak RCTBridge *_bridge;
   UISearchController *_controller;
+  UISearchContainerViewController *_searchContainer;
   UIColor *_textColor;
 }
 
@@ -50,10 +52,34 @@ namespace react = facebook::react;
 
 - (void)initCommonProps
 {
+#if !TARGET_OS_TV
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
+#else
+  _controller = [[UISearchController alloc] initWithSearchResultsController:[UIViewController new]];
+  _searchContainer = [[UISearchContainerViewController alloc] initWithSearchController:_controller];
+#endif
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
   _placement = RNSSearchBarPlacementStacked;
+}
+
+- (void)addSearchContainerToController:(UIViewController *)controller
+{
+  //  UIViewController *parentVC = controller.parentViewController;
+  //  [controller.view removeFromSuperview];
+  //  [controller removeFromParentViewController];
+
+  //  UISearchController *yankyController = [[UISearchController alloc] initWithSearchResultsController:controller];
+  //  _searchContainer = [[UISearchContainerViewController alloc] initWithSearchController:yankyController];
+  //  _searchContainer.view.backgroundColor = controller.view.backgroundColor;
+  //
+  //  [parentVC.view addSubview:_searchContainer.view];
+  //  [parentVC addChildViewController:_searchContainer];
+  //  [_searchContainer didMoveToParentViewController:parentVC];
+
+  [controller.view addSubview:_searchContainer.view];
+  [controller addChildViewController:_searchContainer];
+  [_searchContainer didMoveToParentViewController:controller];
 }
 
 - (void)emitOnFocusEvent
