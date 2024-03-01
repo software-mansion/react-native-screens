@@ -229,7 +229,7 @@ namespace react = facebook::react;
   }
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
   _hasStatusBarStyleSet = YES;
@@ -604,7 +604,7 @@ namespace react = facebook::react;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 /**
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
@@ -821,7 +821,7 @@ namespace react = facebook::react;
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
 }
@@ -832,7 +832,7 @@ namespace react = facebook::react;
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
 }
@@ -1065,7 +1065,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (CGSize)getStatusBarHeightIsModal:(BOOL)isModal
 {
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
@@ -1111,17 +1111,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
 
-  // If navigation controller doesn't exists (or it is hidden) we want to handle two possible cases.
-  // If there's no navigation controller for the modal, we simply don't want to return header height, as modal possibly
-  // does not have header and we don't want to count status bar. If there's no navigation controller for the view we
-  // just want to return status bar height (if it's hidden, it will simply return 0).
+  // If there's no navigation controller for the modal (or the navigation bar is hidden), we simply don't want to
+  // return header height, as modal possibly does not have header when navigation controller is nil,
+  // and we don't want to count status bar if navigation bar is hidden (inset could be negative).
   if (navctr == nil || navctr.isNavigationBarHidden) {
-    if (isModal) {
-      return 0;
-    } else {
-      CGSize statusBarSize = [self getStatusBarHeightIsModal:isModal];
-      return MIN(statusBarSize.width, statusBarSize.height);
-    }
+    return 0;
   }
 
   CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
@@ -1505,7 +1499,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #endif
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 // See:
 // 1. https://github.com/software-mansion/react-native-screens/pull/1543
 // 2. https://github.com/software-mansion/react-native-screens/pull/1596

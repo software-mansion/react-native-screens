@@ -4,7 +4,7 @@
 
 @implementation RNSScreenWindowTraits
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 + (void)assertViewControllerBasedStatusBarAppearenceSet
 {
   static dispatch_once_t once;
@@ -22,21 +22,10 @@
 
 + (void)updateStatusBarAppearance
 {
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [UIView animateWithDuration:0.4
                    animations:^{ // duration based on "Programming iOS 13" p. 311 implementation
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-                     if (@available(iOS 13, *)) {
-                       UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-                       if (firstWindow != nil) {
-                         [[firstWindow rootViewController] setNeedsStatusBarAppearanceUpdate];
-                       }
-                     } else
-#endif
-                     {
-                       [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
-                     }
+                     [RCTKeyWindow().rootViewController setNeedsStatusBarAppearanceUpdate];
                    }];
 #endif
 }
@@ -44,21 +33,7 @@
 + (void)updateHomeIndicatorAutoHidden
 {
 #if !TARGET_OS_TV
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-  if (@available(iOS 13, *)) {
-    UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-    if (firstWindow != nil) {
-      [[firstWindow rootViewController] setNeedsUpdateOfHomeIndicatorAutoHidden];
-    }
-  } else
-#endif
-  {
-    if (@available(iOS 11.0, *)) {
-      [UIApplication.sharedApplication.keyWindow.rootViewController setNeedsUpdateOfHomeIndicatorAutoHidden];
-    }
-  }
+  [RCTKeyWindow().rootViewController setNeedsUpdateOfHomeIndicatorAutoHidden];
 #endif
 }
 
@@ -134,21 +109,10 @@
 
 + (void)enforceDesiredDeviceOrientation
 {
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   dispatch_async(dispatch_get_main_queue(), ^{
-    UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskAllButUpsideDown;
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-    if (@available(iOS 13, *)) {
-      UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-      if (firstWindow != nil) {
-        orientationMask = [firstWindow rootViewController].supportedInterfaceOrientations;
-      }
-    } else
-#endif
-    {
-      orientationMask = UIApplication.sharedApplication.keyWindow.rootViewController.supportedInterfaceOrientations;
-    }
+    UIInterfaceOrientationMask orientationMask = [RCTKeyWindow().rootViewController supportedInterfaceOrientations];
+
     UIInterfaceOrientation currentDeviceOrientation =
         [RNSScreenWindowTraits interfaceOrientationFromDeviceOrientation:[[UIDevice currentDevice] orientation]];
     UIInterfaceOrientation currentInterfaceOrientation = [RNSScreenWindowTraits interfaceOrientation];
@@ -178,7 +142,21 @@
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
       if (@available(iOS 16.0, *)) {
         NSArray *array = [[[UIApplication sharedApplication] connectedScenes] allObjects];
-        UIWindowScene *scene = (UIWindowScene *)array[0];
+
+        // when an app supports multiple scenes (e.g. CarPlay), it is possible that
+        // UIWindowScene is not the first scene, or it may not be present at all
+        UIWindowScene *scene = nil;
+        for (id connectedScene in array) {
+          if ([connectedScene isKindOfClass:[UIWindowScene class]]) {
+            scene = connectedScene;
+            break;
+          }
+        }
+
+        if (scene == nil) {
+          return;
+        }
+
         UIWindowSceneGeometryPreferencesIOS *geometryPreferences =
             [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask];
         [scene requestGeometryUpdateWithPreferences:geometryPreferences
@@ -211,7 +189,7 @@
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 // based on
 // https://stackoverflow.com/questions/57965701/statusbarorientation-was-deprecated-in-ios-13-0-when-attempting-to-get-app-ori/61249908#61249908
 + (UIInterfaceOrientation)interfaceOrientation
@@ -219,11 +197,7 @@
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
-    UIWindow *firstWindow = [[[UIApplication sharedApplication] windows] firstObject];
-    if (firstWindow == nil) {
-      return UIInterfaceOrientationUnknown;
-    }
-    UIWindowScene *windowScene = firstWindow.windowScene;
+    UIWindowScene *windowScene = RCTKeyWindow().windowScene;
     if (windowScene == nil) {
       return UIInterfaceOrientationUnknown;
     }
