@@ -20,6 +20,7 @@ public interface RNSScreenManagerInterface<T extends View> {
   void setSheetGrabberVisible(T view, boolean value);
   void setSheetCornerRadius(T view, float value);
   void setSheetExpandsWhenScrolledToEdge(T view, boolean value);
+  void setSheetInitialDetent(T view, int value);
   void setSheetElevation(T view, int value);
   void setCustomAnimationOnSwipe(T view, boolean value);
   void setFullScreenSwipeEnabled(T view, boolean value);

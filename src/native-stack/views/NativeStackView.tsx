@@ -197,6 +197,7 @@ const RouteView = ({
     sheetCornerRadius = -1.0,
     sheetElevation = 24,
     sheetExpandsWhenScrolledToEdge = true,
+    sheetInitialDetent = 0,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarHidden,
@@ -314,6 +315,7 @@ const RouteView = ({
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
       sheetGrabberVisible={sheetGrabberVisible}
+      sheetInitialDetent={sheetInitialDetent}
       sheetCornerRadius={sheetCornerRadius}
       sheetElevation={sheetElevation}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}

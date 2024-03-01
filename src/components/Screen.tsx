@@ -62,6 +62,7 @@ export class InnerScreen extends React.Component<ScreenProps> {
       sheetCornerRadius = -1.0,
       sheetExpandsWhenScrolledToEdge = true,
       sheetElevation = 24,
+      sheetInitialDetent = 0,
     } = rest;
 
     if (enabled && isNativePlatformSupported) {
@@ -109,6 +110,7 @@ export class InnerScreen extends React.Component<ScreenProps> {
             sheetGrabberVisible={sheetGrabberVisible}
             sheetCornerRadius={sheetCornerRadius}
             sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
+            sheetInitialDetent={sheetInitialDetent}
             gestureResponseDistance={{
               start: gestureResponseDistance?.start ?? -1,
               end: gestureResponseDistance?.end ?? -1,

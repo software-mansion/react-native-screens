@@ -223,6 +223,11 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         view.sheetExpandsWhenScrolledToEdge = value
     }
 
+    @ReactProp(name = "sheetInitialDetent")
+    override fun setSheetInitialDetent(view: Screen, value: Int) {
+        view.sheetInitialDetentIndex = value
+    }
+
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
         ScreenDismissedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDismissed"),
         ScreenWillAppearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onWillAppear"),

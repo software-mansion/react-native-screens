@@ -350,15 +350,15 @@ export type NativeStackNavigationOptions = {
    *
    * @platform Android
    */
-  sheetElevation?: number;
+  sheetElevation?: ScreenProps['sheetElevation'];
   /**
    * Whether the sheet should expand to larger detent when scrolling.
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `true`.
    *
-   * @platform ios
+   * @platform iOS
    */
-  sheetExpandsWhenScrolledToEdge?: boolean;
+  sheetExpandsWhenScrolledToEdge?: ScreenProps['sheetExpandsWhenScrolledToEdge'];
   /**
    * The corner radius that the sheet will try to render with.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -366,18 +366,20 @@ export type NativeStackNavigationOptions = {
    * If set to non-negative value it will try to render sheet with provided radius, else it will apply system default.
    *
    * If left unset system default is used.
-   *
-   * @platform ios
    */
-  sheetCornerRadius?: number;
+  sheetCornerRadius?: ScreenProps['sheetCornerRadius'];
   /**
    * Boolean indicating whether the sheet shows a grabber at the top.
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `false`.
    *
-   * @platform ios
+   * @platform iOS
    */
-  sheetGrabberVisible?: boolean;
+  sheetGrabberVisible?: ScreenProps['sheetGrabberVisible'];
+  /**
+   * TODO: description of this prop
+   */
+  sheetInitialDetent?: ScreenProps['sheetInitialDetent'];
   /**
    * The largest sheet detent for which a view underneath won't be dimmed.
    * Works only when `stackPresentation` is set to `formSheet`.

@@ -39,6 +39,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "sheetExpandsWhenScrolledToEdge":
         mViewManager.setSheetExpandsWhenScrolledToEdge(view, value == null ? false : (boolean) value);
         break;
+      case "sheetInitialDetent":
+        mViewManager.setSheetInitialDetent(view, value == null ? 0 : ((Double) value).intValue());
+        break;
       case "sheetElevation":
         mViewManager.setSheetElevation(view, value == null ? 24 : ((Double) value).intValue());
         break;
