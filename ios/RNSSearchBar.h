@@ -36,6 +36,12 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onBlur;
 #endif
 
+#if TARGET_OS_TV
+
+- (void)addSearchContainerToController:(UIViewController *)controller;
+
+#endif // TARGET_OS_TV
+
 @end
 
 @interface RNSSearchBarManager : RCTViewManager

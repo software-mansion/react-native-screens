@@ -55,8 +55,10 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
 #else
-  _controller = [[UISearchController alloc] initWithSearchResultsController:[UIViewController new]];
-  _searchContainer = [[UISearchContainerViewController alloc] initWithSearchController:_controller];
+// tboba: Classic initialization of controllers, useful in case when you're passing RNSScreen to
+// `addSearchContainerToController` method.
+//  _controller = [[UISearchController alloc] initWithSearchResultsController:[UIViewController new]];
+//  _searchContainer = [[UISearchContainerViewController alloc] initWithSearchController:_controller];
 #endif
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
@@ -65,21 +67,24 @@ namespace react = facebook::react;
 
 - (void)addSearchContainerToController:(UIViewController *)controller
 {
-  //  UIViewController *parentVC = controller.parentViewController;
-  //  [controller.view removeFromSuperview];
-  //  [controller removeFromParentViewController];
+  UIViewController *parentVC = controller.parentViewController;
+  [controller.view removeFromSuperview];
+  [controller removeFromParentViewController];
 
-  //  UISearchController *yankyController = [[UISearchController alloc] initWithSearchResultsController:controller];
-  //  _searchContainer = [[UISearchContainerViewController alloc] initWithSearchController:yankyController];
-  //  _searchContainer.view.backgroundColor = controller.view.backgroundColor;
-  //
-  //  [parentVC.view addSubview:_searchContainer.view];
-  //  [parentVC addChildViewController:_searchContainer];
-  //  [_searchContainer didMoveToParentViewController:parentVC];
+  // tboba: Initialization of controllers, used to use RNSScreen as searchResultsController. Here, I resigned from using
+  // initialization of search controllers inside initCommonProps, so with that solution we would need to remove
+  // `initCommonProps` call from initializer and move it somewhere else, in case of TVOS.
+  UISearchController *yankyController = [[UISearchController alloc] initWithSearchResultsController:controller];
+  _searchContainer = [[UISearchContainerViewController alloc] initWithSearchController:yankyController];
 
-  [controller.view addSubview:_searchContainer.view];
-  [controller addChildViewController:_searchContainer];
-  [_searchContainer didMoveToParentViewController:controller];
+  [parentVC.view addSubview:_searchContainer.view];
+  [parentVC addChildViewController:_searchContainer];
+  [_searchContainer didMoveToParentViewController:parentVC];
+
+  // The case, when you want to add search container just to the controller.
+  //  [controller.view addSubview:_searchContainer.view];
+  //  [controller addChildViewController:_searchContainer];
+  //  [_searchContainer didMoveToParentViewController:controller];
 }
 
 - (void)emitOnFocusEvent

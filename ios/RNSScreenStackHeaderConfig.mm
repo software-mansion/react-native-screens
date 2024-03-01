@@ -22,6 +22,7 @@
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
+#import "RNSSearchBarBackground.h"
 #import "RNSUIBarButtonItem.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -618,6 +619,7 @@ namespace react = facebook::react;
         }
 
         if ([subview.subviews[0] isKindOfClass:[RNSSearchBar class]]) {
+          //          RNSSearchBarBackground *searchBarBackground = subview.subviews[0];
           RNSSearchBar *searchBar = subview.subviews[0];
 #if !TARGET_OS_TV
           if (@available(iOS 11.0, *)) {
