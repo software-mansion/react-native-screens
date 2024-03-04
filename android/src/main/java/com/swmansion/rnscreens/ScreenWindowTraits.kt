@@ -47,7 +47,6 @@ object ScreenWindowTraits {
         activity.requestedOrientation = orientation
     }
 
-    @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     internal fun setColor(screen: Screen, activity: Activity?, context: ReactContext?) {
         if (activity == null || context == null) {
             return
