@@ -60,7 +60,13 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         // ignore restoring instance state too as we are not saving anything anyways.
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
         if (changed) {
             val width = r - l
             val height = b - t
@@ -74,7 +80,10 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         }
     }
 
-    private fun updateScreenSizePaper(width: Int, height: Int) {
+    private fun updateScreenSizePaper(
+        width: Int,
+        height: Int,
+    ) {
         val reactContext = context as ReactContext
         reactContext.runOnNativeModulesQueueThread(
             object : GuardedRunnable(reactContext) {
@@ -83,7 +92,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
                         .getNativeModule(UIManagerModule::class.java)
                         ?.updateNodeSize(id, width, height)
                 }
-            })
+            },
+        )
     }
 
     val headerConfig: ScreenStackHeaderConfig?
@@ -105,7 +115,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         }
         super.setLayerType(
             if (transitioning && !isWebViewInScreen) LAYER_TYPE_HARDWARE else LAYER_TYPE_NONE,
-            null
+            null,
         )
     }
 
@@ -123,7 +133,10 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         return false
     }
 
-    override fun setLayerType(layerType: Int, paint: Paint?) {
+    override fun setLayerType(
+        layerType: Int,
+        paint: Paint?,
+    ) {
         // ignore - layer type is controlled by `transitioning` prop
     }
 
@@ -141,16 +154,17 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             return
         }
         ScreenWindowTraits.applyDidSetOrientation()
-        this.screenOrientation = when (screenOrientation) {
-            "all" -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-            "portrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-            "portrait_up" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            "portrait_down" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-            "landscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            "landscape_left" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-            "landscape_right" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }
+        this.screenOrientation =
+            when (screenOrientation) {
+                "all" -> ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                "portrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                "portrait_up" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                "portrait_down" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                "landscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                "landscape_left" -> ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                "landscape_right" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
 
         fragmentWrapper?.let { ScreenWindowTraits.setOrientation(this, it.tryGetActivity()) }
     }
@@ -190,7 +204,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
                 ScreenWindowTraits.setTranslucent(
                     this,
                     it.tryGetActivity(),
-                    it.tryGetContext()
+                    it.tryGetContext(),
                 )
             }
         }
@@ -235,15 +249,17 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
-        val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
-            .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true }
-            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
+        val actionBarHeight =
+            TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
+                .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true }
+                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
 
-        val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            .takeIf { it > 0 && isStatusBarHidden != true }
-            ?.let { (context.resources::getDimensionPixelSize)(it) }
-            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
-            ?: 0.0
+        val statusBarHeight =
+            context.resources.getIdentifier("status_bar_height", "dimen", "android")
+                .takeIf { it > 0 && isStatusBarHidden != true }
+                ?.let { (context.resources::getDimensionPixelSize)(it) }
+                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
+                ?: 0.0
 
         val totalHeight = actionBarHeight + statusBarHeight
         UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
@@ -251,22 +267,41 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     }
 
     enum class StackPresentation {
-        PUSH, MODAL, TRANSPARENT_MODAL
+        PUSH,
+        MODAL,
+        TRANSPARENT_MODAL,
     }
 
     enum class StackAnimation {
-        DEFAULT, NONE, FADE, SLIDE_FROM_BOTTOM, SLIDE_FROM_RIGHT, SLIDE_FROM_LEFT, FADE_FROM_BOTTOM, IOS
+        DEFAULT,
+        NONE,
+        FADE,
+        SLIDE_FROM_BOTTOM,
+        SLIDE_FROM_RIGHT,
+        SLIDE_FROM_LEFT,
+        FADE_FROM_BOTTOM,
+        IOS,
     }
 
     enum class ReplaceAnimation {
-        PUSH, POP
+        PUSH,
+        POP,
     }
 
     enum class ActivityState {
-        INACTIVE, TRANSITIONING_OR_BELOW_TOP, ON_TOP
+        INACTIVE,
+        TRANSITIONING_OR_BELOW_TOP,
+        ON_TOP,
     }
 
     enum class WindowTraits {
-        ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
+        ORIENTATION,
+        COLOR,
+        STYLE,
+        TRANSLUCENT,
+        HIDDEN,
+        ANIMATED,
+        NAVIGATION_BAR_COLOR,
+        NAVIGATION_BAR_HIDDEN,
     }
 }

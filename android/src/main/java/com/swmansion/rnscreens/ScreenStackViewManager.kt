@@ -24,12 +24,19 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
 
     override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStack(reactContext)
 
-    override fun addView(parent: ScreenStack, child: View, index: Int) {
+    override fun addView(
+        parent: ScreenStack,
+        child: View,
+        index: Int,
+    ) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreen" }
         parent.addScreen(child, index)
     }
 
-    override fun removeViewAt(parent: ScreenStack, index: Int) {
+    override fun removeViewAt(
+        parent: ScreenStack,
+        index: Int,
+    ) {
         prepareOutTransition(parent.getScreenAt(index))
         parent.removeScreenAt(index)
     }
@@ -57,7 +64,10 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
 
     override fun getChildCount(parent: ScreenStack) = parent.screenCount
 
-    override fun getChildAt(parent: ScreenStack, index: Int): View = parent.getScreenAt(index)
+    override fun getChildAt(
+        parent: ScreenStack,
+        index: Int,
+    ): View = parent.getScreenAt(index)
 
     override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreensShadowNode(context)
 
@@ -65,9 +75,10 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStack> = delegate
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
-        StackFinishTransitioningEvent.EVENT_NAME to mutableMapOf("registrationName" to "onFinishTransitioning")
-    )
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> =
+        mutableMapOf(
+            StackFinishTransitioningEvent.EVENT_NAME to mutableMapOf("registrationName" to "onFinishTransitioning"),
+        )
 
     companion object {
         const val REACT_CLASS = "RNSScreenStack"

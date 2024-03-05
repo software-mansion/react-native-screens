@@ -10,8 +10,8 @@ import com.facebook.react.uimanager.ViewManager
 
 @ReactModuleList(
     nativeModules = [
-        ScreensModule::class
-    ]
+        ScreensModule::class,
+    ],
 )
 class RNScreensPackage : TurboReactPackage() {
     override fun createViewManagers(reactContext: ReactApplicationContext) =
@@ -21,12 +21,12 @@ class RNScreensPackage : TurboReactPackage() {
             ScreenStackViewManager(),
             ScreenStackHeaderConfigViewManager(),
             ScreenStackHeaderSubviewManager(),
-            SearchBarManager()
+            SearchBarManager(),
         )
 
     override fun getModule(
         s: String,
-        reactApplicationContext: ReactApplicationContext
+        reactApplicationContext: ReactApplicationContext,
     ): NativeModule? {
         when (s) {
             ScreensModule.NAME -> return ScreensModule(reactApplicationContext)
@@ -38,15 +38,16 @@ class RNScreensPackage : TurboReactPackage() {
         return ReactModuleInfoProvider {
             val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
             val isTurboModule = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-            moduleInfos[ScreensModule.NAME] = ReactModuleInfo(
-                ScreensModule.NAME,
-                ScreensModule.NAME,
-                false,  // canOverrideExistingModule
-                false,  // needsEagerInit
-                true,  // hasConstants
-                false,  // isCxxModule
-                isTurboModule
-            )
+            moduleInfos[ScreensModule.NAME] =
+                ReactModuleInfo(
+                    ScreensModule.NAME,
+                    ScreensModule.NAME,
+                    false, // canOverrideExistingModule
+                    false, // needsEagerInit
+                    true, // hasConstants
+                    false, // isCxxModule
+                    isTurboModule,
+                )
             moduleInfos
         }
     }

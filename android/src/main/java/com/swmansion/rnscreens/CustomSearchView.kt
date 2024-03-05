@@ -12,7 +12,7 @@ class CustomSearchView(context: Context, fragment: Fragment) : SearchView(contex
         maxWidth - https://developer.android.com/reference/android/widget/SearchView#setMaxWidth(int)
         setOnSearchClickListener - https://developer.android.com/reference/android/widget/SearchView#setOnSearchClickListener(android.view.View.OnClickListener)
         setOnCloseListener - https://developer.android.com/reference/android/widget/SearchView#setOnCloseListener(android.widget.SearchView.OnCloseListener)
-    */
+     */
     private var onCloseListener: OnCloseListener? = null
     private var onSearchClickedListener: OnClickListener? = null
 

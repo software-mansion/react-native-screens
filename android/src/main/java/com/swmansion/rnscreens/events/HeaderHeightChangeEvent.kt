@@ -6,9 +6,8 @@ import com.facebook.react.uimanager.events.RCTEventEmitter
 
 class HeaderHeightChangeEvent(
     viewId: Int,
-    private val headerHeight: Double
+    private val headerHeight: Double,
 ) : Event<HeaderHeightChangeEvent>(viewId) {
-
     override fun getEventName() = EVENT_NAME
 
     // As the same header height could appear twice, use header height as a coalescing key.

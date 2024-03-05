@@ -9,42 +9,52 @@ import com.facebook.react.uimanager.FabricViewStateManager
 import com.facebook.react.uimanager.PixelUtil
 import kotlin.math.abs
 
-abstract class FabricEnabledViewGroup constructor(context: ReactContext?) : ViewGroup(context), FabricViewStateManager.HasFabricViewStateManager {
-    private val mFabricViewStateManager: FabricViewStateManager = FabricViewStateManager()
+abstract class FabricEnabledViewGroup constructor(context: ReactContext?) :
+    ViewGroup(
+        context,
+    ),
+    FabricViewStateManager.HasFabricViewStateManager {
+        private val mFabricViewStateManager: FabricViewStateManager = FabricViewStateManager()
 
-    private var lastSetWidth = 0f
-    private var lastSetHeight = 0f
+        private var lastSetWidth = 0f
+        private var lastSetHeight = 0f
 
-    override fun getFabricViewStateManager(): FabricViewStateManager {
-        return mFabricViewStateManager
-    }
+        override fun getFabricViewStateManager(): FabricViewStateManager {
+            return mFabricViewStateManager
+        }
 
-    protected fun updateScreenSizeFabric(width: Int, height: Int) {
-        updateState(width, height)
-    }
-
-    @UiThread
-    fun updateState(width: Int, height: Int) {
-        val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
-        val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
-
-        // Check incoming state values. If they're already the correct value, return early to prevent
-        // infinite UpdateState/SetState loop.
-        val delta = 0.9f
-        if (abs(lastSetWidth - realWidth) < delta &&
-            abs(lastSetHeight - realHeight) < delta
+        protected fun updateScreenSizeFabric(
+            width: Int,
+            height: Int,
         ) {
-            return
+            updateState(width, height)
         }
 
-        lastSetWidth = realWidth
-        lastSetHeight = realHeight
+        @UiThread
+        fun updateState(
+            width: Int,
+            height: Int,
+        ) {
+            val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
+            val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
 
-        mFabricViewStateManager.setState {
-            val map: WritableMap = WritableNativeMap()
-            map.putDouble("frameWidth", realWidth.toDouble())
-            map.putDouble("frameHeight", realHeight.toDouble())
-            map
+            // Check incoming state values. If they're already the correct value, return early to prevent
+            // infinite UpdateState/SetState loop.
+            val delta = 0.9f
+            if (abs(lastSetWidth - realWidth) < delta &&
+                abs(lastSetHeight - realHeight) < delta
+            ) {
+                return
+            }
+
+            lastSetWidth = realWidth
+            lastSetHeight = realHeight
+
+            mFabricViewStateManager.setState {
+                val map: WritableMap = WritableNativeMap()
+                map.putDouble("frameWidth", realWidth.toDouble())
+                map.putDouble("frameHeight", realHeight.toDouble())
+                map
+            }
         }
     }
-}
