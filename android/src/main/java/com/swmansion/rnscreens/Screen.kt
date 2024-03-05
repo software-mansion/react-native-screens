@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.os.Build
 import android.os.Parcelable
 import android.util.Log
 import android.util.SparseArray
@@ -15,11 +14,7 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
-import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsAnimationCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -72,66 +67,66 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 
     var sheetElevation: Float = 24F
 
-    val insetCallback =
-        @RequiresApi(Build.VERSION_CODES.R)
-        object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-            var startBottom = 0
-            var endBottom = 0
-            val decorView = reactContext!!.currentActivity!!.window.decorView
-
-            override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-                startBottom = this@Screen.bottom
-                Log.w(TAG, "inset onPrepare, sbottom $startBottom, ebottom: $endBottom")
-
-                ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
-                    val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-                    val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-                    val screenBottom = this@Screen.bottom
-                    Log.w(TAG, "inset onApplyWindowInsetsCallback bottomInset: $imeBottomInset, viewBottom: $screenBottom")
-                    endBottom = imeBottomInset
-
-                    if (isImeVisible && this@Screen.stackPresentation == StackPresentation.FORM_SHEET) {
-//                    this@Screen.updatePadding(bottom = imeBottomInset)
-                        Log.w(TAG, "inset onApplyWindowInsetsCallback UPDATE BTM PADDING to $imeBottomInset, viewBottom: $screenBottom")
-                    }
-                    insets
-                }
-                ViewCompat.requestApplyInsets(decorView)
-            }
-
-            override fun onStart(
-                animation: WindowInsetsAnimationCompat,
-                bounds: WindowInsetsAnimationCompat.BoundsCompat,
-            ): WindowInsetsAnimationCompat.BoundsCompat {
-//            endBottom = this@Screen.bottom
-//            endBottom = 1541
-                Log.w(TAG, "inset onStart, sbottom: $startBottom, ebottom: $endBottom, diff: ${startBottom - endBottom}")
-                this@Screen.translationY = (startBottom - endBottom).toFloat()
-//            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
-
-                ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
-                ViewCompat.requestApplyInsets(decorView)
-                return bounds
-            }
-
-            override fun onProgress(
-                insets: WindowInsetsCompat,
-                runningAnimations: MutableList<WindowInsetsAnimationCompat>,
-            ): WindowInsetsCompat {
-                val t = runningAnimations.first().interpolatedFraction
-                val offset = (startBottom - endBottom) * (1 - t)
-                this@Screen.translationY = offset
-//            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
-                Log.w(TAG, "inset onProgress $t -> $offset, bottom: ${this@Screen.bottom}")
-
-                return insets
-            }
-
-            override fun onEnd(animation: WindowInsetsAnimationCompat) {
-                Log.w(TAG, "inset onEnd ${this@Screen.bottom}")
-                super.onEnd(animation)
-            }
-        }
+//    val insetCallback =
+//        @RequiresApi(Build.VERSION_CODES.R)
+//        object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+//            var startBottom = 0
+//            var endBottom = 0
+//            val decorView = reactContext!!.currentActivity!!.window.decorView
+//
+//            override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+//                startBottom = this@Screen.bottom
+//                Log.w(TAG, "inset onPrepare, sbottom $startBottom, ebottom: $endBottom")
+//
+//                ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
+//                    val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+//                    val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+//                    val screenBottom = this@Screen.bottom
+//                    Log.w(TAG, "inset onApplyWindowInsetsCallback bottomInset: $imeBottomInset, viewBottom: $screenBottom")
+//                    endBottom = imeBottomInset
+//
+//                    if (isImeVisible && this@Screen.stackPresentation == StackPresentation.FORM_SHEET) {
+// //                    this@Screen.updatePadding(bottom = imeBottomInset)
+//                        Log.w(TAG, "inset onApplyWindowInsetsCallback UPDATE BTM PADDING to $imeBottomInset, viewBottom: $screenBottom")
+//                    }
+//                    insets
+//                }
+//                ViewCompat.requestApplyInsets(decorView)
+//            }
+//
+//            override fun onStart(
+//                animation: WindowInsetsAnimationCompat,
+//                bounds: WindowInsetsAnimationCompat.BoundsCompat,
+//            ): WindowInsetsAnimationCompat.BoundsCompat {
+// //            endBottom = this@Screen.bottom
+// //            endBottom = 1541
+//                Log.w(TAG, "inset onStart, sbottom: $startBottom, ebottom: $endBottom, diff: ${startBottom - endBottom}")
+//                this@Screen.translationY = (startBottom - endBottom).toFloat()
+// //            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
+//
+//                ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
+//                ViewCompat.requestApplyInsets(decorView)
+//                return bounds
+//            }
+//
+//            override fun onProgress(
+//                insets: WindowInsetsCompat,
+//                runningAnimations: MutableList<WindowInsetsAnimationCompat>,
+//            ): WindowInsetsCompat {
+//                val t = runningAnimations.first().interpolatedFraction
+//                val offset = (startBottom - endBottom) * (1 - t)
+//                this@Screen.translationY = offset
+// //            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
+//                Log.w(TAG, "inset onProgress $t -> $offset, bottom: ${this@Screen.bottom}")
+//
+//                return insets
+//            }
+//
+//            override fun onEnd(animation: WindowInsetsAnimationCompat) {
+//                Log.w(TAG, "inset onEnd ${this@Screen.bottom}")
+//                super.onEnd(animation)
+//            }
+//        }
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -228,12 +223,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
                 updateScreenSizePaper(width, height)
             }
         }
-
-//        sheetBehavior?.let {
-//            if (it.maxHeight == 0) {
-//                it.maxHeight = findMaxChildrenHeightInStraightLine(this, skip = 1)
-//            }
-//        }
     }
 
     private fun updateScreenSizePaper(

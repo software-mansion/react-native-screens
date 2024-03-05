@@ -162,26 +162,26 @@ object ScreenWindowTraits {
 //                        ViewCompat.requestApplyInsets(decorView)
                     } else {
                         Log.w("ScreenWindowTraits", "Removing listener from $decorView")
-//                        ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
-                        ViewCompat.setOnApplyWindowInsetsListener(decorView) { view, insets ->
-                            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-                            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-                            if (isImeVisible) {
-                                WindowInsetsCompat
-                                    .Builder(insets)
-                                    .setInsets(
-                                        WindowInsetsCompat.Type.navigationBars(),
-                                        Insets.of(
-                                            prevInsets.left,
-                                            prevInsets.top,
-                                            prevInsets.right,
-                                            0
-                                        )
-                                    ).build()
-                            } else {
-                                insets
-                            }
-                        }
+                        ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
+//                        ViewCompat.setOnApplyWindowInsetsListener(decorView) { view, insets ->
+//                            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+//                            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+//                            if (isImeVisible) {
+//                                WindowInsetsCompat
+//                                    .Builder(insets)
+//                                    .setInsets(
+//                                        WindowInsetsCompat.Type.navigationBars(),
+//                                        Insets.of(
+//                                            prevInsets.left,
+//                                            prevInsets.top,
+//                                            prevInsets.right,
+//                                            0
+//                                        )
+//                                    ).build()
+//                            } else {
+//                                insets
+//                            }
+//                        }
 //                        ViewCompat.setOnApplyWindowInsetsListener(decorView, decorView.getTag(androidx.core.R.id.tag_on_apply_window_listener) as? OnApplyWindowInsetsListener)
                         hasAttachedWindowInsetsCallback = false
 //                        ViewCompat.requestApplyInsets(decorView)

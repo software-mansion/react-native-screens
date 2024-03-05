@@ -27,6 +27,9 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.swmansion.rnscreens.KeyboardDidHide
+import com.swmansion.rnscreens.KeyboardNotVisible
+import com.swmansion.rnscreens.KeyboardVisible
 import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen
 import com.swmansion.rnscreens.ScreenContainer
@@ -49,6 +52,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     private val maxAlpha: Float = 0.15F
     private val reactContext: ReactContext? = screen.reactContext
 
+    private var isKeyboardVisible: Boolean = false
 
     private var dimmingViewCallback: BottomSheetCallback? = null
 
@@ -58,7 +62,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
 
     private val insetCallback = object : WindowInsetsAnimationCompat.Callback(
         DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
-        val rootView = reactContext!!.currentActivity!!.window.decorView
+//        val rootView = reactContext!!.currentActivity!!.window.decorView
 
         override fun onPrepare(animation: WindowInsetsAnimationCompat) {
             Log.w(TAG, "insetCallback:onPrepare")
@@ -72,7 +76,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         ): WindowInsetsAnimationCompat.BoundsCompat {
             Log.w(TAG, "insetCallback:onStart: ${bounds.lowerBound}, ${bounds.upperBound}")
 
-            ViewCompat.setOnApplyWindowInsetsListener(rootView, null)
+//            ViewCompat.setOnApplyWindowInsetsListener(rootView, null)
 //            ViewCompat.requestApplyInsets(rootView)
             return bounds
         }
@@ -81,6 +85,11 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
             insets: WindowInsetsCompat,
             runningAnimations: MutableList<WindowInsetsAnimationCompat>,
         ): WindowInsetsCompat = insets
+
+        override fun onEnd(animation: WindowInsetsAnimationCompat) {
+            super.onEnd(animation)
+            Log.w(TAG, "insetCallback:onEnd")
+        }
     }
 
     init {
@@ -90,6 +99,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         val rootView = screen.reactContext!!.currentActivity!!.window.decorView;
         ViewCompat.setOnApplyWindowInsetsListener(rootView, this)
 //        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
+//        ViewCompat.setWindowInsetsAnimationCallback(containerView, insetCallback)
     }
 
     private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, val maxAlpha: Float) : BottomSheetCallback() {
@@ -159,7 +169,8 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         savedInstanceState: Bundle?
     ): View {
         initViewHierarchy()
-//        ViewCompat.setOnApplyWindowInsetsListener(containerView, this)
+        val rootView = reactContext!!.currentActivity!!.window.decorView
+        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
         return containerView
     }
 
@@ -365,8 +376,9 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         Log.w(TAG, "View $v received bottom inset $imeBottomInset ime: $isImeVisible")
 
         if (isImeVisible) {
+            isKeyboardVisible = true
             screen.sheetBehavior?.let {
-                (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviourForIme(it, imeBottomInset.bottom)
+                (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardVisible(imeBottomInset.bottom))
             }
             val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             if (this.isRemoving) {
@@ -386,8 +398,14 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 .build()
         } else {
             screen.sheetBehavior?.let {
-                (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it)
+                if (isKeyboardVisible) {
+                    (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardDidHide)
+                } else {
+                    (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardNotVisible)
+                }
             }
+
+            isKeyboardVisible = false
             val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             return WindowInsetsCompat
                 .Builder(insets)

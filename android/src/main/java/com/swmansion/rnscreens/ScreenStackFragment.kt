@@ -35,6 +35,13 @@ import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 import kotlin.math.max
 
+
+sealed class KeyboardState()
+object KeyboardNotVisible : KeyboardState()
+object KeyboardDidHide : KeyboardState()
+class KeyboardVisible(val height: Int): KeyboardState()
+
+
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
     private var toolbar: Toolbar? = null
@@ -215,7 +222,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return coordinatorLayout
     }
 
-    internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>): BottomSheetBehavior<Screen> {
+    internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible): BottomSheetBehavior<Screen> {
         val displayMetrics = context?.resources?.displayMetrics
         check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
 
@@ -228,44 +235,73 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
         }
 
-        if (screen.sheetDetents.count() == 1) {
-            behavior.apply {
-                state = BottomSheetBehavior.STATE_EXPANDED
-                skipCollapsed = true
-                isFitToContents = true
-                maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
-            }
-        } else if (screen.sheetDetents.count() == 2) {
-            behavior.apply {
-                state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
-                skipCollapsed = false
-                isFitToContents = true
-                peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
-            }
-        } else {
-            behavior.apply {
-                state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
-                skipCollapsed = false
-                isFitToContents = false
-                peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
+        return when (keyboardState) {
+            is KeyboardNotVisible -> {
+                if (screen.sheetDetents.count() == 1) {
+                    behavior.apply {
+                        state = BottomSheetBehavior.STATE_EXPANDED
+                        skipCollapsed = true
+                        isFitToContents = true
+                        maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
+                    }
+                } else if (screen.sheetDetents.count() == 2) {
+                    behavior.apply {
+                        state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+                        skipCollapsed = false
+                        isFitToContents = true
+                        peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
+                        maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
+                    }
+                } else {
+                    behavior.apply {
+                        state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+                        skipCollapsed = false
+                        isFitToContents = false
+                        peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
 //                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
-                expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
-                halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+                        expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+                        halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+                    }
+                }
+            }
+            is KeyboardVisible -> {
+                behavior.apply {
+                    state = BottomSheetBehavior.STATE_EXPANDED
+                    skipCollapsed = true
+                    isFitToContents = true
+                    maxHeight = max(1, maxHeight - keyboardState.height)
+                }
+            }
+            is KeyboardDidHide -> {
+                if (screen.sheetDetents.count() == 1) {
+                    behavior.apply {
+                        state = BottomSheetBehavior.STATE_EXPANDED
+                        skipCollapsed = true
+                        isFitToContents = true
+                        maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
+                    }
+                } else if (screen.sheetDetents.count() == 2) {
+                    behavior.apply {
+                        state = BottomSheetBehavior.STATE_EXPANDED
+                        skipCollapsed = false
+                        isFitToContents = true
+                        peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
+                        maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
+                    }
+                } else {
+                    behavior.apply {
+                        state = BottomSheetBehavior.STATE_EXPANDED
+                        skipCollapsed = false
+                        isFitToContents = false
+                        peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
+//                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
+                        expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+                        halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+                    }
+                }
             }
         }
-
-        return behavior
-    }
-
-    internal fun configureBottomSheetBehaviourForIme(behavior: BottomSheetBehavior<Screen>, imeHeight: Int): BottomSheetBehavior<Screen> {
-        behavior.apply {
-            state = BottomSheetBehavior.STATE_EXPANDED
-            skipCollapsed = true
-            isFitToContents = true
-            maxHeight = max(1, maxHeight - imeHeight)
-        }
-        return behavior
+//        return behavior
     }
 
     internal fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
