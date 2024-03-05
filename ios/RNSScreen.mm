@@ -199,6 +199,7 @@ namespace react = facebook::react;
     case RNSScreenStackAnimationSimplePush:
     case RNSScreenStackAnimationSlideFromBottom:
     case RNSScreenStackAnimationFadeFromBottom:
+    case RNSScreenStackAnimationSlideFromLeft:
       // Default
       break;
   }
@@ -1572,7 +1573,7 @@ RCT_ENUM_CONVERTER(
       @"simple_push" : @(RNSScreenStackAnimationSimplePush),
       @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
       @"slide_from_right" : @(RNSScreenStackAnimationDefault),
-      @"slide_from_left" : @(RNSScreenStackAnimationDefault),
+      @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
       @"ios" : @(RNSScreenStackAnimationDefault),
     }),
     RNSScreenStackAnimationDefault,

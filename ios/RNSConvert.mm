@@ -27,9 +27,10 @@
 + (RNSScreenStackAnimation)RNSScreenStackAnimationFromCppEquivalent:(react::RNSScreenStackAnimation)stackAnimation
 {
   switch (stackAnimation) {
-    // these four are intentionally grouped
-    case react::RNSScreenStackAnimation::Slide_from_right:
     case react::RNSScreenStackAnimation::Slide_from_left:
+      return RNSScreenStackAnimationSlideFromLeft;
+    // these three are intentionally grouped
+    case react::RNSScreenStackAnimation::Slide_from_right:
     case react::RNSScreenStackAnimation::Ios:
     case react::RNSScreenStackAnimation::Default:
       return RNSScreenStackAnimationDefault;
