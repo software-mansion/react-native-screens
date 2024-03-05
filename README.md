@@ -11,6 +11,7 @@ To learn about how to use `react-native-screens` with Fabric architecture, head 
 - [x] iOS
 - [x] Android
 - [x] tvOS
+- [x] visionOS
 - [x] Windows
 - [x] Web
 
@@ -103,8 +104,9 @@ Screens are already integrated with the React Native's most popular navigation l
 
 ## Supported react-native version
 
-| version | react-native version |
+| library version | react-native version |
 | ------- | -------------------- |
+| 3.30.0+ | 0.68.0+              |
 | 3.14.0+ | 0.64.0+              |
 | 3.0.0+  | 0.62.0+              |
 | 2.0.0+  | 0.60.0+              |
@@ -113,13 +115,11 @@ Screens are already integrated with the React Native's most popular navigation l
 
 [Fabric](https://reactnative.dev/architecture/fabric-renderer) is React Native's new rendering system.
 
-- As of [version `3.21.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.21.0) of this project, Fabric is supported only for react-native 0.72+. Support for lower versions has been dropped.
-- As of [version `3.19.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.19.0) of this project, Fabric is supported only for react-native 0.71+. Support for lower versions has been dropped.
-- As of [version `3.18.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.18.0) of this project, Fabric is supported only for react-native 0.70+. Support for lower versions has been dropped.
-- As of [version `3.14.0`](https://github.com/software-mansion/react-native-screens/releases/tag/3.14.0) of this project, Fabric is supported only for react-native 0.69+. Support for lower versions has been dropped.
+Here's a table with summary of supported `react-native` versions when Fabric is turned on.
 
-| version | react-native version |
+| library version | react-native version |
 | ------- | -------------------- |
+| 3.28.0+ | 0.73.0+              |
 | 3.21.0+ | 0.72.0+              |
 | 3.19.0+ | 0.71.0+              |
 | 3.18.0+ | 0.70.0+              |
@@ -145,7 +145,7 @@ You are all set 🎉 – when screens are enabled in your application code react
 
 ### Experimental support for `react-freeze`
 
-> You have to use React Native 0.64 or higher, react-navigation 5.x or 6.x and react-native-screens >= v3.9.0
+> You have to use React Native 0.68 or higher, react-navigation 5.x or 6.x and react-native-screens >= v3.9.0
 
 Since `v3.9.0`, `react-native-screens` comes with experimental support for [`react-freeze`](https://github.com/software-mansion-labs/react-freeze). It uses the React `Suspense` mechanism to prevent parts of the React component tree from rendering, while keeping its state untouched.
 

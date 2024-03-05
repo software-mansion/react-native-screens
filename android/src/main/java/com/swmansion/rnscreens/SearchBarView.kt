@@ -28,9 +28,9 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     var autoFocus: Boolean = false
     var shouldShowHintSearchIcon: Boolean = true
 
-    private var mSearchViewFormatter: SearchViewFormatter? = null
+    private var searchViewFormatter: SearchViewFormatter? = null
 
-    private var mAreListenersSet: Boolean = false
+    private var areListenersSet: Boolean = false
 
     private val headerConfig: ScreenStackHeaderConfig?
         get() {
@@ -52,17 +52,17 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     private fun setSearchViewProps() {
         val searchView = screenStackFragment?.searchView
         if (searchView != null) {
-            if (!mAreListenersSet) {
+            if (!areListenersSet) {
                 setSearchViewListeners(searchView)
-                mAreListenersSet = true
+                areListenersSet = true
             }
 
             searchView.inputType = inputType.toAndroidInputType(autoCapitalize)
-            mSearchViewFormatter?.setTextColor(textColor)
-            mSearchViewFormatter?.setTintColor(tintColor)
-            mSearchViewFormatter?.setHeaderIconColor(headerIconColor)
-            mSearchViewFormatter?.setHintTextColor(hintTextColor)
-            mSearchViewFormatter?.setPlaceholder(placeholder, shouldShowHintSearchIcon)
+            searchViewFormatter?.setTextColor(textColor)
+            searchViewFormatter?.setTintColor(tintColor)
+            searchViewFormatter?.setHeaderIconColor(headerIconColor)
+            searchViewFormatter?.setHintTextColor(hintTextColor)
+            searchViewFormatter?.setPlaceholder(placeholder, shouldShowHintSearchIcon)
             searchView.overrideBackAction = shouldOverrideBackButton
         }
     }
@@ -71,7 +71,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         super.onAttachedToWindow()
 
         screenStackFragment?.onSearchViewCreate = { newSearchView ->
-            if (mSearchViewFormatter == null) mSearchViewFormatter =
+            if (searchViewFormatter == null) searchViewFormatter =
                 SearchViewFormatter(newSearchView)
             setSearchViewProps()
             if (autoFocus) {
@@ -148,6 +148,10 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
 
     fun handleSetTextJsRequest(text: String?) {
         text?.let { screenStackFragment?.searchView?.setText(it) }
+    }
+
+    fun handleCancelSearchJsRequest() {
+        screenStackFragment?.searchView?.cancelSearch()
     }
 
     private fun setToolbarElementsVisibility(visibility: Int) {

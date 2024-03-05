@@ -64,7 +64,10 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
   }
 
   if (screen != nil) {
-    if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
+    if ([screen.reactSuperview isKindOfClass:[RNSScreenStackView class]] &&
+        ((RNSScreenStackView *)(screen.reactSuperview)).customAnimation) {
+      [self animateWithNoAnimation:transitionContext toVC:toViewController fromVC:fromViewController];
+    } else if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
       // we are swiping with full width gesture
       if (screen.customAnimationOnSwipe) {
         [self animateTransitionWithStackAnimation:screen.stackAnimation
@@ -287,6 +290,30 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
                        fromViewController.view.alpha = 0.0;
                      }
                      completion:nil];
+  }
+}
+
+- (void)animateWithNoAnimation:(id<UIViewControllerContextTransitioning>)transitionContext
+                          toVC:(UIViewController *)toViewController
+                        fromVC:(UIViewController *)fromViewController
+{
+  if (_operation == UINavigationControllerOperationPush) {
+    [[transitionContext containerView] addSubview:toViewController.view];
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+        }
+        completion:^(BOOL finished) {
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  } else if (_operation == UINavigationControllerOperationPop) {
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+        }
+        completion:^(BOOL finished) {
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
   }
 }
 

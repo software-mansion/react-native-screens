@@ -17,10 +17,10 @@ import javax.annotation.Nonnull
 
 @ReactModule(name = ScreenStackHeaderConfigViewManager.REACT_CLASS)
 class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderConfig>(), RNSScreenStackHeaderConfigManagerInterface<ScreenStackHeaderConfig> {
-    private val mDelegate: ViewManagerDelegate<ScreenStackHeaderConfig>
+    private val delegate: ViewManagerDelegate<ScreenStackHeaderConfig>
 
     init {
-        mDelegate = RNSScreenStackHeaderConfigManagerDelegate<ScreenStackHeaderConfig, ScreenStackHeaderConfigViewManager>(this)
+        delegate = RNSScreenStackHeaderConfigManagerDelegate<ScreenStackHeaderConfig, ScreenStackHeaderConfigViewManager>(this)
     }
 
     override fun getName(): String = REACT_CLASS
@@ -143,7 +143,7 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
         )
     }
 
-    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> = mDelegate
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderConfig> = delegate
 
     companion object {
         const val REACT_CLASS = "RNSScreenStackHeaderConfig"

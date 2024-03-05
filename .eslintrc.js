@@ -18,6 +18,7 @@ module.exports = {
       'react-native-screens',
       'react-native-screens/native-stack',
       'react-native-screens/reanimated',
+      'react-native-screens/gesture-handler',
     ],
     'import/ignore': [
       'node_modules/react-native/index\\.js$', 

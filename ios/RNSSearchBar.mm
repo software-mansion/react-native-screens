@@ -50,7 +50,13 @@ namespace react = facebook::react;
 
 - (void)initCommonProps
 {
+#if !TARGET_OS_TV
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
+#else
+  // on TVOS UISearchController must contain searchResultsController.
+  _controller = [[UISearchController alloc] initWithSearchResultsController:[UIViewController new]];
+#endif
+
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
   _placement = RNSSearchBarPlacementStacked;
@@ -304,6 +310,14 @@ namespace react = facebook::react;
   [_controller.searchBar setText:text];
 }
 
+- (void)cancelSearch
+{
+#if !TARGET_OS_TV
+  [self searchBarCancelButtonClicked:_controller.searchBar];
+  _controller.active = NO;
+#endif
+}
+
 #pragma mark-- Fabric specific
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -330,9 +344,11 @@ namespace react = facebook::react;
     [self setPlaceholder:RCTNSStringFromStringNilIfEmpty(newScreenProps.placeholder)];
   }
 
+#if !TARGET_OS_VISION
   if (oldScreenProps.autoCapitalize != newScreenProps.autoCapitalize) {
     [self setAutoCapitalize:[RNSConvert UITextAutocapitalizationTypeFromCppEquivalent:newScreenProps.autoCapitalize]];
   }
+#endif
 
   if (oldScreenProps.tintColor != newScreenProps.tintColor) {
     [self setTintColor:RCTUIColorFromSharedColor(newScreenProps.tintColor)];
@@ -443,6 +459,14 @@ RCT_EXPORT_METHOD(setText : (NSNumber *_Nonnull)reactTag text : (NSString *)text
   [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
     RNSSearchBar *searchBar = viewRegistry[reactTag];
     [searchBar setText:text];
+  }];
+}
+
+RCT_EXPORT_METHOD(cancelSearch : (NSNumber *_Nonnull)reactTag)
+{
+  [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary *viewRegistry) {
+    RNSSearchBar *searchBar = viewRegistry[reactTag];
+    [searchBar cancelSearch];
   }];
 }
 

@@ -61,6 +61,7 @@ interface NativeCommands {
     flag: boolean
   ) => void;
   setText: (viewRef: React.ElementRef<ComponentType>, text: string) => void;
+  cancelSearch: (viewRef: React.ElementRef<ComponentType>) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
@@ -70,6 +71,7 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
     'clearText',
     'toggleCancelButton',
     'setText',
+    'cancelSearch',
   ],
 });
 

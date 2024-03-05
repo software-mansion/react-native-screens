@@ -23,10 +23,10 @@ import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
-    private val mDelegate: ViewManagerDelegate<Screen>
+    private val delegate: ViewManagerDelegate<Screen>
 
     init {
-        mDelegate = RNSScreenManagerDelegate<Screen, ScreenViewManager>(this)
+        delegate = RNSScreenManagerDelegate<Screen, ScreenViewManager>(this)
     }
 
     override fun getName() = REACT_CLASS
@@ -193,7 +193,7 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
     )
 
-    protected override fun getDelegate(): ViewManagerDelegate<Screen> = mDelegate
+    protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate
 
     companion object {
         const val REACT_CLASS = "RNSScreen"

@@ -8,7 +8,7 @@ describe('Events', () => {
     await waitFor(element(by.id('root-screen-playground-Events')))
       .toBeVisible()
       .whileElement(by.id('root-screen-examples-scrollview'))
-      .scroll(200, 'down');
+      .scroll(100, 'down', NaN, 0.85);
   });
 
   it('should Events playground exist', async () => {
