@@ -12,7 +12,7 @@ set(LIB_ANDROID_GENERATED_COMPONENTS_DIR ${LIB_ANDROID_GENERATED_JNI_DIR}/react/
 add_compile_options(
   -fexceptions
   -frtti
-  -std=c++17
+  -std=c++20
   -Wall
   -Wpedantic
   -Wno-gnu-zero-variadic-macro-arguments
@@ -50,6 +50,8 @@ target_link_libraries(
   react_render_debug
   react_render_graphics
   react_render_mapbuffer
+  react_render_componentregistry
+  react_utils
   rrc_view
   turbomodulejsijni
   yoga
@@ -61,7 +63,7 @@ target_compile_options(
   -DLOG_TAG=\"ReactNative\"
   -fexceptions
   -frtti
-  -std=c++17
+  -std=c++20
   -Wall
 )
 
