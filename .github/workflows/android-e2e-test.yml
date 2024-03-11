@@ -55,21 +55,20 @@ jobs:
           disable-animations: false
           avd-name: e2e_emulator
           arch: x86_64
-          script: echo 'Boot completed!'
-      - name: Suppress "System UI isn't responding"
-        run: |
-          sleep 60
-          # dismiss all system dialogs
-          adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS
-          # Send keystroke Arrow Right
-          sleep 3; adb shell input keyevent 22
-          # Send keystroke Arrow Right again
-          sleep 3; adb shell input keyevent 22
-          # Send keystroke Enter to press a button on the dialog
-          sleep 3; adb shell input keyevent 66
-      - name: Run e2e tests
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn test-e2e-android
+          script: |
+            echo 'Boot completed!'
+            # Suppress "System UI isn't responding"
+            sleep 60
+            # dismiss all system dialogs
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS
+            # Send keystroke Arrow Right
+            sleep 3; adb shell input keyevent 22
+            # Send keystroke Arrow Right again
+            sleep 3; adb shell input keyevent 22
+            # Send keystroke Enter to press a button on the dialog
+            sleep 3; adb shell input keyevent 66
+            # run e2e tests
+            yarn test-e2e-android
       - uses: actions/upload-artifact@v3
         if: ${{ failure() }}
         with:
