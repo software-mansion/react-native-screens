@@ -10,9 +10,10 @@ class ScreenDismissedEvent(surfaceId: Int, viewId: Int) : Event<ScreenDismissedE
     // All events for a given view can be coalesced.
     override fun getCoalescingKey(): Short = 0
 
-    override fun getEventData(): WritableMap? = Arguments.createMap().apply {
-        putInt("dismissCount", 1)
-    }
+    override fun getEventData(): WritableMap? =
+        Arguments.createMap().apply {
+            putInt("dismissCount", 1)
+        }
 
     companion object {
         const val EVENT_NAME = "topDismissed"

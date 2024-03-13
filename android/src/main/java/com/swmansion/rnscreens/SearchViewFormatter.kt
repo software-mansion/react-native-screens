@@ -57,7 +57,10 @@ class SearchViewFormatter(var searchView: SearchView) {
         }
     }
 
-    fun setPlaceholder(placeholder: String, shouldShowHintSearchIcon: Boolean) {
+    fun setPlaceholder(
+        placeholder: String,
+        shouldShowHintSearchIcon: Boolean,
+    ) {
         if (shouldShowHintSearchIcon) {
             searchView.queryHint = placeholder
         } else {

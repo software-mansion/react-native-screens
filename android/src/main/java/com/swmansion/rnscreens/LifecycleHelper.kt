@@ -7,22 +7,23 @@ import androidx.lifecycle.LifecycleObserver
 
 class LifecycleHelper {
     private val mViewToLifecycleMap: MutableMap<View, Lifecycle> = HashMap()
-    private val mRegisterOnLayoutChange: View.OnLayoutChangeListener = object : View.OnLayoutChangeListener {
-        override fun onLayoutChange(
-            view: View,
-            i: Int,
-            i1: Int,
-            i2: Int,
-            i3: Int,
-            i4: Int,
-            i5: Int,
-            i6: Int,
-            i7: Int
-        ) {
-            registerViewWithLifecycleOwner(view)
-            view.removeOnLayoutChangeListener(this)
+    private val mRegisterOnLayoutChange: View.OnLayoutChangeListener =
+        object : View.OnLayoutChangeListener {
+            override fun onLayoutChange(
+                view: View,
+                i: Int,
+                i1: Int,
+                i2: Int,
+                i3: Int,
+                i4: Int,
+                i5: Int,
+                i6: Int,
+                i7: Int,
+            ) {
+                registerViewWithLifecycleOwner(view)
+                view.removeOnLayoutChangeListener(this)
+            }
         }
-    }
 
     private fun registerViewWithLifecycleOwner(view: View) {
         val parent = findNearestScreenFragmentAncestor(view)
@@ -54,7 +55,9 @@ class LifecycleHelper {
             }
             return if (parent != null) {
                 (parent as Screen).fragment
-            } else null
+            } else {
+                null
+            }
         }
     }
 }

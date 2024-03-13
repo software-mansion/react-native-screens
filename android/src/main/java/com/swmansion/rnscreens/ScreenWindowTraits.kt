@@ -38,7 +38,10 @@ object ScreenWindowTraits {
         didSetNavigationBarAppearance = true
     }
 
-    internal fun setOrientation(screen: Screen, activity: Activity?) {
+    internal fun setOrientation(
+        screen: Screen,
+        activity: Activity?,
+    ) {
         if (activity == null) {
             return
         }
@@ -75,10 +78,15 @@ object ScreenWindowTraits {
                     }
                     colorAnimation.start()
                 }
-            })
+            },
+        )
     }
 
-    internal fun setStyle(screen: Screen, activity: Activity?, context: ReactContext?) {
+    internal fun setStyle(
+        screen: Screen,
+        activity: Activity?,
+        context: ReactContext?,
+    ) {
         if (activity == null || context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return
         }
@@ -97,7 +105,7 @@ object ScreenWindowTraits {
     internal fun setTranslucent(
         screen: Screen,
         activity: Activity?,
-        context: ReactContext?
+        context: ReactContext?,
     ) {
         if (activity == null || context == null) {
             return
@@ -127,8 +135,8 @@ object ScreenWindowTraits {
                                             windowInsets.left,
                                             0,
                                             windowInsets.right,
-                                            windowInsets.bottom
-                                        )
+                                            windowInsets.bottom,
+                                        ),
                                     )
                                     .build()
                             } else {
@@ -136,7 +144,7 @@ object ScreenWindowTraits {
                                     defaultInsets.systemWindowInsetLeft,
                                     0,
                                     defaultInsets.systemWindowInsetRight,
-                                    defaultInsets.systemWindowInsetBottom
+                                    defaultInsets.systemWindowInsetBottom,
                                 )
                             }
                         }
@@ -145,10 +153,14 @@ object ScreenWindowTraits {
                     }
                     ViewCompat.requestApplyInsets(decorView)
                 }
-            })
+            },
+        )
     }
 
-    internal fun setHidden(screen: Screen, activity: Activity?) {
+    internal fun setHidden(
+        screen: Screen,
+        activity: Activity?,
+    ) {
         if (activity == null) {
             return
         }
@@ -168,7 +180,10 @@ object ScreenWindowTraits {
 
     // Methods concerning navigationBar management were taken from `react-native-navigation`'s repo:
     // https://github.com/wix/react-native-navigation/blob/9bb70d81700692141a2c505c081c2d86c7f9c66e/lib/android/app/src/main/java/com/reactnativenavigation/utils/SystemUiUtils.kt
-    internal fun setNavigationBarColor(screen: Screen, activity: Activity?) {
+    internal fun setNavigationBarColor(
+        screen: Screen,
+        activity: Activity?,
+    ) {
         if (activity == null) {
             return
         }
@@ -185,7 +200,10 @@ object ScreenWindowTraits {
         window.navigationBarColor = color
     }
 
-    internal fun setNavigationBarHidden(screen: Screen, activity: Activity?) {
+    internal fun setNavigationBarHidden(
+        screen: Screen,
+        activity: Activity?,
+    ) {
         if (activity == null) {
             return
         }
@@ -204,12 +222,16 @@ object ScreenWindowTraits {
         } else {
             WindowInsetsControllerCompat(
                 window,
-                window.decorView
+                window.decorView,
             ).show(WindowInsetsCompat.Type.navigationBars())
         }
     }
 
-    internal fun trySetWindowTraits(screen: Screen, activity: Activity?, context: ReactContext?) {
+    internal fun trySetWindowTraits(
+        screen: Screen,
+        activity: Activity?,
+        context: ReactContext?,
+    ) {
         if (didSetOrientation) {
             setOrientation(screen, activity)
         }
@@ -225,7 +247,10 @@ object ScreenWindowTraits {
         }
     }
 
-    private fun findScreenForTrait(screen: Screen, trait: WindowTraits): Screen? {
+    private fun findScreenForTrait(
+        screen: Screen,
+        trait: WindowTraits,
+    ): Screen? {
         val childWithTrait = childScreenWithTraitSet(screen, trait)
         if (childWithTrait != null) {
             return childWithTrait
@@ -239,7 +264,10 @@ object ScreenWindowTraits {
         }
     }
 
-    private fun findParentWithTraitSet(screen: Screen, trait: WindowTraits): Screen? {
+    private fun findParentWithTraitSet(
+        screen: Screen,
+        trait: WindowTraits,
+    ): Screen? {
         var parent: ViewParent? = screen.container
         while (parent != null) {
             if (parent is Screen) {
@@ -254,7 +282,7 @@ object ScreenWindowTraits {
 
     private fun childScreenWithTraitSet(
         screen: Screen?,
-        trait: WindowTraits
+        trait: WindowTraits,
     ): Screen? {
         screen?.fragmentWrapper?.let {
             for (sc in it.childScreenContainers) {
@@ -272,7 +300,10 @@ object ScreenWindowTraits {
         return null
     }
 
-    private fun checkTraitForScreen(screen: Screen, trait: WindowTraits): Boolean {
+    private fun checkTraitForScreen(
+        screen: Screen,
+        trait: WindowTraits,
+    ): Boolean {
         return when (trait) {
             WindowTraits.ORIENTATION -> screen.screenOrientation != null
             WindowTraits.COLOR -> screen.statusBarColor != null
