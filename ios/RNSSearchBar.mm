@@ -50,7 +50,13 @@ namespace react = facebook::react;
 
 - (void)initCommonProps
 {
+#if !TARGET_OS_TV
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
+#else
+  // on TVOS UISearchController must contain searchResultsController.
+  _controller = [[UISearchController alloc] initWithSearchResultsController:[UIViewController new]];
+#endif
+
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
   _placement = RNSSearchBarPlacementStacked;
