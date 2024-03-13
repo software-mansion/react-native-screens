@@ -48,7 +48,7 @@ jobs:
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: 31
-          target: default
+          target: aosp_atd
           profile: pixel_2
           ram-size: '4096M'
           disk-size: '10G'
