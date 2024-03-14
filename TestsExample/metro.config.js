@@ -24,7 +24,8 @@ const config = {
   resolver: {
     blockList: exclusionList(
       modules.map(
-        m => new RegExp(`^${escape(path.join(rnsRoot, 'node_modules', m))}\\/.*$`),
+        m =>
+          new RegExp(`^${escape(path.join(rnsRoot, 'node_modules', m))}\\/.*$`),
       ),
     ),
 
