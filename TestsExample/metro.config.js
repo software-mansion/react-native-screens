@@ -5,16 +5,11 @@ const exclusionList = require('metro-config/src/defaults/exclusionList');
 const escape = require('escape-string-regexp');
 const pack = require('../package.json');
 
-const root = path.resolve(__dirname, '..');
+// react-native-screens root directory
+const rnsRoot = path.resolve(__dirname, '..');
 
 const modules = [
   '@react-navigation/native',
-  // '@react-navigation/bottom-tabs',
-  // '@react-navigation/stack',
-  // '@react-navigation/core',
-  // '@react-navigation/elements',
-  // '@react-navigation/routers',
-  // '@react-navigation/native-stack',
   'react-native-reanimated',
   'react-native-safe-area-context',
   ...Object.keys(pack.peerDependencies),
@@ -22,67 +17,62 @@ const modules = [
 
 const config = {
   projectRoot: __dirname,
-  watchFolders: [root],
+  watchFolders: [rnsRoot],
 
   // We need to make sure that only one version is loaded for peerDependencies
   // So we exclude them at the root, and alias them to the versions in example's node_modules
   resolver: {
     blockList: exclusionList(
       modules.map(
-        m => new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`),
+        m => new RegExp(`^${escape(path.join(rnsRoot, 'node_modules', m))}\\/.*$`),
       ),
     ),
 
-    // maxWorkers: 1,
-
     extraNodeModules: modules.reduce((acc, name) => {
-      const enm = path.join(__dirname, 'node_modules', name);
-      const npm = path.join(__dirname, '../../');
-      console.log(`ENM: ${enm} NMP: ${npm}`);
       acc[name] = path.join(__dirname, 'node_modules', name);
       return acc;
     }, {}),
 
     nodeModulesPaths: [path.join(__dirname, '../../')],
 
-    maxWorkers: 1,
-
+    // Since we use react-naviation as submodule it comes with it's own node_modules. While loading
+    // react-navigation code, due to how module resolution algorithms works it seems that its node_modules
+    // are consulted first, resulting in double-loaded packages (so doubled react, react-native and other package instances) leading
+    // to various errors. To mitigate this we define below custom request resolver, hijacking requests to conflicting modules and manually
+    // resolving appropriate files. **Most likely** this can be achieved by proper usage of blockList but I found this method working ¯\_(ツ)_/¯
     resolveRequest: (context, moduleName, platform) => {
-      // console.log(
-      //   `context: ${JSON.stringify(
-      //     context,
-      //   )} moduleName: ${moduleName} platform ${platform}`,
-      // );
-      if (moduleName === 'react') {
-        // Logic to resolve the module name to a file path...
-        // NOTE: Throw an error if there is no resolution.
+      if (moduleName === 'react' || moduleName === 'react-native') {
         return {
-          filePath: '/Users/kkafara/workspace/swm/react-native-screens/TestsExample/node_modules/react/index.js',
-          type: 'sourceFile',
-        };
-      }
-      if (moduleName === 'react-native') {
-        // Logic to resolve the module name to a file path...
-        // NOTE: Throw an error if there is no resolution.
-        return {
-          filePath: '/Users/kkafara/workspace/swm/react-native-screens/TestsExample/node_modules/react-native/index.js',
+          filePath: path.join(
+            __dirname,
+            'node_modules',
+            moduleName,
+            'index.js',
+          ),
           type: 'sourceFile',
         };
       }
 
       if (moduleName === 'react-native-safe-area-context') {
         return {
-          filePath: '/Users/kkafara/workspace/swm/react-native-screens/TestsExample/node_modules/react-native-safe-area-context/src/index.tsx',
+          filePath: path.join(
+            __dirname,
+            'node_modules',
+            moduleName,
+            'src',
+            'index.tsx',
+          ),
           type: 'sourceFile',
         };
       }
 
       if (moduleName === 'react-native-screens') {
         return {
-          filePath: '/Users/kkafara/workspace/swm/react-native-screens/src/index.tsx',
+          filePath: path.join(rnsRoot, 'src', 'index.tsx'),
           type: 'sourceFile',
         };
       }
+
       // Optionally, chain to the standard Metro resolver.
       return context.resolveRequest(context, moduleName, platform);
     },
