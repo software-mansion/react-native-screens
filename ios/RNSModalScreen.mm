@@ -3,7 +3,6 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>
 #import <rnscreens/RNSModalScreenComponentDescriptor.h>
-#import "RNSConvert.h"
 #endif
 
 @implementation RNSModalScreen

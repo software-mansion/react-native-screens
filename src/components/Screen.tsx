@@ -83,6 +83,7 @@ export class InnerScreen extends React.Component<ScreenProps> {
     } = rest;
 
     if (enabled && isNativePlatformSupported) {
+      // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens
       const AnimatedScreen =
         Platform.OS === 'android' ||
         stackPresentation === 'push' ||
