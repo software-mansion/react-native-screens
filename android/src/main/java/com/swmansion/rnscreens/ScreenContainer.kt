@@ -320,7 +320,6 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
             // will already be false.
             performUpdates()
         }
-
     }
 
     protected fun performUpdatesNow() {

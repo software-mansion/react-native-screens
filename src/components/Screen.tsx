@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import React from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, View, Platform } from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -14,6 +14,7 @@ import {
 
 // Native components
 import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
+import ModalScreenNativeComponent from '../fabric/ModalScreenNativeComponent';
 
 // @ts-ignore - its taken straight from RN
 // eslint-disable-next-line import/namespace
@@ -31,7 +32,10 @@ customDirectEventTypes.topDetached = {
 
 export const NativeScreen: React.ComponentType<ScreenProps> =
   ScreenNativeComponent as any;
-let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
+const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
+const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
+  ModalScreenNativeComponent as React.ComponentType<ScreenProps>
+);
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
@@ -75,11 +79,18 @@ export class InnerScreen extends React.Component<ScreenProps> {
       sheetGrabberVisible = false,
       sheetCornerRadius = -1.0,
       sheetExpandsWhenScrolledToEdge = true,
+      stackPresentation,
     } = rest;
 
     if (enabled && isNativePlatformSupported) {
-      AnimatedNativeScreen =
-        AnimatedNativeScreen || Animated.createAnimatedComponent(NativeScreen);
+      // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens
+      const AnimatedScreen =
+        Platform.OS === 'android' ||
+        stackPresentation === 'push' ||
+        stackPresentation === 'containedModal' ||
+        stackPresentation === 'containedTransparentModal'
+          ? AnimatedNativeScreen
+          : AnimatedNativeModalScreen;
 
       let {
         // Filter out active prop in this case because it is unused and
@@ -113,7 +124,7 @@ export class InnerScreen extends React.Component<ScreenProps> {
 
       return (
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
-          <AnimatedNativeScreen
+          <AnimatedScreen
             {...props}
             activityState={activityState}
             sheetAllowedDetents={sheetAllowedDetents}
@@ -164,7 +175,7 @@ export class InnerScreen extends React.Component<ScreenProps> {
                 {children}
               </TransitionProgressContext.Provider>
             )}
-          </AnimatedNativeScreen>
+          </AnimatedScreen>
         </DelayedFreeze>
       );
     } else {

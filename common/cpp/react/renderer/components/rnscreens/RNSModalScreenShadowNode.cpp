@@ -1,11 +1,11 @@
-#include "RNSScreenShadowNode.h"
+#include "RNSModalScreenShadowNode.h"
 
 namespace facebook {
 namespace react {
 
-extern const char RNSScreenComponentName[] = "RNSScreen";
+extern const char RNSModalScreenComponentName[] = "RNSModalScreen";
 
-Point RNSScreenShadowNode::getContentOriginOffset() const {
+Point RNSModalScreenShadowNode::getContentOriginOffset() const {
   auto stateData = getStateData();
   auto contentOffset = stateData.contentOffset;
   return {contentOffset.x, contentOffset.y};
