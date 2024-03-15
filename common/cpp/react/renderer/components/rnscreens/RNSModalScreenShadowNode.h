@@ -9,10 +9,10 @@
 namespace facebook {
 namespace react {
 
-JSI_EXPORT extern const char RNSScreenComponentName[];
+JSI_EXPORT extern const char RNSModalScreenComponentName[];
 
-class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
-                                          RNSScreenComponentName,
+class JSI_EXPORT RNSModalScreenShadowNode final : public ConcreteViewShadowNode<
+                                          RNSModalScreenComponentName,
                                           RNSScreenProps,
                                           RNSScreenEventEmitter,
                                           RNSScreenState> {
@@ -20,6 +20,11 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
 
   Point getContentOriginOffset() const override;
+  static ShadowNodeTraits BaseTraits() {
+    auto traits = ConcreteViewShadowNode::BaseTraits();
+    traits.set(ShadowNodeTraits::Trait::RootNodeKind);
+    return traits;
+  }
 };
 
 } // namespace react
