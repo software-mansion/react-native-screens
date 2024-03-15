@@ -107,7 +107,10 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
-    CGFloat headerHeight = [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
+    RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
+    // in large title, ScrollView handles the offset of content so we cannot set it here also.
+    CGFloat headerHeight =
+        config.largeTitle ? 0 : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
     auto newState =
         react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), RCTPointFromCGPoint(CGPointMake(0, headerHeight))};
     _state->updateState(std::move(newState));
