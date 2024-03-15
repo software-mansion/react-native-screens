@@ -416,7 +416,7 @@ namespace react = facebook::react;
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -511,7 +511,7 @@ namespace react = facebook::react;
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{

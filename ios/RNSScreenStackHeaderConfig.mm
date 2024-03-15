@@ -750,7 +750,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
  */
 + (RCTImageSource *)imageSourceFromImageView:(RCTImageComponentView *)view
 {
-  auto const imageProps = *std::static_pointer_cast<const react::ImageProps>(view.props);
+  const auto &imageProps = *std::static_pointer_cast<const react::ImageProps>(view.props);
   react::ImageSource cppImageSource = imageProps.sources.at(0);
   auto imageSize = CGSize{cppImageSource.size.width, cppImageSource.size.height};
   NSURLRequest *request =
