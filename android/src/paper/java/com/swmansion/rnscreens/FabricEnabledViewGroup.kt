@@ -8,7 +8,7 @@ abstract class FabricEnabledViewGroup constructor(context: ReactContext?) : View
 
     val fabricViewStateManager get() = null as FabricViewStateManager?
 
-    protected fun updateScreenSizeFabric(width: Int, height: Int) {
+    protected fun updateScreenSizeFabric(width: Int, height: Int, headerHeight: Double) {
         // do nothing
     }
 }
