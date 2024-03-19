@@ -20,7 +20,8 @@ module.exports = {
           "RNSScreenStackHeaderSubviewComponentDescriptor",
           "RNSScreenStackComponentDescriptor",
           "RNSSearchBarComponentDescriptor",
-          'RNSScreenComponentDescriptor'
+          'RNSScreenComponentDescriptor',
+          'RNSModalScreenComponentDescriptor'
         ],
         cmakeListsPath: "../android/src/main/jni/CMakeLists.txt"
       } : {},

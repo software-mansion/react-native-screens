@@ -3,9 +3,9 @@ import React from 'react';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import { ScrollView, Button, Text } from 'react-native';
 import {
-  createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import {createStackNavigator} from '@react-navigation/stack';
 
