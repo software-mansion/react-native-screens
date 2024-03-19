@@ -582,10 +582,6 @@ namespace react = facebook::react;
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
-#ifdef RCT_NEW_ARCH_ENABLED
-        auto screenController = (RNSScreen *)top;
-        [screenController resetViewToScreen];
-#endif
         [_controller setViewControllers:controllers animated:YES];
       } else {
         // last top controller is no longer on stack
@@ -603,10 +599,6 @@ namespace react = facebook::react;
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
       [_controller setViewControllers:newControllers animated:NO];
-#ifdef RCT_NEW_ARCH_ENABLED
-      auto screenController = (RNSScreen *)top;
-      [screenController resetViewToScreen];
-#endif
       [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
@@ -667,14 +659,11 @@ namespace react = facebook::react;
 - (void)dismissOnReload
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-  if ([_controller.visibleViewController isKindOfClass:[RNSScreen class]]) {
-    [(RNSScreen *)_controller.visibleViewController resetViewToScreen];
-  }
 #else
   dispatch_async(dispatch_get_main_queue(), ^{
     [self invalidate];
   });
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #pragma mark methods connected to transitioning
@@ -1166,7 +1155,6 @@ namespace react = facebook::react;
   }
 
   [_presentedModals removeAllObjects];
-  [self dismissOnReload];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
   [_controller setViewControllers:@[ [UIViewController new] ]];
