@@ -171,12 +171,10 @@ namespace react = facebook::react;
     _controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    // TODO: on Fabric, same controllers can be used as modals and then recycled and used a push which would result in
-    // this error. It would be good to check if it doesn't leak in such case.
 #else
     RCTLogError(
         @"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
   }
   _stackPresentation = stackPresentation;
 }
@@ -298,7 +296,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onDismissed(react::RNSScreenEventEmitter::OnDismissed{.dismissCount = dismissCount});
@@ -320,7 +317,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onNativeDismissCancelled(
@@ -337,7 +333,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillAppear(react::RNSScreenEventEmitter::OnWillAppear{});
