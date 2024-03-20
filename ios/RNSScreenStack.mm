@@ -582,7 +582,17 @@ namespace react = facebook::react;
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
+#ifdef RCT_NEW_ARCH_ENABLED
+        // This is a workaround for the case, when in the app we're trying to replace the screens during the transition
+        // of the screen that is already being replaced. In such case, we can't do the snapshot, since
+        // we don't have appropriate superview to mount it (it's not a wrapperView, but _UIParallaxDimmingView).
+        // At the moment of RN 0.74 we can't queue the unmounts for such situation either, so we need to turn off
+        // animations, when the view is not yet mounted, but it will appear after the transition of previous
+        // replacement.
+        [_controller setViewControllers:controllers animated:previousTop.view.window != nil];
+#else
         [_controller setViewControllers:controllers animated:YES];
+#endif // RCT_NEW_ARCH_ENABLED
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
@@ -598,6 +608,15 @@ namespace react = facebook::react;
       // no animation and do animated push of the last item
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
+
+      // when array with current view controllers is equal to array with new ones,
+      // we shouldn't try to set push view controllers, since it may result with error
+      // about trying to push the same view controller more than once. This may be the case
+      // when we're trying to navigate to the one screen and navigate to the other one in the same time.
+      if ([_controller.viewControllers isEqualToArray:newControllers] && newControllers.count > 1) {
+        return;
+      }
+
       [_controller setViewControllers:newControllers animated:NO];
       [_controller pushViewController:top animated:YES];
     } else {
