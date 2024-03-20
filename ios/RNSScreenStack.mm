@@ -583,10 +583,16 @@ namespace react = facebook::react;
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
 #ifdef RCT_NEW_ARCH_ENABLED
-        auto screenController = (RNSScreen *)top;
-        [screenController resetViewToScreen];
-#endif
+        // This is a workaround for the case, when in the app we're trying to do `replace` action on screens, when
+        // there's already ongoing transition to some screen. In such case, we're making the snapshot, but we're trying
+        // to add it to the wrong superview (where it should be UIViewControllerWrapperView, but it's
+        // _UIParallaxDimmingView instead). At the moment of RN 0.74 we can't queue the unmounts for such situation
+        // either, so we need to turn off animations, when the view is not yet mounted, but it will appear after the
+        // transition of previous replacement.
+        [_controller setViewControllers:controllers animated:previousTop.view.window != nil];
+#else
         [_controller setViewControllers:controllers animated:YES];
+#endif // RCT_NEW_ARCH_ENABLED
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
@@ -602,11 +608,18 @@ namespace react = facebook::react;
       // no animation and do animated push of the last item
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
-      [_controller setViewControllers:newControllers animated:NO];
+
 #ifdef RCT_NEW_ARCH_ENABLED
-      auto screenController = (RNSScreen *)top;
-      [screenController resetViewToScreen];
-#endif
+      // when array with current view controllers is equal to array with new ones,
+      // we shouldn't try to set push view controllers, since it may result with error
+      // about trying to push the same view controller more than once. This may be the case
+      // when we're trying to navigate to the one screen and navigate to the other one in the same time.
+      if ([_controller.viewControllers isEqualToArray:newControllers] && newControllers.count > 1) {
+        return;
+      }
+#endif // RCT_NEW_ARCH_ENABLED
+
+      [_controller setViewControllers:newControllers animated:NO];
       [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
@@ -667,14 +680,11 @@ namespace react = facebook::react;
 - (void)dismissOnReload
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-  if ([_controller.visibleViewController isKindOfClass:[RNSScreen class]]) {
-    [(RNSScreen *)_controller.visibleViewController resetViewToScreen];
-  }
 #else
   dispatch_async(dispatch_get_main_queue(), ^{
     [self invalidate];
   });
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #pragma mark methods connected to transitioning
@@ -1166,7 +1176,6 @@ namespace react = facebook::react;
   }
 
   [_presentedModals removeAllObjects];
-  [self dismissOnReload];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
   [_controller setViewControllers:@[ [UIViewController new] ]];

@@ -171,12 +171,10 @@ namespace react = facebook::react;
     _controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    // TODO: on Fabric, same controllers can be used as modals and then recycled and used a push which would result in
-    // this error. It would be good to check if it doesn't leak in such case.
 #else
     RCTLogError(
         @"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
   }
   _stackPresentation = stackPresentation;
 }
@@ -298,7 +296,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onDismissed(react::RNSScreenEventEmitter::OnDismissed{.dismissCount = dismissCount});
@@ -320,7 +317,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onNativeDismissCancelled(
@@ -337,7 +333,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillAppear(react::RNSScreenEventEmitter::OnWillAppear{});
@@ -360,7 +355,6 @@ namespace react = facebook::react;
   }
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillDisappear(react::RNSScreenEventEmitter::OnWillDisappear{});
@@ -376,7 +370,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onAppear(react::RNSScreenEventEmitter::OnAppear{});
@@ -396,7 +389,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onDisappear(react::RNSScreenEventEmitter::OnDisappear{});
@@ -676,6 +668,11 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
 }
 
++ (BOOL)shouldBeRecycled
+{
+  return NO;
+}
+
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
@@ -696,27 +693,6 @@ namespace react = facebook::react;
 }
 
 #pragma mark - RCTComponentViewProtocol
-
-- (void)prepareForRecycle
-{
-  [super prepareForRecycle];
-  // TODO: Make sure that there is no edge case when this should be uncommented
-  // _controller=nil;
-  _dismissed = NO;
-  _state.reset();
-  _touchHandler = nil;
-
-  // We set this prop to default value here to workaround view-recycling.
-  // Let's assume the view has had _stackPresentation == <some modal stack presentation> set
-  // before below line was executed. Then, when instantiated again (with the same modal presentation)
-  // updateProps:oldProps: method would be called and setter for stack presentation would not be called.
-  // This is crucial as in that setter we register `self.controller` as a delegate
-  // (UIAdaptivePresentationControllerDelegate) to presentation controller and this leads to buggy modal behaviour as we
-  // rely on UIAdaptivePresentationControllerDelegate callbacks. Restoring the default value and then comparing against
-  // it in updateProps:oldProps: allows for setter to be called, however if there was some additional logic to execute
-  // when stackPresentation is set to "push" the setter would not be triggered.
-  _stackPresentation = RNSScreenStackPresentationPush;
-}
 
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
@@ -781,12 +757,9 @@ namespace react = facebook::react;
   }
 #endif // !TARGET_OS_TV
 
-  // Notice that we compare against _stackPresentation, not oldScreenProps.stackPresentation.
-  // See comment in prepareForRecycle method for explanation.
-  RNSScreenStackPresentation newStackPresentation =
-      [RNSConvert RNSScreenStackPresentationFromCppEquivalent:newScreenProps.stackPresentation];
-  if (newStackPresentation != _stackPresentation) {
-    [self setStackPresentation:newStackPresentation];
+  if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
+    [self
+        setStackPresentation:[RNSConvert RNSScreenStackPresentationFromCppEquivalent:newScreenProps.stackPresentation]];
   }
 
   if (newScreenProps.stackAnimation != oldScreenProps.stackAnimation) {
@@ -993,9 +966,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-#ifdef RCT_NEW_ARCH_ENABLED
-  [self resetViewToScreen];
-#endif
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     if (self.screenView.preventNativeDismiss) {
       // if we want to prevent the native dismiss, we do not send dismissal event,
@@ -1411,25 +1381,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)setViewToSnapshot:(UIView *)snapshot
 {
-  // modals of native stack seem not to support
-  // changing their view by just setting the view
-  if (_initialView.stackPresentation != RNSScreenStackPresentationPush) {
-    UIView *superView = self.view.superview;
-    [self.view removeFromSuperview];
-    self.view = snapshot;
-    [superView addSubview:self.view];
-  } else {
-    [self.view removeFromSuperview];
-    self.view = snapshot;
-  }
-}
-
-- (void)resetViewToScreen
-{
-  if (self.view != _initialView) {
-    [self.view removeFromSuperview];
-    self.view = _initialView;
-  }
+  UIView *superView = self.view.superview;
+  [self.view removeFromSuperview];
+  self.view = snapshot;
+  [superView addSubview:self.view];
 }
 
 #else
