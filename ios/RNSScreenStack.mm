@@ -583,12 +583,12 @@ namespace react = facebook::react;
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
 #ifdef RCT_NEW_ARCH_ENABLED
-        // This is a workaround for the case, when in the app we're trying to replace the screens during the transition
-        // of the screen that is already being replaced. In such case, we can't do the snapshot, since
-        // we don't have appropriate superview to mount it (it's not a wrapperView, but _UIParallaxDimmingView).
-        // At the moment of RN 0.74 we can't queue the unmounts for such situation either, so we need to turn off
-        // animations, when the view is not yet mounted, but it will appear after the transition of previous
-        // replacement.
+        // This is a workaround for the case, when in the app we're trying to do `replace` action on screens, when
+        // there's already ongoing transition to some screen. In such case, we're making the snapshot, but we're trying
+        // to add it to the wrong superview (where it should be UIViewControllerWrapperView, but it's
+        // _UIParallaxDimmingView instead). At the moment of RN 0.74 we can't queue the unmounts for such situation
+        // either, so we need to turn off animations, when the view is not yet mounted, but it will appear after the
+        // transition of previous replacement.
         [_controller setViewControllers:controllers animated:previousTop.view.window != nil];
 #else
         [_controller setViewControllers:controllers animated:YES];
