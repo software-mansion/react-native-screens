@@ -37,25 +37,6 @@ const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
   ModalScreenNativeComponent as React.ComponentType<ScreenProps>
 );
 
-// Incomplete type, all accessible properties available at:
-// react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
-interface ViewConfig extends View {
-  viewConfig: {
-    validAttributes: {
-      style: {
-        display: boolean;
-      };
-    };
-  };
-  _viewConfig: {
-    validAttributes: {
-      style: {
-        display: boolean;
-      };
-    };
-  };
-}
-
 export class InnerScreen extends React.Component<ScreenProps> {
   private ref: React.ElementRef<typeof View> | null = null;
   private closing = new Animated.Value(0);
@@ -119,22 +100,6 @@ export class InnerScreen extends React.Component<ScreenProps> {
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
 
-      const handleRef = (ref: ViewConfig) => {
-        if (ref?.viewConfig?.validAttributes?.style) {
-          ref.viewConfig.validAttributes.style = {
-            ...ref.viewConfig.validAttributes.style,
-            display: false,
-          };
-          this.setRef(ref);
-        } else if (ref?._viewConfig?.validAttributes?.style) {
-          ref._viewConfig.validAttributes.style = {
-            ...ref._viewConfig.validAttributes.style,
-            display: false,
-          };
-          this.setRef(ref);
-        }
-      };
-
       return (
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen
@@ -153,7 +118,7 @@ export class InnerScreen extends React.Component<ScreenProps> {
             }}
             // This prevents showing blank screen when navigating between multiple screens with freezing
             // https://github.com/software-mansion/react-native-screens/pull/1208
-            ref={handleRef}
+            ref={this.setRef}
             onTransitionProgress={
               !isNativeStack
                 ? undefined

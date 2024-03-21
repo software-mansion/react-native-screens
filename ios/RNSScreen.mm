@@ -91,6 +91,10 @@ namespace react = facebook::react;
 #endif // !TARGET_OS_TV
 }
 
+- (void)setReactDisplay:(YGDisplay)reactDisplay
+{
+}
+
 - (UIViewController *)reactViewController
 {
   return _controller;
@@ -1503,6 +1507,8 @@ RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #endif
+
+RCT_CUSTOM_SHADOW_PROPERTY(display, id, RNSScreenView) {}
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
 // See:

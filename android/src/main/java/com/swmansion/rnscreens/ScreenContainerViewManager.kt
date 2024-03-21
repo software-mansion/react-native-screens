@@ -30,7 +30,7 @@ class ScreenContainerViewManager : ViewGroupManager<ScreenContainer>() {
 
     override fun getChildAt(parent: ScreenContainer, index: Int): View = parent.getScreenAt(index)
 
-    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreensShadowNode(context)
+    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreenContainerShadowNode(context)
 
     override fun needsCustomLayoutForChildren(): Boolean = true
 

@@ -303,7 +303,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
     }
 
     private fun onScreenChanged() {
-        // we perform update in `onBeforeLayout` of `ScreensShadowNode` by adding an UIBlock
+        // we perform update in `onBeforeLayout` of `ScreenContainerShadowNode` by adding an UIBlock
         // which is called after updating children of the ScreenContainer.
         // We do it there because `onUpdate` logic requires all changes of children to be already
         // made in order to provide proper animation for fragment transition for ScreenStack
@@ -314,7 +314,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         needsUpdate = true
         (context as ThemedReactContext).reactApplicationContext.runOnUiQueueThread {
             // We schedule the update here because LayoutAnimations of `react-native-reanimated`
-            // sometimes attach/detach screens after the layout block of `ScreensShadowNode` has
+            // sometimes attach/detach screens after the layout block of `ScreenContainerShadowNode` has
             // already run, and we want to update the container then too. In the other cases,
             // this code will do nothing since it will run after the UIBlock when `mNeedUpdate`
             // will already be false.
@@ -325,7 +325,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
     protected fun performUpdatesNow() {
         // we want to update immediately when the fragment manager is set or native back button
         // dismiss is dispatched or Screen's activityState changes since it is not connected to React
-        // view hierarchy changes and will not trigger `onBeforeLayout` method of `ScreensShadowNode`
+        // view hierarchy changes and will not trigger `onBeforeLayout` method of `ScreenContainerShadowNode`
         needsUpdate = true
         performUpdates()
     }

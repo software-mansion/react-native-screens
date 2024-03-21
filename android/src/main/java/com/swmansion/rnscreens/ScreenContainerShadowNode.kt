@@ -6,7 +6,7 @@ import com.facebook.react.uimanager.NativeViewHierarchyManager
 import com.facebook.react.uimanager.NativeViewHierarchyOptimizer
 import com.facebook.react.uimanager.UIManagerModule
 
-internal class ScreensShadowNode(private var context: ReactContext) : LayoutShadowNode() {
+internal class ScreenContainerShadowNode(private var context: ReactContext) : LayoutShadowNode() {
     override fun onBeforeLayout(nativeViewHierarchyOptimizer: NativeViewHierarchyOptimizer) {
         super.onBeforeLayout(nativeViewHierarchyOptimizer)
         (context.getNativeModule(UIManagerModule::class.java))?.addUIBlock { nativeViewHierarchyManager: NativeViewHierarchyManager ->
