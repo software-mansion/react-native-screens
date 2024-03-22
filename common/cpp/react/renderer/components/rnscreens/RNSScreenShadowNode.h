@@ -16,10 +16,25 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
                                           RNSScreenProps,
                                           RNSScreenEventEmitter,
                                           RNSScreenState> {
- public:
-  using ConcreteViewShadowNode::ConcreteViewShadowNode;
+                                          public:
+                                              RNSScreenShadowNode(
+                                                     ShadowNodeFragment const &fragment,
+                                                     ShadowNodeFamily::Shared const &family,
+                                                     ShadowNodeTraits traits)
+                                                     : ConcreteViewShadowNode(static_cast<ShadowNodeFragment>(updateFragmentProps(fragment, *family)), family, traits) {
+                                                         
+                                                     }
 
-  Point getContentOriginOffset() const override;
+                                              RNSScreenShadowNode(
+                                                     ShadowNode const &sourceShadowNode,
+                                                     ShadowNodeFragment const &fragment)
+                                                     : ConcreteViewShadowNode(sourceShadowNode, static_cast<ShadowNodeFragment>(updateFragmentProps(fragment, sourceShadowNode.getFamily()))) {}
+                                              
+                                              Point getContentOriginOffset() const override;
+
+                                          private:
+                                                 static const ShadowNodeFragment::Value updateFragmentProps(ShadowNodeFragment const &fragment, ShadowNodeFamily const &family);
+                                              
 };
 
 } // namespace react

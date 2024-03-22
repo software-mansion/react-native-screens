@@ -1,9 +1,11 @@
 package com.swmansion.rnscreens
 
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
@@ -192,6 +194,8 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
         HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
         ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
     )
+
+    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode = ScreenShadowNode()
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate
 
