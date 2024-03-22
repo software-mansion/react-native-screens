@@ -2,7 +2,16 @@ import {
   GestureUpdateEvent,
   PanGestureHandlerEventPayload,
 } from 'react-native-gesture-handler';
+
 import { ScreenTransition } from 'react-native-reanimated';
+
+const _ScreenTransition = ScreenTransition;
+if (!ScreenTransition) {
+  throw new Error(
+    "[RNScreens] Couldn't initialize `ScreenTransition`. Are you trying to use `goBackGesture` prop and your navigator is wrapped in GestureDetectorProvider? \n\n" +
+      "Please make sure that you're using `react-native-reanimated` with version higher than 3.8.1 (or nightly)."
+  );
+}
 
 export const DefaultEvent: GestureUpdateEvent<PanGestureHandlerEventPayload> = {
   absoluteX: 0,
@@ -28,11 +37,11 @@ export const DefaultScreenDimensions = {
 };
 
 export const AnimationForGesture = {
-  swipeRight: ScreenTransition.SwipeRight,
-  swipeLeft: ScreenTransition.SwipeLeft,
-  swipeDown: ScreenTransition.SwipeDown,
-  swipeUp: ScreenTransition.SwipeUp,
-  horizontalSwipe: ScreenTransition.Horizontal,
-  verticalSwipe: ScreenTransition.Vertical,
-  twoDimensionalSwipe: ScreenTransition.TwoDimensional,
+  swipeRight: _ScreenTransition.SwipeRight,
+  swipeLeft: _ScreenTransition.SwipeLeft,
+  swipeDown: _ScreenTransition.SwipeDown,
+  swipeUp: _ScreenTransition.SwipeUp,
+  horizontalSwipe: _ScreenTransition.Horizontal,
+  verticalSwipe: _ScreenTransition.Vertical,
+  twoDimensionalSwipe: _ScreenTransition.TwoDimensional,
 };
