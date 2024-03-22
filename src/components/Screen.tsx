@@ -33,6 +33,13 @@ interface ViewConfig extends View {
       };
     };
   };
+  _viewConfig: {
+    validAttributes: {
+      style: {
+        display: boolean;
+      };
+    };
+  };
 }
 
 export class InnerScreen extends React.Component<ScreenProps> {
@@ -102,6 +109,12 @@ export class InnerScreen extends React.Component<ScreenProps> {
         if (ref?.viewConfig?.validAttributes?.style) {
           ref.viewConfig.validAttributes.style = {
             ...ref.viewConfig.validAttributes.style,
+            display: false,
+          };
+          this.setRef(ref);
+        } else if (ref?._viewConfig?.validAttributes?.style) {
+          ref._viewConfig.validAttributes.style = {
+            ...ref._viewConfig.validAttributes.style,
             display: false,
           };
           this.setRef(ref);
