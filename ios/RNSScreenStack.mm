@@ -759,12 +759,14 @@ namespace react = facebook::react;
   // Now we're dealing with RNSScreenEdgeGestureRecognizer (or _UIParallaxTransitionPanGestureRecognizer)
   if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+      UIRectEdge edges = ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges;
+      BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+      BOOL isSlideFromLeft = topScreen.stackAnimation == RNSScreenStackAnimationSlideFromLeft;
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
       // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
-      BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
-                            ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
-          (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
-           ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
+      BOOL isCorrectEdge = (isRTL && edges == UIRectEdgeRight) ||
+          (!isRTL && isSlideFromLeft && edges == UIRectEdgeRight) ||
+          (isRTL && isSlideFromLeft && edges == UIRectEdgeLeft) || (!isRTL && edges == UIRectEdgeLeft);
       if (isCorrectEdge) {
         [self cancelTouchesInParent];
         return YES;
@@ -828,7 +830,10 @@ namespace react = facebook::react;
     }
   }
 
+  bool isInverted = topScreen.stackAnimation == RNSScreenStackAnimationSlideFromLeft;
+
   float transitionProgress = (translation / distance);
+  transitionProgress = isInverted ? transitionProgress * -1 : transitionProgress;
 
   switch (gestureRecognizer.state) {
     case UIGestureRecognizerStateBegan: {
@@ -850,7 +855,10 @@ namespace react = facebook::react;
     case UIGestureRecognizerStateEnded: {
       // values taken from
       // https://github.com/react-navigation/react-navigation/blob/54739828598d7072c1bf7b369659e3682db3edc5/packages/stack/src/views/Stack/Card.tsx#L316
-      BOOL shouldFinishTransition = (translation + velocity * 0.3) > (distance / 2);
+      float snapPoint = distance / 2;
+      float gestureDistance = translation + velocity * 0.3;
+      gestureDistance = isInverted ? gestureDistance * -1 : gestureDistance;
+      BOOL shouldFinishTransition = gestureDistance > snapPoint;
       if (shouldFinishTransition) {
         [_interactionController finishInteractiveTransition];
       } else {
