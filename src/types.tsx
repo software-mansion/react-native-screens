@@ -322,7 +322,7 @@ export interface ScreenProps extends ViewProps {
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
-   * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "slide_from_left" - slide in the new screen from left to right
    * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
