@@ -123,7 +123,7 @@
 
 - (void)show
 {
-  UIWindow *window = RCTSharedApplication().delegate.window;
+  UIWindow *window = RCTSharedApplication().keyWindow;
   [window addSubview:_container];
 }
 
