@@ -1197,6 +1197,17 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
 
+    // In case of fullScreenModal we want to ask for orientation specifically the screen underneath,
+    // so that when the modal is dismissed the controller underneath is already in expected orientation,
+    // without the need to first wait for the dimissal to complete and only then to rotate.
+    // See: https://github.com/software-mansion/react-native-screens/pull/1848/
+    // Also note, that on simulator some weird visual glitch can bee seen (see the PR ^ for details),
+    // however it looks like it does not exist on real device.
+    RNSScreen *modalScreen = (RNSScreen *)lastViewController;
+    if (modalScreen.screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal) {
+      return self;
+    }
+
     if (!includingModals) {
       return nil;
     }
