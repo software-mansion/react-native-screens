@@ -3,7 +3,6 @@
   "version": "3.29.0",
   "description": "Native navigation primitives for your React Native app.",
   "scripts": {
-    "postinstall": "git submodule update --init --recursive && (cd react-navigation && yarn)",
     "check-types": "tsc --noEmit",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
