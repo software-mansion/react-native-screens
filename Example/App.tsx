@@ -20,7 +20,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type StackParamList = {
   Main: undefined;
-  Story: undefined;
+  Story1: undefined;
+  Story2: undefined;
+  Story3: undefined;
+  Story4: undefined;
 };
 
 interface MainScreenProps {
@@ -28,10 +31,22 @@ interface MainScreenProps {
 }
 
 const stories = [
-  require('./src/assets/appjs/1.jpg'),
-  require('./src/assets/appjs/2.jpg'),
-  require('./src/assets/appjs/3.jpg'),
-  require('./src/assets/appjs/4.jpg'),
+  {
+    id: '1',
+    image: require('./src/assets/appjs/1.jpg'),
+  },
+  {
+    id: '2',
+    image: require('./src/assets/appjs/2.jpg'),
+  },
+  {
+    id: '3',
+    image: require('./src/assets/appjs/3.jpg'),
+  },
+  {
+    id: '4',
+    image: require('./src/assets/appjs/4.jpg'),
+  },
 ];
 
 const posts = [
@@ -46,16 +61,18 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
       <ScrollView>
         <Text style={[styles.header]}>Screen Transitions</Text>
         <ScrollView contentContainerStyle={styles.row} horizontal>
-          {stories.map(image => (
+          {stories.map(story => (
             <Pressable
-              onPress={() => navigation.navigate('Story', { image })}
+              onPress={() =>
+                navigation.navigate(`Story${story.id}`, { image: story.image })
+              }
               style={{ height: 100 }}
-              key={image}>
+              key={story.id}>
               <View style={styles.border}>
                 <Animated.Image
                   style={[styles.image]}
-                  source={image}
-                  sharedTransitionTag={String(image)}></Animated.Image>
+                  source={story.image}
+                  sharedTransitionTag={story.id}></Animated.Image>
               </View>
             </Pressable>
           ))}
@@ -124,17 +141,8 @@ const SwipeDown: AnimatedScreenTransition = {
     'worklet';
     const x = Math.abs(event.translationY / screenSize.height);
     const h = screenSize.height;
-    const scaleY = (((98 - h) / 0.75) * x + h) / h;
-    const scaleY2 =
-      ((0 - 0.115) / (1 - 0.75)) * x + (0.115 * 1 - 0 * 0.75) / (1 - 0.75);
     return {
-      transform: [
-        { translateY: (h / 2) * x },
-        {
-          scaleY: x < 0.75 ? scaleY : scaleY2,
-        },
-        { scaleX: 1 - x },
-      ],
+      transform: [{ translateY: (h / 2) * x }, { scale: 1 - x }],
       borderRadius: 250 * x - 250 * x * x,
       overflow: 'hidden',
     };
@@ -164,11 +172,32 @@ const App = (): JSX.Element => (
           }}>
           <Stack.Screen name="Main" component={MainScreen} />
           <Stack.Screen
-            name="Story"
+            name="Story1"
             component={StoryScreen}
             options={{
               transitionAnimation: SwipeDown,
               goBackGesture: 'swipeDown',
+            }}
+          />
+          <Stack.Screen
+            name="Story2"
+            component={StoryScreen}
+            options={{
+              goBackGesture: 'swipeUp',
+            }}
+          />
+          <Stack.Screen
+            name="Story3"
+            component={StoryScreen}
+            options={{
+              goBackGesture: 'swipeLeft',
+            }}
+          />
+          <Stack.Screen
+            name="Story4"
+            component={StoryScreen}
+            options={{
+              goBackGesture: 'swipeRight',
             }}
           />
         </Stack.Navigator>
@@ -184,9 +213,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   header: {
     fontWeight: 'bold',
