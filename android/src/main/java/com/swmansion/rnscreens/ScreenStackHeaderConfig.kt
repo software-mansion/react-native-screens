@@ -25,6 +25,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false  // named this way to avoid conflict with platform's isHidden
+    var isHeaderTranslucent = false // named this way to avoid conflict with platform's isTranslucent
     private var headerTopInset: Int? = null
     private var title: String? = null
     private var titleColor = 0
@@ -38,7 +39,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private var isDestroyed = false
     private var backButtonInCustomView = false
     private var isTopInsetEnabled = true
-    private var isTranslucent = false
     private var tintColor = 0
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
@@ -195,7 +195,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         screenFragment?.setToolbarShadowHidden(isShadowHidden)
 
         // translucent
-        screenFragment?.setToolbarTranslucent(isTranslucent)
+        screenFragment?.setToolbarTranslucent(isHeaderTranslucent)
 
         // title
         actionBar.title = title
@@ -363,7 +363,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     }
 
     fun setTranslucent(translucent: Boolean) {
-        isTranslucent = translucent
+        isHeaderTranslucent = translucent
     }
 
     fun setBackButtonInCustomView(backButtonInCustomView: Boolean) {

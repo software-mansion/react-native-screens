@@ -65,12 +65,15 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             val width = r - l
             val height = b - t
 
-            val headerHeight = calculateHeaderHeight().first
+            val headerHeight = calculateHeaderHeight()
+            val totalHeight = headerHeight.first + headerHeight.second // action bar height + status bar height
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height, headerHeight)
+                updateScreenSizeFabric(width, height, totalHeight)
             } else {
                 updateScreenSizePaper(width, height)
             }
+
+            notifyHeaderHeightChange(totalHeight)
         }
     }
 
@@ -236,16 +239,22 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
         val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
-            .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true }
+            .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true && headerConfig?.isHeaderTranslucent != true }
             ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
 
         val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            .takeIf { it > 0 && isStatusBarHidden != true }
+            // Count only status bar when action bar is visible and status bar is not hidden
+            .takeIf { it > 0 && isStatusBarHidden != true && actionBarHeight > 0 }
             ?.let { (context.resources::getDimensionPixelSize)(it) }
             ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
             ?: 0.0
 
         return actionBarHeight to statusBarHeight
+    }
+
+    private fun notifyHeaderHeightChange(headerHeight: Double) {
+        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+            ?.dispatchEvent(HeaderHeightChangeEvent(id, headerHeight))
     }
 
     enum class StackPresentation {
