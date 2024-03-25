@@ -68,7 +68,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             val headerHeight = calculateHeaderHeight()
             val totalHeight = headerHeight.first + headerHeight.second // action bar height + status bar height
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height, headerHeight.first + headerHeight.second)
+                updateScreenSizeFabric(width, height, totalHeight)
             } else {
                 updateScreenSizePaper(width, height)
             }
