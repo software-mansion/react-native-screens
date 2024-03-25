@@ -28,15 +28,15 @@ interface MainScreenProps {
 }
 
 const stories = [
-  'https://scontent.cdninstagram.com/v/t51.2885-15/347171734_918144379462147_4789619291137099835_n.jpg?stp=dst-jpg_e15_fr_s1080x1080&_nc_ht=scontent.cdninstagram.com&_nc_cat=107&_nc_ohc=q_V632i8a_MAX8D3OlT&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAK0Ojqeps4N5SxhyzLJXyu_ras0ADVTfMTrxAfeE4t6A&oe=65D823AA&_nc_sid=10d13b',
-  'https://scontent.cdninstagram.com/v/t51.2885-15/347653531_565898079061054_4453455050671626230_n.jpg?stp=dst-jpg_e15_fr_s1080x1080&_nc_ht=scontent.cdninstagram.com&_nc_cat=110&_nc_ohc=4PwXdHJV6XkAX9zR2Iy&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfB66CRFGl6f3xPhtyCpC8w9aulm_ccVE_leBNKolUv9FA&oe=65D77A44&_nc_sid=10d13b',
-  'https://scontent.cdninstagram.com/v/t51.2885-15/347386909_1376382106542363_1303661864773169836_n.jpg?stp=dst-jpg_e15_fr_s1080x1080&_nc_ht=scontent.cdninstagram.com&_nc_cat=103&_nc_ohc=W6uRXErEga8AX9bMb1D&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfA3eRlGEp07oa1qc2zi43XeeutVDDBMQ-bONQ_tKkU-gg&oe=65D83958&_nc_sid=10d13b',
-  'https://scontent.cdninstagram.com/v/t51.2885-15/347191289_242729281685637_1045169335033276859_n.jpg?stp=dst-jpg_e15_fr_s1080x1080&_nc_ht=scontent.cdninstagram.com&_nc_cat=109&_nc_ohc=08KKZPZeHc8AX9pmawb&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAhQz0tWIqjj81KYw8n32BPfUJbvvQoJ0BUZvfceSQSWw&oe=65D896C2&_nc_sid=10d13b',
+  require('./src/assets/appjs/1.jpg'),
+  require('./src/assets/appjs/2.jpg'),
+  require('./src/assets/appjs/3.jpg'),
+  require('./src/assets/appjs/4.jpg'),
 ];
 
 const posts = [
-  'https://scontent.cdninstagram.com/v/t51.2885-15/347274903_621545773230724_2716363464525756446_n.jpg?stp=dst-jpg_e15_fr_s1080x1080&_nc_ht=scontent.cdninstagram.com&_nc_cat=104&_nc_ohc=YWco19mOqgwAX-Z87xF&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfCoYIQ0KAPFNt9IaVmfQYIXCHN4Mx_QbISrWN3VmE0YJw&oe=65D7A5ED&_nc_sid=10d13b',
-  'https://scontent.cdninstagram.com/v/t51.2885-15/347274262_259757039945611_8707106244299845260_n.jpg?stp=dst-jpg_e15_fr_s1080x1080&_nc_ht=scontent.cdninstagram.com&_nc_cat=107&_nc_ohc=5Sz0iixExHAAX_-DZzz&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfA7s9OoxQ2hQQim0g2eTy2uUveadJXlinklh1QzidJM0Q&oe=65D8BE71&_nc_sid=10d13b',
+  require('./src/assets/appjs/5.jpg'),
+  require('./src/assets/appjs/6.jpg'),
 ];
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
@@ -54,10 +54,8 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
               <View style={styles.border}>
                 <Animated.Image
                   style={[styles.image]}
-                  source={{
-                    uri: image,
-                  }}
-                  sharedTransitionTag={image}></Animated.Image>
+                  source={image}
+                  sharedTransitionTag={String(image)}></Animated.Image>
               </View>
             </Pressable>
           ))}
@@ -74,10 +72,8 @@ function User() {
   return (
     <View style={styles.userRow}>
       <Image
-        source={{
-          uri: 'https://scontent-waw1-1.cdninstagram.com/v/t51.2885-19/90741695_2404792386287654_4989854663319748608_n.jpg?stp=dst-jpg_s100x100&_nc_cat=106&ccb=1-7&_nc_sid=3fd06f&_nc_ohc=xJxo5CjffpYAX_wZKeJ&_nc_oc=AQlND1yOs9XepQbfKk1VLPjFyC07dpvE8n-sGs_onEe9A8LbDfktshen8IcreAFt7R8&_nc_ht=scontent-waw1-1.cdninstagram.com&oh=00_AfBHHYmVPeKlayOwF16AvI-xDUuoapDLlX6WAQXr4JRMWA&oe=65D80EF4',
-        }}
-        style={{ height: 36, width: 36, borderRadius: 25 }}
+        source={require('./src/assets/appjs/7.jpg')}
+        style={styles.userAvatar}
       />
       <View>
         <Text style={styles.username}>swmansion</Text>
@@ -92,9 +88,7 @@ function Post({ image }) {
     <View style={{ marginBottom: 24 }}>
       <User />
       <Animated.Image
-        source={{
-          uri: image,
-        }}
+        source={image}
         style={{
           height: Dimensions.get('window').width,
           width: Dimensions.get('window').width,
@@ -116,11 +110,9 @@ const StoryScreen = ({ route }) => {
 
   return (
     <Animated.Image
-      source={{
-        uri: route.params.image,
-      }}
+      source={route.params.image}
       style={[styles.screen]}
-      sharedTransitionTag={tag}
+      sharedTransitionTag={String(tag)}
     />
   );
 };
@@ -239,6 +231,11 @@ const styles = StyleSheet.create({
   userRow: {
     flexDirection: 'row',
     marginBottom: 8,
+  },
+  userAvatar: {
+    height: 36,
+    width: 36,
+    borderRadius: 25,
   },
 });
 
