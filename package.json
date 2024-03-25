@@ -148,5 +148,6 @@
     "android": {
       "javaPackageName": "com.swmansion.rnscreens"
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
