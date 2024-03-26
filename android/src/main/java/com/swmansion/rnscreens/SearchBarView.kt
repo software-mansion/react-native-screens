@@ -60,7 +60,6 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             searchView.inputType = inputType.toAndroidInputType(autoCapitalize)
             searchViewFormatter?.setTextColor(textColor)
             searchViewFormatter?.setTintColor(tintColor)
-            searchViewFormatter?.setHeaderIconColor(headerIconColor)
             searchViewFormatter?.setHintTextColor(hintTextColor)
             searchViewFormatter?.setPlaceholder(placeholder, shouldShowHintSearchIcon)
             searchView.overrideBackAction = shouldOverrideBackButton
@@ -74,6 +73,7 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
             if (searchViewFormatter == null) searchViewFormatter =
                 SearchViewFormatter(newSearchView)
             setSearchViewProps()
+            searchViewFormatter?.setHeaderIconColor(headerIconColor)
             if (autoFocus) {
                 screenStackFragment?.searchView?.focus()
             }
@@ -157,8 +157,10 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     private fun setToolbarElementsVisibility(visibility: Int) {
         for (i in 0..(headerConfig?.configSubviewsCount?.minus(1) ?: 0)) {
             val subview = headerConfig?.getConfigSubview(i)
-            if (subview?.type != ScreenStackHeaderSubview.Type.SEARCH_BAR)
+            if (subview?.type != ScreenStackHeaderSubview.Type.SEARCH_BAR) {
+                searchViewFormatter?.setHeaderIconColor(if (visibility == 0) headerIconColor else hintTextColor)
                 subview?.visibility = visibility
+            }
         }
     }
 
