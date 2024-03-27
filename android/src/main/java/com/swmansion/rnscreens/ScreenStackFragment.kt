@@ -2,7 +2,9 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,12 +22,15 @@ import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.swmansion.rnscreens.utils.DeviceUtils
+import com.google.android.material.R as MaterialR
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
-    private var toolbar: Toolbar? = null
+    var screenStackHeader = ScreenStackHeader(screen)
+
     private var isToolbarShadowHidden = false
     private var isToolbarTranslucent = false
+    private var isToolbarHidden = false
 
     private var lastFocusedChild: View? = null
 
@@ -42,22 +47,40 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun removeToolbar() {
-        appBarLayout?.let {
-            toolbar?.let { toolbar ->
-                if (toolbar.parent === it) {
-                    it.removeView(toolbar)
+        isToolbarHidden = true
+
+        appBarLayout?.let { appBarLayout ->
+            screenStackHeader.collapsingToolbarLayout?.let { collapsingToolbar ->
+                if (collapsingToolbar.parent === appBarLayout) {
+                    appBarLayout.removeView(collapsingToolbar)
                 }
             }
         }
-        toolbar = null
+
+        screenStackHeader.removeToolbar()
+
+        // As AppBarLayout may have dimensions of expanded medium / large header,
+        // We need to change its layout params to `WRAP_CONTENT`.
+        appBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
+            CoordinatorLayout.LayoutParams.MATCH_PARENT,
+            CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun setToolbar(toolbar: Toolbar) {
-        appBarLayout?.addView(toolbar)
-        toolbar.layoutParams = AppBarLayout.LayoutParams(
-            AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
-        ).apply { scrollFlags = 0 }
-        this.toolbar = toolbar
+        isToolbarHidden = false
+        screenStackHeader.toolbar = toolbar as CustomToolbar
+        screenStackHeader.recreateToolbar()
+
+        screenStackHeader.collapsingToolbarLayout?.apply {
+            appBarLayout?.addView(this)
+        }
+
+        // As `setToolbar` may be called after changing header's visibility,
+        // we need to apply correction to layoutParams with proper dimensions.
+        appBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
+            CoordinatorLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(toolbar.context)
+        )
     }
 
     override fun setToolbarShadowHidden(hidden: Boolean) {
@@ -72,6 +95,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             val params = screen.layoutParams
             (params as CoordinatorLayout.LayoutParams).behavior =
                 if (translucent) null else ScrollingViewBehavior()
+
             isToolbarTranslucent = translucent
         }
     }
@@ -118,16 +142,29 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             // role. On top of that it breaks screens animations when alfa offscreen compositing is off
             // (which is the default)
             setBackgroundColor(Color.TRANSPARENT)
+
             layoutParams = AppBarLayout.LayoutParams(
-                AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
+                AppBarLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(context)
             )
+
+            // On Material 3 the elevation is not visible on AppBarLayout.
+            // To prevent this behavior, we're setting outline shadow colors to black.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                outlineAmbientShadowColor = Color.BLACK
+                outlineSpotShadowColor = Color.BLACK
+            }
+            
+            screenStackHeader.collapsingToolbarLayout?.let {
+                addView(recycleView(it))
+            }
         }
 
-        view?.addView(appBarLayout)
+        appBarLayout?.let { view?.addView(it) }
+
         if (isToolbarShadowHidden) {
             appBarLayout?.targetElevation = 0f
         }
-        toolbar?.let { appBarLayout?.addView(recycleView(it)) }
+
         setHasOptionsMenu(true)
         return view
     }
@@ -147,6 +184,27 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         updateToolbarMenu(menu)
         return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun getHeightOfToolbar(context: Context): Int {
+        if (isToolbarHidden) {
+            return CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        }
+
+        val resolvedSize = when (screen.headerType) {
+            Screen.HeaderType.Medium -> MaterialR.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
+            Screen.HeaderType.Large -> MaterialR.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
+            else -> CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        }
+
+        // For apps that don't support Material 3 it's possible that resolved attribute of
+        // given header type size will return -1. In such case we want to return fallback value of
+        // desired header type.
+        return when (screen.headerType) {
+            Screen.HeaderType.Medium -> if (resolvedSize != -1) resolvedSize else PixelUtil.toPixelFromDIP(112f).toInt()
+            Screen.HeaderType.Large -> if (resolvedSize != -1) resolvedSize else PixelUtil.toPixelFromDIP(152f).toInt()
+            else -> resolvedSize
+        }
     }
 
     private fun shouldShowSearchBar(): Boolean {
@@ -210,6 +268,17 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         val container: ScreenContainer? = screen.container
         check(container is ScreenStack) { "ScreenStackFragment added into a non-stack container" }
         container.dismiss(this)
+    }
+
+    private fun Int.resolveAttribute(context: Context): Int {
+        val textSizeAttr = intArrayOf(this)
+        val indexOfAttrTextSize = 0
+
+        val obtainedAttributesTa: TypedArray = context.obtainStyledAttributes(textSizeAttr)
+        val parsedAttribute = obtainedAttributesTa.getDimensionPixelSize(indexOfAttrTextSize, -1)
+
+        obtainedAttributesTa.recycle()
+        return parsedAttribute
     }
 
     private class ScreensCoordinatorLayout(

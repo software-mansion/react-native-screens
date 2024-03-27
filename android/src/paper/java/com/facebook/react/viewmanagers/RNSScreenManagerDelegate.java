@@ -104,6 +104,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "nativeBackButtonDismissalEnabled":
         mViewManager.setNativeBackButtonDismissalEnabled(view, value == null ? false : (boolean) value);
         break;
+      case "headerType":
+        mViewManager.setHeaderType(view, (String) value);
+        break;
       default:
         super.setProperty(view, propName, value);
     }

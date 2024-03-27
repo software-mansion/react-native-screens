@@ -182,6 +182,7 @@ object ScreenWindowTraits {
             WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars =
                 isColorLight(color)
         }
+
         window.navigationBarColor = color
     }
 
