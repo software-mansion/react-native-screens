@@ -3,6 +3,7 @@ import {
   isSearchBarAvailableForCurrentPlatform,
   SearchBarCommands,
   SearchBarProps,
+  SearchBarBackgroundProps,
 } from 'react-native-screens';
 import { View } from 'react-native';
 
@@ -10,11 +11,14 @@ import { View } from 'react-native';
 import SearchBarNativeComponent, {
   Commands as SearchBarNativeCommands,
 } from '../fabric/SearchBarNativeComponent';
+import SearchBarBackgroundNativeComponent from '../fabric/SearchBarBackgroundNativeComponent';
 
 export const NativeSearchBar: React.ComponentType<SearchBarProps> &
   typeof NativeSearchBarCommands = SearchBarNativeComponent as any;
 export const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as any;
+export const NativeSearchBarBackground: React.ComponentType<SearchBarBackgroundProps> =
+  SearchBarBackgroundNativeComponent as any;
 
 type SearchBarCommandsType = {
   blur: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
