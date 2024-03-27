@@ -114,7 +114,7 @@
     "@react-native-community/cli-platform-android": "^11.3.6",
     "@react-native-community/cli": "^11.3.6",
     "@react-native-community/cli-platform-ios": "^11.3.6",
-    "@types/react": "^18.2.21"
+    "@types/react": "^18.2.72"
   },
   "lint-staged": {
     "{src,Example}/**/*.{js,ts,tsx}": "yarn format-js",

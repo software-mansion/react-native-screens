@@ -44,7 +44,7 @@
     "@react-native/metro-config": "^0.72.11",
     "@tsconfig/react-native": "^3.0.0",
     "@types/jest": "^29.2.5",
-    "@types/react": "^18.0.24",
+    "@types/react": "^18.2.72",
     "@types/react-native": "0.72.2",
     "@types/react-native-restart": "^0.0.0",
     "@types/react-test-renderer": "^18.0.0",
