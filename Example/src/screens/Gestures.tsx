@@ -11,8 +11,8 @@ import {
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-  useHeaderHeight,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
+import { useHeaderHeight } from '@react-navigation/elements';
 import RNRestart from 'react-native-restart';
 import { Button, SettingsSwitch } from '../shared';
 import { SettingsMultiInput } from '../shared/SettingsMultiInput';
@@ -49,7 +49,8 @@ interface DetailsScreenProps {
 const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
   const headerHeight = useHeaderHeight();
   const [gestureEnabled, setGestureEnabled] = useState(true);
-  const [fullScreenSwipeEnabled, setFullScreenSwipeEnabled] = useState(true);
+  const [fullScreenGestureEnabled, setFullScreenGestureEnabled] =
+    useState(true);
 
   const { height, width } = Dimensions.get('window');
 
@@ -67,7 +68,7 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
       gestureEnabled,
-      fullScreenSwipeEnabled,
+      fullScreenGestureEnabled,
       gestureResponseDistance: {
         start: startValue,
         end: endValue,
@@ -78,7 +79,7 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
   }, [
     navigation,
     gestureEnabled,
-    fullScreenSwipeEnabled,
+    fullScreenGestureEnabled,
     startValue,
     endValue,
     topValue,
@@ -115,8 +116,8 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
       </View>
       <SettingsSwitch
         label="Full screen swipe enabled"
-        value={fullScreenSwipeEnabled}
-        onValueChange={setFullScreenSwipeEnabled}
+        value={fullScreenGestureEnabled}
+        onValueChange={setFullScreenGestureEnabled}
       />
       <SettingsMultiInput
         label="Gesture response distance"
@@ -143,7 +144,7 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
           },
         ]}
       />
-      {fullScreenSwipeEnabled && (
+      {fullScreenGestureEnabled && (
         <View
           style={{
             ...styles.gestureSurface,
@@ -169,8 +170,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const App = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      headerBackVisible: false,
     }}>
     <Stack.Screen
       name="Main"

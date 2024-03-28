@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, I18nManager } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { Button, Alert } from '../shared';
 
 type StackParamList = {
@@ -59,8 +59,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const App = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      headerBackVisible: false,
     }}>
     <Stack.Screen
       name="Main"
@@ -70,25 +69,25 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="Modal"
       component={ModalScreen}
-      options={{ stackPresentation: 'modal' }}
+      options={{ presentation: 'modal' }}
     />
     <Stack.Screen
       name="FullscreenModal"
       component={ModalScreen}
-      options={{ stackPresentation: 'fullScreenModal' }}
+      options={{ presentation: 'fullScreenModal' }}
     />
     <Stack.Screen
       name="ContainedModal"
       component={ModalScreen}
-      options={{ stackPresentation: 'containedModal' }}
+      options={{ presentation: 'containedModal' }}
     />
     <Stack.Screen
       name="Alert"
       component={Alert}
       options={{
-        stackPresentation: 'transparentModal',
+        presentation: 'transparentModal',
         headerShown: false,
-        stackAnimation: 'slide_from_bottom',
+        animation: 'slide_from_bottom',
       }}
     />
   </Stack.Navigator>

@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, I18nManager } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { Button } from '../shared';
 
 type StackParamList = {
@@ -49,14 +49,15 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const App = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
-      headerHideBackButton: true,
-      stackAnimation: 'none',
+      headerBackVisible: true,
+      animation: 'none',
     }}>
     <Stack.Screen name="ScreenA" component={MainScreen} />
     <Stack.Screen
       name="ScreenB"
       component={ScreenB}
       options={{
+        // @ts-ignore: goBackGesture is not implemented yet in react-navigation
         goBackGesture: 'twoDimensionalSwipe',
       }}
     />

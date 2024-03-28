@@ -1,10 +1,10 @@
 import React, { useLayoutEffect } from 'react';
-import { I18nManager, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { Button } from '../shared';
 
@@ -20,7 +20,8 @@ interface DetailsScreenProps {
 const DetailsScreen = ({
   navigation,
   route,
-}: DetailsScreenProps): JSX.Element => {
+  letter,
+}: DetailsScreenProps & { letter: number }): JSX.Element => {
   const colors = [
     'snow',
     'cornsilk',
@@ -49,7 +50,7 @@ const DetailsScreen = ({
       <Button
         title={`More details ${index}`}
         accessibilityLabel={`More details ${index}`}
-        testID="bottom-tabs-more-details-button"
+        testID={`bottom-tabs-${letter}-more-details-button`}
         onPress={() => navigation.push('Details', { index: index + 1 })}
       />
       {index === 0 ? (
@@ -66,19 +67,26 @@ const DetailsScreen = ({
 const createStack = (letter: string) => {
   const Stack = createNativeStackNavigator();
 
-  const makeStack = () => (
+  const StackWithDetails = () => (
     <Stack.Navigator
       screenOptions={{
-        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
         headerRight: () => (
-          <Text testID="bottom-tabs-header-right-id">{letter}</Text>
+          <Text testID={`bottom-tabs-${letter}-header-right-id`}>{letter}</Text>
         ),
       }}>
-      <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Screen name="Details">
+        {({ navigation, route }) => (
+          <DetailsScreen
+            navigation={navigation}
+            route={route as RouteProp<StackParamList, 'Details'>}
+            letter={letter}
+          />
+        )}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 
-  return makeStack;
+  return StackWithDetails;
 };
 
 const AStack = createStack('A');
@@ -93,12 +101,12 @@ const NavigationTabsAndStack = (): JSX.Element => (
     <Tab.Screen
       name="A"
       component={AStack}
-      options={{ tabBarTestID: 'bottom-tabs-A-tab' }}
+      options={{ tabBarButtonTestID: 'bottom-tabs-A-tab' }}
     />
     <Tab.Screen
       name="B"
       component={BStack}
-      options={{ tabBarTestID: 'bottom-tabs-B-tab' }}
+      options={{ tabBarButtonTestID: 'bottom-tabs-B-tab' }}
     />
     <Tab.Screen name="C" component={CStack} />
     <Tab.Screen name="D" component={DStack} />

@@ -2003,14 +2003,14 @@
   uid ""
 
 "@react-navigation/core@link:../react-navigation/packages/core":
-  version "6.4.13"
+  version "7.0.0-alpha.17"
   dependencies:
-    "@react-navigation/routers" "^6.1.9"
+    "@react-navigation/routers" "^7.0.0-alpha.6"
     escape-string-regexp "^4.0.0"
-    nanoid "^3.1.23"
+    nanoid "3.3.7"
     query-string "^7.1.3"
-    react-is "^16.13.0"
-    use-latest-callback "^0.1.7"
+    react-is "^18.2.0"
+    use-latest-callback "^0.1.9"
 
 "@react-navigation/core@link:../react-navigation/packages/core/":
   version "0.0.0"
@@ -2020,10 +2020,12 @@
   version "0.0.0"
   uid ""
 
-"@react-navigation/elements@^1.3.26":
-  version "1.3.26"
-  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-1.3.26.tgz#f66afb21d01d1ff05a578991cfb81d19ae5f031d"
-  integrity sha512-9rSY7MD6etU3M3j/OYUvtg4eBqABlkS39iJwwQheE89pSa9QyvXbJSsz/bUBEjFWwsOYxTVzj27bc7ulrDVWgw==
+"@react-navigation/elements@^2.0.0-alpha.17":
+  version "2.0.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.0.0-alpha.17.tgz#433ca7ff49097c46e7db40a08b8dc37f344d688c"
+  integrity sha512-DvKPYhqDMjS7/61MM+xlAq22078M/WKqzwwjmXR5/fd+rDtOq3ysMzyCBSRKSjy5Dh+UUcQP3GobIWZhzVBPsA==
+  dependencies:
+    color "^4.2.3"
 
 "@react-navigation/elements@link:../react-navigation/packages/elements":
   version "0.0.0"
@@ -2037,12 +2039,12 @@
   version "0.0.0"
   uid ""
 
-"@react-navigation/routers@^6.1.9":
-  version "6.1.9"
-  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-6.1.9.tgz#73f5481a15a38e36592a0afa13c3c064b9f90bed"
-  integrity sha512-lTM8gSFHSfkJvQkxacGM6VJtBt61ip2XO54aNfswD+KMw6eeZ4oehl7m0me3CR9hnDE4+60iAZR8sAhvCiI3NA==
+"@react-navigation/routers@^7.0.0-alpha.6":
+  version "7.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-7.0.0-alpha.6.tgz#d10fcbc408d94b9b6904b1e97de88422f69954fb"
+  integrity sha512-0V+/WRbgVmrPXW5TjMLxf8NJAHsUoG9G8X4WWmVIf1ASMF3POZM4CCbhEeudhgUxN4QEvkoSIrzvUpoUplQOMw==
   dependencies:
-    nanoid "^3.1.23"
+    nanoid "3.3.7"
 
 "@react-navigation/routers@link:../react-navigation/packages/routers":
   version "0.0.0"
@@ -2183,13 +2185,21 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.2.6":
+"@types/react@*":
   version "18.2.39"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.39.tgz#744bee99e053ad61fe74eb8b897f3ab5b19a7e25"
   integrity sha512-Oiw+ppED6IremMInLV4HXGbfbG6GyziY3kqAwJYOR0PNbkYDmLWQA3a95EhdSmamsvbkJN96ZNN+YD+fGjzSBA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^18.2.72":
+  version "18.2.73"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.73.tgz#0579548ad122660d99e00499d22e33b81e73ed94"
+  integrity sha512-XcGdod0Jjv84HOC7N5ziY3x+qL0AfmubvKOZ9hJjJ2yd5EE+KYjWhdOjt387e9HPheHkdggF9atTifMRtyAaRA==
+  dependencies:
+    "@types/prop-types" "*"
     csstype "^3.0.2"
 
 "@types/scheduler@*":
@@ -5474,7 +5484,7 @@ ms@2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-nanoid@^3.1.23:
+nanoid@3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
   integrity sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==
@@ -5964,7 +5974,7 @@ react-freeze@^1.0.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
-react-is@^16.13.0, react-is@^16.13.1, react-is@^16.7.0:
+react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
@@ -6904,7 +6914,7 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-use-latest-callback@^0.1.7:
+use-latest-callback@^0.1.9:
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/use-latest-callback/-/use-latest-callback-0.1.9.tgz#10191dc54257e65a8e52322127643a8940271e2a"
   integrity sha512-CL/29uS74AwreI/f2oz2hLTW7ZqVeV5+gxFeGudzQrgkCytrHw33G4KbnQOrRlAEzzAFXi7dDLMC9zhWcVpzmw==
@@ -6945,7 +6955,7 @@ walker@^1.0.7, walker@^1.0.8:
   dependencies:
     makeerror "1.0.12"
 
-warn-once@^0.1.0:
+warn-once@^0.1.0, warn-once@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/warn-once/-/warn-once-0.1.1.tgz#952088f4fb56896e73fd4e6a3767272a3fccce43"
   integrity sha512-VkQZJbO8zVImzYFteBXvBOZEl1qL175WH8VmZcxF2fZAoudNhNDvHi+doCaAEdU2l2vtcIwa2zn0QK5+I1HQ3Q==

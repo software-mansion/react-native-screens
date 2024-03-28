@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { Button, SettingsPicker } from '../shared';
 
 type StackParamList = {
@@ -14,7 +14,7 @@ type StackParamList = {
 };
 
 type ScreenOrientation = Exclude<
-  NativeStackNavigationOptions['screenOrientation'],
+  NativeStackNavigationOptions['orientation'],
   undefined
 >;
 
@@ -28,7 +28,7 @@ const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      screenOrientation,
+      orientation: screenOrientation,
     });
   }, [navigation, screenOrientation]);
 
@@ -76,8 +76,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const App = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      headerBackVisible: false,
     }}>
     <Stack.Screen
       name="First"

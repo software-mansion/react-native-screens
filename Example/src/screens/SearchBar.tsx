@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { I18nManager, ScrollView, Text, StyleSheet } from 'react-native';
+import { ScrollView, Text, StyleSheet } from 'react-native';
 import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import {
   Button,
   ListItem,
@@ -50,7 +50,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      searchBar: {
+      headerSearchBarOptions: {
         ref: searchBarRef,
         barTintColor,
         hintTextColor,
@@ -188,6 +188,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
         title="Hide cancel"
       />
       <Button
+        // @ts-ignore: `cancelSearch` is not implemented yet in react-navigation
         onPress={() => searchBarRef.current?.cancelSearch()}
         title="Cancel search"
       />
@@ -228,7 +229,7 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      searchBar: {
+      headerSearchBarOptions: {
         placeholder: 'Interesting places...',
         onChangeText: event => setSearch(event.nativeEvent.text),
         obscureBackground: false,
@@ -261,8 +262,7 @@ const App = (): JSX.Element => (
   <ToastProvider>
     <Stack.Navigator
       screenOptions={{
-        headerHideBackButton: true,
-        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+        headerBackVisible: true,
       }}>
       <Stack.Screen
         name="Main"
