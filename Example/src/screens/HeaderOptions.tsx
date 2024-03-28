@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text } from 'react-native';
+import { StyleSheet, ScrollView, Text, Platform } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -40,16 +40,21 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   );
 };
 
-type HeaderItemPosition = 'right' | 'center' | 'left';
+type HeaderItemPosition = 'left' | 'center' | 'right';
+type HeaderTitleAlignment = 'left' | 'center';
 
 interface SettingsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Settings'>;
 }
 
 const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
+  const toast = useToast();
+
   const [headerTitle, setHeaderTitle] = useState('Settings');
   const [backButtonVisible, setBackButtonVisible] = useState(true);
   const [headerShown, setHeaderShown] = useState(true);
+  const [headerTitleAlign, setHeaderTitleAlign] =
+    useState<HeaderTitleAlignment>('left');
   const [headerLargeTitle, setHeaderLargeTitle] = useState(true);
   const [headerItem, setHeaderItem] = useState<HeaderItemPosition>('right');
   const [headerBackTitle, setHeaderBackTitle] = useState('Back');
@@ -67,6 +72,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
       headerLargeTitle, // iOS
       headerBackTitle, // iOS
       headerShown,
+      headerTitleAlign, // Android
       headerRight: headerItem === 'right' ? square : undefined,
       headerTitle: headerItem === 'center' ? square : headerTitle,
       headerLeft: headerItem === 'left' ? square : undefined,
@@ -80,6 +86,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
     headerLargeTitle,
     headerBackTitle,
     headerItem,
+    headerTitleAlign,
     headerShown,
     headerShadowVisible,
     headerTransparent,
@@ -104,6 +111,12 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
         value={headerShown}
         onValueChange={setHeaderShown}
       />
+      <SettingsPicker<HeaderTitleAlignment>
+        label="Header title align"
+        value={headerTitleAlign}
+        onValueChange={setHeaderTitleAlign}
+        items={['left', 'center']}
+      />
       <SettingsSwitch
         label="Header shadow visible"
         value={headerShadowVisible}
@@ -121,7 +134,24 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
           if (item === 'left' && backButtonVisible) {
             // to make header's item ideally on the left side,
             // we need to hide the back button.
+            toast.push({
+              message: 'Hiding back button...',
+              backgroundColor: 'orange',
+            });
             setBackButtonVisible(false);
+          }
+          if (
+            item === 'center' &&
+            Platform.OS === 'android' &&
+            headerTitleAlign !== 'center'
+          ) {
+            // on Android, we can't have a header item in the center
+            // and a title at the same time
+            toast.push({
+              message: 'Changing title alignment to center...',
+              backgroundColor: 'orange',
+            });
+            setHeaderTitleAlign('center');
           }
           setHeaderItem(item);
         }}
