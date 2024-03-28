@@ -42,20 +42,20 @@ module.exports = {
     simulator: {
       type: 'ios.simulator',
       device: {
-        type: 'iPhone 15 Pro',
+        type: 'iPhone 14',
       },
     },
     attached: {
       type: 'android.attached',
       device: {
-        adbName: 'Pixel_7_Pro_API_34',
+        adbName: 'e2e_emulator',
       },
       utilBinaryPaths: ['e2e/apps/test-butler-app-2.2.1.apk'],
     },
     emulator: {
       type: 'android.emulator',
       device: {
-        avdName: 'Pixel_7_Pro_API_34',
+        avdName: 'e2e_emulator',
       },
       utilBinaryPaths: ['e2e/apps/test-butler-app-2.2.1.apk'],
     },
