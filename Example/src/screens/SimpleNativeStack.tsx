@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, I18nManager } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { Button } from '../shared';
 
 type StackParamList = {
@@ -45,8 +45,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const App = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      headerBackVisible: false,
     }}>
     <Stack.Screen
       name="Main"

@@ -1,10 +1,10 @@
 import React, { useLayoutEffect } from 'react';
-import { I18nManager, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { Button } from '../shared';
 
@@ -66,19 +66,18 @@ const DetailsScreen = ({
 const createStack = (letter: string) => {
   const Stack = createNativeStackNavigator();
 
-  const makeStack = () => (
+  const StackWithDetails = () => (
     <Stack.Navigator
       screenOptions={{
-        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
         headerRight: () => (
           <Text testID="bottom-tabs-header-right-id">{letter}</Text>
         ),
       }}>
-      <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Screen name="Details" component={DetailsScreen as any} />
     </Stack.Navigator>
   );
 
-  return makeStack;
+  return StackWithDetails;
 };
 
 const AStack = createStack('A');
@@ -93,12 +92,12 @@ const NavigationTabsAndStack = (): JSX.Element => (
     <Tab.Screen
       name="A"
       component={AStack}
-      options={{ tabBarTestID: 'bottom-tabs-A-tab' }}
+      options={{ tabBarButtonTestID: 'bottom-tabs-A-tab' }}
     />
     <Tab.Screen
       name="B"
       component={BStack}
-      options={{ tabBarTestID: 'bottom-tabs-B-tab' }}
+      options={{ tabBarButtonTestID: 'bottom-tabs-B-tab' }}
     />
     <Tab.Screen name="C" component={CStack} />
     <Tab.Screen name="D" component={DStack} />

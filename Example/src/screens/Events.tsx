@@ -1,10 +1,10 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, StyleSheet, I18nManager } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { Button, SettingsPicker, ToastProvider, useToast } from '../shared';
 
 type StackParamList = {
@@ -15,7 +15,7 @@ type StackParamList = {
 };
 
 type StackAnimation = Exclude<
-  NativeStackNavigationOptions['stackAnimation'],
+  NativeStackNavigationOptions['animation'],
   undefined
 >;
 
@@ -31,6 +31,17 @@ const MainScreen = ({
   setStackAnimation,
 }: MainScreenProps): JSX.Element => {
   const toast = useToast();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
+      toast.push({
+        message: `Main | beforeRemove`,
+        backgroundColor: 'red',
+      });
+    });
+
+    return unsubscribe;
+  });
 
   useEffect(() => {
     const unsubscribe = navigation.addListener(
@@ -63,7 +74,7 @@ const MainScreen = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      stackAnimation,
+      animation: stackAnimation,
     });
   }, [navigation, stackAnimation]);
 
@@ -109,6 +120,17 @@ const ChatsScreen = ({
   const toast = useToast();
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
+      toast.push({
+        message: `Chats | beforeRemove`,
+        backgroundColor: 'red',
+      });
+    });
+
+    return unsubscribe;
+  });
+
+  useEffect(() => {
     const unsubscribe = navigation.addListener(
       'transitionStart',
       ({ data }) => {
@@ -139,7 +161,7 @@ const ChatsScreen = ({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      stackAnimation,
+      animation: stackAnimation,
     });
   }, [navigation, stackAnimation]);
 
@@ -147,9 +169,8 @@ const ChatsScreen = ({
     <NestedStack.Navigator
       screenOptions={{
         headerShown: true,
-        nativeBackButtonDismissalEnabled: true,
-        headerTopInsetEnabled: false,
-        headerHideBackButton: true,
+        // nativeBackButtonDismissalEnabled: true,
+        headerBackVisible: false,
       }}>
       <NestedStack.Screen name="Privacy" component={PrivacyScreen} />
       <NestedStack.Screen name="Options" component={OptionsScreen} />
@@ -163,6 +184,17 @@ interface PrivacyScreenProps {
 
 const PrivacyScreen = ({ navigation }: PrivacyScreenProps): JSX.Element => {
   const toast = useToast();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
+      toast.push({
+        message: `Privacy | beforeRemove`,
+        backgroundColor: 'red',
+      });
+    });
+
+    return unsubscribe;
+  });
 
   useEffect(() => {
     const unsubscribe = navigation.addListener(
@@ -212,6 +244,17 @@ const OptionsScreen = ({ navigation }: OptionsScreenProps): JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
+      toast.push({
+        message: `Options | beforeRemove`,
+        backgroundColor: 'red',
+      });
+    });
+
+    return unsubscribe;
+  });
+
+  useEffect(() => {
     const unsubscribe = navigation.addListener(
       'transitionStart',
       ({ data }) => {
@@ -256,14 +299,10 @@ const App = (): JSX.Element => {
 
   return (
     <ToastProvider>
-      <Stack.Navigator
-        screenOptions={{
-          direction: I18nManager.isRTL ? 'rtl' : 'ltr',
-          nativeBackButtonDismissalEnabled: true,
-        }}>
+      <Stack.Navigator>
         <Stack.Screen
           name="Main"
-          options={{ title: 'Events', headerHideBackButton: true }}>
+          options={{ title: 'Events', headerBackVisible: true }}>
           {({ navigation }) => (
             <MainScreen
               navigation={navigation}

@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, I18nManager, Text } from 'react-native';
+import { View, ScrollView, StyleSheet, Text } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { SettingsPicker, SettingsSwitch, Button } from '../shared';
 
 type StackParamList = {
@@ -33,7 +33,8 @@ const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
   const [statusBarAnimation, setStatusBarAnimation] =
     useState<StatusBarAnimation>('fade');
   const [statusBarTranslucent, setStatusBarTranslucent] = useState(true);
-  const [statusBarColor, setStatusBarColor] = useState('gray');
+  const [statusBarBackgroundColor, setStatusBarBackgroundColor] =
+    useState('gray');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -41,7 +42,7 @@ const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
       statusBarHidden,
       statusBarAnimation,
       statusBarTranslucent,
-      statusBarColor,
+      statusBarBackgroundColor,
     });
   }, [
     navigation,
@@ -49,7 +50,7 @@ const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
     statusBarHidden,
     statusBarAnimation,
     statusBarTranslucent,
-    statusBarColor,
+    statusBarBackgroundColor,
   ]);
 
   return (
@@ -79,8 +80,8 @@ const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
       />
       <SettingsPicker<string>
         label="Status bar color"
-        value={statusBarColor}
-        onValueChange={setStatusBarColor}
+        value={statusBarBackgroundColor}
+        onValueChange={setStatusBarBackgroundColor}
         items={['red', 'green', 'blue', 'gray']}
       />
       <Button
@@ -114,8 +115,7 @@ const App = (): JSX.Element => (
       headerTitleStyle: {
         color: 'white',
       },
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      headerBackVisible: false,
     }}>
     <Stack.Screen
       name="First"
@@ -128,7 +128,7 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="Modal"
       component={SecondScreen}
-      options={{ stackPresentation: 'modal' }}
+      options={{ presentation: 'modal' }}
     />
   </Stack.Navigator>
 );
