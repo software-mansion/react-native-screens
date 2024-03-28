@@ -20,7 +20,8 @@ interface DetailsScreenProps {
 const DetailsScreen = ({
   navigation,
   route,
-}: DetailsScreenProps): JSX.Element => {
+  letter,
+}: DetailsScreenProps & { letter: number }): JSX.Element => {
   const colors = [
     'snow',
     'cornsilk',
@@ -49,7 +50,7 @@ const DetailsScreen = ({
       <Button
         title={`More details ${index}`}
         accessibilityLabel={`More details ${index}`}
-        testID="bottom-tabs-more-details-button"
+        testID={`bottom-tabs-${letter}-more-details-button`}
         onPress={() => navigation.push('Details', { index: index + 1 })}
       />
       {index === 0 ? (
@@ -70,10 +71,18 @@ const createStack = (letter: string) => {
     <Stack.Navigator
       screenOptions={{
         headerRight: () => (
-          <Text testID="bottom-tabs-header-right-id">{letter}</Text>
+          <Text testID={`bottom-tabs-${letter}-header-right-id`}>{letter}</Text>
         ),
       }}>
-      <Stack.Screen name="Details" component={DetailsScreen as any} />
+      <Stack.Screen name="Details">
+        {({ navigation, route }) => (
+          <DetailsScreen
+            navigation={navigation}
+            route={route as RouteProp<StackParamList, 'Details'>}
+            letter={letter}
+          />
+        )}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 

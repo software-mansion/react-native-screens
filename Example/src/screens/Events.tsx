@@ -33,17 +33,6 @@ const MainScreen = ({
   const toast = useToast();
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', () => {
-      toast.push({
-        message: `Main | beforeRemove`,
-        backgroundColor: 'red',
-      });
-    });
-
-    return unsubscribe;
-  });
-
-  useEffect(() => {
     const unsubscribe = navigation.addListener(
       'transitionStart',
       ({ data }) => {
@@ -169,7 +158,6 @@ const ChatsScreen = ({
     <NestedStack.Navigator
       screenOptions={{
         headerShown: true,
-        // nativeBackButtonDismissalEnabled: true,
         headerBackVisible: false,
       }}>
       <NestedStack.Screen name="Privacy" component={PrivacyScreen} />
