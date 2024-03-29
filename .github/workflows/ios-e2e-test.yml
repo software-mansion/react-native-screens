@@ -41,14 +41,10 @@ jobs:
       - name: Install root node dependencies
         run: yarn install && yarn submodules
       - name: Install node dependencies
-        id: install_deps
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        continue-on-error: true
-        run: yarn
-      - if: steps.install_deps.outcome == 'failure'
-        name: Reinstall node dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: 3
+          command: (cd $WORKING_DIRECTORY && yarn)
         # This step is required due to the bug introduced in 1.15.0 version of cocoapods
         # that breaks the pod installation for cached packages.
         # see https://github.com/facebook/react-native/issues/42698
