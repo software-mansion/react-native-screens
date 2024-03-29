@@ -39,10 +39,13 @@ jobs:
       - name: Install AppleSimulatorUtils
         run: brew tap wix/brew && brew install applesimutils
       - name: Install root node dependencies
-        run: | 
-          yarn install 
-          yarn submodules 
+        run: yarn install && yarn submodules
       - name: Install node dependencies
+        id: install_deps
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: yarn
+      - if: steps.install_deps.outcome == 'failure'
+        name: Reinstall node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
         # This step is required due to the bug introduced in 1.15.0 version of cocoapods
