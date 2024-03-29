@@ -44,6 +44,7 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           max_attempts: 3
+          timeout_minutes: 3
           command: (cd $WORKING_DIRECTORY && yarn)
         # This step is required due to the bug introduced in 1.15.0 version of cocoapods
         # that breaks the pod installation for cached packages.

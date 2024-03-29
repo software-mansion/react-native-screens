@@ -41,6 +41,7 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           max_attempts: 3
+          timeout_minutes: 3
           command: (cd $WORKING_DIRECTORY && yarn)
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
