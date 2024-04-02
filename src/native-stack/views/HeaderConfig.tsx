@@ -12,6 +12,7 @@ import {
   SearchBarProps,
   isSearchBarAvailableForCurrentPlatform,
   executeNativeBackPress,
+  // NativeSearchBarBackground,
 } from 'react-native-screens';
 import { NativeStackNavigationOptions } from '../types';
 import { useBackPressSubscription } from '../utils/useBackPressSubscription';
@@ -175,8 +176,13 @@ export default function HeaderConfig({
       {isSearchBarAvailableForCurrentPlatform &&
       processedSearchBarOptions !== undefined ? (
         <ScreenStackHeaderSearchBarView>
+          {/* <NativeSearchBarBackground> */}
           {/* @ts-ignore Skip incorrect error about incompatible ref types */}
           <SearchBar {...processedSearchBarOptions} />
+          {/* {searchBar?.background !== undefined
+              ? searchBar?.background()
+              : null}
+          </NativeSearchBarBackground> */}
         </ScreenStackHeaderSearchBarView>
       ) : null}
     </ScreenStackHeaderConfig>
