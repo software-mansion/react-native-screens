@@ -507,11 +507,11 @@ export interface MeasuredDimensions {
 }
 
 export type AnimatedScreenTransition = {
-  topScreenFrame: (
+  topScreenStyle: (
     event: PanGestureHandlerEventPayload,
     screenSize: MeasuredDimensions
   ) => Record<string, unknown>;
-  belowTopScreenFrame: (
+  belowTopScreenStyle: (
     event: PanGestureHandlerEventPayload,
     screenSize: MeasuredDimensions
   ) => Record<string, unknown>;
