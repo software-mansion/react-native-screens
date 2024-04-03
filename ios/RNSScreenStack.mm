@@ -609,16 +609,6 @@ namespace react = facebook::react;
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
 
-#ifdef RCT_NEW_ARCH_ENABLED
-      // when array with current view controllers is equal to array with new ones,
-      // we shouldn't try to set push view controllers, since it may result with error
-      // about trying to push the same view controller more than once. This may be the case
-      // when we're trying to navigate to the one screen and navigate to the other one in the same time.
-      if ([_controller.viewControllers isEqualToArray:newControllers] && newControllers.count > 1) {
-        return;
-      }
-#endif // RCT_NEW_ARCH_ENABLED
-
       [_controller setViewControllers:newControllers animated:NO];
       [_controller pushViewController:top animated:YES];
     } else {
