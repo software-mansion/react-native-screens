@@ -1064,7 +1064,7 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - ReactCommon/turbomodule/core
-  - RNScreens (3.31.0-rc.0):
+  - RNScreens (3.31.0-rc.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1294,7 +1294,7 @@ SPEC CHECKSUMS:
   ReactCommon: 840a955d37b7f3358554d819446bffcf624b2522
   RNGestureHandler: 61bfdfc05db9b79dd61f894dcd29d3dcc6db3c02
   RNReanimated: e7abe58f02a10c8b619db32b6bf33507420a9f86
-  RNScreens: 22ffb2b47d05288818fd58ffb85adf1b827132fd
+  RNScreens: 794330587bf2cc284138990677584eb7b105c188
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 64cd2a583ead952b0315d5135bf39e053ae9be70
 
