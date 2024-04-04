@@ -3,7 +3,7 @@ import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNati
 import type { ViewProps, ColorValue, HostComponent } from 'react-native';
 import type {
   WithDefault,
-  BubblingEventHandler,
+  DirectEventHandler,
 } from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
@@ -22,11 +22,11 @@ type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 interface NativeProps extends ViewProps {
-  onFocus?: BubblingEventHandler<SearchBarEvent> | null;
-  onBlur?: BubblingEventHandler<SearchBarEvent> | null;
-  onSearchButtonPress?: BubblingEventHandler<SearchButtonPressedEvent> | null;
-  onCancelButtonPress?: BubblingEventHandler<SearchBarEvent> | null;
-  onChangeText?: BubblingEventHandler<ChangeTextEvent> | null;
+  onFocus?: DirectEventHandler<SearchBarEvent> | null;
+  onBlur?: DirectEventHandler<SearchBarEvent> | null;
+  onSearchButtonPress?: DirectEventHandler<SearchButtonPressedEvent> | null;
+  onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
+  onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
   hideWhenScrolling?: boolean;
   autoCapitalize?: WithDefault<AutoCapitalizeType, 'none'>;
   placeholder?: string;
@@ -43,8 +43,8 @@ interface NativeProps extends ViewProps {
   disableBackButtonOverride?: boolean;
   // TODO: consider creating enum here
   inputType?: string;
-  onClose?: BubblingEventHandler<SearchBarEvent> | null;
-  onOpen?: BubblingEventHandler<SearchBarEvent> | null;
+  onClose?: DirectEventHandler<SearchBarEvent> | null;
+  onOpen?: DirectEventHandler<SearchBarEvent> | null;
   hintTextColor?: ColorValue;
   headerIconColor?: ColorValue;
   shouldShowHintSearchIcon?: WithDefault<boolean, true>;
