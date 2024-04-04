@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
@@ -35,12 +37,10 @@ import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 import kotlin.math.max
 
-
 sealed class KeyboardState()
 object KeyboardNotVisible : KeyboardState()
 object KeyboardDidHide : KeyboardState()
-class KeyboardVisible(val height: Int): KeyboardState()
-
+class KeyboardVisible(val height: Int) : KeyboardState()
 
 class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
@@ -222,11 +222,33 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return coordinatorLayout
     }
 
-    internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible): BottomSheetBehavior<Screen> {
-        val displayMetrics = context?.resources?.displayMetrics
-        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
+    fun tryResolveWindowHeight(): Int? {
+        if (screen.container != null) {
+            return screenStack.height
+        }
 
-        val containerHeight = displayMetrics.heightPixels
+        val height1 = context?.resources?.displayMetrics?.heightPixels
+        if (height1 != null) return height1
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val height2 = (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics?.bounds?.height()
+            if (height2 != null) return height2
+        }
+
+//        Log.w(TAG, "$height1, $height2")
+//        check(height1 == height2)
+
+        return null
+    }
+
+    internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible): BottomSheetBehavior<Screen> {
+//        val displayMetrics = context?.resources?.displayMetrics
+//        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
+
+//        val containerHeight = displayMetrics.heightPixels
+
+        val containerHeight = tryResolveWindowHeight()
+        check(containerHeight != null)
 
         behavior.apply {
             isHideable = true
