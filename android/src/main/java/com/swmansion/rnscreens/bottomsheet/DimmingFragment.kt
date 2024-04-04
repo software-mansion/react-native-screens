@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.swmansion.rnscreens.KeyboardDidHide
 import com.swmansion.rnscreens.KeyboardNotVisible
+import com.swmansion.rnscreens.KeyboardState
 import com.swmansion.rnscreens.KeyboardVisible
 import com.swmansion.rnscreens.R
 import com.swmansion.rnscreens.Screen
@@ -53,50 +54,19 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     private val reactContext: ReactContext? = screen.reactContext
 
     private var isKeyboardVisible: Boolean = false
+    private var keyboardState: KeyboardState = KeyboardNotVisible
+    private var keyboardTopOffset: Float = 0F
 
     private var dimmingViewCallback: BottomSheetCallback? = null
 
     private val container: ScreenStack?
         get() = screen.container as? ScreenStack
 
-
-    private val insetCallback = object : WindowInsetsAnimationCompat.Callback(
-        DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
-//        val rootView = reactContext!!.currentActivity!!.window.decorView
-
-        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-            Log.w(TAG, "insetCallback:onPrepare")
-//            ViewCompat.setOnApplyWindowInsetsListener(rootView, this@DimmingFragment)
-//            ViewCompat.requestApplyInsets(rootView)
-        }
-
-        override fun onStart(
-            animation: WindowInsetsAnimationCompat,
-            bounds: WindowInsetsAnimationCompat.BoundsCompat,
-        ): WindowInsetsAnimationCompat.BoundsCompat {
-            Log.w(TAG, "insetCallback:onStart: ${bounds.lowerBound}, ${bounds.upperBound}")
-
-//            ViewCompat.setOnApplyWindowInsetsListener(rootView, null)
-//            ViewCompat.requestApplyInsets(rootView)
-            return bounds
-        }
-
-        override fun onProgress(
-            insets: WindowInsetsCompat,
-            runningAnimations: MutableList<WindowInsetsAnimationCompat>,
-        ): WindowInsetsCompat = insets
-
-        override fun onEnd(animation: WindowInsetsAnimationCompat) {
-            super.onEnd(animation)
-            Log.w(TAG, "insetCallback:onEnd")
-        }
-    }
-
     init {
         // We register for our child lifecycle as we want to know when it's dismissed via native gesture
         nestedFragment.fragment.lifecycle.addObserver(this)
 
-        val rootView = screen.reactContext!!.currentActivity!!.window.decorView;
+        val rootView = screen.reactContext!!.currentActivity!!.window.decorView
         ViewCompat.setOnApplyWindowInsetsListener(rootView, this)
 //        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
 //        ViewCompat.setWindowInsetsAnimationCallback(containerView, insetCallback)
@@ -170,7 +140,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     ): View {
         initViewHierarchy()
         val rootView = reactContext!!.currentActivity!!.window.decorView
-        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
+//        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
         return containerView
     }
 
@@ -369,6 +339,39 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         }
     }
 
+    private val insetCallback = object : WindowInsetsAnimationCompat.Callback(
+        DISPATCH_MODE_CONTINUE_ON_SUBTREE
+    ) {
+//        val rootView = reactContext!!.currentActivity!!.window.decorView
+
+        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+            Log.w(TAG, "insetCallback:onPrepare")
+//            ViewCompat.setOnApplyWindowInsetsListener(rootView, this@DimmingFragment)
+//            ViewCompat.requestApplyInsets(rootView)
+        }
+
+        override fun onStart(
+            animation: WindowInsetsAnimationCompat,
+            bounds: WindowInsetsAnimationCompat.BoundsCompat,
+        ): WindowInsetsAnimationCompat.BoundsCompat {
+            Log.w(TAG, "insetCallback:onStart: ${bounds.lowerBound}, ${bounds.upperBound}")
+
+//            ViewCompat.setOnApplyWindowInsetsListener(rootView, null)
+//            ViewCompat.requestApplyInsets(rootView)
+            return bounds
+        }
+
+        override fun onProgress(
+            insets: WindowInsetsCompat,
+            runningAnimations: MutableList<WindowInsetsAnimationCompat>,
+        ): WindowInsetsCompat = insets
+
+        override fun onEnd(animation: WindowInsetsAnimationCompat) {
+            super.onEnd(animation)
+            Log.w(TAG, "insetCallback:onEnd")
+        }
+    }
+
     override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -377,6 +380,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
 
         if (isImeVisible) {
             isKeyboardVisible = true
+            keyboardState = KeyboardVisible(imeBottomInset.bottom)
             screen.sheetBehavior?.let {
                 (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardVisible(imeBottomInset.bottom))
             }
@@ -392,7 +396,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                         prevInsets.left,
                         prevInsets.top,
                         prevInsets.right,
-                        imeBottomInset.bottom
+                        0,
                     )
                 )
                 .build()
@@ -400,10 +404,13 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
             screen.sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardDidHide)
-                } else {
+                } else if (keyboardState != KeyboardNotVisible) {
                     (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardNotVisible)
+                } else {
                 }
             }
+
+            keyboardState = KeyboardNotVisible
 
             isKeyboardVisible = false
             val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
@@ -420,5 +427,6 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 )
                 .build()
         }
+//        return insets
     }
 }
