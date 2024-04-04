@@ -98,7 +98,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
 
             if (largestUndimmedOffset < slideOffset && slideOffset < firstDimmedOffset) {
                 val fraction = (slideOffset - largestUndimmedOffset) / intervalLength
-                Log.w(TAG, "$fraction")
+//                Log.w(TAG, "$fraction")
                 animator!!.setCurrentFraction(fraction)
             }
         }
