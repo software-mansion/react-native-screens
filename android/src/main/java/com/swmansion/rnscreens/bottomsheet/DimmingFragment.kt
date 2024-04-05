@@ -376,7 +376,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime())
 
-        Log.w(TAG, "View $v received bottom inset $imeBottomInset ime: $isImeVisible")
+        Log.w(TAG, "DV: $this: View $v received bottom inset $imeBottomInset ime: $isImeVisible")
 
         if (isImeVisible) {
             isKeyboardVisible = true
@@ -384,10 +384,12 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
             screen.sheetBehavior?.let {
                 (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardVisible(imeBottomInset.bottom))
             }
-            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+
             if (this.isRemoving) {
                 return insets
             }
+
+            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             return WindowInsetsCompat
                 .Builder(insets)
                 .setInsets(
@@ -401,6 +403,22 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 )
                 .build()
         } else {
+            if (this.isRemoving) {
+                val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+                return WindowInsetsCompat
+                    .Builder(insets)
+                    .setInsets(
+                        WindowInsetsCompat.Type.navigationBars(),
+                        Insets.of(
+                            prevInsets.left,
+                            prevInsets.top,
+                            prevInsets.right,
+                            0
+                        )
+                    )
+                    .build()
+            }
+
             screen.sheetBehavior?.let {
                 if (isKeyboardVisible) {
                     (nestedFragment as ScreenStackFragment).configureBottomSheetBehaviour(it, KeyboardDidHide)
@@ -413,6 +431,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
             keyboardState = KeyboardNotVisible
 
             isKeyboardVisible = false
+
             val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             return WindowInsetsCompat
                 .Builder(insets)

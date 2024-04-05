@@ -248,7 +248,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 //        val containerHeight = displayMetrics.heightPixels
 
         val containerHeight = tryResolveWindowHeight()
-        check(containerHeight != null)
+        check(containerHeight != null) { "Failed to find window height during bottom sheet behaviour configuration" }
 
         behavior.apply {
             isHideable = true
