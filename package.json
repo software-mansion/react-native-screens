@@ -149,5 +149,5 @@
       "javaPackageName": "com.swmansion.rnscreens"
     }
   },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "yarn@4.1.1"
 }
