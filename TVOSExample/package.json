@@ -39,10 +39,10 @@
     "@react-native-community/eslint-config": "^3.0.0",
     "babel-jest": "^27.0.6",
     "eslint": "^7.32.0",
+    "glob-to-regexp": "^0.4.1",
     "jest": "^27.0.6",
     "metro-react-native-babel-preset": "^0.66.2",
-    "react-test-renderer": "17.0.1",
-    "glob-to-regexp": "^0.4.1"
+    "react-test-renderer": "17.0.1"
   },
   "jest": {
     "preset": "react-native"
