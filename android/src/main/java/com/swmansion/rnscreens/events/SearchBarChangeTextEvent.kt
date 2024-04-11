@@ -8,7 +8,7 @@ class SearchBarChangeTextEvent(
     surfaceId: Int,
     viewId: Int,
     private val text: String?,
-) : Event<ScreenAppearEvent>(surfaceId, viewId) {
+) : Event<SearchBarChangeTextEvent>(surfaceId, viewId) {
     override fun getEventName(): String = EVENT_NAME
 
     // All events for a given view can be coalesced.
