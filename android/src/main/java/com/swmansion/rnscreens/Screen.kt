@@ -253,8 +253,10 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     }
 
     private fun notifyHeaderHeightChange(headerHeight: Double) {
-        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(id, headerHeight))
+        val screenContext = context as ReactContext
+        val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
+        UIManagerHelper.getEventDispatcherForReactTag(screenContext, id)
+            ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
     enum class StackPresentation {
