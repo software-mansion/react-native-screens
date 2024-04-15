@@ -10,7 +10,7 @@ import {
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 function isTranslucent(route: Route<string>) {
@@ -94,7 +94,7 @@ function Second({
   const [isTranslucent, setIsTranslucent] = React.useState(false);
 
   React.useEffect(() => {
-    navigation.setOptions({ headerTranslucent: isTranslucent });
+    navigation.setOptions({ headerTransparent: isTranslucent });
   }, [isTranslucent]);
 
   return (

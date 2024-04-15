@@ -4,7 +4,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Props {
@@ -50,7 +50,7 @@ const App = (): JSX.Element => {
             name="Second"
             component={Second}
             options={{
-              stackPresentation: 'modal',
+              presentation: 'modal',
               // eslint-disable-next-line react/display-name
               headerLeft: () => <View />,
             }}

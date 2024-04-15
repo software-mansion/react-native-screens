@@ -2,18 +2,10 @@ import React from 'react';
 import { Button, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
-// swipe gesture works when using react-native-screens/native-stack
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
-} from 'react-native-screens/native-stack';
-
-// but it doesn't work with @react-navigation/native-stack
-// use `@react-navigation/native@^6` & `@react-navigation/native-stack@^6` to test this
-// import {
-//   createNativeStackNavigator,
-//   NativeStackScreenProps,
-// } from '@react-navigation/native-stack';
+} from '@react-navigation/native-stack';
 
 type StackParams = {
   Screen: undefined;

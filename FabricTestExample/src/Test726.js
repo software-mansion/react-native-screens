@@ -29,7 +29,7 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator keyboardHandlingEnabled={false}>
+      <Stack.Navigator screenOptions={{ keyboardHandlingEnabled: false }}>
         <Stack.Screen name="Home" component={TestScreen} />
         <Stack.Screen name="Test" component={TestScreen2} />
       </Stack.Navigator>

@@ -4,7 +4,7 @@ import { Button, View } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 
 type StackParamList = {

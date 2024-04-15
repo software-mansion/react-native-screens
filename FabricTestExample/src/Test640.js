@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 
 function wait(timeout) {
@@ -54,7 +54,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ stackPresentation: 'modal' }}>
+      <Stack.Navigator screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Modal" component={Modal} options={{}} />
       </Stack.Navigator>

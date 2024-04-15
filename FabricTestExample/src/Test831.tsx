@@ -4,7 +4,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator();
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ direction: 'rtl', headerShown: false }}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>
