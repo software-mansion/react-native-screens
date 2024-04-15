@@ -5,7 +5,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 // Uncomment these lines if you want to test useAnimatedHeaderHeight.
 import { Animated } from 'react-native';
@@ -98,9 +98,9 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
-              fullScreenSwipeEnabled: true,
-              stackAnimation: 'fade_from_bottom',
-              customAnimationOnSwipe: true,
+              fullScreenGestureEnabled: true,
+              animation: 'fade_from_bottom',
+              animationMatchesGesture: true,
               headerLargeTitle: true,
               // headerTranslucent: true,
             }}>

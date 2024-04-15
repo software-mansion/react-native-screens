@@ -33,7 +33,7 @@ module.exports = {
       return acc;
     }, {}),
 
-    // Since we use react-naviation as submodule it comes with it's own node_modules. While loading
+    // Since we use react-navigation as submodule it comes with it's own node_modules. While loading
     // react-navigation code, due to how module resolution algorithms works it seems that its node_modules
     // are consulted first, resulting in double-loaded packages (so doubled react, react-native and other package instances) leading
     // to various errors. To mitigate this we define below custom request resolver, hijacking requests to conflicting modules and manually
