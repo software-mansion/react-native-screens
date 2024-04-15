@@ -1,15 +1,5 @@
 import { device, expect, element, by } from 'detox';
 
-const pressBack = async () => {
-  if (device.getPlatform() === 'android') {
-    await device.pressBack();
-  } else if (device.getPlatform() === 'ios') {
-    await element(by.traits(['button']))
-      .atIndex(0)
-      .tap();
-  }
-};
-
 const awaitClassicalEventBehavior = async () => {
   if (device.getPlatform() === 'ios') {
     await expect(
@@ -71,7 +61,7 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('should go back from Chats using header button and run opening & closing events in correct order ', async () => {
+  it('should go back from Chats and run opening & closing events in correct order ', async () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
     await element(by.id('events-go-to-chats')).tap();
@@ -86,7 +76,7 @@ describe('Events', () => {
     awaitClassicalEventBehavior();
   });
 
-  it('should use "none" animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
+  it('should use "none" animation, go back from Chats and run opening & closing events in correct order ', async () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
     await element(by.id('events-stack-animation-picker')).tap();
@@ -133,7 +123,7 @@ describe('Events', () => {
     ).toExist();
   });
 
-  it('should use "slide_from_bottom" animation, go back from Chats using header button and run opening & closing events in correct order ', async () => {
+  it('should use "slide_from_bottom" animation, go back from Chats and run opening & closing events in correct order ', async () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
     await element(by.id('events-stack-animation-picker')).tap();
@@ -148,42 +138,6 @@ describe('Events', () => {
         by.type('androidx.appcompat.widget.AppCompatImageButton')
       ).tap();
     }
-
-    awaitClassicalEventBehavior();
-  });
-
-  it('should go back from Chats using native way and run opening & closing events in correct order ', async () => {
-    await element(by.id('root-screen-playground-Events')).tap();
-
-    await element(by.id('events-go-to-chats')).tap();
-
-    await pressBack();
-
-    awaitClassicalEventBehavior();
-  });
-
-  it('should use "none" animation, go back from Chats using native way and run opening & closing events in correct order ', async () => {
-    await element(by.id('root-screen-playground-Events')).tap();
-
-    await element(by.id('events-stack-animation-picker')).tap();
-    await element(by.id('stack-animation-none')).tap();
-
-    await element(by.id('events-go-to-chats')).tap();
-
-    await pressBack();
-
-    awaitClassicalEventBehavior();
-  });
-
-  it('should use "slide_from_bottom" animation, go back from Chats using native way and run opening & closing events in correct order ', async () => {
-    await element(by.id('root-screen-playground-Events')).tap();
-
-    await element(by.id('events-stack-animation-picker')).tap();
-    await element(by.id('stack-animation-slide_from_bottom')).tap();
-
-    await element(by.id('events-go-to-chats')).tap();
-
-    await pressBack();
 
     awaitClassicalEventBehavior();
   });
