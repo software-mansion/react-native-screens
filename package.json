@@ -5,7 +5,6 @@
   "scripts": {
     "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn)",
     "check-types": "tsc --noEmit",
-    "submodules": "git submodule update --init --recursive && (cd react-navigation && yarn)",
     "start": "react-native start",
     "test:unit": "jest --passWithNoTests",
     "format-js": "prettier --write --list-different './{src,Example}/**/*.{js,ts,tsx}'",
