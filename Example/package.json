@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start",
+    "android": "npx react-native run-android",
+    "ios": "npx react-native run-ios",
+    "start": "npx react-native start",
     "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types && yarn format",
     "check-types": "tsc --noEmit",
