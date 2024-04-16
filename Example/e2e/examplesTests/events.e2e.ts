@@ -73,7 +73,7 @@ describe('Events', () => {
       ).tap();
     }
 
-    awaitClassicalEventBehavior();
+    await awaitClassicalEventBehavior();
   });
 
   it('should use "none" animation, go back from Chats and run opening & closing events in correct order ', async () => {
@@ -92,7 +92,7 @@ describe('Events', () => {
       ).tap();
     }
 
-    awaitClassicalEventBehavior();
+    await awaitClassicalEventBehavior();
   });
 
   it('should use "slide_from_bottom" animation, go to Chats and run opening & closing events in correct order ', async () => {
@@ -139,6 +139,6 @@ describe('Events', () => {
       ).tap();
     }
 
-    awaitClassicalEventBehavior();
+    await awaitClassicalEventBehavior();
   });
 });
