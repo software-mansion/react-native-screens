@@ -16,20 +16,6 @@ import {
 import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
 import ModalScreenNativeComponent from '../fabric/ModalScreenNativeComponent';
 
-// @ts-ignore - its taken straight from RN
-// eslint-disable-next-line import/namespace
-import { customDirectEventTypes } from 'react-native/Libraries/Renderer/shims/ReactNativeViewConfigRegistry';
-
-customDirectEventTypes.topInsetsChange = {
-  registrationName: 'topInsetsChange',
-};
-customDirectEventTypes.topAttached = {
-  registrationName: 'topAttached',
-};
-customDirectEventTypes.topDetached = {
-  registrationName: 'topDetached',
-};
-
 export const NativeScreen: React.ComponentType<ScreenProps> =
   ScreenNativeComponent as any;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
