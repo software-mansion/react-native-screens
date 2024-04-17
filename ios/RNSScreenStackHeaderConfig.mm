@@ -515,6 +515,10 @@ namespace react = facebook::react;
 
   if (config.isBackTitleVisible) {
     if ((config.backTitleFontFamily &&
+         // While being used by react-navigation, the `backTitleFontFamily` will
+         // be set to "System" by default - which is the system default font.
+         // To avoid always considering the font as customized, we need to have an additional check.
+         // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
          ![config.backTitleFontFamily isEqual:@"System"]) ||
         config.backTitleFontSize) {
       isBackButtonCustomized = YES;
