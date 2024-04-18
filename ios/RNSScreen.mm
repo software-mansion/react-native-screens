@@ -1567,11 +1567,12 @@ RCT_ENUM_CONVERTER(
     RNSStatusBarStyle,
     (@{
       @"auto" : @(RNSStatusBarStyleAuto),
-      @"inverted" : @(RNSStatusBarStyleInverted),
+      @"system" : @(RNSStatusBarStyleSystem),
+      @"systemInverted" : @(RNSStatusBarStyleSystemInverted),
       @"light" : @(RNSStatusBarStyleLight),
       @"dark" : @(RNSStatusBarStyleDark),
     }),
-    RNSStatusBarStyleAuto,
+    RNSStatusBarStyleSystem,
     integerValue)
 
 RCT_ENUM_CONVERTER(

@@ -44,11 +44,11 @@
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
   if (@available(iOS 13.0, *)) {
     switch (statusBarStyle) {
-      case RNSStatusBarStyleAuto:
+      case RNSStatusBarStyleSystem:
         return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
             ? UIStatusBarStyleLightContent
             : UIStatusBarStyleDarkContent;
-      case RNSStatusBarStyleInverted:
+      case RNSStatusBarStyleSystemInverted:
         return [UITraitCollection.currentTraitCollection userInterfaceStyle] == UIUserInterfaceStyleDark
             ? UIStatusBarStyleDarkContent
             : UIStatusBarStyleLightContent;

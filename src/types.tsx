@@ -354,9 +354,9 @@ export interface ScreenProps extends ViewProps {
    */
   statusBarHidden?: boolean;
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `system`.
    */
-  statusBarStyle?: 'inverted' | 'auto' | 'light' | 'dark';
+  statusBarStyle?: 'auto' | 'system' | 'systemInverted' | 'light' | 'dark';
   /**
    * Sets the translucency of the status bar. Defaults to `false`.
    *

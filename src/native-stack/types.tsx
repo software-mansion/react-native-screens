@@ -424,7 +424,7 @@ export type NativeStackNavigationOptions = {
    */
   statusBarHidden?: boolean;
   /**
-   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `auto`.
+   * Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file on iOS. Defaults to `system`.
    */
   statusBarStyle?: ScreenProps['statusBarStyle'];
   /**
