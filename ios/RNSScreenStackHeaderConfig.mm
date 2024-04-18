@@ -511,7 +511,7 @@ namespace react = facebook::react;
                                                                              action:nil];
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu || NO;
+  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
 
   if (config.isBackTitleVisible) {
     if ((config.backTitleFontFamily &&
