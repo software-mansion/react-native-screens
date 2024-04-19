@@ -4,9 +4,11 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 platform = new_arch_enabled ? "11.0" : "9.0"
-source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : ["ios/**/*.{h,m,mm}", "cpp/**/*.{cpp,h}"]
+source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp,swift}' : ["ios/**/*.{h,m,mm,swift}", "cpp/**/*.{cpp,h}"]
 
 folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32'
+
+Pod::UI.puts "---- RUN PODSPEC #{new_arch_enabled}"
 
 # Helper class to avoid clashing with Cocoapods install_dependencies function
 class RNScreensDependencyHelper
@@ -16,16 +18,27 @@ class RNScreensDependencyHelper
       return
     end
 
+    
     s.subspec "common" do |ss|
+      Pod::UI.puts "---- pre ss.pod_target_xcconfig: #{ss.to_json}"
+
       ss.source_files         = ["common/cpp/**/*.{cpp,h}", "cpp/**/*.{cpp,h}"]
-      ss.header_dir           = "rnscreens"
-      ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
+      # ss.header_dir           = "rnscreens"
+      ss.pod_target_xcconfig  = { 
+        "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\" \"$(PODS_TARGET_SRCROOT)/ios\"",
+        'DEFINES_MODULE' => 'YES',
+        'OTHER_SWIFT_FLAGS' => '-DRCT_NEW_ARCH_ENABLED',
+      }
+
+      Pod::UI.puts "---- after ss.pod_target_xcconfig: #{ss.to_json}"
     end
   end
 
   # Function to support older versions of React Native which do not provide the
   # install_modules_dependencies function
   def self.install_dependencies(s, new_arch_enabled)
+    Pod::UI.puts "---- new arch enabled: #{new_arch_enabled}"
+    
     if new_arch_enabled
       s.pod_target_xcconfig = {
         'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost" "$(PODS_ROOT)/boost-for-react-native"  "$(PODS_ROOT)/RCT-Folly"',
@@ -66,9 +79,11 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   if defined?(install_modules_dependencies()) != nil
+    Pod::UI.puts "---- RUN add_common_subspec #{new_arch_enabled}"
     install_modules_dependencies(s)
     RNScreensDependencyHelper.add_common_subspec(s, new_arch_enabled)
   else
+    Pod::UI.puts "---- RUN install_dependencies #{new_arch_enabled}"
     RNScreensDependencyHelper.install_dependencies(s, new_arch_enabled)
   end
 end

@@ -3,6 +3,7 @@ import React from 'react';
 
 import { enableFreeze } from 'react-native-screens';
 
+import TestX from './src/TestX';
 import Test42 from './src/Test42';
 import Test111 from './src/Test111';
 import Test263 from './src/Test263';
@@ -99,5 +100,5 @@ import Test2069 from './src/Test2069';
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <TestX />;
 }
