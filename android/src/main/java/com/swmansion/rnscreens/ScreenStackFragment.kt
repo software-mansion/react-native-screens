@@ -212,7 +212,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         container.dismiss(this)
     }
 
-    private class ScreensCoordinatorLayout(
+    class ScreensCoordinatorLayout(
         context: Context,
         private val mFragment: ScreenFragment
     ) : CoordinatorLayout(context) {
@@ -228,6 +228,16 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
                 override fun onAnimationRepeat(animation: Animation) {}
             }
+
+        override fun startViewTransition(view: View?) {
+            super.startViewTransition(view)
+            mFragment.onViewAnimationStart()
+        }
+
+        override fun endViewTransition(view: View?) {
+            super.endViewTransition(view)
+            mFragment.onViewAnimationEnd()
+        }
 
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for

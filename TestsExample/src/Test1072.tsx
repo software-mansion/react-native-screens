@@ -46,7 +46,7 @@ export default function App() {
         <Stack.Navigator
           screenOptions={{
             fullScreenSwipeEnabled: true,
-            stackAnimation: 'fade_from_bottom',
+            stackAnimation: 'default',
             customAnimationOnSwipe: true,
           }}>
           <Stack.Screen name="First" component={First} />

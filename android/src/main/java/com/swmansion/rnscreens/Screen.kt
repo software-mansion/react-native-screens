@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
 import android.util.TypedValue
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
@@ -48,6 +49,16 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         // Setting params this way is not the most elegant way to solve this problem but workarounds it
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
+    }
+
+    override fun startViewTransition(view: View?) {
+        super.startViewTransition(view)
+        fragmentWrapper?.onViewAnimationStart()
+    }
+
+    override fun endViewTransition(view: View?) {
+        super.endViewTransition(view)
+        fragmentWrapper?.onViewAnimationEnd()
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {

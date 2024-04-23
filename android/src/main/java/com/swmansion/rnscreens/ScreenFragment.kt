@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.view.ViewParent
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.transition.Transition
+import androidx.transition.Transition.TransitionListener
+import androidx.transition.TransitionSet
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
@@ -64,6 +67,33 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super() {
         screen = screenView
+    }
+
+    override fun setEnterTransition(transition: Any?) {
+        if (transition != null && transition is TransitionSet) {
+            transition.addListener(object: TransitionListener {
+                override fun onTransitionStart(transition: Transition) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onTransitionEnd(transition: Transition) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onTransitionCancel(transition: Transition) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onTransitionPause(transition: Transition) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onTransitionResume(transition: Transition) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+        }
     }
 
     override fun onResume() {

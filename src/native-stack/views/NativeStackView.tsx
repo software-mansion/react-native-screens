@@ -324,6 +324,7 @@ const RouteView = ({
           data: { closing: false },
           target: route.key,
         });
+        console.error('Will appear');
       }}
       onWillDisappear={() => {
         navigation.emit({
@@ -331,12 +332,14 @@ const RouteView = ({
           data: { closing: true },
           target: route.key,
         });
+        console.error('Will disappear');
       }}
       onAppear={() => {
         navigation.emit({
           type: 'appear',
           target: route.key,
         });
+        console.error('Appear');
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: false },
@@ -349,6 +352,7 @@ const RouteView = ({
           data: { closing: true },
           target: route.key,
         });
+        console.error('Disappear');
       }}
       onHeaderHeightChange={e => {
         const headerHeight = e.nativeEvent.headerHeight;
