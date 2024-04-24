@@ -53,12 +53,10 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
     override fun startViewTransition(view: View?) {
         super.startViewTransition(view)
-        fragmentWrapper?.onViewAnimationStart()
     }
 
     override fun endViewTransition(view: View?) {
         super.endViewTransition(view)
-        fragmentWrapper?.onViewAnimationEnd()
     }
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {

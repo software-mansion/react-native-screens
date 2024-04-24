@@ -1,9 +1,11 @@
 package com.swmansion.rnscreens
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -16,6 +18,7 @@ import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
@@ -84,6 +87,35 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     override fun onViewAnimationEnd() {
         super.onViewAnimationEnd()
         notifyViewAppearTransitionEnd()
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        // this means that the fragment will appear with a custom transition, in the case
+        // of animation: 'none', onViewAnimationStart and onViewAnimationEnd
+        // won't be called and we need to notify stack directly from here.
+        // When using the Toolbar back button this is called an extra time with transit = 0 but in
+        // this case we don't want to notify. The way I found to detect is case is check isHidden.
+         if (transit == 0 && !isHidden
+//            && screen.stackAnimation === Screen.StackAnimation.NONE
+        ) {
+            if (enter) {
+                // Android dispatches the animation start event for the fragment that is being added first
+                // however we want the one being dismissed first to match iOS. It also makes more sense
+                // from  a navigation point of view to have the disappear event first.
+                // Since there are no explicit relationships between the fragment being added / removed
+                // the practical way to fix this is delaying dispatching the appear events at the end of
+                // the frame.
+                UiThreadUtil.runOnUiThread {
+                    dispatchOnWillAppear()
+                    dispatchOnAppear()
+                }
+            } else {
+                dispatchOnWillDisappear()
+                dispatchOnDisappear()
+                notifyViewAppearTransitionEnd()
+            }
+        }
+        return null
     }
 
     private fun notifyViewAppearTransitionEnd() {
@@ -228,16 +260,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
                 override fun onAnimationRepeat(animation: Animation) {}
             }
-
-        override fun startViewTransition(view: View?) {
-            super.startViewTransition(view)
-            mFragment.onViewAnimationStart()
-        }
-
-        override fun endViewTransition(view: View?) {
-            super.endViewTransition(view)
-            mFragment.onViewAnimationEnd()
-        }
 
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for

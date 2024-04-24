@@ -28,13 +28,17 @@ function First({
   );
 }
 
-function Second() {
+function Second({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}) {
   return (
     <ScrollView>
       <Text style={styles.subTitle}>
         Use swipe back gesture to go back (iOS only)
       </Text>
-      <Post />
+      <Post onPress={() => navigation.navigate('Third')} />
     </ScrollView>
   );
 }
@@ -51,6 +55,7 @@ export default function App() {
           }}>
           <Stack.Screen name="First" component={First} />
           <Stack.Screen name="Second" component={Second} />
+          <Stack.Screen name="Third" component={Second} />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

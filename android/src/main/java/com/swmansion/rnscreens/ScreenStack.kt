@@ -2,7 +2,6 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.graphics.Canvas
-import android.os.Build
 import android.view.View
 import androidx.fragment.app.FragmentTransaction
 import com.facebook.react.bridge.ReactContext
@@ -10,8 +9,6 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 class ScreenStack(context: Context?) : ScreenContainer(context) {
     private val stack = ArrayList<ScreenStackFragmentWrapper>()
@@ -19,6 +16,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
+    private var previousTopScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
     private var isDetachingCurrentScreen = false
     private var reverseLastTwoChildren = false
@@ -51,15 +49,17 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
-        topScreenWrapper?.onViewAnimationStart()
         removalTransitionStarted = true
+        previousTopScreenWrapper?.onViewAnimationStart()
+        topScreenWrapper?.onViewAnimationStart()
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
-        topScreenWrapper?.onViewAnimationEnd()
         if (removalTransitionStarted) {
             removalTransitionStarted = false
+            previousTopScreenWrapper?.onViewAnimationEnd()
+            topScreenWrapper?.onViewAnimationEnd()
             dispatchOnFinishTransitioning()
         }
     }
@@ -221,6 +221,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 it.add(id, newTop.fragment)
             }
+            previousTopScreenWrapper = topScreenWrapper
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.map { it as ScreenStackFragmentWrapper })

@@ -26,6 +26,7 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
 
     override fun addView(parent: ScreenStack, child: View, index: Int) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreen" }
+        prepareOutTransition(child)
         parent.addScreen(child, index)
     }
 

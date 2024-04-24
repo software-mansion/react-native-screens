@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
+import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.transition.Transition
@@ -67,33 +68,6 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     @SuppressLint("ValidFragment")
     constructor(screenView: Screen) : super() {
         screen = screenView
-    }
-
-    override fun setEnterTransition(transition: Any?) {
-        if (transition != null && transition is TransitionSet) {
-            transition.addListener(object: TransitionListener {
-                override fun onTransitionStart(transition: Transition) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onTransitionEnd(transition: Transition) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onTransitionCancel(transition: Transition) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onTransitionPause(transition: Transition) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onTransitionResume(transition: Transition) {
-                    TODO("Not yet implemented")
-                }
-
-            })
-        }
     }
 
     override fun onResume() {
@@ -200,22 +174,22 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         }
     }
 
-    private fun dispatchOnWillAppear() {
+    fun dispatchOnWillAppear() {
         dispatchLifecycleEvent(ScreenLifecycleEvent.WILL_APPEAR, this)
         dispatchTransitionProgressEvent(0.0f, false)
     }
 
-    private fun dispatchOnAppear() {
+    fun dispatchOnAppear() {
         dispatchLifecycleEvent(ScreenLifecycleEvent.DID_APPEAR, this)
         dispatchTransitionProgressEvent(1.0f, false)
     }
 
-    private fun dispatchOnWillDisappear() {
+    fun dispatchOnWillDisappear() {
         dispatchLifecycleEvent(ScreenLifecycleEvent.WILL_DISAPPEAR, this)
         dispatchTransitionProgressEvent(0.0f, true)
     }
 
-    private fun dispatchOnDisappear() {
+    fun dispatchOnDisappear() {
         dispatchLifecycleEvent(ScreenLifecycleEvent.DID_DISAPPEAR, this)
         dispatchTransitionProgressEvent(1.0f, true)
     }
@@ -302,7 +276,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
             // root view in order to achieve this.
-            if (isResumed) {
+            if (isResumed || screen.container?.topScreen === screen) {
                 // Android dispatches the animation start event for the fragment that is being added first
                 // however we want the one being dismissed first to match iOS. It also makes more sense from
                 // a navigation point of view to have the disappear event first.
