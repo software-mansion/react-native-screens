@@ -174,22 +174,22 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         }
     }
 
-    fun dispatchOnWillAppear() {
+    private fun dispatchOnWillAppear() {
         dispatchLifecycleEvent(ScreenLifecycleEvent.WILL_APPEAR, this)
         dispatchTransitionProgressEvent(0.0f, false)
     }
 
-    fun dispatchOnAppear() {
+    private fun dispatchOnAppear() {
         dispatchLifecycleEvent(ScreenLifecycleEvent.DID_APPEAR, this)
         dispatchTransitionProgressEvent(1.0f, false)
     }
 
-    fun dispatchOnWillDisappear() {
+    private fun dispatchOnWillDisappear() {
         dispatchLifecycleEvent(ScreenLifecycleEvent.WILL_DISAPPEAR, this)
         dispatchTransitionProgressEvent(0.0f, true)
     }
 
-    fun dispatchOnDisappear() {
+    private fun dispatchOnDisappear() {
         dispatchLifecycleEvent(ScreenLifecycleEvent.DID_DISAPPEAR, this)
         dispatchTransitionProgressEvent(1.0f, true)
     }
@@ -276,7 +276,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
             // root view in order to achieve this.
-            if (isResumed || screen.container?.topScreen === screen) {
+            if (isResumed) {
                 // Android dispatches the animation start event for the fragment that is being added first
                 // however we want the one being dismissed first to match iOS. It also makes more sense from
                 // a navigation point of view to have the disappear event first.

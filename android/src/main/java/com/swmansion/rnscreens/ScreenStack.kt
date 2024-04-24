@@ -16,7 +16,6 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
     private var topScreenWrapper: ScreenStackFragmentWrapper? = null
-    private var previousTopScreenWrapper: ScreenStackFragmentWrapper? = null
     private var removalTransitionStarted = false
     private var isDetachingCurrentScreen = false
     private var reverseLastTwoChildren = false
@@ -217,7 +216,6 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 it.add(id, newTop.fragment)
             }
-            previousTopScreenWrapper = topScreenWrapper
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
             stack.clear()
             stack.addAll(screenWrappers.map { it as ScreenStackFragmentWrapper })
