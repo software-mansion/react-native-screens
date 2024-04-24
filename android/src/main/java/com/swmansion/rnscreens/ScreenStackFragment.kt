@@ -1,13 +1,13 @@
 package com.swmansion.rnscreens
 
 import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -20,6 +20,8 @@ import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.R
+import androidx.fragment.app.FragmentTransaction
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
@@ -91,8 +93,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         notifyViewAppearTransitionEnd()
     }
 
-    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator {
-        val listener = object: AnimatorListenerAdapter() {
+    // Similarly to ScreensCoordinatorLayout, this method listens only for the phases of default Android
+    // transitions (default/none/fade), since `ScreensCoordinatorLayout#startAnimation` is being
+    // called only for custom animations.
+    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
+        val listener = object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator) {
                 onViewAnimationStart()
                 super.onAnimationStart(animation)
@@ -104,9 +109,28 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         }
 
-        val animator = AnimatorSet().apply {
+        // When fragment is being removed or there's no transition selected, we simply
+        // return AnimatorSet without any animation.
+        if (isRemoving || transit == FragmentTransaction.TRANSIT_NONE) {
+            return AnimatorSet().apply {
+                addListener(listener)
+            }
+        }
+
+        var selectedNextAnim = nextAnim
+        if (nextAnim == 0) {
+            selectedNextAnim = when (transit) {
+                FragmentTransaction.TRANSIT_FRAGMENT_OPEN -> if (enter) R.animator.fragment_open_enter else R.animator.fragment_open_exit
+                FragmentTransaction.TRANSIT_FRAGMENT_CLOSE -> if (enter) R.animator.fragment_close_enter else R.animator.fragment_close_exit
+                FragmentTransaction.TRANSIT_FRAGMENT_FADE -> if (enter) R.animator.fragment_fade_enter else R.animator.fragment_fade_exit
+                else -> 0
+            }
+        }
+
+        val animator = AnimatorInflater.loadAnimator(context, selectedNextAnim).apply {
             addListener(listener)
         }
+
         return animator
     }
 
@@ -116,7 +140,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         // won't be called and we need to notify stack directly from here.
         // When using the Toolbar back button this is called an extra time with transit = 0 but in
         // this case we don't want to notify. The way I found to detect is case is check isHidden.
-         if (transit == 0 && !isHidden
+        if (transit == 0 && !isHidden
 //            && screen.stackAnimation === Screen.StackAnimation.NONE
         ) {
             if (enter) {

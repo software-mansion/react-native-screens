@@ -324,7 +324,6 @@ const RouteView = ({
           data: { closing: false },
           target: route.key,
         });
-        console.error(`SCREEN ${index}:Will appear`);
       }}
       onWillDisappear={() => {
         navigation.emit({
@@ -332,14 +331,12 @@ const RouteView = ({
           data: { closing: true },
           target: route.key,
         });
-        console.error(`SCREEN ${index}:Will disappear`);
       }}
       onAppear={() => {
         navigation.emit({
           type: 'appear',
           target: route.key,
         });
-        console.error(`SCREEN ${index}:Appear`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: false },
@@ -352,7 +349,6 @@ const RouteView = ({
           data: { closing: true },
           target: route.key,
         });
-        console.error(`SCREEN ${index}:Disappear`);
       }}
       onHeaderHeightChange={e => {
         const headerHeight = e.nativeEvent.headerHeight;
