@@ -8,12 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
-import android.view.animation.Animation
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-import androidx.transition.Transition
-import androidx.transition.Transition.TransitionListener
-import androidx.transition.TransitionSet
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
@@ -276,7 +272,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
             // root view in order to achieve this.
-            if (isResumed) {
+            if (isResumed || screen.container?.topScreen === screen) {
                 // Android dispatches the animation start event for the fragment that is being added first
                 // however we want the one being dismissed first to match iOS. It also makes more sense from
                 // a navigation point of view to have the disappear event first.
