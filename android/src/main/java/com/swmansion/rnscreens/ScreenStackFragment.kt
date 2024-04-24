@@ -1,6 +1,8 @@
 package com.swmansion.rnscreens
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
@@ -87,6 +89,25 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     override fun onViewAnimationEnd() {
         super.onViewAnimationEnd()
         notifyViewAppearTransitionEnd()
+    }
+
+    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator {
+        val listener = object: AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator) {
+                onViewAnimationStart()
+                super.onAnimationStart(animation)
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                onViewAnimationEnd()
+                super.onAnimationEnd(animation)
+            }
+        }
+
+        val animator = AnimatorSet().apply {
+            addListener(listener)
+        }
+        return animator
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

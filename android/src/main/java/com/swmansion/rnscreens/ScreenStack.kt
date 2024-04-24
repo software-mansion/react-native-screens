@@ -50,16 +50,12 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
         removalTransitionStarted = true
-        previousTopScreenWrapper?.onViewAnimationStart()
-        topScreenWrapper?.onViewAnimationStart()
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
         if (removalTransitionStarted) {
             removalTransitionStarted = false
-            previousTopScreenWrapper?.onViewAnimationEnd()
-            topScreenWrapper?.onViewAnimationEnd()
             dispatchOnFinishTransitioning()
         }
     }
@@ -344,7 +340,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
             // Hence, we're comparing numerical version here.
 //            Build.VERSION.SDK_INT >= 33 ||
-                fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+            fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.IOS
     }
