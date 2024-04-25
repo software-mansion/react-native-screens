@@ -109,6 +109,12 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
         }
 
+        // If there's custom animation set, use default onCreateAnimator implementation, as event
+        // handling will be handled by ScreensCoordinatorLayout.
+        if (!Screen.isSystemAnimation(screen.stackAnimation)) {
+            return super.onCreateAnimator(transit, enter, nextAnim)
+        }
+
         // When fragment is being removed or there's no transition selected, we simply
         // return AnimatorSet without any animation.
         if (isRemoving || transit == FragmentTransaction.TRANSIT_NONE) {
