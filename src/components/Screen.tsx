@@ -51,9 +51,9 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       props.onComponentRef?.(ref);
     };
 
-    const closing = new Animated.Value(0);
-    const progress = new Animated.Value(0);
-    const goingForward = new Animated.Value(0);
+    const closing = React.useRef(new Animated.Value(0)).current;
+    const progress = React.useRef(new Animated.Value(0)).current;
+    const goingForward = React.useRef(new Animated.Value(0)).current;
 
     const {
       enabled = screensEnabled(),
