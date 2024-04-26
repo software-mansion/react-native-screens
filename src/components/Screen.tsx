@@ -48,6 +48,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
 
     const setRef = (ref: ViewConfig) => {
       innerRef.current = ref;
+      props.onComponentRef?.(ref);
     };
 
     const closing = new Animated.Value(0);
