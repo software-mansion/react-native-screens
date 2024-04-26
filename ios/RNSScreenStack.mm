@@ -385,9 +385,9 @@ namespace react = facebook::react;
   // for the duration of transition.
 
   // There are couple of scenarios:
-  // (1) No modals are presented or all modals were presented by this RNSNavigationController,
-  // (2) There are modals presented by other RNSNavigationControllers (nested/outer)
-  // (3) There are modals presented by other controllers (e.g. React Native's Modal view)
+  // (1) no modals are presented or all modals were presented by this RNSNavigationController,
+  // (2) there are modals presented by other RNSNavigationControllers (nested/outer),
+  // (3) there are modals presented by other controllers (e.g. React Native's Modal view).
 
   // Last controller that is common for both _presentedModals & controllers
   __block UIViewController *changeRootController = _controller;
