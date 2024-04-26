@@ -383,7 +383,6 @@ namespace react = facebook::react;
 
   // We need to find bottom-most view controller that should stay on the stack
   // for the duration of transition.
-  // We will want to dismiss all
 
   // There are couple of scenarios:
   // (1) No modals are presented or all modals were presented by this RNSNavigationController,
