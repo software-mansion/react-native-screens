@@ -382,9 +382,12 @@ namespace react = facebook::react;
   [newControllers removeObjectsInArray:_presentedModals];
 
   // We need to find bottom-most view controller that should stay on the stack
-  // for the duration of transition. There are couple of scenarios:
-  // (1) No modals are presented or all modals were presented by this RNSNavigationController,
-  // (2) There are modals presented by other RNSNavigationControllers (nested/outer)
+  // for the duration of transition.
+
+  // There are couple of scenarios:
+  // (1) no modals are presented or all modals were presented by this RNSNavigationController,
+  // (2) there are modals presented by other RNSNavigationControllers (nested/outer),
+  // (3) there are modals presented by other controllers (e.g. React Native's Modal view).
 
   // Last controller that is common for both _presentedModals & controllers
   __block UIViewController *changeRootController = _controller;
@@ -479,16 +482,35 @@ namespace react = facebook::react;
     }
   };
 
+  // changeRootController is the last controller that *is owned by this stack*, and should stay unchanged after this
+  // batch of transitions. Therefore changeRootController.presentedViewController is the first constroller to be
+  // dismissed (implying also all controllers above). Notice here, that firstModalToBeDismissed could have been
+  // RNSScreen modal presented from *this* stack, another stack, or any other view controller with modal presentation
+  // provided by third-party libraries (e.g. React Native's Modal view). In case of presence of other (not managed by
+  // us) modal controllers, weird interactions might arise. The code below, besides handling our presentation /
+  // dismissal logic also attempts to handle possible wide gamut of cases of interactions with third-party modal
+  // controllers, however it's not perfect.
+  // TODO: Find general way to manage owned and foreign modal view controllers and refactor this code. Consider building
+  // model first (data structue, attempting to be aware of all modals in presentation and some text-like algorithm for
+  // computing required operations).
+
   UIViewController *firstModalToBeDismissed = changeRootController.presentedViewController;
+
   if (firstModalToBeDismissed != nil) {
     BOOL shouldAnimate = changeRootIndex == controllers.count &&
         [firstModalToBeDismissed isKindOfClass:[RNSScreen class]] &&
         ((RNSScreen *)firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone;
 
-    if ([_presentedModals containsObject:firstModalToBeDismissed]) {
+    if ([_presentedModals containsObject:firstModalToBeDismissed] ||
+        ![firstModalToBeDismissed isKindOfClass:RNSScreen.class]) {
       // We dismiss every VC that was presented by changeRootController VC or its descendant.
       // After the series of dismissals is completed we run completion block in which
       // we present modals on top of changeRootController (which may be the this stack VC)
+      //
+      // There also might the second case, where the firstModalToBeDismissed is foreign.
+      // See: https://github.com/software-mansion/react-native-screens/issues/2048
+      // For now, to mitigate the issue, we also decide to trigger its dismissal before
+      // starting the presentation chain down below in finish() callback.
       [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
       return;
     }
