@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Build
 import android.text.TextUtils
 import android.util.TypedValue
@@ -231,7 +232,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // color
         if (tintColor != 0) {
-            toolbar.navigationIcon?.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
+            toolbar.navigationIcon?.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
         }
 
         // subviews
