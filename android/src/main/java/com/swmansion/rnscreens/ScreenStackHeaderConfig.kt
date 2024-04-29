@@ -8,6 +8,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -82,7 +83,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         // we want to save the top inset before the status bar can be hidden, which would resolve in
         // inset being 0
         if (headerTopInset == null) {
-            headerTopInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            headerTopInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                rootWindowInsets.getInsets(WindowInsets.Type.systemBars()).top
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 rootWindowInsets.systemWindowInsetTop
             else
             // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
