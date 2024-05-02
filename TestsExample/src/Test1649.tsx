@@ -118,7 +118,7 @@ export default function App(): JSX.Element {
               screenStyle: {
                 backgroundColor: 'firebrick',
               },
-              footerComponent: Footer,
+              footerComponent: Footer(),
               ...sheetOptions,
             }}
           />

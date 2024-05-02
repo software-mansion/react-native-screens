@@ -435,7 +435,7 @@ const RouteView = ({
             headerShown={isHeaderInPush}
           />
           {footerComponent && (
-            <FooterComponent>{footerComponent()}</FooterComponent>
+            <FooterComponent>{footerComponent}</FooterComponent>
           )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>
