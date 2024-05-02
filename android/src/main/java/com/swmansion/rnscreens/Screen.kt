@@ -16,7 +16,6 @@ import android.view.WindowManager
 import android.webkit.WebView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.facebook.react.bridge.GuardedRunnable
 import com.facebook.react.bridge.ReactContext
@@ -25,6 +24,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.State
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 
 @SuppressLint("ViewConstructor")
@@ -542,7 +542,17 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
     companion object {
         const val TAG = "Screen"
 
-        fun sheetStateFromScreen(
+        /**
+         * This method maps indices from legal detents array (prop) to appropriate values
+         * recognized by BottomSheetBehaviour. In particular used when setting up the initial behaviour
+         * of the form sheet.
+         *
+         * @param index index from array with detents fractions
+         * @param detentCount length of array with detents fractions
+         *
+         * @throws IllegalArgumentException for invalid index / detentCount combinations
+         */
+        fun sheetStateFromDetentIndex(
             index: Int,
             detentCount: Int,
         ): Int =
@@ -570,5 +580,37 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
                     }
                 else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
             }
+    }
+
+    /**
+     * This method maps BottomSheetBehavior.State values to appropriate indices of detents array.
+     *
+     * @param state state of the bottom sheet
+     * @param detentCount length of array with detents fractions
+     *
+     * @throws IllegalArgumentException for invalid state / detentCount combinations
+     */
+    fun detentIndexFromSheetState(@State state: Int, detentCount: Int): Int {
+        return when (detentCount) {
+            1 -> when (state) {
+                BottomSheetBehavior.STATE_HIDDEN -> -1
+                BottomSheetBehavior.STATE_EXPANDED -> 0
+                else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+            }
+            2 -> when (state) {
+                BottomSheetBehavior.STATE_HIDDEN -> -1
+                BottomSheetBehavior.STATE_COLLAPSED -> 0
+                BottomSheetBehavior.STATE_EXPANDED -> 1
+                else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+            }
+            3 -> when (state) {
+                BottomSheetBehavior.STATE_HIDDEN -> -1
+                BottomSheetBehavior.STATE_COLLAPSED -> 0
+                BottomSheetBehavior.STATE_HALF_EXPANDED -> 1
+                BottomSheetBehavior.STATE_EXPANDED -> 2
+                else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+            }
+            else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+        }
     }
 }

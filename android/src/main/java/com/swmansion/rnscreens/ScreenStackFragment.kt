@@ -226,6 +226,8 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     fun tryResolveWindowHeight(): Int? {
+        // Note that these three values differ slightly! For now, for practical purposes
+        // this is acceptable.
         if (screen.container != null) {
             return screenStack.height
         }
@@ -237,9 +239,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             val height2 = (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics?.bounds?.height()
             if (height2 != null) return height2
         }
-
-//        Log.w(TAG, "$height1, $height2")
-//        check(height1 == height2)
 
         return null
     }
@@ -267,17 +266,14 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible): BottomSheetBehavior<Screen> {
-//        val displayMetrics = context?.resources?.displayMetrics
-//        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
-
-//        val containerHeight = displayMetrics.heightPixels
-
         val containerHeight = tryResolveWindowHeight()
-        check(containerHeight != null) { "Failed to find window height during bottom sheet behaviour configuration" }
+        check(containerHeight != null) { "[RNScreens] Failed to find window height during bottom sheet behaviour configuration" }
 
         behavior.apply {
             isHideable = true
             isDraggable = true
+            // Want to make sure that this callback is registered, but only once.
+            // Removing not registered callback is safe, does not throw.
             removeBottomSheetCallback(bottomSheetOnSwipedDownCallback)
             addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
         }
@@ -293,7 +289,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     }
                 } else if (screen.sheetDetents.count() == 2) {
                     behavior.apply {
-                        state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+                        state = Screen.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
                         skipCollapsed = false
                         isFitToContents = true
                         peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
@@ -301,7 +297,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     }
                 } else {
                     behavior.apply {
-                        state = Screen.sheetStateFromScreen(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+                        state = Screen.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
                         skipCollapsed = false
                         isFitToContents = false
                         peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
@@ -324,12 +320,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 behavior.removeBottomSheetCallback(keyboardSheetCallback)
                 if (screen.sheetDetents.count() == 1) {
                     behavior.apply {
-                        state = BottomSheetBehavior.STATE_EXPANDED
+//                        state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = true
                         isFitToContents = true
                         maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
                     }
                 } else if (screen.sheetDetents.count() == 2) {
+                    // Here we assume that the keyboard was either closed explicitly by user,
+                    // or the user dragged the sheet down. In any case the state should
+                    // stay unchanged.
                     behavior.apply {
 //                        state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = false
@@ -339,7 +338,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     }
                 } else {
                     behavior.apply {
-                        state = BottomSheetBehavior.STATE_EXPANDED
+//                        state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = false
                         isFitToContents = false
                         peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
@@ -354,11 +353,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     internal fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
-        val displayMetrics = context?.resources?.displayMetrics
-        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
-        val behavior = BottomSheetBehavior<Screen>()
-
-        return configureBottomSheetBehaviour(behavior)
+        return configureBottomSheetBehaviour(BottomSheetBehavior<Screen>())
     }
 
     private fun attachShapeToScreen(screen: Screen) {
@@ -469,10 +464,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         private val fragment: ScreenStackFragment
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context), ReactPointerEventsView {
-
-        init {
-//            this.fitsSystemWindows = true
-        }
 
         private val animationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {
