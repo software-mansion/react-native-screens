@@ -7,12 +7,17 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+import com.google.android.material.math.MathUtils
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor")
 class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
-    private var lastContainerHeight: Int = 0;
-    private var lastStableSheetState: Int = BottomSheetBehavior.STATE_HIDDEN;
+    private var lastContainerHeight: Int = 0
+    private var lastStableSheetState: Int = BottomSheetBehavior.STATE_HIDDEN
 
     private val screenParent
         get() = requireNotNull(parent as? Screen)
@@ -30,10 +35,10 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
 
     private var footerCallback = object : BottomSheetCallback() {
         fun isStateStable(state: Int): Boolean = when (state) {
-            BottomSheetBehavior.STATE_HIDDEN,
-            BottomSheetBehavior.STATE_EXPANDED,
-            BottomSheetBehavior.STATE_COLLAPSED,
-            BottomSheetBehavior.STATE_HALF_EXPANDED -> true
+            STATE_HIDDEN,
+            STATE_EXPANDED,
+            STATE_COLLAPSED,
+            STATE_HALF_EXPANDED -> true
             else -> false
         }
 
@@ -43,17 +48,17 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
             }
 
             when (newState) {
-                BottomSheetBehavior.STATE_COLLAPSED,
-                BottomSheetBehavior.STATE_HALF_EXPANDED,
-                BottomSheetBehavior.STATE_EXPANDED -> layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopInStableState(newState))
+                STATE_COLLAPSED,
+                STATE_HALF_EXPANDED,
+                STATE_EXPANDED -> layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopInStableState(newState))
                 else -> {}
             }
             lastStableSheetState = newState
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-//            this@ScreenFooter.top = lastContainerHeight!! - (0 + measuredHeight + paddingBottom)
+            Log.i("ScreenFooter", "$slideOffset")
+            layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopWhileDragging(slideOffset))
         }
     }
 
@@ -64,15 +69,24 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
 
     private fun sheetTopInStableState(state: Int): Int {
         val retval = when (state) {
-            BottomSheetBehavior.STATE_COLLAPSED -> lastContainerHeight - sheetBehavior.peekHeight
-            BottomSheetBehavior.STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - sheetBehavior.halfExpandedRatio)).toInt()
-            BottomSheetBehavior.STATE_EXPANDED -> sheetBehavior.expandedOffset
-            BottomSheetBehavior.STATE_HIDDEN -> lastContainerHeight
+            STATE_COLLAPSED -> lastContainerHeight - sheetBehavior.peekHeight
+            STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - sheetBehavior.halfExpandedRatio)).toInt()
+            STATE_EXPANDED -> sheetBehavior.expandedOffset
+            STATE_HIDDEN -> lastContainerHeight
             else -> throw IllegalArgumentException("[RNSScreen] use of stable-state method for unstable state")
         }
         return retval
     }
 
+    private fun sheetTopWhileDragging(slideOffset: Float): Int {
+        return MathUtils.lerp(
+            sheetTopInStableState(STATE_COLLAPSED).toFloat(),
+            sheetTopInStableState(
+                STATE_EXPANDED
+            ).toFloat(),
+            slideOffset
+        ).toInt()
+    }
 
     fun onParentLayout(
         changed: Boolean,
@@ -87,7 +101,7 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
 
         Log.w(
             "ScreenFooter",
-            "onParentLayout  t: $top, b: $bottom, ch: $containerHeight, mh: ${measuredHeight}, top: ${this.top}"
+            "onParentLayout  t: $top, b: $bottom, ch: $containerHeight, mh: $measuredHeight, top: ${this.top}"
         )
     }
 
