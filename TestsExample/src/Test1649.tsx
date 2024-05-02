@@ -65,6 +65,7 @@ function Footer() {
   return (
     <View style={{ backgroundColor: 'goldenrod' }}>
       <Text>SomeContent</Text>
+      <Button title="Click me" onPress={() => console.log("Footer button clicked")} />
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>

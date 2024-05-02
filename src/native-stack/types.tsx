@@ -86,7 +86,7 @@ export type NativeStackNavigationOptions = {
   /**
    * TODO: Place this in right spot & describe
    */
-  footerComponent?: React.ComponentType<any>;
+  footerComponent?: React.ReactNode;
   /**
    * Image to display in the header as the back button.
    * Defaults to back icon image for the platform (a chevron on iOS and an arrow on Android).
