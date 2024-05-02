@@ -67,6 +67,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 
     var sheetElevation: Float = 24F
 
+    var footer: ScreenFooter? = null
+
 //    val insetCallback =
 //        @RequiresApi(Build.VERSION_CODES.R)
 //        object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
@@ -222,6 +224,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
             } else {
                 updateScreenSizePaper(width, height)
             }
+
+            footer?.onParentLayout(changed, l, t, r, b, container!!.height)
         }
     }
 

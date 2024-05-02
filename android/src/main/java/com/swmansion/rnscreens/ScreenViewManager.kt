@@ -39,11 +39,14 @@ class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<
         setActivityState(view, activityState.toInt())
     }
 
-    override fun addView(parent: Screen?, child: View?, index: Int) {
-        super.addView(parent, child, index)
+    override fun addView(parent: Screen, child: View, index: Int) {
         if (child is ScreenContentWrapper) {
-            parent!!.registerLayoutCallbackForWrapper(child)
+            parent.registerLayoutCallbackForWrapper(child)
         }
+        if (child is ScreenFooter) {
+            parent.footer = child
+        }
+        super.addView(parent, child, index)
     }
 
     override fun updateState(

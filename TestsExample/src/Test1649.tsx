@@ -63,7 +63,7 @@ const Stack = createNativeStackNavigator();
 
 function Footer() {
   return (
-    <View style={{ backgroundColor: 'red' }}>
+    <View style={{ backgroundColor: 'goldenrod' }}>
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>
@@ -117,7 +117,7 @@ export default function App(): JSX.Element {
               screenStyle: {
                 backgroundColor: 'firebrick',
               },
-              // footerComponent: Footer,
+              footerComponent: Footer,
               ...sheetOptions,
             }}
           />

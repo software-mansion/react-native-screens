@@ -18,9 +18,12 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
 import android.view.animation.Transformation
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.commit
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.PointerEvents
@@ -241,6 +244,28 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return null
     }
 
+    private val keyboardSheetCallback = object : BottomSheetCallback() {
+        @RequiresApi(Build.VERSION_CODES.M)
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                val isKeyboardVisible = WindowInsetsCompat.toWindowInsetsCompat(bottomSheet.rootWindowInsets).isVisible(WindowInsetsCompat.Type.ime())
+                if (isKeyboardVisible) {
+                    // Does it not interfere with React Native focus mechanism? In any case I'm not aware
+                    // of different way of hiding the keyboard.
+                    // https://stackoverflow.com/questions/1109022/how-can-i-close-hide-the-android-soft-keyboard-programmatically
+                    // https://developer.android.com/develop/ui/views/touch-and-input/keyboard-input/visibility
+                    if (bottomSheet.requestFocus()) {
+                        val imm = requireContext().getSystemService(InputMethodManager::class.java)
+                        imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
+                    }
+                }
+            }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+
+    }
+
     internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible): BottomSheetBehavior<Screen> {
 //        val displayMetrics = context?.resources?.displayMetrics
 //        check(displayMetrics != null) { "When creating a bottom sheet display metrics must not be null" }
@@ -289,12 +314,14 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             is KeyboardVisible -> {
                 behavior.apply {
                     state = BottomSheetBehavior.STATE_EXPANDED
-                    skipCollapsed = true
+                    skipCollapsed = false
                     isFitToContents = true
                     maxHeight = max(1, maxHeight - keyboardState.height)
+                    addBottomSheetCallback(keyboardSheetCallback)
                 }
             }
             is KeyboardDidHide -> {
+                behavior.removeBottomSheetCallback(keyboardSheetCallback)
                 if (screen.sheetDetents.count() == 1) {
                     behavior.apply {
                         state = BottomSheetBehavior.STATE_EXPANDED
@@ -304,7 +331,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     }
                 } else if (screen.sheetDetents.count() == 2) {
                     behavior.apply {
-                        state = BottomSheetBehavior.STATE_EXPANDED
+//                        state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = false
                         isFitToContents = true
                         peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
