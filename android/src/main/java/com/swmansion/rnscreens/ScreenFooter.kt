@@ -47,7 +47,6 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
                 bounds: WindowInsetsAnimationCompat.BoundsCompat
             ): WindowInsetsAnimationCompat.BoundsCompat {
                 isAnimationControlledByKeyboard = true
-                Log.i(TAG, "onStart bounds ${bounds.upperBound}")
                 return super.onStart(animation, bounds)
             }
 
@@ -59,6 +58,10 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
                 val navigationBarBottomInset =
                     insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 
+                // **It looks like** when keyboard is presented its inset does include navigation bar
+                // bottom inset, while it is already accounted for somewhere (dunno where).
+                // That is why we subtract navigation bar bottom inset here.
+                //
                 // Situations where keyboard is not visible and navigation bar is present are handled
                 // directly in layout function by not allowing lastBottomInset to contribute value less
                 // than 0. Alternative would be write logic specific to keyboard animation direction (hide / show).
@@ -121,7 +124,6 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
             if (!isStateStable(newState)) {
                 return
             }
-//            Log.i(TAG, "onStateChanged")
 
             when (newState) {
                 STATE_COLLAPSED,

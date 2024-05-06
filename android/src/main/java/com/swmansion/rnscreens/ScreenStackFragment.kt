@@ -256,13 +256,15 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     if (bottomSheet.requestFocus()) {
                         val imm = requireContext().getSystemService(InputMethodManager::class.java)
                         imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
+                    } else {
+                        val imm = requireContext().getSystemService(InputMethodManager::class.java)
+                        imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
                     }
                 }
             }
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
-
     }
 
     internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible): BottomSheetBehavior<Screen> {
