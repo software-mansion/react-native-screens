@@ -37,7 +37,7 @@ type NavProp = {
 // ]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
-const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.9]);
+const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.6, 0.9]);
 // const allowedDetentsAtom =
 //   jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
 //     'fitToContents',
@@ -63,9 +63,12 @@ const Stack = createNativeStackNavigator();
 
 function Footer() {
   return (
-    <View style={{ backgroundColor: 'goldenrod' }}>
+    <View style={{ backgroundColor: 'goldenrod', padding: 20 }}>
       <Text>SomeContent</Text>
-      <Button title="Click me" onPress={() => console.log("Footer button clicked")} />
+      <Button
+        title="Click me"
+        onPress={() => console.log('Footer button clicked')}
+      />
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>
