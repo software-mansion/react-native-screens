@@ -1,6 +1,9 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
+import androidx.core.view.children
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -35,6 +38,23 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())
+    }
+
+    override fun onWillDismiss(screen: Screen) {
+        Log.w(REACT_CLASS, "onWillDismiss")
+        screen.children.forEach {
+            screen.startViewTransition(it)
+        }
+    }
+
+    override fun receiveCommand(root: Screen, commandId: String?, args: ReadableArray?) {
+        Log.w(REACT_CLASS, "receiveCommand $commandId")
+        super.receiveCommand(root, commandId, args)
+    }
+
+    override fun removeViewAt(parent: Screen?, index: Int) {
+        Log.w(REACT_CLASS, "$parent removeViewAt $index")
+        super.removeViewAt(parent, index)
     }
 
     override fun updateState(

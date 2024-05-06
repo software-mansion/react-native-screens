@@ -1,5 +1,6 @@
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { ViewProps, ColorValue } from 'react-native';
+import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
+import type { ViewProps, ColorValue, HostComponent } from 'react-native';
 import type {
   DirectEventHandler,
   WithDefault,
@@ -98,6 +99,18 @@ export interface NativeProps extends ViewProps {
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
 }
+
+type ComponentType = HostComponent<NativeProps>;
+
+export interface NativeCommands {
+  onWillDismiss: (viewRef: React.ElementRef<ComponentType>) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: [
+    'onWillDismiss',
+  ],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {
   interfaceOnly: true,

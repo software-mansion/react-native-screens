@@ -101,5 +101,5 @@ import TestStack from './src/TestStack';
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <TestStack />;
 }
