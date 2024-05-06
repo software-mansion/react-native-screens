@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.util.Log
+import android.view.View
 import androidx.core.view.children
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
@@ -42,9 +43,9 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
 
     override fun onWillDismiss(screen: Screen) {
         Log.w(REACT_CLASS, "onWillDismiss")
-        screen.children.forEach {
-            screen.startViewTransition(it)
-        }
+//        screen.children.forEach {
+//            screen.startViewTransition(it)
+//        }
     }
 
     override fun receiveCommand(root: Screen, commandId: String?, args: ReadableArray?) {
@@ -52,7 +53,12 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
         super.receiveCommand(root, commandId, args)
     }
 
-    override fun removeViewAt(parent: Screen?, index: Int) {
+    override fun addView(parent: Screen, child: View, index: Int) {
+        Log.w(REACT_CLASS, "$parent addView $child at $index")
+        super.addView(parent, child, index)
+    }
+
+    override fun removeViewAt(parent: Screen, index: Int) {
         Log.w(REACT_CLASS, "$parent removeViewAt $index")
         super.removeViewAt(parent, index)
     }
