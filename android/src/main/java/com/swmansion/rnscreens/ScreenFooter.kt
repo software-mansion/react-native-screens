@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -17,8 +16,9 @@ import kotlin.math.max
 @SuppressLint("ViewConstructor")
 class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
     private var lastContainerHeight: Int = 0
-    private var lastStableSheetState: Int = BottomSheetBehavior.STATE_HIDDEN
+    private var lastStableSheetState: Int = STATE_HIDDEN
 
+    // ScreenFooter is supposed to be direct child of Screen
     private val screenParent
         get() = requireNotNull(parent as? Screen)
 
@@ -27,6 +27,7 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
+        layoutFooterOnYAxis(lastContainerHeight, bottom - top, sheetTopInStableState(sheetBehavior.state))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -57,14 +58,20 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            Log.i("ScreenFooter", "$slideOffset")
             layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopWhileDragging(slideOffset))
         }
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        // TODO: Find a place to remove this callback?
+        // Maybe add / remove it in ScreenViewManager rather than here
         screenParent.sheetBehavior?.addBottomSheetCallback(footerCallback)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        screenParent.sheetBehavior?.removeBottomSheetCallback(footerCallback)
     }
 
     private fun sheetTopInStableState(state: Int): Int {
@@ -105,6 +112,20 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
         )
     }
 
+    /**
+     * Layouts this component within parent screen. It takes care only of vertical axis.
+     *
+     * This is a bit against Android rules, that parents should layout their children,
+     * however I wanted to keep this logic away from Screen component to avoid introducing
+     * complexity there and have footer logic as much separated as it is possible.
+     *
+     * Please note that React has no clue about updates enforced in below method.
+     *
+     * @param containerHeight this should be the height of the screen (sheet) container used
+     * to calculate sheet properties when configuring behaviour
+     * @param footerHeight summarized height of this component children
+     * @param sheetTop current bottom sheet top (Screen top) **relative to container**
+     */
     fun layoutFooterOnYAxis(containerHeight: Int, footerHeight: Int, sheetTop: Int) {
         val newTop = containerHeight - footerHeight - sheetTop
         this.top = max(newTop, 0)
