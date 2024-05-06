@@ -30,11 +30,16 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
     private val sheetBehavior
         get() = requireNotNull(screenParent.sheetBehavior)
 
-    private val insetsAnimation = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-            super.onPrepare(animation)
-        }
+    private val reactHeight
+        get() = measuredHeight
 
+    private val reactWidth
+        get() = measuredWidth
+
+    // Main goal of this callback implementation is to handle keyboard appearance. We use it to make sure
+    // that the footer respects keyboard during layout.
+    // Note `DISPATCH_MODE_STOP` is used here to avoid propagation of insets callback to footer subtree.
+    private val insetsAnimation = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
         override fun onStart(
             animation: WindowInsetsAnimationCompat,
             bounds: WindowInsetsAnimationCompat.BoundsCompat
@@ -47,12 +52,12 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
             insets: WindowInsetsCompat,
             runningAnimations: MutableList<WindowInsetsAnimationCompat>
         ): WindowInsetsCompat {
-            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
             val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             lastBottomInset = imeBottomInset
+            layoutFooterOnYAxis(lastContainerHeight, reactHeight, sheetTopWhileDragging(lastSlideOffset), imeBottomInset)
 
-//            Log.i("ScreenFooter", "onProgress $isImeVisible $imeBottomInset")
-            layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopWhileDragging(lastSlideOffset), imeBottomInset)
+            // Please note that we do *not* consume any insets here, so that we do not interfere with
+            // any other view.
             return insets
         }
 
@@ -63,15 +68,22 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
 
     init {
         val rootView = reactContext.currentActivity!!.window.decorView
-        ViewCompat.setWindowInsetsAnimationCallback(rootView!!, insetsAnimation)
+
+        // Note that we do override insets animation on given view. I can see it interfering e.g.
+        // with reanimated keyboard or even other places in our code. Need to test this.
+        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetsAnimation)
     }
 
+    // React calls `layout` function to set view dimensions, thus this is our entry point for
+    // fixing layout up after Yoga repositions it.
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-//        Log.i(TAG, "onLayout")
         layoutFooterOnYAxis(lastContainerHeight, bottom - top, sheetTopInStableState(sheetBehavior.state), lastBottomInset)
     }
 
+    // Overriding it here just to make a comment. Due to Android restrictions on layout flow, particularly
+    // the fact that onMeasure must set `measuredHeight` & `measuredWidth` React calls `measure` on every
+    // view group with accurate dimensions computed by Yoga. This is our entry point to get current view dimensions.
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
@@ -94,7 +106,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
             when (newState) {
                 STATE_COLLAPSED,
                 STATE_HALF_EXPANDED,
-                STATE_EXPANDED -> layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopInStableState(newState), lastBottomInset)
+                STATE_EXPANDED -> layoutFooterOnYAxis(lastContainerHeight, reactHeight, sheetTopInStableState(newState), lastBottomInset)
                 else -> {}
             }
             lastStableSheetState = newState
@@ -104,7 +116,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
 //            Log.i(TAG, "onSlide $slideOffset")
             lastSlideOffset = slideOffset
             if (!isAnimationControlledByKeyboard) {
-                layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopWhileDragging(slideOffset), lastBottomInset)
+                layoutFooterOnYAxis(lastContainerHeight, reactHeight, sheetTopWhileDragging(slideOffset), lastBottomInset)
             }
         }
     }
@@ -142,6 +154,9 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         ).toInt()
     }
 
+    /**
+     *
+     */
     fun onParentLayout(
         changed: Boolean,
         left: Int,
@@ -151,7 +166,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         containerHeight: Int
     ) {
         lastContainerHeight = containerHeight
-        layoutFooterOnYAxis(containerHeight, measuredHeight, sheetTopInStableState(sheetBehavior.state))
+        layoutFooterOnYAxis(containerHeight, reactHeight, sheetTopInStableState(sheetBehavior.state))
     }
 
     /**
@@ -165,13 +180,14 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
      * Please note that React has no clue about updates enforced in below method.
      *
      * @param containerHeight this should be the height of the screen (sheet) container used
-     * to calculate sheet properties when configuring behaviour
-     * @param footerHeight summarized height of this component children
+     * to calculate sheet properties when configuring behaviour (pixels)
+     * @param footerHeight summarized height of this component children (pixels)
      * @param sheetTop current bottom sheet top (Screen top) **relative to container**
+     * @param bottomInset current bottom inset, used to offset the footer by keyboard height (pixels)
      */
     fun layoutFooterOnYAxis(containerHeight: Int, footerHeight: Int, sheetTop: Int, bottomInset: Int = 0) {
         val newTop = containerHeight - footerHeight - sheetTop - bottomInset
-        val heightBeforeUpdate = this.measuredHeight
+        val heightBeforeUpdate = reactHeight
         this.top = max(newTop, 0)
         this.bottom = this.top + heightBeforeUpdate
 
