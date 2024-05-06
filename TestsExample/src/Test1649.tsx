@@ -10,15 +10,9 @@ import {
   View,
   Text,
   ScrollView,
-  findNodeHandle,
   // TextInput,
 } from 'react-native';
-import {
-  NavigationContainer,
-  ParamListBase,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -59,15 +53,23 @@ const sheetOptionsAtom = jotai.atom(get => ({
   sheetExpandsWhenScrolledToEdge: get(expandsWhenScrolledToEdgeAtom),
 }));
 
+const isAdditionalContentVisibleAtom = jotai.atom(false);
+
 const Stack = createNativeStackNavigator();
 
 function Footer() {
+  const setAdditionalContentVisible = jotai.useSetAtom(
+    isAdditionalContentVisibleAtom,
+  );
+
   return (
     <View style={{ backgroundColor: 'goldenrod', padding: 20 }}>
       <Text>SomeContent</Text>
       <Button
         title="Click me"
-        onPress={() => console.log('Footer button clicked')}
+        onPress={() => {
+          setAdditionalContentVisible(old => !old);
+        }}
       />
       <Text>SomeContent</Text>
       <Text>SomeContent</Text>
@@ -132,9 +134,6 @@ export default function App(): JSX.Element {
               headerShown: false,
               stackPresentation: 'formSheet',
               ...sheetOptions,
-            }}
-            onLayout={(event) => {
-              console.log("Screen layout")
             }}
           />
           <Stack.Screen
@@ -299,6 +298,8 @@ function SheetScreen({
   const [isGrabberVisible, setIsGrabberVisible] = React.useState(false);
   const [shouldExpand, setShouldExpand] = React.useState(true);
 
+  const isAdditionalContentVisible = jotai.useAtomValue(isAdditionalContentVisibleAtom);
+
   function nextDetentLevel(detent: SheetDetent): SheetDetent {
     if (Array.isArray(detent)) {
       return 'all';
@@ -398,57 +399,45 @@ function SheetScreen({
           }}
         />
       </View>
+      {isAdditionalContentVisible && (
+        <View style={{ backgroundColor: 'pink' }}>
+          <Text>Additional content</Text>
+        </View>
+      )}
     </View>
   );
 }
 
 function SheetScreenWithScrollView({ navigation }: NavProp) {
-  const [svSize, setSvSize] = React.useState({ w: 0, h: 0 });
-  const [contentSize, setContentSize] = React.useState({ w: 0, h: 0 });
-  const [additionalContentVisible, setAdditionalContentVisible] = React.useState(false);
+  const [additionalContentVisible, setAdditionalContentVisible] =
+    React.useState(false);
 
   const svRef = React.useRef<ScrollView | null>(null);
   const contentRef = React.useRef<View | null>(null);
 
   return (
-    <ScrollView
-      ref={svRef}
-      onLayout={event => {
-        console.log('sv', event.nativeEvent);
-        setSvSize({
-          w: event.nativeEvent.layout.width,
-          h: event.nativeEvent.layout.height,
-        });
-      }}
-      nestedScrollEnabled={true}
-      scrollEnabled>
-      <View
-        ref={contentRef}
-        onLayout={event => {
-          console.log('content', event.nativeEvent);
-          setContentSize({
-            w: event.nativeEvent.layout.width,
-            h: event.nativeEvent.layout.height,
-          });
-        }}>
+    <ScrollView ref={svRef} nestedScrollEnabled={true} scrollEnabled>
+      <View ref={contentRef}>
         <SheetScreen navigation={navigation} />
-        <Button title='Toggle content' onPress={() => setAdditionalContentVisible((old) => !old)} />
-        {additionalContentVisible && (
+        <Button
+          title="Toggle content"
+          onPress={() => setAdditionalContentVisible(old => !old)}
+        />
+        {additionalContentVisible &&
           [...Array(3).keys()].map(val => (
-          <Text key={`${val}`}>Some component {val}</Text>
-          ))
-        )}
+            <Text key={`${val}`}>Some component {val}</Text>
+          ))}
       </View>
     </ScrollView>
   );
-  return (
-    <ScrollView nestedScrollEnabled={true}>
-      <SheetScreen navigation={navigation} />
-      {[...Array(99).keys()].map(val => (
-        <Text key={`${val}`}>Some component {val}</Text>
-      ))}
-    </ScrollView>
-  );
+  // return (
+  //   <ScrollView nestedScrollEnabled={true}>
+  //     <SheetScreen navigation={navigation} />
+  //     {[...Array(99).keys()].map(val => (
+  //       <Text key={`${val}`}>Some component {val}</Text>
+  //     ))}
+  //   </ScrollView>
+  // );
 }
 
 function SheetScreenWithTextInput({ navigation }: NavProp) {
