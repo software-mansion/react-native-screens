@@ -123,7 +123,7 @@
 
 - (void)show
 {
-  UIWindow *window = RCTSharedApplication().delegate.window;
+  UIWindow *window = RCTKeyWindow();
   [window addSubview:_container];
 }
 
@@ -156,7 +156,7 @@
 // so when the component gets recycled we need to add it back.
 - (void)maybeShow
 {
-  UIWindow *window = RCTSharedApplication().delegate.window;
+  UIWindow *window = RCTKeyWindow();
   if (![[window subviews] containsObject:self]) {
     [window addSubview:_container];
   }

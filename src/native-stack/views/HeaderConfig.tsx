@@ -16,6 +16,7 @@ import {
 import { NativeStackNavigationOptions } from '../types';
 import { useBackPressSubscription } from '../utils/useBackPressSubscription';
 import { processFonts } from './FontProcessor';
+import warnOnce from 'warn-once';
 
 type Props = NativeStackNavigationOptions & {
   route: Route<string>;
@@ -96,6 +97,15 @@ export default function HeaderConfig({
     return searchBar;
   }, [searchBar, createSubscription, clearSubscription]);
 
+  // @ts-ignore isVision is not yet in the type definitions (RN 0.74+)
+  const isVisionOS = Platform?.isVision;
+
+  warnOnce(
+    isVisionOS &&
+      (headerTitleStyle.color !== undefined || headerTintColor !== undefined),
+    'headerTitleStyle.color and headerTintColor are not supported on visionOS.'
+  );
+
   return (
     <ScreenStackHeaderConfig
       backButtonInCustomView={backButtonInCustomView}
@@ -165,6 +175,7 @@ export default function HeaderConfig({
       {isSearchBarAvailableForCurrentPlatform &&
       processedSearchBarOptions !== undefined ? (
         <ScreenStackHeaderSearchBarView>
+          {/* @ts-ignore Skip incorrect error about incompatible ref types */}
           <SearchBar {...processedSearchBarOptions} />
         </ScreenStackHeaderSearchBarView>
       ) : null}

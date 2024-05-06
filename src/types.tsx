@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Animated,
   NativeSyntheticEvent,
@@ -7,6 +8,7 @@ import {
   TextInputFocusEventData,
   ColorValue,
 } from 'react-native';
+import { NativeStackNavigatorProps } from './native-stack/types';
 
 export type SearchBarCommands = {
   focus: () => void;
@@ -14,6 +16,7 @@ export type SearchBarCommands = {
   clearText: () => void;
   toggleCancelButton: (show: boolean) => void;
   setText: (text: string) => void;
+  cancelSearch: () => void;
 };
 
 export type StackPresentationTypes =
@@ -319,7 +322,7 @@ export interface ScreenProps extends ViewProps {
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
    * - `slide_from_bottom` – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
-   * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "slide_from_left" - slide in the new screen from left to right
    * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
@@ -391,12 +394,20 @@ export interface ScreenContainerProps extends ViewProps {
   hasTwoStates?: boolean;
 }
 
+export interface GestureDetectorBridge {
+  stackUseEffectCallback: (
+    stackRef: React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>
+  ) => void;
+}
+
 export interface ScreenStackProps extends ViewProps {
   children?: React.ReactNode;
   /**
    * A callback that gets called when the current screen finishes its transition.
    */
   onFinishTransitioning?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  gestureDetectorBridge?: React.MutableRefObject<GestureDetectorBridge>;
+  ref?: React.MutableRefObject<React.Ref<View>>;
 }
 
 export interface ScreenStackHeaderConfigProps extends ViewProps {
@@ -552,6 +563,7 @@ export interface SearchBarProps {
    * * `blur` - removes focus from the search bar
    * * `clearText` - removes any text present in the search bar input field
    * * `setText` - sets the search bar's content to given value
+   * * `cancelSearch` - cancel search in search bar.
    * * `toggleCancelButton` - depending on passed boolean value, hides or shows cancel button (iOS only)
    */
   ref?: React.RefObject<SearchBarCommands>;

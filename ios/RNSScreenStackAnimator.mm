@@ -64,7 +64,10 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
   }
 
   if (screen != nil) {
-    if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
+    if ([screen.reactSuperview isKindOfClass:[RNSScreenStackView class]] &&
+        ((RNSScreenStackView *)(screen.reactSuperview)).customAnimation) {
+      [self animateWithNoAnimation:transitionContext toVC:toViewController fromVC:fromViewController];
+    } else if (screen.fullScreenSwipeEnabled && transitionContext.isInteractive) {
       // we are swiping with full width gesture
       if (screen.customAnimationOnSwipe) {
         [self animateTransitionWithStackAnimation:screen.stackAnimation
@@ -100,6 +103,64 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
       UISemanticContentAttributeForceRightToLeft) {
     rightTransform = CGAffineTransformMakeTranslation(-containerWidth, 0);
     leftTransform = CGAffineTransformMakeTranslation(belowViewWidth, 0);
+  }
+
+  if (_operation == UINavigationControllerOperationPush) {
+    toViewController.view.transform = rightTransform;
+    [[transitionContext containerView] addSubview:toViewController.view];
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+          fromViewController.view.transform = leftTransform;
+          toViewController.view.transform = CGAffineTransformIdentity;
+        }
+        completion:^(BOOL finished) {
+          fromViewController.view.transform = CGAffineTransformIdentity;
+          toViewController.view.transform = CGAffineTransformIdentity;
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  } else if (_operation == UINavigationControllerOperationPop) {
+    toViewController.view.transform = leftTransform;
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    void (^animationBlock)(void) = ^{
+      toViewController.view.transform = CGAffineTransformIdentity;
+      fromViewController.view.transform = rightTransform;
+    };
+    void (^completionBlock)(BOOL) = ^(BOOL finished) {
+      fromViewController.view.transform = CGAffineTransformIdentity;
+      toViewController.view.transform = CGAffineTransformIdentity;
+      [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    };
+
+    if (!transitionContext.isInteractive) {
+      [UIView animateWithDuration:[self transitionDuration:transitionContext]
+                       animations:animationBlock
+                       completion:completionBlock];
+    } else {
+      // we don't want the EaseInOut option when swiping to dismiss the view, it is the same in default animation option
+      [UIView animateWithDuration:[self transitionDuration:transitionContext]
+                            delay:0.0
+                          options:UIViewAnimationOptionCurveLinear
+                       animations:animationBlock
+                       completion:completionBlock];
+    }
+  }
+}
+
+- (void)animateSlideFromLeftWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                             toVC:(UIViewController *)toViewController
+                                           fromVC:(UIViewController *)fromViewController
+{
+  float containerWidth = transitionContext.containerView.bounds.size.width;
+  float belowViewWidth = containerWidth * 0.3;
+
+  CGAffineTransform rightTransform = CGAffineTransformMakeTranslation(-containerWidth, 0);
+  CGAffineTransform leftTransform = CGAffineTransformMakeTranslation(belowViewWidth, 0);
+
+  if (toViewController.navigationController.view.semanticContentAttribute ==
+      UISemanticContentAttributeForceRightToLeft) {
+    rightTransform = CGAffineTransformMakeTranslation(containerWidth, 0);
+    leftTransform = CGAffineTransformMakeTranslation(-belowViewWidth, 0);
   }
 
   if (_operation == UINavigationControllerOperationPush) {
@@ -290,6 +351,30 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
   }
 }
 
+- (void)animateWithNoAnimation:(id<UIViewControllerContextTransitioning>)transitionContext
+                          toVC:(UIViewController *)toViewController
+                        fromVC:(UIViewController *)fromViewController
+{
+  if (_operation == UINavigationControllerOperationPush) {
+    [[transitionContext containerView] addSubview:toViewController.view];
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+        }
+        completion:^(BOOL finished) {
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  } else if (_operation == UINavigationControllerOperationPop) {
+    [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+
+    [UIView animateWithDuration:[self transitionDuration:transitionContext]
+        animations:^{
+        }
+        completion:^(BOOL finished) {
+          [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        }];
+  }
+}
+
 + (BOOL)isCustomAnimation:(RNSScreenStackAnimation)animation
 {
   return (animation != RNSScreenStackAnimationFlip && animation != RNSScreenStackAnimationDefault);
@@ -302,6 +387,9 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
 {
   if (animation == RNSScreenStackAnimationSimplePush) {
     [self animateSimplePushWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+    return;
+  } else if (animation == RNSScreenStackAnimationSlideFromLeft) {
+    [self animateSlideFromLeftWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
     return;
   } else if (animation == RNSScreenStackAnimationFade || animation == RNSScreenStackAnimationNone) {
     [self animateFadeWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];

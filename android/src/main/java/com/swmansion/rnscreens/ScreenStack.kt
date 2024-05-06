@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.graphics.Canvas
+import android.os.Build
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -12,30 +13,33 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
 class ScreenStack(context: Context?) : ScreenContainer(context) {
-    private val mStack = ArrayList<ScreenStackFragmentWrapper>()
-    private val mDismissed: MutableSet<ScreenStackFragmentWrapper> = HashSet()
+    private val stack = ArrayList<ScreenStackFragmentWrapper>()
+    private val dismissedWrappers: MutableSet<ScreenStackFragmentWrapper> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
     private var drawingOps: MutableList<DrawingOp> = ArrayList()
-    private var mTopScreen: ScreenStackFragmentWrapper? = null
-    private var mRemovalTransitionStarted = false
+    private var topScreenWrapper: ScreenStackFragmentWrapper? = null
+    private var removalTransitionStarted = false
     private var isDetachingCurrentScreen = false
     private var reverseLastTwoChildren = false
     private var previousChildrenCount = 0
     var goingForward = false
 
     fun dismiss(screenFragment: ScreenStackFragmentWrapper) {
-        mDismissed.add(screenFragment)
+        dismissedWrappers.add(screenFragment)
         performUpdatesNow()
     }
 
     override val topScreen: Screen?
-        get() = mTopScreen?.screen
+        get() = topScreenWrapper?.screen
+
+    val fragments: ArrayList<ScreenStackFragmentWrapper>
+        get() = stack
 
     val rootScreen: Screen
         get() {
             for (i in 0 until screenCount) {
                 val screenWrapper = getScreenFragmentWrapperAt(i)
-                if (!mDismissed.contains(screenWrapper)) {
+                if (!dismissedWrappers.contains(screenWrapper)) {
                     return screenWrapper.screen
                 }
             }
@@ -46,19 +50,19 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
 
     override fun startViewTransition(view: View) {
         super.startViewTransition(view)
-        mRemovalTransitionStarted = true
+        removalTransitionStarted = true
     }
 
     override fun endViewTransition(view: View) {
         super.endViewTransition(view)
-        if (mRemovalTransitionStarted) {
-            mRemovalTransitionStarted = false
+        if (removalTransitionStarted) {
+            removalTransitionStarted = false
             dispatchOnFinishTransitioning()
         }
     }
 
     fun onViewAppearTransitionEnd() {
-        if (!mRemovalTransitionStarted) {
+        if (!removalTransitionStarted) {
             dispatchOnFinishTransitioning()
         }
     }
@@ -71,17 +75,17 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     }
 
     override fun removeScreenAt(index: Int) {
-        mDismissed.remove(getScreenFragmentWrapperAt(index))
+        dismissedWrappers.remove(getScreenFragmentWrapperAt(index))
         super.removeScreenAt(index)
     }
 
     override fun removeAllScreens() {
-        mDismissed.clear()
+        dismissedWrappers.clear()
         super.removeAllScreens()
     }
 
     override fun hasScreen(screenFragmentWrapper: ScreenFragmentWrapper?): Boolean =
-        super.hasScreen(screenFragmentWrapper) && !mDismissed.contains(screenFragmentWrapper)
+        super.hasScreen(screenFragmentWrapper) && !dismissedWrappers.contains(screenFragmentWrapper)
 
     override fun onUpdate() {
         // When going back from a nested stack with a single screen on it, we may hit an edge case
@@ -90,9 +94,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         var newTop: ScreenFragmentWrapper? = null // newTop is nullable, see the above comment ^
         var visibleBottom: ScreenFragmentWrapper? = null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
-        for (i in mScreenFragments.indices.reversed()) {
+        for (i in screenWrappers.indices.reversed()) {
             val screen = getScreenFragmentWrapperAt(i)
-            if (!mDismissed.contains(screen)) {
+            if (!dismissedWrappers.contains(screen)) {
                 if (newTop == null) {
                     newTop = screen
                 } else {
@@ -105,29 +109,29 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         }
         var shouldUseOpenAnimation = true
         var stackAnimation: StackAnimation? = null
-        if (!mStack.contains(newTop)) {
+        if (!stack.contains(newTop)) {
             // if new top screen wasn't on stack we do "open animation" so long it is not the very first
             // screen on stack
-            if (mTopScreen != null && newTop != null) {
+            if (topScreenWrapper != null && newTop != null) {
                 // there was some other screen attached before
                 // if the previous top screen does not exist anymore and the new top was not on the stack
                 // before, probably replace or reset was called, so we play the "close animation".
                 // Otherwise it's open animation
-                val containsTopScreen = mTopScreen?.let { mScreenFragments.contains(it) } == true
+                val containsTopScreen = topScreenWrapper?.let { screenWrappers.contains(it) } == true
                 val isPushReplace = newTop.screen.replaceAnimation === Screen.ReplaceAnimation.PUSH
                 shouldUseOpenAnimation = containsTopScreen || isPushReplace
                 // if the replace animation is `push`, the new top screen provides the animation, otherwise the previous one
-                stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else mTopScreen?.screen?.stackAnimation
-            } else if (mTopScreen == null && newTop != null) {
+                stackAnimation = if (shouldUseOpenAnimation) newTop.screen.stackAnimation else topScreenWrapper?.screen?.stackAnimation
+            } else if (topScreenWrapper == null && newTop != null) {
                 // mTopScreen was not present before so newTop is the first screen added to a stack
                 // and we don't want the animation when it is entering
                 stackAnimation = StackAnimation.NONE
                 goingForward = true
             }
-        } else if (mTopScreen != null && mTopScreen != newTop) {
+        } else if (topScreenWrapper != null && topScreenWrapper != newTop) {
             // otherwise if we are performing top screen change we do "close animation"
             shouldUseOpenAnimation = false
-            stackAnimation = mTopScreen?.screen?.stackAnimation
+            stackAnimation = topScreenWrapper?.screen?.stackAnimation
         }
 
         createTransaction().let {
@@ -180,19 +184,19 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             }
 
             // remove all screens previously on stack
-            for (fragmentWrapper in mStack) {
-                if (!mScreenFragments.contains(fragmentWrapper) || mDismissed.contains(fragmentWrapper)) {
+            for (fragmentWrapper in stack) {
+                if (!screenWrappers.contains(fragmentWrapper) || dismissedWrappers.contains(fragmentWrapper)) {
                     it.remove(fragmentWrapper.fragment)
                 }
             }
-            for (fragmentWrapper in mScreenFragments) {
+            for (fragmentWrapper in screenWrappers) {
                 // Stop detaching screens when reaching visible bottom. All screens above bottom should be
                 // visible.
                 if (fragmentWrapper === visibleBottom) {
                     break
                 }
                 // detach all screens that should not be visible
-                if (fragmentWrapper !== newTop && !mDismissed.contains(fragmentWrapper)) {
+                if (fragmentWrapper !== newTop && !dismissedWrappers.contains(fragmentWrapper)) {
                     it.remove(fragmentWrapper.fragment)
                 }
             }
@@ -201,7 +205,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             if (visibleBottom != null && !visibleBottom.fragment.isAdded) {
                 val top = newTop
                 var beneathVisibleBottom = true
-                for (fragmentWrapper in mScreenFragments) {
+                for (fragmentWrapper in screenWrappers) {
                     // ignore all screens beneath the visible bottom
                     if (beneathVisibleBottom) {
                         beneathVisibleBottom = if (fragmentWrapper === visibleBottom) {
@@ -214,9 +218,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             } else if (newTop != null && !newTop.fragment.isAdded) {
                 it.add(id, newTop.fragment)
             }
-            mTopScreen = newTop as? ScreenStackFragmentWrapper
-            mStack.clear()
-            mStack.addAll(mScreenFragments.map { it as ScreenStackFragmentWrapper })
+            topScreenWrapper = newTop as? ScreenStackFragmentWrapper
+            stack.clear()
+            stack.addAll(screenWrappers.map { it as ScreenStackFragmentWrapper })
 
             turnOffA11yUnderTransparentScreen(visibleBottom)
 
@@ -226,10 +230,10 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
 
     // only top visible screen should be accessible
     private fun turnOffA11yUnderTransparentScreen(visibleBottom: ScreenFragmentWrapper?) {
-        if (mScreenFragments.size > 1 && visibleBottom != null) {
-            mTopScreen?.let {
+        if (screenWrappers.size > 1 && visibleBottom != null) {
+            topScreenWrapper?.let {
                 if (isTransparent(it)) {
-                    val screenFragmentsBeneathTop = mScreenFragments.slice(0 until mScreenFragments.size - 1).asReversed()
+                    val screenFragmentsBeneathTop = screenWrappers.slice(0 until screenWrappers.size - 1).asReversed()
                     // go from the top of the stack excluding the top screen
                     for (fragmentWrapper in screenFragmentsBeneathTop) {
                         fragmentWrapper.screen.changeAccessibilityMode(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)
@@ -247,7 +251,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     }
 
     override fun notifyContainerUpdate() {
-        mStack.forEach { it.onContainerUpdate() }
+        stack.forEach { it.onContainerUpdate() }
     }
 
     // below methods are taken from
@@ -332,8 +336,12 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
-            fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+            // On Android sdk 33 and above the animation is different and requires draw reordering.
+            // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
+            // Hence, we're comparing numerical version here.
+            Build.VERSION.SDK_INT >= 33 ||
+                fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
-                  fragmentWrapper.screen.stackAnimation === StackAnimation.IOS
+                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS
     }
 }

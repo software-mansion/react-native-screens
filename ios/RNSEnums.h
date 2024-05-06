@@ -16,6 +16,7 @@ typedef NS_ENUM(NSInteger, RNSScreenStackAnimation) {
   RNSScreenStackAnimationFlip,
   RNSScreenStackAnimationSlideFromBottom,
   RNSScreenStackAnimationSimplePush,
+  RNSScreenStackAnimationSlideFromLeft,
 };
 
 typedef NS_ENUM(NSInteger, RNSScreenReplaceAnimation) {

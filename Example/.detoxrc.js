@@ -28,14 +28,14 @@ module.exports = {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
       build:
-        'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..',
+        'cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=x86_64 && cd ..',
       reversePorts: [8081],
     },
     'android.release': {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
       build:
-        'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..',
+        'cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=x86_64 && cd ..',
     },
   },
   devices: {
@@ -50,12 +50,14 @@ module.exports = {
       device: {
         adbName: 'e2e_emulator',
       },
+      utilBinaryPaths: ['e2e/apps/test-butler-app-2.2.1.apk'],
     },
     emulator: {
       type: 'android.emulator',
       device: {
         avdName: 'e2e_emulator',
       },
+      utilBinaryPaths: ['e2e/apps/test-butler-app-2.2.1.apk'],
     },
   },
   configurations: {

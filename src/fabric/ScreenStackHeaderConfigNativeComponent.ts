@@ -3,11 +3,19 @@ import type { ViewProps, ColorValue } from 'react-native';
 import type {
   Int32,
   WithDefault,
+  DirectEventHandler,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 type DirectionType = 'rtl' | 'ltr';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+type OnAttachedEvent = Readonly<{}>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+type OnDetachedEvent = Readonly<{}>;
+
 export interface NativeProps extends ViewProps {
+  onAttached?: DirectEventHandler<OnAttachedEvent>;
+  onDetached?: DirectEventHandler<OnDetachedEvent>;
   backgroundColor?: ColorValue;
   backTitle?: string;
   backTitleFontFamily?: string;

@@ -10,6 +10,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import * as React from 'react';
+import { PropsWithChildren } from 'react';
 import {
   ImageSourcePropType,
   StyleProp,
@@ -17,6 +18,7 @@ import {
   ColorValue,
 } from 'react-native';
 import {
+  GestureDetectorBridge,
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
@@ -390,7 +392,7 @@ export type NativeStackNavigationOptions = {
    * - "simple_push" – performs a default animation, but without shadow and native header transition (iOS only)
    * - "slide_from_bottom" – performs a slide from bottom animation
    * - "slide_from_right" - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
-   * - "slide_from_left" - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+   * - "slide_from_left" - slide in the new screen from left to right
    * - "ios" - iOS like slide in animation (Android only, resolves to default transition on iOS)
    * - "none" – the screen appears/dissapears without an animation
    */
@@ -451,6 +453,10 @@ export type NativeStackNavigationOptions = {
    * @platform ios
    */
   transitionDuration?: number;
+
+  goBackGesture?: GoBackGesture;
+  transitionAnimation?: AnimatedScreenTransition;
+  screenEdgeGesture?: boolean;
 };
 
 export type NativeStackNavigatorProps =
@@ -468,3 +474,58 @@ export type NativeStackDescriptor = Descriptor<
 export type NativeStackDescriptorMap = {
   [key: string]: NativeStackDescriptor;
 };
+
+// copy from GestureHandler to avoid strong dependency
+export type PanGestureHandlerEventPayload = {
+  x: number;
+  y: number;
+  absoluteX: number;
+  absoluteY: number;
+  translationX: number;
+  translationY: number;
+  velocityX: number;
+  velocityY: number;
+};
+
+// copy from Reanimated to avoid strong dependency
+export type GoBackGesture =
+  | 'swipeRight'
+  | 'swipeLeft'
+  | 'swipeUp'
+  | 'swipeDown'
+  | 'verticalSwipe'
+  | 'horizontalSwipe'
+  | 'twoDimensionalSwipe';
+
+export interface MeasuredDimensions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  pageX: number;
+  pageY: number;
+}
+
+export type AnimatedScreenTransition = {
+  topScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions
+  ) => Record<string, unknown>;
+  belowTopScreenStyle: (
+    event: PanGestureHandlerEventPayload,
+    screenSize: MeasuredDimensions
+  ) => Record<string, unknown>;
+};
+
+export type ScreensRefsHolder = React.MutableRefObject<
+  Record<string, React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>>
+>;
+
+export type GestureProviderProps = PropsWithChildren<{
+  gestureDetectorBridge: React.MutableRefObject<GestureDetectorBridge>;
+  screensRefs: ScreensRefsHolder;
+  currentRouteKey: string;
+  goBackGesture: GoBackGesture | undefined;
+  transitionAnimation: AnimatedScreenTransition | undefined;
+  screenEdgeGesture: boolean | undefined;
+}>;

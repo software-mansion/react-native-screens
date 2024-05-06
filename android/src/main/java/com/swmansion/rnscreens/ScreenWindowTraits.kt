@@ -11,7 +11,6 @@ import android.os.Build
 import android.view.ViewParent
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.facebook.react.bridge.GuardedRunnable
@@ -22,21 +21,21 @@ import com.swmansion.rnscreens.Screen.WindowTraits
 object ScreenWindowTraits {
     // Methods concerning statusBar management were taken from `react-native`'s status bar module:
     // https://github.com/facebook/react-native/blob/master/ReactAndroid/src/main/java/com/facebook/react/modules/statusbar/StatusBarModule.java
-    private var mDidSetOrientation = false
-    private var mDidSetStatusBarAppearance = false
-    private var mDidSetNavigationBarAppearance = false
-    private var mDefaultStatusBarColor: Int? = null
+    private var didSetOrientation = false
+    private var didSetStatusBarAppearance = false
+    private var didSetNavigationBarAppearance = false
+    private var defaultStatusBarColor: Int? = null
 
     internal fun applyDidSetOrientation() {
-        mDidSetOrientation = true
+        didSetOrientation = true
     }
 
     internal fun applyDidSetStatusBarAppearance() {
-        mDidSetStatusBarAppearance = true
+        didSetStatusBarAppearance = true
     }
 
     internal fun applyDidSetNavigationBarAppearance() {
-        mDidSetNavigationBarAppearance = true
+        didSetNavigationBarAppearance = true
     }
 
     internal fun setOrientation(screen: Screen, activity: Activity?) {
@@ -48,17 +47,16 @@ object ScreenWindowTraits {
         activity.requestedOrientation = orientation
     }
 
-    @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     internal fun setColor(screen: Screen, activity: Activity?, context: ReactContext?) {
         if (activity == null || context == null) {
             return
         }
-        if (mDefaultStatusBarColor == null) {
-            mDefaultStatusBarColor = activity.window.statusBarColor
+        if (defaultStatusBarColor == null) {
+            defaultStatusBarColor = activity.window.statusBarColor
         }
         val screenForColor = findScreenForTrait(screen, WindowTraits.COLOR)
         val screenForAnimated = findScreenForTrait(screen, WindowTraits.ANIMATED)
-        val color = screenForColor?.statusBarColor ?: mDefaultStatusBarColor
+        val color = screenForColor?.statusBarColor ?: defaultStatusBarColor
         val animated = screenForAnimated?.isStatusBarAnimated ?: false
 
         UiThreadUtil.runOnUiThread(
@@ -197,7 +195,6 @@ object ScreenWindowTraits {
         val screenForNavBarHidden = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_HIDDEN)
         val hidden = screenForNavBarHidden?.isNavigationBarHidden ?: false
 
-        WindowCompat.setDecorFitsSystemWindows(window, hidden)
         if (hidden) {
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
                 controller.hide(WindowInsetsCompat.Type.navigationBars())
@@ -213,16 +210,16 @@ object ScreenWindowTraits {
     }
 
     internal fun trySetWindowTraits(screen: Screen, activity: Activity?, context: ReactContext?) {
-        if (mDidSetOrientation) {
+        if (didSetOrientation) {
             setOrientation(screen, activity)
         }
-        if (mDidSetStatusBarAppearance) {
+        if (didSetStatusBarAppearance) {
             setColor(screen, activity, context)
             setStyle(screen, activity, context)
             setTranslucent(screen, activity, context)
             setHidden(screen, activity)
         }
-        if (mDidSetNavigationBarAppearance) {
+        if (didSetNavigationBarAppearance) {
             setNavigationBarColor(screen, activity)
             setNavigationBarHidden(screen, activity)
         }

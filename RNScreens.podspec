@@ -4,7 +4,7 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 platform = new_arch_enabled ? "11.0" : "9.0"
-source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : "ios/**/*.{h,m,mm}"
+source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : ["ios/**/*.{h,m,mm}", "cpp/**/*.{cpp,h}"]
 
 folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32'
 
@@ -17,7 +17,7 @@ class RNScreensDependencyHelper
     end
 
     s.subspec "common" do |ss|
-      ss.source_files         = "common/cpp/**/*.{cpp,h}"
+      ss.source_files         = ["common/cpp/**/*.{cpp,h}", "cpp/**/*.{cpp,h}"]
       ss.header_dir           = "rnscreens"
       ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
     end
@@ -60,13 +60,15 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/software-mansion/react-native-screens"
   s.license      = "MIT"
   s.author       = { "author" => "author@domain.cn" }
-  s.platforms    = { :ios => platform, :tvos => "11.0" }
+  s.platforms    = { :ios => platform, :tvos => "11.0", :visionos => "1.0" }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
   s.requires_arc = true
 
   if defined?(install_modules_dependencies()) != nil
     install_modules_dependencies(s)
+    # Add missing dependencies, that were not included in install_modules_dependencies
+    s.dependency "React-RCTImage"
     RNScreensDependencyHelper.add_common_subspec(s, new_arch_enabled)
   else
     RNScreensDependencyHelper.install_dependencies(s, new_arch_enabled)

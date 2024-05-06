@@ -7,23 +7,19 @@ import com.facebook.react.uimanager.events.Event
 class ScreenTransitionProgressEvent(
     surfaceId: Int,
     viewId: Int,
-    private val mProgress: Float,
-    private val mClosing: Boolean,
-    private val mGoingForward: Boolean,
-    private val mCoalescingKey: Short
-) : Event<ScreenAppearEvent?>(surfaceId, viewId) {
-    override fun getEventName(): String {
-        return EVENT_NAME
-    }
+    private val progress: Float,
+    private val isClosing: Boolean,
+    private val isGoingForward: Boolean,
+    private val coalescingKey: Short
+) : Event<ScreenTransitionProgressEvent>(surfaceId, viewId) {
+    override fun getEventName(): String = EVENT_NAME
 
-    override fun getCoalescingKey(): Short {
-        return mCoalescingKey
-    }
+    override fun getCoalescingKey(): Short = coalescingKey
 
     override fun getEventData(): WritableMap? = Arguments.createMap().apply {
-        putDouble("progress", mProgress.toDouble())
-        putInt("closing", if (mClosing) 1 else 0)
-        putInt("goingForward", if (mGoingForward) 1 else 0)
+        putDouble("progress", progress.toDouble())
+        putInt("closing", if (isClosing) 1 else 0)
+        putInt("goingForward", if (isGoingForward) 1 else 0)
     }
 
     companion object {

@@ -92,7 +92,7 @@ namespace react = facebook::react;
 
 @end
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 @interface RNSScreenEdgeGestureRecognizer : UIScreenEdgePanGestureRecognizer
 @end
 
@@ -150,7 +150,7 @@ namespace react = facebook::react;
   _presentedModals = [NSMutableArray new];
   _controller = [RNSNavigationController new];
   _controller.delegate = self;
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self setupGestureHandlers];
 #endif
   // we have to initialize viewControllers with a non empty array for
@@ -323,6 +323,38 @@ namespace react = facebook::react;
   }
 }
 
++ (UIViewController *)findTopMostPresentedViewControllerFromViewController:(UIViewController *)controller
+{
+  auto presentedVc = controller;
+  while (presentedVc.presentedViewController != nil) {
+    presentedVc = presentedVc.presentedViewController;
+  }
+  return presentedVc;
+}
+
+- (UIViewController *)findReactRootViewController
+{
+  UIView *parent = self;
+  while (parent) {
+    parent = parent.reactSuperview;
+    if (parent.isReactRootView) {
+      return parent.reactViewController;
+    }
+  }
+  return nil;
+}
+
+- (UIViewController *)lastFromPresentedViewControllerChainStartingFrom:(UIViewController *)vc
+{
+  UIViewController *lastNonNullVc = vc;
+  UIViewController *lastVc = vc.presentedViewController;
+  while (lastVc != nil) {
+    lastNonNullVc = lastVc;
+    lastVc = lastVc.presentedViewController;
+  }
+  return lastNonNullVc;
+}
+
 - (void)setModalViewControllers:(NSArray<UIViewController *> *)controllers
 {
   // prevent re-entry
@@ -349,9 +381,18 @@ namespace react = facebook::react;
   NSMutableArray<UIViewController *> *newControllers = [NSMutableArray arrayWithArray:controllers];
   [newControllers removeObjectsInArray:_presentedModals];
 
-  // find bottom-most controller that should stay on the stack for the duration of transition
+  // We need to find bottom-most view controller that should stay on the stack
+  // for the duration of transition.
+
+  // There are couple of scenarios:
+  // (1) no modals are presented or all modals were presented by this RNSNavigationController,
+  // (2) there are modals presented by other RNSNavigationControllers (nested/outer),
+  // (3) there are modals presented by other controllers (e.g. React Native's Modal view).
+
+  // Last controller that is common for both _presentedModals & controllers
+  __block UIViewController *changeRootController = _controller;
+  // Last common controller index + 1
   NSUInteger changeRootIndex = 0;
-  UIViewController *changeRootController = _controller;
   for (NSUInteger i = 0; i < MIN(_presentedModals.count, controllers.count); i++) {
     if (_presentedModals[i] == controllers[i]) {
       changeRootController = controllers[i];
@@ -403,6 +444,7 @@ namespace react = facebook::react;
       return;
     } else {
       UIViewController *previous = changeRootController;
+
       for (NSUInteger i = changeRootIndex; i < controllers.count; i++) {
         UIViewController *next = controllers[i];
         BOOL lastModal = (i == controllers.count - 1);
@@ -440,16 +482,69 @@ namespace react = facebook::react;
     }
   };
 
-  if (changeRootController.presentedViewController != nil &&
-      [_presentedModals containsObject:changeRootController.presentedViewController]) {
+  // changeRootController is the last controller that *is owned by this stack*, and should stay unchanged after this
+  // batch of transitions. Therefore changeRootController.presentedViewController is the first constroller to be
+  // dismissed (implying also all controllers above). Notice here, that firstModalToBeDismissed could have been
+  // RNSScreen modal presented from *this* stack, another stack, or any other view controller with modal presentation
+  // provided by third-party libraries (e.g. React Native's Modal view). In case of presence of other (not managed by
+  // us) modal controllers, weird interactions might arise. The code below, besides handling our presentation /
+  // dismissal logic also attempts to handle possible wide gamut of cases of interactions with third-party modal
+  // controllers, however it's not perfect.
+  // TODO: Find general way to manage owned and foreign modal view controllers and refactor this code. Consider building
+  // model first (data structue, attempting to be aware of all modals in presentation and some text-like algorithm for
+  // computing required operations).
+
+  UIViewController *firstModalToBeDismissed = changeRootController.presentedViewController;
+
+  if (firstModalToBeDismissed != nil) {
     BOOL shouldAnimate = changeRootIndex == controllers.count &&
-        [changeRootController.presentedViewController isKindOfClass:[RNSScreen class]] &&
-        ((RNSScreen *)changeRootController.presentedViewController).screenView.stackAnimation !=
-            RNSScreenStackAnimationNone;
-    [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
-  } else {
-    finish();
+        [firstModalToBeDismissed isKindOfClass:[RNSScreen class]] &&
+        ((RNSScreen *)firstModalToBeDismissed).screenView.stackAnimation != RNSScreenStackAnimationNone;
+
+    if ([_presentedModals containsObject:firstModalToBeDismissed] ||
+        ![firstModalToBeDismissed isKindOfClass:RNSScreen.class]) {
+      // We dismiss every VC that was presented by changeRootController VC or its descendant.
+      // After the series of dismissals is completed we run completion block in which
+      // we present modals on top of changeRootController (which may be the this stack VC)
+      //
+      // There also might the second case, where the firstModalToBeDismissed is foreign.
+      // See: https://github.com/software-mansion/react-native-screens/issues/2048
+      // For now, to mitigate the issue, we also decide to trigger its dismissal before
+      // starting the presentation chain down below in finish() callback.
+      [changeRootController dismissViewControllerAnimated:shouldAnimate completion:finish];
+      return;
+    }
+
+    UIViewController *lastModalVc = [self lastFromPresentedViewControllerChainStartingFrom:firstModalToBeDismissed];
+
+    if (lastModalVc != firstModalToBeDismissed) {
+      [lastModalVc dismissViewControllerAnimated:shouldAnimate completion:finish];
+      return;
+    }
   }
+
+  // changeRootController does not have presentedViewController but it does not mean that no modals are in presentation;
+  // modals could be presented by another stack (nested / outer), third-party view controller or they could be using
+  // UIModalPresentationCurrentContext / UIModalPresentationOverCurrentContext presentation styles; in the last case
+  // for some reason system asks top-level (react root) vc to present instead of our stack, despite the fact that
+  // `definesPresentationContext` returns `YES` for UINavigationController.
+  // So we first need to find top-level controller manually:
+  UIViewController *reactRootVc = [self findReactRootViewController];
+  UIViewController *topMostVc = [RNSScreenStackView findTopMostPresentedViewControllerFromViewController:reactRootVc];
+
+  if (topMostVc != reactRootVc) {
+    changeRootController = topMostVc;
+
+    // Here we handle just the simplest case where the top level VC was dismissed. In any more complex
+    // scenario we will still have problems, see: https://github.com/software-mansion/react-native-screens/issues/1813
+    if ([_presentedModals containsObject:topMostVc] && ![controllers containsObject:topMostVc]) {
+      [changeRootController dismissViewControllerAnimated:YES completion:finish];
+      return;
+    }
+  }
+
+  // We didn't detect any controllers for dismissal, thus we start presenting new VCs
+  finish();
 }
 
 - (void)setPushViewControllers:(NSArray<UIViewController *> *)controllers
@@ -510,10 +605,16 @@ namespace react = facebook::react;
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
 #ifdef RCT_NEW_ARCH_ENABLED
-        auto screenController = (RNSScreen *)top;
-        [screenController resetViewToScreen];
-#endif
+        // This is a workaround for the case, when in the app we're trying to do `replace` action on screens, when
+        // there's already ongoing transition to some screen. In such case, we're making the snapshot, but we're trying
+        // to add it to the wrong superview (where it should be UIViewControllerWrapperView, but it's
+        // _UIParallaxDimmingView instead). At the moment of RN 0.74 we can't queue the unmounts for such situation
+        // either, so we need to turn off animations, when the view is not yet mounted, but it will appear after the
+        // transition of previous replacement.
+        [_controller setViewControllers:controllers animated:previousTop.view.window != nil];
+#else
         [_controller setViewControllers:controllers animated:YES];
+#endif // RCT_NEW_ARCH_ENABLED
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
@@ -529,11 +630,8 @@ namespace react = facebook::react;
       // no animation and do animated push of the last item
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
+
       [_controller setViewControllers:newControllers animated:NO];
-#ifdef RCT_NEW_ARCH_ENABLED
-      auto screenController = (RNSScreen *)top;
-      [screenController resetViewToScreen];
-#endif
       [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
@@ -573,19 +671,32 @@ namespace react = facebook::react;
 {
   [super layoutSubviews];
   _controller.view.frame = self.bounds;
+
+  // We need to update the bounds of the modal views here, since
+  // for contained modals they are not updated by modals themselves.
+  for (UIViewController *modal in _presentedModals) {
+    // Because `layoutSubviews` method is also called on grabbing the modal,
+    // we don't want to update the frame when modal is being dismissed.
+    // We also want to get the frame in correct position. In the best case, it
+    // should be modal's superview (UITransitionView), which frame is being changed correctly.
+    // Otherwise, when superview is nil, we will fallback to the bounds of the ScreenStack.
+    BOOL isModalBeingDismissed = [modal isKindOfClass:[RNSScreen class]] && ((RNSScreen *)modal).isBeingDismissed;
+    CGRect correctFrame = modal.view.superview != nil ? modal.view.superview.frame : self.bounds;
+
+    if (!CGRectEqualToRect(modal.view.frame, correctFrame) && !isModalBeingDismissed) {
+      modal.view.frame = correctFrame;
+    }
+  }
 }
 
 - (void)dismissOnReload
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-  if ([_controller.visibleViewController isKindOfClass:[RNSScreen class]]) {
-    [(RNSScreen *)_controller.visibleViewController resetViewToScreen];
-  }
 #else
   dispatch_async(dispatch_get_main_queue(), ^{
     [self invalidate];
   });
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 #pragma mark methods connected to transitioning
@@ -608,7 +719,7 @@ namespace react = facebook::react;
       // Also, we need to return the animator when full width swiping even if the animation is not custom,
       // otherwise the screen will be just popped immediately due to no animation
       ((operation == UINavigationControllerOperationPop && shouldCancelDismiss) || _isFullWidthSwiping ||
-       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation])) {
+       [RNSScreenStackAnimator isCustomAnimation:screen.stackAnimation] || _customAnimation)) {
     return [[RNSScreenStackAnimator alloc] initWithOperation:operation];
   }
   return nil;
@@ -637,9 +748,12 @@ namespace react = facebook::react;
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
+  if (_disableSwipeBack) {
+    return NO;
+  }
   RNSScreenView *topScreen = _reactSubviews.lastObject;
 
-#if TARGET_OS_TV
+#if TARGET_OS_TV || TARGET_OS_VISION
   [self cancelTouchesInParent];
   return YES;
 #else
@@ -657,12 +771,14 @@ namespace react = facebook::react;
   // Now we're dealing with RNSScreenEdgeGestureRecognizer (or _UIParallaxTransitionPanGestureRecognizer)
   if (topScreen.customAnimationOnSwipe && [RNSScreenStackAnimator isCustomAnimation:topScreen.stackAnimation]) {
     if ([gestureRecognizer isKindOfClass:[RNSScreenEdgeGestureRecognizer class]]) {
+      UIRectEdge edges = ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges;
+      BOOL isRTL = _controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft;
+      BOOL isSlideFromLeft = topScreen.stackAnimation == RNSScreenStackAnimationSlideFromLeft;
       // if we do not set any explicit `semanticContentAttribute`, it is `UISemanticContentAttributeUnspecified` instead
       // of `UISemanticContentAttributeForceLeftToRight`, so we just check if it is RTL or not
-      BOOL isCorrectEdge = (_controller.view.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft &&
-                            ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeRight) ||
-          (_controller.view.semanticContentAttribute != UISemanticContentAttributeForceRightToLeft &&
-           ((RNSScreenEdgeGestureRecognizer *)gestureRecognizer).edges == UIRectEdgeLeft);
+      BOOL isCorrectEdge = (isRTL && edges == UIRectEdgeRight) ||
+          (!isRTL && isSlideFromLeft && edges == UIRectEdgeRight) ||
+          (isRTL && isSlideFromLeft && edges == UIRectEdgeLeft) || (!isRTL && edges == UIRectEdgeLeft);
       if (isCorrectEdge) {
         [self cancelTouchesInParent];
         return YES;
@@ -682,7 +798,7 @@ namespace react = facebook::react;
 #endif // TARGET_OS_TV
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 - (void)setupGestureHandlers
 {
   // gesture recognizers for custom stack animations
@@ -726,7 +842,10 @@ namespace react = facebook::react;
     }
   }
 
+  bool isInverted = topScreen.stackAnimation == RNSScreenStackAnimationSlideFromLeft;
+
   float transitionProgress = (translation / distance);
+  transitionProgress = isInverted ? transitionProgress * -1 : transitionProgress;
 
   switch (gestureRecognizer.state) {
     case UIGestureRecognizerStateBegan: {
@@ -748,7 +867,10 @@ namespace react = facebook::react;
     case UIGestureRecognizerStateEnded: {
       // values taken from
       // https://github.com/react-navigation/react-navigation/blob/54739828598d7072c1bf7b369659e3682db3edc5/packages/stack/src/views/Stack/Card.tsx#L316
-      BOOL shouldFinishTransition = (translation + velocity * 0.3) > (distance / 2);
+      float snapPoint = distance / 2;
+      float gestureDistance = translation + velocity * 0.3;
+      gestureDistance = isInverted ? gestureDistance * -1 : gestureDistance;
+      BOOL shouldFinishTransition = gestureDistance > snapPoint;
       if (shouldFinishTransition) {
         [_interactionController finishInteractiveTransition];
       } else {
@@ -848,8 +970,8 @@ namespace react = facebook::react;
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
   if (CGRectContainsPoint(_controller.navigationBar.frame, point)) {
-    // headerConfig should be the first subview of the topmost screen
-    UIView *headerConfig = [[_reactSubviews.lastObject reactSubviews] firstObject];
+    RNSScreenView *topMostScreen = (RNSScreenView *)_reactSubviews.lastObject;
+    UIView *headerConfig = topMostScreen.findHeaderConfig;
     if ([headerConfig isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
       UIView *headerHitTestResult = [headerConfig hitTest:point withEvent:event];
       if (headerHitTestResult != nil) {
@@ -860,7 +982,7 @@ namespace react = facebook::react;
   return [super hitTest:point withEvent:event];
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 
 - (BOOL)isScrollViewPanGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
@@ -961,6 +1083,33 @@ namespace react = facebook::react;
   });
 }
 
+- (void)startScreenTransition
+{
+  if (_interactionController == nil) {
+    _customAnimation = YES;
+    _interactionController = [UIPercentDrivenInteractiveTransition new];
+    [_controller popViewControllerAnimated:YES];
+  }
+}
+
+- (void)updateScreenTransition:(double)progress
+{
+  [_interactionController updateInteractiveTransition:progress];
+}
+
+- (void)finishScreenTransition:(BOOL)canceled
+{
+  _customAnimation = NO;
+  if (canceled) {
+    [_interactionController updateInteractiveTransition:0.0];
+    [_interactionController cancelInteractiveTransition];
+  } else {
+    [_interactionController updateInteractiveTransition:1.0];
+    [_interactionController finishInteractiveTransition];
+  }
+  _interactionController = nil;
+}
+
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
@@ -1048,7 +1197,6 @@ namespace react = facebook::react;
   }
 
   [_presentedModals removeAllObjects];
-  [self dismissOnReload];
   [_controller willMoveToParentViewController:nil];
   [_controller removeFromParentViewController];
   [_controller setViewControllers:@[ [UIViewController new] ]];

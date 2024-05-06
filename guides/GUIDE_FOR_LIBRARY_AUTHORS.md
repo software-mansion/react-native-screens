@@ -202,7 +202,7 @@ Allows for the customization of how the given screen should appear/disappear whe
 - `"simple_push"` – performs a default animation, but without shadow and native header transition (iOS only)
 - `"slide_from_bottom"` - slide in the new screen from bottom to top
 - `"slide_from_right"` - slide in the new screen from right to left (Android only, resolves to default transition on iOS)
-- `"slide_from_left"` - slide in the new screen from left to right (Android only, resolves to default transition on iOS)
+- `"slide_from_left"` - slide in the new screen from left to right
 - `"ios"` - iOS like slide in animation (Android only, resolves to default transition on iOS)
 - `"none"` – the screen appears/disappears without an animation
 
@@ -400,6 +400,7 @@ Allowed imperative actions on search bar are:
 - `blur` - Function to remove focus from search bar.
 - `clearText` - Function to clear text in search bar.
 - `setText` - Function to set search bar's text to given value.
+- `cancelSearch` - Function to cancel search in search bar.
 - `toggleCancelButton` - Function toggle cancel button display near search bar. (iOS only)
 
 Below is a list of properties that can be set with `ScreenStackHeaderConfig` component:

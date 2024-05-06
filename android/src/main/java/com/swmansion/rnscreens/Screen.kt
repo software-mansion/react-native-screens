@@ -19,7 +19,7 @@ import com.facebook.react.uimanager.UIManagerModule
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 
 @SuppressLint("ViewConstructor")
-class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(context) {
+class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
@@ -27,21 +27,14 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     var container: ScreenContainer? = null
     var activityState: ActivityState? = null
         private set
-    private var mTransitioning = false
+    private var isTransitioning = false
     var stackPresentation = StackPresentation.PUSH
     var replaceAnimation = ReplaceAnimation.POP
     var stackAnimation = StackAnimation.DEFAULT
     var isGestureEnabled = true
     var screenOrientation: Int? = null
         private set
-    private var mStatusBarStyle: String? = null
-    private var mStatusBarHidden: Boolean? = null
-    private var mStatusBarTranslucent: Boolean? = null
-    private var mStatusBarColor: Int? = null
-    private var mNavigationBarColor: Int? = null
-    private var mNavigationBarHidden: Boolean? = null
     var isStatusBarAnimated: Boolean? = null
-    private var mNativeBackButtonDismissalEnabled = true
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -68,16 +61,19 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        if (changed) {
+        if (container is ScreenStack && changed) {
             val width = r - l
             val height = b - t
 
-            calculateHeaderHeight()
+            val headerHeight = calculateHeaderHeight()
+            val totalHeight = headerHeight.first + headerHeight.second // action bar height + status bar height
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height)
+                updateScreenSizeFabric(width, height, totalHeight)
             } else {
                 updateScreenSizePaper(width, height)
             }
+
+            notifyHeaderHeightChange(totalHeight)
         }
     }
 
@@ -102,10 +98,10 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
      * container when transitioning is detected and turned off immediately after
      */
     fun setTransitioning(transitioning: Boolean) {
-        if (mTransitioning == transitioning) {
+        if (isTransitioning == transitioning) {
             return
         }
-        mTransitioning = transitioning
+        isTransitioning = transitioning
         val isWebViewInScreen = hasWebView(this)
         if (isWebViewInScreen && layerType != LAYER_TYPE_HARDWARE) {
             return
@@ -169,33 +165,30 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
         this.headerConfig?.toolbar?.importantForAccessibility = mode
     }
 
-    var statusBarStyle: String?
-        get() = mStatusBarStyle
+    var statusBarStyle: String? = null
         set(statusBarStyle) {
             if (statusBarStyle != null) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
-            mStatusBarStyle = statusBarStyle
+            field = statusBarStyle
             fragmentWrapper?.let { ScreenWindowTraits.setStyle(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
-    var isStatusBarHidden: Boolean?
-        get() = mStatusBarHidden
+    var isStatusBarHidden: Boolean? = null
         set(statusBarHidden) {
             if (statusBarHidden != null) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
-            mStatusBarHidden = statusBarHidden
+            field = statusBarHidden
             fragmentWrapper?.let { ScreenWindowTraits.setHidden(this, it.tryGetActivity()) }
         }
 
-    var isStatusBarTranslucent: Boolean?
-        get() = mStatusBarTranslucent
+    var isStatusBarTranslucent: Boolean? = null
         set(statusBarTranslucent) {
             if (statusBarTranslucent != null) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
-            mStatusBarTranslucent = statusBarTranslucent
+            field = statusBarTranslucent
             fragmentWrapper?.let {
                 ScreenWindowTraits.setTranslucent(
                     this,
@@ -205,33 +198,30 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             }
         }
 
-    var statusBarColor: Int?
-        get() = mStatusBarColor
+    var statusBarColor: Int? = null
         set(statusBarColor) {
             if (statusBarColor != null) {
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
-            mStatusBarColor = statusBarColor
+            field = statusBarColor
             fragmentWrapper?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
-    var navigationBarColor: Int?
-        get() = mNavigationBarColor
+    var navigationBarColor: Int? = null
         set(navigationBarColor) {
             if (navigationBarColor != null) {
                 ScreenWindowTraits.applyDidSetNavigationBarAppearance()
             }
-            mNavigationBarColor = navigationBarColor
+            field = navigationBarColor
             fragmentWrapper?.let { ScreenWindowTraits.setNavigationBarColor(this, it.tryGetActivity()) }
         }
 
-    var isNavigationBarHidden: Boolean?
-        get() = mNavigationBarHidden
+    var isNavigationBarHidden: Boolean? = null
         set(navigationBarHidden) {
             if (navigationBarHidden != null) {
                 ScreenWindowTraits.applyDidSetNavigationBarAppearance()
             }
-            mNavigationBarHidden = navigationBarHidden
+            field = navigationBarHidden
             fragmentWrapper?.let {
                 ScreenWindowTraits.setNavigationBarHidden(
                     this,
@@ -240,31 +230,33 @@ class Screen constructor(context: ReactContext?) : FabricEnabledViewGroup(contex
             }
         }
 
-    var nativeBackButtonDismissalEnabled: Boolean
-        get() = mNativeBackButtonDismissalEnabled
-        set(enableNativeBackButtonDismissal) {
-            mNativeBackButtonDismissalEnabled = enableNativeBackButtonDismissal
-        }
+    var nativeBackButtonDismissalEnabled: Boolean = true
 
-    private fun calculateHeaderHeight() {
+    private fun calculateHeaderHeight(): Pair<Double, Double> {
         val actionBarTv = TypedValue()
         val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
 
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
         val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
-            .takeIf { resolvedActionBarSize && headerConfig?.mIsHidden != true }
+            .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true && headerConfig?.isHeaderTranslucent != true }
             ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
 
         val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            .takeIf { it > 0 && isStatusBarHidden != true }
+            // Count only status bar when action bar is visible and status bar is not hidden
+            .takeIf { it > 0 && isStatusBarHidden != true && actionBarHeight > 0 }
             ?.let { (context.resources::getDimensionPixelSize)(it) }
             ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
             ?: 0.0
 
-        val totalHeight = actionBarHeight + statusBarHeight
-        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(id, totalHeight))
+        return actionBarHeight to statusBarHeight
+    }
+
+    private fun notifyHeaderHeightChange(headerHeight: Double) {
+        val screenContext = context as ReactContext
+        val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
+        UIManagerHelper.getEventDispatcherForReactTag(screenContext, id)
+            ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
     enum class StackPresentation {

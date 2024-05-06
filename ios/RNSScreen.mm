@@ -38,13 +38,13 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSScreenView {
-  __weak RCTBridge *_bridge;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
 #else
+  __weak RCTBridge *_bridge;
   RCTTouchHandler *_touchHandler;
   CGRect _reactFrame;
 #endif
@@ -61,8 +61,7 @@ namespace react = facebook::react;
   }
   return self;
 }
-#endif // RCT_NEW_ARCH_ENABLED
-
+#else
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
   if (self = [super init]) {
@@ -72,6 +71,7 @@ namespace react = facebook::react;
 
   return self;
 }
+#endif // RCT_NEW_ARCH_ENABLED
 
 - (void)initCommonProps
 {
@@ -107,7 +107,12 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
-    auto newState = react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size)};
+    RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
+    // in large title, ScrollView handles the offset of content so we cannot set it here also.
+    CGFloat headerHeight =
+        config.largeTitle ? 0 : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
+    auto newState =
+        react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), RCTPointFromCGPoint(CGPointMake(0, headerHeight))};
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
@@ -166,12 +171,10 @@ namespace react = facebook::react;
     _controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    // TODO: on Fabric, same controllers can be used as modals and then recycled and used a push which would result in
-    // this error. It would be good to check if it doesn't leak in such case.
 #else
     RCTLogError(
         @"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
   }
   _stackPresentation = stackPresentation;
 }
@@ -194,6 +197,7 @@ namespace react = facebook::react;
     case RNSScreenStackAnimationSimplePush:
     case RNSScreenStackAnimationSlideFromBottom:
     case RNSScreenStackAnimationFadeFromBottom:
+    case RNSScreenStackAnimationSlideFromLeft:
       // Default
       break;
   }
@@ -229,7 +233,7 @@ namespace react = facebook::react;
   }
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 - (void)setStatusBarStyle:(RNSStatusBarStyle)statusBarStyle
 {
   _hasStatusBarStyleSet = YES;
@@ -293,7 +297,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onDismissed(react::RNSScreenEventEmitter::OnDismissed{.dismissCount = dismissCount});
@@ -315,7 +318,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onNativeDismissCancelled(
@@ -332,7 +334,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillAppear(react::RNSScreenEventEmitter::OnWillAppear{});
@@ -355,7 +356,6 @@ namespace react = facebook::react;
   }
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onWillDisappear(react::RNSScreenEventEmitter::OnWillDisappear{});
@@ -371,7 +371,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onAppear(react::RNSScreenEventEmitter::OnAppear{});
@@ -391,7 +390,6 @@ namespace react = facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
-  // it will be cleaned in prepareForRecycle
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onDisappear(react::RNSScreenEventEmitter::OnDisappear{});
@@ -416,7 +414,7 @@ namespace react = facebook::react;
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -511,7 +509,7 @@ namespace react = facebook::react;
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [[RCTBridge currentBridge].eventDispatcher sendEvent:event];
+  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
@@ -560,13 +558,19 @@ namespace react = facebook::react;
   }
 }
 
-- (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig
+- (nullable RNSScreenStackHeaderConfig *)findHeaderConfig
 {
+  // Fast path
+  if ([self.reactSubviews.lastObject isKindOfClass:RNSScreenStackHeaderConfig.class]) {
+    return (RNSScreenStackHeaderConfig *)self.reactSubviews.lastObject;
+  }
+
   for (UIView *view in self.reactSubviews) {
     if ([view isKindOfClass:RNSScreenStackHeaderConfig.class]) {
       return (RNSScreenStackHeaderConfig *)view;
     }
   }
+
   return nil;
 }
 
@@ -598,7 +602,7 @@ namespace react = facebook::react;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 /**
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
@@ -665,6 +669,11 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
 }
 
++ (BOOL)shouldBeRecycled
+{
+  return NO;
+}
+
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
@@ -685,27 +694,6 @@ namespace react = facebook::react;
 }
 
 #pragma mark - RCTComponentViewProtocol
-
-- (void)prepareForRecycle
-{
-  [super prepareForRecycle];
-  // TODO: Make sure that there is no edge case when this should be uncommented
-  // _controller=nil;
-  _dismissed = NO;
-  _state.reset();
-  _touchHandler = nil;
-
-  // We set this prop to default value here to workaround view-recycling.
-  // Let's assume the view has had _stackPresentation == <some modal stack presentation> set
-  // before below line was executed. Then, when instantiated again (with the same modal presentation)
-  // updateProps:oldProps: method would be called and setter for stack presentation would not be called.
-  // This is crucial as in that setter we register `self.controller` as a delegate
-  // (UIAdaptivePresentationControllerDelegate) to presentation controller and this leads to buggy modal behaviour as we
-  // rely on UIAdaptivePresentationControllerDelegate callbacks. Restoring the default value and then comparing against
-  // it in updateProps:oldProps: allows for setter to be called, however if there was some additional logic to execute
-  // when stackPresentation is set to "push" the setter would not be triggered.
-  _stackPresentation = RNSScreenStackPresentationPush;
-}
 
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
@@ -770,12 +758,9 @@ namespace react = facebook::react;
   }
 #endif // !TARGET_OS_TV
 
-  // Notice that we compare against _stackPresentation, not oldScreenProps.stackPresentation.
-  // See comment in prepareForRecycle method for explanation.
-  RNSScreenStackPresentation newStackPresentation =
-      [RNSConvert RNSScreenStackPresentationFromCppEquivalent:newScreenProps.stackPresentation];
-  if (newStackPresentation != _stackPresentation) {
-    [self setStackPresentation:newStackPresentation];
+  if (newScreenProps.stackPresentation != oldScreenProps.stackPresentation) {
+    [self
+        setStackPresentation:[RNSConvert RNSScreenStackPresentationFromCppEquivalent:newScreenProps.stackPresentation]];
   }
 
   if (newScreenProps.stackAnimation != oldScreenProps.stackAnimation) {
@@ -815,7 +800,7 @@ namespace react = facebook::react;
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
 }
@@ -826,7 +811,7 @@ namespace react = facebook::react;
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
   [super didSetProps:changedProps];
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
 }
@@ -982,9 +967,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)viewDidDisappear:(BOOL)animated
 {
   [super viewDidDisappear:animated];
-#ifdef RCT_NEW_ARCH_ENABLED
-  [self resetViewToScreen];
-#endif
   if (self.parentViewController == nil && self.presentingViewController == nil) {
     if (self.screenView.preventNativeDismiss) {
       // if we want to prevent the native dismiss, we do not send dismissal event,
@@ -1059,7 +1041,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (CGSize)getStatusBarHeightIsModal:(BOOL)isModal
 {
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
   CGSize fallbackStatusBarSize = [[UIApplication sharedApplication] statusBarFrame].size;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
@@ -1105,17 +1087,11 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   UINavigationController *navctr = [self getVisibleNavigationControllerIsModal:isModal];
 
-  // If navigation controller doesn't exists (or it is hidden) we want to handle two possible cases.
-  // If there's no navigation controller for the modal, we simply don't want to return header height, as modal possibly
-  // does not have header and we don't want to count status bar. If there's no navigation controller for the view we
-  // just want to return status bar height (if it's hidden, it will simply return 0).
+  // If there's no navigation controller for the modal (or the navigation bar is hidden), we simply don't want to
+  // return header height, as modal possibly does not have header when navigation controller is nil,
+  // and we don't want to count status bar if navigation bar is hidden (inset could be negative).
   if (navctr == nil || navctr.isNavigationBarHidden) {
-    if (isModal) {
-      return 0;
-    } else {
-      CGSize statusBarSize = [self getStatusBarHeightIsModal:isModal];
-      return MIN(statusBarSize.width, statusBarSize.height);
-    }
+    return 0;
   }
 
   CGFloat navbarHeight = navctr.navigationBar.frame.size.height;
@@ -1220,15 +1196,28 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   UIViewController *lastViewController = [[self childViewControllers] lastObject];
   if ([self.presentedViewController isKindOfClass:[RNSScreen class]]) {
     lastViewController = self.presentedViewController;
+
+    if (!includingModals) {
+      return nil;
+    }
+
     // we don't want to allow controlling of status bar appearance when we present non-fullScreen modal
     // and it is not possible if `modalPresentationCapturesStatusBarAppearance` is not set to YES, so even
     // if we went into a modal here and ask it, it wouldn't take any effect. For fullScreen modals, the system
     // asks them by itself, so we can stop traversing here.
     // for screen orientation, we need to start the search again from that modal
-    return !includingModals
-        ? nil
-        : [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait includingModals:includingModals]
-            ?: lastViewController;
+    UIViewController *modalOrChild = [(RNSScreen *)lastViewController findChildVCForConfigAndTrait:trait
+                                                                                   includingModals:includingModals];
+    if (modalOrChild != nil) {
+      return modalOrChild;
+    }
+
+    // if searched VC was not found, we don't want to search for configs of child VCs any longer,
+    // and we don't want to rely on lastViewController.
+    // That's because the modal did not find a child VC that has an orientation set,
+    // and it doesn't itself have an orientation set. Hence, we fallback to the standard behavior.
+    // Please keep in mind that this behavior might be wrong and could lead to undiscovered bugs.
+    // For more information, see https://github.com/software-mansion/react-native-screens/pull/2008.
   }
 
   UIViewController *selfOrNil = [self hasTraitSet:trait] ? self : nil;
@@ -1393,25 +1382,10 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
 - (void)setViewToSnapshot:(UIView *)snapshot
 {
-  // modals of native stack seem not to support
-  // changing their view by just setting the view
-  if (_initialView.stackPresentation != RNSScreenStackPresentationPush) {
-    UIView *superView = self.view.superview;
-    [self.view removeFromSuperview];
-    self.view = snapshot;
-    [superView addSubview:self.view];
-  } else {
-    [self.view removeFromSuperview];
-    self.view = snapshot;
-  }
-}
-
-- (void)resetViewToScreen
-{
-  if (self.view != _initialView) {
-    [self.view removeFromSuperview];
-    self.view = _initialView;
-  }
+  UIView *superView = self.view.superview;
+  [self.view removeFromSuperview];
+  self.view = snapshot;
+  [superView addSubview:self.view];
 }
 
 #else
@@ -1423,6 +1397,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     // we don't want to send `scrollViewDidEndDecelerating` event to JS before the JS thread is ready
     return;
   }
+
+  if ([NSStringFromClass([view class]) isEqualToString:@"AVPlayerView"]) {
+    // Traversing through AVPlayerView is an uncommon edge case that causes the disappearing screen
+    // to an excessive traversal through all video player elements
+    // (e.g., for react-native-video, this includes all controls and additional video views).
+    // Thus, we want to avoid unnecessary traversals through these views.
+    return;
+  }
+
   if ([view isKindOfClass:[UIScrollView class]] &&
       ([[(UIScrollView *)view delegate] respondsToSelector:@selector(scrollViewDidEndDecelerating:)])) {
     [[(UIScrollView *)view delegate] scrollViewDidEndDecelerating:(id)view];
@@ -1477,7 +1460,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #endif
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_VISION
 // See:
 // 1. https://github.com/software-mansion/react-native-screens/pull/1543
 // 2. https://github.com/software-mansion/react-native-screens/pull/1596
@@ -1500,10 +1483,13 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 }
 #endif // !TARGET_OS_TV
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#else
 - (UIView *)view
 {
   return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
+#endif
 
 + (BOOL)requiresMainQueueSetup
 {
@@ -1542,7 +1528,7 @@ RCT_ENUM_CONVERTER(
       @"simple_push" : @(RNSScreenStackAnimationSimplePush),
       @"slide_from_bottom" : @(RNSScreenStackAnimationSlideFromBottom),
       @"slide_from_right" : @(RNSScreenStackAnimationDefault),
-      @"slide_from_left" : @(RNSScreenStackAnimationDefault),
+      @"slide_from_left" : @(RNSScreenStackAnimationSlideFromLeft),
       @"ios" : @(RNSScreenStackAnimationDefault),
     }),
     RNSScreenStackAnimationDefault,
