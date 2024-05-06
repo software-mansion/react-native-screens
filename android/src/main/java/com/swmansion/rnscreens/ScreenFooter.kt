@@ -114,9 +114,9 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
 //            Log.i(TAG, "onSlide $slideOffset")
-            lastSlideOffset = slideOffset
+            lastSlideOffset = max(slideOffset, 0.0f)
             if (!isAnimationControlledByKeyboard) {
-                layoutFooterOnYAxis(lastContainerHeight, reactHeight, sheetTopWhileDragging(slideOffset), lastBottomInset)
+                layoutFooterOnYAxis(lastContainerHeight, reactHeight, sheetTopWhileDragging(lastSlideOffset), lastBottomInset)
             }
         }
     }
