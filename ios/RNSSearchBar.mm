@@ -50,7 +50,13 @@ namespace react = facebook::react;
 
 - (void)initCommonProps
 {
+#if !TARGET_OS_TV
   _controller = [[UISearchController alloc] initWithSearchResultsController:nil];
+#else
+  // on TVOS UISearchController must contain searchResultsController.
+  _controller = [[UISearchController alloc] initWithSearchResultsController:[UIViewController new]];
+#endif
+
   _controller.searchBar.delegate = self;
   _hideWhenScrolling = YES;
   _placement = RNSSearchBarPlacementStacked;
@@ -338,9 +344,11 @@ namespace react = facebook::react;
     [self setPlaceholder:RCTNSStringFromStringNilIfEmpty(newScreenProps.placeholder)];
   }
 
+#if !TARGET_OS_VISION
   if (oldScreenProps.autoCapitalize != newScreenProps.autoCapitalize) {
     [self setAutoCapitalize:[RNSConvert UITextAutocapitalizationTypeFromCppEquivalent:newScreenProps.autoCapitalize]];
   }
+#endif
 
   if (oldScreenProps.tintColor != newScreenProps.tintColor) {
     [self setTintColor:RCTUIColorFromSharedColor(newScreenProps.tintColor)];

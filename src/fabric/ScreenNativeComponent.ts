@@ -1,7 +1,7 @@
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { ViewProps, ColorValue } from 'react-native';
 import type {
-  BubblingEventHandler,
+  DirectEventHandler,
   WithDefault,
   Int32,
   Float,
@@ -58,16 +58,16 @@ type SwipeDirection = 'vertical' | 'horizontal';
 type ReplaceAnimation = 'pop' | 'push';
 
 export interface NativeProps extends ViewProps {
-  onAppear?: BubblingEventHandler<ScreenEvent>;
-  onDisappear?: BubblingEventHandler<ScreenEvent>;
-  onDismissed?: BubblingEventHandler<ScreenDismissedEvent>;
-  onNativeDismissCancelled?: BubblingEventHandler<ScreenDismissedEvent>;
-  onWillAppear?: BubblingEventHandler<ScreenEvent>;
-  onWillDisappear?: BubblingEventHandler<ScreenEvent>;
-  onHeaderHeightChange?: BubblingEventHandler<HeaderHeightChangeEvent>;
-  onTransitionProgress?: BubblingEventHandler<TransitionProgressEvent>;
-  onGestureCancel?: BubblingEventHandler<ScreenEvent>;
-  onHeaderBackButtonClicked?: BubblingEventHandler<ScreenEvent>;
+  onAppear?: DirectEventHandler<ScreenEvent>;
+  onDisappear?: DirectEventHandler<ScreenEvent>;
+  onDismissed?: DirectEventHandler<ScreenDismissedEvent>;
+  onNativeDismissCancelled?: DirectEventHandler<ScreenDismissedEvent>;
+  onWillAppear?: DirectEventHandler<ScreenEvent>;
+  onWillDisappear?: DirectEventHandler<ScreenEvent>;
+  onHeaderHeightChange?: DirectEventHandler<HeaderHeightChangeEvent>;
+  onTransitionProgress?: DirectEventHandler<TransitionProgressEvent>;
+  onGestureCancel?: DirectEventHandler<ScreenEvent>;
+  onHeaderBackButtonClicked?: DirectEventHandler<ScreenEvent>;
   sheetAllowedDetents?: number[];
   sheetLargestUndimmedDetent?: WithDefault<Int32, -1>;
   sheetGrabberVisible?: WithDefault<boolean, false>;

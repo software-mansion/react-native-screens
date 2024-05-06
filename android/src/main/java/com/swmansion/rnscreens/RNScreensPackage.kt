@@ -18,6 +18,7 @@ class RNScreensPackage : TurboReactPackage() {
         listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
             ScreenViewManager(),
+            ModalScreenViewManager(),
             ScreenStackViewManager(),
             ScreenStackHeaderConfigViewManager(),
             ScreenStackHeaderSubviewManager(),

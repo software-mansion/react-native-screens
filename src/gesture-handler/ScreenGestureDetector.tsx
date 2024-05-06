@@ -24,7 +24,7 @@ import {
   getAnimationForTransition,
 } from './constraints';
 
-const EmptyGestureHandler = Gesture.Tap();
+const EmptyGestureHandler = Gesture.Fling();
 
 const ScreenGestureDetector = ({
   children,
@@ -183,8 +183,10 @@ const ScreenGestureDetector = ({
 
     const velocityFactor = 0.3;
     const screenSize = screenTransitionConfig.value.screenDimensions;
-    const distanceX = event.translationX + event.velocityX * velocityFactor;
-    const distanceY = event.translationY + event.velocityY * velocityFactor;
+    const distanceX =
+      event.translationX + Math.min(event.velocityX * velocityFactor, 100);
+    const distanceY =
+      event.translationY + Math.min(event.velocityY * velocityFactor, 100);
     const requiredXDistance = screenSize.width / 2;
     const requiredYDistance = screenSize.height / 2;
     const isTransitionCanceled = checkIfTransitionCancelled(

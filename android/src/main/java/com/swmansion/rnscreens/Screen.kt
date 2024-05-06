@@ -206,26 +206,21 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         // ignore restoring instance state too as we are not saving anything anyways.
     }
 
-    override fun onLayout(
-        changed: Boolean,
-        l: Int,
-        t: Int,
-        r: Int,
-        b: Int,
-    ) {
-        Log.w(TAG, "onLayout to $width, $height")
-        if (changed) {
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        if (container is ScreenStack && changed) {
             val width = r - l
             val height = b - t
 
-            calculateHeaderHeight()
+            val headerHeight = calculateHeaderHeight()
+            val totalHeight = headerHeight.first + headerHeight.second // action bar height + status bar height
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                updateScreenSizeFabric(width, height)
+                updateScreenSizeFabric(width, height, totalHeight)
             } else {
                 updateScreenSizePaper(width, height)
             }
 
             footer?.onParentLayout(changed, l, t, r, b, container!!.height)
+            notifyHeaderHeightChange(totalHeight)
         }
     }
 
@@ -397,27 +392,31 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 
     var nativeBackButtonDismissalEnabled: Boolean = true
 
-    private fun calculateHeaderHeight() {
+    private fun calculateHeaderHeight(): Pair<Double, Double> {
         val actionBarTv = TypedValue()
         val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
 
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
-        val actionBarHeight =
-            TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
-                .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true }
-                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
+        val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
+            .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true && headerConfig?.isHeaderTranslucent != true }
+            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
 
-        val statusBarHeight =
-            context.resources.getIdentifier("status_bar_height", "dimen", "android")
-                .takeIf { it > 0 && isStatusBarHidden != true }
-                ?.let { (context.resources::getDimensionPixelSize)(it) }
-                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
-                ?: 0.0
+        val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+            // Count only status bar when action bar is visible and status bar is not hidden
+            .takeIf { it > 0 && isStatusBarHidden != true && actionBarHeight > 0 }
+            ?.let { (context.resources::getDimensionPixelSize)(it) }
+            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
+            ?: 0.0
 
-        val totalHeight = actionBarHeight + statusBarHeight
-        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
-            ?.dispatchEvent(HeaderHeightChangeEvent(id, totalHeight))
+        return actionBarHeight to statusBarHeight
+    }
+
+    private fun notifyHeaderHeightChange(headerHeight: Double) {
+        val screenContext = context as ReactContext
+        val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
+        UIManagerHelper.getEventDispatcherForReactTag(screenContext, id)
+            ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
     override fun drawChild(

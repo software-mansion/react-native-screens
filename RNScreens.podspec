@@ -60,13 +60,15 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/software-mansion/react-native-screens"
   s.license      = "MIT"
   s.author       = { "author" => "author@domain.cn" }
-  s.platforms    = { :ios => platform, :tvos => "11.0" }
+  s.platforms    = { :ios => platform, :tvos => "11.0", :visionos => "1.0" }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
   s.requires_arc = true
 
   if defined?(install_modules_dependencies()) != nil
     install_modules_dependencies(s)
+    # Add missing dependencies, that were not included in install_modules_dependencies
+    s.dependency "React-RCTImage"
     RNScreensDependencyHelper.add_common_subspec(s, new_arch_enabled)
   else
     RNScreensDependencyHelper.install_dependencies(s, new_arch_enabled)

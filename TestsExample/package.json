@@ -3,26 +3,32 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start",
+    "android": "npx react-native run-android",
+    "ios": "npx react-native run-ios",
+    "start": "npx react-native start",
     "test": "jest",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-navigation/bottom-tabs": "^6.5.8",
-    "@react-navigation/native": "^6.1.7",
-    "@react-navigation/native-stack": "^6.9.13",
-    "@react-navigation/stack": "^6.3.17",
+    "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/",
+    "@react-navigation/core": "link:../react-navigation/packages/core/",
+    "@react-navigation/elements": "link:../react-navigation/packages/elements/",
+    "@react-navigation/native": "link:../react-navigation/packages/native/",
+    "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/",
+    "@react-navigation/routers": "link:../react-navigation/packages/routers/",
+    "@react-navigation/stack": "link:../react-navigation/packages/stack/",
     "nanoid": "^4.0.2",
     "postinstall-postinstall": "^2.1.0",
     "react": "18.2.0",
-    "react-native": "0.73.0",
+    "react-native": "0.73.4",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-reanimated": "^3.6.0",
     "react-native-safe-area-context": "^4.8.1",
     "react-native-screens": "link:../"
+  },
+  "resolutions": {
+    "@react-navigation/core": "link:../react-navigation/packages/core/"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

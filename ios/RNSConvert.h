@@ -26,8 +26,10 @@ namespace react = facebook::react;
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
     (const react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance;
 
+#if !TARGET_OS_VISION
 + (UITextAutocapitalizationType)UITextAutocapitalizationTypeFromCppEquivalent:
     (react::RNSSearchBarAutoCapitalize)autoCapitalize;
+#endif
 
 + (RNSSearchBarPlacement)RNSScreenSearchBarPlacementFromCppEquivalent:(react::RNSSearchBarPlacement)placement;
 
