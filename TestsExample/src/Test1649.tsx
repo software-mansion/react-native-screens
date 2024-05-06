@@ -63,7 +63,7 @@ function Footer() {
   );
 
   return (
-    <View style={{ backgroundColor: 'goldenrod', padding: 20 }}>
+    <View style={{ backgroundColor: 'goldenrod', padding: 20, borderColor: 'darkblue', borderWidth: 1 }}>
       <Text>SomeContent</Text>
       <Button
         title="Click me"
@@ -326,7 +326,8 @@ function SheetScreen({
             margin: 5,
             borderRadius: 5,
           }}
-          placeholder="hello"
+          placeholder="123"
+          inputMode="numeric"
           ref={ref}
         />
         <Button

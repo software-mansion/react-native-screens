@@ -1,6 +1,7 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
@@ -39,32 +40,45 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
     // Main goal of this callback implementation is to handle keyboard appearance. We use it to make sure
     // that the footer respects keyboard during layout.
     // Note `DISPATCH_MODE_STOP` is used here to avoid propagation of insets callback to footer subtree.
-    private val insetsAnimation = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-        override fun onStart(
-            animation: WindowInsetsAnimationCompat,
-            bounds: WindowInsetsAnimationCompat.BoundsCompat
-        ): WindowInsetsAnimationCompat.BoundsCompat {
-            isAnimationControlledByKeyboard = true
-            return super.onStart(animation, bounds)
-        }
+    private val insetsAnimation =
+        object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+            override fun onStart(
+                animation: WindowInsetsAnimationCompat,
+                bounds: WindowInsetsAnimationCompat.BoundsCompat
+            ): WindowInsetsAnimationCompat.BoundsCompat {
+                isAnimationControlledByKeyboard = true
+                Log.i(TAG, "onStart bounds ${bounds.upperBound}")
+                return super.onStart(animation, bounds)
+            }
 
-        override fun onProgress(
-            insets: WindowInsetsCompat,
-            runningAnimations: MutableList<WindowInsetsAnimationCompat>
-        ): WindowInsetsCompat {
-            val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            lastBottomInset = imeBottomInset
-            layoutFooterOnYAxis(lastContainerHeight, reactHeight, sheetTopWhileDragging(lastSlideOffset), imeBottomInset)
+            override fun onProgress(
+                insets: WindowInsetsCompat,
+                runningAnimations: MutableList<WindowInsetsAnimationCompat>
+            ): WindowInsetsCompat {
+                val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                val navigationBarBottomInset =
+                    insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
 
-            // Please note that we do *not* consume any insets here, so that we do not interfere with
-            // any other view.
-            return insets
-        }
+                // Situations where keyboard is not visible and navigation bar is present are handled
+                // directly in layout function by not allowing lastBottomInset to contribute value less
+                // than 0. Alternative would be write logic specific to keyboard animation direction (hide / show).
+                lastBottomInset = imeBottomInset - navigationBarBottomInset
+                layoutFooterOnYAxis(
+                    lastContainerHeight,
+                    reactHeight,
+                    sheetTopWhileDragging(lastSlideOffset),
+                    lastBottomInset
+                )
 
-        override fun onEnd(animation: WindowInsetsAnimationCompat) {
-            isAnimationControlledByKeyboard = false
+                // Please note that we do *not* consume any insets here, so that we do not interfere with
+                // any other view.
+                return insets
+            }
+
+            override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                isAnimationControlledByKeyboard = false
+            }
         }
-    }
 
     init {
         val rootView = reactContext.currentActivity!!.window.decorView
@@ -78,7 +92,12 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
     // fixing layout up after Yoga repositions it.
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        layoutFooterOnYAxis(lastContainerHeight, bottom - top, sheetTopInStableState(sheetBehavior.state), lastBottomInset)
+        layoutFooterOnYAxis(
+            lastContainerHeight,
+            bottom - top,
+            sheetTopInStableState(sheetBehavior.state),
+            lastBottomInset
+        )
     }
 
     // Overriding it here just to make a comment. Due to Android restrictions on layout flow, particularly
@@ -94,6 +113,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
             STATE_EXPANDED,
             STATE_COLLAPSED,
             STATE_HALF_EXPANDED -> true
+
             else -> false
         }
 
@@ -106,7 +126,13 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
             when (newState) {
                 STATE_COLLAPSED,
                 STATE_HALF_EXPANDED,
-                STATE_EXPANDED -> layoutFooterOnYAxis(lastContainerHeight, reactHeight, sheetTopInStableState(newState), lastBottomInset)
+                STATE_EXPANDED -> layoutFooterOnYAxis(
+                    lastContainerHeight,
+                    reactHeight,
+                    sheetTopInStableState(newState),
+                    lastBottomInset
+                )
+
                 else -> {}
             }
             lastStableSheetState = newState
@@ -116,7 +142,12 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
 //            Log.i(TAG, "onSlide $slideOffset")
             lastSlideOffset = max(slideOffset, 0.0f)
             if (!isAnimationControlledByKeyboard) {
-                layoutFooterOnYAxis(lastContainerHeight, reactHeight, sheetTopWhileDragging(lastSlideOffset), lastBottomInset)
+                layoutFooterOnYAxis(
+                    lastContainerHeight,
+                    reactHeight,
+                    sheetTopWhileDragging(lastSlideOffset),
+                    lastBottomInset
+                )
             }
         }
     }
@@ -166,7 +197,11 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         containerHeight: Int
     ) {
         lastContainerHeight = containerHeight
-        layoutFooterOnYAxis(containerHeight, reactHeight, sheetTopInStableState(sheetBehavior.state))
+        layoutFooterOnYAxis(
+            containerHeight,
+            reactHeight,
+            sheetTopInStableState(sheetBehavior.state)
+        )
     }
 
     /**
@@ -185,13 +220,17 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
      * @param sheetTop current bottom sheet top (Screen top) **relative to container**
      * @param bottomInset current bottom inset, used to offset the footer by keyboard height (pixels)
      */
-    fun layoutFooterOnYAxis(containerHeight: Int, footerHeight: Int, sheetTop: Int, bottomInset: Int = 0) {
-        val newTop = containerHeight - footerHeight - sheetTop - bottomInset
+    fun layoutFooterOnYAxis(
+        containerHeight: Int,
+        footerHeight: Int,
+        sheetTop: Int,
+        bottomInset: Int = 0
+    ) {
+        // max(bottomInset, 0) is just a hack to avoid double offset of navigation bar.
+        val newTop = containerHeight - footerHeight - sheetTop - max(bottomInset, 0)
         val heightBeforeUpdate = reactHeight
         this.top = max(newTop, 0)
         this.bottom = this.top + heightBeforeUpdate
-
-//        Log.i("ScreenFooter", "Layout cH: $containerHeight, fH: $footerHeight, sT: $sheetTop, bI: $bottomInset -> top: $top")
     }
 
     companion object {
