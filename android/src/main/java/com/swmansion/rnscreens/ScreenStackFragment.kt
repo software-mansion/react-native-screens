@@ -311,7 +311,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 behavior.apply {
                     state = BottomSheetBehavior.STATE_EXPANDED
                     skipCollapsed = false
-                    isFitToContents = true
+                    isFitToContents = false
                     maxHeight = max(1, maxHeight - keyboardState.height)
                     addBottomSheetCallback(keyboardSheetCallback)
                 }

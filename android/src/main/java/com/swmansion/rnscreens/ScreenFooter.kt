@@ -1,8 +1,10 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
@@ -14,9 +16,12 @@ import com.google.android.material.math.MathUtils
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor")
-class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
+class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext) {
     private var lastContainerHeight: Int = 0
     private var lastStableSheetState: Int = STATE_HIDDEN
+    private var isAnimationControlledByKeyboard = false
+    private var lastSlideOffset = 0.0f
+    private var lastBottomInset = 0
 
     // ScreenFooter is supposed to be direct child of Screen
     private val screenParent
@@ -25,9 +30,46 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
     private val sheetBehavior
         get() = requireNotNull(screenParent.sheetBehavior)
 
+    private val insetsAnimation = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+            super.onPrepare(animation)
+        }
+
+        override fun onStart(
+            animation: WindowInsetsAnimationCompat,
+            bounds: WindowInsetsAnimationCompat.BoundsCompat
+        ): WindowInsetsAnimationCompat.BoundsCompat {
+            isAnimationControlledByKeyboard = true
+            return super.onStart(animation, bounds)
+        }
+
+        override fun onProgress(
+            insets: WindowInsetsCompat,
+            runningAnimations: MutableList<WindowInsetsAnimationCompat>
+        ): WindowInsetsCompat {
+            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            lastBottomInset = imeBottomInset
+
+//            Log.i("ScreenFooter", "onProgress $isImeVisible $imeBottomInset")
+            layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopWhileDragging(lastSlideOffset), imeBottomInset)
+            return insets
+        }
+
+        override fun onEnd(animation: WindowInsetsAnimationCompat) {
+            isAnimationControlledByKeyboard = false
+        }
+    }
+
+    init {
+        val rootView = reactContext.currentActivity!!.window.decorView
+        ViewCompat.setWindowInsetsAnimationCallback(rootView!!, insetsAnimation)
+    }
+
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        layoutFooterOnYAxis(lastContainerHeight, bottom - top, sheetTopInStableState(sheetBehavior.state))
+//        Log.i(TAG, "onLayout")
+        layoutFooterOnYAxis(lastContainerHeight, bottom - top, sheetTopInStableState(sheetBehavior.state), lastBottomInset)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -47,18 +89,23 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
             if (!isStateStable(newState)) {
                 return
             }
+//            Log.i(TAG, "onStateChanged")
 
             when (newState) {
                 STATE_COLLAPSED,
                 STATE_HALF_EXPANDED,
-                STATE_EXPANDED -> layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopInStableState(newState))
+                STATE_EXPANDED -> layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopInStableState(newState), lastBottomInset)
                 else -> {}
             }
             lastStableSheetState = newState
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopWhileDragging(slideOffset))
+//            Log.i(TAG, "onSlide $slideOffset")
+            lastSlideOffset = slideOffset
+            if (!isAnimationControlledByKeyboard) {
+                layoutFooterOnYAxis(lastContainerHeight, measuredHeight, sheetTopWhileDragging(slideOffset), lastBottomInset)
+            }
         }
     }
 
@@ -105,15 +152,11 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
     ) {
         lastContainerHeight = containerHeight
         layoutFooterOnYAxis(containerHeight, measuredHeight, sheetTopInStableState(sheetBehavior.state))
-
-        Log.w(
-            "ScreenFooter",
-            "onParentLayout  t: $top, b: $bottom, ch: $containerHeight, mh: $measuredHeight, top: ${this.top}"
-        )
     }
 
     /**
-     * Layouts this component within parent screen. It takes care only of vertical axis.
+     * Layouts this component within parent screen. It takes care only of vertical axis, leaving
+     * horizontal axis solely for React to handle.
      *
      * This is a bit against Android rules, that parents should layout their children,
      * however I wanted to keep this logic away from Screen component to avoid introducing
@@ -126,11 +169,16 @@ class ScreenFooter(reactContext: ReactContext) : ReactViewGroup(reactContext) {
      * @param footerHeight summarized height of this component children
      * @param sheetTop current bottom sheet top (Screen top) **relative to container**
      */
-    fun layoutFooterOnYAxis(containerHeight: Int, footerHeight: Int, sheetTop: Int) {
-        val newTop = containerHeight - footerHeight - sheetTop
+    fun layoutFooterOnYAxis(containerHeight: Int, footerHeight: Int, sheetTop: Int, bottomInset: Int = 0) {
+        val newTop = containerHeight - footerHeight - sheetTop - bottomInset
+        val heightBeforeUpdate = this.measuredHeight
         this.top = max(newTop, 0)
-        if (childCount > 0) {
-            this.bottom = this.top + getChildAt(0).height
-        }
+        this.bottom = this.top + heightBeforeUpdate
+
+//        Log.i("ScreenFooter", "Layout cH: $containerHeight, fH: $footerHeight, sT: $sheetTop, bI: $bottomInset -> top: $top")
+    }
+
+    companion object {
+        const val TAG = "ScreenFooter"
     }
 }
