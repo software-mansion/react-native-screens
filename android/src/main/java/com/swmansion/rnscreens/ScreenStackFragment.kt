@@ -310,13 +310,38 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                 }
             }
             is KeyboardVisible -> {
-                behavior.apply {
-                    state = BottomSheetBehavior.STATE_EXPANDED
-                    skipCollapsed = false
-                    isFitToContents = false
-                    maxHeight = max(1, maxHeight - keyboardState.height)
-                    addBottomSheetCallback(keyboardSheetCallback)
+                if (screen.sheetDetents.count() == 1) {
+                    behavior.apply {
+                        state = BottomSheetBehavior.STATE_EXPANDED
+                        skipCollapsed = true
+                        isFitToContents = true
+                        maxHeight = max(1, maxHeight - keyboardState.height)
+                        addBottomSheetCallback(keyboardSheetCallback)
+                    }
+                } else if (screen.sheetDetents.count() == 2) {
+                    behavior.apply {
+                        state = BottomSheetBehavior.STATE_EXPANDED
+                        skipCollapsed = false
+                        isFitToContents = true
+                        maxHeight = max(1, maxHeight - keyboardState.height)
+                        addBottomSheetCallback(keyboardSheetCallback)
+                    }
+                } else {
+                    behavior.apply {
+                        state = BottomSheetBehavior.STATE_EXPANDED
+                        skipCollapsed = false
+                        isFitToContents = false
+                        maxHeight = max(1, maxHeight - keyboardState.height)
+                        addBottomSheetCallback(keyboardSheetCallback)
+                    }
                 }
+//                behavior.apply {
+//                    state = BottomSheetBehavior.STATE_EXPANDED
+//                    skipCollapsed = false
+//                    isFitToContents = true
+//                    maxHeight = max(1, maxHeight - keyboardState.height)
+//                    addBottomSheetCallback(keyboardSheetCallback)
+//                }
             }
             is KeyboardDidHide -> {
                 behavior.removeBottomSheetCallback(keyboardSheetCallback)
