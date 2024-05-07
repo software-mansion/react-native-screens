@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, View } from 'react-native';
+import { Button, View, I18nManager } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -11,6 +11,8 @@ type Props = {
 };
 
 const Stack = createNativeStackNavigator();
+
+I18nManager.forceRTL(true);
 
 export default function App(): JSX.Element {
   return (
