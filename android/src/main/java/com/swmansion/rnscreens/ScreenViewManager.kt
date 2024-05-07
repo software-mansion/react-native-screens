@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.children
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableArray
@@ -41,17 +42,36 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
         setActivityState(view, activityState.toInt())
     }
 
-    override fun onWillDismiss(screen: Screen) {
-        Log.w(REACT_CLASS, "onWillDismiss")
-//        screen.children.forEach {
-//            screen.startViewTransition(it)
-//        }
+    private fun prepareOutTransition(screen: Screen?) {
+        startTransitionRecursive(screen)
     }
 
-    override fun receiveCommand(root: Screen, commandId: String?, args: ReadableArray?) {
-        Log.w(REACT_CLASS, "receiveCommand $commandId")
-        super.receiveCommand(root, commandId, args)
+    private fun startTransitionRecursive(parent: ViewGroup?) {
+        parent?.let {
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                child?.let { view -> it.startViewTransition(view) }
+                if (child is ScreenStackHeaderConfig) {
+                    // we want to start transition on children of the toolbar too,
+                    // which is not a child of ScreenStackHeaderConfig
+                    startTransitionRecursive(child.toolbar)
+                }
+                if (child is ViewGroup) {
+                    startTransitionRecursive(child)
+                }
+            }
+        }
     }
+
+    override fun onWillDismiss(screen: Screen) {
+        Log.w(REACT_CLASS, "onWillDismiss in $screen with tag ${screen.id}")
+        prepareOutTransition(screen)
+    }
+
+//    override fun receiveCommand(root: Screen, commandId: String?, args: ReadableArray?) {
+//        Log.w(REACT_CLASS, "receiveCommand $commandId")
+//        super.receiveCommand(root, commandId, args)
+//    }
 
     override fun addView(parent: Screen, child: View, index: Int) {
         Log.w(REACT_CLASS, "$parent addView $child at $index")
@@ -59,7 +79,7 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
     }
 
     override fun removeViewAt(parent: Screen, index: Int) {
-        Log.w(REACT_CLASS, "$parent removeViewAt $index")
+        Log.w(REACT_CLASS, "$parent removeViewAt $index, child: ${parent.getChildAt(index)}")
         super.removeViewAt(parent, index)
     }
 
