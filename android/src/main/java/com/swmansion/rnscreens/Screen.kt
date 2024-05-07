@@ -69,67 +69,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 
     var footer: ScreenFooter? = null
 
-//    val insetCallback =
-//        @RequiresApi(Build.VERSION_CODES.R)
-//        object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-//            var startBottom = 0
-//            var endBottom = 0
-//            val decorView = reactContext!!.currentActivity!!.window.decorView
-//
-//            override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-//                startBottom = this@Screen.bottom
-//                Log.w(TAG, "inset onPrepare, sbottom $startBottom, ebottom: $endBottom")
-//
-//                ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
-//                    val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-//                    val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-//                    val screenBottom = this@Screen.bottom
-//                    Log.w(TAG, "inset onApplyWindowInsetsCallback bottomInset: $imeBottomInset, viewBottom: $screenBottom")
-//                    endBottom = imeBottomInset
-//
-//                    if (isImeVisible && this@Screen.stackPresentation == StackPresentation.FORM_SHEET) {
-// //                    this@Screen.updatePadding(bottom = imeBottomInset)
-//                        Log.w(TAG, "inset onApplyWindowInsetsCallback UPDATE BTM PADDING to $imeBottomInset, viewBottom: $screenBottom")
-//                    }
-//                    insets
-//                }
-//                ViewCompat.requestApplyInsets(decorView)
-//            }
-//
-//            override fun onStart(
-//                animation: WindowInsetsAnimationCompat,
-//                bounds: WindowInsetsAnimationCompat.BoundsCompat,
-//            ): WindowInsetsAnimationCompat.BoundsCompat {
-// //            endBottom = this@Screen.bottom
-// //            endBottom = 1541
-//                Log.w(TAG, "inset onStart, sbottom: $startBottom, ebottom: $endBottom, diff: ${startBottom - endBottom}")
-//                this@Screen.translationY = (startBottom - endBottom).toFloat()
-// //            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
-//
-//                ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
-//                ViewCompat.requestApplyInsets(decorView)
-//                return bounds
-//            }
-//
-//            override fun onProgress(
-//                insets: WindowInsetsCompat,
-//                runningAnimations: MutableList<WindowInsetsAnimationCompat>,
-//            ): WindowInsetsCompat {
-//                val t = runningAnimations.first().interpolatedFraction
-//                val offset = (startBottom - endBottom) * (1 - t)
-//                this@Screen.translationY = offset
-// //            this@Screen.getChildAt(0).translationY = (startBottom - endBottom).toFloat()
-//                Log.w(TAG, "inset onProgress $t -> $offset, bottom: ${this@Screen.bottom}")
-//
-//                return insets
-//            }
-//
-//            override fun onEnd(animation: WindowInsetsAnimationCompat) {
-//                Log.w(TAG, "inset onEnd ${this@Screen.bottom}")
-//                super.onEnd(animation)
-//            }
-//        }
-
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
@@ -142,29 +81,14 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         // Setting params this way is not the most elegant way to solve this problem but workarounds it
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
-
-//        this.fitsSystemWindows = true
-//        val rootView = reactContext!!.currentActivity!!.window.decorView.rootView
-        val rootView = reactContext!!.currentActivity!!.window.decorView
-//        val rootView = this
-
-//        Log.w(TAG, "Adding listener in Screen")
-//        ViewCompat.setOnApplyWindowInsetsListener(rootView) { v, insets ->
-//            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-//            val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-//            val screenBottom = this@Screen.bottom
-//            Log.w(TAG, "inset onApplyWindowInsetsCallback $imeBottomInset, $screenBottom")
-//
-//            if (isImeVisible && this.stackPresentation == StackPresentation.FORM_SHEET) {
-//                Log.w(TAG, "inset onApplyWindowInsetsCallback UPDATE PADDING to $imeBottomInset, $screenBottom")
-//                this.updatePadding(bottom = imeBottomInset)
-//            }
-//            insets
-//        }
-
-//        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
     }
 
+
+    /**
+     * ScreenContentWrapper notifies us here on it's layout. It is essential for implementing
+     * `fitToContents` for formSheets, as this is first entry point where we can acquire
+     * height of our content.
+     */
     override fun onLayoutCallback(
         changed: Boolean,
         left: Int,
@@ -175,7 +99,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         val width = right - left
         val height = bottom - top
 
-        if (sheetDetents.count() == 1 && sheetDetents.first() == -1.0) {
+        if (sheetDetents.count() == 1 && sheetDetents.first() == SHEET_FIT_TO_CONTENTS) {
             sheetBehavior?.let {
                 if (it.maxHeight != height) {
                     it.maxHeight = height
@@ -291,10 +215,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         }
         this.activityState = activityState
         container?.notifyChildUpdate()
-    }
-
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return super.onInterceptTouchEvent(ev)
     }
 
     fun setScreenOrientation(screenOrientation: String?) {
@@ -419,85 +339,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
-    override fun drawChild(
-        canvas: Canvas,
-        child: View?,
-        drawingTime: Long,
-    ): Boolean {
-//        if (stackPresentation == StackPresentation.FORM_SHEET && sheetCornerRadius > 0F) {
-//            Log.d("Screen", "onDraw inside")
-//            val borderRadius = PixelUtil.toPixelFromDIP(sheetCornerRadius)
-//            val path = Path()
-//            path.rewind()
-//            path.addRoundRect(
-//                RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
-//                floatArrayOf(
-//                    borderRadius, borderRadius,
-//                    borderRadius, borderRadius,
-//                    0F, 0F,
-//                    0F, 0F,
-//                ),
-//                Path.Direction.CCW
-//            )
-//            val paint = Paint()
-//            paint.style = Paint.Style.FILL
-//            paint.color = Color.BLACK
-//            canvas.drawPath(path, paint)
-//        }
-        return super.drawChild(canvas, child, drawingTime)
-    }
-
-    override fun dispatchDraw(canvas: Canvas) {
-//        if (stackPresentation == StackPresentation.FORM_SHEET && sheetCornerRadius > 0F) {
-//            Log.d("Screen", "onDraw inside")
-//            val borderRadius = PixelUtil.toPixelFromDIP(sheetCornerRadius)
-//            val path = Path()
-//            path.rewind()
-//            path.addRoundRect(
-//                RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
-//                floatArrayOf(
-//                    borderRadius, borderRadius,
-//                    borderRadius, borderRadius,
-//                    0F, 0F,
-//                    0F, 0F,
-//                ),
-//                Path.Direction.CW
-//            )
-// //            val paint = Paint()
-// //            paint.setColor(Color.RED)
-// //            paint.style = Paint.Style.FILL_AND_STROKE
-// //            canvas.drawPath(path, paint)
-//            canvas.clipPath(path)
-//        }
-        super.dispatchDraw(canvas)
-    }
-
-    override fun draw(canvas: Canvas) {
-        super.draw(canvas)
-    }
-
-    override fun onDraw(canvas: Canvas) {
-//        Log.d("Screen", "onDraw")
-//        if (stackPresentation == StackPresentation.FORM_SHEET && sheetCornerRadius > 0F) {
-//            Log.d("Screen", "onDraw inside")
-//            val borderRadius = PixelUtil.toPixelFromDIP(sheetCornerRadius)
-//            val path = Path()
-// //            path.rewind()
-//            path.addRoundRect(
-//                RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
-//                floatArrayOf(
-//                   borderRadius, borderRadius,
-//                    borderRadius, borderRadius,
-//                    0F, 0F,
-//                    0F, 0F,
-//                ),
-//                Path.Direction.CW
-//            )
-//            canvas.clipPath(path)
-//        }
-        super.onDraw(canvas)
-    }
-
     enum class StackPresentation {
         PUSH,
         MODAL,
@@ -540,6 +381,11 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
 
     companion object {
         const val TAG = "Screen"
+
+        /**
+         * This value describes value in sheet detents array that will be treated as `fitToContents` option.
+         */
+        const val SHEET_FIT_TO_CONTENTS = -1.0
 
         /**
          * This method maps indices from legal detents array (prop) to appropriate values
