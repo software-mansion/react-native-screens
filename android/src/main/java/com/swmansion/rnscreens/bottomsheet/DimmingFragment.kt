@@ -219,7 +219,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setOnClickListener {
-                if (screen.sheetClosesWhenTouchOutside) {
+                if (screen.sheetClosesOnTouchOutside) {
                     dismissSelf(true)
                 }
             }

@@ -42,11 +42,32 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
     override fun addView(parent: Screen, child: View, index: Int) {
         if (child is ScreenContentWrapper) {
             parent.registerLayoutCallbackForWrapper(child)
-        }
-        if (child is ScreenFooter) {
+        } else if (child is ScreenFooter) {
             parent.footer = child
         }
         super.addView(parent, child, index)
+    }
+
+    // Overriding all three remove methods despite the fact, that they all do use removeViewAt in parent
+    // class implementation to make it safe in case this changes. Relying on implementation details in this
+    // case in unnecessary.
+    override fun removeViewAt(parent: Screen, index: Int) {
+        super.removeViewAt(parent, index)
+        if (parent.getChildAt(index) is ScreenFooter) {
+            parent.footer = null
+        }
+    }
+
+    override fun removeView(parent: Screen, view: View) {
+        super.removeView(parent, view)
+        if (view is ScreenFooter) {
+            parent.footer = null
+        }
+    }
+
+    override fun removeAllViews(parent: Screen) {
+        super.removeAllViews(parent)
+        parent.footer = null
     }
 
     override fun updateState(

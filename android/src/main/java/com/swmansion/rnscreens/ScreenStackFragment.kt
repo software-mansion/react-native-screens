@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -138,7 +137,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                     this@ScreenStackFragment.dismissFromContainer()
                 }
             }
-            Log.i("ScreenStackFragment", "Sheet state changed to $newState, sheetSize: ${bottomSheet.width}, ${bottomSheet.height}")
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
@@ -153,30 +151,27 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         } else {
             AnimationUtils.loadAnimation(context, R.anim.rns_slide_out_to_bottom)
         }
-//        return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
     internal fun onSheetCornerRadiusChange() {
-        (screen.background as MaterialShapeDrawable).shapeAppearanceModel = ShapeAppearanceModel.Builder().apply {
-            setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
-            setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
-        }.build()
+        (screen.background as MaterialShapeDrawable).shapeAppearanceModel =
+            ShapeAppearanceModel.Builder().apply {
+                setTopLeftCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+                setTopRightCorner(CornerFamily.ROUNDED, screen.sheetCornerRadius ?: 0F)
+            }.build()
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        coordinatorLayout = ScreensCoordinatorLayout(requireContext(), this).apply {
-//            setBackgroundColor(Color.argb(0, 0, 0, 0))
-        }
+        coordinatorLayout = ScreensCoordinatorLayout(requireContext(), this)
 
         screen.layoutParams = CoordinatorLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         ).apply {
             behavior = if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
-                createAndConfigureBottomSheetBehaviour()
+                val behavior = createAndConfigureBottomSheetBehaviour()
+                behavior
             } else if (isToolbarTranslucent) {
                 null
             } else {
@@ -188,8 +183,8 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             screen.clipToOutline = true
             attachShapeToScreen(screen) // TODO(@kkafar): without this line there is no drawable / outline & nothing shows...? Determine what's going on here
             screen.elevation = screen.sheetElevation
-//            screen.outlineProvider = CustomOutlineProvider(PixelUtil.toPixelFromDIP(screen.sheetCornerRadius ?: 0F))
 
+            // TODO: Native grabber here?
 //            if (screen.isSheetGrabberVisible) {
 //                val grabberView = BottomSheetDragHandleView(requireContext()).apply {
 //                    layoutParams = ViewGroup.LayoutParams(
@@ -225,21 +220,22 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return coordinatorLayout
     }
 
-    fun tryResolveWindowHeight(): Int? {
-        // Note that these three values differ slightly! For now, for practical purposes
-        // this is acceptable.
+    /**
+     * This method might return slightly different values depending on code path,
+     * but during testing I've found this effect negligible. For practical purposes
+     * this is acceptable.
+     */
+    private fun tryResolveContainerHeight(): Int? {
         if (screen.container != null) {
             return screenStack.height
         }
 
-        val height1 = context?.resources?.displayMetrics?.heightPixels
-        if (height1 != null) return height1
+        context?.resources?.displayMetrics?.heightPixels?.let { return it }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val height2 = (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics?.bounds?.height()
-            if (height2 != null) return height2
+            (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics?.bounds?.height()
+                ?.let { return it }
         }
-
         return null
     }
 
@@ -247,19 +243,20 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                val isKeyboardVisible = WindowInsetsCompat.toWindowInsetsCompat(bottomSheet.rootWindowInsets).isVisible(WindowInsetsCompat.Type.ime())
-                if (isKeyboardVisible) {
+                val isImeVisible =
+                    WindowInsetsCompat.toWindowInsetsCompat(bottomSheet.rootWindowInsets)
+                        .isVisible(WindowInsetsCompat.Type.ime())
+                if (isImeVisible) {
                     // Does it not interfere with React Native focus mechanism? In any case I'm not aware
                     // of different way of hiding the keyboard.
                     // https://stackoverflow.com/questions/1109022/how-can-i-close-hide-the-android-soft-keyboard-programmatically
                     // https://developer.android.com/develop/ui/views/touch-and-input/keyboard-input/visibility
-                    if (bottomSheet.requestFocus()) {
-                        val imm = requireContext().getSystemService(InputMethodManager::class.java)
-                        imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
-                    } else {
-                        val imm = requireContext().getSystemService(InputMethodManager::class.java)
-                        imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
-                    }
+
+                    // I want to be polite here and request focus before dismissing the keyboard,
+                    // however event if it fails I want to try to hide the keyboard. This sometimes works...
+                    bottomSheet.requestFocus()
+                    val imm = requireContext().getSystemService(InputMethodManager::class.java)
+                    imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
                 }
             }
         }
@@ -267,118 +264,126 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
     }
 
-    internal fun configureBottomSheetBehaviour(behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible): BottomSheetBehavior<Screen> {
-        val containerHeight = tryResolveWindowHeight()
+    internal fun configureBottomSheetBehaviour(
+        behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible
+    ): BottomSheetBehavior<Screen> {
+        val containerHeight = tryResolveContainerHeight()
         check(containerHeight != null) { "[RNScreens] Failed to find window height during bottom sheet behaviour configuration" }
 
         behavior.apply {
             isHideable = true
             isDraggable = true
-            // Want to make sure that this callback is registered, but only once.
-            // Removing not registered callback is safe, does not throw.
-            removeBottomSheetCallback(bottomSheetOnSwipedDownCallback)
+
+            // It seems that there is a guard in material implementation that will prevent
+            // this callback from being registered multiple times.
             addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
         }
 
+        screen.footer?.registerWithSheetBehaviour(behavior)
+
         return when (keyboardState) {
             is KeyboardNotVisible -> {
-                if (screen.sheetDetents.count() == 1) {
-                    behavior.apply {
+                when (screen.sheetDetents.count()) {
+                    1 -> behavior.apply {
                         state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = true
                         isFitToContents = true
                         maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
                     }
-                } else if (screen.sheetDetents.count() == 2) {
-                    behavior.apply {
-                        state = Screen.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+
+                    2 -> behavior.apply {
+                        state = Screen.sheetStateFromDetentIndex(
+                            screen.sheetInitialDetentIndex, screen.sheetDetents.count()
+                        )
                         skipCollapsed = false
                         isFitToContents = true
                         peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
                         maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
                     }
-                } else {
-                    behavior.apply {
-                        state = Screen.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+
+                    3 -> behavior.apply {
+                        state = Screen.sheetStateFromDetentIndex(
+                            screen.sheetInitialDetentIndex, screen.sheetDetents.count()
+                        )
                         skipCollapsed = false
                         isFitToContents = false
                         peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-//                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
                         expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
-                        halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+                        halfExpandedRatio =
+                            (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
                     }
+
+                    else -> throw IllegalStateException("[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.")
                 }
             }
+
             is KeyboardVisible -> {
-                if (screen.sheetDetents.count() == 1) {
-                    behavior.apply {
+                when (screen.sheetDetents.count()) {
+                    1 -> behavior.apply {
                         state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = true
                         isFitToContents = true
                         maxHeight = max(1, maxHeight - keyboardState.height)
                         addBottomSheetCallback(keyboardSheetCallback)
                     }
-                } else if (screen.sheetDetents.count() == 2) {
-                    behavior.apply {
+
+                    2 -> behavior.apply {
                         state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = false
                         isFitToContents = true
                         maxHeight = max(1, maxHeight - keyboardState.height)
                         addBottomSheetCallback(keyboardSheetCallback)
                     }
-                } else {
-                    behavior.apply {
+
+                    3 -> behavior.apply {
                         state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = false
                         isFitToContents = false
                         maxHeight = max(1, maxHeight - keyboardState.height)
                         addBottomSheetCallback(keyboardSheetCallback)
                     }
+
+                    else -> throw IllegalStateException("[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.")
                 }
-//                behavior.apply {
-//                    state = BottomSheetBehavior.STATE_EXPANDED
-//                    skipCollapsed = false
-//                    isFitToContents = true
-//                    maxHeight = max(1, maxHeight - keyboardState.height)
-//                    addBottomSheetCallback(keyboardSheetCallback)
-//                }
             }
+
             is KeyboardDidHide -> {
+                // Here we assume that the keyboard was either closed explicitly by user,
+                // or the user dragged the sheet down. In any case the state should
+                // stay unchanged.
+
                 behavior.removeBottomSheetCallback(keyboardSheetCallback)
-                if (screen.sheetDetents.count() == 1) {
-                    behavior.apply {
-//                        state = BottomSheetBehavior.STATE_EXPANDED
+                when (screen.sheetDetents.count()) {
+                    1 -> behavior.apply {
                         skipCollapsed = true
                         isFitToContents = true
                         maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
                     }
-                } else if (screen.sheetDetents.count() == 2) {
-                    // Here we assume that the keyboard was either closed explicitly by user,
-                    // or the user dragged the sheet down. In any case the state should
-                    // stay unchanged.
-                    behavior.apply {
-//                        state = BottomSheetBehavior.STATE_EXPANDED
+
+                    2 -> behavior.apply {
                         skipCollapsed = false
                         isFitToContents = true
                         peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
                         maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
                     }
-                } else {
-                    behavior.apply {
-//                        state = BottomSheetBehavior.STATE_EXPANDED
+
+                    3 -> behavior.apply {
                         skipCollapsed = false
                         isFitToContents = false
                         peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-//                maxHeight = (screen.sheetDetents[2] * displayMetrics.heightPixels).toInt()
                         expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
-                        halfExpandedRatio = (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+                        halfExpandedRatio =
+                            (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
                     }
+
+                    else -> throw IllegalStateException("[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.")
                 }
             }
         }
-//        return behavior
     }
 
+    // In general it would be great to create BottomSheetBehaviour only via this method as it runs some
+    // side effects.
     internal fun createAndConfigureBottomSheetBehaviour(): BottomSheetBehavior<Screen> {
         return configureBottomSheetBehaviour(BottomSheetBehavior<Screen>())
     }
@@ -392,19 +397,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         val shape = MaterialShapeDrawable(shapeAppearanceModel)
         shape.setTint((screen.background as? ColorDrawable?)?.color ?: Color.TRANSPARENT)
         screen.background = shape
-
-//        screen.background = GradientDrawable().apply {
-//            shape = GradientDrawable.RECTANGLE
-// //            cornerRadii = FloatArray(8) { i -> if (i < 4) cornerSize else 0F }
-//            cornerRadius = cornerSize
-//        }
-        // TODO(@kkafar): It looks like this finally works with ReactViewBackgroundDrawable,
-        // however it should also work with GradientDrawable, but for some reason it does not on API < 33
-        // (tested on 31)
-//        screen.background = ReactViewBackgroundDrawable(requireContext()).apply {
-//            setRadius(cornerSize, 1)
-//            setRadius(cornerSize, 0)
-//        }
     }
 
     override fun onStop() {
@@ -487,8 +479,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     private class ScreensCoordinatorLayout(
-        context: Context,
-        private val fragment: ScreenStackFragment
+        context: Context, private val fragment: ScreenStackFragment
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context), ReactPointerEventsView {
 

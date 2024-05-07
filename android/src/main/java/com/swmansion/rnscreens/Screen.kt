@@ -2,14 +2,11 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Parcelable
 import android.util.Log
 import android.util.SparseArray
 import android.util.TypedValue
-import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -60,14 +57,24 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
             (fragment as? ScreenStackFragment)?.onSheetCornerRadiusChange()
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
+    
+    // We want to make sure here that at least one value is present in this array all the time.
+    // TODO: Model this with custom data structure to guarantee that this invariant is not violated.
     var sheetDetents = ArrayList<Double>().apply { add(1.0) }
     var sheetLargestUndimmedDetentIndex: Int = -1
     var sheetInitialDetentIndex: Int = 0
-    var sheetClosesWhenTouchOutside = true
-
+    var sheetClosesOnTouchOutside = true
     var sheetElevation: Float = 24F
 
     var footer: ScreenFooter? = null
+        set(value) {
+            if (value == null && field != null) {
+                sheetBehavior?.let { field!!.unregisterWithSheetBehaviour(it) }
+            } else if (value != null) {
+                sheetBehavior?.let { value.registerWithSheetBehaviour(it) }
+            }
+            field = value
+        }
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs

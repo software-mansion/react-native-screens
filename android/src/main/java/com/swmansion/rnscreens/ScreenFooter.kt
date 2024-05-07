@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.views.view.ReactViewGroup
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -23,13 +24,14 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
     private var isAnimationControlledByKeyboard = false
     private var lastSlideOffset = 0.0f
     private var lastBottomInset = 0
+    private var isCallbackRegistered = false
 
     // ScreenFooter is supposed to be direct child of Screen
     private val screenParent
-        get() = requireNotNull(parent as? Screen)
+        get() = parent as? Screen
 
     private val sheetBehavior
-        get() = requireNotNull(screenParent.sheetBehavior)
+        get() = requireScreenParent().sheetBehavior
 
     private val reactHeight
         get() = measuredHeight
@@ -91,6 +93,10 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         ViewCompat.setWindowInsetsAnimationCallback(rootView, insetsAnimation)
     }
 
+    private fun requireScreenParent(): Screen = requireNotNull(screenParent)
+
+    private fun requireSheetBehaviour(): BottomSheetBehavior<Screen> = requireNotNull(sheetBehavior)
+
     // React calls `layout` function to set view dimensions, thus this is our entry point for
     // fixing layout up after Yoga repositions it.
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -98,7 +104,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         layoutFooterOnYAxis(
             lastContainerHeight,
             bottom - top,
-            sheetTopInStableState(sheetBehavior.state),
+            sheetTopInStableState(requireSheetBehaviour().state),
             lastBottomInset
         )
     }
@@ -154,24 +160,43 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         }
     }
 
+    // Important to keep this method idempotent! We attempt to (un)register
+    // our callback in different places depending on whether the behaviour is already created.
+    fun registerWithSheetBehaviour(behaviour: BottomSheetBehavior<Screen>) {
+        if (!isCallbackRegistered) {
+            behaviour.addBottomSheetCallback(footerCallback)
+            isCallbackRegistered = true
+        }
+    }
+
+    // Important to keep this method idempotent! We attempt to (un)register
+    // our callback in different places depending on whether the behaviour is already created.
+    fun unregisterWithSheetBehaviour(behaviour: BottomSheetBehavior<Screen>) {
+        if (isCallbackRegistered) {
+            behaviour.removeBottomSheetCallback(footerCallback)
+            isCallbackRegistered = false
+        }
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        // TODO: Find a place to remove this callback?
-        // Maybe add / remove it in ScreenViewManager rather than here
-        screenParent.sheetBehavior?.addBottomSheetCallback(footerCallback)
+        sheetBehavior?.let { registerWithSheetBehaviour(it) }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        screenParent.sheetBehavior?.removeBottomSheetCallback(footerCallback)
+        sheetBehavior?.let { unregisterWithSheetBehaviour(it) }
     }
 
-    private fun sheetTopInStableState(state: Int): Int = when (state) {
-        STATE_COLLAPSED -> lastContainerHeight - sheetBehavior.peekHeight
-        STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - sheetBehavior.halfExpandedRatio)).toInt()
-        STATE_EXPANDED -> sheetBehavior.expandedOffset
-        STATE_HIDDEN -> lastContainerHeight
-        else -> throw IllegalArgumentException("[RNSScreen] use of stable-state method for unstable state")
+    private fun sheetTopInStableState(state: Int): Int {
+        val behaviour = requireSheetBehaviour()
+        return when (state) {
+            STATE_COLLAPSED -> lastContainerHeight - behaviour.peekHeight
+            STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - behaviour.halfExpandedRatio)).toInt()
+            STATE_EXPANDED -> behaviour.expandedOffset
+            STATE_HIDDEN -> lastContainerHeight
+            else -> throw IllegalArgumentException("[RNSScreen] use of stable-state method for unstable state")
+        }
     }
 
     private fun sheetTopWhileDragging(slideOffset: Float): Int {
@@ -200,7 +225,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         layoutFooterOnYAxis(
             containerHeight,
             reactHeight,
-            sheetTopInStableState(sheetBehavior.state)
+            sheetTopInStableState(requireSheetBehaviour().state)
         )
     }
 
