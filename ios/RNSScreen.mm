@@ -410,11 +410,17 @@ namespace react = facebook::react;
             facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.headerHeight = headerHeight});
   }
 
+  // the code below is needed for Animated to properly work with tranisition progress and is taken
+  // from
+  // https://github.com/facebook/react-native/blob/06eea61c19cd730cf0c14a436f042d30791c3f4a/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L75-L78
   RNSHeaderHeightChangeEvent *event =
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                      object:nil
+                                                    userInfo:userInfo];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -504,12 +510,19 @@ namespace react = facebook::react;
         ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
             .progress = progress, .closing = closing ? 1 : 0, .goingForward = goingForward ? 1 : 0});
   }
+
+  // the code below is needed for Animated to properly work with tranisition progress and is taken
+  // from
+  // https://github.com/facebook/react-native/blob/06eea61c19cd730cf0c14a436f042d30791c3f4a/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L75-L78
   RNSScreenViewEvent *event = [[RNSScreenViewEvent alloc] initWithEventName:@"onTransitionProgress"
                                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                      object:nil
+                                                    userInfo:userInfo];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{

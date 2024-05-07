@@ -131,6 +131,11 @@ RCT_EXPORT_MODULE()
 }
 #endif
 
+- (void)setBridge:(RCTBridge *)bridge
+{
+  _bridge = bridge;
+}
+
 - (void)installHostObject
 {
   /*
@@ -138,8 +143,7 @@ RCT_EXPORT_MODULE()
    because depending on the selected architecture, only one method will be called.
    For `Paper`, it will be constantsToExport, and for `Fabric`, it will be getTurboModule.
 */
-  RCTBridge *bridge = [RCTBridge currentBridge];
-  RCTCxxBridge *cxxBridge = (RCTCxxBridge *)bridge;
+  RCTCxxBridge *cxxBridge = (RCTCxxBridge *)_bridge;
   if (cxxBridge != nil) {
     auto jsiRuntime = (jsi::Runtime *)cxxBridge.runtime;
     if (jsiRuntime != nil) {
