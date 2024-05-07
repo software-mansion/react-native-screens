@@ -166,15 +166,12 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         screenParent.sheetBehavior?.removeBottomSheetCallback(footerCallback)
     }
 
-    private fun sheetTopInStableState(state: Int): Int {
-        val retval = when (state) {
-            STATE_COLLAPSED -> lastContainerHeight - sheetBehavior.peekHeight
-            STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - sheetBehavior.halfExpandedRatio)).toInt()
-            STATE_EXPANDED -> sheetBehavior.expandedOffset
-            STATE_HIDDEN -> lastContainerHeight
-            else -> throw IllegalArgumentException("[RNSScreen] use of stable-state method for unstable state")
-        }
-        return retval
+    private fun sheetTopInStableState(state: Int): Int = when (state) {
+        STATE_COLLAPSED -> lastContainerHeight - sheetBehavior.peekHeight
+        STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - sheetBehavior.halfExpandedRatio)).toInt()
+        STATE_EXPANDED -> sheetBehavior.expandedOffset
+        STATE_HIDDEN -> lastContainerHeight
+        else -> throw IllegalArgumentException("[RNSScreen] use of stable-state method for unstable state")
     }
 
     private fun sheetTopWhileDragging(slideOffset: Float): Int {
@@ -188,7 +185,8 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
     }
 
     /**
-     *
+     * Parent Screen will call this on it's layout. We need to be notified on any update to Screen's content
+     * or its container dimensions change. This is also our entrypoint to acquiring container height.
      */
     fun onParentLayout(
         changed: Boolean,
