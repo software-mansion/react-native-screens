@@ -207,6 +207,12 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
             fragmentWrapper?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
         }
 
+    var headerType = HeaderType.Small
+        set(headerType) {
+            field = headerType
+            headerConfig?.onUpdate()
+        }
+
     var navigationBarColor: Int? = null
         set(navigationBarColor) {
             if (navigationBarColor != null) {
@@ -277,5 +283,11 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_HIDDEN
+    }
+
+    enum class HeaderType(val isCollapsing: Boolean) {
+        Small(false),
+        Medium(true),
+        Large(true);
     }
 }
