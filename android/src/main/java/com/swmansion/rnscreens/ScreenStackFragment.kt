@@ -62,7 +62,8 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     override fun setToolbarShadowHidden(hidden: Boolean) {
         if (isToolbarShadowHidden != hidden) {
-            appBarLayout?.targetElevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
+            appBarLayout?.elevation = if (hidden) 0f else PixelUtil.toPixelFromDIP(4f)
+            appBarLayout?.stateListAnimator = null
             isToolbarShadowHidden = hidden
         }
     }
@@ -125,7 +126,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
         view?.addView(appBarLayout)
         if (isToolbarShadowHidden) {
-            appBarLayout?.targetElevation = 0f
+            appBarLayout?.elevation = 0f
         }
         toolbar?.let { appBarLayout?.addView(recycleView(it)) }
         setHasOptionsMenu(true)
