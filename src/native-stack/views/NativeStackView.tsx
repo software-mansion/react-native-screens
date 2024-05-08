@@ -414,7 +414,6 @@ const RouteView = ({
         });
       }}
       onSheetDetentChanged={(e) => {
-        console.log("onSheetDetentChanged in NativeStackView");
         if (onSheetDetentChanged) {
           onSheetDetentChanged(e);
         }

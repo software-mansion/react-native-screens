@@ -127,9 +127,14 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     private val bottomSheetStateCallback = object : BottomSheetCallback() {
+        private var lastStableState: Int = Screen.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (Screen.isStateStable(newState)) {
-                screen.emitOnSheetDetentChanged(Screen.detentIndexFromSheetState(newState, screen.sheetDetents.count()))
+                lastStableState = newState
+                screen.emitOnSheetDetentChanged(Screen.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), true)
+            } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                screen.emitOnSheetDetentChanged(Screen.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
             }
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                 if (this@ScreenStackFragment.parentFragment is DimmingFragment) {

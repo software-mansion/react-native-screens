@@ -27,6 +27,7 @@ type HeaderHeightChangeEvent = Readonly<{
 
 type SheetDetentChangedEvent = Readonly<{
   index: Int32;
+  isStable: boolean;
 }>;
 
 type GestureResponseDistanceType = Readonly<{

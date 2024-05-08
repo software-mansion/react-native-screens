@@ -219,7 +219,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * A callback that gets called when the current screen is in `formSheet` presentation and its detent has changed.
    */
-  onSheetDetentChanged?: (e: NativeSyntheticEvent<{ index: number }>) => void;
+  onSheetDetentChanged?: (e: NativeSyntheticEvent<{ index: number; isStable: boolean }>) => void;
   /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
@@ -267,7 +267,9 @@ export interface ScreenProps extends ViewProps {
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
    *
-   * Heights should be described as fraction (a number from [0, 1] interval) of screen height / maximum detent height.
+   * Heights should be described as fraction (a number from `[0, 1]` interval) of screen height / maximum detent height.
+   * There is also possibility to specify `[-1]` literal array with single element, which intets to set the sheet height
+   * to the height of its contents.
    *
    * Please note that the array **must** be sorted in ascending order.
    *

@@ -346,9 +346,9 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
-    internal fun emitOnSheetDetentChanged(detentIndex: Int) {
+    internal fun emitOnSheetDetentChanged(detentIndex: Int, isStable: Boolean) {
         val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
-        reactEventDispatcher?.dispatchEvent(SheetDetentChangedEvent(surfaceId, id, detentIndex))
+        reactEventDispatcher?.dispatchEvent(SheetDetentChangedEvent(surfaceId, id, detentIndex, isStable))
     }
 
     enum class StackPresentation {

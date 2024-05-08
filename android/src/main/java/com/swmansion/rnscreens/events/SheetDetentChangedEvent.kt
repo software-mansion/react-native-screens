@@ -4,7 +4,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 
-class SheetDetentChangedEvent(surfaceId: Int, viewId: Int, val index: Int) : Event<ScreenDisappearEvent>(surfaceId, viewId) {
+class SheetDetentChangedEvent(surfaceId: Int, viewId: Int, val index: Int, val isStable: Boolean) : Event<ScreenDisappearEvent>(surfaceId, viewId) {
     override fun getEventName() = EVENT_NAME
 
     // All events for a given view can be coalesced.
@@ -12,6 +12,7 @@ class SheetDetentChangedEvent(surfaceId: Int, viewId: Int, val index: Int) : Eve
 
     override fun getEventData(): WritableMap? = Arguments.createMap().apply {
         putInt("index", index)
+        putBoolean("isStable", isStable)
     }
 
     companion object {
