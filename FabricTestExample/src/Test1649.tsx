@@ -10,6 +10,7 @@ import {
   View,
   Text,
   ScrollView,
+  NativeSyntheticEvent,
   // TextInput,
 } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
@@ -26,18 +27,20 @@ type NavProp = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
+type AllowedDetentsType = NativeStackNavigationOptions['sheetAllowedDetents'];
+
 /// Sheet options
-// const allowedDetentsAtom = jotai.atom<number[]>([
+// const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([
 //   0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
 // ]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
-const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.6, 0.9]);
+const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([0.4, 0.6, 0.9]);
 // const allowedDetentsAtom =
 //   jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
 //     'fitToContents',
 //   );
-const largestUndimmedDetentAtom = jotai.atom<number>(0);
+const largestUndimmedDetentAtom = jotai.atom<number>(-1);
 
 // const allowedDetentsAtom = jotai.atom<number[]>([0.7]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(-1);
@@ -121,7 +124,10 @@ export default function App(): JSX.Element {
               screenStyle: {
                 backgroundColor: 'firebrick',
               },
-              footerComponent: Footer(),
+              // footerComponent: Footer(),
+              onSheetDetentChanged: (e: NativeSyntheticEvent<{ index: number }>) => {
+                console.log(`onSheetDetentChanged in App with index ${e.nativeEvent.index}`)
+              },
               ...sheetOptions,
             }}
           />
@@ -326,7 +332,7 @@ function CommonSheetContent(): React.JSX.Element {
   }
 
   return (
-    <View style={[{ backgroundColor: 'green' }]}>
+    <View style={[{ backgroundColor: 'lightgreen' }]}>
       <View style={{ paddingTop: 10 }}>
         <TextInput
           style={{
@@ -410,6 +416,11 @@ function CommonSheetContent(): React.JSX.Element {
           }}
         />
       </View>
+      <TouchableOpacity
+        style={{ backgroundColor: 'goldenrod' }}
+        onPress={() => console.log('GH Button clicked')}>
+        <Text>GH BUTTON</Text>
+      </TouchableOpacity>
       {isAdditionalContentVisible && (
         <View style={{ backgroundColor: 'pink' }}>
           <Text>Additional content</Text>
