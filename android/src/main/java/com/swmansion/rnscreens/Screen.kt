@@ -160,7 +160,6 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         height: Int,
     ) {
         val reactContext = context as ReactContext
-        Log.w(TAG, "updateScreenSize to $width, $height")
         reactContext.runOnNativeModulesQueueThread(
             object : GuardedRunnable(reactContext) {
                 override fun runGuarded() {

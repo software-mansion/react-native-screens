@@ -48,7 +48,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     Animation.AnimationListener,
     OnApplyWindowInsetsListener {
     private lateinit var dimmingView: DimmingView
-    private lateinit var containerView: GestureTransparentFrameLayout
+    private lateinit var containerView: GestureTransparentViewGroup
 
     private val maxAlpha: Float = 0.15F
     private val reactContext: ReactContext? = screen.reactContext
@@ -200,7 +200,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     }
 
     private fun initContainerView() {
-        containerView = GestureTransparentFrameLayout(requireContext()).apply {
+        containerView = GestureTransparentViewGroup(requireContext()).apply {
             // These do not guarantee fullscreen width & height, TODO: find a way to guarantee that
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

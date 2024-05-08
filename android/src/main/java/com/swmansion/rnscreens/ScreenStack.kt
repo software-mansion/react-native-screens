@@ -37,7 +37,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     }
 
     /**
-     * Notify stack that a fragment it manages has been removed externally w/o the stack knowledge.
+     * Notify stack that a fragment it manages has been removed externally w/o the stack knowledge,
+     * and stack should simply forget about this wrapper.
+     *
      * This happens e.g. on dialog fragment dismissal.
      *
      * TODO: Who should be responsible for firing events to JS?
@@ -61,9 +63,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
 
     override fun adapt(screen: Screen): ScreenStackFragmentWrapper =
         when (screen.stackPresentation) {
-//            Screen.StackPresentation.MODAL -> ScreenModalFragment(screen)
-            Screen.StackPresentation.MODAL, Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
-//            Screen.StackPresentation.MODAL, Screen.StackPresentation.FORM_SHEET -> ScreenStackFragment(screen)
+            Screen.StackPresentation.MODAL -> ScreenModalFragment(screen)
+            Screen.StackPresentation.FORM_SHEET -> DimmingFragment(ScreenStackFragment(screen))
             else -> ScreenStackFragment(screen)
         }
 
@@ -106,11 +107,6 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
     override fun hasScreen(screenFragmentWrapper: ScreenFragmentWrapper?): Boolean =
         super.hasScreen(screenFragmentWrapper) && !dismissedWrappers.contains(screenFragmentWrapper)
 
-    fun onScreenDismissed(wrapper: ScreenStackFragmentWrapper) {
-        screenWrappers.remove(wrapper)
-        stack.remove(wrapper)
-    }
-
     override fun onUpdate() {
         // When going back from a nested stack with a single screen on it, we may hit an edge case
         // when all screens are dismissed and no screen is to be displayed on top. We need to gracefully
@@ -119,17 +115,6 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         var visibleBottom: ScreenFragmentWrapper? =
             null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
-//        for (wrapper in screenWrappers.reversed()) {
-//
-//        }
-
-        Log.w(TAG, "onUpdate")
-        screenWrappers.withIndex().forEach { (i, wrapper) ->
-            Log.i(TAG, "Wrapper: $i $wrapper")
-        }
-        stack.withIndex().forEach { (i, wrapper) ->
-            Log.i(TAG, "Stack: $i $wrapper")
-        }
 
         for (i in screenWrappers.indices.reversed()) {
             val screen = getScreenFragmentWrapperAt(i)
