@@ -66,7 +66,13 @@ function Footer() {
   );
 
   return (
-    <View style={{ backgroundColor: 'goldenrod', padding: 20, borderColor: 'darkblue', borderWidth: 1 }}>
+    <View
+      style={{
+        backgroundColor: 'goldenrod',
+        padding: 20,
+        borderColor: 'darkblue',
+        borderWidth: 1,
+      }}>
       <Text>SomeContent</Text>
       <Button
         title="Click me"
@@ -198,7 +204,9 @@ function Second({ navigation }: NavProp) {
         title="Go back to first screen"
         onPress={navigateToFirstCallback}
       />
-      <TouchableOpacity style={{ backgroundColor: 'goldenrod' }}onPress={() => console.log('GH Button clicked')}>
+      <TouchableOpacity
+        style={{ backgroundColor: 'goldenrod' }}
+        onPress={() => console.log('GH Button clicked')}>
         <Text>GH BUTTON</Text>
       </TouchableOpacity>
     </View>
@@ -296,11 +304,20 @@ function CommonSheetContent(): React.JSX.Element {
 
   const [radius, setRadius] = jotai.useAtom(cornerRadiusAtom);
   const [detents, setDetents] = jotai.useAtom(allowedDetentsAtom);
-  const [largestUndimmedDetent, setLargestUndimmedDetent] = jotai.useAtom(largestUndimmedDetentAtom);
-  const [isGrabberVisible, setIsGrabberVisible] = jotai.useAtom(grabberVisibleAtom);
-  const [shouldExpand, setShouldExpand] = jotai.useAtom(expandsWhenScrolledToEdgeAtom);
-  const [selectedDetentIndex, setSelectedDetentIndex] = jotai.useAtom(selectedDetentIndexAtom);
-  const isAdditionalContentVisible = jotai.useAtomValue(isAdditionalContentVisibleAtom);
+  const [largestUndimmedDetent, setLargestUndimmedDetent] = jotai.useAtom(
+    largestUndimmedDetentAtom,
+  );
+  const [isGrabberVisible, setIsGrabberVisible] =
+    jotai.useAtom(grabberVisibleAtom);
+  const [shouldExpand, setShouldExpand] = jotai.useAtom(
+    expandsWhenScrolledToEdgeAtom,
+  );
+  const [selectedDetentIndex, setSelectedDetentIndex] = jotai.useAtom(
+    selectedDetentIndexAtom,
+  );
+  const isAdditionalContentVisible = jotai.useAtomValue(
+    isAdditionalContentVisibleAtom,
+  );
 
   const ref = React.useRef(null);
 
@@ -350,7 +367,9 @@ function CommonSheetContent(): React.JSX.Element {
         <Button
           title="Change detent level"
           onPress={() => {
-            const newDetentLevel = nextDetentLevel(detents[selectedDetentIndex]);
+            const newDetentLevel = nextDetentLevel(
+              detents[selectedDetentIndex],
+            );
             setSelectedDetentIndex(newDetentLevel);
             // navigation.setOptions({
             //   sheetAllowedDetents: newDetentLevel,
@@ -398,137 +417,17 @@ function CommonSheetContent(): React.JSX.Element {
       )}
     </View>
   );
-
 }
 
-function ModalScreen({ navigation }: NavProp) {
-  return (
-    <CommonSheetContent />
-  );
+function ModalScreen() {
+  return <CommonSheetContent />;
 }
 
 function SheetScreen() {
-  const navigation = useNavigation();
-
-  const [radius, setRadius] = React.useState(-1);
-  const [detent, setDetent] = React.useState<SheetDetentTypes>('all');
-  const [largestUndimmedDetent, sheetLargestUndimmedDetent] =
-    React.useState<SheetDetentTypes>('all');
-  const [isGrabberVisible, setIsGrabberVisible] = React.useState(false);
-  const [shouldExpand, setShouldExpand] = React.useState(true);
-
-  const isAdditionalContentVisible = jotai.useAtomValue(isAdditionalContentVisibleAtom);
-
-  function nextDetentLevel(detent: SheetDetent): SheetDetent {
-    if (Array.isArray(detent)) {
-      return 'all';
-    } else if (detent === 'all') {
-      return 'medium';
-    } else if (detent === 'medium') {
-      return 'large';
-    } else if (detent === 'large') {
-      return initialAllowedDetentsArray;
-    } else {
-      return 'all';
-    }
-  }
-
-  const ref = React.useRef(null);
-
-  return (
-    <View style={[{ backgroundColor: 'green' }]}>
-      <View style={{ paddingTop: 10 }}>
-        <TextInput
-          style={{
-            backgroundColor: 'lightblue',
-            paddingHorizontal: 5,
-            margin: 5,
-            borderRadius: 5,
-          }}
-          placeholder="123"
-          inputMode="numeric"
-          ref={ref}
-        />
-        <Button
-          title="Tap me for the first screen"
-          onPress={() => navigation.navigate('First')}
-        />
-        <Button
-          title="Tap me for the second screen"
-          onPress={() => navigation.navigate('Second')}
-        />
-        <Button
-          title="Tap me for the third screen / blur"
-          onPress={() => {
-            // navigation.goBack();
-            navigation.navigate('Third');
-          }}
-        />
-        <Button
-          title="Change the corner radius"
-          onPress={() => {
-            const newRadius = radius >= 150 ? -1.0 : radius + 50;
-            setRadius(newRadius);
-            navigation.setOptions({
-              sheetCornerRadius: newRadius,
-            });
-          }}
-        />
-        <Text>radius: {radius}</Text>
-        <Button
-          title="Change detent level"
-          onPress={() => {
-            const newDetentLevel = nextDetentLevel(detent);
-            setDetent(newDetentLevel);
-            navigation.setOptions({
-              sheetAllowedDetents: newDetentLevel,
-            });
-          }}
-        />
-        <Text>detent: {detent}</Text>
-        <Button
-          title="Change largest undimmed detent"
-          onPress={() => {
-            const newDetentLevel = nextDetentLevel(largestUndimmedDetent);
-            sheetLargestUndimmedDetent(newDetentLevel);
-            navigation.setOptions({
-              sheetLargestUndimmedDetent: newDetentLevel,
-            });
-          }}
-        />
-        <Text>largestUndimmedDetent: {largestUndimmedDetent}</Text>
-        <Button
-          title="Toggle sheetExpandsWhenScrolledToEdge"
-          onPress={() => {
-            setShouldExpand(!shouldExpand);
-            navigation.setOptions({
-              sheetExpandsWhenScrolledToEdge: !shouldExpand,
-            });
-          }}
-        />
-        <Text>
-          sheetExpandsWhenScrolledToEdge: {shouldExpand ? 'true' : 'false'}
-        </Text>
-        <Button
-          title="Toggle grabber visibility"
-          onPress={() => {
-            setIsGrabberVisible(!isGrabberVisible);
-            navigation.setOptions({
-              sheetGrabberVisible: !isGrabberVisible,
-            });
-          }}
-        />
-      </View>
-      {isAdditionalContentVisible && (
-        <View style={{ backgroundColor: 'pink' }}>
-          <Text>Additional content</Text>
-        </View>
-      )}
-    </View>
-  );
+  return <CommonSheetContent />;
 }
 
-function SheetScreenWithScrollView({ navigation }: NavProp) {
+function SheetScreenWithScrollView() {
   const [additionalContentVisible, setAdditionalContentVisible] =
     React.useState(false);
 
@@ -538,7 +437,7 @@ function SheetScreenWithScrollView({ navigation }: NavProp) {
   return (
     <ScrollView ref={svRef} nestedScrollEnabled={true} scrollEnabled>
       <View ref={contentRef}>
-        <SheetScreen />
+        <CommonSheetContent />
         <Button
           title="Toggle content"
           onPress={() => setAdditionalContentVisible(old => !old)}
@@ -570,7 +469,7 @@ function SheetScreenWithTextInput({ navigation }: NavProp) {
         value={textValue}
         onChangeText={text => setTextValue(text)}
       />
-      <SheetScreen navigation={navigation} />
+      <CommonSheetContent />
     </View>
   );
 }
