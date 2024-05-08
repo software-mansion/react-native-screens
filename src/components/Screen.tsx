@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import React from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, View, Platform } from 'react-native';
 
 import TransitionProgressContext from '../TransitionProgressContext';
 import DelayedFreeze from './helpers/DelayedFreeze';
@@ -14,10 +13,14 @@ import {
 
 // Native components
 import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
+import ModalScreenNativeComponent from '../fabric/ModalScreenNativeComponent';
 
 export const NativeScreen: React.ComponentType<ScreenProps> =
-  ScreenNativeComponent as any;
-let AnimatedNativeScreen: React.ComponentType<ScreenProps>;
+  ScreenNativeComponent as React.ComponentType<ScreenProps>;
+const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
+const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
+  ModalScreenNativeComponent as React.ComponentType<ScreenProps>
+);
 
 // Incomplete type, all accessible properties available at:
 // react-native/Libraries/Components/View/ReactNativeViewViewConfig.js
@@ -29,29 +32,34 @@ interface ViewConfig extends View {
       };
     };
   };
+  _viewConfig: {
+    validAttributes: {
+      style: {
+        display: boolean;
+      };
+    };
+  };
 }
 
-export class InnerScreen extends React.Component<ScreenProps> {
-  private ref: React.ElementRef<typeof View> | null = null;
-  private closing = new Animated.Value(0);
-  private progress = new Animated.Value(0);
-  private goingForward = new Animated.Value(0);
+export const InnerScreen = React.forwardRef<View, ScreenProps>(
+  function InnerScreen(props, ref) {
+    const innerRef = React.useRef<ViewConfig | null>(null);
+    React.useImperativeHandle(ref, () => innerRef.current!, []);
 
-  setNativeProps(props: ScreenProps): void {
-    this.ref?.setNativeProps(props);
-  }
+    const setRef = (ref: ViewConfig) => {
+      innerRef.current = ref;
+      props.onComponentRef?.(ref);
+    };
 
-  setRef = (ref: React.ElementRef<typeof View> | null): void => {
-    this.ref = ref;
-    this.props.onComponentRef?.(ref);
-  };
+    const closing = React.useRef(new Animated.Value(0)).current;
+    const progress = React.useRef(new Animated.Value(0)).current;
+    const goingForward = React.useRef(new Animated.Value(0)).current;
 
-  render() {
     const {
       enabled = screensEnabled(),
       freezeOnBlur = freezeEnabled(),
       ...rest
-    } = this.props;
+    } = props;
 
     // To maintain default behavior of formSheet stack presentation style and to have reasonable
     // defaults for new medium-detent iOS API we need to set defaults here
@@ -61,11 +69,19 @@ export class InnerScreen extends React.Component<ScreenProps> {
       sheetGrabberVisible = false,
       sheetCornerRadius = -1.0,
       sheetExpandsWhenScrolledToEdge = true,
+      stackPresentation,
     } = rest;
 
     if (enabled && isNativePlatformSupported) {
-      AnimatedNativeScreen =
-        AnimatedNativeScreen || Animated.createAnimatedComponent(NativeScreen);
+      // Due to how Yoga resolves layout, we need to have different components for modal nad non-modal screens
+      const AnimatedScreen =
+        Platform.OS === 'android' ||
+        stackPresentation === undefined ||
+        stackPresentation === 'push' ||
+        stackPresentation === 'containedModal' ||
+        stackPresentation === 'containedTransparentModal'
+          ? AnimatedNativeScreen
+          : AnimatedNativeModalScreen;
 
       let {
         // Filter out active prop in this case because it is unused and
@@ -93,13 +109,19 @@ export class InnerScreen extends React.Component<ScreenProps> {
             ...ref.viewConfig.validAttributes.style,
             display: false,
           };
-          this.setRef(ref);
+          setRef(ref);
+        } else if (ref?._viewConfig?.validAttributes?.style) {
+          ref._viewConfig.validAttributes.style = {
+            ...ref._viewConfig.validAttributes.style,
+            display: false,
+          };
+          setRef(ref);
         }
       };
 
       return (
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
-          <AnimatedNativeScreen
+          <AnimatedScreen
             {...props}
             activityState={activityState}
             sheetAllowedDetents={sheetAllowedDetents}
@@ -123,9 +145,9 @@ export class InnerScreen extends React.Component<ScreenProps> {
                     [
                       {
                         nativeEvent: {
-                          progress: this.progress,
-                          closing: this.closing,
-                          goingForward: this.goingForward,
+                          progress,
+                          closing,
+                          goingForward,
                         },
                       },
                     ],
@@ -143,14 +165,14 @@ export class InnerScreen extends React.Component<ScreenProps> {
             ) : (
               <TransitionProgressContext.Provider
                 value={{
-                  progress: this.progress,
-                  closing: this.closing,
-                  goingForward: this.goingForward,
+                  progress,
+                  closing,
+                  goingForward,
                 }}>
                 {children}
               </TransitionProgressContext.Provider>
             )}
-          </AnimatedNativeScreen>
+          </AnimatedScreen>
         </DelayedFreeze>
       );
     } else {
@@ -170,25 +192,22 @@ export class InnerScreen extends React.Component<ScreenProps> {
       return (
         <Animated.View
           style={[style, { display: activityState !== 0 ? 'flex' : 'none' }]}
-          ref={this.setRef}
+          ref={setRef}
           {...props}
         />
       );
     }
   }
-}
+);
 
 // context to be used when the user wants to use enhanced implementation
 // e.g. to use `useReanimatedTransitionProgress` (see `reanimated` folder in repo)
 export const ScreenContext = React.createContext(InnerScreen);
 
-class Screen extends React.Component<ScreenProps> {
-  static contextType = ScreenContext;
+const Screen: React.FC<ScreenProps> = props => {
+  const ScreenWrapper = React.useContext(ScreenContext) || InnerScreen;
 
-  render() {
-    const ScreenWrapper = (this.context || InnerScreen) as React.ElementType;
-    return <ScreenWrapper {...this.props} />;
-  }
-}
+  return <ScreenWrapper {...props} />;
+};
 
 export default Screen;

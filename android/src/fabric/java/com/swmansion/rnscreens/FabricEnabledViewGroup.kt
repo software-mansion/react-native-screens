@@ -19,12 +19,12 @@ abstract class FabricEnabledViewGroup constructor(context: ReactContext?) : View
         return mFabricViewStateManager
     }
 
-    protected fun updateScreenSizeFabric(width: Int, height: Int) {
-        updateState(width, height)
+    protected fun updateScreenSizeFabric(width: Int, height: Int, headerHeight: Double) {
+        updateState(width, height, headerHeight)
     }
 
     @UiThread
-    fun updateState(width: Int, height: Int) {
+    fun updateState(width: Int, height: Int, headerHeight: Double) {
         val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
         val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
 
@@ -44,6 +44,8 @@ abstract class FabricEnabledViewGroup constructor(context: ReactContext?) : View
             val map: WritableMap = WritableNativeMap()
             map.putDouble("frameWidth", realWidth.toDouble())
             map.putDouble("frameHeight", realHeight.toDouble())
+            map.putDouble("contentOffsetX", 0.0)
+            map.putDouble("contentOffsetY", headerHeight)
             map
         }
     }

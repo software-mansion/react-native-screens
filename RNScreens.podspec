@@ -67,6 +67,8 @@ Pod::Spec.new do |s|
 
   if defined?(install_modules_dependencies()) != nil
     install_modules_dependencies(s)
+    # Add missing dependencies, that were not included in install_modules_dependencies
+    s.dependency "React-RCTImage"
     RNScreensDependencyHelper.add_common_subspec(s, new_arch_enabled)
   else
     RNScreensDependencyHelper.install_dependencies(s, new_arch_enabled)

@@ -1,23 +1,22 @@
 package com.swmansion.rnscreens.events
 
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
-import com.facebook.react.uimanager.events.RCTEventEmitter
 
 class HeaderHeightChangeEvent(
+    surfaceId: Int,
     viewId: Int,
     private val headerHeight: Double
-) : Event<HeaderHeightChangeEvent>(viewId) {
+) : Event<HeaderHeightChangeEvent>(surfaceId, viewId) {
 
     override fun getEventName() = EVENT_NAME
 
     // As the same header height could appear twice, use header height as a coalescing key.
     override fun getCoalescingKey(): Short = headerHeight.toInt().toShort()
 
-    override fun dispatch(rctEventEmitter: RCTEventEmitter) {
-        val map = Arguments.createMap()
-        map.putDouble("headerHeight", headerHeight)
-        rctEventEmitter.receiveEvent(viewTag, eventName, map)
+    override fun getEventData(): WritableMap? = Arguments.createMap().apply {
+        putDouble("headerHeight", headerHeight)
     }
 
     companion object {

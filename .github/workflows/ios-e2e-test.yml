@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 jobs:
   test:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: Example
@@ -30,12 +30,16 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
+      - name: Use latest stable Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Get Xcode version
         run: xcodebuild -version
       - name: Install AppleSimulatorUtils
         run: brew tap wix/brew && brew install applesimutils
       - name: Install root node dependencies
-        run: yarn
+        run: yarn install && yarn submodules
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn

@@ -11,7 +11,7 @@ class ScreenTransitionProgressEvent(
     private val isClosing: Boolean,
     private val isGoingForward: Boolean,
     private val coalescingKey: Short
-) : Event<ScreenAppearEvent?>(surfaceId, viewId) {
+) : Event<ScreenTransitionProgressEvent>(surfaceId, viewId) {
     override fun getEventName(): String = EVENT_NAME
 
     override fun getCoalescingKey(): Short = coalescingKey

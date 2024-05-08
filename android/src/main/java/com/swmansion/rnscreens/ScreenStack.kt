@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.content.Context
 import android.graphics.Canvas
+import android.os.Build
 import android.view.View
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -335,8 +336,12 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL
 
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
-            fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
+            // On Android sdk 33 and above the animation is different and requires draw reordering.
+            // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
+            // Hence, we're comparing numerical version here.
+            Build.VERSION.SDK_INT >= 33 ||
+                fragmentWrapper.screen.stackAnimation === StackAnimation.SLIDE_FROM_BOTTOM ||
                 fragmentWrapper.screen.stackAnimation === StackAnimation.FADE_FROM_BOTTOM ||
-                  fragmentWrapper.screen.stackAnimation === StackAnimation.IOS
+                fragmentWrapper.screen.stackAnimation === StackAnimation.IOS
     }
 }

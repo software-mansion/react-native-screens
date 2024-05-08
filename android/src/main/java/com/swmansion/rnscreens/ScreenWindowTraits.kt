@@ -47,7 +47,6 @@ object ScreenWindowTraits {
         activity.requestedOrientation = orientation
     }
 
-    @SuppressLint("ObsoleteSdkInt") // to be removed when support for < 0.64 is dropped
     internal fun setColor(screen: Screen, activity: Activity?, context: ReactContext?) {
         if (activity == null || context == null) {
             return
@@ -61,7 +60,7 @@ object ScreenWindowTraits {
         val animated = screenForAnimated?.isStatusBarAnimated ?: false
 
         UiThreadUtil.runOnUiThread(
-            object : GuardedRunnable(context) {
+            object : GuardedRunnable(context.exceptionHandler) {
                 override fun runGuarded() {
                     val window = activity.window
                     val curColor: Int = window.statusBarColor
@@ -106,7 +105,7 @@ object ScreenWindowTraits {
         val screenForTranslucent = findScreenForTrait(screen, WindowTraits.TRANSLUCENT)
         val translucent = screenForTranslucent?.isStatusBarTranslucent ?: false
         UiThreadUtil.runOnUiThread(
-            object : GuardedRunnable(context) {
+            object : GuardedRunnable(context.exceptionHandler) {
                 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 override fun runGuarded() {
                     // If the status bar is translucent hook into the window insets calculations

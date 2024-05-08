@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "postinstall": "patch-package",
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "tv-os": "react-native run-ios --scheme=\"TVOSExample-tvOS\" --simulator=\"Apple TV\"",
-    "start": "react-native start",
+    "android": "npx react-native run-android",
+    "ios": "npx react-native run-ios",
+    "tv-os": "npx react-native run-ios --scheme=\"TVOSExample-tvOS\" --simulator=\"Apple TV\"",
+    "start": "npx react-native start",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -39,10 +39,10 @@
     "@react-native-community/eslint-config": "^3.0.0",
     "babel-jest": "^27.0.6",
     "eslint": "^7.32.0",
+    "glob-to-regexp": "^0.4.1",
     "jest": "^27.0.6",
     "metro-react-native-babel-preset": "^0.66.2",
-    "react-test-renderer": "17.0.1",
-    "glob-to-regexp": "^0.4.1"
+    "react-test-renderer": "17.0.1"
   },
   "jest": {
     "preset": "react-native"

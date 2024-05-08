@@ -36,7 +36,7 @@ jobs:
           node-version: 18
           cache: 'yarn'
       - name: Install root node dependencies
-        run: yarn install
+        run: yarn install && yarn submodules
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn install
@@ -48,7 +48,7 @@ jobs:
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: 31
-          target: default
+          target: aosp_atd
           profile: pixel_2
           ram-size: '4096M'
           disk-size: '10G'

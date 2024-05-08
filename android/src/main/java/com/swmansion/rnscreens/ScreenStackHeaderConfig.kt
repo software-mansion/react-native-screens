@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Build
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +30,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false  // named this way to avoid conflict with platform's isHidden
+    var isHeaderTranslucent = false // named this way to avoid conflict with platform's isTranslucent
     private var headerTopInset: Int? = null
     private var title: String? = null
     private var titleColor = 0
@@ -42,7 +45,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private var backButtonInCustomView = false
     private var isTitleCentered = false
     private var isTopInsetEnabled = true
-    private var isTranslucent = false
     private var tintColor = 0
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
@@ -86,7 +88,9 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         // we want to save the top inset before the status bar can be hidden, which would resolve in
         // inset being 0
         if (headerTopInset == null) {
-            headerTopInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            headerTopInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                rootWindowInsets.getInsets(WindowInsets.Type.systemBars()).top
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 rootWindowInsets.systemWindowInsetTop
             else
             // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
@@ -212,7 +216,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         screenFragment?.setToolbarShadowHidden(isShadowHidden)
 
         // translucent
-        screenFragment?.setToolbarTranslucent(isTranslucent)
+        screenFragment?.setToolbarTranslucent(isHeaderTranslucent)
 
         // title
         screenStackHeader?.title = title
@@ -255,7 +259,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // color
         if (tintColor != 0) {
-            toolbar.navigationIcon?.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
+            toolbar.navigationIcon?.colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP)
         }
 
         // subviews
@@ -396,7 +400,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     }
 
     fun setTranslucent(translucent: Boolean) {
-        isTranslucent = translucent
+        isHeaderTranslucent = translucent
     }
 
     fun setBackButtonInCustomView(backButtonInCustomView: Boolean) {

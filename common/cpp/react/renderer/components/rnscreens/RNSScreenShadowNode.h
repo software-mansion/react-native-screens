@@ -19,11 +19,7 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
 
-  static ShadowNodeTraits BaseTraits() {
-    auto traits = ConcreteViewShadowNode::BaseTraits();
-    traits.set(ShadowNodeTraits::Trait::RootNodeKind);
-    return traits;
-  }
+  Point getContentOriginOffset() const override;
 };
 
 } // namespace react
