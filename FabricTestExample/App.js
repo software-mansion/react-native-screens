@@ -91,6 +91,8 @@ import Test1829 from './src/Test1829';
 import Test1844 from './src/Test1844';
 import Test1864 from './src/Test1864';
 import Test1874 from './src/Test1874';
+import Test1970 from './src/Test1970';
+import TestScreenAnimation from './src/TestScreenAnimation';
 import Test1981 from './src/Test1981';
 import Test2008 from './src/Test2008';
 import Test2028 from './src/Test2028';
