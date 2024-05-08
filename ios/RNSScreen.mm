@@ -587,10 +587,9 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 #else
   if (self.onSheetDetentChanged) {
     self.onSheetDetentChanged(@{
-      @"index" : @0,
+      @"index" : @(newDetentIndex),
     });
   }
-
 #endif
 }
 
@@ -887,19 +886,51 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+- (NSInteger)detentIndexFromDetentIdentifier:(UISheetPresentationControllerDetentIdentifier)identifier
+    API_AVAILABLE(ios(15.0))
+{
+  // We first check if we are running on iOS 16+ as the API is different
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+  if (_sheetAllowedDetents.count > 0) {
+    // We should be running on custom detents in this case, thu identifier should be a stringified number.
+    return identifier.integerValue;
+  } else
+#endif // iOS 16 check
+  {
+    if (_sheetAllowedDetents.count >= 2) {
+      if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
+        return 0;
+      } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
+        return 1;
+      }
+    } else if (_sheetAllowedDetents.count == 0) {
+      if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
+        return 0;
+      } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
+        return 1;
+      }
+    } else {
+      // There is only single option.
+      return 0;
+    }
+  }
+  return 0;
+}
+
 - (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
-    (UISheetPresentationController *)sheetPresentationController
+    (UISheetPresentationController *)sheetPresentationController API_AVAILABLE(ios(15.0))
 {
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
-
-  [self notifySheetDetentChanged:0];
+  [self notifySheetDetentChanged:[self detentIndexFromDetentIdentifier:ident]];
 }
-#endif
+#endif // iOS 15 check
 
 /**
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
- * guarantee that values of all related props had been updated earlier.
+ * guarantee that values of all related props had been updated earlier. It should be invoked from `didSetProps`.
+ * On Fabric we have controll over prop-setting process but it might be reasonable to run it from `finalizeUpdates`.
  */
 - (void)updateFormSheetPresentationStyle
 {
@@ -908,8 +939,13 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
-  int sheetLUDLimitExclusive = _sheetAllowedDetents.count;
+  int sheetLudLimitExclusive = _sheetAllowedDetents.count;
+
+  // Whether we use system (iOS 15) detents or custom (iOS 16+).
+  // Custom detents are in use if we are on iOS 16+ and we have at least single detent
+  // defined in the detents array. In any other case we do use system defined detents.
   bool systemDetentsInUse = false;
+
   if (@available(iOS 15.0, *)) {
     UISheetPresentationController *sheet = _controller.sheetPresentationController;
     if (sheet == nil) {
@@ -944,7 +980,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
       } else if (_sheetAllowedDetents.count >= 2) {
         float first = _sheetAllowedDetents[0].floatValue;
         float second = _sheetAllowedDetents[1].floatValue;
-        sheetLUDLimitExclusive = 2;
+        sheetLudLimitExclusive = 2;
 
         if (first < second) {
           [self setAllowedDetentsForSheet:sheet
@@ -975,12 +1011,12 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
 
     int detentIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
-    detentIndex = detentIndex >= sheetLUDLimitExclusive ? detentIndex - 1 : detentIndex;
+    detentIndex = detentIndex >= sheetLudLimitExclusive ? detentIndex - 1 : detentIndex;
     if (detentIndex == -1) {
       [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
     } else if (detentIndex >= 0) {
       if (systemDetentsInUse) {
-        if (sheetLUDLimitExclusive == 0 || (sheetLUDLimitExclusive == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
+        if (sheetLudLimitExclusive == 0 || (sheetLudLimitExclusive == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
           [self setLargestUndimmedDetentForSheet:sheet
                                               to:UISheetPresentationControllerDetentIdentifierMedium
                                          animate:YES];
@@ -1019,6 +1055,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+
 - (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
     API_AVAILABLE(ios(16.0))
 {
@@ -1026,17 +1063,14 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
       [NSMutableArray arrayWithCapacity:fractions.count];
   int detentIndex = 0;
   for (NSNumber *frac in fractions) {
-    NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
-    [customDetents addObject:[UISheetPresentationControllerDetent
-                                 customDetentWithIdentifier:ident
-                                                   resolver:^CGFloat(
-                                                       id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     if (frac.integerValue == -1) {
-                                                       return 100;
-                                                     } else {
-                                                       return ctx.maximumDetentValue * frac.floatValue;
-                                                     }
-                                                   }]];
+    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithInt:detentIndex] stringValue];
+    [customDetents
+        addObject:[UISheetPresentationControllerDetent
+                      customDetentWithIdentifier:ident
+                                        resolver:^CGFloat(
+                                            id<UISheetPresentationControllerDetentResolutionContext> ctx) {
+                                          return MIN(ctx.maximumDetentValue, ctx.maximumDetentValue * frac.floatValue);
+                                        }]];
     ++detentIndex;
   }
   return customDetents;
