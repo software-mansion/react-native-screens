@@ -4,8 +4,7 @@ import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
-import { SearchBarProps } from 'react-native-screens';
+} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +23,7 @@ function First({
 }) {
   const [events, setEvents] = React.useState<string[]>([]);
   React.useLayoutEffect(() => {
-    const searchBar: SearchBarProps = {
+    const searchBar = {
       onSearchButtonPress: () => setEvents(prev => [...prev, 'Search']),
       onBlur: () => setEvents(prev => [...prev, 'Blur']),
       onClose: () => setEvents(prev => [...prev, 'Close']),
@@ -32,7 +31,7 @@ function First({
       onFocus: () => setEvents(prev => [...prev, 'Focus']),
     };
     navigation.setOptions({
-      searchBar: searchBar,
+      headerSearchBarOptions: searchBar,
     });
   }, [navigation]);
 

@@ -4,8 +4,8 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-  useHeaderHeight,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
+import { useHeaderHeight } from '@react-navigation/elements';
 import {
   GestureHandlerRootView,
   ScrollView,
@@ -68,9 +68,9 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            fullScreenSwipeEnabled: true,
-            stackAnimation: 'default',
-            customAnimationOnSwipe: true,
+            fullScreenGestureEnabled: true,
+            animation: 'default',
+            animationMatchesGesture: true,
             headerLargeTitle: true,
           }}>
           <Stack.Screen name="First" component={First} />

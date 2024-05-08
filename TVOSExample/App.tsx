@@ -1,7 +1,7 @@
 import React from 'react';
 import 'react-native/tvos-types.d';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from './src/HomeScreen';
 import BottomTabsExample from './src/BottomTabsExample';
 import ModalsExample from './src/ModalsExample';

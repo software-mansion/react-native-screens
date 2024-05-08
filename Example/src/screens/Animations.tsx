@@ -1,10 +1,10 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, StyleSheet, I18nManager } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { SettingsPicker, Button } from '../shared';
 
 type StackParamList = {
@@ -16,7 +16,7 @@ type StackParamList = {
 };
 
 type StackAnimation = Exclude<
-  NativeStackNavigationOptions['stackAnimation'],
+  NativeStackNavigationOptions['animation'],
   undefined
 >;
 
@@ -33,7 +33,7 @@ const MainScreen = ({
 }: MainScreenProps): JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
-      stackAnimation,
+      animation: stackAnimation,
     });
   }, [navigation, stackAnimation]);
 
@@ -85,7 +85,7 @@ const ReplaceScreen = ({
 }: ReplaceScreenProps): JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
-      stackAnimation,
+      animation: stackAnimation,
     });
   }, [navigation, stackAnimation]);
 
@@ -107,7 +107,7 @@ const NavigateScreen = ({
 }: NavigateScreenProps): JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
-      stackAnimation,
+      animation: stackAnimation,
     });
   }, [navigation, stackAnimation]);
 
@@ -126,8 +126,7 @@ const App = (): JSX.Element => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerHideBackButton: true,
-        direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+        headerBackVisible: false,
       }}>
       <Stack.Screen name="Main" options={{ title: 'Animations' }}>
         {({ navigation }) => (
@@ -141,7 +140,7 @@ const App = (): JSX.Element => {
       <Stack.Screen
         name="Push"
         options={{
-          replaceAnimation: 'push',
+          animationTypeForReplace: 'push',
         }}>
         {({ navigation }) => (
           <ReplaceScreen
@@ -153,7 +152,7 @@ const App = (): JSX.Element => {
       <Stack.Screen
         name="Pop"
         options={{
-          replaceAnimation: 'pop',
+          animationTypeForReplace: 'pop',
         }}>
         {({ navigation }) => (
           <ReplaceScreen
@@ -165,7 +164,7 @@ const App = (): JSX.Element => {
       <Stack.Screen
         name="Modal"
         options={{
-          stackPresentation: 'modal',
+          presentation: 'modal',
         }}>
         {({ navigation }) => (
           <NavigateScreen

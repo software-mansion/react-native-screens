@@ -4,7 +4,7 @@ import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +15,7 @@ export default function App() {
         name="First"
         component={First}
         options={{
-          searchBar: {
+          headerSearchBarOptions: {
             autoCapitalize: 'sentences',
             textColor: '#FF00FF',
             barTintColor: '#00FF00',

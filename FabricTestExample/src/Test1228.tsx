@@ -7,7 +7,7 @@ import {
   DarkTheme,
 } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 export const FirstScreen = () => {
   const [theme, setTheme] = useState(false);
@@ -57,7 +57,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer theme={theme ? DarkTheme : DefaultTheme}>
-        <Stack.Navigator screenOptions={{ stackPresentation: 'modal' }}>
+        <Stack.Navigator screenOptions={{ presentation: 'modal' }}>
           <Stack.Screen name="screen1" component={FirstScreen} />
           <Stack.Screen
             name="screen2"

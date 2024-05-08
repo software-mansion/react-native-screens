@@ -5,12 +5,12 @@ import {
   NavigationProp,
   ParamListBase,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function HomeScreen({
   navigation,
 }: {
-  navigation: NavigationProp<ParamListBase>;
+  navigation: NavigationProp<ParamListBase>,
 }) {
   return (
     <Button
@@ -25,7 +25,7 @@ function HomeScreen({
 function DetailsScreen({
   navigation,
 }: {
-  navigation: NavigationProp<ParamListBase>;
+  navigation: NavigationProp<ParamListBase>,
 }) {
   const [visible, setVisible] = React.useState(true);
 

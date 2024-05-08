@@ -9,8 +9,8 @@ import {
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
-} from 'react-native-screens/native-stack';
-import { SearchBarProps, SearchBarCommands } from 'react-native-screens';
+} from '@react-navigation/native-stack';
+import { SearchBarCommands } from 'react-native-screens';
 
 const AppStack = createNativeStackNavigator();
 
@@ -20,7 +20,7 @@ export default function App(): JSX.Element {
       <AppStack.Navigator
         screenOptions={{
           headerLargeTitle: true,
-          headerTranslucent: true,
+          headerTransparent: true,
         }}>
         <AppStack.Screen name="First" component={First} />
         <AppStack.Screen name="Second" component={Second} />
@@ -35,13 +35,13 @@ function First({ navigation }: NativeStackScreenProps<ParamListBase>) {
 
   React.useEffect(() => {
     navigation.setOptions({
-      searchBar: searchBarOptions,
+      headerSearchBarOptions: searchBarOptions,
     });
   }, [navigation]);
 
   const [search, setSearch] = React.useState('');
 
-  const searchBarOptions: SearchBarProps = {
+  const searchBarOptions = {
     // @ts-ignore
     ref: searchBarRef,
     barTintColor: 'powderblue',
@@ -136,7 +136,7 @@ function Second({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
 function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
   const searchBarRef = React.useRef<SearchBarCommands>();
 
-  const searchBarProps: SearchBarProps = {
+  const searchBarProps = {
     // @ts-ignore
     ref: searchBarRef,
     barTintColor: 'powderblue',
@@ -155,7 +155,7 @@ function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
 
   React.useEffect(() => {
     navigation.setOptions({
-      searchBar: searchBarProps,
+      headerSearchBarOptions: searchBarProps,
     });
   }, [navigation]);
 

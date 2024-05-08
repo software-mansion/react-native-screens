@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Button, View } from 'react-native';
+import { Button, View, I18nManager } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -12,10 +12,12 @@ type Props = {
 
 const Stack = createNativeStackNavigator();
 
+I18nManager.forceRTL(true);
+
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ direction: 'rtl', headerShown: false }}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>

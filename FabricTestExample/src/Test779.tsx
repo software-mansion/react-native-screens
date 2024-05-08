@@ -5,7 +5,7 @@ import {
   NavigationProp,
   ParamListBase,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function HomeScreen({
   navigation,
@@ -74,7 +74,7 @@ function RootStackScreen() {
   return (
     <RootStack.Navigator
       screenOptions={{
-        stackAnimation: 'slide_from_bottom',
+        animation: 'slide_from_bottom',
         gestureEnabled: false,
         headerShown: false,
       }}>

@@ -1,9 +1,8 @@
 import React from 'react';
 import { Button, Text, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function HomeScreen({ navigation }) {
   return (
@@ -52,7 +51,7 @@ function MainStackScreen() {
 
 function RootStackScreen() {
   return (
-    <RootStack.Navigator mode="modal">
+    <RootStack.Navigator>
       <RootStack.Screen
         name="Main"
         component={MainStackScreen}

@@ -13,7 +13,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { useTransitionProgress } from 'react-native-screens';
 import {
   useReanimatedTransitionProgress,
@@ -49,9 +49,9 @@ export default function App(): JSX.Element {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            stackAnimation: 'fade_from_bottom',
+            animation: 'fade_from_bottom',
             headerShown: true,
-            customAnimationOnSwipe: true,
+            animationMatchesGesture: true,
             // stackPresentation: 'transparentModal',
           }}>
           <Stack.Screen name="First" component={NestedFirst} />
@@ -59,7 +59,7 @@ export default function App(): JSX.Element {
           <Stack.Screen
             name="Third"
             component={Dialog}
-            options={{ stackPresentation: 'modal' }}
+            options={{ presentation: 'modal' }}
           />
         </Stack.Navigator>
       </NavigationContainer>

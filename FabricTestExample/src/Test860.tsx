@@ -5,7 +5,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import {createStackNavigator} from '@react-navigation/stack';
 
@@ -16,14 +16,14 @@ export default function NativeNavigation() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackPresentation: 'push',
-          stackAnimation: 'slide_from_right',
+          presentation: 'card',
+          animation: 'slide_from_right',
         }}>
         <Stack.Screen
           name="Home"
           component={Home}
           options={{
-            statusBarColor: 'rgba(0,0,255,0.25)',
+            statusBarBackgroundColor: 'rgba(0,0,255,0.25)',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
             statusBarTranslucent: true,
@@ -36,12 +36,11 @@ export default function NativeNavigation() {
           name="NestedNavigator"
           component={NestedNavigator}
           options={{
-            statusBarColor: 'red',
+            statusBarBackgroundColor: 'red',
             statusBarAnimation: 'slide',
             statusBarStyle: 'dark',
             statusBarHidden: true,
             statusBarTranslucent: true,
-            headerTopInsetEnabled: false,
             navigationBarColor: 'blue',
             navigationBarHidden: true,
           }}
@@ -58,7 +57,7 @@ const NestedNavigator = () => (
   <Tab.Navigator
     screenOptions={
       {
-        //  statusBarColor: 'purple',
+        //  statusBarBackgroundColor: 'purple',
         //  statusBarStyle: 'light',
       }
     }>
@@ -69,7 +68,7 @@ const NestedNavigator = () => (
       component={Home}
       options={
         {
-          // statusBarColor: 'powderblue',
+          // statusBarBackgroundColor: 'powderblue',
           // statusBarStyle: 'dark',
         }
       }
@@ -82,10 +81,9 @@ const InnerStack = createNativeStackNavigator();
 const Inner = () => (
   <InnerStack.Navigator
     screenOptions={{
-      statusBarColor: 'pink',
+      statusBarBackgroundColor: 'pink',
       statusBarAnimation: 'none',
       statusBarStyle: 'auto',
-      headerTopInsetEnabled: false,
       navigationBarColor: 'pink',
       // headerShown: false,
     }}>
@@ -107,8 +105,6 @@ function Home({
     React.useState<NativeStackNavigationOptions['statusBarAnimation']>('slide');
   const [navigationBarColor, setNavigationBarColor] = React.useState('green');
   const [navigationBarHidden, setNavigationBarHidden] = React.useState(false);
-  const [headerTopInsetEnabled, setHeaderTopInsetEnabled] =
-    React.useState(false);
 
   return (
     <ScrollView
@@ -136,7 +132,7 @@ function Home({
         title="Change status bar color"
         onPress={() => {
           navigation.setOptions({
-            statusBarColor,
+            statusBarBackgroundColor: statusBarColor,
           });
           setStatusBarColor(
             statusBarColor === 'mediumseagreen'
@@ -148,12 +144,9 @@ function Home({
       <Button
         title="Change status bar color in parent native-stack"
         onPress={() => {
-          navigation
-            .dangerouslyGetParent()
-            ?.dangerouslyGetParent()
-            ?.setOptions({
-              statusBarColor,
-            });
+          navigation.getParent()?.getParent()?.setOptions({
+            statusBarColor,
+          });
           setStatusBarColor(
             statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen',
           );
@@ -175,15 +168,6 @@ function Home({
             statusBarHidden,
           });
           setStatusBarHidden(!statusBarHidden);
-        }}
-      />
-      <Button
-        title="Change status bar top inset"
-        onPress={() => {
-          navigation.setOptions({
-            headerTopInsetEnabled,
-          });
-          setHeaderTopInsetEnabled(!headerTopInsetEnabled);
         }}
       />
       <Button

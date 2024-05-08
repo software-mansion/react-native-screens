@@ -5,7 +5,7 @@ import { ScrollView, Button, Text } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import {createStackNavigator} from '@react-navigation/stack';
 
@@ -16,20 +16,20 @@ export default function NativeNavigation() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackPresentation: 'modal',
+          presentation: 'modal',
         }}>
         <Stack.Screen
           name="Home"
           component={Home}
           options={{
-            screenOrientation: 'portrait_up',
+            orientation: 'portrait_up',
           }}
         />
         <Stack.Screen
           name="NestedNavigator"
           component={NestedNavigator}
           options={{
-            screenOrientation: 'landscape_right',
+            orientation: 'landscape_right',
           }}
         />
       </Stack.Navigator>
@@ -44,7 +44,7 @@ const NestedNavigator = () => (
   <Tab.Navigator
     screenOptions={
       {
-        // screenOrientation: 'landscape_left',
+        // orientation: 'landscape_left',
       }
     }>
     <Tab.Screen name="Screen1" component={Home} />
@@ -52,7 +52,7 @@ const NestedNavigator = () => (
     <Tab.Screen
       name="Screen3"
       component={Home}
-      // options={{screenOrientation: 'landscape_right'}}
+      // options={{orientation: 'landscape_right'}}
     />
   </Tab.Navigator>
 );
@@ -62,7 +62,7 @@ const InnerStack = createNativeStackNavigator();
 const Inner = () => (
   <InnerStack.Navigator
     screenOptions={{
-      screenOrientation: 'portrait_down',
+      orientation: 'portrait_down',
     }}>
     <InnerStack.Screen name="DeeperHome" component={Home} />
   </InnerStack.Navigator>
@@ -100,7 +100,7 @@ function Home({
         title="Randomly change screen orientation"
         onPress={() => {
           navigation.setOptions({
-            screenOrientation: Math.random() > 0.5 ? 'portrait' : 'landscape',
+            orientation: Math.random() > 0.5 ? 'portrait' : 'landscape',
           });
           setYes(!yes);
         }}

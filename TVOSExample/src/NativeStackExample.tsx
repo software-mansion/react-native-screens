@@ -1,7 +1,7 @@
 import React from 'react';
 import 'react-native/tvos-types.d';
 import {View, Text, Button} from 'react-native';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {STYLES} from './styles';
 
 function Root({navigation}) {

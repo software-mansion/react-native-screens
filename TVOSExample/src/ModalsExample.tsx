@@ -3,7 +3,7 @@ import {View, I18nManager, Button} from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import {STYLES} from './styles';
 
 type StackParamList = {
@@ -49,8 +49,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const ModalsExample = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      headerBackVisible: false,
     }}>
     <Stack.Screen
       name="Main"
@@ -60,12 +59,12 @@ const ModalsExample = (): JSX.Element => (
     <Stack.Screen
       name="Modal"
       component={ModalScreen}
-      options={{stackPresentation: 'modal'}}
+      options={{presentation: 'modal'}}
     />
     <Stack.Screen
       name="FullscreenModal"
       component={ModalScreen}
-      options={{stackPresentation: 'fullScreenModal'}}
+      options={{presentation: 'fullScreenModal'}}
     />
   </Stack.Navigator>
 );
