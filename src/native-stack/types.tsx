@@ -16,6 +16,7 @@ import {
   StyleProp,
   ViewStyle,
   ColorValue,
+  NativeSyntheticEvent,
 } from 'react-native';
 import {
   GestureDetectorBridge,
@@ -305,6 +306,10 @@ export type NativeStackNavigationOptions = {
    * @platform android
    */
   navigationBarHidden?: boolean;
+  /**
+   * A callback that gets called when the current screen is in `formSheet` presentation and its detent has changed.
+   */
+  onSheetDetentChanged?: (e: NativeSyntheticEvent<{ index: number }>) => void;
   /**
    * How should the screen replacing another screen animate. Defaults to `pop`.
    * The following values are currently supported:

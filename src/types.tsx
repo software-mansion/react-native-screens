@@ -217,6 +217,10 @@ export interface ScreenProps extends ViewProps {
     e: NativeSyntheticEvent<{ dismissCount: number }>
   ) => void;
   /**
+   * A callback that gets called when the current screen is in `formSheet` presentation and its detent has changed.
+   */
+  onSheetDetentChanged?: (e: NativeSyntheticEvent<{ index: number }>) => void;
+  /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
   onTransitionProgress?: (

@@ -25,6 +25,10 @@ type HeaderHeightChangeEvent = Readonly<{
   headerHeight: Double;
 }>;
 
+type SheetDetentChangedEvent = Readonly<{
+  index: Int32;
+}>;
+
 type GestureResponseDistanceType = Readonly<{
   start: Float;
   end: Float;
@@ -68,6 +72,7 @@ export interface NativeProps extends ViewProps {
   onTransitionProgress?: DirectEventHandler<TransitionProgressEvent>;
   onGestureCancel?: DirectEventHandler<ScreenEvent>;
   onHeaderBackButtonClicked?: DirectEventHandler<ScreenEvent>;
+  onSheetDetentChanged?: DirectEventHandler<SheetDetentChangedEvent>;
   sheetAllowedDetents?: number[];
   sheetLargestUndimmedDetent?: WithDefault<Int32, -1>;
   sheetGrabberVisible?: WithDefault<boolean, false>;

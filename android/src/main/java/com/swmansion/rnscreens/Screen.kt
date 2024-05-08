@@ -23,16 +23,17 @@ import com.facebook.react.uimanager.events.EventDispatcher
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.State
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
+import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
 @SuppressLint("ViewConstructor")
-class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenContentWrapper.OnLayoutCallback {
+class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
     val sheetBehavior: BottomSheetBehavior<Screen>?
         get() = (layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? BottomSheetBehavior<Screen>
 
-    val reactContext: ReactContext? = context
+    val reactContext: ReactContext = context
     val reactEventDispatcher: EventDispatcher?
         get() = UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)
 
@@ -345,6 +346,11 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
+    internal fun emitOnSheetDetentChanged(detentIndex: Int) {
+        val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
+        reactEventDispatcher?.dispatchEvent(SheetDetentChangedEvent(surfaceId, id, detentIndex))
+    }
+
     enum class StackPresentation {
         PUSH,
         MODAL,
@@ -394,6 +400,21 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
         const val SHEET_FIT_TO_CONTENTS = -1.0
 
         /**
+         * Verifies whether BottomSheetBehavior.State is one of stable states. As unstable states
+         * we consider `STATE_DRAGGING` and `STATE_SETTLING`.
+         *
+         * @param state bottom sheet state to verify
+         */
+        fun isStateStable(state: Int): Boolean = when (state) {
+            BottomSheetBehavior.STATE_HIDDEN,
+            BottomSheetBehavior.STATE_EXPANDED,
+            BottomSheetBehavior.STATE_COLLAPSED,
+            BottomSheetBehavior.STATE_HALF_EXPANDED -> true
+
+            else -> false
+        }
+
+        /**
          * This method maps indices from legal detents array (prop) to appropriate values
          * recognized by BottomSheetBehaviour. In particular used when setting up the initial behaviour
          * of the form sheet.
@@ -431,37 +452,37 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context), ScreenCo
                     }
                 else -> throw IllegalArgumentException("Invalid detentCount/index combination $detentCount / $index")
             }
-    }
 
-    /**
-     * This method maps BottomSheetBehavior.State values to appropriate indices of detents array.
-     *
-     * @param state state of the bottom sheet
-     * @param detentCount length of array with detents fractions
-     *
-     * @throws IllegalArgumentException for invalid state / detentCount combinations
-     */
-    fun detentIndexFromSheetState(@State state: Int, detentCount: Int): Int {
-        return when (detentCount) {
-            1 -> when (state) {
-                BottomSheetBehavior.STATE_HIDDEN -> -1
-                BottomSheetBehavior.STATE_EXPANDED -> 0
+        /**
+         * This method maps BottomSheetBehavior.State values to appropriate indices of detents array.
+         *
+         * @param state state of the bottom sheet
+         * @param detentCount length of array with detents fractions
+         *
+         * @throws IllegalArgumentException for invalid state / detentCount combinations
+         */
+        fun detentIndexFromSheetState(@State state: Int, detentCount: Int): Int {
+            return when (detentCount) {
+                1 -> when (state) {
+                    BottomSheetBehavior.STATE_HIDDEN -> -1
+                    BottomSheetBehavior.STATE_EXPANDED -> 0
+                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                }
+                2 -> when (state) {
+                    BottomSheetBehavior.STATE_HIDDEN -> -1
+                    BottomSheetBehavior.STATE_COLLAPSED -> 0
+                    BottomSheetBehavior.STATE_EXPANDED -> 1
+                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                }
+                3 -> when (state) {
+                    BottomSheetBehavior.STATE_HIDDEN -> -1
+                    BottomSheetBehavior.STATE_COLLAPSED -> 0
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> 1
+                    BottomSheetBehavior.STATE_EXPANDED -> 2
+                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                }
                 else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
             }
-            2 -> when (state) {
-                BottomSheetBehavior.STATE_HIDDEN -> -1
-                BottomSheetBehavior.STATE_COLLAPSED -> 0
-                BottomSheetBehavior.STATE_EXPANDED -> 1
-                else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
-            }
-            3 -> when (state) {
-                BottomSheetBehavior.STATE_HIDDEN -> -1
-                BottomSheetBehavior.STATE_COLLAPSED -> 0
-                BottomSheetBehavior.STATE_HALF_EXPANDED -> 1
-                BottomSheetBehavior.STATE_EXPANDED -> 2
-                else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
-            }
-            else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
         }
     }
 }

@@ -22,6 +22,7 @@ import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
+import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
@@ -260,7 +261,8 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
         ScreenDisappearEvent.EVENT_NAME to MapBuilder.of("registrationName", "onDisappear"),
         HeaderHeightChangeEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderHeightChange"),
         HeaderBackButtonClickedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onHeaderBackButtonClicked"),
-        ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress")
+        ScreenTransitionProgressEvent.EVENT_NAME to MapBuilder.of("registrationName", "onTransitionProgress"),
+        SheetDetentChangedEvent.EVENT_NAME to MapBuilder.of("registrationName", "onSheetDetentChanged"),
     )
 
     protected override fun getDelegate(): ViewManagerDelegate<Screen> = delegate

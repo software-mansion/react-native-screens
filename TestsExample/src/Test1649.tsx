@@ -10,6 +10,7 @@ import {
   View,
   Text,
   ScrollView,
+  NativeSyntheticEvent,
   // TextInput,
 } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
@@ -26,13 +27,15 @@ type NavProp = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
+type AllowedDetentsType = NativeStackNavigationOptions['sheetAllowedDetents'];
+
 /// Sheet options
 // const allowedDetentsAtom = jotai.atom<number[]>([
 //   0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
 // ]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
-const allowedDetentsAtom = jotai.atom<number[]>([0.4, 0.6, 0.9]);
+const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([0.4, 0.6, 0.9]);
 // const allowedDetentsAtom =
 //   jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
 //     'fitToContents',
@@ -122,6 +125,9 @@ export default function App(): JSX.Element {
                 backgroundColor: 'firebrick',
               },
               footerComponent: Footer(),
+              onSheetDetentChanged: (e: NativeSyntheticEvent<{ index: number }>) => {
+                console.log(`onSheetDetentChanged in App with index ${e.nativeEvent.index}`)
+              },
               ...sheetOptions,
             }}
           />
@@ -410,6 +416,11 @@ function CommonSheetContent(): React.JSX.Element {
           }}
         />
       </View>
+      <TouchableOpacity
+        style={{ backgroundColor: 'goldenrod' }}
+        onPress={() => console.log('GH Button clicked')}>
+        <Text>GH BUTTON</Text>
+      </TouchableOpacity>
       {isAdditionalContentVisible && (
         <View style={{ backgroundColor: 'pink' }}>
           <Text>Additional content</Text>

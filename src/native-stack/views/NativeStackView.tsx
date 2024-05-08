@@ -212,6 +212,7 @@ const RouteView = ({
     transitionDuration,
     freezeOnBlur,
     footerComponent,
+    onSheetDetentChanged = null,
   } = options;
 
   let {
@@ -411,6 +412,12 @@ const RouteView = ({
           source: route.key,
           target: stateKey,
         });
+      }}
+      onSheetDetentChanged={(e) => {
+        console.log("onSheetDetentChanged in NativeStackView");
+        if (onSheetDetentChanged) {
+          onSheetDetentChanged(e);
+        }
       }}
       onGestureCancel={() => {
         navigation.emit({

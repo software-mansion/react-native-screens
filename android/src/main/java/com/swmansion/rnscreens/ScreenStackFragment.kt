@@ -35,6 +35,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingFragment
+import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 import kotlin.math.max
@@ -125,8 +126,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
-    private val bottomSheetOnSwipedDownCallback = object : BottomSheetCallback() {
+    private val bottomSheetStateCallback = object : BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (Screen.isStateStable(newState)) {
+                screen.emitOnSheetDetentChanged(Screen.detentIndexFromSheetState(newState, screen.sheetDetents.count()))
+            }
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                 if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
                     parentFragmentManager.commit {
@@ -276,7 +280,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
             // It seems that there is a guard in material implementation that will prevent
             // this callback from being registered multiple times.
-            addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
+            addBottomSheetCallback(bottomSheetStateCallback)
         }
 
         screen.footer?.registerWithSheetBehaviour(behavior)

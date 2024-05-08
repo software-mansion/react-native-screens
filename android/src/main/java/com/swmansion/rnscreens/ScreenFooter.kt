@@ -117,17 +117,8 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
     }
 
     private var footerCallback = object : BottomSheetCallback() {
-        fun isStateStable(state: Int): Boolean = when (state) {
-            STATE_HIDDEN,
-            STATE_EXPANDED,
-            STATE_COLLAPSED,
-            STATE_HALF_EXPANDED -> true
-
-            else -> false
-        }
-
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (!isStateStable(newState)) {
+            if (!Screen.isStateStable(newState)) {
                 return
             }
 
