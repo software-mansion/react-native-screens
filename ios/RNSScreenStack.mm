@@ -923,10 +923,6 @@ namespace react = facebook::react;
 {
   [self emitOnFinishTransitioningEvent];
   [RNSScreenWindowTraits updateWindowTraits];
-  // Because of the bug that caused view to have incorrect dimensions while changing the orientation,
-  // we need to signalize that it needs to be layouted.
-  // see https://github.com/software-mansion/react-native-screens/pull/1970
-  [_controller.view setNeedsLayout];
 }
 #endif
 
@@ -1175,7 +1171,11 @@ namespace react = facebook::react;
 
 - (void)takeSnapshot
 {
-  _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
+  if (_presentedModals.count < 2) {
+    _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
+  } else {
+    _snapshot = [[_presentedModals.lastObject view] snapshotViewAfterScreenUpdates:NO];
+  }
 }
 
 - (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
