@@ -1,10 +1,3 @@
-//
-//  RNSScreenFooter.m
-//  RNScreens
-//
-//  Created by Kacper Kafara on 20/02/2024.
-//
-
 #import "RNSScreenFooter.h"
 #import "RNSScreen.h"
 
@@ -54,30 +47,30 @@
 {
   NSLog(@"Adding constraints between %@ and %@", self, _parent);
   if (_parent != nil) {
-//    [NSLayoutConstraint activateConstraints:@[
-//      [NSLayoutConstraint constraintWithItem:self
-//                                   attribute:NSLayoutAttributeBottom
-//                                   relatedBy:NSLayoutRelationEqual
-//                                      toItem:_parent
-//                                   attribute:NSLayoutAttributeBottom
-//                                  multiplier:1.0
-//                                    constant:0.0],
-      //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft
-      //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeLeft multiplier:1.0
-      //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight
-      //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeRight multiplier:1.0
-      //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop
-      //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeTop multiplier:1.0
-      //      constant:0.0], [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeBottom
-      //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0
-      //      constant:0.0], [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeLeft
-      //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
-      //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeRight
-      //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
-      //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeTop
-      //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0],
-//    ]];
-//    [self setNeedsLayout];
+    //    [NSLayoutConstraint activateConstraints:@[
+    //      [NSLayoutConstraint constraintWithItem:self
+    //                                   attribute:NSLayoutAttributeBottom
+    //                                   relatedBy:NSLayoutRelationEqual
+    //                                      toItem:_parent
+    //                                   attribute:NSLayoutAttributeBottom
+    //                                  multiplier:1.0
+    //                                    constant:0.0],
+    //      [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft
+    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeLeft multiplier:1.0
+    //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight
+    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeRight multiplier:1.0
+    //      constant:0.0], [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop
+    //      relatedBy:NSLayoutRelationEqual toItem:_parent attribute:NSLayoutAttributeTop multiplier:1.0
+    //      constant:0.0], [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeBottom
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0
+    //      constant:0.0], [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeLeft
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
+    //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeRight
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
+    //      [NSLayoutConstraint constraintWithItem:_parent attribute:NSLayoutAttributeTop
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0],
+    //    ]];
+    //    [self setNeedsLayout];
   }
 }
 

@@ -4,8 +4,8 @@
 #import "RCTScrollView.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
-#import "RNSScreenWindowTraits.h"
 #import "RNSScreenContentWrapper.h"
+#import "RNSScreenWindowTraits.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
@@ -34,11 +34,19 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
+constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
+
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
-    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate, CAAnimationDelegate>
+    <RCTRNSScreenViewProtocol,
+     UIAdaptivePresentationControllerDelegate,
+     CAAnimationDelegate,
+     UISheetPresentationControllerDelegate>
 #else
-    <UIAdaptivePresentationControllerDelegate, RNSScreenContentWrapperDelegate, RCTInvalidating>
+    <UIAdaptivePresentationControllerDelegate,
+     RNSScreenContentWrapperDelegate,
+     RCTInvalidating,
+     UISheetPresentationControllerDelegate>
 #endif
 
 - (void)updateFooterLayout;
@@ -46,7 +54,6 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSScreenView {
-  __weak RCTBridge *_bridge;
   __weak RCTScrollView *_sheetsScrollView;
   __weak RNSScreenFooter *_footer;
   CGSize _keyboardSize;
@@ -105,7 +112,7 @@ namespace react = facebook::react;
   _sheetsScrollView = nil;
   _footer = nil;
   _didSetSheetAllowedDetentsOnController = NO;
-//  self.translatesAutoresizingMaskIntoConstraints = true;
+  //  self.translatesAutoresizingMaskIntoConstraints = true;
 }
 
 - (UIViewController *)reactViewController
@@ -146,16 +153,16 @@ namespace react = facebook::react;
 
 - (void)updateFooterLayout
 {
-//  if (_footer != nil && _footer.subviews.count > 0) {
-//    CGPoint footerOrigin = _footer.frame.origin;
-//    CGSize targetFooterSize = _footer.subviews[0].frame.size;
-//    RCTView *child = (RCTView *)_footer.subviews[0];
-//    footerOrigin.y -= targetFooterSize.height + child.reactCompoundInsets.bottom - child.reactPaddingInsets.bottom +
-//        _keyboardSize.height;
-//    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width, targetFooterSize.height);
-//    NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame));
-//    _footer.frame = newFooterFrame;
-//  }
+  //  if (_footer != nil && _footer.subviews.count > 0) {
+  //    CGPoint footerOrigin = _footer.frame.origin;
+  //    CGSize targetFooterSize = _footer.subviews[0].frame.size;
+  //    RCTView *child = (RCTView *)_footer.subviews[0];
+  //    footerOrigin.y -= targetFooterSize.height + child.reactCompoundInsets.bottom - child.reactPaddingInsets.bottom +
+  //        _keyboardSize.height;
+  //    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width,
+  //    targetFooterSize.height); NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame)); _footer.frame =
+  //    newFooterFrame;
+  //  }
 }
 
 - (void)layoutSubviews
@@ -413,9 +420,9 @@ namespace react = facebook::react;
   if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _didSetSheetAllowedDetentsOnController == YES) {
     return;
   }
-  
+
   _didSetSheetAllowedDetentsOnController = YES;
-  
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
   if (@available(iOS 16.0, *)) {
@@ -425,14 +432,13 @@ namespace react = facebook::react;
       RCTLogError(@"[RNScreens] sheetPresentationController is null when attempting to set allowed detents");
       return;
     }
-    
+
     if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == -1) {
-      auto detents = [self detensFromMaxHeights:@[[NSNumber numberWithFloat:reactFrame.size.height]]];
+      auto detents = [self detensFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height] ]];
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
     }
   }
 #endif // Check for iOS >= 16
-  
 }
 
 - (void)addSubview:(UIView *)view
@@ -452,8 +458,9 @@ namespace react = facebook::react;
     //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
     //    ]];
   }
-  
-  if ([view isKindOfClass:RNSScreenContentWrapper.class] && self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+
+  if ([view isKindOfClass:RNSScreenContentWrapper.class] &&
+      self.stackPresentation == RNSScreenStackPresentationFormSheet) {
     auto contentWrapper = (RNSScreenContentWrapper *)view;
     contentWrapper.delegate = self;
   }
@@ -570,6 +577,20 @@ namespace react = facebook::react;
   if (self.onDisappear) {
     self.onDisappear(nil);
   }
+#endif
+}
+
+- (void)notifySheetDetentChanged:(NSInteger)newDetentIndex
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  // TODO: Implement this on Fabric
+#else
+  if (self.onSheetDetentChanged) {
+    self.onSheetDetentChanged(@{
+      @"index" : @0,
+    });
+  }
+
 #endif
 }
 
@@ -863,6 +884,18 @@ namespace react = facebook::react;
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+- (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
+    (UISheetPresentationController *)sheetPresentationController
+{
+  UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
+
+  [self notifySheetDetentChanged:0];
+}
+#endif
+
 /**
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
@@ -882,15 +915,19 @@ namespace react = facebook::react;
     if (sheet == nil) {
       return;
     }
+    sheet.delegate = self;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
     if (_sheetAllowedDetents.count > 0) {
       if (@available(iOS 16.0, *)) {
-        if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == -1) {
-          // We do not set anything here, we will set once React computed layout of our React's children, namely RNSScreenContentWrapper,
-          // which in case of formSheet presentation style does have exactly the same frame as actual content.
+        if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
+          // We do not set anything here, we will set once React computed layout of our React's children, namely
+          // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
+          // actual content.
         } else {
-          [self setAllowedDetentsForSheet:sheet to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents] animate:NO];
+          [self setAllowedDetentsForSheet:sheet
+                                       to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents]
+                                  animate:NO];
         }
       }
     } else
@@ -921,7 +958,7 @@ namespace react = facebook::react;
         }
       } else {
         float first = _sheetAllowedDetents[0].floatValue;
-        if (first == -1) {
+        if (first == SHEET_FIT_TO_CONTENTS) {
           RCTLogError(@"Unsupported on iOS versions below 16");
         } else if (first < 1.0) {
           [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
@@ -994,11 +1031,11 @@ namespace react = facebook::react;
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                         if (frac.integerValue == -1) {
-                                                           return 100;
-                                                         } else {
-                                                           return ctx.maximumDetentValue * frac.floatValue;
-                                                         }
+                                                     if (frac.integerValue == -1) {
+                                                       return 100;
+                                                     } else {
+                                                       return ctx.maximumDetentValue * frac.floatValue;
+                                                     }
                                                    }]];
     ++detentIndex;
   }
@@ -1010,7 +1047,7 @@ namespace react = facebook::react;
 {
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
       [NSMutableArray arrayWithCapacity:maxHeights.count];
-  
+
   int detentIndex = 0;
   for (NSNumber *height in maxHeights) {
     NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
@@ -1018,13 +1055,12 @@ namespace react = facebook::react;
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                         return MIN(ctx.maximumDetentValue, height.floatValue);
+                                                     return MIN(ctx.maximumDetentValue, height.floatValue);
                                                    }]];
     ++detentIndex;
   }
   return customDetents;
 }
-
 
 #endif // Check for iOS >= 16
 
@@ -1863,6 +1899,7 @@ RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onSheetDetentChanged, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
