@@ -41,6 +41,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     <RCTRNSScreenViewProtocol,
      UIAdaptivePresentationControllerDelegate,
      CAAnimationDelegate,
+     RNSScreenContentWrapperDelegate,
      UISheetPresentationControllerDelegate>
 #else
     <UIAdaptivePresentationControllerDelegate,
@@ -1108,11 +1109,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   return _config != nil;
 }
 
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
-}
-
 + (BOOL)shouldBeRecycled
 {
   return NO;
@@ -1193,12 +1189,11 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
-    [self setSheetAllowedDetents:[RNSConvert RNSScreenDetentTypeFromAllowedDetents:newScreenProps.sheetAllowedDetents]];
+    [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];
   }
 
   if (newScreenProps.sheetLargestUndimmedDetent != oldScreenProps.sheetLargestUndimmedDetent) {
-    [self setSheetLargestUndimmedDetent:
-              [RNSConvert RNSScreenDetentTypeFromLargestUndimmedDetent:newScreenProps.sheetLargestUndimmedDetent]];
+    [self setSheetLargestUndimmedDetent:[NSNumber numberWithInt:newScreenProps.sheetLargestUndimmedDetent]];
   }
 #endif // !TARGET_OS_TV
 
@@ -1213,16 +1208,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 
   if (newScreenProps.replaceAnimation != oldScreenProps.replaceAnimation) {
     [self setReplaceAnimation:[RNSConvert RNSScreenReplaceAnimationFromCppEquivalent:newScreenProps.replaceAnimation]];
-  }
-
-  if (_stackPresentation == RNSScreenStackPresentationFormSheet) {
-    if (newScreenProps.sheetCustomDetents != oldScreenProps.sheetCustomDetents) {
-      [self setSheetCustomDetents:[RNSConvert arrayFromVector:newScreenProps.sheetCustomDetents]];
-    }
-    if (newScreenProps.sheetCustomLargestUndimmedDetent != oldScreenProps.sheetCustomLargestUndimmedDetent) {
-      [self
-          setSheetCustomLargestUndimmedDetent:[NSNumber numberWithInt:newScreenProps.sheetCustomLargestUndimmedDetent]];
-    }
   }
 
   [super updateProps:props oldProps:oldProps];

@@ -19,9 +19,7 @@ namespace react = facebook::react;
 
 + (RNSScreenSwipeDirection)RNSScreenSwipeDirectionFromCppEquivalent:(react::RNSScreenSwipeDirection)swipeDirection;
 
-+ (RNSScreenDetentType)RNSScreenDetentTypeFromAllowedDetents:(react::RNSScreenSheetAllowedDetents)allowedDetents;
-
-+ (RNSScreenDetentType)RNSScreenDetentTypeFromLargestUndimmedDetent:(react::RNSScreenSheetLargestUndimmedDetent)detent;
++ (NSArray<NSNumber *> *)detentFractionsArrayFromVector:(const std::vector<react::Float> &)detents;
 
 + (NSDictionary *)gestureResponseDistanceDictFromCppStruct:
     (const react::RNSScreenGestureResponseDistanceStruct &)gestureResponseDistance;
