@@ -589,6 +589,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   if (self.onSheetDetentChanged) {
     self.onSheetDetentChanged(@{
       @"index" : @(newDetentIndex),
+      @"isStable" : @(YES),
     });
   }
 #endif
