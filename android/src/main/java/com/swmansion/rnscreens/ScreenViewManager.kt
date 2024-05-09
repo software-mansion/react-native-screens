@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.view.ContextThemeWrapper
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
@@ -103,6 +104,15 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
             null, "pop" -> Screen.ReplaceAnimation.POP
             "push" -> Screen.ReplaceAnimation.PUSH
             else -> throw JSApplicationIllegalArgumentException("Unknown replace animation type $animation")
+        }
+    }
+
+    @ReactProp(name = "materialVersion")
+    override fun setMaterialVersion(view: Screen, version: Int?) {
+        if (version == 3) {
+            view.themedContext = ContextThemeWrapper(view.context, R.style.Material3Theme)
+        } else {
+            view.themedContext = ContextThemeWrapper(view.context, R.style.Material2Theme)
         }
     }
 

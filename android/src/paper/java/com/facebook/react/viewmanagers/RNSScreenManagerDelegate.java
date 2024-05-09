@@ -23,6 +23,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
   @Override
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
+      case "materialVersion":
+        mViewManager.setMaterialVersion(view, value == null ? 3 : ((Double) value).intValue());
+        break;
       case "sheetAllowedDetents":
         mViewManager.setSheetAllowedDetents(view, (String) value);
         break;

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -113,7 +114,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
         view?.addView(recycleView(screen))
 
-        appBarLayout = context?.let { AppBarLayout(it) }?.apply {
+        appBarLayout = context?.let { AppBarLayout(screen.themedContext) }?.apply {
             // By default AppBarLayout will have a background color set but since we cover the whole layout
             // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
             // role. On top of that it breaks screens animations when alfa offscreen compositing is off

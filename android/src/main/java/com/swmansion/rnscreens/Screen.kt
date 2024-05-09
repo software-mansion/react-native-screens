@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
 import android.util.TypedValue
+import android.view.ContextThemeWrapper
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
@@ -20,6 +21,7 @@ import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 
 @SuppressLint("ViewConstructor")
 class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
+    lateinit var themedContext: ContextThemeWrapper
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 

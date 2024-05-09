@@ -165,6 +165,12 @@ export interface ScreenProps extends ViewProps {
    */
   nativeBackButtonDismissalEnabled?: boolean;
   /**
+   * Sets the version of Material design that the screen should use. Defaults to `3`.
+   * 
+   * @platform android
+   */
+  materialVersion?: 2 | 3;
+  /**
    * Sets the navigation bar color. Defaults to initial status bar color.
    *
    * @platform android

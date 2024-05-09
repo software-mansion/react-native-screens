@@ -9,8 +9,6 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.StackAnimation
 import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 import java.util.Collections
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 class ScreenStack(context: Context?) : ScreenContainer(context) {
     private val stack = ArrayList<ScreenStackFragmentWrapper>()

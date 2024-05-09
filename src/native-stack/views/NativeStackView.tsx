@@ -202,9 +202,14 @@ const RouteView = ({
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureResponseDistance,
+    materialVersion,
     stackAnimation,
     stackPresentation = 'push',
   } = options;
+
+  if (materialVersion !== 2 && materialVersion !== 3) {
+    materialVersion = 3;
+  }
 
   if (swipeDirection === 'vertical') {
     // for `vertical` direction to work, we need to set `fullScreenSwipeEnabled` to `true`
@@ -297,6 +302,7 @@ const RouteView = ({
       homeIndicatorHidden={homeIndicatorHidden}
       gestureEnabled={isAndroid ? false : gestureEnabled}
       gestureResponseDistance={gestureResponseDistance}
+      materialVersion={materialVersion}
       nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
       navigationBarColor={navigationBarColor}
       navigationBarHidden={navigationBarHidden}
