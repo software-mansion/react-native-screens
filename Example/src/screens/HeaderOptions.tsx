@@ -40,8 +40,9 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
   );
 };
 
-type HeaderItemPosition = 'left' | 'center' | 'right';
 type HeaderTitleAlignment = 'left' | 'center';
+type HeaderItemPosition = 'right' | 'center' | 'left';
+type BackButtonDisplayMode = 'minimal' | 'default' | 'generic';
 
 interface SettingsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Settings'>;
@@ -57,9 +58,11 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
     useState<HeaderTitleAlignment>('left');
   const [headerLargeTitle, setHeaderLargeTitle] = useState(true);
   const [headerItem, setHeaderItem] = useState<HeaderItemPosition>('right');
-  const [headerBackTitle, setHeaderBackTitle] = useState('Back');
   const [headerShadowVisible, setHeaderShadowVisible] = useState(false);
   const [headerTransparent, setHeaderTransparent] = useState(false);
+  const [backButtonDisplayMode, setBackButtonDisplayMode] =
+    useState<BackButtonDisplayMode>('default');
+  const [headerBackTitle, setHeaderBackTitle] = useState('Own Back');
 
   const square = (props: { tintColor?: string }) => (
     <Square {...props} color="green" size={20} />
@@ -71,6 +74,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
       headerBackTitleVisible: backButtonVisible, // iOS
       headerLargeTitle, // iOS
       headerBackTitle, // iOS
+      backButtonDisplayMode, // iOS
       headerShown,
       headerTitleAlign, // Android
       headerRight: headerItem === 'right' ? square : undefined,
@@ -87,6 +91,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
     headerBackTitle,
     headerItem,
     headerTitleAlign,
+    backButtonDisplayMode,
     headerShown,
     headerShadowVisible,
     headerTransparent,
@@ -158,6 +163,12 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
         items={['left', 'center', 'right']}
       />
       <Text style={styles.heading}>iOS only</Text>
+      <SettingsPicker<BackButtonDisplayMode>
+        label="Back button display mode"
+        value={backButtonDisplayMode}
+        onValueChange={setBackButtonDisplayMode}
+        items={['default', 'generic', 'minimal']}
+      />
       <SettingsSwitch
         label="Header large title"
         value={headerLargeTitle}

@@ -13,6 +13,8 @@ type OnAttachedEvent = Readonly<{}>;
 // eslint-disable-next-line @typescript-eslint/ban-types
 type OnDetachedEvent = Readonly<{}>;
 
+type BackButtonDisplayMode = 'minimal' | 'default' | 'generic';
+
 export interface NativeProps extends ViewProps {
   onAttached?: DirectEventHandler<OnAttachedEvent>;
   onDetached?: DirectEventHandler<OnDetachedEvent>;
@@ -39,6 +41,7 @@ export interface NativeProps extends ViewProps {
   titleFontWeight?: string;
   titleColor?: ColorValue;
   disableBackButtonMenu?: boolean;
+  backButtonDisplayMode?: WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean;
   backButtonInCustomView?: boolean;
   // TODO: implement this props on iOS

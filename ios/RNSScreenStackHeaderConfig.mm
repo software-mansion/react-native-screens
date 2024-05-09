@@ -19,6 +19,7 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
+#import "RNSConvert.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
@@ -511,7 +512,13 @@ namespace react = facebook::react;
                                                                              action:nil];
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
+  auto overrideBackButtonItem =
+      config.disableBackButtonMenu; // when config.disableBackButtonMenu is true we need to set backButtomItem
+  prevItem.backButtonTitle = resolvedBackTitle;
+
+  if (@available(iOS 14.0, *)) {
+    prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
+  }
 
   if (config.isBackTitleVisible) {
     if ((config.backTitleFontFamily &&
@@ -521,7 +528,7 @@ namespace react = facebook::react;
          // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
          ![config.backTitleFontFamily isEqual:@"System"]) ||
         config.backTitleFontSize) {
-      isBackButtonCustomized = YES;
+      overrideBackButtonItem = YES;
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
       if (config.backTitleFontFamily) {
@@ -542,17 +549,15 @@ namespace react = facebook::react;
     // but it should still appear in back menu (if one is enabled)
 
     // When backBarButtonItem's title is null, back menu will use value
-    // of backButtonTitle
+    // of backButtonTitle from prevItem
     [backBarButtonItem setTitle:nil];
-    isBackButtonCustomized = YES;
-    prevItem.backButtonTitle = resolvedBackTitle;
   }
 
   // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
   // as assigning one will override the native behavior of automatically shortening
   // the title to "Back" or hide the back title if there's not enough space.
   // See: https://github.com/software-mansion/react-native-screens/issues/1589
-  if (isBackButtonCustomized) {
+  if (overrideBackButtonItem) {
     prevItem.backBarButtonItem = backBarButtonItem;
   }
 
@@ -791,23 +796,6 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
-- (NSNumber *)getFontSizePropValue:(int)value
-{
-  if (value > 0)
-    return [NSNumber numberWithInt:value];
-  return nil;
-}
-
-- (UISemanticContentAttribute)getDirectionPropValue:(react::RNSScreenStackHeaderConfigDirection)direction
-{
-  switch (direction) {
-    case react::RNSScreenStackHeaderConfigDirection::Rtl:
-      return UISemanticContentAttributeForceRightToLeft;
-    case react::RNSScreenStackHeaderConfigDirection::Ltr:
-      return UISemanticContentAttributeForceLeftToRight;
-  }
-}
-
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSScreenStackHeaderConfigProps>(_props);
@@ -834,7 +822,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _titleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontFamily);
   }
   _titleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontWeight);
-  _titleFontSize = [self getFontSizePropValue:newScreenProps.titleFontSize];
+  _titleFontSize = [RNSConvert getFontSizePropValue:newScreenProps.titleFontSize];
   _hideShadow = newScreenProps.hideShadow;
 
   _largeTitle = newScreenProps.largeTitle;
@@ -842,19 +830,20 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _largeTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontFamily);
   }
   _largeTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontWeight);
-  _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
+  _largeTitleFontSize = [RNSConvert getFontSizePropValue:newScreenProps.largeTitleFontSize];
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
 
   _backTitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitle);
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
     _backTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitleFontFamily);
   }
-  _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
+  _backTitleFontSize = [RNSConvert getFontSizePropValue:newScreenProps.backTitleFontSize];
   _hideBackButton = newScreenProps.hideBackButton;
   _disableBackButtonMenu = newScreenProps.disableBackButtonMenu;
+  _backButtonDisplayMode = [RNSConvert getBackButtonDisplayModePropValue:newScreenProps.backButtonDisplayMode];
 
   if (newScreenProps.direction != oldScreenProps.direction) {
-    _direction = [self getDirectionPropValue:newScreenProps.direction];
+    _direction = [RNSConvert getDirectionPropValue:newScreenProps.direction];
   }
 
   _backTitleVisible = newScreenProps.backTitleVisible;
@@ -945,7 +934,9 @@ RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
-// `hidden` is an UIView property, we need to use different name internally
+RCT_EXPORT_VIEW_PROPERTY(
+    backButtonDisplayMode,
+    UINavigationItemBackButtonDisplayMode) // `hidden` is an UIView property, we need to use different name internally
 RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
@@ -1000,6 +991,16 @@ RCT_ENUM_CONVERTER(
       @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
     }),
     UISemanticContentAttributeUnspecified,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    UINavigationItemBackButtonDisplayMode,
+    (@{
+      @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
+      @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
+      @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
+    }),
+    UINavigationItemBackButtonDisplayModeDefault,
     integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)
