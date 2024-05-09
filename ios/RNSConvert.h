@@ -10,7 +10,7 @@ namespace react = facebook::react;
 
 + (UISemanticContentAttribute)getDirectionPropValue:(react::RNSScreenStackHeaderConfigDirection)direction;
 
-+ (UINavigationItemBackButtonDisplayMode)getBackButtonDisplayModePropValue:
++ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode;
 
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
