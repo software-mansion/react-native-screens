@@ -3,14 +3,8 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 @implementation RNSConvert
 
-+ (NSNumber *)getFontSizePropValue:(int)value
-{
-  if (value > 0)
-    return [NSNumber numberWithInt:value];
-  return nil;
-}
-
-+ (UISemanticContentAttribute)getDirectionPropValue:(react::RNSScreenStackHeaderConfigDirection)direction
++ (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigDirection)direction
 {
   switch (direction) {
     case react::RNSScreenStackHeaderConfigDirection::Rtl:
@@ -20,7 +14,7 @@
   }
 }
 
-+ (UINavigationItemBackButtonDisplayMode)getBackButtonDisplayModePropValue:
++ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode
 {
   switch (backButtonDisplayMode) {

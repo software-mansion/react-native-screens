@@ -6,9 +6,8 @@ namespace react = facebook::react;
 
 @interface RNSConvert : NSObject
 
-+ (NSNumber *)getFontSizePropValue:(int)value;
-
-+ (UISemanticContentAttribute)getDirectionPropValue:(react::RNSScreenStackHeaderConfigDirection)direction;
++ (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigDirection)direction;
 
 + (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
     (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode;

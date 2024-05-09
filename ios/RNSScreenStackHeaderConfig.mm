@@ -791,6 +791,13 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 }
 
+- (NSNumber *)getFontSizePropValue:(int)value
+{
+  if (value > 0)
+    return [NSNumber numberWithInt:value];
+  return nil;
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
@@ -822,7 +829,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _titleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontFamily);
   }
   _titleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.titleFontWeight);
-  _titleFontSize = [RNSConvert getFontSizePropValue:newScreenProps.titleFontSize];
+  _titleFontSize = [self getFontSizePropValue:newScreenProps.titleFontSize];
   _hideShadow = newScreenProps.hideShadow;
 
   _largeTitle = newScreenProps.largeTitle;
@@ -830,20 +837,21 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
     _largeTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontFamily);
   }
   _largeTitleFontWeight = RCTNSStringFromStringNilIfEmpty(newScreenProps.largeTitleFontWeight);
-  _largeTitleFontSize = [RNSConvert getFontSizePropValue:newScreenProps.largeTitleFontSize];
+  _largeTitleFontSize = [self getFontSizePropValue:newScreenProps.largeTitleFontSize];
   _largeTitleHideShadow = newScreenProps.largeTitleHideShadow;
 
   _backTitle = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitle);
   if (newScreenProps.backTitleFontFamily != oldScreenProps.backTitleFontFamily) {
     _backTitleFontFamily = RCTNSStringFromStringNilIfEmpty(newScreenProps.backTitleFontFamily);
   }
-  _backTitleFontSize = [RNSConvert getFontSizePropValue:newScreenProps.backTitleFontSize];
+  _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
   _hideBackButton = newScreenProps.hideBackButton;
   _disableBackButtonMenu = newScreenProps.disableBackButtonMenu;
-  _backButtonDisplayMode = [RNSConvert getBackButtonDisplayModePropValue:newScreenProps.backButtonDisplayMode];
+  _backButtonDisplayMode =
+      [RNSConvert UINavigationItemBackButtonDisplayModeFromCppEquivalent:newScreenProps.backButtonDisplayMode];
 
   if (newScreenProps.direction != oldScreenProps.direction) {
-    _direction = [RNSConvert getDirectionPropValue:newScreenProps.direction];
+    _direction = [RNSConvert UISemanticContentAttributeFromCppEquivalent:newScreenProps.direction];
   }
 
   _backTitleVisible = newScreenProps.backTitleVisible;
