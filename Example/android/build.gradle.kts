@@ -1,14 +1,12 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext {
-        buildToolsVersion = "33.0.0"
-        minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
-        ndkVersion = "23.1.7779620"
-        kotlinVersion = "1.8.22"
-    }
+    val buildToolsVersion: String by extra("33.0.0")
+    val compileSdkVersion: Int by extra(33)
+    val minSdkVersion: Int by extra(21)
+    val targetSdkVersion: Int by extra(33)
+    val ndkVersion: String by extra("23.1.7779620")
+    val kotlinVersion: String by extra("1.8.22")
     repositories {
         google()
         mavenCentral()
@@ -28,7 +26,7 @@ buildscript {
 allprojects {
     repositories {
         maven {
-            url("$rootDir/../node_modules/detox/Detox-android")
+            url = uri("$rootDir/../node_modules/detox/Detox-android")
         }
     }
 }

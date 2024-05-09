@@ -1,5 +1,9 @@
-apply plugin: "com.android.application"
-apply plugin: "com.facebook.react"
+import groovy.lang.Closure
+
+plugins {
+    id ("com.android.application")
+    id ("com.facebook.react")
+}
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -53,7 +57,7 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode
  */
-def enableProguardInReleaseBuilds = false
+val enableProguardInReleaseBuilds = false
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -66,70 +70,71 @@ def enableProguardInReleaseBuilds = false
  * give correct results when using with locales other than en-US. Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
+val jscFlavor = "org.webkit:android-jsc:+"
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
-
-    compileSdkVersion rootProject.ext.compileSdkVersion
-
-    namespace "com.swmansion.rnscreens.example"
+    ndkVersion = rootProject.extra["ndkVersion"] as String
+    compileSdkVersion(rootProject.extra["compileSdkVersion"] as Int)
+    namespace = "com.swmansion.rnscreens.example"
     defaultConfig {
-        applicationId "com.swmansion.rnscreens.example"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-        testBuildType System.getProperty('testBuildType', 'release')
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        applicationId = "com.swmansion.rnscreens.example"
+        minSdkVersion(rootProject.extra["minSdkVersion"] as Int)
+        targetSdkVersion(rootProject.extra["targetSdkVersion"] as Int)
+        versionCode = 1
+        versionName = "1.0"
+        testBuildType = System.getProperty("testBuildType", "release")
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
-        debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
         }
-        release {
-            storeFile file("rns-example-keystore.jks")
-            storePassword "12345678"
-            keyAlias "react-native-screens-example"
-            keyPassword "12345678"
+        create("release") {
+            storeFile = file("rns-example-keystore.jks")
+            storePassword = "12345678"
+            keyAlias = "react-native-screens-example"
+            keyPassword = "12345678"
         }
     }
     buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
         }
-        release {
+        getByName("release") {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            isMinifyEnabled = enableProguardInReleaseBuilds
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
 
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.getByName("release")
             // Detox-specific additions to pro-guard
-            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+            proguardFile("${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro")
         }
     }
 }
+val hermesEnabled: String by project
 
 dependencies {
-    androidTestImplementation('com.wix:detox:+') {
+    androidTestImplementation("com.wix:detox:+") {
         // Both rn-screens and detox are using this class
         // https://github.com/wix/Detox/issues/2848
-        exclude group: 'com.google.android.material'
+        exclude(group = "com.google.android.material")
     }
-    implementation "androidx.appcompat:appcompat:1.6.1"
-  
+    implementation("androidx.appcompat:appcompat:1.6.1")
+
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
-        implementation jscFlavor
+        implementation(jscFlavor)
     }
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply (from = "../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+val applyNativeModules: Closure<Any> = extra.get("applyNativeModulesAppBuildGradle") as Closure<Any>
+applyNativeModules(project)
