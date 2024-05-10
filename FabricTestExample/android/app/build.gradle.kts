@@ -1,6 +1,10 @@
-apply plugin: "com.android.application"
-apply plugin: "org.jetbrains.kotlin.android"
-apply plugin: "com.facebook.react"
+import groovy.lang.Closure
+
+plugins {
+    id ("com.android.application")
+    id ("org.jetbrains.kotlin.android")
+    id ("com.facebook.react")
+}
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -54,7 +58,7 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+val enableProguardInReleaseBuilds = false
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -67,42 +71,43 @@ def enableProguardInReleaseBuilds = false
  * give correct results when using with locales other than en-US. Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
+val jscFlavor = "org.webkit:android-jsc:+"
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
-    compileSdk rootProject.ext.compileSdkVersion
+    ndkVersion = rootProject.extra["ndkVersion"] as String
+    compileSdk = rootProject.extra["compileSdkVersion"] as Int
+    buildToolsVersion = rootProject.extra["buildToolsVersion"] as String
 
-    namespace "com.fabrictestexample"
+    namespace = "com.fabrictestexample"
     defaultConfig {
-        applicationId "com.fabrictestexample"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.fabrictestexample"
+        minSdkVersion(rootProject.extra["minSdkVersion"] as Int)
+        targetSdkVersion(rootProject.extra["targetSdkVersion"] as Int)
+        versionCode = 1
+        versionName = "1.0"
     }
     signingConfigs {
-        debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
         }
     }
     buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
         }
-        release {
+        getByName("release") {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = enableProguardInReleaseBuilds
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
 }
+val hermesEnabled: String by project
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
@@ -111,8 +116,10 @@ dependencies {
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
-        implementation jscFlavor
+        implementation(jscFlavor)
     }
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply (from = "../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+val applyNativeModules: Closure<Any> = extra.get("applyNativeModulesAppBuildGradle") as Closure<Any>
+applyNativeModules(project)
