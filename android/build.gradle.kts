@@ -3,6 +3,7 @@ import java.util.Properties
 
 plugins {
     id ("com.android.library")
+    id("kotlin-android")
 }
 
 val rnsDefaultTargetSdkVersion: Int by extra(34)
@@ -27,7 +28,6 @@ if (project == rootProject) {
 if (isNewArchitectureEnabled()) {
     apply(plugin = "com.facebook.react")
 }
-apply (plugin = "kotlin-android")
 
 fun reactNativeArchitectures(): List<String> {
     val value = project.properties["reactNativeArchitectures"] as? String
