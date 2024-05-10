@@ -5,7 +5,7 @@ import { FullWindowOverlay } from 'react-native-screens';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 
 function Home({
@@ -67,7 +67,7 @@ export default function App() {
         <NativeStack.Screen
           name="Modal"
           component={ModalScreen}
-          options={{ stackPresentation: 'modal' }}
+          options={{ presentation: 'modal' }}
         />
       </NativeStack.Navigator>
     </NavigationContainer>

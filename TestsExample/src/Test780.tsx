@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // import {createStackNavigator} from '@react-navigation/stack';
 import {
   NavigationContainer,
@@ -88,7 +88,7 @@ const App = () => {
     <NavigationContainer>
       <MainStack.Navigator
         screenOptions={{
-          stackPresentation: 'modal',
+          presentation: 'modal',
         }}>
         <MainStack.Screen name="home" component={HomeStack} />
         <MainStack.Screen name="modalScreen" component={ModalStack} />

@@ -1,9 +1,8 @@
 import React from 'react';
 import { Button, Text, View } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function HomeScreen({ navigation }) {
   return (
@@ -66,9 +65,7 @@ function MainStackScreen() {
 
 function TabsScreen() {
   return (
-    <Tabs.Navigator
-      detachInactiveScreens={true}
-      screenOptions={{ detachPreviousScreen: false }}>
+    <Tabs.Navigator detachInactiveScreens={true}>
       <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Second" component={SecondScreen} />
     </Tabs.Navigator>

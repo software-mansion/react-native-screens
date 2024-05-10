@@ -4,8 +4,8 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-  useHeaderHeight,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +13,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={{ stackPresentation: 'formSheet', headerShown: false }}>
+        screenOptions={{ presentation: 'formSheet', headerShown: false }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>

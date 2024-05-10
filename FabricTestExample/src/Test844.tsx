@@ -4,7 +4,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 const defaultOptions = {
   headerHideShadow: true,
@@ -88,7 +88,7 @@ export default function App(): JSX.Element {
           component={ModalNavigator}
           options={{
             headerShown: false,
-            stackPresentation: 'containedModal',
+            presentation: 'containedModal',
           }}
         />
       </Stack.Navigator>

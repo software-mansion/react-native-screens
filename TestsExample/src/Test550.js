@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, ScrollView, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function HomeScreen({ navigation }) {
   return (
@@ -24,7 +24,7 @@ function RootStackScreen() {
   return (
     <RootStack.Navigator
       screenOptions={{
-        backButtonImage: require('../assets/backButton.png'),
+        headerBackImageSource: require('../assets/backButton.png'),
         headerBackTitleVisible: false,
         headerTintColor: 'red',
       }}>

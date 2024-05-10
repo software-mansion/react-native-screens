@@ -6,7 +6,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -55,7 +55,7 @@ const App = () => {
         Native Navigation
       </Text>
       <NavigationContainer>
-        <NStack.Navigator screenOptions={{ stackAnimation: 'fade' }}>
+        <NStack.Navigator screenOptions={{ animation: 'fade' }}>
           <NStack.Screen component={Home} name="HOME" />
           <NStack.Screen component={Details} name="DETAILS" />
         </NStack.Navigator>
