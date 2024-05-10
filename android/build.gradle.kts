@@ -5,23 +5,11 @@ plugins {
     id ("com.android.library")
 }
 
-buildscript {
-    val rnsDefaultTargetSdkVersion: Int by extra(34)
-    val rnsDefaultCompileSdkVersion: Int by extra(34)
-    val rnsDefaultMinSdkVersion: Int by extra(1)
-    val rnsDefaultKotlinVersion: String by extra("1.8.0")
-    val safeExtGet: (String, String) -> Any? by extra ({ prop: String, fallback: String -> rootProject.extra[prop] ?: extra[fallback] })
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:4.2.2")
-        classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet("kotlinVersion", "rnsDefaultKotlinVersion")}")
-        classpath ("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
-    }
-}
-val safeExtGet: (String, Any?) -> Any? by extra
+val rnsDefaultTargetSdkVersion: Int by extra(34)
+val rnsDefaultCompileSdkVersion: Int by extra(34)
+val rnsDefaultMinSdkVersion: Int by extra(1)
+val rnsDefaultKotlinVersion: String by extra("1.8.0")
+val safeExtGet: (String, String) -> Any? by extra ({ prop: String, fallback: String -> rootProject.extra[prop] ?: extra[fallback] })
 
 fun isNewArchitectureEnabled(): Boolean {
     // To opt-in for the New Architecture, you can either:
