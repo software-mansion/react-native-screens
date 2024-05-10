@@ -1,6 +1,11 @@
 #import <React/RCTViewManager.h>
 #import <UIKit/UIKit.h>
-#import "RCTView.h"
+
+#if RCT_NEW_ARCH_ENABLED
+#import <React/RCTViewComponentView.h>
+#else
+#import <React/RCTView.h>
+#endif // RCT_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,7 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RNSScreenContentWrapper : RCTView
+@interface RNSScreenContentWrapper :
+#ifdef RCT_NEW_ARCH_ENABLED
+    RCTViewComponentView
+#else
+    RCTView
+#endif
 
 @property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
 
