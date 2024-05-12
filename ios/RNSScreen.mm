@@ -545,10 +545,16 @@ namespace react = facebook::react;
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
   if (_preventNativeDismiss) {
-    [self notifyDismissCancelledWithDismissCount:1];
     return NO;
   }
   return _gestureEnabled;
+}
+
+- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
+{
+  if (_preventNativeDismiss) {
+    [self notifyDismissCancelledWithDismissCount:1];
+  }
 }
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
