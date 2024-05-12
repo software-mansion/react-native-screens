@@ -22,6 +22,7 @@ import StatusBarExample from './src/screens/StatusBar';
 import Animations from './src/screens/Animations';
 import BottomTabsAndStack from './src/screens/BottomTabsAndStack';
 import Modals from './src/screens/Modals';
+import PreventRemove from './src/screens/PreventRemove';
 import Orientation from './src/screens/Orientation';
 import SearchBar from './src/screens/SearchBar';
 import Events from './src/screens/Events';
@@ -68,6 +69,11 @@ const SCREENS: Record<
   Modals: {
     title: 'Modals',
     component: Modals,
+    type: 'example',
+  },
+  PreventRemove: {
+    title: 'Prevent Remove',
+    component: PreventRemove,
     type: 'example',
   },
   HeaderOptions: {
