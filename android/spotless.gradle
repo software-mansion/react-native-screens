@@ -1,5 +1,5 @@
 // formatter & linter configuration for kotlin
-apply(plugin = "com.diffplug.spotless")
+apply plugin:  "com.diffplug.spotless"
 
 spotless {
   kotlin {
