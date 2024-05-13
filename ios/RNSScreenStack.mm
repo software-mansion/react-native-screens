@@ -923,6 +923,10 @@ namespace react = facebook::react;
 {
   [self emitOnFinishTransitioningEvent];
   [RNSScreenWindowTraits updateWindowTraits];
+  // Because of the bug that caused view to have incorrect dimensions while changing the orientation,
+  // we need to signalize that it needs to be layouted.
+  // see https://github.com/software-mansion/react-native-screens/pull/1970
+  [_controller.view setNeedsLayout];
 }
 #endif
 
