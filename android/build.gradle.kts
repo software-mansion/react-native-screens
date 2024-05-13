@@ -3,7 +3,7 @@ import java.util.Properties
 
 plugins {
     id ("com.android.library")
-    id("kotlin-android")
+    id ("kotlin-android")
 }
 
 val rnsDefaultTargetSdkVersion: Int by extra(34)
@@ -136,22 +136,19 @@ android {
     }
     sourceSets {
         getByName("main") {
-            extra.apply {
-                set("androidResDir", "src/main/res")
-            }
-            val androidResDir: String by extra
+            val androidResDir: String by extra("src/main/res")
             java {
                 if (isNewArchitectureEnabled()) {
-                    srcDirs(listOf("src/fabric/java"))
+                    srcDirs("src/fabric/java")
                 } else {
-                    srcDirs(listOf("src/paper/java", "build/generated/source/codegen/java"))
+                    srcDirs("src/paper/java", "build/generated/source/codegen/java")
                 }
             }
             res {
                 if (safeExtGet("compileSdkVersion", "rnsDefaultCompileSdkVersion") as Int >= 33) {
-                    srcDirs(listOf("${androidResDir}/base", "${androidResDir}/v33"))
+                    srcDirs("${androidResDir}/base", "${androidResDir}/v33")
                 } else {
-                    srcDirs(listOf("${androidResDir}/base"))
+                    srcDirs("${androidResDir}/base")
                 }
             }
 

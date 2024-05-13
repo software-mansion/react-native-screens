@@ -3,6 +3,7 @@ import groovy.lang.Closure
 plugins {
     id ("com.android.application")
     id ("com.facebook.react")
+    id ("org.jetbrains.kotlin.android")
 }
 
 /**
