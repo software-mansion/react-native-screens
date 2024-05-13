@@ -8,6 +8,12 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   I18nManager.forceRTL(true);
 
+  React.useEffect(() => {
+    return () => {
+      I18nManager.forceRTL(false);
+    };
+  });
+
   return (
     <NavigationContainer>
       <Stack.Navigator>

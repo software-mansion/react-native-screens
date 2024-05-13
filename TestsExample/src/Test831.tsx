@@ -15,6 +15,12 @@ const Stack = createNativeStackNavigator();
 export default function App(): JSX.Element {
   I18nManager.forceRTL(true);
 
+  React.useEffect(() => {
+    return () => {
+      I18nManager.forceRTL(false);
+    };
+  });
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
