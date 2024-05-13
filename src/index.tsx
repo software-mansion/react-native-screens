@@ -28,6 +28,7 @@ export {
 } from './components/ScreenContainer';
 
 export { default as ScreenStack } from './components/ScreenStack';
+export { default as ScreenSplit } from './components/ScreenSplit';
 
 export {
   ScreenStackHeaderConfig,

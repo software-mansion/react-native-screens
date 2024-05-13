@@ -30,6 +30,7 @@
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenSplit.h"
 
 #import "UIView+RNSUtility.h"
 
@@ -132,6 +133,11 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
 - (void)updateBounds
 {
+  [self updateBounds:self.bounds.size];
+}
+
+- (void)updateBounds:(CGSize)boundsSize
+{
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
@@ -139,13 +145,13 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
     CGFloat headerHeight =
         config.largeTitle ? 0 : [_controller calculateHeaderHeightIsModal:self.isPresentedAsNativeModal];
     auto newState =
-        react::RNSScreenState{RCTSizeFromCGSize(self.bounds.size), RCTPointFromCGPoint(CGPointMake(0, headerHeight))};
+        react::RNSScreenState{RCTSizeFromCGSize(boundsSize), RCTPointFromCGPoint(CGPointMake(0, headerHeight))};
     _state->updateState(std::move(newState));
     UINavigationController *navctr = _controller.navigationController;
     [navctr.view setNeedsLayout];
   }
 #else
-  [_bridge.uiManager setSize:self.bounds.size forView:self];
+  [_bridge.uiManager setSize:boundsSize forView:self];
 #endif // RCT_NEW_ARCH_ENABLED
 
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
@@ -1173,11 +1179,23 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
-  _newLayoutMetrics = layoutMetrics;
+  auto fixedMetrics = layoutMetrics;
+  NSLog(@"updateLayoutMetrics %@ %ld", NSStringFromClass([_reactSuperview class]), (long)self.tag);
+
+  if ([self isSuperviewKindOfSplitView]) {
+    auto frame = layoutMetrics.frame;
+    auto origin = frame.origin;
+    auto size = frame.size;
+    auto rect = CGRectMake(origin.x, origin.y, size.width, size.height);
+    auto fixedFrame = [self fixFrame:rect];
+    fixedMetrics.frame = RCTRectFromCGRect(fixedFrame);
+  }
+
+  _newLayoutMetrics = fixedMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
-    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+    [super updateLayoutMetrics:fixedMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
   // when screen is mounted under RNSNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
@@ -1217,6 +1235,10 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
 - (void)reactSetFrame:(CGRect)frame
 {
+  NSLog(@"reactSetFrame %@ %ld", NSStringFromClass([_reactSuperview class]), (long)self.tag);
+  if ([self isSuperviewKindOfSplitView]) {
+    frame = [self fixFrame:frame];
+  }
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
@@ -1236,6 +1258,39 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
 #endif
+
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"setFrame %@ %p %ld", NSStringFromCGRect(frame), self, (long)self.tag);
+  if ([self isSuperviewKindOfSplitView]) {
+    frame = [self fixFrame:frame];
+    [self updateBounds:frame.size];
+  }
+  [super setFrame:frame];
+}
+
+- (CGRect)fixFrame:(CGRect)frame
+{
+  NSLog(@"fixFrame %@ %p %ld", NSStringFromCGRect(frame), self, (long)self.tag);
+
+  CGSize screenSize = UIScreen.mainScreen.bounds.size;
+  auto frameWidth = frame.size.width;
+  if (frameWidth > screenSize.width / 2) {
+    frame.origin.x = screenSize.width - frameWidth;
+  }
+  while (frame.origin.y > screenSize.height) {
+    frame.origin.y -= screenSize.height;
+  }
+  frame.size.height = screenSize.height - frame.origin.y;
+
+  NSLog(@"fixFrame2 %@ %p %ld", NSStringFromCGRect(frame), self, (long)self.tag);
+  return frame;
+}
+
+- (BOOL)isSuperviewKindOfSplitView
+{
+  return [_reactSuperview isKindOfClass:[RNSScreenSplitView class]];
+}
 
 @end
 
