@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
+import { I18nManager } from 'react-native';
 
 import { enableFreeze } from 'react-native-screens';
 
@@ -98,6 +99,10 @@ import Test1981 from './src/Test1981';
 import Test2008 from './src/Test2008';
 import Test2048 from './src/Test2048';
 import Test2069 from './src/Test2069';
+
+// Prevent RTL tests from propagating direction to other tests.
+// Remember to reload the app after switching from the test with RTL mode.
+I18nManager.forceRTL(false);
 
 enableFreeze(true);
 

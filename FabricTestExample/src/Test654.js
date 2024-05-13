@@ -5,9 +5,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-I18nManager.forceRTL(true);
-
 export default function App() {
+  I18nManager.forceRTL(true);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>

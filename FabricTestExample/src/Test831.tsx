@@ -12,9 +12,9 @@ type Props = {
 
 const Stack = createNativeStackNavigator();
 
-I18nManager.forceRTL(true);
-
 export default function App(): JSX.Element {
+  I18nManager.forceRTL(true);
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
