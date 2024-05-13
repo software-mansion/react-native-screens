@@ -4,7 +4,7 @@ import { Button, Text, View } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 function First({
   navigation,
@@ -57,7 +57,7 @@ function App() {
           name="Second"
           component={Second}
           options={{
-            swipeDirection: 'vertical',
+            gestureDirection: 'vertical',
           }}
         />
       </Stack.Navigator>

@@ -90,7 +90,7 @@ function TabAStack() {
 export const maybePopToTop = (
   navigation: StackNavigationProp<ParamListBase>,
 ) => {
-  const state = navigation.dangerouslyGetState().routes;
+  const state = navigation.getState().routes;
 
   const stackWithState = state.filter(stack => stack.state);
 

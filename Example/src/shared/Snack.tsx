@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, Pressable } from 'react-native';
 import { NavigatorScreenParams, ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp } from 'react-native-screens/native-stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const DISAPPEAR_AFTER = 2000; // ms
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { View, Text, Button } from 'react-native';
@@ -82,7 +82,7 @@ const App = () => (
         component={BottomStackScreen}
         options={{
           headerShown: false,
-          stackAnimation: 'default' /** set none to fix */,
+          animation: 'default' /** set none to fix */,
         }}
       />
       <ParentStack.Screen

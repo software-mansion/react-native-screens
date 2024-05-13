@@ -91,8 +91,7 @@ function TabAStack() {
 export const maybePopToTop = (
   navigation: StackNavigationProp<ParamListBase>,
 ) => {
-  // @ts-ignore It does exist on v5
-  const state = navigation.dangerouslyGetState().routes;
+  const state = navigation.getState().routes;
 
   // @ts-ignore
   const stackWithState = state.filter(stack => stack.state);

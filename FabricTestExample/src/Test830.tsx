@@ -4,7 +4,7 @@ import { Button, View } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 
 type StackParamList = {
@@ -15,10 +15,7 @@ interface DetailsScreenProps {
   route: RouteProp<StackParamList, 'Details'>;
 }
 
-const DetailsScreen = ({
-  navigation,
-  route,
-}: DetailsScreenProps): JSX.Element => {
+const DetailsScreen = ({ navigation, route }: DetailsScreenProps) => {
   const index = route.params?.index ? route.params?.index : 0;
 
   useLayoutEffect(() => {

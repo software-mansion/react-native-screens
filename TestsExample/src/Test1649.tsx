@@ -5,14 +5,14 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackNavigationOptions,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { SheetDetentTypes } from 'react-native-screens';
 
 const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
   const initialScreenOptions: NativeStackNavigationOptions = {
-    stackPresentation: 'formSheet',
+    presentation: 'formSheet',
     sheetAllowedDetents: 'all',
     sheetLargestUndimmedDetent: 'medium',
     sheetGrabberVisible: false,
@@ -29,14 +29,14 @@ export default function App(): JSX.Element {
             color: 'cyan',
           },
           headerShown: true,
-          headerHideBackButton: false,
+          headerBackVisible: false,
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen
           name="Second"
           component={Second}
           options={{
-            fullScreenSwipeEnabled: true,
+            fullScreenGestureEnabled: true,
           }}
         />
         <Stack.Screen

@@ -5,7 +5,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -61,7 +61,7 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackAnimation: 'slide_from_right',
+          animation: 'slide_from_right',
         }}>
         <Stack.Screen name="Screen1" component={First} />
         <Stack.Screen name="Screen2" component={Second} />

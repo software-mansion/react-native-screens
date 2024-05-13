@@ -6,7 +6,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,14 +15,14 @@ const App = (): JSX.Element => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackAnimation: 'slide_from_right',
+          animation: 'slide_from_right',
         }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
           name="Notifications"
           component={Notifications}
           options={{
-            headerCenter: () => <Text>Hello!</Text>,
+            header: () => <Text>Hello!</Text>,
             headerRight: () => <Text>Some other text</Text>,
           }}
         />

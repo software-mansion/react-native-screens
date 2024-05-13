@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,15 +54,15 @@ function App() {
           name="Second"
           component={Second}
           options={{
-            fullScreenSwipeEnabled: true,
+            fullScreenGestureEnabled: true,
           }}
         />
         <Stack.Screen
           name="Modal"
           component={Modal}
           options={{
-            stackPresentation: 'modal',
-            stackAnimation: 'slide_from_bottom',
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
             gestureEnabled: true,
             headerShown: false,
           }}

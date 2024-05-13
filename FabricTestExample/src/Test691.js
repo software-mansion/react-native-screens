@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createNativeStackNavigator();
@@ -38,7 +38,7 @@ function ModalStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        stackPresentation: 'modal',
+        presentation: 'modal',
       }}>
       <Stack.Screen name="First" component={First} />
       <Stack.Screen name="Modal" component={Modal} />

@@ -4,13 +4,13 @@ import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <Stack.Navigator screenOptions={{ stackAnimation: 'none' }}>
+    <Stack.Navigator screenOptions={{ animation: 'none' }}>
       <Stack.Screen name="First" component={First} />
       <Stack.Screen name="Search" component={Second} options={{ title: '' }} />
     </Stack.Navigator>
@@ -37,7 +37,7 @@ function First({
     navigation.setOptions({
       title: 'Home',
       headerRight: HeaderSearchButton,
-      stackAnimation: 'none',
+      animation: 'none',
     });
   }, [navigation]);
   return (
@@ -57,14 +57,14 @@ function Second({
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: '',
-      searchBar: {
+      headerSearchBarOptions: {
         autoCapitalize: 'none',
         autoFocus: true,
         onClose: () => navigation.navigate('First'),
         onChangeText: e => setText(e.nativeEvent.text),
         barTintColor: text,
       },
-      stackAnimation: 'none',
+      animation: 'none',
     });
   }, [navigation, text]);
 

@@ -4,7 +4,7 @@ import { StyleSheet, Button, View, Text } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 const MainScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
   return (
@@ -63,7 +63,7 @@ const App = () => (
       <Stack.Screen
         name="Modal"
         component={PushScreen}
-        options={{ stackPresentation: 'modal' }}
+        options={{ presentation: 'modal' }}
       />
     </Stack.Navigator>
   </NavigationContainer>

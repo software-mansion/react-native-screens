@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function Home(props) {
   return (
@@ -34,7 +34,7 @@ export function App() {
           name="Modal"
           component={Modal}
           options={{
-            stackPresentation: 'modal',
+            presentation: 'modal',
             gestureEnabled: false,
           }}
         />
