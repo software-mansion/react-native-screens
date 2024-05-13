@@ -12,9 +12,11 @@ import SearchBarNativeComponent, {
 } from '../fabric/SearchBarNativeComponent';
 
 export const NativeSearchBar: React.ComponentType<SearchBarProps> &
-  typeof NativeSearchBarCommands = SearchBarNativeComponent as any;
+  typeof NativeSearchBarCommands =
+  SearchBarNativeComponent as unknown as React.ComponentType<SearchBarProps> &
+    SearchBarCommandsType;
 export const NativeSearchBarCommands: SearchBarCommandsType =
-  SearchBarNativeCommands as any;
+  SearchBarNativeCommands as SearchBarCommandsType;
 
 type SearchBarCommandsType = {
   blur: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
@@ -31,61 +33,65 @@ type SearchBarCommandsType = {
   cancelSearch: (viewRef: React.ElementRef<typeof NativeSearchBar>) => void;
 };
 
-class SearchBar extends React.Component<SearchBarProps> {
-  nativeSearchBarRef: React.RefObject<SearchBarCommands>;
+const SearchBar = React.forwardRef<SearchBarCommands, SearchBarProps>(
+  function SearchBar(props, ref) {
+    const nativeSearchBarRef = React.useRef<SearchBarCommands | null>(null!);
+    React.useImperativeHandle(ref, () => ({
+      ...nativeSearchBarRef.current,
+      blur,
+      focus,
+      toggleCancelButton,
+      clearText,
+      setText,
+      cancelSearch,
+    }));
 
-  constructor(props: SearchBarProps) {
-    super(props);
-    this.nativeSearchBarRef = React.createRef();
-  }
+    function _callMethodWithRef(method: (ref: SearchBarCommands) => void) {
+      const ref = nativeSearchBarRef.current;
+      if (ref) {
+        method(ref);
+      } else {
+        console.warn(
+          'Reference to native search bar component has not been updated yet'
+        );
+      }
+    }
 
-  _callMethodWithRef(method: (ref: SearchBarCommands) => void) {
-    const ref = this.nativeSearchBarRef.current;
-    if (ref) {
-      method(ref);
-    } else {
-      console.warn(
-        'Reference to native search bar component has not been updated yet'
+    function blur() {
+      _callMethodWithRef(ref => NativeSearchBarCommands.blur(ref));
+    }
+
+    function focus() {
+      _callMethodWithRef(ref => NativeSearchBarCommands.focus(ref));
+    }
+
+    function toggleCancelButton(flag: boolean) {
+      _callMethodWithRef(ref =>
+        NativeSearchBarCommands.toggleCancelButton(ref, flag)
       );
     }
-  }
 
-  blur() {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.blur(ref));
-  }
+    function clearText() {
+      _callMethodWithRef(ref => NativeSearchBarCommands.clearText(ref));
+    }
 
-  focus() {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.focus(ref));
-  }
+    function setText(text: string) {
+      _callMethodWithRef(ref => NativeSearchBarCommands.setText(ref, text));
+    }
 
-  toggleCancelButton(flag: boolean) {
-    this._callMethodWithRef(ref =>
-      NativeSearchBarCommands.toggleCancelButton(ref, flag)
-    );
-  }
+    function cancelSearch() {
+      _callMethodWithRef(ref => NativeSearchBarCommands.cancelSearch(ref));
+    }
 
-  clearText() {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.clearText(ref));
-  }
-
-  setText(text: string) {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.setText(ref, text));
-  }
-
-  cancelSearch() {
-    this._callMethodWithRef(ref => NativeSearchBarCommands.cancelSearch(ref));
-  }
-
-  render() {
     if (!isSearchBarAvailableForCurrentPlatform) {
       console.warn(
         'Importing SearchBar is only valid on iOS and Android devices.'
       );
-      return View as any as ReactNode;
+      return View as unknown as ReactNode;
     }
 
-    return <NativeSearchBar {...this.props} ref={this.nativeSearchBarRef} />;
+    return <NativeSearchBar {...props} ref={nativeSearchBarRef} />;
   }
-}
+);
 
 export default SearchBar;
