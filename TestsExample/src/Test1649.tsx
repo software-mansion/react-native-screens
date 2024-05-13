@@ -161,6 +161,18 @@ export default function App(): JSX.Element {
               ...sheetOptions,
             }}
           />
+          <Stack.Screen
+            name="AnotherSheetScreen"
+            component={SheetScreen}
+            options={{
+              headerShown: false,
+              stackPresentation: 'formSheet',
+              sheetElevation: 24,
+              screenStyle: {
+                backgroundColor: 'firebrick',
+              },
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
@@ -361,6 +373,12 @@ function CommonSheetContent(): React.JSX.Element {
           title="Tap me for the third screen / blur"
           onPress={() => {
             navigation.navigate('Third');
+          }}
+        />
+        <Button
+          title="Tap me to open another sheet"
+          onPress={() => {
+            navigation.navigate('AnotherSheetScreen');
           }}
         />
         <Button
