@@ -97,6 +97,7 @@ import Test2008 from './src/Test2008';
 import Test2028 from './src/Test2028';
 import Test2048 from './src/Test2048';
 import Test2069 from './src/Test2069';
+import Test2118 from './src/Test2118';
 
 enableFreeze(true);
 

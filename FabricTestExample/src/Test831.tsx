@@ -12,8 +12,6 @@ type Props = {
 
 const Stack = createNativeStackNavigator();
 
-I18nManager.forceRTL(true);
-
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
