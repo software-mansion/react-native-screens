@@ -3,7 +3,7 @@ import java.util.Properties
 
 plugins {
     id ("com.android.library")
-    id ("kotlin-android")
+    id ("org.jetbrains.kotlin.android")
 }
 
 val rnsDefaultTargetSdkVersion: Int by extra(34)
