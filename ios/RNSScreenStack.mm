@@ -1,7 +1,9 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>
+#import <React/RCTFabricSurface.h>
 #import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
+#import <React/RCTSurfaceView.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
@@ -744,6 +746,26 @@ namespace react = facebook::react;
     [touchHandler setEnabled:YES];
     [touchHandler reset];
   }
+
+  parent = _controller.view;
+  while (parent != nil && ![parent isKindOfClass:RCTSurfaceView.class]) {
+    parent = parent.superview;
+  }
+
+  RCTSurfaceTouchHandler *touchHandler = nil;
+  for (UIGestureRecognizer *recognizer in parent.gestureRecognizers) {
+    if ([recognizer isKindOfClass:RCTSurfaceTouchHandler.class]) {
+      touchHandler = recognizer;
+    }
+  }
+
+  if (touchHandler != nil) {
+    [touchHandler setEnabled:NO];
+    [touchHandler setEnabled:YES];
+    [touchHandler reset];
+  }
+
+  NSLog(@"Found %p, %p", parent, touchHandler);
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
