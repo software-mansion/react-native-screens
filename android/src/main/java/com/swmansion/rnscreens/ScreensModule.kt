@@ -25,7 +25,7 @@ class ScreensModule(private val reactContext: ReactApplicationContext)
             } else {
                 Log.e("[RNScreens]", "Could not install JSI bindings.")
             }
-        } catch (exception: Exception) {
+        } catch (exception: UnsatisfiedLinkError) {
             Log.w("[RNScreens]", "Could not load RNScreens module.")
         }
     }
