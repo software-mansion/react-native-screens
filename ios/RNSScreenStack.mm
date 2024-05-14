@@ -9,6 +9,7 @@
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
+#import "RCTSurfaceTouchHandler+RNSUtility.h"
 #else
 #import <React/RCTBridge.h>
 #import <React/RCTRootContentView.h>
@@ -16,6 +17,7 @@
 #import <React/RCTTouchHandler.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+#import "RCTTouchHandler+RNSUtility.h"
 #endif // RCT_NEW_ARCH_ENABLED
 
 #import "RNSScreen.h"
@@ -733,39 +735,43 @@ namespace react = facebook::react;
   // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
   // Without the below code the Touchable will remain active (highlighted) for the duration of back
   // gesture and onPress may fire when we release the finger.
-  UIView *parent = _controller.view;
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
-    parent = parent.superview;
-  if (parent != nil) {
 #ifdef RCT_NEW_ARCH_ENABLED
-    RCTSurfaceTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-#else
-    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-#endif
-    [touchHandler setEnabled:NO];
-    [touchHandler setEnabled:YES];
-    [touchHandler reset];
-  }
-
-  parent = _controller.view;
+  // On Fabric there is no view that exposes touchHandler above us in the view hierarchy, however it is still
+  // utilised. `RCTSurfaceView` should be present above us, which hosts `RCTFabricSurface` instance, which in turn
+  // hosts `RCTSurfaceTouchHandler` as a private field. When initialised, `RCTSurfaceTouchHandler` is attached to the
+  // surface view as a gestureRecognizer <- and this is where we can lay our hands on it.
+  UIView *parent = _controller.view;
   while (parent != nil && ![parent isKindOfClass:RCTSurfaceView.class]) {
     parent = parent.superview;
   }
 
+  // This could be possible in modal context
+  if (parent == nil) {
+    return;
+  }
+
   RCTSurfaceTouchHandler *touchHandler = nil;
+  // Experimentation shows that RCTSurfaceTouchHandler is the only gestureRecogniser registered here,
+  // so we should not be afraid of any performance hit here.
   for (UIGestureRecognizer *recognizer in parent.gestureRecognizers) {
     if ([recognizer isKindOfClass:RCTSurfaceTouchHandler.class]) {
-      touchHandler = recognizer;
+      touchHandler = static_cast<RCTSurfaceTouchHandler *>(recognizer);
     }
   }
 
-  if (touchHandler != nil) {
-    [touchHandler setEnabled:NO];
-    [touchHandler setEnabled:YES];
-    [touchHandler reset];
+  [touchHandler rns_cancelTouches];
+#else
+  // On Paper we can access touchHandler hosted by `RCTRootContentView` which should be above ScreenStack
+  // in view hierarchy.
+  UIView *parent = _controller.view;
+  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) {
+    parent = parent.superview;
   }
-
-  NSLog(@"Found %p, %p", parent, touchHandler);
+  if (parent != nil) {
+    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
+    [touchHandler rns_cancelTouches];
+  }
+#endif // RCT_NEW_ARCH_ENABLED
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
