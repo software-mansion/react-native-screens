@@ -13,13 +13,13 @@ type Props = {
 const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
-  I18nManager.forceRTL(true);
-
   React.useEffect(() => {
+    I18nManager.forceRTL(true);
+
     return () => {
       I18nManager.forceRTL(false);
     };
-  });
+  }, []);
 
   return (
     <NavigationContainer>
