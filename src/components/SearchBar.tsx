@@ -18,18 +18,18 @@ export const NativeSearchBar: React.ComponentType<SearchBarProps> &
 export const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
 
-type ViewRef = React.ElementRef<typeof NativeSearchBar>;
+type NativeSearchBarRef = React.ElementRef<typeof NativeSearchBar>;
 
 type SearchBarCommandsType = {
-  blur: (viewRef: ViewRef) => void;
-  focus: (viewRef: ViewRef) => void;
-  clearText: (viewRef: ViewRef) => void;
-  toggleCancelButton: (viewRef: ViewRef, flag: boolean) => void;
-  setText: (viewRef: ViewRef, text: string) => void;
-  cancelSearch: (viewRef: ViewRef) => void;
+  blur: (viewRef: NativeSearchBarRef) => void;
+  focus: (viewRef: NativeSearchBarRef) => void;
+  clearText: (viewRef: NativeSearchBarRef) => void;
+  toggleCancelButton: (viewRef: NativeSearchBarRef, flag: boolean) => void;
+  setText: (viewRef: NativeSearchBarRef, text: string) => void;
+  cancelSearch: (viewRef: NativeSearchBarRef) => void;
 };
 
-function ImplSearchBar(props: SearchBarProps, ref: Ref<SearchBarCommands>) {
+function SearchBar(props: SearchBarProps, ref: Ref<SearchBarCommands>) {
   const implRef = React.useRef<SearchBarCommands | null>(null);
 
   React.useImperativeHandle(ref, () => ({
@@ -80,5 +80,5 @@ function ImplSearchBar(props: SearchBarProps, ref: Ref<SearchBarCommands>) {
 }
 
 export default React.forwardRef<SearchBarCommands, SearchBarProps>(
-  ImplSearchBar
+  SearchBar
 );
