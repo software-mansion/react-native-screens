@@ -1,4 +1,4 @@
-import React, { ReactNode, Ref } from 'react';
+import React from 'react';
 import {
   isSearchBarAvailableForCurrentPlatform,
   SearchBarCommands,
@@ -29,8 +29,8 @@ type SearchBarCommandsType = {
   cancelSearch: (viewRef: NativeSearchBarRef) => void;
 };
 
-function SearchBar(props: SearchBarProps, ref: Ref<SearchBarCommands>) {
-  const implRef = React.useRef<SearchBarCommands | null>(null);
+function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
+  const searchBarRef = React.useRef<SearchBarCommands | null>(null);
 
   React.useImperativeHandle(ref, () => ({
     blur: () => {
@@ -57,7 +57,7 @@ function SearchBar(props: SearchBarProps, ref: Ref<SearchBarCommands>) {
 
   const _callMethodWithRef = React.useCallback(
     (method: (ref: SearchBarCommands) => void) => {
-      const ref = implRef.current;
+      const ref = searchBarRef.current;
       if (ref) {
         method(ref);
       } else {
@@ -66,19 +66,17 @@ function SearchBar(props: SearchBarProps, ref: Ref<SearchBarCommands>) {
         );
       }
     },
-    [implRef]
+    [searchBarRef]
   );
 
   if (!isSearchBarAvailableForCurrentPlatform) {
     console.warn(
       'Importing SearchBar is only valid on iOS and Android devices.'
     );
-    return View as unknown as ReactNode;
+    return View as unknown as React.ReactNode;
   }
 
-  return <NativeSearchBar {...props} ref={implRef} />;
+  return <NativeSearchBar {...props} ref={searchBarRef} />;
 }
 
-export default React.forwardRef<SearchBarCommands, SearchBarProps>(
-  SearchBar
-);
+export default React.forwardRef<SearchBarCommands, SearchBarProps>(SearchBar);
