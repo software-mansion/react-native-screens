@@ -8,6 +8,12 @@
 #import "RNSScreenStack.h"
 #import "RNScreensTurboModule.h"
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import <React/RCTScheduler.h>
+#import <React/RCTSurfacePresenter.h>
+#import "listener.h"
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation RNSModule {
@@ -18,6 +24,8 @@ RCT_EXPORT_MODULE()
 
 #ifdef RCT_NEW_ARCH_ENABLED
 @synthesize viewRegistry_DEPRECATED = _viewRegistry_DEPRECATED;
+__weak RCTSurfacePresenter *_surfacePresenter;
+std::shared_ptr<LayoutAnimationsProxy> layoutAnimationsProxy_;
 #endif // RCT_NEW_ARCH_ENABLED
 @synthesize bridge = _bridge;
 
@@ -123,10 +131,39 @@ RCT_EXPORT_MODULE()
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
+/*
+ * Taken from RCTNativeAnimatedTurboModule:
+ * In bridgeless mode, `setBridge` is never called during initializtion. Instead this selector is invoked via
+ * BridgelessTurboModuleSetup.
+ */
+- (void)setSurfacePresenter:(id<RCTSurfacePresenterStub>)surfacePresenter
+{
+  _surfacePresenter = surfacePresenter;
+}
+
+- (std::shared_ptr<facebook::react::UIManager>)getUIManager
+{
+  RCTScheduler *scheduler = [_surfacePresenter scheduler];
+  return scheduler.uiManager;
+}
+
+- (void)setupMutationsListener
+{
+  auto uiManager = [self getUIManager];
+  layoutAnimationsProxy_ = std::make_shared<LayoutAnimationsProxy>([self](int tag) {
+    RNSScreenStackView *stack = [self getStackView:[NSNumber numberWithInt:tag]];
+    [stack inform];
+  });
+  uiManager->getShadowTreeRegistry().enumerate([self](const facebook::react::ShadowTree &shadowTree, bool &stop) {
+    shadowTree.getMountingCoordinator()->setMountingOverrideDelegate(layoutAnimationsProxy_);
+  });
+}
+
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
   [self installHostObject];
+  [self setupMutationsListener];
   return std::make_shared<facebook::react::NativeScreensModuleSpecJSI>(params);
 }
 #endif

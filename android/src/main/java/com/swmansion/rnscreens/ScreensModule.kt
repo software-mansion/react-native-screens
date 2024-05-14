@@ -4,8 +4,10 @@ import android.util.Log
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
+import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.common.UIManagerType
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -15,10 +17,10 @@ class ScreensModule(private val reactContext: ReactApplicationContext)
 {
     private var topScreenId: Int = -1
     private val isActiveTransition = AtomicBoolean(false)
+    private var proxy: NativeProxy? = null
 
     init {
         try {
-            System.loadLibrary("rnscreens")
             val jsContext = reactApplicationContext.javaScriptContextHolder
             if (jsContext != null) {
                 nativeInstall(jsContext.get())
@@ -31,6 +33,17 @@ class ScreensModule(private val reactContext: ReactApplicationContext)
     }
 
     private external fun nativeInstall(jsiPtr: Long)
+
+    override fun initialize() {
+        super.initialize()
+        val jsContext = reactApplicationContext.javaScriptContextHolder
+        val fabricUIManager =
+            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
+        if (jsContext != null) {
+            proxy = NativeProxy(reactContext)
+            proxy?.nativeAddMutationsListener(fabricUIManager)
+        }
+    }
 
     override fun getName(): String = NAME
 
@@ -101,5 +114,8 @@ class ScreensModule(private val reactContext: ReactApplicationContext)
 
     companion object {
         const val NAME = "RNSModule"
+        init {
+            System.loadLibrary("rnscreens")
+        }
     }
 }

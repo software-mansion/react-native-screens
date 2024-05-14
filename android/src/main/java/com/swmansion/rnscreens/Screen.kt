@@ -232,6 +232,27 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
     var nativeBackButtonDismissalEnabled: Boolean = true
 
+    fun startRemovalTransition() {
+        startTransitionRecursive(this)
+    }
+
+    private fun startTransitionRecursive(parent: ViewGroup?) {
+        parent?.let {
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                child?.let { view -> it.startViewTransition(view) }
+                if (child is ScreenStackHeaderConfig) {
+                    // we want to start transition on children of the toolbar too,
+                    // which is not a child of ScreenStackHeaderConfig
+                    startTransitionRecursive(child.toolbar)
+                }
+                if (child is ViewGroup) {
+                    startTransitionRecursive(child)
+                }
+            }
+        }
+    }
+
     private fun calculateHeaderHeight(): Pair<Double, Double> {
         val actionBarTv = TypedValue()
         val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)

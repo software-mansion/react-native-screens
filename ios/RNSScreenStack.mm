@@ -1178,16 +1178,22 @@ namespace react = facebook::react;
   _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
 }
 
+- (void)inform
+{
+  [self takeSnapshot];
+}
+
 - (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
                 withSurfaceTelemetry:(react::SurfaceTelemetry const &)surfaceTelemetry
 {
-  for (auto &mutation : transaction.getMutations()) {
-    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-      [self takeSnapshot];
-      return;
-    }
-  }
+  //  for (auto &mutation : transaction.getMutations()) {
+  //    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil
+  //    &&
+  //        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
+  //      [self takeSnapshot];
+  //      return;
+  //    }
+  //  }
 }
 
 - (void)prepareForRecycle
