@@ -512,9 +512,7 @@ namespace react = facebook::react;
                                                                              action:nil];
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
-  auto overrideBackButtonItem =
-      config.disableBackButtonMenu; // when config.disableBackButtonMenu is true we need to set backButtomItem
-  prevItem.backButtonTitle = resolvedBackTitle;
+  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
 
   if (@available(iOS 14.0, *)) {
     prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
@@ -528,7 +526,7 @@ namespace react = facebook::react;
          // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
          ![config.backTitleFontFamily isEqual:@"System"]) ||
         config.backTitleFontSize) {
-      overrideBackButtonItem = YES;
+      isBackButtonCustomized = YES;
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
       if (config.backTitleFontFamily) {
@@ -549,15 +547,17 @@ namespace react = facebook::react;
     // but it should still appear in back menu (if one is enabled)
 
     // When backBarButtonItem's title is null, back menu will use value
-    // of backButtonTitle from prevItem
+    // of backButtonTitle
     [backBarButtonItem setTitle:nil];
+    isBackButtonCustomized = YES;
+    prevItem.backButtonTitle = resolvedBackTitle;
   }
 
   // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
   // as assigning one will override the native behavior of automatically shortening
   // the title to "Back" or hide the back title if there's not enough space.
   // See: https://github.com/software-mansion/react-native-screens/issues/1589
-  if (overrideBackButtonItem) {
+  if (isBackButtonCustomized) {
     prevItem.backBarButtonItem = backBarButtonItem;
   }
 
