@@ -12,7 +12,7 @@ import {
 } from '../core';
 
 // Native components
-import ScreenNativeComponent from '../fabric/ScreenNativeComponent';
+import ScreenNativeComponent, { Commands } from '../fabric/ScreenNativeComponent';
 import ModalScreenNativeComponent from '../fabric/ModalScreenNativeComponent';
 
 export const NativeScreen: React.ComponentType<ScreenProps> =
@@ -50,6 +50,15 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
       innerRef.current = ref;
       props.onComponentRef?.(ref);
     };
+
+    React.useLayoutEffect(() => {
+      return () => {
+        if (innerRef.current) {
+          console.log("Screen unmount with ref");
+          Commands.onWillDismiss(innerRef.current);
+        }
+      }
+    });
 
     const closing = React.useRef(new Animated.Value(0)).current;
     const progress = React.useRef(new Animated.Value(0)).current;

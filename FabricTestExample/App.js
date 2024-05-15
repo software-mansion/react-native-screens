@@ -97,9 +97,10 @@ import Test2008 from './src/Test2008';
 import Test2028 from './src/Test2028';
 import Test2048 from './src/Test2048';
 import Test2069 from './src/Test2069';
+import TestStack from './src/TestStack';
 
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <TestStack />;
 }

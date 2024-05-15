@@ -1,6 +1,11 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.children
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -35,6 +40,47 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())
+    }
+
+    private fun prepareOutTransition(screen: Screen?) {
+        startTransitionRecursive(screen)
+    }
+
+    private fun startTransitionRecursive(parent: ViewGroup?) {
+        parent?.let {
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                child?.let { view -> it.startViewTransition(view) }
+                if (child is ScreenStackHeaderConfig) {
+                    // we want to start transition on children of the toolbar too,
+                    // which is not a child of ScreenStackHeaderConfig
+                    startTransitionRecursive(child.toolbar)
+                }
+                if (child is ViewGroup) {
+                    startTransitionRecursive(child)
+                }
+            }
+        }
+    }
+
+    override fun onWillDismiss(screen: Screen) {
+        Log.w(REACT_CLASS, "onWillDismiss in $screen with tag ${screen.id}")
+        prepareOutTransition(screen)
+    }
+
+//    override fun receiveCommand(root: Screen, commandId: String?, args: ReadableArray?) {
+//        Log.w(REACT_CLASS, "receiveCommand $commandId")
+//        super.receiveCommand(root, commandId, args)
+//    }
+
+    override fun addView(parent: Screen, child: View, index: Int) {
+        Log.w(REACT_CLASS, "$parent addView $child at $index")
+        super.addView(parent, child, index)
+    }
+
+    override fun removeViewAt(parent: Screen, index: Int) {
+        Log.w(REACT_CLASS, "$parent removeViewAt $index, child: ${parent.getChildAt(index)}")
+        super.removeViewAt(parent, index)
     }
 
     override fun updateState(
