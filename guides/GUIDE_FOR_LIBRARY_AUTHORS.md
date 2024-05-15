@@ -447,7 +447,10 @@ Boolean indicating whether to show the menu on longPress of iOS >= 14 back butto
 
 ### `backButtonDisplayMode` (iOS only)
 
-Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of:  `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123).
+Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of:  `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+- `default` – show given back button previous controller title, system generic or just icon based on available space
+- `generic` – show given system generic or just icon based on available space
+- `minimal` – show just an icon
 
 ### `hidden`
 

@@ -514,9 +514,12 @@ namespace react = facebook::react;
 
   auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
   if (@available(iOS 14.0, *)) {
     prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
   }
+#endif
 
   if (config.isBackTitleVisible) {
     if ((config.backTitleFontFamily &&
@@ -942,10 +945,8 @@ RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
-RCT_EXPORT_VIEW_PROPERTY(
-    backButtonDisplayMode,
-    UINavigationItemBackButtonDisplayMode) // `hidden` is an UIView property, we need to use different name internally
-RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
+RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @end
