@@ -6,7 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RCTTouchHandler (RNSUtility)
 
-- (void)rns_cancelTouches;
+- (void)rnscreens_cancelTouches;
 
 @end
 

@@ -3,7 +3,7 @@
 
 @implementation RCTTouchHandler (RNSUtility)
 
-- (void)rns_cancelTouches
+- (void)rnscreens_cancelTouches
 {
   [self setEnabled:NO];
   [self setEnabled:YES];

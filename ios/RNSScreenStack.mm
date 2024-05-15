@@ -759,7 +759,7 @@ namespace react = facebook::react;
     }
   }
 
-  [touchHandler rns_cancelTouches];
+  [touchHandler rnscreens_cancelTouches];
 #else
   // On Paper we can access touchHandler hosted by `RCTRootContentView` which should be above ScreenStack
   // in view hierarchy.
@@ -769,7 +769,7 @@ namespace react = facebook::react;
   }
   if (parent != nil) {
     RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-    [touchHandler rns_cancelTouches];
+    [touchHandler rnscreens_cancelTouches];
   }
 #endif // RCT_NEW_ARCH_ENABLED
 }
