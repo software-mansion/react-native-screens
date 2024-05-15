@@ -1203,7 +1203,11 @@ namespace react = facebook::react;
 
 - (void)takeSnapshot
 {
-  _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
+  if (_presentedModals.count < 2) {
+    _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
+  } else {
+    _snapshot = [[_presentedModals.lastObject view] snapshotViewAfterScreenUpdates:NO];
+  }
 }
 
 - (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
