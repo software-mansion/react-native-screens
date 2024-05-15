@@ -27,7 +27,7 @@ namespace rnscreens {
             jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
             fabricUIManager) {
         auto uiManager = fabricUIManager->getBinding()->getScheduler()->getUIManager();
-            layoutAnimationsProxy_ = std::make_shared<LayoutAnimationsProxy>(
+            screenRemovalListener_ = std::make_shared<RNSScreenRemovalListener>(
             [this](int tag) {
                 static const auto method = javaPart_->getClass()->getMethod<void(jint)>("notifyStackRemovingChildren");
                 method(javaPart_, tag);
@@ -36,7 +36,7 @@ namespace rnscreens {
             uiManager->getShadowTreeRegistry().enumerate(
             [this](const facebook::react::ShadowTree &shadowTree, bool &stop) {
                 shadowTree.getMountingCoordinator()->setMountingOverrideDelegate(
-                        layoutAnimationsProxy_);
+                        screenRemovalListener_);
             });
     }
 

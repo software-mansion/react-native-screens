@@ -2,7 +2,7 @@
 
 #include <fbjni/fbjni.h>
 #include <react/fabric/JFabricUIManager.h>
-#include "listener.h"
+#include "RNSScreenRemovalListener.h"
 
 #include <string>
 
@@ -12,7 +12,7 @@
 
     class NativeProxy : public jni::HybridClass<NativeProxy> {
     public:
-        std::shared_ptr<LayoutAnimationsProxy> layoutAnimationsProxy_;
+        std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
         static auto constexpr kJavaDescriptor =
                 "Lcom/swmansion/rnscreens/NativeProxy;";
         static jni::local_ref<jhybriddata>

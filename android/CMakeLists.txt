@@ -10,8 +10,8 @@ endif()
 add_library(rnscreens
     SHARED
     ../cpp/RNScreensTurboModule.cpp
+    ../cpp/RNSScreenRemovalListener.cpp
         ./src/main/cpp/jni-adapter.cpp
-        ./src/main/cpp/listener.cpp
         ./src/main/cpp/NativeProxy.cpp
         ./src/main/cpp/OnLoad.cpp
 )

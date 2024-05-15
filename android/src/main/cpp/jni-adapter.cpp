@@ -3,20 +3,8 @@
 #include <jni.h>
 #include <jsi/jsi.h>
 #include "RNScreensTurboModule.h"
-#include <fbjni/fbjni.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#include <react/fabric/Binding.h>
-#include "listener.h"
-#include <react/fabric/JFabricUIManager.h>
-#include <react/renderer/scheduler/Scheduler.h>
-#include <react/jni/CxxModuleWrapper.h>
-#include <react/jni/JMessageQueueThread.h>
-#include <react/jni/WritableNativeMap.h>
-#include <react/renderer/uimanager/UIManagerBinding.h>
-#endif
 using namespace facebook;
-using namespace react;
 
 jobject globalThis;
 
