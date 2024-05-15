@@ -6,9 +6,9 @@
 
 using namespace facebook::react;
 
-struct LayoutAnimationsProxy : public MountingOverrideDelegate {
+struct RNSScreenRemovalListener : public MountingOverrideDelegate {
   std::function<void(int)> listenerFunction_;
-  LayoutAnimationsProxy(std::function<void(int)> &&listenerFunction_)
+    RNSScreenRemovalListener(std::function<void(int)> &&listenerFunction_)
       : listenerFunction_(listenerFunction_) {}
 
   bool shouldOverridePullTransaction() const override;

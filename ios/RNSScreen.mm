@@ -805,6 +805,11 @@ namespace react = facebook::react;
 #endif // !TARGET_OS_TV
 }
 
+- (void)notifyAboutRemoval
+{
+  [_controller setViewToSnapshot];
+}
+
 #pragma mark - Paper specific
 #else
 
@@ -1380,12 +1385,16 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
-- (void)setViewToSnapshot:(UIView *)snapshot
+- (void)setViewToSnapshot
 {
   UIView *superView = self.view.superview;
-  [self.view removeFromSuperview];
-  self.view = snapshot;
-  [superView addSubview:self.view];
+  // if we dismissed the view natively, it will already be detached from view hierarchy
+  if (self.view.window != nil) {
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+    [superView addSubview:snapshot];
+  }
 }
 
 #else

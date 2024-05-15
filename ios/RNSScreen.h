@@ -40,7 +40,7 @@ namespace react = facebook::react;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
 #ifdef RCT_NEW_ARCH_ENABLED
-- (void)setViewToSnapshot:(UIView *)snapshot;
+- (void)setViewToSnapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
 
@@ -120,6 +120,7 @@ namespace react = facebook::react;
 - (void)notifyDisappear;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
+- (void)notifyAboutRemoval;
 - (instancetype)initWithFrame:(CGRect)frame;
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;

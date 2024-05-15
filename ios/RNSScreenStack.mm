@@ -1,6 +1,5 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>
-#import <React/RCTMountingTransactionObserving.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <React/UIView+React.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -30,12 +29,7 @@ namespace react = facebook::react;
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate
-#ifdef RCT_NEW_ARCH_ENABLED
-    ,
-    RCTMountingTransactionObserving
-#endif
-    >
+    UIViewControllerTransitioningDelegate>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -115,9 +109,6 @@ namespace react = facebook::react;
   BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
-#ifdef RCT_NEW_ARCH_ENABLED
-  UIView *_snapshot;
-#endif
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1141,15 +1132,6 @@ namespace react = facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
-  // We should only do a snapshot of a screen that is on the top.
-  // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
-  // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
-  // snapshot.
-  if (screenChildComponent.window != nil &&
-      ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
-       screenChildComponent == [_presentedModals.lastObject view])) {
-    [screenChildComponent.controller setViewToSnapshot:_snapshot];
-  }
 
   RCTAssert(
       screenChildComponent.reactSuperview == self,
@@ -1171,33 +1153,6 @@ namespace react = facebook::react;
   dispatch_async(dispatch_get_main_queue(), ^{
     [self maybeAddToParentAndUpdateContainer];
   });
-}
-
-- (void)takeSnapshot
-{
-  if (_presentedModals.count < 2) {
-    _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
-  } else {
-    _snapshot = [[_presentedModals.lastObject view] snapshotViewAfterScreenUpdates:NO];
-  }
-}
-
-- (void)inform
-{
-  [self takeSnapshot];
-}
-
-- (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
-                withSurfaceTelemetry:(react::SurfaceTelemetry const &)surfaceTelemetry
-{
-  //  for (auto &mutation : transaction.getMutations()) {
-  //    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil
-  //    &&
-  //        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-  //      [self takeSnapshot];
-  //      return;
-  //    }
-  //  }
 }
 
 - (void)prepareForRecycle

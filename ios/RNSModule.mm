@@ -5,13 +5,14 @@
 #import <React/RCTUIManagerUtils.h>
 #import <React/RCTUtils.h>
 #include <jsi/jsi.h>
+#import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNScreensTurboModule.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTScheduler.h>
 #import <React/RCTSurfacePresenter.h>
-#import "listener.h"
+#import "RNSScreenRemovalListener.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -25,7 +26,7 @@ RCT_EXPORT_MODULE()
 #ifdef RCT_NEW_ARCH_ENABLED
 @synthesize viewRegistry_DEPRECATED = _viewRegistry_DEPRECATED;
 __weak RCTSurfacePresenter *_surfacePresenter;
-std::shared_ptr<LayoutAnimationsProxy> layoutAnimationsProxy_;
+std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
 #endif // RCT_NEW_ARCH_ENABLED
 @synthesize bridge = _bridge;
 
@@ -124,13 +125,25 @@ std::shared_ptr<LayoutAnimationsProxy> layoutAnimationsProxy_;
 {
   RNSScreenStackView *view = [self getScreenStackView:stackTag];
   if (view != nil && ![view isKindOfClass:[RNSScreenStackView class]]) {
-    RCTLogError(@"Invalid view type, expecting RNSScreenStackView, got: %@", view);
+    RCTLogError(@"[RNSCREENS] Invalid view type, expecting RNSScreenStackView, got: %@", view);
     return nil;
   }
   return view;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
+
+- (RNSScreenView *)getScreenView:(NSNumber *)reactTag
+{
+  RCTAssertMainQueue();
+  UIView *view = [self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
+  if (view != nil && ![view isKindOfClass:[RNSScreenView class]]) {
+    RCTLogError(@"[RNSCREENS] Invalid view type, expecting RNSScreenStackView, got: %@", view);
+    return nil;
+  }
+  return (RNSScreenView *)view;
+}
+
 /*
  * Taken from RCTNativeAnimatedTurboModule:
  * In bridgeless mode, `setBridge` is never called during initializtion. Instead this selector is invoked via
@@ -144,18 +157,22 @@ std::shared_ptr<LayoutAnimationsProxy> layoutAnimationsProxy_;
 - (std::shared_ptr<facebook::react::UIManager>)getUIManager
 {
   RCTScheduler *scheduler = [_surfacePresenter scheduler];
-  return scheduler.uiManager;
+  auto uiManager = scheduler.uiManager;
+  if (uiManager == nullptr) {
+    RCTLogError(@"[RNSCREENS] Could not get uiManager");
+  }
+  return uiManager;
 }
 
 - (void)setupMutationsListener
 {
   auto uiManager = [self getUIManager];
-  layoutAnimationsProxy_ = std::make_shared<LayoutAnimationsProxy>([self](int tag) {
-    RNSScreenStackView *stack = [self getStackView:[NSNumber numberWithInt:tag]];
-    [stack inform];
+  screenRemovalListener_ = std::make_shared<RNSScreenRemovalListener>([self](int tag) {
+    RNSScreenView *screen = [self getScreenView:[NSNumber numberWithInt:tag]];
+    [screen notifyAboutRemoval];
   });
   uiManager->getShadowTreeRegistry().enumerate([self](const facebook::react::ShadowTree &shadowTree, bool &stop) {
-    shadowTree.getMountingCoordinator()->setMountingOverrideDelegate(layoutAnimationsProxy_);
+    shadowTree.getMountingCoordinator()->setMountingOverrideDelegate(screenRemovalListener_);
   });
 }
 
@@ -163,7 +180,9 @@ std::shared_ptr<LayoutAnimationsProxy> layoutAnimationsProxy_;
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
   [self installHostObject];
+#ifdef RCT_NEW_ARCH_ENABLED
   [self setupMutationsListener];
+#endif
   return std::make_shared<facebook::react::NativeScreensModuleSpecJSI>(params);
 }
 #endif
