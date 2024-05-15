@@ -41,7 +41,7 @@ const SCREENS: Record<
   string,
   {
     title: string;
-    component: () => JSX.Element;
+    component: () => React.JSX.Element;
     type: 'example' | 'playground';
   }
 > = {
@@ -119,7 +119,7 @@ interface MainScreenProps {
   navigation: StackNavigationProp<RootStackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
   <ScrollView testID="root-screen-examples-scrollview">
     <SettingsSwitch
       style={styles.switch}
@@ -157,7 +157,7 @@ const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
   </ScrollView>
 );
 
-const ExampleApp = (): JSX.Element => (
+const ExampleApp = (): React.JSX.Element => (
   <GestureHandlerRootView style={{ flex: 1 }}>
     <GestureDetectorProvider>
       <NavigationContainer>

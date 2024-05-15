@@ -24,7 +24,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   useEffect(() => {
     navigation.navigate('Settings');
   }, []);
@@ -47,7 +47,7 @@ interface SettingsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Settings'>;
 }
 
-const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
+const SettingsScreen = ({ navigation }: SettingsScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   const [headerTitle, setHeaderTitle] = useState('Settings');
@@ -175,7 +175,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <ToastProvider>
     <Stack.Navigator
       screenOptions={{

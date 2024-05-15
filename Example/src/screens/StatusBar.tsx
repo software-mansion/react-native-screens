@@ -27,7 +27,7 @@ interface FirstScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'First'>;
 }
 
-const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
+const FirstScreen = ({ navigation }: FirstScreenProps): React.JSX.Element => {
   const [statusBarStyle, setStatusBarStyle] = useState<StatusBarStyle>('auto');
   const [statusBarHidden, setStatusBarHidden] = useState(false);
   const [statusBarAnimation, setStatusBarAnimation] =
@@ -98,7 +98,7 @@ interface SecondScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Second'>;
 }
 
-const SecondScreen = ({ navigation }: SecondScreenProps): JSX.Element => (
+const SecondScreen = ({ navigation }: SecondScreenProps): React.JSX.Element => (
   <View style={styles.container}>
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </View>
@@ -106,7 +106,7 @@ const SecondScreen = ({ navigation }: SecondScreenProps): JSX.Element => (
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <Stack.Navigator
     screenOptions={{
       headerStyle: {

@@ -29,7 +29,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   const [search, setSearch] = useState('');
@@ -258,7 +258,7 @@ const SearchScreen = ({ navigation }: SearchScreenProps) => {
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <ToastProvider>
     <Stack.Navigator
       screenOptions={{

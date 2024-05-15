@@ -5,6 +5,6 @@ interface Props {
   children: ReactNode;
 }
 
-export const Spacer = ({ children }: Props): JSX.Element => (
+export const Spacer = ({ children }: Props): React.JSX.Element => (
   <View style={{ margin: 10 }}>{children}</View>
 );

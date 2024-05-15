@@ -21,7 +21,7 @@ const DetailsScreen = ({
   navigation,
   route,
   letter,
-}: DetailsScreenProps & { letter: number }): JSX.Element => {
+}: DetailsScreenProps & { letter: number }): React.JSX.Element => {
   const colors = [
     'snow',
     'cornsilk',
@@ -96,7 +96,7 @@ const DStack = createStack('D');
 
 const Tab = createBottomTabNavigator();
 
-const NavigationTabsAndStack = (): JSX.Element => (
+const NavigationTabsAndStack = (): React.JSX.Element => (
   <Tab.Navigator>
     <Tab.Screen
       name="A"

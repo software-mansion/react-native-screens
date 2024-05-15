@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export const Choose = (): JSX.Element => {
+export const Choose = (): React.JSX.Element => {
   const navigation = useNavigation();
   return (
     <View>

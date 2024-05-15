@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "@react-native/typescript-config/tsconfig.json",
   "allowJs": true,
   "include": ["**/*"],
   "compilerOptions": {

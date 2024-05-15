@@ -26,7 +26,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'lavenderblush' }}>
     {Platform.OS === 'ios' ? (
       <Button
@@ -46,7 +46,7 @@ interface DetailsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Details'>;
 }
 
-const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
+const DetailsScreen = ({ navigation }: DetailsScreenProps): React.JSX.Element => {
   const headerHeight = useHeaderHeight();
   const [gestureEnabled, setGestureEnabled] = useState(true);
   const [fullScreenGestureEnabled, setFullScreenGestureEnabled] =
@@ -167,7 +167,7 @@ const DetailsScreen = ({ navigation }: DetailsScreenProps): JSX.Element => {
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <Stack.Navigator
     screenOptions={{
       headerBackVisible: false,
