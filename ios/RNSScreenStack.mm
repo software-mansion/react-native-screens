@@ -751,7 +751,7 @@ namespace react = facebook::react;
   }
 
   RCTSurfaceTouchHandler *touchHandler = nil;
-  // Experimentation shows that RCTSurfaceTouchHandler is the only gestureRecogniser registered here,
+  // Experimentation shows that RCTSurfaceTouchHandler is the only gestureRecognizer registered here,
   // so we should not be afraid of any performance hit here.
   for (UIGestureRecognizer *recognizer in parent.gestureRecognizers) {
     if ([recognizer isKindOfClass:RCTSurfaceTouchHandler.class]) {
