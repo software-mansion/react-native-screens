@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const AppStack = createNativeStackNavigator();
 
@@ -11,7 +11,7 @@ export default function App() {
       <AppStack.Navigator
         screenOptions={{
           headerLargeTitle: true,
-          stackAnimation: 'slide_from_right',
+          animation: 'slide_from_right',
         }}>
         <AppStack.Screen name="First" component={First} />
         <AppStack.Screen name="Second" component={Second} />

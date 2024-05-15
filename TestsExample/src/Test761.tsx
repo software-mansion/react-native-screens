@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 // import {createStackNavigator} from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator();
@@ -19,8 +19,7 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackAnimation: 'simple_push',
-          direction: 'ltr',
+          animation: 'simple_push',
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />

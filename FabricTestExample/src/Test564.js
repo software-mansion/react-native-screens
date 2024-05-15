@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, Button } from 'react-native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -29,7 +29,7 @@ const TabNavigator = () => (
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerTranslucent: true }}>
+      <Stack.Navigator screenOptions={{ headerTransparent: true }}>
         <Stack.Screen name="Home1" component={HomeScreen} />
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
       </Stack.Navigator>

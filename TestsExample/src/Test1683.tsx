@@ -6,8 +6,7 @@ import {
   DefaultTheme,
   Theme,
 } from '@react-navigation/native';
-// import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { createContext, useContext, useState } from 'react';
 
 const RootStack = createNativeStackNavigator();
@@ -47,8 +46,7 @@ const Navigator = () => {
           name="Home"
           component={HomeScreen}
           options={{
-            // headerSearchBarOptions: {},
-            searchBar: {},
+            headerSearchBarOptions: {},
             // statusBarStyle: 'light',
           }}
         />

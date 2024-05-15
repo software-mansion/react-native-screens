@@ -1,7 +1,7 @@
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const App = () => {
   return (
@@ -100,7 +100,7 @@ function MyStack() {
       <MainScreen
         name="PinnedModal"
         component={PinnedModalStack}
-        options={{ stackPresentation: 'modal' }}
+        options={{ presentation: 'modal' }}
       />
     </MainNavigator>
   );

@@ -1,30 +1,38 @@
-/* eslint-disable import/no-commonjs */
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
+const fs = require('fs');
 const path = require('path');
-const blacklist = require('metro-config/src/defaults/exclusionList');
+const exclusionList = require('metro-config/src/defaults/exclusionList');
 const escape = require('escape-string-regexp');
+
 const pack = require('../package.json');
+const projectPack = require('./package.json');
 
 // react-native-screens root directory
 const rnsRoot = path.resolve(__dirname, '..');
 
 const modules = [
   '@react-navigation/native',
+  '@react-navigation/stack',
   'react-native-reanimated',
   'react-native-safe-area-context',
+  'react-native-gesture-handler',
   ...Object.keys(pack.peerDependencies),
 ];
 
-module.exports = {
+const resolvedExts = ['.ts', '.tsx', '.js', '.jsx'];
+
+const config = {
   projectRoot: __dirname,
   watchFolders: [rnsRoot],
 
   // We need to make sure that only one version is loaded for peerDependencies
-  // So we blacklist them at the root, and alias them to the versions in example's node_modules
+  // So we exclude them at the root, and alias them to the versions in example's node_modules
   resolver: {
-    blockList: blacklist(
+    blockList: exclusionList(
       modules.map(
-        m => new RegExp(`^${escape(path.join(rnsRoot, 'node_modules', m))}\\/.*$`),
+        m =>
+          new RegExp(`^${escape(path.join(rnsRoot, 'node_modules', m))}\\/.*$`),
       ),
     ),
 
@@ -33,42 +41,50 @@ module.exports = {
       return acc;
     }, {}),
 
-    // Since we use react-naviation as submodule it comes with it's own node_modules. While loading
+    nodeModulesPaths: [path.join(__dirname, '../../')],
+
+    // Since we use react-navigation as submodule it comes with it's own node_modules. While loading
     // react-navigation code, due to how module resolution algorithms works it seems that its node_modules
     // are consulted first, resulting in double-loaded packages (so doubled react, react-native and other package instances) leading
     // to various errors. To mitigate this we define below custom request resolver, hijacking requests to conflicting modules and manually
     // resolving appropriate files. **Most likely** this can be achieved by proper usage of blockList but I found this method working ¯\_(ツ)_/¯
     resolveRequest: (context, moduleName, platform) => {
-      if (moduleName === 'react' || moduleName === 'react-native') {
-        return {
-          filePath: path.join(
-            __dirname,
-            'node_modules',
-            moduleName,
-            'index.js',
-          ),
-          type: 'sourceFile',
-        };
-      }
-
-      if (moduleName === 'react-native-safe-area-context') {
-        return {
-          filePath: path.join(
-            __dirname,
-            'node_modules',
-            moduleName,
-            'src',
-            'index.tsx',
-          ),
-          type: 'sourceFile',
-        };
-      }
-
       if (moduleName === 'react-native-screens') {
         return {
           filePath: path.join(rnsRoot, 'src', 'index.tsx'),
           type: 'sourceFile',
         };
+      }
+
+      if (moduleName in projectPack.dependencies) {
+        for (const ext of resolvedExts) {
+          const possiblePath = path.join(
+            __dirname,
+            'node_modules',
+            moduleName,
+            `index${ext}`,
+          );
+
+          const possibleSrcPath = path.join(
+            __dirname,
+            'node_modules',
+            moduleName,
+            'src',
+            `index${ext}`,
+          );
+
+          if (fs.existsSync(possiblePath)) {
+            return {
+              filePath: possiblePath,
+              type: 'sourceFile',
+            };
+          } else if (fs.existsSync(possibleSrcPath)) {
+            return {
+              filePath: possibleSrcPath,
+              type: 'sourceFile',
+            };
+          }
+        }
       }
 
       // Optionally, chain to the standard Metro resolver.
@@ -85,3 +101,5 @@ module.exports = {
     }),
   },
 };
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);

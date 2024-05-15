@@ -511,8 +511,17 @@ namespace react = facebook::react;
                                                                              action:nil];
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
+  auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
+
   if (config.isBackTitleVisible) {
-    if (config.backTitleFontFamily || config.backTitleFontSize) {
+    if ((config.backTitleFontFamily &&
+         // While being used by react-navigation, the `backTitleFontFamily` will
+         // be set to "System" by default - which is the system default font.
+         // To avoid always considering the font as customized, we need to have an additional check.
+         // See: https://github.com/software-mansion/react-native-screens/pull/2105#discussion_r1565222738
+         ![config.backTitleFontFamily isEqual:@"System"]) ||
+        config.backTitleFontSize) {
+      isBackButtonCustomized = YES;
       NSMutableDictionary *attrs = [NSMutableDictionary new];
       NSNumber *size = config.backTitleFontSize ?: @17;
       if (config.backTitleFontFamily) {
@@ -535,9 +544,17 @@ namespace react = facebook::react;
     // When backBarButtonItem's title is null, back menu will use value
     // of backButtonTitle
     [backBarButtonItem setTitle:nil];
+    isBackButtonCustomized = YES;
     prevItem.backButtonTitle = resolvedBackTitle;
   }
-  prevItem.backBarButtonItem = backBarButtonItem;
+
+  // Prevent unnecessary assignment of backBarButtonItem if it is not customized,
+  // as assigning one will override the native behavior of automatically shortening
+  // the title to "Back" or hide the back title if there's not enough space.
+  // See: https://github.com/software-mansion/react-native-screens/issues/1589
+  if (isBackButtonCustomized) {
+    prevItem.backBarButtonItem = backBarButtonItem;
+  }
 
   if (@available(iOS 11.0, *)) {
     if (config.largeTitle) {

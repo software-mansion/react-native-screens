@@ -1,16 +1,10 @@
 import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  ImageBackground,
-  I18nManager,
-} from 'react-native';
+import { ScrollView, StyleSheet, View, ImageBackground } from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { Button, Form, Choose, Alert, Dialog } from '../shared';
 
 type StackParamList = {
@@ -132,8 +126,7 @@ const Stack = createNativeStackNavigator<StackParamList>();
 const App = (): JSX.Element => (
   <Stack.Navigator
     screenOptions={{
-      headerHideBackButton: true,
-      direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+      headerBackVisible: true,
     }}>
     <Stack.Screen
       name="Main"
@@ -143,48 +136,48 @@ const App = (): JSX.Element => (
     <Stack.Screen
       name="Push"
       component={FormScreen}
-      options={{ stackPresentation: 'push' }}
+      options={{ presentation: 'card' }}
     />
     <Stack.Screen
       name="Modal"
       component={ModalScreen}
-      options={{ stackPresentation: 'modal' }}
+      options={{ presentation: 'modal' }}
     />
     <Stack.Screen
       name="TransparentModal"
       component={Alert}
       options={{
-        stackPresentation: 'transparentModal',
+        presentation: 'transparentModal',
         headerShown: false,
-        stackAnimation: 'slide_from_bottom',
+        animation: 'slide_from_bottom',
       }}
     />
     <Stack.Screen
       name="ContainedModal"
       component={ModalScreen}
-      options={{ stackPresentation: 'containedModal' }}
+      options={{ presentation: 'containedModal' }}
     />
     <Stack.Screen
       name="ContainedTransparentModal"
       component={Dialog}
       options={{
-        stackPresentation: 'containedTransparentModal',
+        presentation: 'containedTransparentModal',
         headerShown: false,
-        stackAnimation: 'fade',
+        animation: 'fade',
       }}
     />
     <Stack.Screen
       name="FullScreenModal"
       component={FullScreenModalScreen}
       options={{
-        stackPresentation: 'fullScreenModal',
+        presentation: 'fullScreenModal',
         headerShown: false,
       }}
     />
     <Stack.Screen
       name="FormSheet"
       component={FormScreen}
-      options={{ stackPresentation: 'formSheet' }}
+      options={{ presentation: 'formSheet' }}
     />
   </Stack.Navigator>
 );

@@ -5,11 +5,11 @@ import { ScrollView, View, Button } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 type Props = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>,
 };
 
 const Stack = createNativeStackNavigator();
@@ -19,14 +19,14 @@ export default function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          stackPresentation: 'modal',
+          presentation: 'modal',
         }}>
         <Stack.Screen
           name="Home"
           component={Home}
           options={{
             statusBarStyle: 'dark',
-            homeIndicatorHidden: true,
+            autoHideHomeIndicator: true,
           }}
         />
         <Stack.Screen
@@ -41,8 +41,8 @@ export default function App(): JSX.Element {
           component={Home}
           options={{
             statusBarStyle: 'light',
-            stackPresentation: 'fullScreenModal',
-            homeIndicatorHidden: true,
+            presentation: 'fullScreenModal',
+            autoHideHomeIndicator: true,
           }}
         />
       </Stack.Navigator>
@@ -66,7 +66,7 @@ const Inner = () => (
   <InnerStack.Navigator
     screenOptions={{
       statusBarStyle: 'dark',
-      homeIndicatorHidden: true,
+      autoHideHomeIndicator: true,
     }}>
     <InnerStack.Screen name="DeeperHome" component={Home} />
   </InnerStack.Navigator>

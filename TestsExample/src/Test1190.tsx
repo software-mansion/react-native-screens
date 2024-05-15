@@ -4,7 +4,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -19,14 +19,14 @@ export default function App() {
         <Stack.Screen
           name="First"
           component={First}
-          options={{ stackAnimation: 'none' }}
+          options={{ animation: 'none' }}
         />
         <Stack.Screen
           name="Second"
           component={Second}
           options={{
-            stackAnimation: 'slide_from_bottom',
-            replaceAnimation: 'push',
+            animation: 'slide_from_bottom',
+            animationTypeForReplace: 'push',
           }}
         />
       </Stack.Navigator>

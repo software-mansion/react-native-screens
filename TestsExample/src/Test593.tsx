@@ -16,7 +16,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -88,8 +88,7 @@ function Deeper({ navigation }: Props) {
     <NestedStack.Navigator
       screenOptions={{
         headerShown: true,
-        stackAnimation: 'slide_from_right',
-        nativeBackButtonDismissalEnabled: true,
+        animation: 'slide_from_right',
       }}>
       <NestedStack.Screen name="Privacy" component={Privacy} />
       <NestedStack.Screen name="Another" component={Another} />
@@ -103,8 +102,7 @@ export default function NativeNavigation() {
       <ToastProvider>
         <Stack.Navigator
           screenOptions={{
-            stackAnimation: 'slide_from_bottom',
-            nativeBackButtonDismissalEnabled: true,
+            animation: 'slide_from_bottom',
           }}>
           <Stack.Screen name="Status" component={Status} />
           <Stack.Screen name="Deeper" component={Deeper} />

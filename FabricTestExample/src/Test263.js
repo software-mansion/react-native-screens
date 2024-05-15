@@ -7,7 +7,7 @@ import {
   State,
 } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function Example() {
   return (
@@ -90,8 +90,8 @@ export default function ReactNativeScreensBugs() {
     <NavigationContainer>
       <NativeStack.Navigator
         screenOptions={{
-          headerTranslucent: true,
-          stackPresentation: 'modal',
+          headerTransparent: true,
+          presentation: 'modal',
         }}>
         <NativeStack.Screen
           options={{ headerLargeTitle: true }}

@@ -4,7 +4,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -20,8 +20,8 @@ export default function App() {
             component={First}
             options={{
               gestureEnabled: true,
-              headerTranslucent: true,
-              searchBar: {
+              headerTransparent: true,
+              headerSearchBarOptions: {
                 placeholder: 'Interesting places...',
                 obscureBackground: false,
                 hideWhenScrolling: false,

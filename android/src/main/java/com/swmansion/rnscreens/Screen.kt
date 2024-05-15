@@ -162,7 +162,7 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
     ) {
         val reactContext = context as ReactContext
         reactContext.runOnNativeModulesQueueThread(
-            object : GuardedRunnable(reactContext) {
+            object : GuardedRunnable(reactContext.exceptionHandler) {
                 override fun runGuarded() {
                     reactContext
                         .getNativeModule(UIManagerModule::class.java)

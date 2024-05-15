@@ -6,7 +6,7 @@ import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 function First({
   navigation,
@@ -68,12 +68,11 @@ function ButtonWithBiggerChild(props: {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ stackPresentation: 'modal' }}>
+      <Stack.Navigator screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen
           name="First"
           component={First}
           options={{
-            backButtonInCustomView: true,
             headerShown: true,
             headerLeft: () => (
               <ButtonWithBiggerChild

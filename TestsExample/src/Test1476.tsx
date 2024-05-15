@@ -2,12 +2,10 @@ import React from 'react';
 import { Button, Text, View, StyleSheet, ScrollView } from 'react-native';
 import { NavigationContainer as NavigationContainerNative } from '@react-navigation/native';
 
-// remember to change prop names in ScreenGroup && ModalGroup
-// import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 const NativeStack = createNativeStackNavigator();
 
@@ -114,12 +112,7 @@ const ScreenGroup = StackBuilder(
     headerBackTitleVisible: false,
     gestureEnabled: true,
     contentStyle: { backgroundColor: 'white' },
-
-    // prop for @react-navigation/native-stack
-    // fullScreenGestureEnabled: true,
-
-    // prop for react-native-screens/native-stack
-    fullScreenSwipeEnabled: true,
+    fullScreenGestureEnabled: true,
   },
 );
 
@@ -133,16 +126,10 @@ const ModalGroup = StackBuilder(
   ],
   {
     headerShown: false,
-
-    // props for @react-navigation/native-stack
-    // animation: 'fade_from_bottom',
-    // presentation: 'containedTransparentModal',
-
-    // props for react-native-screens/native-stack
-    stackAnimation: 'fade_from_bottom',
-    stackPresentation: 'containedTransparentModal',
-    fullScreenSwipeEnabled: true,
-    customAnimationOnSwipe: true,
+    animation: 'fade_from_bottom',
+    presentation: 'containedTransparentModal',
+    fullScreenGestureEnabled: true,
+    animationMatchesGesture: true,
   },
 );
 

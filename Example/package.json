@@ -15,11 +15,14 @@
     "test-e2e-android": "detox test --configuration android.release --take-screenshots failing"
   },
   "dependencies": {
-    "@react-navigation/bottom-tabs": "^5.11.7",
-    "@react-navigation/compat": "^5.3.14",
-    "@react-navigation/drawer": "^5.12.3",
-    "@react-navigation/native": "^5.9.2",
-    "@react-navigation/stack": "^5.14.2",
+    "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/",
+    "@react-navigation/core": "link:../react-navigation/packages/core/",
+    "@react-navigation/drawer": "link:../react-navigation/packages/drawer/",
+    "@react-navigation/elements": "link:../react-navigation/packages/elements/",
+    "@react-navigation/native": "link:../react-navigation/packages/native/",
+    "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/",
+    "@react-navigation/routers": "link:../react-navigation/packages/routers/",
+    "@react-navigation/stack": "link:../react-navigation/packages/stack/",
     "nanoid": "^4.0.2",
     "react": "18.2.0",
     "react-native": "0.72.4",
@@ -30,6 +33,9 @@
     "react-native-screens": "link:../",
     "react-native-vector-icons": "^8.0.0"
   },
+  "resolutions": {
+    "@react-navigation/core": "link:../react-navigation/packages/core/"
+  },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
@@ -38,7 +44,7 @@
     "@react-native/metro-config": "^0.72.11",
     "@tsconfig/react-native": "^3.0.0",
     "@types/jest": "^29.2.5",
-    "@types/react": "^18.0.24",
+    "@types/react": "^18.2.72",
     "@types/react-native": "0.72.2",
     "@types/react-native-restart": "^0.0.0",
     "@types/react-test-renderer": "^18.0.0",

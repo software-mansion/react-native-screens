@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, StyleSheet, Button } from 'react-native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
 export const Modal1 = React.memo(() => {
@@ -45,13 +45,13 @@ export default function App() {
             key={'modalScreen-1'}
             name={'modalScreen-1'}
             component={Modal1}
-            options={{ stackPresentation: 'modal', headerShown: false }}
+            options={{ presentation: 'modal', headerShown: false }}
           />
           <Stack.Screen
             key={'modalScreen-2'}
             name={'modalScreen-2'}
             component={Modal2}
-            options={{ stackPresentation: 'modal', headerShown: false }}
+            options={{ presentation: 'modal', headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

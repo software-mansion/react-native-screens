@@ -1,9 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import {
-  useHeaderHeight,
-  createNativeStackNavigator,
-} from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { NavigationContainer } from '@react-navigation/native';
 
 const App = () => {
@@ -55,11 +53,11 @@ const Navigation = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          fullScreenSwipeEnabled: true,
-          stackAnimation: 'fade_from_bottom',
-          customAnimationOnSwipe: true,
+          fullScreenGestureEnabled: true,
+          animation: 'fade_from_bottom',
+          animationMatchesGesture: true,
           // headerLargeTitle: true,
-          headerTranslucent: true,
+          headerTransparent: true,
         }}>
         <Stack.Screen
           name="Header"

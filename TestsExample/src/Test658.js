@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import { Button, Dimensions, Text, View } from 'react-native';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,9 +13,8 @@ export default function App() {
           name="TransparentModal"
           component={Screen}
           options={{
-            stackPresentation: 'transparentModal',
-            stackAnimation: 'slide_from_bottom',
-            headerMode: 'none',
+            presentation: 'transparentModal',
+            animation: 'slide_from_bottom',
             headerShown: false,
           }}
         />
@@ -23,8 +22,7 @@ export default function App() {
           name="Modal"
           component={Screen}
           options={{
-            stackPresentation: 'modal',
-            headerMode: 'none',
+            presentation: 'modal',
             headerShown: false,
           }}
         />
