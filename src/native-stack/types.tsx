@@ -113,6 +113,15 @@ export type NativeStackNavigationOptions = {
    */
   disableBackButtonMenu?: boolean;
   /**
+   * How the back button behaves by default (when not customized). Available on iOS>=14, and is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set.
+   * The following values are currently supported (they correspond to https://developer.apple.com/documentation/uikit/uinavigationitembackbuttondisplaymode?language=objc):
+   * - "default" – show given back button previous controller title, system generic or just icon based on available space
+   * - "generic" – show given system generic or just icon based on available space
+   * - "minimal" – show just an icon
+   * @platform ios
+   */
+  backButtonDisplayMode?: ScreenStackHeaderConfigProps['backButtonDisplayMode'];
+  /**
    * Whether inactive screens should be suspended from re-rendering. Defaults to `false`.
    * Defaults to `true` when `enableFreeze()` is run at the top of the application.
    */
