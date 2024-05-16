@@ -21,6 +21,7 @@ class ScreensModule(private val reactContext: ReactApplicationContext)
 
     init {
         try {
+            System.loadLibrary("rnscreens")
             val jsContext = reactApplicationContext.javaScriptContextHolder
             if (jsContext != null) {
                 nativeInstall(jsContext.get())
@@ -116,8 +117,5 @@ class ScreensModule(private val reactContext: ReactApplicationContext)
 
     companion object {
         const val NAME = "RNSModule"
-        init {
-            System.loadLibrary("rnscreens")
-        }
     }
 }
