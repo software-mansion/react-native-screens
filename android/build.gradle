@@ -141,7 +141,8 @@ android {
                 "META-INF/**",
                 "**/libjsi.so",
                 "**/libc++_shared.so",
-                "**/libreact_render*.so"
+                "**/libreact_render*.so",
+                "**/libreactnativejni.so"
         ]
     }
     sourceSets.main {

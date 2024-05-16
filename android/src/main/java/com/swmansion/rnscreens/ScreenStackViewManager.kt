@@ -35,24 +35,7 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
     }
 
     private fun prepareOutTransition(screen: Screen?) {
-        startTransitionRecursive(screen)
-    }
-
-    private fun startTransitionRecursive(parent: ViewGroup?) {
-        parent?.let {
-            for (i in 0 until it.childCount) {
-                val child = it.getChildAt(i)
-                child?.let { view -> it.startViewTransition(view) }
-                if (child is ScreenStackHeaderConfig) {
-                    // we want to start transition on children of the toolbar too,
-                    // which is not a child of ScreenStackHeaderConfig
-                    startTransitionRecursive(child.toolbar)
-                }
-                if (child is ViewGroup) {
-                    startTransitionRecursive(child)
-                }
-            }
-        }
+        screen?.startRemovalTransition()
     }
 
     override fun getChildCount(parent: ScreenStack) = parent.screenCount

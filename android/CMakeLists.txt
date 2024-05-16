@@ -7,6 +7,7 @@ if(${IS_NEW_ARCHITECTURE_ENABLED})
     string(APPEND CMAKE_CXX_FLAGS " -DRCT_NEW_ARCH_ENABLED")
 endif()
 
+if(${IS_NEW_ARCHITECTURE_ENABLED})
 add_library(rnscreens
     SHARED
     ../cpp/RNScreensTurboModule.cpp
@@ -15,6 +16,13 @@ add_library(rnscreens
         ./src/main/cpp/NativeProxy.cpp
         ./src/main/cpp/OnLoad.cpp
 )
+else()
+add_library(rnscreens
+    SHARED
+    ../cpp/RNScreensTurboModule.cpp
+    ./src/main/cpp/jni-adapter.cpp
+)
+endif()
 
 include_directories(
     ../cpp
@@ -26,7 +34,10 @@ target_compile_definitions(
         -DFOLLY_NO_CONFIG=1
 )
 
-target_include_directories(
+find_package(ReactAndroid REQUIRED CONFIG)
+
+if(${IS_NEW_ARCHITECTURE_ENABLED})
+    target_include_directories(
         rnscreens
         PRIVATE
         "${REACT_NATIVE_DIR}/ReactAndroid/src/main/jni/react/turbomodule"
@@ -35,14 +46,13 @@ target_include_directories(
         "${REACT_NATIVE_DIR}/ReactCommon/react/renderer/graphics/platform/cxx"
         "${REACT_NATIVE_DIR}/ReactCommon/runtimeexecutor"
         "${REACT_NATIVE_DIR}/ReactCommon/yoga"
-)
+    )
 
-find_package(ReactAndroid REQUIRED CONFIG)
-find_package(fbjni REQUIRED CONFIG)
-
-if(${IS_NEW_ARCHITECTURE_ENABLED})
+    find_package(fbjni REQUIRED CONFIG)
+    
     target_link_libraries(
         rnscreens
+            ReactAndroid::jsi
             ReactAndroid::folly_runtime
             ReactAndroid::react_nativemodule_core
             ReactAndroid::react_render_uimanager
@@ -63,11 +73,11 @@ if(${IS_NEW_ARCHITECTURE_ENABLED})
             ReactAndroid::glog
             ReactAndroid::react_render_componentregistry
             fbjni::fbjni
+            android
+    )
+else()
+    target_link_libraries(rnscreens
+        ReactAndroid::jsi
+        android
     )
 endif()
-
-target_link_libraries(rnscreens
-    ReactAndroid::jsi
-    fbjni::fbjni
-    android
-)

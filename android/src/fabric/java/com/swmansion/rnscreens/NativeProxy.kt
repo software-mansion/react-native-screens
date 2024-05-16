@@ -21,18 +21,11 @@ class NativeProxy(private val reactContext: ReactApplicationContext) {
     external fun nativeAddMutationsListener(fabricUIManager: FabricUIManager)
 
     @DoNotStrip
-    public fun notifyStackRemovingChildren(stackTag: Int) {
+    public fun notifyScreenRemoved(screenTag: Int) {
         val uiManager = UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC)
-        val screen = uiManager?.resolveView(stackTag)
+        val screen = uiManager?.resolveView(screenTag)
         if (screen is Screen) {
             screen.startRemovalTransition()
-        }
-    }
-
-
-    companion object {
-        init {
-            SoLoader.loadLibrary("rnscreens")
         }
     }
 }

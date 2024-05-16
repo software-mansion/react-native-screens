@@ -29,7 +29,7 @@ namespace rnscreens {
         auto uiManager = fabricUIManager->getBinding()->getScheduler()->getUIManager();
             screenRemovalListener_ = std::make_shared<RNSScreenRemovalListener>(
             [this](int tag) {
-                static const auto method = javaPart_->getClass()->getMethod<void(jint)>("notifyStackRemovingChildren");
+                static const auto method = javaPart_->getClass()->getMethod<void(jint)>("notifyScreenRemoved");
                 method(javaPart_, tag);
             });
 
