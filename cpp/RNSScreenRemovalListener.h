@@ -8,7 +8,7 @@ using namespace facebook::react;
 
 struct RNSScreenRemovalListener : public MountingOverrideDelegate {
   std::function<void(int)> listenerFunction_;
-    RNSScreenRemovalListener(std::function<void(int)> &&listenerFunction_)
+  RNSScreenRemovalListener(std::function<void(int)> &&listenerFunction_)
       : listenerFunction_(listenerFunction_) {}
 
   bool shouldOverridePullTransaction() const override;

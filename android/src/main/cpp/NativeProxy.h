@@ -6,30 +6,30 @@
 
 #include <string>
 
-    namespace rnscreens {
-    using namespace facebook;
-    using namespace facebook::jni;
+namespace rnscreens {
+using namespace facebook;
+using namespace facebook::jni;
 
-    class NativeProxy : public jni::HybridClass<NativeProxy> {
-    public:
-        std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
-        static auto constexpr kJavaDescriptor =
-                "Lcom/swmansion/rnscreens/NativeProxy;";
-        static jni::local_ref<jhybriddata>
-        initHybrid(jni::alias_ref<jhybridobject> jThis);
-        static void registerNatives();
+class NativeProxy : public jni::HybridClass<NativeProxy> {
+ public:
+  std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
+  static auto constexpr kJavaDescriptor =
+      "Lcom/swmansion/rnscreens/NativeProxy;";
+  static jni::local_ref<jhybriddata> initHybrid(
+      jni::alias_ref<jhybridobject> jThis);
+  static void registerNatives();
 
-        ~NativeProxy();
+  ~NativeProxy();
 
-    private:
-        friend HybridBase;
-        jni::global_ref<NativeProxy::javaobject> javaPart_;
+ private:
+  friend HybridBase;
+  jni::global_ref<NativeProxy::javaobject> javaPart_;
 
-        explicit NativeProxy(jni::alias_ref<NativeProxy::javaobject> jThis);
+  explicit NativeProxy(jni::alias_ref<NativeProxy::javaobject> jThis);
 
-        void
-        nativeAddMutationsListener(jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
-                         fabricUIManager);
-    };
+  void nativeAddMutationsListener(
+      jni::alias_ref<facebook::react::JFabricUIManager::javaobject>
+          fabricUIManager);
+};
 
-    }
+} // namespace rnscreens

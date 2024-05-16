@@ -7,13 +7,14 @@ std::optional<MountingTransaction> RNSScreenRemovalListener::pullTransaction(
     MountingTransaction::Number transactionNumber,
     const TransactionTelemetry &telemetry,
     ShadowViewMutationList mutations) const {
-    for (ShadowViewMutation mutation : mutations) {
-        if (mutation.type == ShadowViewMutation::Type::Remove && mutation.oldChildShadowView.componentName !=
-                                                                             nullptr &&
-            strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-            listenerFunction_(mutation.oldChildShadowView.tag);
-        }
+  for (ShadowViewMutation mutation : mutations) {
+    if (mutation.type == ShadowViewMutation::Type::Remove &&
+        mutation.oldChildShadowView.componentName != nullptr &&
+        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") ==
+            0) {
+      listenerFunction_(mutation.oldChildShadowView.tag);
     }
+  }
 
   return MountingTransaction{
       surfaceId, transactionNumber, std::move(mutations), telemetry};
