@@ -159,13 +159,13 @@ If you're changing core functionality:
 
 When you propose the changes that require creating a PR to the `react-navigation` repository, please follow these steps:
 
-1. Create PR with `react-native-screens` changes
-2. Create PR that changes the native-stack in `react-navigation`
-3. Wait for both to pass the review and have all all checks passed
+1. Create a PR with `react-native-screens` changes
+2. Create a PR with changes for native-stack in `react-navigation`
+3. Wait for both to pass the review and have all checks passed
 4. Merge `react-native-screens` changes
 5. Merge `react-native-navigation` changes
-6. Bump the version of main branch index ref in `react-native-screens` 
-7. Post and merge ASAP the main branch ref bump of `react-navigation`
+6. Upgrade the version of main branch index reference in `react-native-screens` (usually, git checkout on a submodule should be sufficient)
+7. Post and merge ASAP upgrade of the main branch reference of `react-navigation`
 
 > [!WARNING]
 > Those steps are crucial, if you change the API in react-native-screens and won't merge react-navigation changes the libraries may go out of sync and crash i.e. because of not existing property. On the other hand, if you don't perform step 6 and 7, test examples and showcase app may stop working in react-native-screens.
