@@ -157,7 +157,7 @@ If you're changing core functionality:
 
 ### What is the flow to integrate with react-navigation
 
-When you propose the changes that require posting PR to react-navigation. Please follow those steps:
+When you propose the changes that require creating a PR to the `react-navigation` repository, please follow these steps:
 
 1. Create PR with `react-native-screens` changes
 2. Create PR that changes the native-stack in `react-navigation`
