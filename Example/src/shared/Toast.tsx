@@ -27,7 +27,7 @@ const Toast = ({
   message,
   style = {},
   remove,
-}: ToastProps): JSX.Element => {
+}: ToastProps): React.JSX.Element => {
   useEffect(() => {
     const timer = setTimeout(() => {
       remove(id);

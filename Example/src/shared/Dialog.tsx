@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export const Dialog = (): JSX.Element => {
+export const Dialog = (): React.JSX.Element => {
   const navigation = useNavigation();
 
   return (

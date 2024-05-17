@@ -19,7 +19,7 @@ export const SettingsSwitch = ({
   value,
   onValueChange,
   style = {},
-}: Props): JSX.Element => {
+}: Props): React.JSX.Element => {
   return (
     <TouchableOpacity onPress={() => onValueChange(!value)}>
       <View style={{ ...styles.container, ...style }}>

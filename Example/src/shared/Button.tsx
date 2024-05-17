@@ -14,7 +14,7 @@ export const Button = ({
   accessibilityLabel,
   onPress,
   testID,
-}: Props): JSX.Element => (
+}: Props): React.JSX.Element => (
   <Spacer>
     <RNButton
       accessibilityLabel={accessibilityLabel}
