@@ -1229,7 +1229,7 @@ PODS:
     - React-logger (= 0.74.0-rc.2)
     - React-perflogger (= 0.74.0-rc.2)
     - React-utils (= 0.74.0-rc.2)
-  - RNScreens (3.31.0-rc.1):
+  - RNGestureHandler (2.16.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1249,9 +1249,8 @@ PODS:
     - React-utils
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 3.31.0-rc.1)
     - Yoga
-  - RNScreens/common (3.31.0-rc.1):
+  - RNScreens (3.31.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1267,6 +1266,30 @@ PODS:
     - React-ImageManager
     - React-NativeModulesApple
     - React-RCTFabric
+    - React-RCTImage
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNScreens/common (= 3.31.1)
+    - Yoga
+  - RNScreens/common (3.31.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-RCTImage
     - React-rendererdebug
     - React-utils
     - ReactCommon/turbomodule/bridging
@@ -1332,6 +1355,7 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1449,14 +1473,16 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: 26fad476bfa736552bbfa698a06cc530475c1505
-  DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
+  boost: d3f49c53809116a5d38da093a8aa78bf551aed09
+  DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: fa59cfcc9893760f58a0af6f5c25d5736c6d0b14
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
@@ -1509,7 +1535,8 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 29aa1c59c7da4d7275c9757d4f26869e2954a8bd
   React-utils: b3fdffd65d9f66ae79435e6633b8a634ac67baf7
   ReactCommon: a4c502bf9d6b69ac8a1961bce7ae32a1e8439555
-  RNScreens: a68878603ae871d339f683bc683803545422986f
+  RNGestureHandler: 07b0babf8a26ea79729ae5c1990f8807e098970b
+  RNScreens: 63fe8222c172a79f5c30dd1aefaeb369c6eb57b6
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: f78d50661f1d9906929cddb3641febd14068f090
 
