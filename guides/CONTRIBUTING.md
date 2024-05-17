@@ -48,7 +48,7 @@ We inform you that unrespectful issues will be closed.
 - `native-stack` &ndash; native stack v5, this will be deprecated in favor of react-navigation in near feature
 - `react-navigation` &ndash; git submodule containing react-navigation
 - `reanimated` &ndash; interop between react-native-screens and react-native-reanimated
-- `scripts` &ndash; cli utils 
+- `scripts` &ndash; utility scripts, used by CLI
 - `src` &ndash; JS core code 
 - `TestsExample` &ndash; paper version of React Native mobile app containing test examples
 - `TVOSExample` &ndash; React Native for TVOS app wrapper for shared example code
