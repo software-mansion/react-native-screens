@@ -36,7 +36,7 @@ We inform you that unrespectful issues will be closed.
 
 ### Repository overview 
 
-- `android` &ndash; source code of Android native implementation
+- `android` &ndash; source code of native implementation for Android
 - `common` &ndash; C++ code related to components - shadow nodes and state
 - `cpp` &ndash; C++ code for turbo modules
 - `Example` &ndash; paper version of React Native mobile example app
