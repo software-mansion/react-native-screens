@@ -7,7 +7,7 @@ interface Props {
   testID?: string;
 }
 
-export const ListItem = ({ title, onPress, testID }: Props): JSX.Element => {
+export const ListItem = ({ title, onPress, testID }: Props): React.JSX.Element => {
   return (
     <TouchableOpacity onPress={onPress} testID={testID}>
       <View style={styles.container}>

@@ -17,7 +17,7 @@ export const SettingsInput = ({
   label,
   value,
   onValueChange,
-}: Props): JSX.Element => {
+}: Props): React.JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>

@@ -30,7 +30,7 @@ const MainScreen = ({
   navigation,
   stackAnimation,
   setStackAnimation,
-}: MainScreenProps): JSX.Element => {
+}: MainScreenProps): React.JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
       animation: stackAnimation,
@@ -82,7 +82,7 @@ interface ReplaceScreenProps {
 const ReplaceScreen = ({
   navigation,
   stackAnimation,
-}: ReplaceScreenProps): JSX.Element => {
+}: ReplaceScreenProps): React.JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
       animation: stackAnimation,
@@ -104,7 +104,7 @@ interface NavigateScreenProps {
 const NavigateScreen = ({
   navigation,
   stackAnimation,
-}: NavigateScreenProps): JSX.Element => {
+}: NavigateScreenProps): React.JSX.Element => {
   useLayoutEffect(() => {
     navigation.setOptions({
       animation: stackAnimation,
@@ -120,7 +120,7 @@ const NavigateScreen = ({
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => {
+const App = (): React.JSX.Element => {
   const [stackAnimation, setStackAnimation] =
     useState<StackAnimation>('default');
   return (

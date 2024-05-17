@@ -29,7 +29,7 @@ const MainScreen = ({
   navigation,
   stackAnimation,
   setStackAnimation,
-}: MainScreenProps): JSX.Element => {
+}: MainScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -105,7 +105,7 @@ interface ChatsScreenProps {
 const ChatsScreen = ({
   navigation,
   stackAnimation,
-}: ChatsScreenProps): JSX.Element => {
+}: ChatsScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -170,7 +170,7 @@ interface PrivacyScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const PrivacyScreen = ({ navigation }: PrivacyScreenProps): JSX.Element => {
+const PrivacyScreen = ({ navigation }: PrivacyScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -228,7 +228,7 @@ interface OptionsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const OptionsScreen = ({ navigation }: OptionsScreenProps): JSX.Element => {
+const OptionsScreen = ({ navigation }: OptionsScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -281,7 +281,7 @@ const OptionsScreen = ({ navigation }: OptionsScreenProps): JSX.Element => {
 const Stack = createNativeStackNavigator<StackParamList>();
 const NestedStack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => {
+const App = (): React.JSX.Element => {
   const [stackAnimation, setStackAnimation] =
     useState<StackAnimation>('default');
 

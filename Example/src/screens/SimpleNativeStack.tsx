@@ -15,7 +15,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
     <Button
       testID="simple-native-stack-go-to-detail"
@@ -30,7 +30,7 @@ interface DetailScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Detail'>;
 }
 
-const DetailScreen = ({ navigation }: DetailScreenProps): JSX.Element => (
+const DetailScreen = ({ navigation }: DetailScreenProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
     <Button
       title="Go back"
@@ -42,7 +42,7 @@ const DetailScreen = ({ navigation }: DetailScreenProps): JSX.Element => (
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <Stack.Navigator
     screenOptions={{
       headerBackVisible: false,

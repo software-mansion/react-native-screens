@@ -22,7 +22,7 @@ interface FirstScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'First'>;
 }
 
-const FirstScreen = ({ navigation }: FirstScreenProps): JSX.Element => {
+const FirstScreen = ({ navigation }: FirstScreenProps): React.JSX.Element => {
   const [screenOrientation, setScreenOrientation] =
     useState<ScreenOrientation>('default');
 
@@ -65,7 +65,7 @@ interface SecondScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Second'>;
 }
 
-const SecondScreen = ({ navigation }: SecondScreenProps): JSX.Element => (
+const SecondScreen = ({ navigation }: SecondScreenProps): React.JSX.Element => (
   <SafeAreaView style={{ ...styles.container, backgroundColor: 'honeydew' }}>
     <Button title="Go back" onPress={() => navigation.goBack()} />
   </SafeAreaView>
@@ -73,7 +73,7 @@ const SecondScreen = ({ navigation }: SecondScreenProps): JSX.Element => (
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <Stack.Navigator
     screenOptions={{
       headerBackVisible: false,

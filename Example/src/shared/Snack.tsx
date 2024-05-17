@@ -12,7 +12,7 @@ interface Props {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-export const Snack = ({ route, navigation }: Props): JSX.Element => {
+export const Snack = ({ route, navigation }: Props): React.JSX.Element => {
   const { backgroundColor, message } = route.params ?? {
     backgroundColor: 'white',
     message: 'Hi!',

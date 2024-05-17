@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, StyleSheet, Dimensions, View, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export const Alert = (): JSX.Element => {
+export const Alert = (): React.JSX.Element => {
   const navigation = useNavigation();
   const backgrounds = [
     'darkviolet',
