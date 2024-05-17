@@ -152,7 +152,6 @@ android {
             } else {
                 srcDirs += [
                     "src/paper/java",
-                    "build/generated/source/codegen/java"
                 ]
             }
         }
