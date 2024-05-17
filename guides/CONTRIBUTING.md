@@ -52,7 +52,7 @@ We inform you that unrespectful issues will be closed.
 - `src` &ndash; JS core code 
 - `TestsExample` &ndash; paper version of React Native mobile app containing test examples
 - `TVOSExample` &ndash; React Native for TVOS app wrapper for shared example code
-- `windows` &ndash; react-native-screens support for Windows 
+- `windows` &ndash; source code of native implementation for Windows
 
 ## Handling open issues 
 
