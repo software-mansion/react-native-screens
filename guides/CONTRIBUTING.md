@@ -149,8 +149,8 @@ If you're changing native-stack v5 (`./native-stack`) you **do not need** to pos
 If you're changing native-stack v6, v7 you **need to** post PR to `react-navigation`, as the code belongs there now.
 
 If you're changing core functionality:
-- If it's a bug fix and does not change the interface then you **do not need** to post PR to `react-navigation`.
-- If you're adding new feature or changing API you **need to** post PR to `react-navigation`.
+- If it's a bug fix and does not change the interface, then you **do not need** to create a PR in `react-navigation` repository.
+- If you're adding a new feature or changing API, you **need to** create a PR in `react-navigation` repository.
 
 > [!TIP]
 > As the rule of thumb, if you're changing the external interface you need to prepare PRs for react-navigation
