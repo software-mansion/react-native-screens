@@ -5,3 +5,4 @@ include ':react-native-screens'
 project(':react-native-screens').projectDir = new File(rootProject.projectDir, '../../android')
 
 include ':app'
+includeBuild('../node_modules/@react-native/gradle-plugin')
