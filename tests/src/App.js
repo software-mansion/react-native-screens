@@ -79,6 +79,7 @@ import Test1296 from './Test1296';
 import Test1299 from './Test1299';
 import Test1391 from './Test1391';
 import Test1419 from './Test1419';
+import Test1463 from './Test1463';
 import Test1473 from './Test1473';
 import Test1476 from './Test1476';
 import Test1509 from './Test1509';
@@ -96,9 +97,11 @@ import Test1864 from './Test1864';
 import Test1970 from './Test1970';
 import Test1981 from './Test1981';
 import Test2008 from './Test2008';
+import Test2028 from './Test2028';
 import Test2048 from './Test2048';
 import Test2069 from './Test2069';
 import Test2118 from './Test2118';
+import TestScreenAnimation from './TestScreenAnimation';
 
 enableFreeze(true);
 
