@@ -3,8 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "android": "npx react-native run-android",
+    "ios": "npx react-native run-ios",
+    "start": "npx react-native start",
+    "format": "prettier --write --list-different './src/**/*.{js,ts,tsx}'",
     "lint": "eslint --ext '.js,.ts,.tsx' --fix src && yarn check-types && yarn format",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "build-e2e-ios": "detox build --configuration ios.release",
+    "build-e2e-android": "detox build --configuration android.release",
+    "test-e2e-ios": "detox test --configuration ios.release --take-screenshots failing",
+    "test-e2e-android": "detox test --configuration android.release --take-screenshots failing"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/",
