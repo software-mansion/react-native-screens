@@ -6,9 +6,22 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.ViewManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenContainerManagerDelegate
+import com.facebook.react.viewmanagers.RNSScreenContainerManagerInterface
 
 @ReactModule(name = ScreenContainerViewManager.REACT_CLASS)
-class ScreenContainerViewManager : ViewGroupManager<ScreenContainer>() {
+class ScreenContainerViewManager : ViewGroupManager<ScreenContainer>(), RNSScreenContainerManagerInterface<ScreenContainer> {
+    private val delegate: ViewManagerDelegate<ScreenContainer>
+
+    init {
+        delegate = RNSScreenContainerManagerDelegate<ScreenContainer, ScreenContainerViewManager>(this)
+    }
+
+    protected override fun getDelegate(): ViewManagerDelegate<ScreenContainer> {
+        return delegate
+    }
+
     override fun getName(): String = REACT_CLASS
 
     override fun createViewInstance(reactContext: ThemedReactContext): ScreenContainer = ScreenContainer(reactContext)
