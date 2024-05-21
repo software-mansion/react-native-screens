@@ -63,7 +63,7 @@ Often understanding and reproducing the problem can be very time consuming task.
 - missing description,
 - not related or truncated stack trace. 
 
-What you can do is ask the owner for those details or try provide them by yourself - try to reproduce the problem and provide missing details, so other developer can start debugging straightaway! 🎉
+What you can do is ask the owner of an issue for such details or try provide them by yourself - try to reproduce the problem and provide missing details, so other developer can start debugging straightaway! 🎉
 
 ## Contributing to Code
 
@@ -85,13 +85,14 @@ We have two types of applications: pure examples (Example, FabricExample) and ex
 
 ### Working on Android
 
-To start with, let install all dependencies:
+To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-3. `cd TestsExample`
-4. `yarn`
-5. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
+3. `(cd react-navigation && yarn prepare)`
+4. `cd TestsExample`
+5. `yarn`
+6. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
 
 and open `react-native-screens/TestsExample/android` with Android Studio.
 
@@ -101,14 +102,15 @@ The native source code of react-native-screens can be found in `react-native-scr
 
 ### Working on iOS
 
-To start with, let install all dependencies:
+To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-3. `cd TestsExample`
-4. `yarn`
-5. `(cd ios && pod install)`
-6. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
+3. `(cd react-navigation && yarn prepare)`
+4. `cd TestsExample`
+5. `yarn`
+6. `(cd ios && pod install)`
+7. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
 
 and open `react-native-screens/TestsExample/ios/TestsExample.xcworkspace` with XCode.
 
