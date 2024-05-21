@@ -140,7 +140,7 @@ Currently, native stack is both in `react-native-screens` and `react-navigation`
 
 #### Changes in native code 
 
-If your change is only related to native code, for example you're fixing a bug, you **do not need** to post PR to `react-navigation`. `react-native-screens` is separate library installed alongside `react-navigation`, you can just bump `react-native-screens` version in you package.json file.
+If your change is only related to the native code (for example you're fixing a bug), you **do not need** to create a PR in the `react-navigation` repository. `react-native-screens` is a separate library installed alongside `react-navigation`, so you can just increase version of `react-native-screens` in your package.json file.
 
 #### Changes in JS code or both
 
