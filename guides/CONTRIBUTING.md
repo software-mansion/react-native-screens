@@ -97,7 +97,7 @@ and open `react-native-screens/TestsExample/android` with Android Studio.
 
 ![Android Studio](android_studio.png)
 
-The native source code of react-native-screens can be found in `react-native-screens` module, in `kotlin+java/com.swmansion.rnscreens`. Making sure metro builder is run, you can now build React Native app or debug native code. 
+The native source code of react-native-screens can be found in `react-native-screens` module, in `kotlin+java/com.swmansion.rnscreens` (ensuring your project view is in the `Android` mode). Making sure metro builder is run, you can now build React Native app or debug native code. 
 
 ### Working on iOS
 
