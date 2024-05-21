@@ -72,7 +72,7 @@ Posting Pull Requests to the issues is great way to contribute to Screens. If yo
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
-We have two types of applications: Example (Example, FabricExample) and TestsExample (FabricTestExample, TestsExample), the first work as a showcase of the library, the latter contains specific test cases that corresponds to github issues. For example Test1864.tsx corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.ts` with code example that we try to fix or add. For the new features we try to prepare showcases in Example app.  
+We have two types of applications: pure examples (Example, FabricExample) and examples, dedicated for tests from issues / pull requests (FabricTestExample, TestsExample). The first work as a showcase of the library, the latter contains specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For the new features we try to prepare showcases in Example app.  
 
 - `Example/src` &ndash; source code with showcase app for paper architecture
 - `TestsExample/src` &ndash; source code with tests example app for paper architecture
