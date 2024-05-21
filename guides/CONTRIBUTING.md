@@ -122,7 +122,7 @@ When using fabric on iOS codegen is run while doing `pod install`, on Android wh
 
 ### Preparing Pull Request
 
-When your code changes are ready, it is time to open your Pull Request. Github already has a template that helps you properly post your changes. The most crucial are:
+When your code changes are ready, it is time to open your Pull Request. GitHub already has a template that helps you properly post your changes. The most crucial are:
 
 1. **Description**:
  - If you're solving specific issue, start with linking it.
