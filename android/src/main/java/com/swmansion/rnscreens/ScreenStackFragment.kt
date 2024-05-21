@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -246,6 +247,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics?.bounds?.height()
                 ?.let { return it }
         }
+        Log.d(TAG, "[${this.screen.id}] tryResolveContainerHeight return null, isAdded: ${this.isAdded}, isRemoving: ${this.isRemoving}, isDetached: ${this.isDetached}")
         return null
     }
 
@@ -278,7 +280,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         behavior: BottomSheetBehavior<Screen>, keyboardState: KeyboardState = KeyboardNotVisible
     ): BottomSheetBehavior<Screen> {
         val containerHeight = tryResolveContainerHeight()
-        check(containerHeight != null) { "[RNScreens] Failed to find window height during bottom sheet behaviour configuration" }
+        Log.d(TAG, "Resolved containerHeight $containerHeight")
+        check(containerHeight != null) {
+            "[RNScreens] Failed to find window height during bottom sheet behaviour configuration"
+        }
 
         behavior.apply {
             isHideable = true
@@ -407,6 +412,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         val shape = MaterialShapeDrawable(shapeAppearanceModel)
         shape.setTint((screen.background as? ColorDrawable?)?.color ?: Color.TRANSPARENT)
         screen.background = shape
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
     override fun onStop() {

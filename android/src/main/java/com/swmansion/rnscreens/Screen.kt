@@ -138,6 +138,13 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
         // ignore restoring instance state too as we are not saving anything anyways.
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val newWidth = MeasureSpec.getSize(widthMeasureSpec)
+        val newHeight = MeasureSpec.getSize(heightMeasureSpec)
+        Log.d(TAG, "[${this.id}] onMeasure with size $newWidth x $newHeight")
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         if (container is ScreenStack && changed) {
             val width = r - l
@@ -318,6 +325,8 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
         }
 
     var nativeBackButtonDismissalEnabled: Boolean = true
+
+
 
     private fun calculateHeaderHeight(): Pair<Double, Double> {
         val actionBarTv = TypedValue()

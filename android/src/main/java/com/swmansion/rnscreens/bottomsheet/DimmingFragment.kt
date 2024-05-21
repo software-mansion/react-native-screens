@@ -62,14 +62,14 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     private val container: ScreenStack?
         get() = screen.container as? ScreenStack
 
+    private val requireRootView: View
+        get() = screen.reactContext!!.currentActivity!!.window.decorView
+
     init {
         // We register for our child lifecycle as we want to know when it's dismissed via native gesture
         nestedFragment.fragment.lifecycle.addObserver(this)
 
-        val rootView = screen.reactContext!!.currentActivity!!.window.decorView
-        ViewCompat.setOnApplyWindowInsetsListener(rootView, this)
-//        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
-//        ViewCompat.setWindowInsetsAnimationCallback(containerView, insetCallback)
+        ViewCompat.setOnApplyWindowInsetsListener(requireRootView, this)
     }
 
     private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, val maxAlpha: Float) : BottomSheetCallback() {
@@ -154,11 +154,22 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     override fun onStart() {
         // This is the earliest we can access child fragment manager & present another fragment
         super.onStart()
-        childFragmentManager.commit(allowStateLoss = true) {
-            setReorderingAllowed(true)
-//            setCustomAnimations(R.anim.rns_slide_in_from_bottom, R.anim.rns_slide_out_to_bottom)
-            add(requireView().id, nestedFragment.fragment, null)
-        }
+        presentNestedFragment()
+    }
+
+    override fun onPause() {
+        Log.d(TAG, "onPause ${this}")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Log.d(TAG, "onStop ${this}")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy ${this}")
+        super.onDestroy()
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
@@ -170,14 +181,33 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 }
             }
             Lifecycle.Event.ON_STOP -> {
-                source.lifecycle.removeObserver(this@DimmingFragment)
-                dimmingViewCallback?.let {
-                    nestedFragment.screen.sheetBehavior?.removeBottomSheetCallback(it)
-                }
                 dismissSelf(emitDismissedEvent = true)
             }
             else -> {}
         }
+    }
+
+    private fun presentNestedFragment() {
+        childFragmentManager.commit(allowStateLoss = true) {
+            setReorderingAllowed(true)
+            add(requireView().id, nestedFragment.fragment, null)
+        }
+    }
+
+    private fun removeNestedFragment() {
+        childFragmentManager.commit(allowStateLoss = true) {
+            setReorderingAllowed(true)
+            remove(nestedFragment.fragment)
+        }
+    }
+
+    private fun cleanRegisteredCallbacks() {
+        dimmingViewCallback?.let {
+            nestedFragment.screen.sheetBehavior?.removeBottomSheetCallback(it)
+        }
+        dimmingView.setOnClickListener(null)
+        nestedFragment.fragment.lifecycle.removeObserver(this)
+        ViewCompat.setOnApplyWindowInsetsListener(requireRootView, null)
     }
 
     private fun dismissSelf(emitDismissedEvent: Boolean = false) {
@@ -189,6 +219,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                     .getEventDispatcherForReactTag(reactContext, screen.id)
                     ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
             }
+            cleanRegisteredCallbacks()
             dismissFromContainer()
         }
     }
@@ -428,7 +459,6 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
             }
 
             keyboardState = KeyboardNotVisible
-
             isKeyboardVisible = false
 
             val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
@@ -445,6 +475,5 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 )
                 .build()
         }
-//        return insets
     }
 }

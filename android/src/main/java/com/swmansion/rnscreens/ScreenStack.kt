@@ -116,6 +116,17 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             null // this is only set if newTop has TRANSPARENT_MODAL presentation mode
         isDetachingCurrentScreen = false // we reset it so the previous value is not used by mistake
 
+        Log.d(TAG, "screenWrappers -----")
+        screenWrappers.asSequence().withIndex().forEach {
+            Log.d(TAG, "${it.index} -> ${it.value} [${it.value.screen.id}]")
+        }
+        Log.d(TAG, "-----")
+        Log.d(TAG, "dismissedWrappers")
+        dismissedWrappers.asSequence().withIndex().forEach {
+            Log.d(TAG, "${it.index} -> ${it.value} [${it.value.screen.id}]")
+        }
+        Log.d(TAG, "-----")
+
         for (i in screenWrappers.indices.reversed()) {
             val screen = getScreenFragmentWrapperAt(i)
             if (!dismissedWrappers.contains(screen)) {
@@ -249,6 +260,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             // remove all screens previously on stack
             for (fragmentWrapper in stack) {
                 if (!screenWrappers.contains(fragmentWrapper) || dismissedWrappers.contains(fragmentWrapper)) {
+                    Log.d(TAG, "Removing ${fragmentWrapper.fragment}")
                     it.remove(fragmentWrapper.fragment)
                 }
             }
@@ -260,6 +272,7 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                 }
                 // detach all screens that should not be visible
                 if (fragmentWrapper !== newTop && !dismissedWrappers.contains(fragmentWrapper)) {
+                    Log.d(TAG, "Removing ${fragmentWrapper.fragment}")
                     it.remove(fragmentWrapper.fragment)
                 }
             }
@@ -276,11 +289,13 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                         } else continue
                     }
                     // when first visible screen found, make all screens after that visible
+                    Log.d(TAG, "Attaching ${fragmentWrapper.fragment}")
                     it.add(id, fragmentWrapper.fragment).runOnCommit {
                         top?.screen?.bringToFront()
                     }
                 }
             } else if (newTop != null && !newTop.fragment.isAdded) {
+                Log.d(TAG, "Attaching ${newTop.fragment}")
                 it.add(id, newTop.fragment)
             }
             topScreenWrapper = newTop as? ScreenStackFragmentWrapper
