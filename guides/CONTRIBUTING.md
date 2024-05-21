@@ -44,7 +44,7 @@ We inform you that unrespectful issues will be closed.
 - `FabricTestExample` &ndash; fabric version of React Native mobile app containing test examples
 - `gesture-handler` &ndash; interop between react-native-screens and react-native-gesture-handler
 - `guides` &ndash; guides for developers
-- `ios` &ndash; source code of iOS native implementation
+- `ios` &ndash; source code of native implementation for iOS
 - `native-stack` &ndash; native stack v5, this will be deprecated in favor of react-navigation in near feature
 - `react-navigation` &ndash; git submodule containing react-navigation
 - `reanimated` &ndash; interop between react-native-screens and react-native-reanimated
