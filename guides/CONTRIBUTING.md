@@ -45,8 +45,8 @@ We inform you that unrespectful issues will be closed.
 - `gesture-handler` &ndash; interop between react-native-screens and react-native-gesture-handler
 - `guides` &ndash; guides for developers
 - `ios` &ndash; source code of native implementation for iOS
-- `native-stack` &ndash; native stack v5, this will be deprecated in favor of react-navigation in near feature
-- `react-navigation` &ndash; git submodule containing react-navigation
+- `native-stack` &ndash; description of native stack v5, this will be deprecated in favor of react-navigation in near feature
+- `react-navigation` &ndash; git submodule that refers to the react-navigation repository. Used mainly to test changes for newer versions of native stack.
 - `reanimated` &ndash; interop between react-native-screens and react-native-reanimated
 - `scripts` &ndash; utility scripts, used by CLI
 - `src` &ndash; JS core code 
@@ -116,11 +116,11 @@ and open `react-native-screens/TestsExample/ios/TestsExample.xcworkspace` with X
 
 ![XCode](xcode.png)
 
-To find the native source code of Reanimated navigate to `Pods > Development Pods >  RNScreens > TestsExample > node_modules > react-native-screens > ios`. Making sure metro builder is run, you can now build React Native app or debug native code. 
+To find the native source code of `react-native-screens` navigate to `Pods > Development Pods >  RNScreens > TestsExample > node_modules > react-native-screens > ios` or `Pods > Development Pods > RNScreens > .. > TestsExample > node_modules > react-native-screens > ios`. Making sure metro builder is run, you can now build React Native app or debug native code. 
 
 ### Fabric 
 
-When using fabric on iOS codegen is run while doing `pod install`, on Android when running Fabric Example in Android Studio. Alternative approach for Android is to go into `./FabricExample/android` folder and run `./gradlew generateCodegenArtifactsFromSchema`. Next you need to copy changed files from `/android/build/generated/source/codegen/java/com/facebook/react/viewmanagers/` to `android/src/paper/java/com/facebook/react/viewmanagers/`, so the interfaces are in sync. 
+Codegen introduced by the [new architecture](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/codegen.md) is fired automatically for iOS while runing `pod install` or when runing `FabricExample` in Android Studio. Developer can also run it manually by going into `./FabricExample/android` and running `./gradlew generateCodegenArtifactsFromSchema`. In both cases it is important to copy changed files from `/android/build/generated/source/codegen/java/com/facebook/react/viewmanagers/` to `android/src/paper/java/com/facebook/react/viewmanagers/`, so the interfaces are in sync for Paper architecture. 
 
 ### Preparing Pull Request
 
