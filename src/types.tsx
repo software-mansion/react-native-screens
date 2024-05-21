@@ -713,3 +713,24 @@ export interface SearchBarProps {
    */
   shouldShowHintSearchIcon?: boolean;
 }
+
+/**
+ * Since the search bar is a component that is extended from View on iOS,
+ * we can't use onFocus and onBlur events directly there (as of the event naming conflicts).
+ * To omit any breaking changes, we're handling this type to rename onFocus and onBlur events
+ * to onSearchFocus and onSearchBlur inside the native component of the search bar.
+ */
+export type RenamedSearchBarProps = Rename<
+  SearchBarProps,
+  { onFocus: 'onSearchFocus'; onBlur: 'onSearchBlur' }
+>;
+
+/**
+ * Helper type, used to rename certain keys in the interface, given from object.
+ */
+type Rename<
+  T,
+  R extends {
+    [K in keyof R]: K extends keyof T ? PropertyKey : 'Error: key not in T';
+  }
+> = { [P in keyof T as P extends keyof R ? R[P] : P]: T[P] };

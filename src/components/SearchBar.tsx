@@ -3,6 +3,7 @@ import {
   isSearchBarAvailableForCurrentPlatform,
   SearchBarCommands,
   SearchBarProps,
+  RenamedSearchBarProps,
 } from 'react-native-screens';
 import { View } from 'react-native';
 
@@ -11,9 +12,9 @@ import SearchBarNativeComponent, {
   Commands as SearchBarNativeCommands,
 } from '../fabric/SearchBarNativeComponent';
 
-export const NativeSearchBar: React.ComponentType<SearchBarProps> &
+export const NativeSearchBar: React.ComponentType<RenamedSearchBarProps> &
   typeof NativeSearchBarCommands =
-  SearchBarNativeComponent as unknown as React.ComponentType<SearchBarProps> &
+  SearchBarNativeComponent as unknown as React.ComponentType<RenamedSearchBarProps> &
     SearchBarCommandsType;
 export const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
@@ -76,7 +77,14 @@ function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
     return View as unknown as React.ReactNode;
   }
 
-  return <NativeSearchBar {...props} ref={searchBarRef} />;
+  return (
+    <NativeSearchBar
+      onSearchFocus={props.onFocus}
+      onSearchBlur={props.onBlur}
+      {...props}
+      ref={searchBarRef}
+    />
+  );
 }
 
 export default React.forwardRef<SearchBarCommands, SearchBarProps>(SearchBar);

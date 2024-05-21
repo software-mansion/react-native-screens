@@ -22,8 +22,8 @@ type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
 interface NativeProps extends ViewProps {
-  onFocus?: DirectEventHandler<SearchBarEvent> | null;
-  onBlur?: DirectEventHandler<SearchBarEvent> | null;
+  onSearchFocus?: DirectEventHandler<SearchBarEvent> | null;
+  onSearchBlur?: DirectEventHandler<SearchBarEvent> | null;
   onSearchButtonPress?: DirectEventHandler<SearchButtonPressedEvent> | null;
   onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
   onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
