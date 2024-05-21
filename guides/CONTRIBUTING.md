@@ -56,7 +56,7 @@ We inform you that unrespectful issues will be closed.
 
 ## Handling open issues 
 
-Often understanding and reproducing the problem can be very time consuming task. The great way to help other contributors get up to the speed with solving an issue is providing detailed description and *reproducible* example. The github already has an template for creating issue, nevertheless we still encounter issues that do not have all necessary details, like:
+Often understanding and reproducing the problem can be very time consuming task. The great way to help other contributors get up to the speed with solving an issue is providing detailed description and *reproducible* example. The GitHub already has an template for creating issue, nevertheless we still encounter issues that do not have all necessary details, like:
 
 - repository that we can clone and quickly see the problem,
 - very generic reproduction steps,
