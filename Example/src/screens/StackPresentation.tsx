@@ -22,7 +22,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => {
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   return (
     <ScrollView
       style={{ ...styles.container, backgroundColor: 'thistle' }}
@@ -75,7 +75,7 @@ interface FormScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const FormScreen = ({ navigation }: FormScreenProps): JSX.Element => (
+const FormScreen = ({ navigation }: FormScreenProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'white' }}>
     <Form />
     <Button
@@ -90,7 +90,7 @@ interface ModalScreenProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const ModalScreen = ({ navigation }: ModalScreenProps): JSX.Element => (
+const ModalScreen = ({ navigation }: ModalScreenProps): React.JSX.Element => (
   <View style={styles.container}>
     <Choose />
     <Button
@@ -107,7 +107,7 @@ interface FullScreenModalProps {
 
 const FullScreenModalScreen = ({
   navigation,
-}: FullScreenModalProps): JSX.Element => (
+}: FullScreenModalProps): React.JSX.Element => (
   <View style={{ flex: 1 }}>
     <ImageBackground
       style={styles.image}
@@ -123,7 +123,7 @@ const FullScreenModalScreen = ({
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <Stack.Navigator
     screenOptions={{
       headerBackVisible: true,

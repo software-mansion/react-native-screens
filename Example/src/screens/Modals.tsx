@@ -18,7 +18,7 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'bisque' }}>
     <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
     <Button
@@ -38,7 +38,7 @@ interface ModalScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Modal'>;
 }
 
-const ModalScreen = ({ navigation }: ModalScreenProps): JSX.Element => (
+const ModalScreen = ({ navigation }: ModalScreenProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
     <Button title="Open modal" onPress={() => navigation.push('Modal')} />
     <Button
@@ -56,7 +56,7 @@ const ModalScreen = ({ navigation }: ModalScreenProps): JSX.Element => (
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const App = (): JSX.Element => (
+const App = (): React.JSX.Element => (
   <Stack.Navigator
     screenOptions={{
       headerBackVisible: false,

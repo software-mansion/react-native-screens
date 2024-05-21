@@ -10,7 +10,7 @@ type Props = {
   }[];
 };
 
-export function SettingsMultiInput({ label, handlers }: Props): JSX.Element {
+export function SettingsMultiInput({ label, handlers }: Props): React.JSX.Element {
   return (
     <Pressable>
       <View style={styles.container}>

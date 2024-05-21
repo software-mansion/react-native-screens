@@ -17,7 +17,7 @@ export function SettingsPicker<T extends string>({
   onValueChange,
   items,
   style = {},
-}: Props<T>): JSX.Element {
+}: Props<T>): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <TouchableOpacity

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, View } from 'react-native';
+import { Button, View, I18nManager } from 'react-native';
 import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
@@ -13,6 +13,14 @@ type Props = {
 const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
+  React.useEffect(() => {
+    I18nManager.forceRTL(true);
+
+    return () => {
+      I18nManager.forceRTL(false);
+    };
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>

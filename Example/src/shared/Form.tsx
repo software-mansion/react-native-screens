@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text, TextInput } from 'react-native';
 
-export const Form = (): JSX.Element => (
+export const Form = (): React.JSX.Element => (
   <View testID="form" style={styles.wrapper}>
     <Text testID="form-header" style={styles.heading}>
       Example form
