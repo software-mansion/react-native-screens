@@ -153,7 +153,7 @@ If you're changing core functionality:
 - If you're adding a new feature or changing API, you **need to** create a PR in `react-navigation` repository.
 
 > [!TIP]
-> As the rule of thumb, if you're changing the external interface, you need to prepare PRs for the `react-navigation` repository.
+> As the rule of thumb, if you're changing the public interface, you need to prepare PRs for the `react-navigation` repository.
 
 ### What is the flow to integrate with react-navigation
 
