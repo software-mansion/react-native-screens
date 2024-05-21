@@ -67,7 +67,7 @@ What you can do is ask the owner for those details or try provide them by yourse
 
 ## Contributing to Code
 
-Posting Pull Requests to the issues is great way to contribute to Reanimated. If you eager to start contributing right away, we have list of [good first issue](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup. 
+Posting Pull Requests to the issues is great way to contribute to Screens. If you eager to start contributing right away, we have list of [good first issues](https://github.com/software-mansion/react-native-screens/pulls?q=is%3Apr+is%3Aopen+label%3A%22good+first+issue%22) that contain bugs which have limited scope. In this section we'll describe in more details how to play around with react-native-screens setup. 
 
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
