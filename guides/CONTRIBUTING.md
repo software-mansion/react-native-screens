@@ -118,7 +118,7 @@ To find the native source code of Reanimated navigate to `Pods > Development Pod
 
 ### Fabric 
 
-When using fabric on iOS codegen is run while doing `pod install`, on android when running Fabric Example in Android Studio. Alternative approach for Android is to go into `./FabricExample/android` folder and run `./gradlew generateCodegenArtifactsFromSchema`. Next you need to copy changed files from `/android/build/generated/source/codegen/java/com/facebook/react/viewmanagers/` to `android/src/paper/java/com/facebook/react/viewmanagers/`, so the interfaces are in sync. 
+When using fabric on iOS codegen is run while doing `pod install`, on Android when running Fabric Example in Android Studio. Alternative approach for Android is to go into `./FabricExample/android` folder and run `./gradlew generateCodegenArtifactsFromSchema`. Next you need to copy changed files from `/android/build/generated/source/codegen/java/com/facebook/react/viewmanagers/` to `android/src/paper/java/com/facebook/react/viewmanagers/`, so the interfaces are in sync. 
 
 ### Preparing Pull Request
 
