@@ -133,7 +133,7 @@ When your code changes are ready, it is time to open your Pull Request. GitHub a
 
 ### Do I need to prepare Pull Request for react-navigation too? 
 
-Currently native stack is both in `react-native-screens` and `react-navigation`. `react-native-screens` contains native-stack v5 (`/native-stack`), newer versions (v6, v7) are moved to `react-navigation`, hance in some cases it is necessary to prepare pull request for `react-navigation` alongside the `react-native-screens` changes. 
+Currently, native stack is both in `react-native-screens` and `react-navigation`. `react-native-screens` contains native-stack v5 (`src/native-stack`), newer versions (v6, v7) are moved to `react-navigation` (available on branches `main`, `6.x`), hence in some cases it is necessary to prepare a pull request for `react-navigation` alongside the `react-native-screens` changes. 
 
 > [!CAUTION]
 > Currently, in this setup we have some code duplications that we're aware of. We're planning to deprecate native-stack v5 soon and remove it from react-native-screens.
