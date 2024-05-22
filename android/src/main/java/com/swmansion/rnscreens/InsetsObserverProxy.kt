@@ -16,10 +16,11 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
     private var hasBeenRegistered: Boolean = false
 
     override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
+        var rollingInsets = insets
         listeners.forEach {
-            it.onApplyWindowInsets(v, insets)
+            rollingInsets = it.onApplyWindowInsets(v, insets)
         }
-        return insets
+        return rollingInsets
     }
 
     fun addOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener) {

@@ -173,7 +173,7 @@ export default function App(): JSX.Element {
                 backgroundColor: 'firebrick',
               },
               ...sheetOptions,
-              sheetAllowedDetents: [0.3],
+              sheetAllowedDetents: [0.7],
             }}
           />
         </Stack.Navigator>
@@ -382,7 +382,7 @@ function CommonSheetContent(): React.JSX.Element {
           title="Tap me to open another sheet"
           onPress={() => {
             if (ref.current) {
-              ref.current.blur();
+              // ref.current.blur();
               navigation.navigate('AnotherSheetScreen');
             }
           }}
