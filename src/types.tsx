@@ -634,44 +634,6 @@ export interface SearchBarProps {
    */
   obscureBackground?: boolean;
   /**
-   * A callback that gets called when search bar has lost focus
-   */
-  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * A callback that gets called when the cancel button is pressed
-   *
-   * @platform ios
-   */
-  onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-
-  /**
-   * A callback that gets called when the text changes. It receives the current text value of the search bar.
-   */
-  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
-
-  /**
-   * A callback that gets called when search bar is closed
-   *
-   * @platform android
-   */
-  onClose?: () => void;
-  /**
-   * A callback that gets called when search bar has received focus
-   */
-  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * A callback that gets called when search bar is opened
-   *
-   * @platform android
-   */
-  onOpen?: () => void;
-  /**
-   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
-   */
-  onSearchButtonPress?: (
-    e: NativeSyntheticEvent<TextInputFocusEventData>
-  ) => void;
-  /**
    * Text displayed when search field is empty
    */
   placeholder?: string;
@@ -714,23 +676,42 @@ export interface SearchBarProps {
   shouldShowHintSearchIcon?: boolean;
 }
 
-/**
- * Since the search bar is a component that is extended from View on iOS,
- * we can't use onFocus and onBlur events directly there (as of the event naming conflicts).
- * To omit any breaking changes, we're handling this type to rename onFocus and onBlur events
- * to onSearchFocus and onSearchBlur inside the native component of the search bar.
- */
-export type RenamedSearchBarProps = Rename<
-  SearchBarProps,
-  { onFocus: 'onSearchFocus'; onBlur: 'onSearchBlur' }
->;
+export interface SearchBarEvents {
+  /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when search bar has lost focus
+   */
+  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+   */
+  onSearchButtonPress?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>
+  ) => void;
+  /**
+   * A callback that gets called when the cancel button is pressed
+   *
+   * @platform ios
+   */
+  onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
 
-/**
- * Helper type, used to rename certain keys in the interface, given from object.
- */
-type Rename<
-  T,
-  R extends {
-    [K in keyof R]: K extends keyof T ? PropertyKey : 'Error: key not in T';
-  }
-> = { [P in keyof T as P extends keyof R ? R[P] : P]: T[P] };
+  /**
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
+   */
+  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  /**
+   * A callback that gets called when search bar is opened
+   *
+   * @platform android
+   */
+  onOpen?: () => void;
+  /**
+   * A callback that gets called when search bar is closed
+   *
+   * @platform android
+   */
+  onClose?: () => void;
+}

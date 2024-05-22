@@ -3,18 +3,30 @@ import {
   isSearchBarAvailableForCurrentPlatform,
   SearchBarCommands,
   SearchBarProps,
-  RenamedSearchBarProps,
+  SearchBarEvents,
 } from 'react-native-screens';
-import { View } from 'react-native';
+import { View, NativeSyntheticEvent, TargetedEvent } from 'react-native';
 
 // Native components
 import SearchBarNativeComponent, {
   Commands as SearchBarNativeCommands,
+  SearchBarNativeProps,
 } from '../fabric/SearchBarNativeComponent';
 
-export const NativeSearchBar: React.ComponentType<RenamedSearchBarProps> &
+// Remove all events from SearchBar native component, since they differ from types in SearchBarEvents
+// and add ref object for commands.
+type SearchBarNativeType = Omit<
+  SearchBarNativeProps,
+  keyof SearchBarEvents | 'onSearchFocus' | 'onSearchBlur'
+> & {
+  ref?: React.RefObject<SearchBarCommands>;
+  onSearchFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  onSearchBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+};
+
+export const NativeSearchBar: React.ComponentType<SearchBarNativeType> &
   typeof NativeSearchBarCommands =
-  SearchBarNativeComponent as unknown as React.ComponentType<RenamedSearchBarProps> &
+  SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeType> &
     SearchBarCommandsType;
 export const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
@@ -30,7 +42,10 @@ type SearchBarCommandsType = {
   cancelSearch: (viewRef: NativeSearchBarRef) => void;
 };
 
-function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
+function SearchBar(
+  props: SearchBarProps & SearchBarEvents,
+  ref: React.Ref<SearchBarCommands>
+) {
   const searchBarRef = React.useRef<SearchBarCommands | null>(null);
 
   React.useImperativeHandle(ref, () => ({
@@ -87,4 +102,7 @@ function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
   );
 }
 
-export default React.forwardRef<SearchBarCommands, SearchBarProps>(SearchBar);
+export default React.forwardRef<
+  SearchBarCommands,
+  SearchBarProps & SearchBarEvents
+>(SearchBar);

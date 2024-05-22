@@ -21,7 +21,7 @@ type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
-interface NativeProps extends ViewProps {
+export interface SearchBarNativeProps extends ViewProps {
   onSearchFocus?: DirectEventHandler<SearchBarEvent> | null;
   onSearchBlur?: DirectEventHandler<SearchBarEvent> | null;
   onSearchButtonPress?: DirectEventHandler<SearchButtonPressedEvent> | null;
@@ -50,9 +50,9 @@ interface NativeProps extends ViewProps {
   shouldShowHintSearchIcon?: WithDefault<boolean, true>;
 }
 
-type ComponentType = HostComponent<NativeProps>;
+type ComponentType = HostComponent<SearchBarNativeProps>;
 
-interface NativeCommands {
+interface SearchBarNativeCommands {
   blur: (viewRef: React.ElementRef<ComponentType>) => void;
   focus: (viewRef: React.ElementRef<ComponentType>) => void;
   clearText: (viewRef: React.ElementRef<ComponentType>) => void;
@@ -64,15 +64,16 @@ interface NativeCommands {
   cancelSearch: (viewRef: React.ElementRef<ComponentType>) => void;
 }
 
-export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: [
-    'blur',
-    'focus',
-    'clearText',
-    'toggleCancelButton',
-    'setText',
-    'cancelSearch',
-  ],
-});
+export const Commands: SearchBarNativeCommands =
+  codegenNativeCommands<SearchBarNativeCommands>({
+    supportedCommands: [
+      'blur',
+      'focus',
+      'clearText',
+      'toggleCancelButton',
+      'setText',
+      'cancelSearch',
+    ],
+  });
 
-export default codegenNativeComponent<NativeProps>('RNSSearchBar', {});
+export default codegenNativeComponent<SearchBarNativeProps>('RNSSearchBar', {});
