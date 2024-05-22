@@ -36,6 +36,7 @@ type AllowedDetentsType = NativeStackNavigationOptions['sheetAllowedDetents'];
 // const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
 const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([0.4, 0.6, 0.9]);
+// const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([0.6]);
 // const allowedDetentsAtom =
 //   jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
 //     'fitToContents',
@@ -171,6 +172,8 @@ export default function App(): JSX.Element {
               screenStyle: {
                 backgroundColor: 'firebrick',
               },
+              ...sheetOptions,
+              sheetAllowedDetents: [0.3],
             }}
           />
         </Stack.Navigator>
@@ -341,7 +344,7 @@ function CommonSheetContent(): React.JSX.Element {
     isAdditionalContentVisibleAtom,
   );
 
-  const ref = React.useRef(null);
+  const ref = React.useRef<TextInput>(null);
 
   function nextDetentLevel(currentDetent: number): number {
     return 0;
@@ -378,7 +381,10 @@ function CommonSheetContent(): React.JSX.Element {
         <Button
           title="Tap me to open another sheet"
           onPress={() => {
-            navigation.navigate('AnotherSheetScreen');
+            if (ref.current) {
+              ref.current.blur();
+              navigation.navigate('AnotherSheetScreen');
+            }
           }}
         />
         <Button
