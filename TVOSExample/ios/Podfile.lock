@@ -917,31 +917,10 @@ PODS:
   - React-Mapbuffer (0.74.1-0):
     - glog
     - React-debug
-  - react-native-appearance (0.3.4):
-    - React
+  - react-native-restart (0.0.27):
+    - React-Core
   - react-native-safe-area-context (4.10.1):
     - React-Core
-  - react-native-webview (13.10.2):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.01.01.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Codegen
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - React-nativeconfig (0.74.1-0)
   - React-NativeModulesApple (0.74.1-0):
     - glog
@@ -1164,8 +1143,6 @@ PODS:
     - React-logger (= 0.74.1-0)
     - React-perflogger (= 0.74.1-0)
     - React-utils (= 0.74.1-0)
-  - RNCMaskedView (0.1.11):
-    - React
   - RNGestureHandler (2.16.2):
     - DoubleConversion
     - glog
@@ -1230,8 +1207,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNVectorIcons (7.1.0):
-    - React
+  - RNVectorIcons (8.1.0):
+    - React-Core
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
 
@@ -1268,9 +1245,8 @@ DEPENDENCIES:
   - React-jsitracing (from `../node_modules/react-native/ReactCommon/hermes/executor/`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
-  - react-native-appearance (from `../node_modules/react-native-appearance`)
+  - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
-  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1293,7 +1269,6 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -1366,12 +1341,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   React-Mapbuffer:
     :path: "../node_modules/react-native/ReactCommon"
-  react-native-appearance:
-    :path: "../node_modules/react-native-appearance"
+  react-native-restart:
+    :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
-  react-native-webview:
-    :path: "../node_modules/react-native-webview"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1416,8 +1389,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  RNCMaskedView:
-    :path: "../node_modules/@react-native-community/masked-view"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -1460,9 +1431,8 @@ SPEC CHECKSUMS:
   React-jsitracing: 82c700d394f5d553e43699a165b9585046e8e041
   React-logger: c89175f47ac5dee3b345dd931b812e633783d3fa
   React-Mapbuffer: e1da272870606f17a64520bf78d85e1b73bb0778
-  react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
+  react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
-  react-native-webview: 2905d1455be11bcbd909ef33472d8fcdf7abcc41
   React-nativeconfig: 0e309fafbbfbb8eac2f1999d0756732624ac5b39
   React-NativeModulesApple: a53141b07c57c53cdc1f2043e5acf3b9318bc340
   React-perflogger: e4f171200bc71bb8cf0686a0ad41a242f53b6b36
@@ -1485,14 +1455,13 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 4780cdba710de22aae5ea6769266cec9a89b2bba
   React-utils: 45e9ba5a0ec387d31de5d24043bdcf7915b9658b
   ReactCommon: 678c6fdb479e7533859f29000d899af37d3a6c7a
-  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: 2282cfbcf86c360d29f44ace393203afd5c6cff7
   RNReanimated: 7ad0f08a845cb60955ee5d461d2156d7b9707118
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
-  RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
+  RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: d84d1e521e3f8fa3cdd139d617ddf6514d061c78
 
-PODFILE CHECKSUM: 461fd65f46c526aa1d4f2db77e1505e03da64be7
+PODFILE CHECKSUM: 557cfa02082876e8bee3963b92f1465e55e6b01c
 
 COCOAPODS: 1.15.2
