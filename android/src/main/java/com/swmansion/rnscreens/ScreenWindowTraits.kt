@@ -197,6 +197,8 @@ object ScreenWindowTraits {
         val screenForNavBarTranslucent = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_TRANSLUCENT)
         val translucent = screenForNavBarTranslucent?.isNavigationBarTranslucent ?: false
 
+        // Controls whether the decor view should fit root-level content views for insets based on translucent value:
+        // https://developer.android.com/reference/androidx/core/view/WindowCompat#setDecorFitsSystemWindows(android.view.Window,boolean)
         WindowCompat.setDecorFitsSystemWindows(window, !translucent)
     }
 
