@@ -66,8 +66,8 @@ class SearchBarManager : ViewGroupManager<SearchBarView>(), RNSSearchBarManagerI
     }
 
     @ReactProp(name = "disableBackButtonOverride")
-    override fun setDisableBackButtonOverride(view: SearchBarView, value: Boolean) {
-        view.shouldOverrideBackButton = value != true
+    override fun setDisableBackButtonOverride(view: SearchBarView, disableBackButtonOverride: Boolean) {
+        view.shouldOverrideBackButton = disableBackButtonOverride != true
     }
 
     @ReactProp(name = "inputType")
@@ -106,11 +106,9 @@ class SearchBarManager : ViewGroupManager<SearchBarView>(), RNSSearchBarManagerI
     }
 
     @ReactProp(name = "shouldShowHintSearchIcon")
-    override fun setShouldShowHintSearchIcon(view: SearchBarView, value: Boolean) {
-        view.shouldShowHintSearchIcon = value ?: true
+    override fun setShouldShowHintSearchIcon(view: SearchBarView, shouldShowHintSearchIcon: Boolean) {
+        view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
     }
-
-    override fun setPlacement(view: SearchBarView, placeholder: String?) = Unit
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         return MapBuilder.of(
@@ -164,6 +162,10 @@ class SearchBarManager : ViewGroupManager<SearchBarView>(), RNSSearchBarManagerI
     }
 
     // iOS only
+
+    override fun setPlacement(view: SearchBarView, placeholder: String?) {
+        logNotAvailable("setPlacement")
+    }
 
     override fun setHideWhenScrolling(view: SearchBarView?, value: Boolean) {
         logNotAvailable("hideWhenScrolling")
