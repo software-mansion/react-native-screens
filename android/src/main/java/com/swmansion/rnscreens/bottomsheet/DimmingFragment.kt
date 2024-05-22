@@ -157,6 +157,10 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         presentNestedFragment()
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
     override fun onPause() {
         Log.d(TAG, "onPause ${this}")
         super.onPause()
