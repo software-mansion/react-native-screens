@@ -1,3 +1,3 @@
-import App from '../tests';
+import App from '../tests-example-common-src';
 
 export default App;
