@@ -8,7 +8,6 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.view.ViewParent
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
