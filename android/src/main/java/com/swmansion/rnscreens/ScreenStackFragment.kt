@@ -333,12 +333,14 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             }
 
             is KeyboardVisible -> {
+//                val newMaxHeight = max(1, behavior.maxHeight - keyboardState.height)
+                val newMaxHeight = if (behavior.maxHeight - keyboardState.height > 1) behavior.maxHeight - keyboardState.height else behavior.maxHeight
                 when (screen.sheetDetents.count()) {
                     1 -> behavior.apply {
                         state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = true
                         isFitToContents = true
-                        maxHeight = max(1, maxHeight - keyboardState.height)
+                        maxHeight = newMaxHeight
                         addBottomSheetCallback(keyboardSheetCallback)
                     }
 
@@ -346,7 +348,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                         state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = false
                         isFitToContents = true
-                        maxHeight = max(1, maxHeight - keyboardState.height)
+                        maxHeight = newMaxHeight
                         addBottomSheetCallback(keyboardSheetCallback)
                     }
 
@@ -354,7 +356,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
                         state = BottomSheetBehavior.STATE_EXPANDED
                         skipCollapsed = false
                         isFitToContents = false
-                        maxHeight = max(1, maxHeight - keyboardState.height)
+                        maxHeight = newMaxHeight
                         addBottomSheetCallback(keyboardSheetCallback)
                     }
 
