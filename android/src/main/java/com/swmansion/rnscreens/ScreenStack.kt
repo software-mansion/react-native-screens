@@ -87,6 +87,11 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         }
     }
 
+//    override fun onAttachedToWindow() {
+//        super.onAttachedToWindow()
+//        InsetsObserverProxy.registerOnView()
+//    }
+
     private fun dispatchOnFinishTransitioning() {
         val surfaceId = UIManagerHelper.getSurfaceId(this)
         UIManagerHelper

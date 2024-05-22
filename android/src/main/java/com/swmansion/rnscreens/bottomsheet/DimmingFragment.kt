@@ -27,6 +27,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.swmansion.rnscreens.InsetsObserverProxy
 import com.swmansion.rnscreens.KeyboardDidHide
 import com.swmansion.rnscreens.KeyboardNotVisible
 import com.swmansion.rnscreens.KeyboardState
@@ -65,11 +66,13 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     private val requireRootView: View
         get() = screen.reactContext!!.currentActivity!!.window.decorView
 
+    private val insetsProxy = InsetsObserverProxy
+
     init {
         // We register for our child lifecycle as we want to know when it's dismissed via native gesture
         nestedFragment.fragment.lifecycle.addObserver(this)
-
-        ViewCompat.setOnApplyWindowInsetsListener(requireRootView, this)
+        insetsProxy.registerOnView(requireRootView)
+//        ViewCompat.setOnApplyWindowInsetsListener(requireRootView, this)
     }
 
     private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, val maxAlpha: Float) : BottomSheetCallback() {
@@ -158,12 +161,14 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     }
 
     override fun onResume() {
+        insetsProxy.addOnApplyWindowInsetsListener(this)
         super.onResume()
     }
 
     override fun onPause() {
         Log.d(TAG, "onPause ${this}")
         super.onPause()
+        insetsProxy.removeOnApplyWindowInsetsListener(this)
     }
 
     override fun onStop() {
@@ -211,7 +216,8 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         }
         dimmingView.setOnClickListener(null)
         nestedFragment.fragment.lifecycle.removeObserver(this)
-        ViewCompat.setOnApplyWindowInsetsListener(requireRootView, null)
+        insetsProxy.removeOnApplyWindowInsetsListener(this)
+//        ViewCompat.setOnApplyWindowInsetsListener(requireRootView, null)
     }
 
     private fun dismissSelf(emitDismissedEvent: Boolean = false) {

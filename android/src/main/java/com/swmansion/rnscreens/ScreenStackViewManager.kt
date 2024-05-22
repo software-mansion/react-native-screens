@@ -15,9 +15,11 @@ import com.swmansion.rnscreens.events.StackFinishTransitioningEvent
 @ReactModule(name = ScreenStackViewManager.REACT_CLASS)
 class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackManagerInterface<ScreenStack> {
     private val delegate: ViewManagerDelegate<ScreenStack>
+    private val insetsObserver: InsetsObserverProxy
 
     init {
         delegate = RNSScreenStackManagerDelegate<ScreenStack, ScreenStackViewManager>(this)
+        insetsObserver = InsetsObserverProxy
     }
 
     override fun getName() = REACT_CLASS

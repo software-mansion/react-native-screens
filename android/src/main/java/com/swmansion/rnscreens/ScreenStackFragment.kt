@@ -54,6 +54,8 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     private var lastFocusedChild: View? = null
 
+    private val insetProxy = InsetsObserverProxy
+
     var searchView: CustomSearchView? = null
     var onSearchViewCreate: ((searchView: CustomSearchView) -> Unit)? = null
 
