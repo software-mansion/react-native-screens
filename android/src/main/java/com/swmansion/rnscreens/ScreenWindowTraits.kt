@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.util.Log
+import android.view.View
 import android.view.ViewParent
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
@@ -27,6 +28,41 @@ object ScreenWindowTraits {
     private var didSetStatusBarAppearance = false
     private var didSetNavigationBarAppearance = false
     private var defaultStatusBarColor: Int? = null
+
+    private var windowInsetsListener = object : OnApplyWindowInsetsListener {
+        override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
+            Log.w(
+                "ScreenWindowTraits",
+                "onApplyWindowInsetsListener.Callback on $v"
+            )
+            val defaultInsets = ViewCompat.onApplyWindowInsets(v, insets)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowInsets =
+                    defaultInsets.getInsets(WindowInsetsCompat.Type.statusBars())
+
+                return WindowInsetsCompat
+                    .Builder()
+                    .setInsets(
+                        WindowInsetsCompat.Type.statusBars(),
+                        Insets.of(
+                            windowInsets.left,
+                            0,
+                            windowInsets.right,
+                            windowInsets.bottom
+                        )
+                    )
+                    .build()
+            } else {
+                return defaultInsets.replaceSystemWindowInsets(
+                    defaultInsets.systemWindowInsetLeft,
+                    0,
+                    defaultInsets.systemWindowInsetRight,
+                    defaultInsets.systemWindowInsetBottom
+                )
+            }
+        }
+    }
 
     /**
      * Whether we have attached an `OnApplyWindowInsetsListener` on decor view in `setTranslucent`.
@@ -126,66 +162,17 @@ object ScreenWindowTraits {
                 override fun runGuarded() {
                     // If the status bar is translucent hook into the window insets calculations
                     // and consume all the top insets so no padding will be added under the status bar.
-//                    val decorView = activity.window.decorView
-                    val decorView = screen
+                    val decorView = activity.window.decorView
+//                    val decorView = screen
                     if (translucent) {
                         Log.w("ScreenWindowTraits", "setting onApplyWindowInsetsListener.Callback on $decorView")
-                        ViewCompat.setOnApplyWindowInsetsListener(decorView) { v, insets ->
-                            Log.w("ScreenWindowTraits", "onApplyWindowInsetsListener.Callback on $v")
-                            val defaultInsets = ViewCompat.onApplyWindowInsets(v, insets)
-
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                val windowInsets =
-                                    defaultInsets.getInsets(WindowInsetsCompat.Type.statusBars())
-
-                                WindowInsetsCompat
-                                    .Builder()
-                                    .setInsets(
-                                        WindowInsetsCompat.Type.statusBars(),
-                                        Insets.of(
-                                            windowInsets.left,
-                                            0,
-                                            windowInsets.right,
-                                            windowInsets.bottom
-                                        )
-                                    )
-                                    .build()
-                            } else {
-                                defaultInsets.replaceSystemWindowInsets(
-                                    defaultInsets.systemWindowInsetLeft,
-                                    0,
-                                    defaultInsets.systemWindowInsetRight,
-                                    defaultInsets.systemWindowInsetBottom
-                                )
-                            }
-                        }
+                        InsetsObserverProxy.registerOnView(decorView)
+                        InsetsObserverProxy.addOnApplyWindowInsetsListener(windowInsetsListener)
                         hasAttachedWindowInsetsCallback = true
-//                        ViewCompat.requestApplyInsets(decorView)
                     } else {
                         Log.w("ScreenWindowTraits", "Removing listener from $decorView")
-                        ViewCompat.setOnApplyWindowInsetsListener(decorView, null)
-//                        ViewCompat.setOnApplyWindowInsetsListener(decorView) { view, insets ->
-//                            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-//                            val prevInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-//                            if (isImeVisible) {
-//                                WindowInsetsCompat
-//                                    .Builder(insets)
-//                                    .setInsets(
-//                                        WindowInsetsCompat.Type.navigationBars(),
-//                                        Insets.of(
-//                                            prevInsets.left,
-//                                            prevInsets.top,
-//                                            prevInsets.right,
-//                                            0
-//                                        )
-//                                    ).build()
-//                            } else {
-//                                insets
-//                            }
-//                        }
-//                        ViewCompat.setOnApplyWindowInsetsListener(decorView, decorView.getTag(androidx.core.R.id.tag_on_apply_window_listener) as? OnApplyWindowInsetsListener)
+                        InsetsObserverProxy.removeOnApplyWindowInsetsListener(windowInsetsListener)
                         hasAttachedWindowInsetsCallback = false
-//                        ViewCompat.requestApplyInsets(decorView)
                     }
                     ViewCompat.requestApplyInsets(decorView)
                 }

@@ -13,6 +13,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
@@ -505,6 +506,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         context: Context, private val fragment: ScreenStackFragment
 //    ) : CoordinatorLayout(context), ReactCompoundViewGroup, ReactHitSlopView {
     ) : CoordinatorLayout(context), ReactPointerEventsView {
+
+        override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {
+            return super.onApplyWindowInsets(insets)
+        }
 
         private val animationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {

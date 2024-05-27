@@ -15,8 +15,15 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
     // whether this observer has been initially registered.
     private var hasBeenRegistered: Boolean = false
 
+    private var shouldForwardInsetsToView = true
+
     override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
-        var rollingInsets = insets
+        var rollingInsets = if (shouldForwardInsetsToView) {
+            WindowInsetsCompat.toWindowInsetsCompat(v.onApplyWindowInsets(insets.toWindowInsets()), v)
+        } else {
+            insets
+        }
+
         listeners.forEach {
             rollingInsets = it.onApplyWindowInsets(v, insets)
         }
@@ -36,6 +43,10 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
             ViewCompat.setOnApplyWindowInsetsListener(view, this)
             eventSourceView = WeakReference(view)
             hasBeenRegistered = true
+        } else if (getObservedView() != null) {
+            if (getObservedView() != view) {
+                throw IllegalStateException("Attempt to register InsetsObserverProxy on ${view} while it has been already registered on ${getObservedView()}")
+            }
         }
     }
 
@@ -44,4 +55,6 @@ object InsetsObserverProxy : OnApplyWindowInsetsListener {
             ViewCompat.setOnApplyWindowInsetsListener(it, null)
         }
     }
+
+    fun getObservedView(): View? = eventSourceView.get()
 }

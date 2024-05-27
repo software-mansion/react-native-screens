@@ -63,16 +63,11 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     private val container: ScreenStack?
         get() = screen.container as? ScreenStack
 
-    private val requireRootView: View
-        get() = screen.reactContext!!.currentActivity!!.window.decorView
-
     private val insetsProxy = InsetsObserverProxy
 
     init {
         // We register for our child lifecycle as we want to know when it's dismissed via native gesture
         nestedFragment.fragment.lifecycle.addObserver(this)
-        insetsProxy.registerOnView(requireRootView)
-//        ViewCompat.setOnApplyWindowInsetsListener(requireRootView, this)
     }
 
     private class AnimateDimmingViewCallback(val screen: Screen, val viewToAnimate: View, val maxAlpha: Float) : BottomSheetCallback() {
@@ -132,7 +127,6 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return AnimationUtils.loadAnimation(context, if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out)
-//        return null;
     }
 
     override fun onCreateView(
@@ -141,8 +135,6 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         savedInstanceState: Bundle?
     ): View {
         initViewHierarchy()
-        val rootView = reactContext!!.currentActivity!!.window.decorView
-//        ViewCompat.setWindowInsetsAnimationCallback(rootView, insetCallback)
         return containerView
     }
 
@@ -157,6 +149,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
     override fun onStart() {
         // This is the earliest we can access child fragment manager & present another fragment
         super.onStart()
+        insetsProxy.registerOnView(requireRootView())
         presentNestedFragment()
     }
 
@@ -217,7 +210,6 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         dimmingView.setOnClickListener(null)
         nestedFragment.fragment.lifecycle.removeObserver(this)
         insetsProxy.removeOnApplyWindowInsetsListener(this)
-//        ViewCompat.setOnApplyWindowInsetsListener(requireRootView, null)
     }
 
     private fun dismissSelf(emitDismissedEvent: Boolean = false) {
@@ -248,7 +240,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
             setBackgroundColor(Color.TRANSPARENT)
-            id = View.generateViewId()
+            id = View.generateViewId()  // This is purely native view, React does not know of it, thus there should be no conflict with ids.
         }
     }
 
@@ -266,6 +258,8 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
             }
         }
     }
+
+    private fun requireRootView(): View = screen.reactContext.currentActivity!!.window.decorView
 
     // TODO: Move these methods related to toolbar to separate interface
     override fun removeToolbar() = Unit
@@ -379,39 +373,7 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
         }
     }
 
-    private val insetCallback = object : WindowInsetsAnimationCompat.Callback(
-        DISPATCH_MODE_CONTINUE_ON_SUBTREE
-    ) {
-//        val rootView = reactContext!!.currentActivity!!.window.decorView
-
-        override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-            Log.w(TAG, "insetCallback:onPrepare")
-//            ViewCompat.setOnApplyWindowInsetsListener(rootView, this@DimmingFragment)
-//            ViewCompat.requestApplyInsets(rootView)
-        }
-
-        override fun onStart(
-            animation: WindowInsetsAnimationCompat,
-            bounds: WindowInsetsAnimationCompat.BoundsCompat,
-        ): WindowInsetsAnimationCompat.BoundsCompat {
-            Log.w(TAG, "insetCallback:onStart: ${bounds.lowerBound}, ${bounds.upperBound}")
-
-//            ViewCompat.setOnApplyWindowInsetsListener(rootView, null)
-//            ViewCompat.requestApplyInsets(rootView)
-            return bounds
-        }
-
-        override fun onProgress(
-            insets: WindowInsetsCompat,
-            runningAnimations: MutableList<WindowInsetsAnimationCompat>,
-        ): WindowInsetsCompat = insets
-
-        override fun onEnd(animation: WindowInsetsAnimationCompat) {
-            super.onEnd(animation)
-            Log.w(TAG, "insetCallback:onEnd")
-        }
-    }
-
+    // This is View.OnApplyWindowInsetsListener method, not view's own!
     override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime())
