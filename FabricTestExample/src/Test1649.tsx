@@ -224,8 +224,6 @@ function Third({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
-  console.warn('ENTER Third');
-
   const [bgColor, setBgColor] = React.useState('firebrick');
 
   const navigateToSecondCallback = () => {

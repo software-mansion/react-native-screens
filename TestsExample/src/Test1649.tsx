@@ -41,7 +41,7 @@ const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([0.4, 0.6, 0.9]);
 //   jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
 //     'fitToContents',
 //   );
-const largestUndimmedDetentAtom = jotai.atom<number>(-1);
+const largestUndimmedDetentAtom = jotai.atom<number>(2);
 
 // const allowedDetentsAtom = jotai.atom<number[]>([0.7]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(-1);
@@ -63,6 +63,8 @@ const selectedDetentIndexAtom = jotai.atom(0);
 const isAdditionalContentVisibleAtom = jotai.atom(false);
 
 const Stack = createNativeStackNavigator();
+
+const InnerStack = createNativeStackNavigator();
 
 function Footer() {
   const setAdditionalContentVisible = jotai.useSetAtom(
@@ -153,6 +155,7 @@ export default function App(): JSX.Element {
               fullScreenSwipeEnabled: true,
             }}
           />
+          <Stack.Screen name="NestedStack" component={NestedStack} />
           <Stack.Screen
             name="ModalScreen"
             component={ModalScreen}
@@ -184,7 +187,7 @@ export default function App(): JSX.Element {
 
 function Home({ navigation }: NavProp) {
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: 'cornflowerblue' }}>
       <Button
         title="Tap me for the second screen"
         onPress={() => navigation.navigate('Second')}
@@ -194,10 +197,10 @@ function Home({ navigation }: NavProp) {
         onPress={() => navigation.navigate('Second')}
       />
       <Button
-        title="Tap me for the second screen"
-        onPress={() => navigation.navigate('Second')}
+        title="Tap me for the sheet"
+        onPress={() => navigation.navigate('SheetScreen')}
       />
-    </>
+    </View>
   );
 }
 
@@ -208,7 +211,7 @@ function Second({ navigation }: NavProp) {
   };
 
   return (
-    <View style={{ backgroundColor: 'white', flex: 1 }}>
+    <View style={{ backgroundColor: 'darksalmon', flex: 1 }}>
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -219,7 +222,7 @@ function Second({ navigation }: NavProp) {
       />
       <Button
         title="Open the Third screen"
-        onPress={() => navigation.navigate('Third')}
+        onPress={() => navigation.replace('Third')}
       />
       <Button
         title="Open ModalScreen"
@@ -243,39 +246,37 @@ function Third({
 }: {
   navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
-  console.warn('ENTER Third');
-
   const [bgColor, setBgColor] = React.useState('firebrick');
 
   const navigateToSecondCallback = () => {
     console.log('Navigate Back');
     navigation.goBack();
-    navigation.navigate('Second');
+    // navigation.navigate('Second');
   };
 
-  const navState = navigation.getState();
-  const routeInd = navState.index;
-  const routeName = navState.routes[navState.index].name;
+  // const navState = navigation.getState();
+  // const routeInd = navState.index;
+  // const routeName = navState.routes[navState.index].name;
+  //
+  // console.log(`THIRD routeName: ${routeName}, routeInd: ${routeInd}`);
 
-  console.log(`THIRD routeName: ${routeName}, routeInd: ${routeInd}`);
-
-  useFocusEffectIgnoreSheet(
-    React.useCallback(() => {
-      console.log('ACTUAL_CALLBACK called');
-      const handle = setInterval(() => {
-        console.log('SET_INTERVAL_CALLBACK called');
-        setBgColor(value => {
-          return value === 'firebrick' ? 'green' : 'firebrick';
-        });
-      }, 1500);
-
-      return () => {
-        console.log('ACTUAL_CALLBACK cleared');
-        clearInterval(handle);
-      };
-    }, [navigation]),
-    'SheetScreen',
-  );
+  // useFocusEffectIgnoreSheet(
+  //   React.useCallback(() => {
+  //     console.log('ACTUAL_CALLBACK called');
+  //     const handle = setInterval(() => {
+  //       console.log('SET_INTERVAL_CALLBACK called');
+  //       setBgColor(value => {
+  //         return value === 'firebrick' ? 'green' : 'firebrick';
+  //       });
+  //     }, 1500);
+  //
+  //     return () => {
+  //       console.log('ACTUAL_CALLBACK cleared');
+  //       clearInterval(handle);
+  //     };
+  //   }, [navigation]),
+  //   'SheetScreen',
+  // );
 
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -305,9 +306,18 @@ function Third({
   //   };
   // }, []);
 
-  console.log('Third RENDERED');
+  // console.log('Third RENDERED');
   return (
     <View style={{ flex: 1, backgroundColor: bgColor }}>
+      <TextInput
+        style={{
+          backgroundColor: 'lemonchiffon',
+          borderRadius: 10,
+          paddingHorizontal: 10,
+          margin: 10,
+        }}
+        placeholder="Hello there General Kenobi"
+      />
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -321,6 +331,17 @@ function Third({
         onPress={navigateToSecondCallback}
       />
     </View>
+  );
+}
+
+function NestedStack(): React.JSX.Element {
+  return (
+    <InnerStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <InnerStack.Screen name="NestedSheet" component={Third} />
+    </InnerStack.Navigator>
   );
 }
 
@@ -375,7 +396,7 @@ function CommonSheetContent(): React.JSX.Element {
         <Button
           title="Tap me for the third screen / blur"
           onPress={() => {
-            navigation.navigate('Third');
+            navigation.navigate('NestedStack');
           }}
         />
         <Button
