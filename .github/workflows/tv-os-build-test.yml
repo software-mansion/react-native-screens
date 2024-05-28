@@ -44,4 +44,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn tvos
+        run: npx react-native run-ios --scheme="TVOSExample-tvOS" --simulator="Apple TV"
