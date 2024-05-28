@@ -40,4 +40,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn tv-os
+        run: yarn tvos
