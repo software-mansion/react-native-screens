@@ -2593,51 +2593,51 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/bottom-tabs@link:../react-navigation/packages/bottom-tabs/::locator=ScreensExample%40workspace%3A.":
+"@react-navigation/bottom-tabs@link:../../react-navigation/packages/bottom-tabs/::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@react-navigation/bottom-tabs@link:../react-navigation/packages/bottom-tabs/::locator=ScreensExample%40workspace%3A."
+  resolution: "@react-navigation/bottom-tabs@link:../../react-navigation/packages/bottom-tabs/::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
-"@react-navigation/core@link:../react-navigation/packages/core/::locator=ScreensExample%40workspace%3A.":
+"@react-navigation/core@link:../../react-navigation/packages/core/::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@react-navigation/core@link:../react-navigation/packages/core/::locator=ScreensExample%40workspace%3A."
+  resolution: "@react-navigation/core@link:../../react-navigation/packages/core/::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
-"@react-navigation/drawer@link:../react-navigation/packages/drawer/::locator=ScreensExample%40workspace%3A.":
+"@react-navigation/drawer@link:../../react-navigation/packages/drawer/::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@react-navigation/drawer@link:../react-navigation/packages/drawer/::locator=ScreensExample%40workspace%3A."
+  resolution: "@react-navigation/drawer@link:../../react-navigation/packages/drawer/::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
-"@react-navigation/elements@link:../react-navigation/packages/elements/::locator=ScreensExample%40workspace%3A.":
+"@react-navigation/elements@link:../../react-navigation/packages/elements/::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@react-navigation/elements@link:../react-navigation/packages/elements/::locator=ScreensExample%40workspace%3A."
+  resolution: "@react-navigation/elements@link:../../react-navigation/packages/elements/::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
-"@react-navigation/native-stack@link:../react-navigation/packages/native-stack/::locator=ScreensExample%40workspace%3A.":
+"@react-navigation/native-stack@link:../../react-navigation/packages/native-stack/::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@react-navigation/native-stack@link:../react-navigation/packages/native-stack/::locator=ScreensExample%40workspace%3A."
+  resolution: "@react-navigation/native-stack@link:../../react-navigation/packages/native-stack/::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
-"@react-navigation/native@link:../react-navigation/packages/native/::locator=ScreensExample%40workspace%3A.":
+"@react-navigation/native@link:../../react-navigation/packages/native/::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@react-navigation/native@link:../react-navigation/packages/native/::locator=ScreensExample%40workspace%3A."
+  resolution: "@react-navigation/native@link:../../react-navigation/packages/native/::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
-"@react-navigation/routers@link:../react-navigation/packages/routers/::locator=ScreensExample%40workspace%3A.":
+"@react-navigation/routers@link:../../react-navigation/packages/routers/::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@react-navigation/routers@link:../react-navigation/packages/routers/::locator=ScreensExample%40workspace%3A."
+  resolution: "@react-navigation/routers@link:../../react-navigation/packages/routers/::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
-"@react-navigation/stack@link:../react-navigation/packages/stack/::locator=ScreensExample%40workspace%3A.":
+"@react-navigation/stack@link:../../react-navigation/packages/stack/::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "@react-navigation/stack@link:../react-navigation/packages/stack/::locator=ScreensExample%40workspace%3A."
+  resolution: "@react-navigation/stack@link:../../react-navigation/packages/stack/::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
@@ -3115,14 +3115,14 @@ __metadata:
     "@react-native/eslint-config": "npm:0.74.83"
     "@react-native/metro-config": "npm:0.74.83"
     "@react-native/typescript-config": "npm:0.74.83"
-    "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/"
-    "@react-navigation/core": "link:../react-navigation/packages/core/"
-    "@react-navigation/drawer": "link:../react-navigation/packages/drawer/"
-    "@react-navigation/elements": "link:../react-navigation/packages/elements/"
-    "@react-navigation/native": "link:../react-navigation/packages/native/"
-    "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/"
-    "@react-navigation/routers": "link:../react-navigation/packages/routers/"
-    "@react-navigation/stack": "link:../react-navigation/packages/stack/"
+    "@react-navigation/bottom-tabs": "link:../../react-navigation/packages/bottom-tabs/"
+    "@react-navigation/core": "link:../../react-navigation/packages/core/"
+    "@react-navigation/drawer": "link:../../react-navigation/packages/drawer/"
+    "@react-navigation/elements": "link:../../react-navigation/packages/elements/"
+    "@react-navigation/native": "link:../../react-navigation/packages/native/"
+    "@react-navigation/native-stack": "link:../../react-navigation/packages/native-stack/"
+    "@react-navigation/routers": "link:../../react-navigation/packages/routers/"
+    "@react-navigation/stack": "link:../../react-navigation/packages/stack/"
     "@types/jest": "npm:^29.2.5"
     "@types/react": "npm:^18.2.72"
     "@types/react-native": "npm:0.72.2"
@@ -3142,7 +3142,7 @@ __metadata:
     react-native-reanimated: "npm:3.11.0"
     react-native-restart: "npm:^0.0.27"
     react-native-safe-area-context: "npm:^4.10.1"
-    react-native-screens: "link:../"
+    react-native-screens: "link:../../"
     react-native-vector-icons: "npm:^8.0.0"
     react-test-renderer: "npm:18.2.0"
     ts-jest: "npm:^29.0.3"
@@ -8804,9 +8804,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-screens@link:../::locator=ScreensExample%40workspace%3A.":
+"react-native-screens@link:../../::locator=ScreensExample%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "react-native-screens@link:../::locator=ScreensExample%40workspace%3A."
+  resolution: "react-native-screens@link:../../::locator=ScreensExample%40workspace%3A."
   languageName: node
   linkType: soft
 
