@@ -2902,7 +2902,13 @@ __metadata:
     rimraf: "npm:^3.0.2"
   checksum: 10c0/21182379a914ad244b556e794eb6bc6dc63a099cbd2f3eb315a13bd431dc6f24ca096ffb465ad76465144d02969f538a93ef7ef1b2280135174fdae4db5206b3
   languageName: node
-  linkType: hard
+  linkType: soft
+
+"@react-navigation/stack@link:../react-navigation/packages/stack/::locator=ScreensExample%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/stack@link:../react-navigation/packages/stack/::locator=ScreensExample%40workspace%3A."
+  languageName: node
+  linkType: soft
 
 "@sideway/address@npm:^4.1.3":
   version: 4.1.4

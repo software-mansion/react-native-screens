@@ -14,10 +14,6 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-@interface RCTBridge (Private)
-+ (RCTBridge *)currentBridge;
-@end
-
 @implementation RNSScreenStackHeaderSubview
 
 #pragma mark - Common
@@ -98,7 +94,7 @@ namespace react = facebook::react;
 - (RCTBridge *)bridge
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-  return [RCTBridge currentBridge];
+  return nil;
 #else
   return _bridge;
 #endif // RCT_NEW_ARCH_ENABLED
