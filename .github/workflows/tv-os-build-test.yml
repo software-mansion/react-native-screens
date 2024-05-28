@@ -32,6 +32,10 @@ jobs:
           node-version: 18
           cache: 'yarn'
           cache-dependency-path: 'TVOSExample/yarn.lock'
+      - name: Use latest stable Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
