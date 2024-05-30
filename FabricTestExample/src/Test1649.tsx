@@ -20,7 +20,7 @@ import {
   NativeStackNavigationOptions,
 } from 'react-native-screens/native-stack';
 import * as jotai from 'jotai';
-import useFocusEffectIgnoreSheet from './hooks/useFocusEffectIgnoreSheet';
+// import useFocusEffectIgnoreSheet from './hooks/useFocusEffectIgnoreSheet';
 import { NavigationProp, useNavigation } from '@react-navigation/core';
 
 type NavProp = {
@@ -36,11 +36,12 @@ type AllowedDetentsType = NativeStackNavigationOptions['sheetAllowedDetents'];
 // const largestUndimmedDetentAtom = jotai.atom<number>(3);
 
 const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([0.4, 0.6, 0.9]);
+// const allowedDetentsAtom = jotai.atom<AllowedDetentsType>([0.6]);
 // const allowedDetentsAtom =
 //   jotai.atom<NativeStackNavigationOptions['sheetAllowedDetents']>(
 //     'fitToContents',
 //   );
-const largestUndimmedDetentAtom = jotai.atom<number>(-1);
+const largestUndimmedDetentAtom = jotai.atom<number>(2);
 
 // const allowedDetentsAtom = jotai.atom<number[]>([0.7]);
 // const largestUndimmedDetentAtom = jotai.atom<number>(-1);
@@ -62,6 +63,8 @@ const selectedDetentIndexAtom = jotai.atom(0);
 const isAdditionalContentVisibleAtom = jotai.atom(false);
 
 const Stack = createNativeStackNavigator();
+
+const InnerStack = createNativeStackNavigator();
 
 function Footer() {
   const setAdditionalContentVisible = jotai.useSetAtom(
@@ -115,6 +118,10 @@ export default function App(): JSX.Element {
             }}
           />
           <Stack.Screen
+            name="PushWithScrollView"
+            component={PushWithScrollView}
+          />
+          <Stack.Screen
             name="SheetScreen"
             component={SheetScreen}
             options={{
@@ -125,8 +132,12 @@ export default function App(): JSX.Element {
                 backgroundColor: 'firebrick',
               },
               // footerComponent: Footer(),
-              onSheetDetentChanged: (e: NativeSyntheticEvent<{ index: number }>) => {
-                console.log(`onSheetDetentChanged in App with index ${e.nativeEvent.index}`)
+              onSheetDetentChanged: (
+                e: NativeSyntheticEvent<{ index: number; isStable: boolean }>,
+              ) => {
+                console.log(
+                  `onSheetDetentChanged in App with index ${e.nativeEvent.index} isStable: ${e.nativeEvent.isStable}`,
+                );
               },
               ...sheetOptions,
             }}
@@ -145,9 +156,11 @@ export default function App(): JSX.Element {
             component={Third}
             options={{
               // stackPresentation: 'modal',
+              headerShown: true,
               fullScreenSwipeEnabled: true,
             }}
           />
+          <Stack.Screen name="NestedStack" component={NestedStack} />
           <Stack.Screen
             name="ModalScreen"
             component={ModalScreen}
@@ -155,6 +168,20 @@ export default function App(): JSX.Element {
               headerShown: false,
               stackPresentation: 'modal',
               ...sheetOptions,
+            }}
+          />
+          <Stack.Screen
+            name="AnotherSheetScreen"
+            component={SheetScreen}
+            options={{
+              headerShown: false,
+              stackPresentation: 'formSheet',
+              sheetElevation: 24,
+              screenStyle: {
+                backgroundColor: 'firebrick',
+              },
+              ...sheetOptions,
+              sheetAllowedDetents: [0.7],
             }}
           />
         </Stack.Navigator>
@@ -165,20 +192,20 @@ export default function App(): JSX.Element {
 
 function Home({ navigation }: NavProp) {
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: 'cornflowerblue' }}>
       <Button
         title="Tap me for the second screen"
         onPress={() => navigation.navigate('Second')}
       />
       <Button
-        title="Tap me for the second screen"
-        onPress={() => navigation.navigate('Second')}
+        title="Tap me for the PushWithScrollView"
+        onPress={() => navigation.navigate('PushWithScrollView')}
       />
       <Button
-        title="Tap me for the second screen"
-        onPress={() => navigation.navigate('Second')}
+        title="Tap me for the sheet"
+        onPress={() => navigation.navigate('SheetScreen')}
       />
-    </>
+    </View>
   );
 }
 
@@ -189,7 +216,7 @@ function Second({ navigation }: NavProp) {
   };
 
   return (
-    <View style={{ backgroundColor: 'white', flex: 1 }}>
+    <View style={{ backgroundColor: 'darksalmon', flex: 1 }}>
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -200,7 +227,7 @@ function Second({ navigation }: NavProp) {
       />
       <Button
         title="Open the Third screen"
-        onPress={() => navigation.navigate('Third')}
+        onPress={() => navigation.replace('Third')}
       />
       <Button
         title="Open ModalScreen"
@@ -228,33 +255,33 @@ function Third({
 
   const navigateToSecondCallback = () => {
     console.log('Navigate Back');
-    navigation.goBack();
+    // navigation.goBack();
     navigation.navigate('Second');
   };
 
-  const navState = navigation.getState();
-  const routeInd = navState.index;
-  const routeName = navState.routes[navState.index].name;
+  // const navState = navigation.getState();
+  // const routeInd = navState.index;
+  // const routeName = navState.routes[navState.index].name;
+  //
+  // console.log(`THIRD routeName: ${routeName}, routeInd: ${routeInd}`);
 
-  console.log(`THIRD routeName: ${routeName}, routeInd: ${routeInd}`);
-
-  useFocusEffectIgnoreSheet(
-    React.useCallback(() => {
-      console.log('ACTUAL_CALLBACK called');
-      const handle = setInterval(() => {
-        console.log('SET_INTERVAL_CALLBACK called');
-        setBgColor(value => {
-          return value === 'firebrick' ? 'green' : 'firebrick';
-        });
-      }, 1500);
-
-      return () => {
-        console.log('ACTUAL_CALLBACK cleared');
-        clearInterval(handle);
-      };
-    }, [navigation]),
-    'SheetScreen',
-  );
+  // useFocusEffectIgnoreSheet(
+  //   React.useCallback(() => {
+  //     console.log('ACTUAL_CALLBACK called');
+  //     const handle = setInterval(() => {
+  //       console.log('SET_INTERVAL_CALLBACK called');
+  //       setBgColor(value => {
+  //         return value === 'firebrick' ? 'green' : 'firebrick';
+  //       });
+  //     }, 1500);
+  //
+  //     return () => {
+  //       console.log('ACTUAL_CALLBACK cleared');
+  //       clearInterval(handle);
+  //     };
+  //   }, [navigation]),
+  //   'SheetScreen',
+  // );
 
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -284,9 +311,18 @@ function Third({
   //   };
   // }, []);
 
-  console.log('Third RENDERED');
+  // console.log('Third RENDERED');
   return (
     <View style={{ flex: 1, backgroundColor: bgColor }}>
+      <TextInput
+        style={{
+          backgroundColor: 'lemonchiffon',
+          borderRadius: 10,
+          paddingHorizontal: 10,
+          margin: 10,
+        }}
+        placeholder="Hello there General Kenobi"
+      />
       <Button
         title="Open the sheet"
         onPress={() => navigation.navigate('SheetScreen')}
@@ -300,6 +336,57 @@ function Third({
         onPress={navigateToSecondCallback}
       />
     </View>
+  );
+}
+
+function PushWithScrollView({ navigation }: NavProp): React.JSX.Element {
+  const [additionalContentVisible, setAdditionalContentVisible] =
+    React.useState(true);
+
+  const svRef = React.useRef<ScrollView | null>(null);
+  const contentRef = React.useRef<View | null>(null);
+
+  const additionalContentRowCount = 150;
+
+  return (
+    <View style={{ flex: 1, backgroundColor: 'palevioletred' }}>
+      <ScrollView ref={svRef} nestedScrollEnabled={true} scrollEnabled>
+        <View ref={contentRef}>
+          <TextInput
+            style={{
+              backgroundColor: 'lemonchiffon',
+              borderRadius: 10,
+              paddingHorizontal: 10,
+              margin: 10,
+            }}
+            placeholder="Hello there General Kenobi"
+          />
+          <Button
+            title="Open formSheet"
+            onPress={() => navigation.navigate('SheetScreen')}
+          />
+          <Button
+            title="Toggle content"
+            onPress={() => setAdditionalContentVisible(old => !old)}
+          />
+          {additionalContentVisible &&
+            [...Array(additionalContentRowCount).keys()].map(val => (
+              <Text key={`${val}`}>Some component {val}</Text>
+            ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+function NestedStack(): React.JSX.Element {
+  return (
+    <InnerStack.Navigator
+      screenOptions={{
+        headerShown: true,
+      }}>
+      <InnerStack.Screen name="NestedSheet" component={Third} />
+    </InnerStack.Navigator>
   );
 }
 
@@ -323,7 +410,7 @@ function CommonSheetContent(): React.JSX.Element {
     isAdditionalContentVisibleAtom,
   );
 
-  const ref = React.useRef(null);
+  const ref = React.useRef<TextInput>(null);
 
   function nextDetentLevel(currentDetent: number): number {
     return 0;
@@ -354,7 +441,22 @@ function CommonSheetContent(): React.JSX.Element {
         <Button
           title="Tap me for the third screen / blur"
           onPress={() => {
-            navigation.navigate('Third');
+            navigation.navigate('NestedStack');
+          }}
+        />
+        <Button
+          title="Tap me for goBack"
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
+        <Button
+          title="Tap me to open another sheet"
+          onPress={() => {
+            if (ref.current) {
+              // ref.current.blur();
+              navigation.navigate('AnotherSheetScreen');
+            }
           }}
         />
         <Button
