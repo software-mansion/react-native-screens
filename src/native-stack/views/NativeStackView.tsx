@@ -413,7 +413,7 @@ const RouteView = ({
           target: stateKey,
         });
       }}
-      onSheetDetentChanged={(e) => {
+      onSheetDetentChanged={e => {
         if (onSheetDetentChanged) {
           onSheetDetentChanged(e);
         }

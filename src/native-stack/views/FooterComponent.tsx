@@ -16,10 +16,5 @@ export default function FooterComponent({ children }: FooterProps) {
   //   </ScreenContentWrapper>
   // );
 
-  return (
-      <ScreenFooter
-        collapsable={false}>
-        {children}
-      </ScreenFooter>
-  );
+  return <ScreenFooter collapsable={false}>{children}</ScreenFooter>;
 }
