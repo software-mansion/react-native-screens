@@ -157,7 +157,7 @@ If you're changing native-stack v6, v7 you **need to** create a PR in the `react
 
 If you're changing core functionality:
 - If it's a bug fix and does not change the interface, then you **do not need** to create a PR in `react-navigation` repository.
-- If you're adding a new feature or changing API, you **need to** create a PR in `react-navigation` repository.
+- If you're adding a new feature or changing API, you **need to** create a PR in `react-navigation` repository, that exposes new changes.
 
 > [!TIP]
 > As the rule of thumb, if you're changing the public interface, you need to prepare PRs for the `react-navigation` repository.
