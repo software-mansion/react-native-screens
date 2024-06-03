@@ -18,7 +18,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:4.2.2")
+        classpath("com.android.tools.build:gradle:8.4.1")
         classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet("kotlinVersion", "rnsDefaultKotlinVersion")}")
         classpath ("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
     }
