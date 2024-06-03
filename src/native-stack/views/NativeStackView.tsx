@@ -185,6 +185,7 @@ const RouteView = ({
     sheetExpandsWhenScrolledToEdge = true,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
+    navigationBarTranslucent,
     navigationBarHidden,
     replaceAnimation = 'pop',
     screenOrientation,
@@ -299,6 +300,7 @@ const RouteView = ({
       gestureResponseDistance={gestureResponseDistance}
       nativeBackButtonDismissalEnabled={nativeBackButtonDismissalEnabled}
       navigationBarColor={navigationBarColor}
+      navigationBarTranslucent={navigationBarTranslucent}
       navigationBarHidden={navigationBarHidden}
       replaceAnimation={replaceAnimation}
       screenOrientation={screenOrientation}

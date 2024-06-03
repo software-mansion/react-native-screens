@@ -306,6 +306,12 @@ export type NativeStackNavigationOptions = {
    */
   navigationBarColor?: ColorValue;
   /**
+   * Boolean indicating whether the content should be visible behind the navigation bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  navigationBarTranslucent?: boolean;
+  /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
    * @platform android
