@@ -1,12 +1,10 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
-    val buildToolsVersion: String by extra("33.0.0")
-    val compileSdkVersion: Int by extra(33)
-    val minSdkVersion: Int by extra(21)
-    val targetSdkVersion: Int by extra(33)
-    val ndkVersion: String by extra("23.1.7779620")
-    val kotlinVersion: String by extra("1.8.22")
+    val buildToolsVersion: String by extra("34.0.0")
+    val compileSdkVersion: Int by extra(34)
+    val minSdkVersion: Int by extra(23)
+    val targetSdkVersion: Int by extra(34)
+    val ndkVersion: String by extra("26.1.10909125")
+    val kotlinVersion: String by extra("1.9.22")
     repositories {
         google()
         mavenCentral()
@@ -30,3 +28,5 @@ allprojects {
         }
     }
 }
+
+apply plugin: "com.facebook.react.rootproject"

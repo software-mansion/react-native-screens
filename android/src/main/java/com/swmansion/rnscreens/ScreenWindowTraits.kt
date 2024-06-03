@@ -11,6 +11,7 @@ import android.os.Build
 import android.view.ViewParent
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.facebook.react.bridge.GuardedRunnable
@@ -185,6 +186,20 @@ object ScreenWindowTraits {
         window.navigationBarColor = color
     }
 
+    internal fun setNavigationBarTranslucent(screen: Screen, activity: Activity?) {
+        if (activity == null) {
+            return
+        }
+
+        val window = activity.window
+
+        val screenForNavBarTranslucent = findScreenForTrait(screen, WindowTraits.NAVIGATION_BAR_TRANSLUCENT)
+        val translucent = screenForNavBarTranslucent?.isNavigationBarTranslucent ?: false
+
+        // Following method controls whether to display edge-to-edge content that draws behind the navigation bar
+        WindowCompat.setDecorFitsSystemWindows(window, !translucent)
+    }
+
     internal fun setNavigationBarHidden(screen: Screen, activity: Activity?) {
         if (activity == null) {
             return
@@ -221,6 +236,7 @@ object ScreenWindowTraits {
         }
         if (didSetNavigationBarAppearance) {
             setNavigationBarColor(screen, activity)
+            setNavigationBarTranslucent(screen, activity)
             setNavigationBarHidden(screen, activity)
         }
     }
@@ -281,6 +297,7 @@ object ScreenWindowTraits {
             WindowTraits.HIDDEN -> screen.isStatusBarHidden != null
             WindowTraits.ANIMATED -> screen.isStatusBarAnimated != null
             WindowTraits.NAVIGATION_BAR_COLOR -> screen.navigationBarColor != null
+            WindowTraits.NAVIGATION_BAR_TRANSLUCENT -> screen.isNavigationBarTranslucent != null
             WindowTraits.NAVIGATION_BAR_HIDDEN -> screen.isNavigationBarHidden != null
         }
     }

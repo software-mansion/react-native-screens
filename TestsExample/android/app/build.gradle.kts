@@ -78,8 +78,6 @@ android {
     compileSdk = rootProject.extra["compileSdkVersion"] as Int
     buildToolsVersion = rootProject.extra["buildToolsVersion"] as String
 
-//    compileSdk rootProject.ext.compileSdkVersion
-
     namespace = "com.testsexample"
     defaultConfig {
         applicationId = "com.testsexample"

@@ -159,7 +159,7 @@ android {
                 if (isNewArchitectureEnabled()) {
                     srcDirs("src/fabric/java")
                 } else {
-                    srcDirs("src/paper/java", "build/generated/source/codegen/java")
+                    srcDirs("src/paper/java")
                 }
             }
             res {

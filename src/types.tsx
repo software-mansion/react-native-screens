@@ -19,6 +19,7 @@ export type SearchBarCommands = {
   cancelSearch: () => void;
 };
 
+export type BackButtonDisplayMode = 'default' | 'generic' | 'minimal';
 export type StackPresentationTypes =
   | 'push'
   | 'modal'
@@ -170,6 +171,12 @@ export interface ScreenProps extends ViewProps {
    * @platform android
    */
   navigationBarColor?: ColorValue;
+  /**
+   * Boolean indicating whether the content should be visible behind the navigation bar. Defaults to `false`.
+   *
+   * @platform android
+   */
+  navigationBarTranslucent?: boolean;
   /**
    * Sets the visibility of the navigation bar. Defaults to `false`.
    *
@@ -461,6 +468,15 @@ export interface ScreenStackHeaderConfigProps extends ViewProps {
    * @platform ios
    */
   disableBackButtonMenu?: boolean;
+  /**
+   * How the back button behaves by default (when not customized). Available on iOS>=14, and is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set.
+   * The following values are currently supported (they correspond to https://developer.apple.com/documentation/uikit/uinavigationitembackbuttondisplaymode?language=objc):
+   * - "default" – show given back button previous controller title, system generic or just icon based on available space
+   * - "generic" – show given system generic or just icon based on available space
+   * - "minimal" – show just an icon
+   * @platform ios
+   */
+  backButtonDisplayMode?: BackButtonDisplayMode;
   /**
    * When set to true the header will be hidden while the parent Screen is on the top of the stack. The default value is false.
    */
