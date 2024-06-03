@@ -29,4 +29,4 @@ allprojects {
     }
 }
 
-apply plugin: "com.facebook.react.rootproject"
+apply (plugin= "com.facebook.react.rootproject")
