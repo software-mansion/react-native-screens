@@ -210,9 +210,6 @@ task copyCodegenArtifacts(type: Copy) {
     def absoluteCodegenArtifactsPaperDestination = "${project.rootDir}/../../${project.property('codegenArtifactsPaperDestination')}"
     def absoluteCodegenArtifactsSource = "${project.rootDir}/../../${project.property('codegenArtifactsSource')}"
 
-    println absoluteCodegenArtifactsPaperDestination
-    println absoluteCodegenArtifactsSource
-
     def existingFiles = fileTree(absoluteCodegenArtifactsPaperDestination).matching {
         include '**/*.java'
     }
