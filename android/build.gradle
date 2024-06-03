@@ -192,3 +192,61 @@ dependencies {
         }
     }
 }
+
+def isScreensExampleApp() {
+    return project.hasProperty('isScreensExampleApp') && project.property('isScreensExampleApp')
+}
+
+task copyCodegenArtifacts(type: Copy) {
+    group 'After build tasks'
+    description 'Tasks which copy codegen artifacts to paper architecture'
+    
+    if (!isScreensExampleApp()) {
+        return
+    }
+
+    dependsOn tasks.generateCodegenArtifactsFromSchema
+
+    def absoluteCodegenArtifactsPaperDestination = "${project.rootDir}/../../${project.property('codegenArtifactsPaperDestination')}"
+    def absoluteCodegenArtifactsSource = "${project.rootDir}/../../${project.property('codegenArtifactsSource')}"
+
+    println absoluteCodegenArtifactsPaperDestination
+    println absoluteCodegenArtifactsSource
+
+    def existingFiles = fileTree(absoluteCodegenArtifactsPaperDestination).matching {
+        include '**/*.java'
+    }
+
+    def generatedFiles = fileTree(absoluteCodegenArtifactsSource).matching {
+        include '**/*.java'
+    }
+
+    def existingFilesMap = [:]
+
+    existingFiles.forEach { existingFile ->
+        existingFilesMap[existingFile.name] = 1
+    }
+
+    generatedFiles.forEach { generatedFile -> 
+        if (!existingFilesMap.containsKey(generatedFile.name)) {
+            println generatedFile.name + " not found in paper dir"
+        }
+    }
+
+    if (existingFiles.size() <= 0) {
+        throw new Exception('Paper destination with codegen interfaces is empty.')
+    }
+
+    if (existingFiles.size() > generatedFiles.size()) {
+        throw new Exception('Number od generated artifacts should be greather then or equal to paper interfaces.')
+    }
+
+
+    from absoluteCodegenArtifactsSource
+    include existingFiles.collect { it.name }
+    into absoluteCodegenArtifactsPaperDestination
+}
+
+if (isScreensExampleApp()) {
+    tasks.generateCodegenArtifactsFromSchema.finalizedBy('copyCodegenArtifacts')
+}
