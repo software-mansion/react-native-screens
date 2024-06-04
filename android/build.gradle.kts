@@ -11,7 +11,7 @@ buildscript {
     val rnsDefaultCompileSdkVersion: Int by extra(34)
     val rnsDefaultMinSdkVersion: Int by extra(1)
     val rnsDefaultKotlinVersion: String by extra("1.8.0")
-    val safeExtGet: (String, String) -> Any? by extra({ prop: String, fallback: String -> rootProject.extra[prop] ?: extra[fallback] })
+    val safeExtGet: (String, String) -> Any? by extra({ prop: String, fallback: String -> if(rootProject.extra.has(prop)) rootProject.extra.get(prop) else extra[fallback] })
     repositories {
         google()
         mavenCentral()
