@@ -160,7 +160,7 @@ If you're changing core functionality:
 - If you're adding a new feature or changing API, you **need to** create a PR in `react-navigation` repository, that exposes new changes.
 
 > [!TIP]
-> As the rule of thumb, if you're changing the public interface, you need to prepare PRs for the `react-navigation` repository.
+> As the rule of thumb, if you're changing the public interface, you need to open PRs to the `react-navigation` repository.
 
 ### What is the flow to integrate with react-navigation
 
@@ -175,6 +175,6 @@ When you propose the changes that require creating a PR to the `react-navigation
 7. Post and merge ASAP upgrade of the main branch reference of `react-navigation`
 
 > [!WARNING]
-> Those steps are crucial, if you change the API in react-native-screens and won't merge react-navigation changes the libraries may go out of sync and crash i.e. because of not existing property. On the other hand, if you don't perform step 6 and 7, test examples and showcase app may stop working in react-native-screens.
+> Those steps are crucial, since changing the API in react-native-screens without merging react-navigation changes may cause both libraries going out of sync and crashing (i.e. because of not existing property). On the other hand, if you don't perform step 6 and 7, test examples and showcase app may stop working in react-native-screens.
 
 See you on GitHub! 🎉
