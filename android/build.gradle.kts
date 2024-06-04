@@ -12,15 +12,14 @@ buildscript {
     val rnsDefaultMinSdkVersion: Int by extra(1)
     val rnsDefaultKotlinVersion: String by extra("1.8.0")
     val safeExtGet: (String, String) -> Any? by extra({ prop: String, fallback: String -> rootProject.extra[prop] ?: extra[fallback] })
-
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.4.1")
+        classpath("com.android.tools.build:gradle:8.1.4")
         classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet("kotlinVersion", "rnsDefaultKotlinVersion")}")
-        classpath ("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
+        classpath ("com.diffplug.spotless:spotless-plugin-gradle:6.25.0")
     }
 }
 
@@ -93,7 +92,7 @@ val REACT_NATIVE_MINOR_VERSION = if (REACT_NATIVE_VERSION.startsWith("0.0.0-")) 
 }
 
 android {
-    compileSdkVersion(safeExtGet("compileSdkVersion", "rnsDefaultCompileSdkVersion") as Int)
+    compileSdk = safeExtGet("compileSdkVersion", "rnsDefaultCompileSdkVersion") as Int
     val agpVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION
     if (agpVersion.split(".")[0].toInt() >= 7) {
         namespace = "com.swmansion.rnscreens"
