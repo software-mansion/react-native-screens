@@ -75,7 +75,7 @@ val jscFlavor = "org.webkit:android-jsc:+"
 
 android {
     ndkVersion = rootProject.extra["ndkVersion"] as String
-    compileSdkVersion(rootProject.extra["compileSdkVersion"] as Int)
+    compileSdk = rootProject.extra["compileSdkVersion"] as Int
     namespace = "com.swmansion.rnscreens.example"
     defaultConfig {
         applicationId = "com.swmansion.rnscreens.example"
