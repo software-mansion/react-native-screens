@@ -197,7 +197,7 @@ def isScreensExampleApp() {
     return project.hasProperty('isScreensExampleApp') && project.property('isScreensExampleApp')
 }
 
-task copyCodegenArtifacts(type: Copy) {
+tasks.register("copyCodegenArtifacts") {
     group 'After build tasks'
     description 'Tasks which copy codegen artifacts to paper architecture'
     
@@ -207,41 +207,45 @@ task copyCodegenArtifacts(type: Copy) {
 
     dependsOn tasks.generateCodegenArtifactsFromSchema
 
-    def absoluteCodegenArtifactsPaperDestination = "${project.rootDir}/../../${project.property('codegenArtifactsPaperDestination')}"
-    def absoluteCodegenArtifactsSource = "${project.rootDir}/../../${project.property('codegenArtifactsSource')}"
+    doLast {
 
-    def existingFiles = fileTree(absoluteCodegenArtifactsPaperDestination).matching {
-        include '**/*.java'
-    }
+        def absoluteCodegenArtifactsPaperDestination = "${project.rootDir}/../../${project.property('codegenArtifactsPaperDestination')}"
+        def absoluteCodegenArtifactsSource = "${project.rootDir}/../../${project.property('codegenArtifactsSource')}"
 
-    def generatedFiles = fileTree(absoluteCodegenArtifactsSource).matching {
-        include '**/*.java'
-    }
+        def existingFiles = fileTree(absoluteCodegenArtifactsPaperDestination).matching {
+            include '**/*.java'
+        }
 
-    def existingFilesMap = [:]
+        def generatedFiles = fileTree(absoluteCodegenArtifactsSource).matching {
+            include '**/*.java'
+        }
 
-    existingFiles.forEach { existingFile ->
-        existingFilesMap[existingFile.name] = 1
-    }
+        def existingFilesMap = [:]
 
-    generatedFiles.forEach { generatedFile -> 
-        if (!existingFilesMap.containsKey(generatedFile.name)) {
-            println generatedFile.name + " not found in paper dir"
+        existingFiles.forEach { existingFile ->
+            existingFilesMap[existingFile.name] = 1
+        }
+
+        generatedFiles.forEach { generatedFile -> 
+            if (!existingFilesMap.containsKey(generatedFile.name)) {
+                println generatedFile.name + " not found in paper dir"
+            }
+        }
+
+        if (existingFiles.size() <= 0) {
+            throw new Exception('Paper destination with codegen interfaces is empty.')
+        }
+
+        if (existingFiles.size() > generatedFiles.size()) {
+            throw new Exception('Number od generated artifacts should be greather then or equal to paper interfaces.')
+        }
+
+        copy {
+            from absoluteCodegenArtifactsSource
+            include existingFiles.collect { it.name }
+            into absoluteCodegenArtifactsPaperDestination
         }
     }
-
-    if (existingFiles.size() <= 0) {
-        throw new Exception('Paper destination with codegen interfaces is empty.')
-    }
-
-    if (existingFiles.size() > generatedFiles.size()) {
-        throw new Exception('Number od generated artifacts should be greather then or equal to paper interfaces.')
-    }
-
-
-    from absoluteCodegenArtifactsSource
-    include existingFiles.collect { it.name }
-    into absoluteCodegenArtifactsPaperDestination
 }
 
 if (isScreensExampleApp()) {
