@@ -194,7 +194,7 @@ dependencies {
 }
 
 def isScreensExampleApp() {
-    return project.hasProperty('isScreensExampleApp') && project.property('isScreensExampleApp')
+    return project.hasProperty('isScreensExampleApp') && project.property('isScreensExampleApp') == "true"
 }
 
 def getAbsoluteCodegenArtifactsPaperDestination() {
@@ -250,7 +250,7 @@ tasks.register("copyCodegenArtifacts") {
         }
 
         if (existingFiles.size() == 0) {
-            throw new Exception("[RNScreens] Paper destination with codegen interfaces is empty. This might be okay if you don't have any interfaces/delegates used in Android, if that's not the case please check if codegenArtifactsPaperDestination in android/gradle.properties is correct")
+            println "[RNScreens] Paper destination with codegen interfaces is empty. This might be okay if you don't have any interfaces/delegates used in Android, if that's not the case please check if codegenArtifactsPaperDestination in android/gradle.properties is correct"
         }
 
         if (existingFiles.size() > generatedFiles.size()) {
