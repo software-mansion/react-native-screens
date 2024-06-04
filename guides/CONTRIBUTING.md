@@ -46,7 +46,7 @@ We inform you that unrespectful issues will be closed.
 - `gesture-handler` &ndash; interop between react-native-screens and react-native-gesture-handler
 - `guides` &ndash; guides for developers
 - `ios` &ndash; source code of native implementation for iOS
-- `native-stack` &ndash; description of native stack v5, this will be deprecated in favor of react-navigation in near feature
+- `native-stack` &ndash; description of native stack v5, actual implementation can be found in src/native-stack, this will be deprecated in favor of react-navigation in near feature
 - `react-navigation` &ndash; git submodule that refers to the react-navigation repository. Used mainly to test changes for newer versions of native stack.
 - `reanimated` &ndash; interop between react-native-screens and react-native-reanimated
 - `scripts` &ndash; utility scripts, used by CLI
