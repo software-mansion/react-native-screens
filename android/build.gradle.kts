@@ -133,8 +133,8 @@ android {
             }
         }
     }
-    lintOptions {
-        isAbortOnError = false
+    lint {
+        abortOnError = false
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
