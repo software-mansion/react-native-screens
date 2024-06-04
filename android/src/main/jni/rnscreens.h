@@ -19,6 +19,15 @@
 #include <react/renderer/components/rnscreens/RNSScreenComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSModalScreenComponentDescriptor.h>
 
+#include <jni.h>
+
+extern jint HEADER_HEIGHT;
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved);
+//JNIEXPORT void JNICALL setHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight);
+extern "C" JNIEXPORT void JNICALL Java_com_swmansion_rnscreens_ScreenViewManager_nativeSetHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight);
+extern "C" JNIEXPORT void JNICALL Java_com_swmansion_rnscreens_RNScreensPackage_nativeSetHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight);
+
 namespace facebook {
 namespace react {
 

@@ -7,6 +7,7 @@ import android.os.Parcelable
 import android.util.SparseArray
 import android.util.TypedValue
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import androidx.core.view.children
@@ -36,6 +37,8 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         private set
     var isStatusBarAnimated: Boolean? = null
 
+    var ignoreLayout: Boolean = false
+
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
         // not displaying modal menus (e.g., copy/paste or selection). The missing menus are due to the
@@ -60,8 +63,14 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         // ignore restoring instance state too as we are not saving anything anyways.
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = MeasureSpec.getSize(heightMeasureSpec)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        if (container is ScreenStack && changed) {
+        if (container is ScreenStack && changed && !ignoreLayout) {
             val width = r - l
             val height = b - t
 
@@ -75,6 +84,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
 
             notifyHeaderHeightChange(totalHeight)
         }
+        ignoreLayout = false
     }
 
     private fun updateScreenSizePaper(width: Int, height: Int) {

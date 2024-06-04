@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ViewManager
 
 @ReactModuleList(
@@ -14,11 +15,20 @@ import com.facebook.react.uimanager.ViewManager
     ]
 )
 class RNScreensPackage : TurboReactPackage() {
+
+    init {
+        System.loadLibrary("react_codegen_rnscreens")
+        nativeSetHeaderHeight(56)
+        println("Hey, I've loaded codegened shared lib")
+    }
+
+    private external fun nativeSetHeaderHeight(int: Int)
+
     override fun createViewManagers(reactContext: ReactApplicationContext) =
         listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
-            ScreenViewManager(),
-            ModalScreenViewManager(),
+            ScreenViewManager(reactContext),
+            ModalScreenViewManager(reactContext),
             ScreenStackViewManager(),
             ScreenStackHeaderConfigViewManager(),
             ScreenStackHeaderSubviewManager(),

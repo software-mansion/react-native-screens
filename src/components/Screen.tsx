@@ -119,6 +119,8 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         }
       };
 
+      console.log(`Sending sheetAllowedDetents ${sheetAllowedDetents} ${typeof sheetAllowedDetents}`);
+
       return (
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen

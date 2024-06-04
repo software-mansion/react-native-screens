@@ -4,6 +4,36 @@
  */
 #include "rnscreens.h"
 
+#include <iostream>
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv *env;
+    if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        std::cout << "Error while acquiring env\n";
+        return JNI_ERR;
+    }
+
+    jclass screenViewManagerClass = env->FindClass("com/swmansion/rnscreens/ScreenViewManager");
+    if (screenViewManagerClass == nullptr) {
+        std::cout << "Failed to acquire ScreenViewManager class\n";
+        return JNI_ERR;
+    }
+
+    return JNI_VERSION_1_6;
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_swmansion_rnscreens_ScreenViewManager_nativeSetHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight) {
+    HEADER_HEIGHT = headerHeight;
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_swmansion_rnscreens_RNScreensPackage_nativeSetHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight) {
+    HEADER_HEIGHT = headerHeight;
+}
+
+//JNIEXPORT void JNICALL setHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight) {
+//    HEADER_HEIGHT = headerHeight;
+//}
+
 namespace facebook {
 namespace react {
 

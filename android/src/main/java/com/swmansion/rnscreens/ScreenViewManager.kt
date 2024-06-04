@@ -1,9 +1,12 @@
 package com.swmansion.rnscreens
 
+import android.view.View
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.LayoutShadowNode
 import com.facebook.react.uimanager.ReactStylesDiffMap
 import com.facebook.react.uimanager.StateWrapper
 import com.facebook.react.uimanager.ThemedReactContext
@@ -22,7 +25,10 @@ import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
-open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
+open class ScreenViewManager(val reactContext: ReactApplicationContext) : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
+    // The library is loaded in RNScreensPackage, because it is our earliest entrypoint.
+    external fun nativeSetHeaderHeight(int: Int)
+
     private val delegate: ViewManagerDelegate<Screen>
 
     init {
@@ -31,10 +37,28 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
 
     override fun getName() = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext) = Screen(reactContext)
+    override fun createViewInstance(reactContext: ThemedReactContext): Screen {
+        return Screen(reactContext)
+    }
+
+    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode {
+        return super.createShadowNodeInstance(context)
+    }
+
+    override fun createShadowNodeInstance(): LayoutShadowNode {
+        return super.createShadowNodeInstance()
+    }
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())
+    }
+
+    override fun addView(parent: Screen?, child: View?, index: Int) {
+        super.addView(parent, child, index)
+    }
+
+    override fun removeViewAt(parent: Screen?, index: Int) {
+        super.removeViewAt(parent, index)
     }
 
     override fun updateState(

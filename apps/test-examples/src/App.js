@@ -102,9 +102,10 @@ import Test2048 from './Test2048';
 import Test2069 from './Test2069';
 import Test2118 from './Test2118';
 import TestScreenAnimation from './TestScreenAnimation';
+import TestHeader from './TestHeader';
 
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <TestHeader />;
 }

@@ -1,9 +1,10 @@
 package com.swmansion.rnscreens
 
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
 
 @ReactModule(name = ModalScreenViewManager.REACT_CLASS)
-class ModalScreenViewManager : ScreenViewManager() {
+class ModalScreenViewManager(reactApplicationContext: ReactApplicationContext) : ScreenViewManager(reactApplicationContext) {
     override fun getName() = REACT_CLASS
 
     companion object {
