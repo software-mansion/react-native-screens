@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { ScreenStackProps, freezeEnabled } from 'react-native-screens';
 import DelayedFreeze from './helpers/DelayedFreeze';

@@ -1,3 +1,5 @@
+'use client';
+
 import { Platform, UIManager } from 'react-native';
 
 // const that tells if the library should use new implementation, will be undefined for older versions
