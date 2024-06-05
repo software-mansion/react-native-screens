@@ -15,11 +15,37 @@ Point RNSScreenShadowNode::getContentOriginOffset() const {
 }
 
 void RNSScreenShadowNode::layout(facebook::react::LayoutContext layoutContext) {
-    LayoutContext newContext{layoutContext};
-    newContext.viewportOffset = {layoutContext.viewportOffset.x, layoutContext.viewportOffset.y + HEADER_HEIGHT};
-    auto stateData = getStateData();
-    YogaLayoutableShadowNode::layout(newContext);
-    auto _stateData = getStateData();
+//    auto stateData = getStateData();
+//
+//    // Inside this method, we have our new metrics already set by our parent.
+//    LayoutMetrics currentMetrics = getLayoutMetrics();
+//
+//    // If we do not have state, this means we're before first Android layout, or we have not received
+//    // state update from JVM side.
+//    if (stateData.frameSize.width != 0) {
+//        // Then if we have header (supposed) header dimensions already set we can offset our screen
+//        // So that it is positioned respecting header offset.
+//        if (HEADER_HEIGHT != 0 && currentMetrics.contentInsets.bottom == 0) {
+////            currentMetrics.contentInsets.top = HEADER_HEIGHT;
+////            layoutContext.viewportOffset.y += HEADER_HEIGHT;
+////            currentMetrics.frame.origin.y = HEADER_HEIGHT;
+//        }
+//        else {
+//            LOG(INFO) << "Missing header dimensions\n";
+//        }
+//    }
+//
+    YogaLayoutableShadowNode::layout(layoutContext);
+}
+
+Size RNSScreenShadowNode::measure(const LayoutContext &layoutContext,
+                                  const LayoutConstraints &layoutConstraints) const {
+    return LayoutableShadowNode::measure(layoutContext, layoutConstraints);
+}
+
+Size RNSScreenShadowNode::measureContent(const LayoutContext &layoutContext,
+                                         const LayoutConstraints &layoutConstraints) const {
+    return LayoutableShadowNode::measureContent(layoutContext, layoutConstraints);
 }
 
 } // namespace react

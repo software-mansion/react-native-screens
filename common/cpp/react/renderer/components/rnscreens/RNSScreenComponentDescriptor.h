@@ -22,13 +22,13 @@ class RNSScreenComponentDescriptor final
 
     react_native_assert(
         dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
-//    auto &layoutableShadowNode =
-//        dynamic_cast<YogaLayoutableShadowNode &>(screenShadowNode);
+    auto &layoutableShadowNode =
+        dynamic_cast<YogaLayoutableShadowNode &>(screenShadowNode);
 
     auto state =
         std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
             shadowNode.getState());
-//    auto stateData = state->getData();
+    auto stateData = state->getData();
 
 //    const jni::global_ref<jobject> &fabricUIManager = contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
 
@@ -38,10 +38,15 @@ class RNSScreenComponentDescriptor final
 //            ->getField<jobject>("reactApplicationCont;
 //
 //    reactApplicationContext.getId();
+//
+      if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+          layoutableShadowNode.setPadding({0, 0, 0, 0});
+          layoutableShadowNode.setSize(
+                  Size{stateData.frameSize.width, stateData.frameSize.height});
 
-//      if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-//          layoutableShadowNode.setSize(
-//                  Size{stateData.frameSize.width, stateData.frameSize.height});
+      }
+//      else {
+//          layoutableShadowNode.setPadding({.bottom = static_cast<float>(HEADER_HEIGHT)});
 //      }
 
 //    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
@@ -50,7 +55,6 @@ class RNSScreenComponentDescriptor final
 //    } else {
 //        layoutableShadowNode.setPadding({.bottom = static_cast<float>(HEADER_HEIGHT)});
 //    }
-//      layoutableShadowNode.setPadding({.bottom = static_cast<float>(HEADER_HEIGHT)});
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }

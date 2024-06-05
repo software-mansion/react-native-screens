@@ -37,6 +37,8 @@ open class ScreenViewManager(val reactContext: ReactApplicationContext) : ViewGr
 
     override fun getName() = REACT_CLASS
 
+    override fun needsCustomLayoutForChildren(): Boolean = true
+
     override fun createViewInstance(reactContext: ThemedReactContext): Screen {
         return Screen(reactContext)
     }

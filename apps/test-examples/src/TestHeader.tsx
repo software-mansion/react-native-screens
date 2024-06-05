@@ -21,7 +21,10 @@ export default function App(): JSX.Element {
           component={First}
           options={{
             headerShown: true,
-            statusBarTranslucent: true,
+            statusBarTranslucent: false,
+            headerTitleStyle: {
+              fontSize: 64,
+            }
           }}
         />
         <Stack.Screen
