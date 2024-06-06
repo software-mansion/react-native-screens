@@ -426,12 +426,6 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                 fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL ||
                 fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET
 
-//        private fun isTransparent(fragmentWrapper: ScreenFragmentWrapper): Boolean =
-//            fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.TRANSPARENT_MODAL ||
-//                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.MODAL ||
-//                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.FORM_SHEET ||
-//                    fragmentWrapper.screen.stackPresentation === Screen.StackPresentation.PUSH
-
         private fun needsDrawReordering(fragmentWrapper: ScreenFragmentWrapper): Boolean =
             // On Android sdk 33 and above the animation is different and requires draw reordering.
             // For React Native 0.70 and lower versions, `Build.VERSION_CODES.TIRAMISU` is not defined yet.
