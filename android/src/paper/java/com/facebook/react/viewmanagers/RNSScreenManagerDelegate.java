@@ -98,6 +98,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "navigationBarColor":
         mViewManager.setNavigationBarColor(view, ColorPropConverter.getColor(value, view.getContext()));
         break;
+      case "navigationBarTranslucent":
+        mViewManager.setNavigationBarTranslucent(view, value == null ? false : (boolean) value);
+        break;
       case "navigationBarHidden":
         mViewManager.setNavigationBarHidden(view, value == null ? false : (boolean) value);
         break;

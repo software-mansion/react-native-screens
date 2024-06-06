@@ -60,7 +60,7 @@ namespace react = facebook::react;
 
 - (instancetype)init
 {
-  if (self = [super init]) {
+  if (self = [super initWithFrame:CGRectZero]) {
 #ifdef RCT_NEW_ARCH_ENABLED
     static const auto defaultProps = std::make_shared<const react::RNSScreenContainerProps>();
     _props = defaultProps;

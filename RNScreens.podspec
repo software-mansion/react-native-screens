@@ -63,6 +63,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => platform, :tvos => "11.0", :visionos => "1.0" }
   s.source       = { :git => "https://github.com/software-mansion/react-native-screens.git", :tag => "#{s.version}" }
   s.source_files = source_files
+  s.project_header_files = "cpp/**/*.h" # Don't expose C++ headers publicly to allow importing framework into Swift files
   s.requires_arc = true
 
   if defined?(install_modules_dependencies()) != nil
