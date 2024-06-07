@@ -3,6 +3,7 @@
 #include <fbjni/fbjni.h>
 #include <react/debug/react_native_assert.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
+#include <react/renderer/components/rnscreens/Props.h>
 #include "RNSScreenShadowNode.h"
 
 jint HEADER_HEIGHT = 0;
@@ -16,7 +17,18 @@ class RNSScreenComponentDescriptor final
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
-  void adopt(ShadowNode &shadowNode) const override {
+
+  std::optional<std::reference_wrapper<const ShadowNode::Shared>> findHeaderConfigChild(const RNSScreenShadowNode &screenShadowNode) const {
+      for (const ShadowNode::Shared &child : screenShadowNode.getChildren()) {
+            if (std::strcmp(child->getComponentName(), "RNSScreenStackHeaderConfig") == 0) {
+                return {std::ref(child)};
+            }
+      }
+      return std::nullopt;
+//      return std::optional<std::reference_wrapper<const ShadowNode::Shared>>();
+  }
+
+    void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
     auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
 
@@ -50,8 +62,16 @@ class RNSScreenComponentDescriptor final
       layoutableShadowNode.setPadding({.bottom = 0});
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
-
     } else {
+        auto headerConfigChildOpt = findHeaderConfigChild(screenShadowNode);
+        int fontSize = -1;
+        if (headerConfigChildOpt) {
+            auto headerConfigChild = headerConfigChildOpt->get();
+            const auto &headerProps = *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(headerConfigChild->getProps());
+            fontSize = headerProps.titleFontSize;
+//            headerConfigChild->getProps()
+        }
+
       JNIEnv *env = facebook::jni::Environment::current();
       if (env == nullptr) {
         // We can basically crash here
@@ -79,7 +99,8 @@ class RNSScreenComponentDescriptor final
       }
 
       jfloat headerHeight =
-          env->CallFloatMethod(packageInstance, computeDummyLayoutID, 24);
+          env->CallFloatMethod(packageInstance, computeDummyLayoutID, fontSize);
+
 
       layoutableShadowNode.setPadding(
           {.bottom = static_cast<float>(headerHeight)});

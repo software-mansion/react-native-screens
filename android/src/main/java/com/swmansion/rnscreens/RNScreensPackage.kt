@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.graphics.Color
 import android.view.View
 import android.view.View.MeasureSpec
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -88,6 +89,11 @@ class RNScreensPackage : TurboReactPackage() {
 
         val widthMeasureSpec = MeasureSpec.makeMeasureSpec(decorViewWidth, MeasureSpec.EXACTLY)
         val heightMeasureSpec = MeasureSpec.makeMeasureSpec(decorViewHeight, MeasureSpec.EXACTLY)
+
+        val textView = findTextViewInToolbar(toolbar)
+
+        textView?.takeIf { fontSize != -1 }?.let { it.textSize = fontSize.toFloat() }
+
         coordinatorLayout.measure(widthMeasureSpec, heightMeasureSpec)
         coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
 
@@ -95,6 +101,18 @@ class RNScreensPackage : TurboReactPackage() {
 
         val height = PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
         return height
+    }
+
+    private fun findTextViewInToolbar(toolbar: Toolbar): TextView? {
+        for (i in 0 until toolbar.childCount) {
+            val view = toolbar.getChildAt(i)
+            if (view is TextView) {
+                if (view.text == toolbar.title) {
+                    return view
+                }
+            }
+        }
+        return null
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
