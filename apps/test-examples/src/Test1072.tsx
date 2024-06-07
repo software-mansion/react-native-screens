@@ -46,7 +46,7 @@ export default function App() {
         <Stack.Navigator
           screenOptions={{
             fullScreenGestureEnabled: true,
-            animation: 'default',
+            animation: 'fade_from_bottom',
             animationMatchesGesture: true,
           }}>
           <Stack.Screen name="First" component={First} />
