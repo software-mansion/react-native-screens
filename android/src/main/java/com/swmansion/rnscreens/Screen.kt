@@ -2,13 +2,11 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
 import android.util.TypedValue
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import androidx.core.view.children
