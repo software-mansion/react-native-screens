@@ -30,6 +30,9 @@ class RNSScreenComponentDescriptor final
             shadowNode.getState());
     auto stateData = state->getData();
 
+    // We need header config props here! Or... we need to pass some options together with screen!
+//    const auto &props = *std::static_pointer_cast<const RNSScreenProps>(screenShadowNode.getProps());
+
 //    const jni::global_ref<jobject> &fabricUIManager = contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
 
 //    const jni::
@@ -51,7 +54,7 @@ class RNSScreenComponentDescriptor final
               // We can basically crash here
               LOG(ERROR) << "Failed to retrieve env\n";
           }
-          jmethodID computeDummyLayoutID = env->GetMethodID(RNSPACKAGE_REFERENCE, "computeDummyLayout", "()F");
+          jmethodID computeDummyLayoutID = env->GetMethodID(RNSPACKAGE_REFERENCE, "computeDummyLayout", "(I)F");
           if (computeDummyLayoutID == nullptr) {
               LOG(ERROR) << "Failed to retrieve computeDummyLayout method ID";
           }

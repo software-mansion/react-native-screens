@@ -79,7 +79,7 @@ class RNScreensPackage : TurboReactPackage() {
     /**
      * @return height of the header
      */
-    private fun computeDummyLayout(): Float {
+    private fun computeDummyLayout(fontSize: Int): Float {
         // We need to access window dimensions
         val topLevelDecorView = reactContext.get()!!.currentActivity!!.window.decorView
 
@@ -102,7 +102,7 @@ class RNScreensPackage : TurboReactPackage() {
 
         this.reactContext = WeakReference(reactContext)
         initDummyLayoutContent(reactContext)
-        computeDummyLayout()
+        computeDummyLayout(24)
 
         return listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
