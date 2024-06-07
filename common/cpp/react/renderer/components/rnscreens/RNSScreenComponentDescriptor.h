@@ -30,61 +30,73 @@ class RNSScreenComponentDescriptor final
             shadowNode.getState());
     auto stateData = state->getData();
 
-    // We need header config props here! Or... we need to pass some options together with screen!
-//    const auto &props = *std::static_pointer_cast<const RNSScreenProps>(screenShadowNode.getProps());
+    // We need header config props here! Or... we need to pass some options
+    // together with screen!
+    //    const auto &props = *std::static_pointer_cast<const
+    //    RNSScreenProps>(screenShadowNode.getProps());
 
-//    const jni::global_ref<jobject> &fabricUIManager = contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
+    //    const jni::global_ref<jobject> &fabricUIManager =
+    //    contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
 
-//    const jni::
+    //    const jni::
 
-//    static auto reactApplicationContext = facebook::jni::findClassStatic("com/facebook/react/fabric/FabricUIManager")
-//            ->getField<jobject>("reactApplicationCont;
-//
-//    reactApplicationContext.getId();
-//
-      if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-          layoutableShadowNode.setPadding({.bottom = 0});
-          layoutableShadowNode.setSize(
-                  Size{stateData.frameSize.width, stateData.frameSize.height});
+    //    static auto reactApplicationContext =
+    //    facebook::jni::findClassStatic("com/facebook/react/fabric/FabricUIManager")
+    //            ->getField<jobject>("reactApplicationCont;
+    //
+    //    reactApplicationContext.getId();
+    //
+    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+      layoutableShadowNode.setPadding({.bottom = 0});
+      layoutableShadowNode.setSize(
+          Size{stateData.frameSize.width, stateData.frameSize.height});
 
+    } else {
+      JNIEnv *env = facebook::jni::Environment::current();
+      if (env == nullptr) {
+        // We can basically crash here
+        LOG(ERROR) << "Failed to retrieve env\n";
       }
-      else {
-          JNIEnv *env = facebook::jni::Environment::current();
-          if (env == nullptr) {
-              // We can basically crash here
-              LOG(ERROR) << "Failed to retrieve env\n";
-          }
-          jmethodID computeDummyLayoutID = env->GetMethodID(RNSPACKAGE_REFERENCE, "computeDummyLayout", "(I)F");
-          if (computeDummyLayoutID == nullptr) {
-              LOG(ERROR) << "Failed to retrieve computeDummyLayout method ID";
-          }
-
-          jmethodID getInstanceMethodID = env->GetStaticMethodID(RNSPACKAGE_REFERENCE, "getInstance", "()Lcom/swmansion/rnscreens/RNScreensPackage;");
-          if (getInstanceMethodID == nullptr) {
-              LOG(ERROR) << "Failed to retrieve getInstanceMethodID";
-          }
-
-          jobject packageInstance = env->CallStaticObjectMethod(RNSPACKAGE_REFERENCE, getInstanceMethodID);
-
-          if (packageInstance == nullptr) {
-              LOG(ERROR) << "Failed to retrieve packageInstance";
-          }
-
-          jfloat headerHeight = env->CallFloatMethod(packageInstance, computeDummyLayoutID);
-
-          layoutableShadowNode.setPadding({.bottom = static_cast<float>(headerHeight)});
+      jmethodID computeDummyLayoutID =
+          env->GetMethodID(RNSPACKAGE_REFERENCE, "computeDummyLayout", "(I)F");
+      if (computeDummyLayoutID == nullptr) {
+        LOG(ERROR) << "Failed to retrieve computeDummyLayout method ID";
       }
 
-//    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-//        layoutableShadowNode.setSize(
-//                Size{stateData.frameSize.width, stateData.frameSize.height});
-//    } else {
-//        layoutableShadowNode.setPadding({.bottom = static_cast<float>(HEADER_HEIGHT)});
-//    }
+      jmethodID getInstanceMethodID = env->GetStaticMethodID(
+          RNSPACKAGE_REFERENCE,
+          "getInstance",
+          "()Lcom/swmansion/rnscreens/RNScreensPackage;");
+      if (getInstanceMethodID == nullptr) {
+        LOG(ERROR) << "Failed to retrieve getInstanceMethodID";
+      }
+
+      jobject packageInstance = env->CallStaticObjectMethod(
+          RNSPACKAGE_REFERENCE, getInstanceMethodID);
+
+      if (packageInstance == nullptr) {
+        LOG(ERROR) << "Failed to retrieve packageInstance";
+      }
+
+      jfloat headerHeight =
+          env->CallFloatMethod(packageInstance, computeDummyLayoutID, 24);
+
+      layoutableShadowNode.setPadding(
+          {.bottom = static_cast<float>(headerHeight)});
+    }
+
+    //    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0)
+    //    {
+    //        layoutableShadowNode.setSize(
+    //                Size{stateData.frameSize.width,
+    //                stateData.frameSize.height});
+    //    } else {
+    //        layoutableShadowNode.setPadding({.bottom =
+    //        static_cast<float>(HEADER_HEIGHT)});
+    //    }
 
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
-
 };
 
 } // namespace react
