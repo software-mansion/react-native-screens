@@ -44,7 +44,6 @@ class RNScreensPackage : TurboReactPackage() {
             Log.w(TAG, "Failed to load $LIBRARY_NAME")
         }
 
-        WEAK_THIS = WeakReference(this)
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
@@ -52,13 +51,14 @@ class RNScreensPackage : TurboReactPackage() {
         // Moreover this is called before FabricUIManger has finished initializing, not to mention
         // installing its C++ bindings - so we are safe in terms of creating this hierarchy
         // before RN starts creating shadow nodes.
+        WEAK_THIS = WeakReference(this)
         this.reactContext = WeakReference(reactContext)
         ensureDummyLayoutWithHeader(reactContext)
 
         return listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
-            ScreenViewManager(reactContext),
-            ModalScreenViewManager(reactContext),
+            ScreenViewManager(),
+            ModalScreenViewManager(),
             ScreenStackViewManager(),
             ScreenStackHeaderConfigViewManager(),
             ScreenStackHeaderSubviewManager(),

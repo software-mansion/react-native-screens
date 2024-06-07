@@ -25,7 +25,7 @@ import com.swmansion.rnscreens.events.ScreenWillAppearEvent
 import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
-open class ScreenViewManager(val reactContext: ReactApplicationContext) : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
+open class ScreenViewManager() : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
     private val delegate: ViewManagerDelegate<Screen>
 
     init {
