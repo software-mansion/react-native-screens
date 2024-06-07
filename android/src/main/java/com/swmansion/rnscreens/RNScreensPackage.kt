@@ -102,7 +102,7 @@ class RNScreensPackage : TurboReactPackage() {
 
         this.reactContext = WeakReference(reactContext)
         initDummyLayoutContent(reactContext)
-        computeDummyLayout(24)
+//        computeDummyLayout(24)
 
         return listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
