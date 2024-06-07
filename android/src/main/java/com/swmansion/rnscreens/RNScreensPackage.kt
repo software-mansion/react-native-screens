@@ -1,9 +1,8 @@
 package com.swmansion.rnscreens
 
-import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.view.View.MeasureSpec
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -24,103 +23,37 @@ import java.lang.ref.WeakReference
     ]
 )
 class RNScreensPackage : TurboReactPackage() {
+    // The state required to compute header dimensions. We want
     private lateinit var coordinatorLayout: CoordinatorLayout
     private lateinit var appBarLayout: AppBarLayout
     private lateinit var dummyContentView: View
     private lateinit var toolbar: Toolbar
+
+    // We do not want to be responsible for the context lifecycle. If it's null, we're fine.
+    // This same context is being passed down to our view components so it is destroyed
+    // only if our views also are.
     private var reactContext: WeakReference<ReactApplicationContext> = WeakReference(null)
 
     init {
-        System.loadLibrary("react_codegen_rnscreens")
-        nativeSetHeaderHeight(56)
-        println("Hey, I've loaded codegened shared lib")
-    }
-
-    private external fun nativeSetHeaderHeight(int: Int)
-
-    private fun initDummyLayoutContent(reactContext: ReactApplicationContext) {
-        val targetContext = reactContext.currentActivity!!
-        // This is earliest we can get to context I think
-        coordinatorLayout = CoordinatorLayout(targetContext)
-
-        appBarLayout = AppBarLayout(targetContext).apply {
-//            setBackgroundColor(Color.TRANSPARENT)
-            layoutParams = CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-            )
+        // We load the library so that we are able to communicate with our C++ code (descriptor & shadow nodes).
+        // Basically we leak this object to C++, as its lifecycle should span throughout whole application
+        // lifecycle anyway.
+        try {
+            System.loadLibrary(LIBRARY_NAME)
+        } catch (e: UnsatisfiedLinkError) {
+            Log.w(TAG, "Failed to load $LIBRARY_NAME")
         }
 
-//        val actionBar = targetContext.actionBar!!
-//        actionBar.title = "Actionbar"
-
-        toolbar = Toolbar(targetContext).apply {
-            title = "FontSize"
-            layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT).apply { scrollFlags = 0 }
-        }
-
-        (targetContext as AppCompatActivity).setSupportActionBar(toolbar)
-        appBarLayout.addView(toolbar)
-
-        dummyContentView = View(targetContext).apply {
-            layoutParams = CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                CoordinatorLayout.LayoutParams.MATCH_PARENT
-            )
-        }
-
-        coordinatorLayout.apply {
-            addView(appBarLayout)
-            addView(dummyContentView)
-        }
-
-        VIEWS = coordinatorLayout
-    }
-
-    /**
-     * @return height of the header
-     */
-    private fun computeDummyLayout(fontSize: Int): Float {
-        // We need to access window dimensions
-        val topLevelDecorView = reactContext.get()!!.currentActivity!!.window.decorView
-
-        val decorViewWidth = topLevelDecorView.width
-        val decorViewHeight = topLevelDecorView.height
-
-        val widthMeasureSpec = MeasureSpec.makeMeasureSpec(decorViewWidth, MeasureSpec.EXACTLY)
-        val heightMeasureSpec = MeasureSpec.makeMeasureSpec(decorViewHeight, MeasureSpec.EXACTLY)
-
-        val textView = findTextViewInToolbar(toolbar)
-
-        textView?.takeIf { fontSize != -1 }?.let { it.textSize = fontSize.toFloat() }
-
-        coordinatorLayout.measure(widthMeasureSpec, heightMeasureSpec)
-        coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
-
-        // Now we should have our app bar layouted!
-
-        val height = PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
-        return height
-    }
-
-    private fun findTextViewInToolbar(toolbar: Toolbar): TextView? {
-        for (i in 0 until toolbar.childCount) {
-            val view = toolbar.getChildAt(i)
-            if (view is TextView) {
-                if (view.text == toolbar.title) {
-                    return view
-                }
-            }
-        }
-        return null
+        WEAK_THIS = WeakReference(this)
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-        WEAK_THIS = WeakReference(this)
-
+        // This is the earliest we lay our hands on react context.
+        // Moreover this is called before FabricUIManger has finished initializing, not to mention
+        // installing its C++ bindings - so we are safe in terms of creating this hierarchy
+        // before RN starts creating shadow nodes.
         this.reactContext = WeakReference(reactContext)
-        initDummyLayoutContent(reactContext)
-//        computeDummyLayout(24)
+        ensureDummyLayoutWithHeader(reactContext)
 
         return listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
@@ -160,17 +93,97 @@ class RNScreensPackage : TurboReactPackage() {
         }
     }
 
-    companion object {
-        var WEAK_THIS = WeakReference<RNScreensPackage>(null)
-        var VIEWS: CoordinatorLayout? = null
-
-        fun computeDummyLayoutStatic(): Int {
-            if (VIEWS == null) {
-                return 0
-            }
-
-            return 0
+    /**
+     * Initializes dummy view hierarchy with CoordinatorLayout, AppBarLayout and dummy View.
+     * We utilize this to compute header height (app bar layout height) from C++ layer when its needed.
+     */
+    private fun ensureDummyLayoutWithHeader(reactContext: ReactApplicationContext) {
+        if (::coordinatorLayout.isInitialized) {
+            return
         }
+        // We need to use activity here, as react context does not have theme attributes required by
+        // AppBarLayout attached leading to crash.
+        val contextWithTheme =
+            requireNotNull(reactContext.currentActivity) { "[RNScreens] Attempt to use context detached from activity" }
+        coordinatorLayout = CoordinatorLayout(contextWithTheme)
+
+        appBarLayout = AppBarLayout(contextWithTheme).apply {
+            layoutParams = CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+            )
+        }
+
+        toolbar = Toolbar(contextWithTheme).apply {
+            title = "FontSize123!#$"
+            layoutParams = AppBarLayout.LayoutParams(
+                AppBarLayout.LayoutParams.MATCH_PARENT,
+                AppBarLayout.LayoutParams.WRAP_CONTENT
+            ).apply { scrollFlags = 0 }
+        }
+
+        (contextWithTheme as AppCompatActivity).setSupportActionBar(toolbar)
+        appBarLayout.addView(toolbar)
+
+        dummyContentView = View(contextWithTheme).apply {
+            layoutParams = CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                CoordinatorLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+
+        coordinatorLayout.apply {
+            addView(appBarLayout)
+            addView(dummyContentView)
+        }
+    }
+
+    /**
+     * Triggers layout pass on dummy view hierarchy, taking into consideration selected
+     * ScreenStackHeaderConfig props that might have impact on final header height.
+     *
+     * @param fontSize font size value as passed from JS
+     * @return header height in dp as consumed by Yoga
+     */
+    private fun computeDummyLayout(fontSize: Int): Float {
+        if (!::coordinatorLayout.isInitialized) {
+            Log.e(TAG, "[RNScreens] Attempt to access dummy view hierarchy before it is initialized")
+            return 0.0f
+        }
+
+        val topLevelDecorView = reactContext.get()!!.currentActivity!!.window.decorView
+
+        // These dimensions are not accurate, as they do include status bar & navigation bar, however
+        // it is ok for our purposes.
+        val decorViewWidth = topLevelDecorView.width
+        val decorViewHeight = topLevelDecorView.height
+
+        val widthMeasureSpec = MeasureSpec.makeMeasureSpec(decorViewWidth, MeasureSpec.EXACTLY)
+        val heightMeasureSpec = MeasureSpec.makeMeasureSpec(decorViewHeight, MeasureSpec.EXACTLY)
+
+        val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)
+        textView?.takeIf { fontSize != FONT_SIZE_UNSET }?.let { it.textSize = fontSize.toFloat() }
+
+        coordinatorLayout.measure(widthMeasureSpec, heightMeasureSpec)
+
+        // It seems that measure pass would be enough, however I'm not certain whether there are no
+        // scenarios when layout violates measured dimensions.
+        coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
+
+        return PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
+    }
+
+
+    companion object {
+        const val TAG = "RNScreensPackage"
+        const val LIBRARY_NAME = "react_codegen_rnscreens"
+
+        const val FONT_SIZE_UNSET = -1
+
+        // We access this field from C++ layer, through `getInstance` method.
+        // We don't care what instance we get access to as long as it has initialized
+        // dummy view hierarchy.
+        private var WEAK_THIS = WeakReference<RNScreensPackage>(null)
 
         @JvmStatic
         fun getInstance(): RNScreensPackage {

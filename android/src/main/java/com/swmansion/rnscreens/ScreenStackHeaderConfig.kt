@@ -216,7 +216,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             toolbar.contentInsetStartWithNavigation = 0
         }
 
-        val titleTextView = titleTextView
+        val titleTextView = findTitleTextViewInToolbar(toolbar)
         if (titleColor != 0) {
             toolbar.setTitleTextColor(titleColor)
         }
@@ -315,19 +315,6 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         maybeUpdate()
     }
 
-    private val titleTextView: TextView?
-        get() {
-            for (i in 0 until toolbar.childCount) {
-                val view = toolbar.getChildAt(i)
-                if (view is TextView) {
-                    if (view.text == toolbar.title) {
-                        return view
-                    }
-                }
-            }
-            return null
-        }
-
     fun setTitle(title: String?) {
         this.title = title
     }
@@ -406,5 +393,19 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             toolbar.setBackgroundColor(tv.data)
         }
         toolbar.clipChildren = false
+    }
+
+    companion object {
+        fun findTitleTextViewInToolbar(toolbar: Toolbar): TextView? {
+            for (i in 0 until toolbar.childCount) {
+                val view = toolbar.getChildAt(i)
+                if (view is TextView) {
+                    if (view.text == toolbar.title) {
+                        return view
+                    }
+                }
+            }
+            return null
+        }
     }
 }
