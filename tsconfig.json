@@ -2,21 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-screens": ["src"],
-      "react-native-screens/native-stack": ["src/native-stack/index.tsx"],
-      "react-native-screens/reanimated": ["src/reanimated/index.tsx"],
-      "react-native-screens/gesture-handler": ["src/gesture-handler/index.tsx"],
-      "@react-navigation/bottom-tabs": [
-        "react-navigation/packages/bottom-tabs/src"
-      ],
-      "@react-navigation/core": ["react-navigation/packages/core/src"],
-      "@react-navigation/elements": ["react-navigation/packages/elements/src"],
-      "@react-navigation/native": ["react-navigation/packages/native/src"],
-      "@react-navigation/native-stack": [
-        "react-navigation/packages/native-stack/src"
-      ],
-      "@react-navigation/routers": ["react-navigation/packages/routers/src"],
-      "@react-navigation/stack": ["react-navigation/packages/stack/src"]
+      "react-native-screens*": ["src*"],
+      "@react-navigation/*": ["react-navigation/packages/*/src"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
