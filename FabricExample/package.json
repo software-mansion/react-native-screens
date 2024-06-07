@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/",
     "@react-navigation/core": "link:../react-navigation/packages/core/",
+    "@react-navigation/drawer": "link:../react-navigation/packages/drawer/",
     "@react-navigation/elements": "link:../react-navigation/packages/elements/",
     "@react-navigation/native": "link:../react-navigation/packages/native/",
     "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/",
@@ -39,6 +40,7 @@
     "@react-native/metro-config": "0.74.83",
     "@react-native/typescript-config": "0.74.83",
     "@types/react": "^18.2.72",
+    "@types/react-native-restart": "^0.0.0",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.6.3",
     "eslint": "^8.19.0",

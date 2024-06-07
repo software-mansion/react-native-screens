@@ -2648,6 +2648,12 @@ __metadata:
   languageName: node
   linkType: soft
 
+"@react-navigation/drawer@link:../react-navigation/packages/drawer/::locator=FabricExample%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/drawer@link:../react-navigation/packages/drawer/::locator=FabricExample%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@react-navigation/elements@link:../react-navigation/packages/elements/::locator=FabricExample%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@react-navigation/elements@link:../react-navigation/packages/elements/::locator=FabricExample%40workspace%3A."
@@ -2860,6 +2866,13 @@ __metadata:
   version: 15.7.12
   resolution: "@types/prop-types@npm:15.7.12"
   checksum: 10c0/1babcc7db6a1177779f8fde0ccc78d64d459906e6ef69a4ed4dd6339c920c2e05b074ee5a92120fe4e9d9f1a01c952f843ebd550bee2332fc2ef81d1706878f8
+  languageName: node
+  linkType: hard
+
+"@types/react-native-restart@npm:^0.0.0":
+  version: 0.0.0
+  resolution: "@types/react-native-restart@npm:0.0.0"
+  checksum: 10c0/000e6666920edeba9d680b01cf50c9237accc4b12ffe6d577d332260844cf231a0179456219cc5ecd0268d2e0783811e689e6412b664a19be0f532b9b8216723
   languageName: node
   linkType: hard
 
@@ -3137,12 +3150,14 @@ __metadata:
     "@react-native/typescript-config": "npm:0.74.83"
     "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/"
     "@react-navigation/core": "link:../react-navigation/packages/core/"
+    "@react-navigation/drawer": "link:../react-navigation/packages/drawer/"
     "@react-navigation/elements": "link:../react-navigation/packages/elements/"
     "@react-navigation/native": "link:../react-navigation/packages/native/"
     "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/"
     "@react-navigation/routers": "link:../react-navigation/packages/routers/"
     "@react-navigation/stack": "link:../react-navigation/packages/stack/"
     "@types/react": "npm:^18.2.72"
+    "@types/react-native-restart": "npm:^0.0.0"
     "@types/react-test-renderer": "npm:^18.0.0"
     babel-jest: "npm:^29.6.3"
     eslint: "npm:^8.19.0"
