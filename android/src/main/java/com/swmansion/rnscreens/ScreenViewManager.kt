@@ -26,9 +26,6 @@ import com.swmansion.rnscreens.events.ScreenWillDisappearEvent
 
 @ReactModule(name = ScreenViewManager.REACT_CLASS)
 open class ScreenViewManager(val reactContext: ReactApplicationContext) : ViewGroupManager<Screen>(), RNSScreenManagerInterface<Screen> {
-    // The library is loaded in RNScreensPackage, because it is our earliest entrypoint.
-    external fun nativeSetHeaderHeight(int: Int)
-
     private val delegate: ViewManagerDelegate<Screen>
 
     init {

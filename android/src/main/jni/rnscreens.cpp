@@ -22,10 +22,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_VERSION_1_6;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_swmansion_rnscreens_ScreenViewManager_nativeSetHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight) {
-    HEADER_HEIGHT = headerHeight;
-}
-
 extern "C" JNIEXPORT void JNICALL Java_com_swmansion_rnscreens_RNScreensPackage_nativeSetHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight) {
     HEADER_HEIGHT = headerHeight;
     jclass rnspackageClass = env->GetObjectClass(jThis);
