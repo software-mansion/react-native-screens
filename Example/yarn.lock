@@ -3090,13 +3090,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-native-restart@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "@types/react-native-restart@npm:0.0.0"
-  checksum: 10c0/000e6666920edeba9d680b01cf50c9237accc4b12ffe6d577d332260844cf231a0179456219cc5ecd0268d2e0783811e689e6412b664a19be0f532b9b8216723
-  languageName: node
-  linkType: hard
-
 "@types/react-native@npm:0.72.2":
   version: 0.72.2
   resolution: "@types/react-native@npm:0.72.2"
@@ -3398,7 +3391,6 @@ __metadata:
     "@types/jest": "npm:^29.2.5"
     "@types/react": "npm:^18.2.72"
     "@types/react-native": "npm:0.72.2"
-    "@types/react-native-restart": "npm:^0.0.0"
     "@types/react-test-renderer": "npm:^18.0.0"
     babel-jest: "npm:^29.6.3"
     detox: "npm:^20.17.0"
