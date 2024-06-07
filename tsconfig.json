@@ -7,16 +7,16 @@
       "react-native-screens/reanimated": ["src/reanimated/index.tsx"],
       "react-native-screens/gesture-handler": ["src/gesture-handler/index.tsx"],
       "@react-navigation/bottom-tabs": [
-        "react-navigation/packages/bottom-tabs/"
+        "react-navigation/packages/bottom-tabs/src"
       ],
-      "@react-navigation/core": ["react-navigation/packages/core/"],
-      "@react-navigation/elements": ["react-navigation/packages/elements/"],
-      "@react-navigation/native": ["react-navigation/packages/native/"],
+      "@react-navigation/core": ["react-navigation/packages/core/src"],
+      "@react-navigation/elements": ["react-navigation/packages/elements/src"],
+      "@react-navigation/native": ["react-navigation/packages/native/src"],
       "@react-navigation/native-stack": [
-        "react-navigation/packages/native-stack/"
+        "react-navigation/packages/native-stack/src"
       ],
-      "@react-navigation/routers": ["react-navigation/packages/routers/"],
-      "@react-navigation/stack": ["react-navigation/packages/stack/"]
+      "@react-navigation/routers": ["react-navigation/packages/routers/src"],
+      "@react-navigation/stack": ["react-navigation/packages/stack/src"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
