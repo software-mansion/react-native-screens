@@ -15,16 +15,23 @@ const Stack = createNativeStackNavigator();
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{
+        headerTopInsetEnabled: false,
+        topInsetEnabled: false,
+        headerOptions: {
+          topInsetEnabled: false,
+        },
+      }}>
         <Stack.Screen
           name="First"
           component={First}
           options={{
             headerShown: true,
             statusBarTranslucent: false,
-            headerTitleStyle: {
-              fontSize: 64,
-            }
+            headerTopInsetEnabled: false,
+            // headerTitleStyle: {
+            //   fontSize: 64,
+            // }
           }}
         />
         <Stack.Screen
@@ -49,6 +56,10 @@ export default function App(): JSX.Element {
 const First = ({ navigation }: Props) => (
   <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'seagreen' }}>
     <View style={{ height: 100, width: 100, justifyContent: 'flex-start', backgroundColor: 'blue' }} />
+    <Button
+      title="Tap me for second screen"
+      onPress={() => navigation.navigate('Second')}
+    />
     <View style={{ height: 100, width: 100, justifyContent: 'flex-end', backgroundColor: 'red' }} />
   </View>
 );
@@ -58,10 +69,6 @@ const Second = ({ navigation }: Props) => (
     <Button
       title="Tap me for first screen"
       onPress={() => navigation.navigate('First')}
-    />
-    <Button
-      title="Tap me for second screen"
-      onPress={() => navigation.navigate('Second')}
     />
     <Button
       title="Tap me for third screen"
