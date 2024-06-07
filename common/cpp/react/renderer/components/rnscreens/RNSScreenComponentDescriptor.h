@@ -6,9 +6,6 @@
 #include <react/renderer/components/rnscreens/Props.h>
 #include "RNSScreenShadowNode.h"
 
-jint HEADER_HEIGHT = 0;
-extern jclass RNSPACKAGE_REFERENCE;
-
 namespace facebook {
 namespace react {
 
@@ -17,107 +14,94 @@ class RNSScreenComponentDescriptor final
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
+  static constexpr const char *kRnsPackageClassPath = "com/swmansion/rnscreens/RNScreensPackage";
 
-  std::optional<std::reference_wrapper<const ShadowNode::Shared>> findHeaderConfigChild(const RNSScreenShadowNode &screenShadowNode) const {
-      for (const ShadowNode::Shared &child : screenShadowNode.getChildren()) {
-            if (std::strcmp(child->getComponentName(), "RNSScreenStackHeaderConfig") == 0) {
-                return {std::ref(child)};
-            }
+  void adopt(ShadowNode &shadowNode) const override {
+      react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
+      auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
+
+      react_native_assert(
+              dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
+      auto &layoutableShadowNode =
+              dynamic_cast<YogaLayoutableShadowNode &>(screenShadowNode);
+
+      auto state =
+              std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
+                      shadowNode.getState());
+      auto stateData = state->getData();
+
+      if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+          layoutableShadowNode.setPadding({.bottom = 0});
+          layoutableShadowNode.setSize(
+                  Size{stateData.frameSize.width, stateData.frameSize.height});
+      } else {
+          auto headerConfigChildOpt = findHeaderConfigChild(layoutableShadowNode);
+          int fontSize = -1;
+          if (headerConfigChildOpt) {
+              const auto &headerConfigChild = headerConfigChildOpt->get();
+              const auto &headerProps = *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(headerConfigChild->getProps());
+              fontSize = headerProps.titleFontSize;
+          }
+
+          const auto headerHeight = findHeaderHeight(fontSize);
+          layoutableShadowNode.setPadding(
+                  {.bottom = static_cast<float>(headerHeight.value_or(0))});
       }
-      return std::nullopt;
-//      return std::optional<std::reference_wrapper<const ShadowNode::Shared>>();
+      ConcreteComponentDescriptor::adopt(shadowNode);
   }
 
-    void adopt(ShadowNode &shadowNode) const override {
-    react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
-    auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
+  std::optional<std::reference_wrapper<const ShadowNode::Shared>> findHeaderConfigChild(const YogaLayoutableShadowNode &screenShadowNode) const {
+      for (const ShadowNode::Shared &child : screenShadowNode.getChildren()) {
+          if (std::strcmp(child->getComponentName(), "RNSScreenStackHeaderConfig") == 0) {
+              return {std::ref(child)};
+          }
+      }
+      return std::nullopt;
+  }
 
-    react_native_assert(
-        dynamic_cast<YogaLayoutableShadowNode *>(&screenShadowNode));
-    auto &layoutableShadowNode =
-        dynamic_cast<YogaLayoutableShadowNode &>(screenShadowNode);
-
-    auto state =
-        std::static_pointer_cast<const RNSScreenShadowNode::ConcreteState>(
-            shadowNode.getState());
-    auto stateData = state->getData();
-
-    // We need header config props here! Or... we need to pass some options
-    // together with screen!
-    //    const auto &props = *std::static_pointer_cast<const
-    //    RNSScreenProps>(screenShadowNode.getProps());
-
-    //    const jni::global_ref<jobject> &fabricUIManager =
-    //    contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
-
-    //    const jni::
-
-    //    static auto reactApplicationContext =
-    //    facebook::jni::findClassStatic("com/facebook/react/fabric/FabricUIManager")
-    //            ->getField<jobject>("reactApplicationCont;
-    //
-    //    reactApplicationContext.getId();
-    //
-    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      layoutableShadowNode.setPadding({.bottom = 0});
-      layoutableShadowNode.setSize(
-          Size{stateData.frameSize.width, stateData.frameSize.height});
-    } else {
-        auto headerConfigChildOpt = findHeaderConfigChild(screenShadowNode);
-        int fontSize = -1;
-        if (headerConfigChildOpt) {
-            auto headerConfigChild = headerConfigChildOpt->get();
-            const auto &headerProps = *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(headerConfigChild->getProps());
-            fontSize = headerProps.titleFontSize;
-//            headerConfigChild->getProps()
-        }
-
+  std::optional<float> findHeaderHeight(const int fontSize) const {
       JNIEnv *env = facebook::jni::Environment::current();
       if (env == nullptr) {
-        // We can basically crash here
-        LOG(ERROR) << "Failed to retrieve env\n";
+          // We can basically crash here
+          LOG(ERROR) << "Failed to retrieve env\n";
+          return {};
       }
+
+      jclass rnsPackageClass = env->FindClass(kRnsPackageClassPath);
+      if (rnsPackageClass == nullptr) {
+          LOG(ERROR) << "Failed to find class with id " << "";
+          return {};
+      }
+
       jmethodID computeDummyLayoutID =
-          env->GetMethodID(RNSPACKAGE_REFERENCE, "computeDummyLayout", "(I)F");
+              env->GetMethodID(rnsPackageClass, "computeDummyLayout", "(I)F");
       if (computeDummyLayoutID == nullptr) {
-        LOG(ERROR) << "Failed to retrieve computeDummyLayout method ID";
+          LOG(ERROR) << "Failed to retrieve computeDummyLayout method ID";
+          return {};
       }
 
       jmethodID getInstanceMethodID = env->GetStaticMethodID(
-          RNSPACKAGE_REFERENCE,
-          "getInstance",
-          "()Lcom/swmansion/rnscreens/RNScreensPackage;");
+              rnsPackageClass,
+              "getInstance",
+              "()Lcom/swmansion/rnscreens/RNScreensPackage;");
       if (getInstanceMethodID == nullptr) {
-        LOG(ERROR) << "Failed to retrieve getInstanceMethodID";
+          LOG(ERROR) << "Failed to retrieve getInstanceMethodID";
+          return {};
       }
 
       jobject packageInstance = env->CallStaticObjectMethod(
-          RNSPACKAGE_REFERENCE, getInstanceMethodID);
-
+              rnsPackageClass, getInstanceMethodID);
       if (packageInstance == nullptr) {
-        LOG(ERROR) << "Failed to retrieve packageInstance";
+          LOG(ERROR) << "Failed to retrieve packageInstance";
+          return {};
       }
 
       jfloat headerHeight =
-          env->CallFloatMethod(packageInstance, computeDummyLayoutID, fontSize);
+              env->CallFloatMethod(packageInstance, computeDummyLayoutID, fontSize);
 
-
-      layoutableShadowNode.setPadding(
-          {.bottom = static_cast<float>(headerHeight)});
-    }
-
-    //    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0)
-    //    {
-    //        layoutableShadowNode.setSize(
-    //                Size{stateData.frameSize.width,
-    //                stateData.frameSize.height});
-    //    } else {
-    //        layoutableShadowNode.setPadding({.bottom =
-    //        static_cast<float>(HEADER_HEIGHT)});
-    //    }
-
-    ConcreteComponentDescriptor::adopt(shadowNode);
+      return {headerHeight};
   }
+
 };
 
 } // namespace react
