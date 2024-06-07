@@ -2,10 +2,25 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-screens": ["./src"],
-      "react-native-screens/native-stack": ["./src/native-stack/index.tsx"],
+      "react-native-screens": ["src"],
+      "react-native-screens/native-stack": ["src/native-stack/index.tsx"],
       "react-native-screens/reanimated": ["src/reanimated/index.tsx"],
-      "react-native-screens/gesture-handler": ["src/gesture-handler/index.tsx"]
+      "react-native-screens/gesture-handler": ["src/gesture-handler/index.tsx"],
+      "@react-navigation/bottom-tabs": [
+        "link:../react-navigation/packages/bottom-tabs/src"
+      ],
+      "@react-navigation/core": ["link:../react-navigation/packages/core/"],
+      "@react-navigation/elements": [
+        "link:../react-navigation/packages/elements/src"
+      ],
+      "@react-navigation/native": ["link:../react-navigation/packages/native/"],
+      "@react-navigation/native-stack": [
+        "react-navigation/packages/native-stack/src"
+      ],
+      "@react-navigation/routers": [
+        "link:../react-navigation/packages/routers/src"
+      ],
+      "@react-navigation/stack": ["link:../react-navigation/packages/stack/"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
