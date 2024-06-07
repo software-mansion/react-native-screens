@@ -31,6 +31,7 @@ class RNSScreenComponentDescriptor final
             shadowNode.getState());
     auto stateData = state->getData();
 
+#ifdef ANDROID
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       layoutableShadowNode.setPadding({.bottom = 0});
       layoutableShadowNode.setSize(
@@ -50,6 +51,12 @@ class RNSScreenComponentDescriptor final
       layoutableShadowNode.setPadding(
           {.bottom = static_cast<float>(headerHeight.value_or(0))});
     }
+#else
+    if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+      layoutableShadowNode.setSize(
+          Size{stateData.frameSize.width, stateData.frameSize.height});
+    }
+#endif // ANDROID
     ConcreteComponentDescriptor::adopt(shadowNode);
   }
 
@@ -65,6 +72,7 @@ class RNSScreenComponentDescriptor final
     return std::nullopt;
   }
 
+#ifdef ANDROID
   std::optional<float> findHeaderHeight(const int fontSize) const {
     JNIEnv *env = facebook::jni::Environment::current();
     if (env == nullptr) {
@@ -108,6 +116,7 @@ class RNSScreenComponentDescriptor final
 
     return {headerHeight};
   }
+#endif // ANDROID
 };
 
 } // namespace react
