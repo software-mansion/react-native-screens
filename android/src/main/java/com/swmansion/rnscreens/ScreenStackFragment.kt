@@ -213,7 +213,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         container.dismiss(this)
     }
 
-    private class ScreensCoordinatorLayout(
+    class ScreensCoordinatorLayout(
         context: Context,
         private val mFragment: ScreenFragment
     ) : CoordinatorLayout(context) {

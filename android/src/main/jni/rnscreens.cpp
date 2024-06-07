@@ -28,6 +28,8 @@ extern "C" JNIEXPORT void JNICALL Java_com_swmansion_rnscreens_ScreenViewManager
 
 extern "C" JNIEXPORT void JNICALL Java_com_swmansion_rnscreens_RNScreensPackage_nativeSetHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight) {
     HEADER_HEIGHT = headerHeight;
+    jclass rnspackageClass = env->GetObjectClass(jThis);
+    RNSPACKAGE_REFERENCE = reinterpret_cast<jclass>(env->NewGlobalRef(rnspackageClass));
 }
 
 //JNIEXPORT void JNICALL setHeaderHeight(JNIEnv *env, jobject jThis, jint headerHeight) {

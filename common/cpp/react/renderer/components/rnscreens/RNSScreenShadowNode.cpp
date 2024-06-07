@@ -2,6 +2,7 @@
 #include <react/renderer/core/LayoutMetrics.h>
 
 extern jint HEADER_HEIGHT;
+jclass RNSPACKAGE_REFERENCE = nullptr;
 
 namespace facebook {
 namespace react {

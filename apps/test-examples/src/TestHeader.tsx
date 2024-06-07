@@ -22,9 +22,9 @@ export default function App(): JSX.Element {
           options={{
             headerShown: true,
             statusBarTranslucent: false,
-            headerTitleStyle: {
-              fontSize: 64,
-            }
+            // headerTitleStyle: {
+            //   fontSize: 64,
+            // }
           }}
         />
         <Stack.Screen

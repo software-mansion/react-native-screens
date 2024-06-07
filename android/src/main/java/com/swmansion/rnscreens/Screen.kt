@@ -2,6 +2,7 @@ package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
@@ -55,6 +56,10 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         // do nothing, react native will keep the view hierarchy so no need to serialize/deserialize
         // view's states. The side effect of restoring is that TextInput components would trigger
         // set-text events which may confuse text input handling.
+    }
+
+    override fun draw(canvas: Canvas) {
+        super.draw(canvas)
     }
 
     override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
