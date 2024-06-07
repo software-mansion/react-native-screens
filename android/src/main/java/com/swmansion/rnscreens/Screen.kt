@@ -58,43 +58,22 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
         // set-text events which may confuse text input handling.
     }
 
-    override fun draw(canvas: Canvas) {
-        super.draw(canvas)
-    }
-
     override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {
         // ignore restoring instance state too as we are not saving anything anyways.
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = MeasureSpec.getSize(widthMeasureSpec)
-        val height = MeasureSpec.getSize(heightMeasureSpec)
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
-
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        if (childCount > 2) {
-            throw IllegalStateException("[RNScreens] Screen expects at most two children")
-        }
-
         if (container is ScreenStack && changed) {
             val width = r - l
             val height = b - t
 
             val headerHeight = calculateHeaderHeight()
             val totalHeight =
-                headerHeight.first + headerHeight.second // action bar height + status bar height
+                headerHeight.first + headerHeight.second  // action bar height + status bar height
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 updateScreenSizeFabric(width, height, totalHeight)
             } else {
                 updateScreenSizePaper(width, height)
-            }
-
-            children.forEach {
-                if (it !is ScreenStackHeaderConfig) {
-                    it.layout(0, 0, width, height)
-//                    (it as ViewGroup).getChildAt()
-                }
             }
 
             notifyHeaderHeightChange(totalHeight)

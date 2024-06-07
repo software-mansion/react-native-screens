@@ -213,7 +213,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         container.dismiss(this)
     }
 
-    class ScreensCoordinatorLayout(
+    private class ScreensCoordinatorLayout(
         context: Context,
         private val mFragment: ScreenFragment
     ) : CoordinatorLayout(context) {
@@ -229,19 +229,6 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
                 override fun onAnimationRepeat(animation: Animation) {}
             }
-
-        override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-            super.onLayout(changed, l, t, r, b)
-            val headerNativelyMeasuredDimension = this.getChildAt(1).height
-            val tmp = headerNativelyMeasuredDimension
-            val tmpInDIP = PixelUtil.toDIPFromPixel(tmp.toFloat());
-            val tmp2 = tmpInDIP
-        }
-
-        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        }
-
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for
             // exit transitions so we explicitly attach animation listener.

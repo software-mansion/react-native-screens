@@ -24,10 +24,6 @@ class ScreenStackViewManager : ViewGroupManager<ScreenStack>(), RNSScreenStackMa
 
     override fun createViewInstance(reactContext: ThemedReactContext) = ScreenStack(reactContext)
 
-    override fun createShadowNodeInstance(): LayoutShadowNode {
-        return super.createShadowNodeInstance()
-    }
-
     override fun addView(parent: ScreenStack, child: View, index: Int) {
         require(child is Screen) { "Attempt attach child that is not of type RNScreen" }
         parent.addScreen(child, index)

@@ -34,30 +34,10 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
 
     override fun getName() = REACT_CLASS
 
-    override fun needsCustomLayoutForChildren(): Boolean = true
-
-    override fun createViewInstance(reactContext: ThemedReactContext): Screen {
-        return Screen(reactContext)
-    }
-
-    override fun createShadowNodeInstance(context: ReactApplicationContext): LayoutShadowNode {
-        return super.createShadowNodeInstance(context)
-    }
-
-    override fun createShadowNodeInstance(): LayoutShadowNode {
-        return super.createShadowNodeInstance()
-    }
+    override fun createViewInstance(reactContext: ThemedReactContext) = Screen(reactContext)
 
     override fun setActivityState(view: Screen, activityState: Float) {
         setActivityState(view, activityState.toInt())
-    }
-
-    override fun addView(parent: Screen?, child: View?, index: Int) {
-        super.addView(parent, child, index)
-    }
-
-    override fun removeViewAt(parent: Screen?, index: Int) {
-        super.removeViewAt(parent, index)
     }
 
     override fun updateState(
