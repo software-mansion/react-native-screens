@@ -23,7 +23,8 @@ import java.lang.ref.WeakReference
     ]
 )
 class RNScreensPackage : TurboReactPackage() {
-    // The state required to compute header dimensions. We want
+    // The state required to compute header dimensions. We want this on instance rather than on class
+    // for context access & being tied to instance lifetime.
     private lateinit var coordinatorLayout: CoordinatorLayout
     private lateinit var appBarLayout: AppBarLayout
     private lateinit var dummyContentView: View
