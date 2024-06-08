@@ -1256,7 +1256,7 @@ namespace react = facebook::react;
 
 - (void)dismissAllPresentedViewControllersFrom:(UIViewController *)viewController completion:(void (^)(void))completion {
   if (viewController.presentedViewController) {
-    [viewController.presentedViewController dismissViewControllerAnimated:NO completion:^{
+    [viewController.presentedViewController dismissViewControllerAnimated:YES completion:^{
       [self dismissAllPresentedViewControllersFrom:viewController completion:completion];
     }];
   } else {
