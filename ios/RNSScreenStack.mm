@@ -686,7 +686,9 @@ namespace react = facebook::react;
 #ifdef RCT_NEW_ARCH_ENABLED
 #else
   dispatch_async(dispatch_get_main_queue(), ^{
-    [self invalidate];
+    [self dismissAllPresentedViewControllersFrom:self->_controller completion:^{
+      [self invalidate];
+    }];
   });
 #endif // RCT_NEW_ARCH_ENABLED
 }
@@ -1193,18 +1195,16 @@ namespace react = facebook::react;
 
 - (void)invalidate {
   _invalidated = YES;
-  [self dismissAllPresentedViewControllersFrom:_controller completion:^{
-    // Ensure presented modals are removed and the controller is detached from its parent
-    [self->_presentedModals removeAllObjects];
-    [self->_controller willMoveToParentViewController:nil];
-    [self->_controller removeFromParentViewController];
-  }];
+  [_presentedModals removeAllObjects];
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
 }
 
 - (void)dismissAllPresentedViewControllersFrom:(UIViewController *)viewController completion:(void (^)(void))completion {
   if (viewController.presentedViewController) {
     [viewController.presentedViewController dismissViewControllerAnimated:NO completion:^{
       [self dismissAllPresentedViewControllersFrom:viewController completion:completion];
+      [self invalidate];
     }];
   } else {
     completion();
