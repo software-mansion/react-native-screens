@@ -130,7 +130,6 @@ class RNScreensPackage : TurboReactPackage() {
         // We know the title text view will be there, cause we've just set title.
         defaultFontSize = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)!!.textSize
 
-        (contextWithTheme as AppCompatActivity).setSupportActionBar(toolbar)
         appBarLayout.addView(toolbar)
 
         dummyContentView = View(contextWithTheme).apply {
