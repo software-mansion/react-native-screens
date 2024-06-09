@@ -1,5 +1,4 @@
 #include "RNSScreenShadowNode.h"
-#include <react/renderer/core/LayoutMetrics.h>
 
 namespace facebook {
 namespace react {

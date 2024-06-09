@@ -4,8 +4,6 @@
 #include <react/renderer/components/rnscreens/EventEmitters.h>
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
-#include <react/renderer/core/LayoutContext.h>
-#include <react/renderer/core/LayoutableShadowNode.h>
 #include "RNSScreenState.h"
 
 namespace facebook {

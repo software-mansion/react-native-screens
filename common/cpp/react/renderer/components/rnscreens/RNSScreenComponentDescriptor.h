@@ -88,7 +88,8 @@ class RNSScreenComponentDescriptor final
     jclass rnsPackageClass = env->FindClass(kRnsPackageClassPath);
 
     if (rnsPackageClass == nullptr) {
-      LOG(ERROR) << "[RNScreens] Failed to find class with id " << kRnsPackageClassPath;
+      LOG(ERROR) << "[RNScreens] Failed to find class with id "
+                 << kRnsPackageClassPath;
       return {};
     }
 
@@ -96,7 +97,8 @@ class RNSScreenComponentDescriptor final
         env->GetMethodID(rnsPackageClass, "computeDummyLayout", "(I)F");
 
     if (computeDummyLayoutID == nullptr) {
-      LOG(ERROR) << "[RNScreens] Failed to retrieve computeDummyLayout method ID";
+      LOG(ERROR)
+          << "[RNScreens] Failed to retrieve computeDummyLayout method ID";
       return {};
     }
 
@@ -114,7 +116,8 @@ class RNSScreenComponentDescriptor final
         env->CallStaticObjectMethod(rnsPackageClass, getInstanceMethodID);
 
     if (packageInstance == nullptr) {
-      LOG(ERROR) << "[RNScreens] Failed to retrieve packageInstance or the package instance was null on JVM side";
+      LOG(ERROR)
+          << "[RNScreens] Failed to retrieve packageInstance or the package instance was null on JVM side";
       return {};
     }
 
