@@ -13,6 +13,8 @@ add_compile_options(
   -fexceptions
   -frtti
   -std=c++20
+  -Wall
+  -Wpedantic
   -Wno-gnu-zero-variadic-macro-arguments
 )
 
@@ -21,15 +23,15 @@ file(GLOB LIB_CODEGEN_SRCS CONFIGURE_DEPENDS ${LIB_ANDROID_GENERATED_COMPONENTS_
 
 add_library(
   ${LIB_TARGET_NAME}
-  SHARED 
+  SHARED
   ${LIB_CUSTOM_SRCS}
   ${LIB_CODEGEN_SRCS}
 )
 
 target_include_directories(
   ${LIB_TARGET_NAME}
-  PUBLIC 
-  . 
+  PUBLIC
+  .
   ${LIB_COMMON_DIR}
   ${LIB_ANDROID_GENERATED_JNI_DIR}
   ${LIB_ANDROID_GENERATED_COMPONENTS_DIR}

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.util.Log
 import android.view.View
 import android.view.View.MeasureSpec
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.TurboReactPackage
@@ -46,7 +45,6 @@ class RNScreensPackage : TurboReactPackage() {
         } catch (e: UnsatisfiedLinkError) {
             Log.w(TAG, "Failed to load $LIBRARY_NAME")
         }
-
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {

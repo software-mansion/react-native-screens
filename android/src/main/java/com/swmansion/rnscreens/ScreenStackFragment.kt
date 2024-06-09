@@ -229,6 +229,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
                 override fun onAnimationRepeat(animation: Animation) {}
             }
+
         override fun startAnimation(animation: Animation) {
             // For some reason View##onAnimationEnd doesn't get called for
             // exit transitions so we explicitly attach animation listener.
