@@ -20,6 +20,8 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
 
   Point getContentOriginOffset() const override;
+
+  void layout(facebook::react::LayoutContext layoutContext) override;
 };
 
 } // namespace react

@@ -38,8 +38,8 @@ class RNSScreenComponentDescriptor final
 #ifdef ANDROID
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       layoutableShadowNode.setPadding({.bottom = 0});
-      layoutableShadowNode.setSize(
-          Size{stateData.frameSize.width, stateData.frameSize.height});
+//      layoutableShadowNode.setSize(
+//          Size{stateData.frameSize.width, stateData.frameSize.height});
     } else {
       auto headerConfigChildOpt = findHeaderConfigChild(layoutableShadowNode);
       int fontSize = kFontSizeUnset;
@@ -52,8 +52,12 @@ class RNSScreenComponentDescriptor final
       }
 
       const auto headerHeight = findHeaderHeight(fontSize);
-      layoutableShadowNode.setPadding(
-          {.bottom = static_cast<float>(headerHeight.value_or(0))});
+
+      stateData.headerOffset = headerHeight.value_or(0);
+      screenShadowNode.ensureUnsealed();
+      screenShadowNode.setStateData(std::move(stateData));
+//      layoutableShadowNode.setPadding(
+//          {.bottom = static_cast<float>(headerHeight.value_or(0))});
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
