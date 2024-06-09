@@ -76,7 +76,6 @@ class RNSScreenComponentDescriptor final
   std::optional<float> findHeaderHeight(const int fontSize) const {
     JNIEnv *env = facebook::jni::Environment::current();
     if (env == nullptr) {
-      // We can basically crash here
       LOG(ERROR) << "Failed to retrieve env\n";
       return {};
     }
@@ -107,7 +106,7 @@ class RNSScreenComponentDescriptor final
     jobject packageInstance =
         env->CallStaticObjectMethod(rnsPackageClass, getInstanceMethodID);
     if (packageInstance == nullptr) {
-      LOG(ERROR) << "Failed to retrieve packageInstance";
+      LOG(ERROR) << "Failed to retrieve packageInstance or the package instance was null on JVM side";
       return {};
     }
 
