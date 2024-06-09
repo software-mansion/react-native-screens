@@ -1,5 +1,6 @@
 package com.swmansion.rnscreens
 
+import android.app.Activity
 import android.util.Log
 import android.view.View
 import android.view.View.MeasureSpec
@@ -29,11 +30,12 @@ class RNScreensPackage : TurboReactPackage() {
     private lateinit var appBarLayout: AppBarLayout
     private lateinit var dummyContentView: View
     private lateinit var toolbar: Toolbar
+    private var defaultFontSize: Float = 0f
 
     // We do not want to be responsible for the context lifecycle. If it's null, we're fine.
     // This same context is being passed down to our view components so it is destroyed
     // only if our views also are.
-    private var reactContext: WeakReference<ReactApplicationContext> = WeakReference(null)
+    private var reactContextRef: WeakReference<ReactApplicationContext> = WeakReference(null)
 
     init {
         // We load the library so that we are able to communicate with our C++ code (descriptor & shadow nodes).
@@ -53,7 +55,7 @@ class RNScreensPackage : TurboReactPackage() {
         // installing its C++ bindings - so we are safe in terms of creating this hierarchy
         // before RN starts creating shadow nodes.
         WEAK_THIS = WeakReference(this)
-        this.reactContext = WeakReference(reactContext)
+        this.reactContextRef = WeakReference(reactContext)
         ensureDummyLayoutWithHeader(reactContext)
 
         return listOf<ViewManager<*, *>>(
@@ -102,10 +104,12 @@ class RNScreensPackage : TurboReactPackage() {
         if (::coordinatorLayout.isInitialized) {
             return
         }
+
         // We need to use activity here, as react context does not have theme attributes required by
         // AppBarLayout attached leading to crash.
         val contextWithTheme =
             requireNotNull(reactContext.currentActivity) { "[RNScreens] Attempt to use context detached from activity" }
+
         coordinatorLayout = CoordinatorLayout(contextWithTheme)
 
         appBarLayout = AppBarLayout(contextWithTheme).apply {
@@ -122,6 +126,9 @@ class RNScreensPackage : TurboReactPackage() {
                 AppBarLayout.LayoutParams.WRAP_CONTENT
             ).apply { scrollFlags = 0 }
         }
+
+        // We know the title text view will be there, cause we've just set title.
+        defaultFontSize = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)!!.textSize
 
         (contextWithTheme as AppCompatActivity).setSupportActionBar(toolbar)
         appBarLayout.addView(toolbar)
@@ -152,7 +159,7 @@ class RNScreensPackage : TurboReactPackage() {
             return 0.0f
         }
 
-        val topLevelDecorView = reactContext.get()!!.currentActivity!!.window.decorView
+        val topLevelDecorView = requireActivity().window.decorView
 
         // These dimensions are not accurate, as they do include status bar & navigation bar, however
         // it is ok for our purposes.
@@ -163,7 +170,7 @@ class RNScreensPackage : TurboReactPackage() {
         val heightMeasureSpec = MeasureSpec.makeMeasureSpec(decorViewHeight, MeasureSpec.EXACTLY)
 
         val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)
-        textView?.takeIf { fontSize != FONT_SIZE_UNSET }?.let { it.textSize = fontSize.toFloat() }
+        textView?.textSize = if (fontSize != FONT_SIZE_UNSET) fontSize.toFloat() else defaultFontSize
 
         coordinatorLayout.measure(widthMeasureSpec, heightMeasureSpec)
 
@@ -174,6 +181,13 @@ class RNScreensPackage : TurboReactPackage() {
         return PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
     }
 
+    private fun requireReactContext(): ReactApplicationContext {
+        return requireNotNull(reactContextRef.get()) { "[RNScreens] Attempt to require missing react context" }
+    }
+
+    private fun requireActivity(): Activity {
+        return requireNotNull(requireReactContext().currentActivity) { "[RNScreens] Attempt to use context detached from activity" }
+    }
 
     companion object {
         const val TAG = "RNScreensPackage"
