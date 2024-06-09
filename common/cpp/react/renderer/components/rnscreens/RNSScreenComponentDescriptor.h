@@ -17,6 +17,8 @@ class RNSScreenComponentDescriptor final
   static constexpr const char *kRnsPackageClassPath =
       "com/swmansion/rnscreens/RNScreensPackage";
 
+  static constexpr const int kFontSizeUnset = -1;
+
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
     auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
@@ -38,7 +40,7 @@ class RNSScreenComponentDescriptor final
           Size{stateData.frameSize.width, stateData.frameSize.height});
     } else {
       auto headerConfigChildOpt = findHeaderConfigChild(layoutableShadowNode);
-      int fontSize = -1;
+      int fontSize = kFontSizeUnset;
       if (headerConfigChildOpt) {
         const auto &headerConfigChild = headerConfigChildOpt->get();
         const auto &headerProps =
@@ -77,15 +79,14 @@ class RNSScreenComponentDescriptor final
     JNIEnv *env = facebook::jni::Environment::current();
 
     if (env == nullptr) {
-      LOG(ERROR) << "Failed to retrieve env\n";
+      LOG(ERROR) << "[RNScreens] Failed to retrieve env\n";
       return {};
     }
 
     jclass rnsPackageClass = env->FindClass(kRnsPackageClassPath);
 
     if (rnsPackageClass == nullptr) {
-      LOG(ERROR) << "Failed to find class with id "
-                 << "";
+      LOG(ERROR) << "[RNScreens] Failed to find class with id " << kRnsPackageClassPath;
       return {};
     }
 
@@ -93,7 +94,7 @@ class RNSScreenComponentDescriptor final
         env->GetMethodID(rnsPackageClass, "computeDummyLayout", "(I)F");
 
     if (computeDummyLayoutID == nullptr) {
-      LOG(ERROR) << "Failed to retrieve computeDummyLayout method ID";
+      LOG(ERROR) << "[RNScreens] Failed to retrieve computeDummyLayout method ID";
       return {};
     }
 
@@ -103,7 +104,7 @@ class RNSScreenComponentDescriptor final
         "()Lcom/swmansion/rnscreens/RNScreensPackage;");
 
     if (getInstanceMethodID == nullptr) {
-      LOG(ERROR) << "Failed to retrieve getInstanceMethodID";
+      LOG(ERROR) << "[RNScreens] Failed to retrieve getInstanceMethodID";
       return {};
     }
 
@@ -111,7 +112,7 @@ class RNSScreenComponentDescriptor final
         env->CallStaticObjectMethod(rnsPackageClass, getInstanceMethodID);
 
     if (packageInstance == nullptr) {
-      LOG(ERROR) << "Failed to retrieve packageInstance or the package instance was null on JVM side";
+      LOG(ERROR) << "[RNScreens] Failed to retrieve packageInstance or the package instance was null on JVM side";
       return {};
     }
 
