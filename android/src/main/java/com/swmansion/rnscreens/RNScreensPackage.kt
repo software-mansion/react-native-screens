@@ -187,8 +187,8 @@ class RNScreensPackage : TurboReactPackage() {
         private var WEAK_THIS = WeakReference<RNScreensPackage>(null)
 
         @JvmStatic
-        fun getInstance(): RNScreensPackage {
-            return WEAK_THIS.get()!!
+        fun getInstance(): RNScreensPackage? {
+            return WEAK_THIS.get()
         }
     }
 
