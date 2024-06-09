@@ -75,12 +75,14 @@ class RNSScreenComponentDescriptor final
 #ifdef ANDROID
   std::optional<float> findHeaderHeight(const int fontSize) const {
     JNIEnv *env = facebook::jni::Environment::current();
+
     if (env == nullptr) {
       LOG(ERROR) << "Failed to retrieve env\n";
       return {};
     }
 
     jclass rnsPackageClass = env->FindClass(kRnsPackageClassPath);
+
     if (rnsPackageClass == nullptr) {
       LOG(ERROR) << "Failed to find class with id "
                  << "";
@@ -89,6 +91,7 @@ class RNSScreenComponentDescriptor final
 
     jmethodID computeDummyLayoutID =
         env->GetMethodID(rnsPackageClass, "computeDummyLayout", "(I)F");
+
     if (computeDummyLayoutID == nullptr) {
       LOG(ERROR) << "Failed to retrieve computeDummyLayout method ID";
       return {};
@@ -98,6 +101,7 @@ class RNSScreenComponentDescriptor final
         rnsPackageClass,
         "getInstance",
         "()Lcom/swmansion/rnscreens/RNScreensPackage;");
+
     if (getInstanceMethodID == nullptr) {
       LOG(ERROR) << "Failed to retrieve getInstanceMethodID";
       return {};
@@ -105,6 +109,7 @@ class RNSScreenComponentDescriptor final
 
     jobject packageInstance =
         env->CallStaticObjectMethod(rnsPackageClass, getInstanceMethodID);
+
     if (packageInstance == nullptr) {
       LOG(ERROR) << "Failed to retrieve packageInstance or the package instance was null on JVM side";
       return {};
