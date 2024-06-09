@@ -19,10 +19,6 @@
 #include <react/renderer/components/rnscreens/RNSScreenComponentDescriptor.h>
 #include <react/renderer/components/rnscreens/RNSModalScreenComponentDescriptor.h>
 
-#include <jni.h>
-
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved);
-
 namespace facebook {
 namespace react {
 

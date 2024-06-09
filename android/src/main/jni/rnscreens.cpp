@@ -4,17 +4,6 @@
  */
 #include "rnscreens.h"
 
-#include <iostream>
-
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-    JNIEnv *env;
-    if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
-        LOG(ERROR) << "[RNScreens] error while acquiring env";
-        return JNI_ERR;
-    }
-    return JNI_VERSION_1_6;
-}
-
 namespace facebook {
 namespace react {
 
