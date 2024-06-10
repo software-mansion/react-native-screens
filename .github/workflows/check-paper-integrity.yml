@@ -4,7 +4,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     concurrency:
-      group: kotlin-lint-${{ github.ref }}
+      group: check-paper-integrity-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: checkout
@@ -16,7 +16,7 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: 'gradle'
-          
+
       - name: Use Node.js 18
         uses: actions/setup-node@v2
         with:
@@ -42,7 +42,7 @@ jobs:
             ~/.gradle/wrapper
             android/build
             android/.gradle
-          key: ${{ runner.os }}-kotlin-lint-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'android/build.gradle') }}
+          key: ${{ runner.os }}-check-paper-integrity-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'android/build.gradle') }}
           
       - name: Check old arch integrity
         run: yarn checkIntegrity

@@ -296,3 +296,5 @@ tasks.register('checkIntegrityBetweenArchitectures') {
         }
     }
 }
+
+println "Running gradle version: $gradle.gradleVersion"
