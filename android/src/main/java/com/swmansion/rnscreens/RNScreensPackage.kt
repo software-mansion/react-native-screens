@@ -17,7 +17,7 @@ import com.facebook.react.uimanager.ViewManager
 import com.google.android.material.appbar.AppBarLayout
 import java.lang.ref.WeakReference
 
-class HeaderHeightCacheEntry(val cacheKey: Int, val headerHeight: Float) {
+private class HeaderHeightCacheEntry(val cacheKey: Int, val headerHeight: Float) {
     fun hasKey(key: Int) = cacheKey == key
 
     companion object {
@@ -63,7 +63,7 @@ class RNScreensPackage : TurboReactPackage() {
         // Moreover this is called before FabricUIManger has finished initializing, not to mention
         // installing its C++ bindings - so we are safe in terms of creating this hierarchy
         // before RN starts creating shadow nodes.
-        WEAK_THIS = WeakReference(this)
+        WEAK_INSTANCE = WeakReference(this)
         this.reactContextRef = WeakReference(reactContext)
         ensureDummyLayoutWithHeader(reactContext)
 
@@ -212,11 +212,11 @@ class RNScreensPackage : TurboReactPackage() {
         // We access this field from C++ layer, through `getInstance` method.
         // We don't care what instance we get access to as long as it has initialized
         // dummy view hierarchy.
-        private var WEAK_THIS = WeakReference<RNScreensPackage>(null)
+        private var WEAK_INSTANCE = WeakReference<RNScreensPackage>(null)
 
         @JvmStatic
         fun getInstance(): RNScreensPackage? {
-            return WEAK_THIS.get()
+            return WEAK_INSTANCE.get()
         }
     }
 
