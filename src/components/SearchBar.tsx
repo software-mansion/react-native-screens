@@ -4,19 +4,21 @@ import {
   SearchBarCommands,
   SearchBarProps,
 } from 'react-native-screens';
-import { View, NativeSyntheticEvent, TargetedEvent, TextInputFocusEventData } from 'react-native';
+import { View } from 'react-native';
 
 // Native components
 import SearchBarNativeComponent, {
   Commands as SearchBarNativeCommands,
-  SearchBarNativeProps,
+  NativeProps as SearchBarNativeProps,
   SearchBarEvent,
   SearchButtonPressedEvent,
   ChangeTextEvent,
 } from '../fabric/SearchBarNativeComponent';
 import { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
 
-export const NativeSearchBar: React.ComponentType<SearchBarNativeProps> &
+export const NativeSearchBar: React.ComponentType<
+  SearchBarNativeProps & { ref?: React.RefObject<SearchBarCommands> }
+> &
   typeof NativeSearchBarCommands =
   SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
     SearchBarCommandsType;
@@ -83,17 +85,17 @@ function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
 
   return (
     <NativeSearchBar
+      ref={searchBarRef}
+      {...props}
       onSearchFocus={props.onFocus as DirectEventHandler<SearchBarEvent>}
       onSearchBlur={props.onBlur as DirectEventHandler<SearchBarEvent>}
       onSearchButtonPress={
-        props.onSearchButtonPress as DirectEventHandler<TextInputFocusEventData>
+        props.onSearchButtonPress as DirectEventHandler<SearchButtonPressedEvent>
       }
       onCancelButtonPress={
         props.onCancelButtonPress as DirectEventHandler<SearchBarEvent>
       }
       onChangeText={props.onChangeText as DirectEventHandler<ChangeTextEvent>}
-      {...props}
-      ref={searchBarRef}
     />
   );
 }

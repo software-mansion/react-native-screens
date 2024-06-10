@@ -9,6 +9,7 @@ import {
   ScreenStackHeaderRightView,
   ScreenStackHeaderSearchBarView,
   SearchBar,
+  SearchBarProps,
   isSearchBarAvailableForCurrentPlatform,
   executeNativeBackPress,
 } from 'react-native-screens';

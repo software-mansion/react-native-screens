@@ -21,7 +21,7 @@ type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
-export interface SearchBarNativeProps extends ViewProps {
+export interface NativeProps extends ViewProps {
   onSearchFocus?: DirectEventHandler<SearchBarEvent> | null;
   onSearchBlur?: DirectEventHandler<SearchBarEvent> | null;
   onSearchButtonPress?: DirectEventHandler<SearchButtonPressedEvent> | null;
@@ -50,7 +50,7 @@ export interface SearchBarNativeProps extends ViewProps {
   shouldShowHintSearchIcon?: WithDefault<boolean, true>;
 }
 
-type ComponentType = HostComponent<SearchBarNativeProps>;
+type ComponentType = HostComponent<NativeProps>;
 
 interface SearchBarNativeCommands {
   blur: (viewRef: React.ElementRef<ComponentType>) => void;
@@ -76,4 +76,4 @@ export const Commands: SearchBarNativeCommands =
     ],
   });
 
-export default codegenNativeComponent<SearchBarNativeProps>('RNSSearchBar', {});
+export default codegenNativeComponent<NativeProps>('RNSSearchBar', {});
