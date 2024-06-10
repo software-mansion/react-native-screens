@@ -37,6 +37,8 @@ jobs:
           cache: 'yarn'
       - name: Install root node dependencies
         run: yarn install && yarn submodules
+      - name: Install shared app dependencies
+        run: (cd apps/examples && yarn install)
       - name: Install node dependencies
         id: install_deps
         working-directory: ${{ env.WORKING_DIRECTORY }}

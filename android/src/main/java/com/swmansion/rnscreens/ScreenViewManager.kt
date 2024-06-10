@@ -142,6 +142,11 @@ open class ScreenViewManager : ViewGroupManager<Screen>(), RNSScreenManagerInter
         view.navigationBarColor = navigationBarColor
     }
 
+    @ReactProp(name = "navigationBarTranslucent")
+    override fun setNavigationBarTranslucent(view: Screen, navigationBarTranslucent: Boolean) {
+        view.isNavigationBarTranslucent = navigationBarTranslucent
+    }
+
     @ReactProp(name = "navigationBarHidden")
     override fun setNavigationBarHidden(view: Screen, navigationBarHidden: Boolean) {
         view.isNavigationBarHidden = navigationBarHidden

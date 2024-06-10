@@ -95,6 +95,7 @@ export interface NativeProps extends ViewProps {
   hideKeyboardOnSwipe?: boolean;
   activityState?: WithDefault<Float, -1.0>;
   navigationBarColor?: ColorValue;
+  navigationBarTranslucent?: boolean;
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
 }
