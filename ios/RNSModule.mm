@@ -194,8 +194,7 @@ std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
    because depending on the selected architecture, only one method will be called.
    For `Paper`, it will be constantsToExport, and for `Fabric`, it will be getTurboModule.
 */
-  RCTBridge *bridge = [RCTBridge currentBridge];
-  RCTCxxBridge *cxxBridge = (RCTCxxBridge *)bridge;
+  RCTCxxBridge *cxxBridge = (RCTCxxBridge *)self.bridge;
   if (cxxBridge != nil) {
     auto jsiRuntime = (jsi::Runtime *)cxxBridge.runtime;
     if (jsiRuntime != nil) {

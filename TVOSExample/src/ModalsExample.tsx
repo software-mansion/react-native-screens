@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, I18nManager, Button} from 'react-native';
+import { View, Button } from 'react-native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import {STYLES} from './styles';
+import { STYLES } from './styles';
 
 type StackParamList = {
   Main: undefined;
@@ -17,8 +17,8 @@ interface MainScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const MainScreen = ({navigation}: MainScreenProps): JSX.Element => (
-  <View style={[STYLES.screenContainer, {backgroundColor: '#fff'}]}>
+const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
+  <View style={[STYLES.screenContainer, { backgroundColor: '#fff' }]}>
     <Button title="Open modal" onPress={() => navigation.navigate('Modal')} />
     <Button
       title="Open fullscreen modal"
@@ -33,8 +33,8 @@ interface ModalScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Modal'>;
 }
 
-const ModalScreen = ({navigation}: ModalScreenProps): JSX.Element => (
-  <View style={[STYLES.screenContainer, {backgroundColor: '#000'}]}>
+const ModalScreen = ({ navigation }: ModalScreenProps): JSX.Element => (
+  <View style={[STYLES.screenContainer, { backgroundColor: '#000' }]}>
     <Button title="Open modal" onPress={() => navigation.push('Modal')} />
     <Button
       title="Open fullscreen modal"
@@ -54,17 +54,17 @@ const ModalsExample = (): JSX.Element => (
     <Stack.Screen
       name="Main"
       component={MainScreen}
-      options={{title: 'Modals'}}
+      options={{ title: 'Modals' }}
     />
     <Stack.Screen
       name="Modal"
       component={ModalScreen}
-      options={{presentation: 'modal'}}
+      options={{ presentation: 'modal' }}
     />
     <Stack.Screen
       name="FullscreenModal"
       component={ModalScreen}
-      options={{presentation: 'fullScreenModal'}}
+      options={{ presentation: 'fullScreenModal' }}
     />
   </Stack.Navigator>
 );
