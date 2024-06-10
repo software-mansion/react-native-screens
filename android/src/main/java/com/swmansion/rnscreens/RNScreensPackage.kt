@@ -17,6 +17,14 @@ import com.facebook.react.uimanager.ViewManager
 import com.google.android.material.appbar.AppBarLayout
 import java.lang.ref.WeakReference
 
+class HeaderHeightCacheEntry(val cacheKey: Int, val headerHeight: Float) {
+    fun hasKey(key: Int) = cacheKey == key
+
+    companion object {
+        val EMPTY = HeaderHeightCacheEntry(Int.MIN_VALUE, 0f)
+    }
+}
+
 @ReactModuleList(
     nativeModules = [
         ScreensModule::class
@@ -30,6 +38,9 @@ class RNScreensPackage : TurboReactPackage() {
     private lateinit var dummyContentView: View
     private lateinit var toolbar: Toolbar
     private var defaultFontSize: Float = 0f
+
+    // LRU with size 1
+    private var cache: HeaderHeightCacheEntry = HeaderHeightCacheEntry.EMPTY
 
     // We do not want to be responsible for the context lifecycle. If it's null, we're fine.
     // This same context is being passed down to our view components so it is destroyed
@@ -156,6 +167,10 @@ class RNScreensPackage : TurboReactPackage() {
             return 0.0f
         }
 
+        if (cache.hasKey(fontSize)) {
+            return cache.headerHeight
+        }
+
         val topLevelDecorView = requireActivity().window.decorView
 
         // These dimensions are not accurate, as they do include status bar & navigation bar, however
@@ -175,7 +190,9 @@ class RNScreensPackage : TurboReactPackage() {
         // scenarios when layout violates measured dimensions.
         coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
 
-        return PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
+        val headerHeight = PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
+        cache = HeaderHeightCacheEntry(fontSize, headerHeight)
+        return headerHeight
     }
 
     private fun requireReactContext(): ReactApplicationContext {
