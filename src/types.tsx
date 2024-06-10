@@ -640,6 +640,43 @@ export interface SearchBarProps {
    */
   obscureBackground?: boolean;
   /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when search bar has lost focus
+   */
+  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+  /**
+   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
+   */
+  onSearchButtonPress?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>
+  ) => void;
+  /**
+   * A callback that gets called when the cancel button is pressed
+   *
+   * @platform ios
+   */
+  onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+
+  /**
+   * A callback that gets called when the text changes. It receives the current text value of the search bar.
+   */
+  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  /**
+   * A callback that gets called when search bar is opened
+   *
+   * @platform android
+   */
+  onOpen?: () => void;
+  /**
+   * A callback that gets called when search bar is closed
+   *
+   * @platform android
+   */
+  onClose?: () => void;
+  /**
    * Text displayed when search field is empty
    */
   placeholder?: string;
@@ -680,44 +717,4 @@ export interface SearchBarProps {
    * @default true
    */
   shouldShowHintSearchIcon?: boolean;
-}
-
-export interface SearchBarEvents {
-  /**
-   * A callback that gets called when search bar has received focus
-   */
-  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * A callback that gets called when search bar has lost focus
-   */
-  onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
-   */
-  onSearchButtonPress?: (
-    e: NativeSyntheticEvent<TextInputFocusEventData>
-  ) => void;
-  /**
-   * A callback that gets called when the cancel button is pressed
-   *
-   * @platform ios
-   */
-  onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-
-  /**
-   * A callback that gets called when the text changes. It receives the current text value of the search bar.
-   */
-  onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
-  /**
-   * A callback that gets called when search bar is opened
-   *
-   * @platform android
-   */
-  onOpen?: () => void;
-  /**
-   * A callback that gets called when search bar is closed
-   *
-   * @platform android
-   */
-  onClose?: () => void;
 }

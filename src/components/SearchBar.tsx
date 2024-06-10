@@ -3,30 +3,22 @@ import {
   isSearchBarAvailableForCurrentPlatform,
   SearchBarCommands,
   SearchBarProps,
-  SearchBarEvents,
 } from 'react-native-screens';
-import { View, NativeSyntheticEvent, TargetedEvent } from 'react-native';
+import { View, NativeSyntheticEvent, TargetedEvent, TextInputFocusEventData } from 'react-native';
 
 // Native components
 import SearchBarNativeComponent, {
   Commands as SearchBarNativeCommands,
   SearchBarNativeProps,
+  SearchBarEvent,
+  SearchButtonPressedEvent,
+  ChangeTextEvent,
 } from '../fabric/SearchBarNativeComponent';
+import { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
 
-// Remove all events from SearchBar native component, since they differ from types in SearchBarEvents
-// and add ref object for commands.
-type SearchBarNativeType = Omit<
-  SearchBarNativeProps,
-  keyof SearchBarEvents | 'onSearchFocus' | 'onSearchBlur'
-> & {
-  ref?: React.RefObject<SearchBarCommands>;
-  onSearchFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  onSearchBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-};
-
-export const NativeSearchBar: React.ComponentType<SearchBarNativeType> &
+export const NativeSearchBar: React.ComponentType<SearchBarNativeProps> &
   typeof NativeSearchBarCommands =
-  SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeType> &
+  SearchBarNativeComponent as unknown as React.ComponentType<SearchBarNativeProps> &
     SearchBarCommandsType;
 export const NativeSearchBarCommands: SearchBarCommandsType =
   SearchBarNativeCommands as SearchBarCommandsType;
@@ -42,10 +34,7 @@ type SearchBarCommandsType = {
   cancelSearch: (viewRef: NativeSearchBarRef) => void;
 };
 
-function SearchBar(
-  props: SearchBarProps & SearchBarEvents,
-  ref: React.Ref<SearchBarCommands>
-) {
+function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
   const searchBarRef = React.useRef<SearchBarCommands | null>(null);
 
   React.useImperativeHandle(ref, () => ({
@@ -94,15 +83,19 @@ function SearchBar(
 
   return (
     <NativeSearchBar
-      onSearchFocus={props.onFocus}
-      onSearchBlur={props.onBlur}
+      onSearchFocus={props.onFocus as DirectEventHandler<SearchBarEvent>}
+      onSearchBlur={props.onBlur as DirectEventHandler<SearchBarEvent>}
+      onSearchButtonPress={
+        props.onSearchButtonPress as DirectEventHandler<TextInputFocusEventData>
+      }
+      onCancelButtonPress={
+        props.onCancelButtonPress as DirectEventHandler<SearchBarEvent>
+      }
+      onChangeText={props.onChangeText as DirectEventHandler<ChangeTextEvent>}
       {...props}
       ref={searchBarRef}
     />
   );
 }
 
-export default React.forwardRef<
-  SearchBarCommands,
-  SearchBarProps & SearchBarEvents
->(SearchBar);
+export default React.forwardRef<SearchBarCommands, SearchBarProps>(SearchBar);

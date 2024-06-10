@@ -7,13 +7,13 @@ import type {
 } from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
-type SearchBarEvent = Readonly<{}>;
+export type SearchBarEvent = Readonly<{}>;
 
-type SearchButtonPressedEvent = Readonly<{
+export type SearchButtonPressedEvent = Readonly<{
   text?: string;
 }>;
 
-type ChangeTextEvent = Readonly<{
+export type ChangeTextEvent = Readonly<{
   text?: string;
 }>;
 

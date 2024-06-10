@@ -9,7 +9,6 @@ import {
   ScreenStackHeaderRightView,
   ScreenStackHeaderSearchBarView,
   SearchBar,
-  SearchBarEvents,
   isSearchBarAvailableForCurrentPlatform,
   executeNativeBackPress,
 } from 'react-native-screens';
@@ -84,11 +83,11 @@ export default function HeaderConfig({
       searchBar &&
       !searchBar.disableBackButtonOverride
     ) {
-      const onFocus: SearchBarEvents['onFocus'] = (...args) => {
+      const onFocus: SearchBarProps['onFocus'] = (...args) => {
         createSubscription();
         searchBar.onFocus?.(...args);
       };
-      const onClose: SearchBarEvents['onClose'] = (...args) => {
+      const onClose: SearchBarProps['onClose'] = (...args) => {
         clearSubscription();
         searchBar.onClose?.(...args);
       };

@@ -22,7 +22,6 @@ import {
   ScreenProps,
   ScreenStackHeaderConfigProps,
   SearchBarProps,
-  SearchBarEvents,
   SheetDetentTypes,
 } from 'react-native-screens';
 
@@ -341,7 +340,7 @@ export type NativeStackNavigationOptions = {
   /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */
-  searchBar?: SearchBarProps & SearchBarEvents;
+  searchBar?: SearchBarProps;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
