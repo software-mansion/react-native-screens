@@ -21,7 +21,7 @@ class RNSScreenStackHeaderConfigComponentDescriptor final
 
     layoutableShadowNode.setSize(
         {layoutableShadowNode.layoutMetrics_.frame.size.width,
-         HEADER_HEIGHT_CORRECTION});
+         RNS_HEADER_HEIGHT_CORRECTION});
 #endif // ANDROID
 
     ConcreteComponentDescriptor::adopt(shadowNode);

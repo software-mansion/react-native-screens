@@ -8,7 +8,7 @@
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSScreenShadowNode.h"
 
-float HEADER_HEIGHT_CORRECTION = 0.f;
+float RNS_HEADER_HEIGHT_CORRECTION = 0.f;
 
 namespace facebook {
 namespace react {
@@ -41,10 +41,11 @@ class RNSScreenComponentDescriptor final
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
-      HEADER_HEIGHT_CORRECTION = 0.f;
+      RNS_HEADER_HEIGHT_CORRECTION = 0.f;
     } else {
       auto headerConfigChildOpt = findHeaderConfigChild(layoutableShadowNode);
       int fontSize = kFontSizeUnset;
+      bool headerHidden = true;
 
       if (headerConfigChildOpt) {
         const auto &headerConfigChild = headerConfigChildOpt->get();
@@ -52,12 +53,14 @@ class RNSScreenComponentDescriptor final
             *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(
                 headerConfigChild->getProps());
         fontSize = headerProps.titleFontSize;
+        headerHidden = headerProps.hidden;
       }
 
-      const auto headerHeight = findHeaderHeight(fontSize);
+      const auto headerHeight =
+          headerHidden ? 0.f : findHeaderHeight(fontSize).value_or(0.f);
 
       // This will be consumed by header config node down in tree
-      HEADER_HEIGHT_CORRECTION = headerHeight.value_or(0.f);
+      RNS_HEADER_HEIGHT_CORRECTION = headerHeight;
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
