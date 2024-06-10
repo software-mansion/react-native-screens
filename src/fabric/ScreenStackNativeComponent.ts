@@ -9,6 +9,4 @@ interface NativeProps extends ViewProps {
   onFinishTransitioning?: DirectEventHandler<FinishTransitioningEvent>;
 }
 
-export default codegenNativeComponent<NativeProps>('RNSScreenStack', {
-  interfaceOnly: true,
-});
+export default codegenNativeComponent<NativeProps>('RNSScreenStack', {});

@@ -10,18 +10,20 @@
 
 namespace facebook::react {
 
-class JSI_EXPORT RNSScreenStackState final {
+class JSI_EXPORT RNSScreenStackHeaderConfigState final {
  public:
-  using Shared = std::shared_ptr<const RNSScreenStackState>;
+  using Shared = std::shared_ptr<const RNSScreenStackHeaderConfigState>;
 
-  RNSScreenStackState();
+  RNSScreenStackHeaderConfigState();
 
 #ifdef ANDROID
-  RNSScreenStackState(const RNSScreenStackState &previousState, folly::dynamic data);
+  RNSScreenStackHeaderConfigState(
+      const RNSScreenStackHeaderConfigState &previousState,
+      folly::dynamic data);
 
   folly::dynamic getDynamic() const;
   MapBuffer getMapBuffer() const;
 #endif
 };
 
-}
+} // namespace facebook::react

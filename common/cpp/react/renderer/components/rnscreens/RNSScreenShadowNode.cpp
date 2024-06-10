@@ -1,5 +1,7 @@
 #include "RNSScreenShadowNode.h"
 
+#include "RNSScreenStackHeaderConfigShadowNode.h"
+
 namespace facebook {
 namespace react {
 
@@ -9,9 +11,6 @@ Point RNSScreenShadowNode::getContentOriginOffset() const {
   auto stateData = getStateData();
   auto contentOffset = stateData.contentOffset;
   return {contentOffset.x, contentOffset.y};
-}
-void RNSScreenShadowNode::layout(facebook::react::LayoutContext layoutContext) {
-  YogaLayoutableShadowNode::layout(layoutContext);
 }
 
 } // namespace react

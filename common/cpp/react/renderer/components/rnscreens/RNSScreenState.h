@@ -32,7 +32,6 @@ class JSI_EXPORT RNSScreenState final {
 
   const Size frameSize{};
   Point contentOffset;
-  float headerOffset{0};
 
 #ifdef ANDROID
   folly::dynamic getDynamic() const;
