@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
 import android.util.TypedValue
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
@@ -35,6 +36,7 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     var screenOrientation: Int? = null
         private set
     var isStatusBarAnimated: Boolean? = null
+    private var isBeingRemoved = false
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -233,14 +235,27 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     var nativeBackButtonDismissalEnabled: Boolean = true
 
     fun startRemovalTransition() {
-        startTransitionRecursive(this)
+        if (!isBeingRemoved) {
+            isBeingRemoved = true
+            startTransitionRecursive(this)
+        }
     }
 
     private fun startTransitionRecursive(parent: ViewGroup?) {
         parent?.let {
             for (i in 0 until it.childCount) {
                 val child = it.getChildAt(i)
-                child?.let { view -> it.startViewTransition(view) }
+                if (child.javaClass.simpleName.equals("CircleImageView")) {
+                    // SwipeRefreshLayout class which has CircleImageView as a child,
+                    // does not handle `startViewTransition` properly.
+                    // It has a custom `getChildDrawingOrder` method which returns
+                    // wrong index if we called `startViewTransition` on the views on new arch.
+                    // We add a simple View to make bump the number of children so it works.
+                    // TODO: find a better way to handle this scenario
+                    it.addView(View(context), i)
+                } else {
+                    child?.let { view -> it.startViewTransition(view) }
+                }
                 if (child is ScreenStackHeaderConfig) {
                     // we want to start transition on children of the toolbar too,
                     // which is not a child of ScreenStackHeaderConfig
