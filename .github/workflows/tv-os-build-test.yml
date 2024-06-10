@@ -40,4 +40,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: expo run:ios --scheme TVOSExample-tvOS --device "Apple TV" --no-bundler
+        run: yarn expo run:ios --scheme TVOSExample-tvOS --device "Apple TV" --no-bundler
