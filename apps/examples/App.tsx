@@ -43,12 +43,14 @@ const SCREENS: Record<
     title: string;
     component: () => React.JSX.Element;
     type: 'example' | 'playground';
+    isTVOSready?: boolean;
   }
 > = {
   SimpleNativeStack: {
     title: 'Simple Native Stack',
     component: SimpleNativeStack,
     type: 'example',
+    isTVOSready: true,
   },
   SwipeBackAnimation: {
     title: 'Swipe Back Animation',
@@ -59,16 +61,19 @@ const SCREENS: Record<
     title: 'Stack Presentation',
     component: StackPresentation,
     type: 'example',
+    isTVOSready: true,
   },
   BottomTabsAndStack: {
     title: 'Bottom tabs and native stack',
     component: BottomTabsAndStack,
     type: 'example',
+    isTVOSready: true,
   },
   Modals: {
     title: 'Modals',
     component: Modals,
     type: 'example',
+    isTVOSready: true,
   },
   HeaderOptions: {
     title: 'Header Options',
@@ -107,6 +112,10 @@ const SCREENS: Record<
   },
 };
 
+const screens = Object.keys(SCREENS).filter(
+  name => !Platform.isTV || !!SCREENS[name].isTVOSready
+);
+
 type RootStackParamList = {
   Main: undefined;
 } & {
@@ -133,7 +142,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
     <Text style={styles.label} testID="root-screen-examples-header">
       Examples
     </Text>
-    {Object.keys(SCREENS)
+    {screens
       .filter(name => SCREENS[name].type === 'example')
       .map(name => (
         <ListItem
@@ -143,17 +152,21 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
           onPress={() => navigation.navigate(name)}
         />
       ))}
-    <Text style={styles.label}>Playgrounds</Text>
-    {Object.keys(SCREENS)
-      .filter(name => SCREENS[name].type === 'playground')
-      .map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-playground-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-        />
-      ))}
+    {!Platform.isTV && (
+      <>
+        <Text style={styles.label}>Playgrounds</Text>
+        {screens
+          .filter(name => SCREENS[name].type === 'playground')
+          .map(name => (
+            <ListItem
+              key={name}
+              testID={`root-screen-playground-${name}`}
+              title={SCREENS[name].title}
+              onPress={() => navigation.navigate(name)}
+            />
+          ))}
+      </>
+    )}
   </ScrollView>
 );
 
