@@ -18,7 +18,8 @@
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "yarn prepare && npm login && release-it",
-    "prepare": "bob build && husky install"
+    "prepare": "bob build && husky install",
+    "checkIntegrity": "(cd ./FabricExample/android && ./gradlew generateCodegenArtifactsFromSchema -PskipCodegenCopyTask) && (cd ./android && ./gradlew checkIntegrityBetweenArchitectures)"
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
