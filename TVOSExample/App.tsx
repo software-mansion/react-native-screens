@@ -1,7 +1,6 @@
 import React from 'react';
-import 'react-native/tvos-types.d';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/HomeScreen';
 import BottomTabsExample from './src/BottomTabsExample';
 import ModalsExample from './src/ModalsExample';
@@ -16,7 +15,7 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{title: '📺 React Native Screens'}}
+          options={{ title: '📺 React Native Screens' }}
         />
         <Stack.Screen name="Bottom Tabs" component={BottomTabsExample} />
         <Stack.Screen name="Modals" component={ModalsExample} />

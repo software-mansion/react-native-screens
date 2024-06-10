@@ -1,12 +1,11 @@
 import React from 'react';
-import 'react-native/tvos-types.d';
-import {View, Text, Button} from 'react-native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {STYLES} from './styles';
+import { View, Text, Button } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { STYLES } from './styles';
 
-function Root({navigation}) {
+function Root({ navigation }) {
   return (
-    <View style={[STYLES.screenContainer, {backgroundColor: '#CCC'}]}>
+    <View style={[STYLES.screenContainer, { backgroundColor: '#CCC' }]}>
       <Button title="First" onPress={() => navigation.navigate('First')} />
       <Button title="Second" onPress={() => navigation.navigate('Second')} />
       <Button title="Third" onPress={() => navigation.navigate('Third')} />
@@ -14,9 +13,9 @@ function Root({navigation}) {
   );
 }
 
-function First({navigation}) {
+function First({ navigation }) {
   return (
-    <View style={[STYLES.screenContainer, {backgroundColor: '#DDD'}]}>
+    <View style={[STYLES.screenContainer, { backgroundColor: '#DDD' }]}>
       <Text>First</Text>
       <Button title="Second" onPress={() => navigation.navigate('Second')} />
       <Button title="Third" onPress={() => navigation.navigate('Third')} />
@@ -24,9 +23,9 @@ function First({navigation}) {
   );
 }
 
-function Second({navigation}) {
+function Second({ navigation }) {
   return (
-    <View style={[STYLES.screenContainer, {backgroundColor: '#EEE'}]}>
+    <View style={[STYLES.screenContainer, { backgroundColor: '#EEE' }]}>
       <Text>Second</Text>
       <Button title="Third" onPress={() => navigation.navigate('Third')} />
     </View>
@@ -35,7 +34,7 @@ function Second({navigation}) {
 
 function Third() {
   return (
-    <View style={[STYLES.screenContainer, {backgroundColor: '#FFF'}]}>
+    <View style={[STYLES.screenContainer, { backgroundColor: '#FFF' }]}>
       <Text>Third</Text>
     </View>
   );

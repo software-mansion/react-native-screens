@@ -1,8 +1,7 @@
 import React from 'react';
-import 'react-native/tvos-types.d';
-import {View, Text} from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {STYLES} from './styles';
+import { View, Text } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { STYLES } from './styles';
 
 function Tab1() {
   return (
