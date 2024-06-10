@@ -8,7 +8,11 @@
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSScreenShadowNode.h"
 
-float RNS_HEADER_HEIGHT_CORRECTION = 0.f;
+namespace rnscreens {
+
+float gHeaderHeightCorrection = 0.f;
+
+}
 
 namespace facebook {
 namespace react {
@@ -41,7 +45,7 @@ class RNSScreenComponentDescriptor final
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
-      RNS_HEADER_HEIGHT_CORRECTION = 0.f;
+      rnscreens::gHeaderHeightCorrection = 0.f;
     } else {
       auto headerConfigChildOpt = findHeaderConfigChild(layoutableShadowNode);
       int fontSize = kFontSizeUnset;
@@ -60,7 +64,7 @@ class RNSScreenComponentDescriptor final
           headerHidden ? 0.f : findHeaderHeight(fontSize).value_or(0.f);
 
       // This will be consumed by header config node down in tree
-      RNS_HEADER_HEIGHT_CORRECTION = headerHeight;
+      rnscreens::gHeaderHeightCorrection = headerHeight;
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
