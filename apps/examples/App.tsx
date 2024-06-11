@@ -179,7 +179,11 @@ const ExampleApp = (): React.JSX.Element => (
         <Stack.Navigator>
           <Stack.Screen
             name="Main"
-            options={{ title: '📱 React Native Screens Examples' }}
+            options={{
+              title: `${
+                Platform.isTV ? '📺' : '📱'
+              } React Native Screens Examples`,
+            }}
             component={MainScreen}
           />
           {Object.keys(SCREENS).map(name => (
