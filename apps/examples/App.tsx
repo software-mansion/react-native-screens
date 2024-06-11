@@ -115,6 +115,8 @@ const SCREENS: Record<
 const screens = Object.keys(SCREENS).filter(
   name => !Platform.isTV || !!SCREENS[name].isTVOSready
 );
+const examples = screens.filter(name => SCREENS[name].type === 'example');
+const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
 
 type RootStackParamList = {
   Main: undefined;
@@ -142,29 +144,25 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
     <Text style={styles.label} testID="root-screen-examples-header">
       Examples
     </Text>
-    {screens
-      .filter(name => SCREENS[name].type === 'example')
-      .map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-example-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-        />
-      ))}
-    {!Platform.isTV && (
+    {examples.map(name => (
+      <ListItem
+        key={name}
+        testID={`root-screen-example-${name}`}
+        title={SCREENS[name].title}
+        onPress={() => navigation.navigate(name)}
+      />
+    ))}
+    {!!playgrounds.length && (
       <>
         <Text style={styles.label}>Playgrounds</Text>
-        {screens
-          .filter(name => SCREENS[name].type === 'playground')
-          .map(name => (
-            <ListItem
-              key={name}
-              testID={`root-screen-playground-${name}`}
-              title={SCREENS[name].title}
-              onPress={() => navigation.navigate(name)}
-            />
-          ))}
+        {playgrounds.map(name => (
+          <ListItem
+            key={name}
+            testID={`root-screen-playground-${name}`}
+            title={SCREENS[name].title}
+            onPress={() => navigation.navigate(name)}
+          />
+        ))}
       </>
     )}
   </ScrollView>
