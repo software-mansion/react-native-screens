@@ -170,7 +170,7 @@ When you propose the changes that require creating a PR to the `react-navigation
 2. Create a PR with changes for native-stack in `react-navigation`
 3. Wait for both to pass the review and have all checks passed
 4. Merge `react-native-screens` changes
-5. Merge `react-native-navigation` changes
+5. Merge `react-navigation` changes
 6. Upgrade the version of main branch index reference in `react-native-screens` (usually, git checkout on a submodule should be sufficient)
 7. Post and merge ASAP upgrade of the main branch reference of `react-navigation`
 
