@@ -43,14 +43,14 @@ const SCREENS: Record<
     title: string;
     component: () => React.JSX.Element;
     type: 'example' | 'playground';
-    isTVOSready?: boolean;
+    isTVOSReady?: boolean;
   }
 > = {
   SimpleNativeStack: {
     title: 'Simple Native Stack',
     component: SimpleNativeStack,
     type: 'example',
-    isTVOSready: true,
+    isTVOSReady: true,
   },
   SwipeBackAnimation: {
     title: 'Swipe Back Animation',
@@ -61,19 +61,19 @@ const SCREENS: Record<
     title: 'Stack Presentation',
     component: StackPresentation,
     type: 'example',
-    isTVOSready: true,
+    isTVOSReady: true,
   },
   BottomTabsAndStack: {
     title: 'Bottom tabs and native stack',
     component: BottomTabsAndStack,
     type: 'example',
-    isTVOSready: true,
+    isTVOSReady: true,
   },
   Modals: {
     title: 'Modals',
     component: Modals,
     type: 'example',
-    isTVOSready: true,
+    isTVOSReady: true,
   },
   HeaderOptions: {
     title: 'Header Options',
@@ -112,9 +112,15 @@ const SCREENS: Record<
   },
 };
 
-const screens = Object.keys(SCREENS).filter(
-  name => !Platform.isTV || !!SCREENS[name].isTVOSready
-);
+const isPlatformReady = (name: string) => {
+  if (Platform.isTV) {
+    return !!SCREENS[name].isTVOSReady;
+  }
+
+  return true;
+};
+
+const screens = Object.keys(SCREENS).filter(isPlatformReady);
 const examples = screens.filter(name => SCREENS[name].type === 'example');
 const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
 
