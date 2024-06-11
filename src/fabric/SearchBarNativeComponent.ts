@@ -52,7 +52,7 @@ export interface NativeProps extends ViewProps {
 
 type ComponentType = HostComponent<NativeProps>;
 
-interface SearchBarNativeCommands {
+interface NativeCommands {
   blur: (viewRef: React.ElementRef<ComponentType>) => void;
   focus: (viewRef: React.ElementRef<ComponentType>) => void;
   clearText: (viewRef: React.ElementRef<ComponentType>) => void;
@@ -64,16 +64,15 @@ interface SearchBarNativeCommands {
   cancelSearch: (viewRef: React.ElementRef<ComponentType>) => void;
 }
 
-export const Commands: SearchBarNativeCommands =
-  codegenNativeCommands<SearchBarNativeCommands>({
-    supportedCommands: [
-      'blur',
-      'focus',
-      'clearText',
-      'toggleCancelButton',
-      'setText',
-      'cancelSearch',
-    ],
-  });
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: [
+    'blur',
+    'focus',
+    'clearText',
+    'toggleCancelButton',
+    'setText',
+    'cancelSearch',
+  ],
+});
 
 export default codegenNativeComponent<NativeProps>('RNSSearchBar', {});
