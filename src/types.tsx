@@ -649,10 +649,12 @@ export interface SearchBarProps {
    * @platform ios
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
+
   /**
    * A callback that gets called when the text changes. It receives the current text value of the search bar.
    */
   onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+
   /**
    * A callback that gets called when search bar is closed
    *
