@@ -640,30 +640,29 @@ export interface SearchBarProps {
    */
   obscureBackground?: boolean;
   /**
-   * A callback that gets called when search bar has received focus
-   */
-  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
    * A callback that gets called when search bar has lost focus
    */
   onBlur?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-  /**
-   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
-   */
-  onSearchButtonPress?: (
-    e: NativeSyntheticEvent<TextInputFocusEventData>
-  ) => void;
   /**
    * A callback that gets called when the cancel button is pressed
    *
    * @platform ios
    */
   onCancelButtonPress?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
-
   /**
    * A callback that gets called when the text changes. It receives the current text value of the search bar.
    */
   onChangeText?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+  /**
+   * A callback that gets called when search bar is closed
+   *
+   * @platform android
+   */
+  onClose?: () => void;
+  /**
+   * A callback that gets called when search bar has received focus
+   */
+  onFocus?: (e: NativeSyntheticEvent<TargetedEvent>) => void;
   /**
    * A callback that gets called when search bar is opened
    *
@@ -671,11 +670,11 @@ export interface SearchBarProps {
    */
   onOpen?: () => void;
   /**
-   * A callback that gets called when search bar is closed
-   *
-   * @platform android
+   * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
-  onClose?: () => void;
+  onSearchButtonPress?: (
+    e: NativeSyntheticEvent<TextInputFocusEventData>
+  ) => void;
   /**
    * Text displayed when search field is empty
    */
