@@ -5,13 +5,19 @@ interface Props {
   title: string;
   onPress: () => void;
   testID?: string;
+  disabled?: boolean;
 }
 
-export const ListItem = ({ title, onPress, testID }: Props): React.JSX.Element => {
+export const ListItem = ({
+  title,
+  onPress,
+  testID,
+  disabled,
+}: Props): React.JSX.Element => {
   return (
-    <TouchableOpacity onPress={onPress} testID={testID}>
+    <TouchableOpacity onPress={onPress} testID={testID} disabled={disabled}>
       <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, disabled && styles.disabled]}>{disabled && '(N/A) '}{title}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -26,6 +32,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: '#ccc',
     borderWidth: 1,
+  },
+  disabled: {
+    color: 'gray',
   },
   title: {
     color: 'black',
