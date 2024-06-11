@@ -292,4 +292,10 @@ class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     enum class WindowTraits {
         ORIENTATION, COLOR, STYLE, TRANSLUCENT, HIDDEN, ANIMATED, NAVIGATION_BAR_COLOR, NAVIGATION_BAR_TRANSLUCENT, NAVIGATION_BAR_HIDDEN
     }
+
+    companion object {
+        fun isSystemAnimation(stackAnimation: StackAnimation): Boolean {
+            return stackAnimation === StackAnimation.DEFAULT || stackAnimation === StackAnimation.FADE || stackAnimation === StackAnimation.NONE
+        }
+    }
 }

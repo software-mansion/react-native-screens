@@ -1,5 +1,9 @@
 package com.swmansion.rnscreens
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
@@ -16,6 +20,9 @@ import android.view.animation.Transformation
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.R
+import androidx.fragment.app.FragmentTransaction
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
@@ -85,6 +92,53 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     override fun onViewAnimationEnd() {
         super.onViewAnimationEnd()
         notifyViewAppearTransitionEnd()
+    }
+
+    // Similarly to ScreensCoordinatorLayout, this method listens only for the phases of default Android
+    // transitions (default/none/fade), since `ScreensCoordinatorLayout#startAnimation` is being
+    // called only for custom animations.
+    override fun onCreateAnimator(transit: Int, enter: Boolean, nextAnim: Int): Animator? {
+        val listener = object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator) {
+                onViewAnimationStart()
+                super.onAnimationStart(animation)
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                onViewAnimationEnd()
+                super.onAnimationEnd(animation)
+            }
+        }
+
+        // If there's custom animation set, use default onCreateAnimator implementation, as event
+        // handling will be handled by ScreensCoordinatorLayout.
+        if (!Screen.isSystemAnimation(screen.stackAnimation)) {
+            return super.onCreateAnimator(transit, enter, nextAnim)
+        }
+
+        // When fragment is being removed or there's no transition selected, we simply
+        // return AnimatorSet without any animation.
+        if (isRemoving || transit == FragmentTransaction.TRANSIT_NONE) {
+            return AnimatorSet().apply {
+                addListener(listener)
+            }
+        }
+
+        var selectedNextAnim = nextAnim
+        if (nextAnim == 0) {
+            selectedNextAnim = when (transit) {
+                FragmentTransaction.TRANSIT_FRAGMENT_OPEN -> if (enter) R.animator.fragment_open_enter else R.animator.fragment_open_exit
+                FragmentTransaction.TRANSIT_FRAGMENT_CLOSE -> if (enter) R.animator.fragment_close_enter else R.animator.fragment_close_exit
+                FragmentTransaction.TRANSIT_FRAGMENT_FADE -> if (enter) R.animator.fragment_fade_enter else R.animator.fragment_fade_exit
+                else -> 0
+            }
+        }
+
+        val animator = AnimatorInflater.loadAnimator(context, selectedNextAnim).apply {
+            addListener(listener)
+        }
+
+        return animator
     }
 
     private fun notifyViewAppearTransitionEnd() {
