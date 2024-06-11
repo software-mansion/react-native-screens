@@ -147,9 +147,11 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
         RNRestart.Restart();
       }}
     />
-    <Text style={styles.label} testID="root-screen-examples-header">
-      Examples
-    </Text>
+    {!!examples.length && (
+      <Text style={styles.label} testID="root-screen-examples-header">
+        Examples
+      </Text>
+    )}
     {examples.map(name => (
       <ListItem
         key={name}
@@ -158,19 +160,15 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
         onPress={() => navigation.navigate(name)}
       />
     ))}
-    {!!playgrounds.length && (
-      <>
-        <Text style={styles.label}>Playgrounds</Text>
-        {playgrounds.map(name => (
-          <ListItem
-            key={name}
-            testID={`root-screen-playground-${name}`}
-            title={SCREENS[name].title}
-            onPress={() => navigation.navigate(name)}
-          />
-        ))}
-      </>
-    )}
+    {!!playgrounds.length && <Text style={styles.label}>Playgrounds</Text>}
+    {playgrounds.map(name => (
+      <ListItem
+        key={name}
+        testID={`root-screen-playground-${name}`}
+        title={SCREENS[name].title}
+        onPress={() => navigation.navigate(name)}
+      />
+    ))}
   </ScrollView>
 );
 
