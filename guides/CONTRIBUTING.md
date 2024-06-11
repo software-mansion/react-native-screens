@@ -28,7 +28,7 @@ We inform you that unrespectful issues will be closed.
 
 ## Ways to Contribute
 
-1. **Replying and handling open issues** &ndash; great way to contribute without writing a single line of code is triaging the issues. We often get issues that have generic errors, occur only in very specific cases, do not have proper example or reproducible repository. One of they way to help is preparing and filling those details, which will help other contributors get up to speed with the issue faster. 
+1. **Replying and handling open issues** &ndash; great way to contribute without writing a single line of code is triaging the issues. We often get issues that have generic errors, occur only in very specific cases, do not have proper example or reproducible repository. One way to help is preparing and filling those details, which will help other contributors get up to speed with the issue faster. 
 
 2. **Reviewing pull requests** &ndash; reviewing Pull Requests is crucial as it may help catch the corner cases or bugs that the developer did not notice. Every review matters as it may help polish quality of the library.
 
