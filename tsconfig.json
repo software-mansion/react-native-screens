@@ -3,8 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "react-native-screens": ["src"],
-      "react-native-screens/*": ["src/*"],
-      "@react-navigation/*": ["react-navigation/packages/*/src"]
+      "react-native-screens/*": ["src/*"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
