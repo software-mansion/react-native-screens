@@ -4,10 +4,6 @@ project(rnscreens)
 set(CMAKE_CXX_STANDARD 20)
 
 if(${IS_NEW_ARCHITECTURE_ENABLED})
-    string(APPEND CMAKE_CXX_FLAGS " -DRCT_NEW_ARCH_ENABLED")
-endif()
-
-if(${IS_NEW_ARCHITECTURE_ENABLED})
 add_library(rnscreens
     SHARED
     ../cpp/RNScreensTurboModule.cpp

@@ -38,13 +38,10 @@ class ScreensModule(private val reactContext: ReactApplicationContext)
     override fun initialize() {
         super.initialize()
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            val jsContext = reactApplicationContext.javaScriptContextHolder
             val fabricUIManager =
-                UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
-            if (jsContext != null) {
-                proxy = NativeProxy(reactContext)
-                proxy?.nativeAddMutationsListener(fabricUIManager)
-            }
+            UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
+            proxy = NativeProxy()
+            proxy?.nativeAddMutationsListener(fabricUIManager)
         }
     }
 
