@@ -1,7 +1,6 @@
 #include "RNSScreenShadowNode.h"
 
 #include <yoga/enums/PhysicalEdge.h>
-#include "RNSScreenStackHeaderConfigShadowNode.h"
 
 namespace facebook {
 namespace react {

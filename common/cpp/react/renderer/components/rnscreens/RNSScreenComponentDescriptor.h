@@ -8,12 +8,6 @@
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSScreenShadowNode.h"
 
-namespace rnscreens {
-
-float gHeaderHeightCorrection = 0.f;
-
-}
-
 namespace facebook {
 namespace react {
 
