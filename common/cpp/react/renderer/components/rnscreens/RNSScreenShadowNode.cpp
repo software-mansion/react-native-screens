@@ -17,14 +17,27 @@ Point RNSScreenShadowNode::getContentOriginOffset() const {
 
 void RNSScreenShadowNode::setTopMargin(float marginTop) {
   ensureUnsealed();
-  getConcretePropsMut().yogaStyle.setMargin(
-      yoga::Edge::Top, yoga::StyleLength::points(marginTop));
+
+  auto style = yogaNode_.style();
+  style.setMargin(yoga::Edge::Top, yoga::value::points(marginTop));
+
+  auto newMarginTop = yoga::value::points(marginTop);
+
+  if (newMarginTop != style.margin(yoga::Edge::Top)) {
+    style.setMargin(yoga::Edge::Top, newMarginTop);
+    yogaNode_.setStyle(style);
+    yogaNode_.setDirty(true);
+  }
 }
 
 constexpr RNSScreenShadowNode::PropsT &
 RNSScreenShadowNode::getConcretePropsMut() {
   const auto &constProps = getConcreteProps();
   return const_cast<RNSScreenShadowNode::PropsT &>(constProps);
+}
+
+void RNSScreenShadowNode::layout(facebook::react::LayoutContext layoutContext) {
+  YogaLayoutableShadowNode::layout(layoutContext);
 }
 
 } // namespace react

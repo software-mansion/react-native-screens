@@ -37,7 +37,8 @@ class RNSScreenComponentDescriptor final
 
 #ifdef ANDROID
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
-      screenShadowNode.setTopMargin(0.f);
+      //      screenShadowNode.setPadding({0, 0, 0, 0});
+      screenShadowNode.setTopMargin(0);
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     } else {
@@ -58,6 +59,7 @@ class RNSScreenComponentDescriptor final
           headerHidden ? 0.f : findHeaderHeight(fontSize).value_or(0.f);
 
       screenShadowNode.setTopMargin(headerHeight);
+      //      screenShadowNode.setPadding({0, 0, 0, headerHeight});
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {

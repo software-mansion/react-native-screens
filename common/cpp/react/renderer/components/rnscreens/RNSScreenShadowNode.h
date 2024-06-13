@@ -26,6 +26,8 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 
   void setTopMargin(float marginTop);
 
+  void layout(facebook::react::LayoutContext layoutContext) override;
+
  private:
   constexpr PropsT &getConcretePropsMut();
 };
