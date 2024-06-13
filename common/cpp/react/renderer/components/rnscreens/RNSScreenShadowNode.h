@@ -20,8 +20,14 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
                                                  RNSScreenState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
+  using PropsT = ConcreteViewShadowNode::ConcreteProps;
 
   Point getContentOriginOffset() const override;
+
+  void setTopMargin(float marginTop);
+
+ private:
+  constexpr PropsT &getConcretePropsMut();
 };
 
 } // namespace react

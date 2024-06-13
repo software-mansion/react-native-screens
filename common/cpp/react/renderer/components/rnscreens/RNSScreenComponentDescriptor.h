@@ -43,9 +43,9 @@ class RNSScreenComponentDescriptor final
 
 #ifdef ANDROID
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+      screenShadowNode.setTopMargin(0.f);
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
-      rnscreens::gHeaderHeightCorrection = 0.f;
     } else {
       auto headerConfigChildOpt = findHeaderConfigChild(layoutableShadowNode);
       int fontSize = kFontSizeUnset;
@@ -63,8 +63,7 @@ class RNSScreenComponentDescriptor final
       const auto headerHeight =
           headerHidden ? 0.f : findHeaderHeight(fontSize).value_or(0.f);
 
-      // This will be consumed by header config node down in tree
-      rnscreens::gHeaderHeightCorrection = headerHeight;
+      screenShadowNode.setTopMargin(headerHeight);
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
