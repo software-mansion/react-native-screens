@@ -84,7 +84,7 @@ class RNSScreenComponentDescriptor final
         return {std::ref(child)};
       }
     }
-    return std::nullopt;
+    return {};
   }
 
 #ifdef ANDROID
