@@ -37,14 +37,26 @@ class RNSScreenComponentDescriptor final
 
 #ifdef ANDROID
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
+      // When we receive dimensions from JVM side we can remove padding used for
+      // correction, and we can stop applying height correction for the frame.
+      // We want to leave top offset correction though intact.
+      // TODO: In future, when we have dynamic header height we might want to
+      // update Y offset correction here.
       screenShadowNode.setPadding({0, 0, 0, 0});
+      screenShadowNode.getHeaderCorrectionModes().unset(
+          HeaderCorrectionModes::Mode::FrameHeightCorrection);
+
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
     } else {
+      // This code path should be executed only on the very first (few)
+      // layout(s), when we haven't received state update from JVM side yet.
+
       auto headerConfigChildOpt = findHeaderConfigChild(layoutableShadowNode);
       int fontSize = kFontSizeUnset;
       bool headerHidden = true;
 
+      // During creation of the shadow node children are not attached yet.
       if (headerConfigChildOpt) {
         const auto &headerConfigChild = headerConfigChildOpt->get();
         const auto &headerProps =
@@ -58,6 +70,11 @@ class RNSScreenComponentDescriptor final
           headerHidden ? 0.f : findHeaderHeight(fontSize).value_or(0.f);
 
       screenShadowNode.setPadding({0, 0, 0, headerHeight});
+      screenShadowNode.setHeaderHeight(headerHeight);
+      screenShadowNode.getHeaderCorrectionModes().set(
+          HeaderCorrectionModes::Mode(
+              HeaderCorrectionModes::Mode::FrameHeightCorrection |
+              HeaderCorrectionModes::Mode::FrameOriginCorrection));
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {

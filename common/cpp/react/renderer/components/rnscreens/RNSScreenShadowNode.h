@@ -5,7 +5,7 @@
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
-#include <react/renderer/core/LayoutMetrics.h>
+#include "HeaderCorrectionModes.h"
 #include "RNSScreenState.h"
 
 namespace facebook {
@@ -22,14 +22,27 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
   using PropsT = ConcreteViewShadowNode::ConcreteProps;
 
+#pragma mark - ShadowNode overrides
+
   Point getContentOriginOffset() const override;
 
-  void setTopMargin(float marginTop);
+  void layout(LayoutContext layoutContext) override;
 
-  void layout(facebook::react::LayoutContext layoutContext) override;
+#pragma mark - Custom interface
+
+  void setHeaderHeight(float headerHeight);
+
+  HeaderCorrectionModes &getHeaderCorrectionModes();
 
  private:
-  constexpr PropsT &getConcretePropsMut();
+#ifdef ANDROID
+  void applyFrameCorrections();
+
+  // Header height as measured on dummy layout
+  float lastKnownHeaderHeight_{0.f};
+  HeaderCorrectionModes headerCorrectionModes_{};
+
+#endif // ANDROID
 };
 
 } // namespace react
