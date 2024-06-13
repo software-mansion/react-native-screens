@@ -16,8 +16,8 @@ class RNSScreenComponentDescriptor final
  public:
   using ConcreteComponentDescriptor::ConcreteComponentDescriptor;
 
-  static constexpr const char *kRnsPackageClassPath =
-      "com/swmansion/rnscreens/RNScreensPackage";
+  static constexpr const char *kScreenDummyLayoutHelperClass =
+      "com/swmansion/rnscreens/utils/ScreenDummyLayoutHelper";
 
   static constexpr const int kFontSizeUnset = -1;
 
@@ -106,16 +106,16 @@ class RNSScreenComponentDescriptor final
       return {};
     }
 
-    jclass rnsPackageClass = env->FindClass(kRnsPackageClassPath);
+    jclass layoutHelperClass = env->FindClass(kScreenDummyLayoutHelperClass);
 
-    if (rnsPackageClass == nullptr) {
+    if (layoutHelperClass == nullptr) {
       LOG(ERROR) << "[RNScreens] Failed to find class with id "
-                 << kRnsPackageClassPath;
+                 << kScreenDummyLayoutHelperClass;
       return {};
     }
 
     jmethodID computeDummyLayoutID =
-        env->GetMethodID(rnsPackageClass, "computeDummyLayout", "(I)F");
+        env->GetMethodID(layoutHelperClass, "computeDummyLayout", "(I)F");
 
     if (computeDummyLayoutID == nullptr) {
       LOG(ERROR)
@@ -124,9 +124,9 @@ class RNSScreenComponentDescriptor final
     }
 
     jmethodID getInstanceMethodID = env->GetStaticMethodID(
-        rnsPackageClass,
+        layoutHelperClass,
         "getInstance",
-        "()Lcom/swmansion/rnscreens/RNScreensPackage;");
+        "()Lcom/swmansion/rnscreens/utils/ScreenDummyLayoutHelper;");
 
     if (getInstanceMethodID == nullptr) {
       LOG(ERROR) << "[RNScreens] Failed to retrieve getInstanceMethodID";
@@ -134,7 +134,7 @@ class RNSScreenComponentDescriptor final
     }
 
     jobject packageInstance =
-        env->CallStaticObjectMethod(rnsPackageClass, getInstanceMethodID);
+        env->CallStaticObjectMethod(layoutHelperClass, getInstanceMethodID);
 
     if (packageInstance == nullptr) {
       LOG(ERROR)
