@@ -15,20 +15,13 @@ const Stack = createNativeStackNavigator();
 export default function App(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{
-        headerTopInsetEnabled: false,
-        topInsetEnabled: false,
-        headerOptions: {
-          topInsetEnabled: false,
-        },
-      }}>
+      <Stack.Navigator>
         <Stack.Screen
           name="First"
           component={First}
           options={{
             headerShown: true,
             statusBarTranslucent: false,
-            headerTopInsetEnabled: false,
             // headerTitleStyle: {
             //   fontSize: 64,
             // }
@@ -54,6 +47,9 @@ export default function App(): JSX.Element {
 }
 
 const First = ({ navigation }: Props) => (
+  navigation.addListener('blur', () => {
+
+  });
   <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'seagreen' }}>
     <View style={{ height: 100, width: 100, justifyContent: 'flex-start', backgroundColor: 'blue' }} />
     <Button
