@@ -2648,6 +2648,12 @@ __metadata:
   languageName: node
   linkType: soft
 
+"@react-navigation/drawer@link:../react-navigation/packages/drawer/::locator=FabricExample%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@react-navigation/drawer@link:../react-navigation/packages/drawer/::locator=FabricExample%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@react-navigation/elements@link:../react-navigation/packages/elements/::locator=FabricExample%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "@react-navigation/elements@link:../react-navigation/packages/elements/::locator=FabricExample%40workspace%3A."
@@ -3137,6 +3143,7 @@ __metadata:
     "@react-native/typescript-config": "npm:0.74.83"
     "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/"
     "@react-navigation/core": "link:../react-navigation/packages/core/"
+    "@react-navigation/drawer": "link:../react-navigation/packages/drawer/"
     "@react-navigation/elements": "link:../react-navigation/packages/elements/"
     "@react-navigation/native": "link:../react-navigation/packages/native/"
     "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/"

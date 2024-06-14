@@ -113,13 +113,13 @@ class SearchBarManager : ViewGroupManager<SearchBarView>(), RNSSearchBarManagerI
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         return MapBuilder.of(
             SearchBarBlurEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onBlur"),
+            MapBuilder.of("registrationName", "onSearchBlur"),
             SearchBarChangeTextEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onChangeText"),
             SearchBarCloseEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onClose"),
             SearchBarFocusEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onFocus"),
+            MapBuilder.of("registrationName", "onSearchFocus"),
             SearchBarOpenEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onOpen"),
             SearchBarSearchButtonPressEvent.EVENT_NAME,

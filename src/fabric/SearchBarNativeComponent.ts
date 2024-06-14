@@ -7,13 +7,13 @@ import type {
 } from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 
-type SearchBarEvent = Readonly<{}>;
+export type SearchBarEvent = Readonly<{}>;
 
-type SearchButtonPressedEvent = Readonly<{
+export type SearchButtonPressedEvent = Readonly<{
   text?: string;
 }>;
 
-type ChangeTextEvent = Readonly<{
+export type ChangeTextEvent = Readonly<{
   text?: string;
 }>;
 
@@ -21,9 +21,9 @@ type SearchBarPlacement = 'automatic' | 'inline' | 'stacked';
 
 type AutoCapitalizeType = 'none' | 'words' | 'sentences' | 'characters';
 
-interface NativeProps extends ViewProps {
-  onFocus?: DirectEventHandler<SearchBarEvent> | null;
-  onBlur?: DirectEventHandler<SearchBarEvent> | null;
+export interface NativeProps extends ViewProps {
+  onSearchFocus?: DirectEventHandler<SearchBarEvent> | null;
+  onSearchBlur?: DirectEventHandler<SearchBarEvent> | null;
   onSearchButtonPress?: DirectEventHandler<SearchButtonPressedEvent> | null;
   onCancelButtonPress?: DirectEventHandler<SearchBarEvent> | null;
   onChangeText?: DirectEventHandler<ChangeTextEvent> | null;
