@@ -102,6 +102,7 @@ import Test2048 from './src/Test2048';
 import Test2069 from './src/Test2069';
 import Test2118 from './src/Test2118';
 import TestScreenAnimation from './src/TestScreenAnimation';
+import TestHeader from './src/TestHeader';
 
 enableFreeze(true);
 
