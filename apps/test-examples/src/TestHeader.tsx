@@ -47,9 +47,6 @@ export default function App(): JSX.Element {
 }
 
 const First = ({ navigation }: Props) => (
-  navigation.addListener('blur', () => {
-
-  });
   <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'seagreen' }}>
     <View style={{ height: 100, width: 100, justifyContent: 'flex-start', backgroundColor: 'blue' }} />
     <Button
