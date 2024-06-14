@@ -91,7 +91,7 @@ class RNSScreenComponentDescriptor final
     for (const ShadowNode::Shared &child : screenShadowNode.getChildren()) {
       if (std::strcmp(
               child->getComponentName(), "RNSScreenStackHeaderConfig") == 0) {
-        return {std::ref(child)};
+        return {std::cref(child)};
       }
     }
     return {};
