@@ -5,6 +5,7 @@ import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.fabric.FabricUIManager
 import java.lang.ref.WeakReference
+import java.util.concurrent.ConcurrentHashMap
 
 class NativeProxy {
     @DoNotStrip
@@ -19,7 +20,9 @@ class NativeProxy {
     external fun nativeAddMutationsListener(fabricUIManager: FabricUIManager)
 
     companion object {
-        private val viewsMap = HashMap<Int, WeakReference<Screen>>()
+        // we use ConcurrentHashMap here since it will be read on the JS thread,
+        // and written to on the UI thread.
+        private val viewsMap = ConcurrentHashMap<Int, WeakReference<Screen>>()
 
         fun addScreenToMap(tag: Int, view: Screen) {
             viewsMap[tag] = WeakReference(view)
