@@ -31,21 +31,31 @@ void RNSScreenShadowNode::applyFrameCorrections() {
   // read from ShadowTree (e.g by reanimated) they have chance of being
   // accurate. On JVM side we do ignore this frame anyway, because
   // ScreenStackViewManager.needsCustomLayoutForChildren() == true.
-  layoutMetrics_.frame.origin.y += lastKnownHeaderHeight_ *
-      headerCorrectionModes_.check(
+  const auto &stateData = getStateData();
+  const float lastKnownHeaderHeight = stateData.getLastKnownHeaderHeight();
+  const auto &headerCorrectionModes = stateData.getHeaderCorrectionModes();
+  layoutMetrics_.frame.origin.y += lastKnownHeaderHeight *
+      headerCorrectionModes.check(
           HeaderCorrectionModes::Mode::FrameOriginCorrection);
-  layoutMetrics_.frame.size.height -= lastKnownHeaderHeight_ *
-      headerCorrectionModes_.check(
+  layoutMetrics_.frame.size.height -= lastKnownHeaderHeight *
+      headerCorrectionModes.check(
           HeaderCorrectionModes::Mode::FrameHeightCorrection);
 }
 
 void RNSScreenShadowNode::setHeaderHeight(float headerHeight) {
   ensureUnsealed();
-  lastKnownHeaderHeight_ = headerHeight;
+  getStateDataMutable().setHeaderHeight(headerHeight);
 }
 
 HeaderCorrectionModes &RNSScreenShadowNode::getHeaderCorrectionModes() {
-  return headerCorrectionModes_;
+  return getStateDataMutable().getHeaderCorrectionModes();
+}
+
+RNSScreenShadowNode::StateData &RNSScreenShadowNode::getStateDataMutable() {
+  // We assume that this method is called to mutate the data, so we ensure
+  // we're unsealed.
+  ensureUnsealed();
+  return const_cast<RNSScreenShadowNode::StateData &>(getStateData());
 }
 
 #endif // ANDROID

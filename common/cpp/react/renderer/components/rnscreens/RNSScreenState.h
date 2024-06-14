@@ -9,6 +9,8 @@
 #include <react/renderer/mapbuffer/MapBufferBuilder.h>
 #endif
 
+#include "HeaderCorrectionModes.h"
+
 namespace facebook {
 namespace react {
 
@@ -27,7 +29,11 @@ class JSI_EXPORT RNSScreenState final {
             (Float)data["frameHeight"].getDouble()}),
         contentOffset(Point{
             (Float)data["contentOffsetX"].getDouble(),
-            (Float)data["contentOffsetY"].getDouble()}){};
+            (Float)data["contentOffsetY"].getDouble()}),
+        lastKnownHeaderHeight_{previousState.lastKnownHeaderHeight_},
+        headerCorrectionModes_{previousState.headerCorrectionModes_} {
+    LOG(INFO) << "HEY HEY CREATING STATE";
+  };
 #endif
 
   const Size frameSize{};
@@ -39,7 +45,23 @@ class JSI_EXPORT RNSScreenState final {
     return MapBufferBuilder::EMPTY();
   };
 
+  void setHeaderHeight(float headerHeight);
+
+  float getLastKnownHeaderHeight() const noexcept;
+
+  HeaderCorrectionModes &getHeaderCorrectionModes() noexcept;
+
+  const HeaderCorrectionModes &getHeaderCorrectionModes() const noexcept;
+
 #endif
+
+ private:
+#ifdef ANDROID
+  // Header height as measured on dummy layout
+  float lastKnownHeaderHeight_{0.f};
+
+  HeaderCorrectionModes headerCorrectionModes_{};
+#endif // ANDROID
 
 #pragma mark - Getters
 };

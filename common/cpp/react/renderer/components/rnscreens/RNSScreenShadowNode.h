@@ -20,7 +20,7 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
                                                  RNSScreenState> {
  public:
   using ConcreteViewShadowNode::ConcreteViewShadowNode;
-  using PropsT = ConcreteViewShadowNode::ConcreteProps;
+  using StateData = ConcreteViewShadowNode::ConcreteStateData;
 
 #pragma mark - ShadowNode overrides
 
@@ -38,10 +38,7 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 #ifdef ANDROID
   void applyFrameCorrections();
 
-  // Header height as measured on dummy layout
-  float lastKnownHeaderHeight_{0.f};
-  HeaderCorrectionModes headerCorrectionModes_{};
-
+  StateData &getStateDataMutable();
 #endif // ANDROID
 };
 
