@@ -495,7 +495,8 @@ namespace react = facebook::react;
       // iOS 12 cancels swipe gesture when direction is changed. See #1091
       navctr.view.semanticContentAttribute != config.direction) {
     navctr.view.semanticContentAttribute = config.direction;
-    navctr.navigationBar.semanticContentAttribute = config.direction;
+    [[UIButton appearance] setSemanticContentAttribute:config.direction];
+    [[UIView appearance] setSemanticContentAttribute:config.direction];
   }
 
   if (shouldHide) {
@@ -606,8 +607,6 @@ namespace react = facebook::react;
 #endif
   }
 #if !TARGET_OS_TV
-  // Workaround for the wrong rotation of back button arrow in RTL mode.
-  navitem.hidesBackButton = true;
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
