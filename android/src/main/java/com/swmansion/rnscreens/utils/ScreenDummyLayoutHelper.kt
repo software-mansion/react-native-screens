@@ -12,6 +12,12 @@ import com.swmansion.rnscreens.ScreenStackHeaderConfig
 import java.lang.ref.WeakReference
 
 
+/**
+ * This class provides methods to create dummy layout (that mimics Screen setup), and to compute
+ * expected header height. It is meant to be accessed from C++ layer via JNI.
+ * See https://github.com/software-mansion/react-native-screens/pull/2169
+ * for more detailed description of the issue this code solves.
+ */
 internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
     // The state required to compute header dimensions. We want this on instance rather than on class
     // for context access & being tied to instance lifetime.

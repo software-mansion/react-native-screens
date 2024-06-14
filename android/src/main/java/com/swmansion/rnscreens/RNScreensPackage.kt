@@ -16,7 +16,8 @@ import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
     ]
 )
 class RNScreensPackage : TurboReactPackage() {
-    // We just retain it here.
+    // We just retain it here. This object helps us tackle jumping content when using native header.
+    // See: https://github.com/software-mansion/react-native-screens/pull/2169
     private var screenDummyLayoutHelper: ScreenDummyLayoutHelper? = null
 
 
@@ -25,6 +26,7 @@ class RNScreensPackage : TurboReactPackage() {
         // Moreover this is called before FabricUIManger has finished initializing, not to mention
         // installing its C++ bindings - so we are safe in terms of creating this helper
         // before RN starts creating shadow nodes.
+        // See https://github.com/software-mansion/react-native-screens/pull/2169
         screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
 
         return listOf<ViewManager<*, *>>(
