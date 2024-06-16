@@ -33,9 +33,7 @@ class JSI_EXPORT RNSScreenState final {
             (Float)data["contentOffsetX"].getDouble(),
             (Float)data["contentOffsetY"].getDouble()}),
         lastKnownHeaderHeight_{previousState.lastKnownHeaderHeight_},
-        headerCorrectionModes_{previousState.headerCorrectionModes_} {
-    LOG(INFO) << "HEY HEY CREATING STATE";
-  };
+        headerCorrectionModes_{previousState.headerCorrectionModes_} {};
 #endif
 
   const Size frameSize{};
