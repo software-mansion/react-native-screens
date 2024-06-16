@@ -7,6 +7,7 @@
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
 #include "RNSScreenShadowNode.h"
+#include "utils/RectUtil.h"
 
 namespace facebook {
 namespace react {
@@ -44,6 +45,27 @@ class RNSScreenComponentDescriptor final
       // We want to leave top offset correction though intact.
       // TODO: In future, when we have dynamic header height we might want to
       // update Y offset correction here.
+
+#ifdef REACT_NATIVE_DEBUG
+      // We use the fact that height correction is disabled once we receive
+      // state from the native, so when we have incoming state & height
+      // correction is still enabled, we know this is the very first native
+      // state update.
+      if (screenShadowNode.getFrameCorrectionModes().check(
+              FrameCorrectionModes::Mode::FrameHeightCorrection) &&
+          compareFrameSizes(
+              screenShadowNode.layoutMetrics_.frame.size,
+              stateData.frameSize)) {
+        LOG(ERROR)
+            << "[RNScreens] The first frame received from state update: "
+            << stateData.frameSize.width << "x" << stateData.frameSize.height
+            << " differs from the one expected: "
+            << screenShadowNode.layoutMetrics_.frame.size.width << "x"
+            << screenShadowNode.layoutMetrics_.frame.size.height
+            << ". This is most likely a react-native-screens library bug. Please report this at https://github.com/software-mansion/react-native-screens/issues";
+      }
+#endif
+
       screenShadowNode.setPadding({0, 0, 0, 0});
       screenShadowNode.getFrameCorrectionModes().unset(
           FrameCorrectionModes::Mode::FrameHeightCorrection);
