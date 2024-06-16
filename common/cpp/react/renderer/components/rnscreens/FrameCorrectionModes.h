@@ -2,11 +2,13 @@
 
 #include <cstdint>
 
+namespace rnscreens {
+
 /**
  * Flags describing types of corrections to apply to Screen frame
  * after layout process.
  */
-class HeaderCorrectionModes final {
+class FrameCorrectionModes final {
  public:
   enum Mode : std::uint8_t {
     /**
@@ -45,3 +47,5 @@ class HeaderCorrectionModes final {
  private:
   Mode modes_{Mode::None};
 };
+
+} // namespace rnscreens

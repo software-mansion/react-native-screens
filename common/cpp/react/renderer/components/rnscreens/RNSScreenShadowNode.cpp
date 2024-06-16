@@ -4,6 +4,7 @@ namespace facebook {
 namespace react {
 
 namespace yoga = facebook::yoga;
+using namespace rnscreens;
 
 extern const char RNSScreenComponentName[] = "RNSScreen";
 
@@ -36,19 +37,18 @@ void RNSScreenShadowNode::applyFrameCorrections() {
   const auto &headerCorrectionModes = stateData.getHeaderCorrectionModes();
   layoutMetrics_.frame.origin.y += lastKnownHeaderHeight *
       headerCorrectionModes.check(
-          HeaderCorrectionModes::Mode::FrameOriginCorrection);
+          FrameCorrectionModes::Mode::FrameOriginCorrection);
   layoutMetrics_.frame.size.height -= lastKnownHeaderHeight *
       headerCorrectionModes.check(
-          HeaderCorrectionModes::Mode::FrameHeightCorrection);
+          FrameCorrectionModes::Mode::FrameHeightCorrection);
 }
 
 void RNSScreenShadowNode::setHeaderHeight(float headerHeight) {
-  ensureUnsealed();
   getStateDataMutable().setHeaderHeight(headerHeight);
 }
 
-HeaderCorrectionModes &RNSScreenShadowNode::getHeaderCorrectionModes() {
-  return getStateDataMutable().getHeaderCorrectionModes();
+FrameCorrectionModes &RNSScreenShadowNode::getFrameCorrectionModes() {
+  return getStateDataMutable().getFrameCorrectionModes();
 }
 
 RNSScreenShadowNode::StateData &RNSScreenShadowNode::getStateDataMutable() {

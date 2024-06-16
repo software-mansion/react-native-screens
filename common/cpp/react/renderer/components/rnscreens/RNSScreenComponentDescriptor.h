@@ -11,6 +11,8 @@
 namespace facebook {
 namespace react {
 
+using namespace rnscreens;
+
 class RNSScreenComponentDescriptor final
     : public ConcreteComponentDescriptor<RNSScreenShadowNode> {
  public:
@@ -43,8 +45,8 @@ class RNSScreenComponentDescriptor final
       // TODO: In future, when we have dynamic header height we might want to
       // update Y offset correction here.
       screenShadowNode.setPadding({0, 0, 0, 0});
-      screenShadowNode.getHeaderCorrectionModes().unset(
-          HeaderCorrectionModes::Mode::FrameHeightCorrection);
+      screenShadowNode.getFrameCorrectionModes().unset(
+          FrameCorrectionModes::Mode::FrameHeightCorrection);
 
       layoutableShadowNode.setSize(
           Size{stateData.frameSize.width, stateData.frameSize.height});
@@ -71,10 +73,9 @@ class RNSScreenComponentDescriptor final
 
       screenShadowNode.setPadding({0, 0, 0, headerHeight});
       screenShadowNode.setHeaderHeight(headerHeight);
-      screenShadowNode.getHeaderCorrectionModes().set(
-          HeaderCorrectionModes::Mode(
-              HeaderCorrectionModes::Mode::FrameHeightCorrection |
-              HeaderCorrectionModes::Mode::FrameOriginCorrection));
+      screenShadowNode.getFrameCorrectionModes().set(FrameCorrectionModes::Mode(
+          FrameCorrectionModes::Mode::FrameHeightCorrection |
+          FrameCorrectionModes::Mode::FrameOriginCorrection));
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {

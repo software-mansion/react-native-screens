@@ -5,11 +5,13 @@
 #include <react/renderer/components/rnscreens/Props.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
-#include "HeaderCorrectionModes.h"
+#include "FrameCorrectionModes.h"
 #include "RNSScreenState.h"
 
 namespace facebook {
 namespace react {
+
+using namespace rnscreens;
 
 JSI_EXPORT extern const char RNSScreenComponentName[];
 
@@ -32,7 +34,7 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 
   void setHeaderHeight(float headerHeight);
 
-  HeaderCorrectionModes &getHeaderCorrectionModes();
+  FrameCorrectionModes &getFrameCorrectionModes();
 
  private:
 #ifdef ANDROID

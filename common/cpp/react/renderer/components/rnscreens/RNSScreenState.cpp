@@ -3,6 +3,8 @@
 namespace facebook {
 namespace react {
 
+using namespace rnscreens;
+
 #ifdef ANDROID
 folly::dynamic RNSScreenState::getDynamic() const {
   return folly::dynamic::object("frameWidth", frameSize.width)(
@@ -18,11 +20,11 @@ float RNSScreenState::getLastKnownHeaderHeight() const noexcept {
   return lastKnownHeaderHeight_;
 }
 
-HeaderCorrectionModes &RNSScreenState::getHeaderCorrectionModes() noexcept {
+FrameCorrectionModes &RNSScreenState::getFrameCorrectionModes() noexcept {
   return headerCorrectionModes_;
 }
 
-const HeaderCorrectionModes &RNSScreenState::getHeaderCorrectionModes()
+const FrameCorrectionModes &RNSScreenState::getHeaderCorrectionModes()
     const noexcept {
   return headerCorrectionModes_;
 }
