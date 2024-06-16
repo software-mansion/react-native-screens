@@ -3,6 +3,30 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 @implementation RNSConvert
 
++ (UISemanticContentAttribute)UISemanticContentAttributeFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigDirection)direction
+{
+  switch (direction) {
+    case react::RNSScreenStackHeaderConfigDirection::Rtl:
+      return UISemanticContentAttributeForceRightToLeft;
+    case react::RNSScreenStackHeaderConfigDirection::Ltr:
+      return UISemanticContentAttributeForceLeftToRight;
+  }
+}
+
++ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayModeFromCppEquivalent:
+    (react::RNSScreenStackHeaderConfigBackButtonDisplayMode)backButtonDisplayMode
+{
+  switch (backButtonDisplayMode) {
+    case react::RNSScreenStackHeaderConfigBackButtonDisplayMode::Default:
+      return UINavigationItemBackButtonDisplayModeDefault;
+    case react::RNSScreenStackHeaderConfigBackButtonDisplayMode::Generic:
+      return UINavigationItemBackButtonDisplayModeGeneric;
+    case react::RNSScreenStackHeaderConfigBackButtonDisplayMode::Minimal:
+      return UINavigationItemBackButtonDisplayModeMinimal;
+  }
+}
+
 + (RNSScreenStackPresentation)RNSScreenStackPresentationFromCppEquivalent:
     (react::RNSScreenStackPresentation)stackPresentation
 {

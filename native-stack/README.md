@@ -79,6 +79,13 @@ String that applies `rtl` or `ltr` form to the stack. On Android, you have to ad
 
 Boolean indicating whether to show the menu on longPress of iOS >= 14 back button.
 
+#### `backButtonDisplayMode` (iOS only)
+
+Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of:  `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+- `default` – show given back button previous controller title, system generic or just icon based on available space
+- `generic` – show given system generic or just icon based on available space
+- `minimal` – show just an icon
+
 #### `fullScreenSwipeEnabled` (iOS only)
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.

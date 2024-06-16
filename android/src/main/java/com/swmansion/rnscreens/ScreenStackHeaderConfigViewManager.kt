@@ -201,4 +201,8 @@ class ScreenStackHeaderConfigViewManager : ViewGroupManager<ScreenStackHeaderCon
     override fun setDisableBackButtonMenu(view: ScreenStackHeaderConfig?, value: Boolean) {
         logNotAvailable("disableBackButtonMenu")
     }
+
+    override fun setBackButtonDisplayMode(view: ScreenStackHeaderConfig?, value: String?) {
+        logNotAvailable("backButtonDisplayMode")
+    }
 }

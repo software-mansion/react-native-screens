@@ -13,6 +13,6 @@ class SearchBarBlurEvent(surfaceId: Int, viewId: Int) : Event<SearchBarBlurEvent
     override fun getEventData(): WritableMap? = Arguments.createMap()
 
     companion object {
-        const val EVENT_NAME = "topBlur"
+        const val EVENT_NAME = "topSearchBlur"
     }
 }

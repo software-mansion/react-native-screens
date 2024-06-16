@@ -310,6 +310,20 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
             fragmentWrapper?.let { ScreenWindowTraits.setNavigationBarColor(this, it.tryGetActivity()) }
         }
 
+    var isNavigationBarTranslucent: Boolean? = null
+        set(navigationBarTranslucent) {
+            if (navigationBarTranslucent != null) {
+                ScreenWindowTraits.applyDidSetNavigationBarAppearance()
+            }
+            field = navigationBarTranslucent
+            fragmentWrapper?.let {
+                ScreenWindowTraits.setNavigationBarTranslucent(
+                    this,
+                    it.tryGetActivity(),
+                )
+            }
+        }
+
     var isNavigationBarHidden: Boolean? = null
         set(navigationBarHidden) {
             if (navigationBarHidden != null) {
@@ -397,6 +411,7 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
         HIDDEN,
         ANIMATED,
         NAVIGATION_BAR_COLOR,
+        NAVIGATION_BAR_TRANSLUCENT,
         NAVIGATION_BAR_HIDDEN,
     }
 

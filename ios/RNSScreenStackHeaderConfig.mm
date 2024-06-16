@@ -19,6 +19,7 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
+#import "RNSConvert.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
@@ -513,6 +514,13 @@ namespace react = facebook::react;
 
   auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
+  if (@available(iOS 14.0, *)) {
+    prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
+  }
+#endif
+
   if (config.isBackTitleVisible) {
     if ((config.backTitleFontFamily &&
          // While being used by react-navigation, the `backTitleFontFamily` will
@@ -786,11 +794,6 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 }
 
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
-}
-
 - (NSNumber *)getFontSizePropValue:(int)value
 {
   if (value > 0)
@@ -798,14 +801,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   return nil;
 }
 
-- (UISemanticContentAttribute)getDirectionPropValue:(react::RNSScreenStackHeaderConfigDirection)direction
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  switch (direction) {
-    case react::RNSScreenStackHeaderConfigDirection::Rtl:
-      return UISemanticContentAttributeForceRightToLeft;
-    case react::RNSScreenStackHeaderConfigDirection::Ltr:
-      return UISemanticContentAttributeForceLeftToRight;
-  }
+  return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
@@ -852,9 +850,11 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
   _hideBackButton = newScreenProps.hideBackButton;
   _disableBackButtonMenu = newScreenProps.disableBackButtonMenu;
+  _backButtonDisplayMode =
+      [RNSConvert UINavigationItemBackButtonDisplayModeFromCppEquivalent:newScreenProps.backButtonDisplayMode];
 
   if (newScreenProps.direction != oldScreenProps.direction) {
-    _direction = [self getDirectionPropValue:newScreenProps.direction];
+    _direction = [RNSConvert UISemanticContentAttributeFromCppEquivalent:newScreenProps.direction];
   }
 
   _backTitleVisible = newScreenProps.backTitleVisible;
@@ -945,8 +945,8 @@ RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
-// `hidden` is an UIView property, we need to use different name internally
-RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
+RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @end
@@ -1000,6 +1000,16 @@ RCT_ENUM_CONVERTER(
       @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
     }),
     UISemanticContentAttributeUnspecified,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    UINavigationItemBackButtonDisplayMode,
+    (@{
+      @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
+      @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
+      @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
+    }),
+    UINavigationItemBackButtonDisplayModeDefault,
     integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)

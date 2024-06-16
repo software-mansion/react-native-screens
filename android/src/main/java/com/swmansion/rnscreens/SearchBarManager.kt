@@ -1,12 +1,15 @@
 package com.swmansion.rnscreens
 
+import android.util.Log
 import com.facebook.react.bridge.JSApplicationIllegalArgumentException
-import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.facebook.react.viewmanagers.RNSSearchBarManagerDelegate
+import com.facebook.react.viewmanagers.RNSSearchBarManagerInterface
 import com.swmansion.rnscreens.events.SearchBarBlurEvent
 import com.swmansion.rnscreens.events.SearchBarChangeTextEvent
 import com.swmansion.rnscreens.events.SearchBarCloseEvent
@@ -15,7 +18,17 @@ import com.swmansion.rnscreens.events.SearchBarOpenEvent
 import com.swmansion.rnscreens.events.SearchBarSearchButtonPressEvent
 
 @ReactModule(name = SearchBarManager.REACT_CLASS)
-class SearchBarManager : ViewGroupManager<SearchBarView>() {
+class SearchBarManager : ViewGroupManager<SearchBarView>(), RNSSearchBarManagerInterface<SearchBarView> {
+    private val delegate: ViewManagerDelegate<SearchBarView>
+
+    init {
+        delegate = RNSSearchBarManagerDelegate<SearchBarView, SearchBarManager>(this)
+    }
+
+    protected override fun getDelegate(): ViewManagerDelegate<SearchBarView> {
+        return delegate
+    }
+
     override fun getName(): String {
         return REACT_CLASS
     }
@@ -30,7 +43,7 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
     }
 
     @ReactProp(name = "autoCapitalize")
-    fun setAutoCapitalize(view: SearchBarView, autoCapitalize: String?) {
+    override fun setAutoCapitalize(view: SearchBarView, autoCapitalize: String?) {
         view.autoCapitalize = when (autoCapitalize) {
             null, "none" -> SearchBarView.SearchBarAutoCapitalize.NONE
             "words" -> SearchBarView.SearchBarAutoCapitalize.WORDS
@@ -48,17 +61,17 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
     }
 
     @ReactProp(name = "barTintColor", customType = "Color")
-    fun setTintColor(view: SearchBarView, color: Int?) {
+    override fun setBarTintColor(view: SearchBarView, color: Int?) {
         view.tintColor = color
     }
 
     @ReactProp(name = "disableBackButtonOverride")
-    fun setDisableBackButtonOverride(view: SearchBarView, disableBackButtonOverride: Boolean?) {
+    override fun setDisableBackButtonOverride(view: SearchBarView, disableBackButtonOverride: Boolean) {
         view.shouldOverrideBackButton = disableBackButtonOverride != true
     }
 
     @ReactProp(name = "inputType")
-    fun setInputType(view: SearchBarView, inputType: String?) {
+    override fun setInputType(view: SearchBarView, inputType: String?) {
         view.inputType = when (inputType) {
             null, "text" -> SearchBarView.SearchBarInputTypes.TEXT
             "phone" -> SearchBarView.SearchBarInputTypes.PHONE
@@ -71,56 +84,42 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
     }
 
     @ReactProp(name = "placeholder")
-    fun setPlaceholder(view: SearchBarView, placeholder: String?) {
+    override fun setPlaceholder(view: SearchBarView, placeholder: String?) {
         if (placeholder != null) {
             view.placeholder = placeholder
         }
     }
 
     @ReactProp(name = "textColor", customType = "Color")
-    fun setTextColor(view: SearchBarView, color: Int?) {
+    override fun setTextColor(view: SearchBarView, color: Int?) {
         view.textColor = color
     }
 
     @ReactProp(name = "headerIconColor", customType = "Color")
-    fun setHeaderIconColor(view: SearchBarView, color: Int?) {
+    override fun setHeaderIconColor(view: SearchBarView, color: Int?) {
         view.headerIconColor = color
     }
 
     @ReactProp(name = "hintTextColor", customType = "Color")
-    fun setHintTextColor(view: SearchBarView, color: Int?) {
+    override fun setHintTextColor(view: SearchBarView, color: Int?) {
         view.hintTextColor = color
     }
 
     @ReactProp(name = "shouldShowHintSearchIcon")
-    fun setShouldShowHintSearchIcon(view: SearchBarView, shouldShowHintSearchIcon: Boolean?) {
+    override fun setShouldShowHintSearchIcon(view: SearchBarView, shouldShowHintSearchIcon: Boolean) {
         view.shouldShowHintSearchIcon = shouldShowHintSearchIcon ?: true
-    }
-
-    fun setPlacement(view: SearchBarView, placeholder: String?) = Unit
-
-    override fun receiveCommand(root: SearchBarView, commandId: String?, args: ReadableArray?) {
-        when (commandId) {
-            "focus" -> root.handleFocusJsRequest()
-            "blur" -> root.handleBlurJsRequest()
-            "clearText" -> root.handleClearTextJsRequest()
-            "toggleCancelButton" -> root.handleToggleCancelButtonJsRequest(false) // just a dummy argument
-            "setText" -> root.handleSetTextJsRequest(args?.getString(0))
-            "cancelSearch" -> root.handleCancelSearchJsRequest()
-            else -> throw JSApplicationIllegalArgumentException("Unsupported native command received: $commandId")
-        }
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
         return MapBuilder.of(
             SearchBarBlurEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onBlur"),
+            MapBuilder.of("registrationName", "onSearchBlur"),
             SearchBarChangeTextEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onChangeText"),
             SearchBarCloseEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onClose"),
             SearchBarFocusEvent.EVENT_NAME,
-            MapBuilder.of("registrationName", "onFocus"),
+            MapBuilder.of("registrationName", "onSearchFocus"),
             SearchBarOpenEvent.EVENT_NAME,
             MapBuilder.of("registrationName", "onOpen"),
             SearchBarSearchButtonPressEvent.EVENT_NAME,
@@ -130,5 +129,61 @@ class SearchBarManager : ViewGroupManager<SearchBarView>() {
 
     companion object {
         const val REACT_CLASS = "RNSSearchBar"
+    }
+
+    private fun logNotAvailable(propName: String) {
+        Log.w("RN SCREENS", "$propName prop is not available on Android")
+    }
+
+    // NativeCommands
+
+    override fun blur(view: SearchBarView?) {
+        view?.handleBlurJsRequest()
+    }
+
+    override fun focus(view: SearchBarView?) {
+        view?.handleFocusJsRequest()
+    }
+
+    override fun clearText(view: SearchBarView?) {
+        view?.handleClearTextJsRequest()
+    }
+
+    override fun toggleCancelButton(view: SearchBarView?, flag: Boolean) {
+        view?.handleToggleCancelButtonJsRequest(flag)
+    }
+
+    override fun setText(view: SearchBarView?, text: String?) {
+        view?.handleSetTextJsRequest(text)
+    }
+
+    override fun cancelSearch(view: SearchBarView?) {
+        view?.handleFocusJsRequest()
+    }
+
+    // iOS only
+
+    override fun setPlacement(view: SearchBarView, placeholder: String?) {
+        logNotAvailable("setPlacement")
+    }
+
+    override fun setHideWhenScrolling(view: SearchBarView?, value: Boolean) {
+        logNotAvailable("hideWhenScrolling")
+    }
+
+    override fun setObscureBackground(view: SearchBarView?, value: Boolean) {
+        logNotAvailable("hideNavigationBar")
+    }
+
+    override fun setHideNavigationBar(view: SearchBarView?, value: Boolean) {
+        logNotAvailable("hideNavigationBar")
+    }
+
+    override fun setCancelButtonText(view: SearchBarView?, value: String?) {
+        logNotAvailable("cancelButtonText")
+    }
+
+    override fun setTintColor(view: SearchBarView?, value: Int?) {
+        logNotAvailable("tintColor")
     }
 }
