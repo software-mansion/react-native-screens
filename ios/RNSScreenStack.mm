@@ -272,11 +272,7 @@ namespace react = facebook::react;
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
-#ifdef RCT_NEW_ARCH_ENABLED
   BOOL isScreenReadyForShowing = self.window;
-#else
-  BOOL isScreenReadyForShowing = self.window && _hasLayout;
-#endif
   if (!isScreenReadyForShowing && !wasScreenMounted) {
     // We wait with adding to parent controller until the stack is mounted and has its initial
     // layout done.
@@ -1213,13 +1209,13 @@ namespace react = facebook::react;
 
 - (void)invalidate
 {
-  _invalidated = YES;
-  for (UIViewController *controller in _presentedModals) {
-    [controller dismissViewControllerAnimated:NO completion:nil];
-  }
-  [_presentedModals removeAllObjects];
-  [_controller willMoveToParentViewController:nil];
-  [_controller removeFromParentViewController];
+  //  _invalidated = YES;
+  //  for (UIViewController *controller in _presentedModals) {
+  //    [controller dismissViewControllerAnimated:NO completion:nil];
+  //  }
+  //  [_presentedModals removeAllObjects];
+  //  [_controller willMoveToParentViewController:nil];
+  //  [_controller removeFromParentViewController];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
