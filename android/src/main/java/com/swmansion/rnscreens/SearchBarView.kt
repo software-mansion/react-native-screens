@@ -16,7 +16,9 @@ import com.swmansion.rnscreens.events.SearchBarOpenEvent
 import com.swmansion.rnscreens.events.SearchBarSearchButtonPressEvent
 
 @SuppressLint("ViewConstructor")
-class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) {
+class SearchBarView(
+    reactContext: ReactContext?,
+) : ReactViewGroup(reactContext) {
     var inputType: SearchBarInputTypes = SearchBarInputTypes.TEXT
     var autoCapitalize: SearchBarAutoCapitalize = SearchBarAutoCapitalize.NONE
     var textColor: Int? = null
@@ -71,8 +73,10 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
         super.onAttachedToWindow()
 
         screenStackFragment?.onSearchViewCreate = { newSearchView ->
-            if (searchViewFormatter == null) searchViewFormatter =
-                SearchViewFormatter(newSearchView)
+            if (searchViewFormatter == null) {
+                searchViewFormatter =
+                    SearchViewFormatter(newSearchView)
+            }
             setSearchViewProps()
             if (autoFocus) {
                 screenStackFragment?.searchView?.focus()
@@ -81,17 +85,19 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     }
 
     private fun setSearchViewListeners(searchView: SearchView) {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(newText: String?): Boolean {
-                handleTextChange(newText)
-                return true
-            }
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    handleTextChange(newText)
+                    return true
+                }
 
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                handleTextSubmit(query)
-                return true
-            }
-        })
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    handleTextSubmit(query)
+                    return true
+                }
+            },
+        )
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             handleFocusChange(hasFocus)
         }
@@ -157,15 +163,19 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
     private fun setToolbarElementsVisibility(visibility: Int) {
         for (i in 0..(headerConfig?.configSubviewsCount?.minus(1) ?: 0)) {
             val subview = headerConfig?.getConfigSubview(i)
-            if (subview?.type != ScreenStackHeaderSubview.Type.SEARCH_BAR)
+            if (subview?.type != ScreenStackHeaderSubview.Type.SEARCH_BAR) {
                 subview?.visibility = visibility
+            }
         }
     }
 
     private val surfaceId = UIManagerHelper.getSurfaceId(this)
 
     enum class SearchBarAutoCapitalize {
-        NONE, WORDS, SENTENCES, CHARACTERS
+        NONE,
+        WORDS,
+        SENTENCES,
+        CHARACTERS,
     }
 
     enum class SearchBarInputTypes {
@@ -179,17 +189,14 @@ class SearchBarView(reactContext: ReactContext?) : ReactViewGroup(reactContext) 
                 }
         },
         PHONE {
-            override fun toAndroidInputType(capitalize: SearchBarAutoCapitalize) =
-                InputType.TYPE_CLASS_PHONE
+            override fun toAndroidInputType(capitalize: SearchBarAutoCapitalize) = InputType.TYPE_CLASS_PHONE
         },
         NUMBER {
-            override fun toAndroidInputType(capitalize: SearchBarAutoCapitalize) =
-                InputType.TYPE_CLASS_NUMBER
+            override fun toAndroidInputType(capitalize: SearchBarAutoCapitalize) = InputType.TYPE_CLASS_NUMBER
         },
         EMAIL {
-            override fun toAndroidInputType(capitalize: SearchBarAutoCapitalize) =
-                InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-        };
+            override fun toAndroidInputType(capitalize: SearchBarAutoCapitalize) = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        }, ;
 
         abstract fun toAndroidInputType(capitalize: SearchBarAutoCapitalize): Int
     }
