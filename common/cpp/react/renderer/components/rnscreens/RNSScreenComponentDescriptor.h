@@ -81,6 +81,7 @@ class RNSScreenComponentDescriptor final
       bool headerHidden = true;
 
       // During creation of the shadow node children are not attached yet.
+      // We also do not want to set any padding in case
       if (headerConfigChildOpt) {
         const auto &headerConfigChild = headerConfigChildOpt->get();
         const auto &headerProps =
@@ -88,16 +89,16 @@ class RNSScreenComponentDescriptor final
                 headerConfigChild->getProps());
         fontSize = headerProps.titleFontSize;
         headerHidden = headerProps.hidden;
+        const auto headerHeight =
+            headerHidden ? 0.f : findHeaderHeight(fontSize).value_or(0.f);
+
+        screenShadowNode.setPadding({0, 0, 0, headerHeight});
+        screenShadowNode.setHeaderHeight(headerHeight);
+        screenShadowNode.getFrameCorrectionModes().set(
+            FrameCorrectionModes::Mode(
+                FrameCorrectionModes::Mode::FrameHeightCorrection |
+                FrameCorrectionModes::Mode::FrameOriginCorrection));
       }
-
-      const auto headerHeight =
-          headerHidden ? 0.f : findHeaderHeight(fontSize).value_or(0.f);
-
-      screenShadowNode.setPadding({0, 0, 0, headerHeight});
-      screenShadowNode.setHeaderHeight(headerHeight);
-      screenShadowNode.getFrameCorrectionModes().set(FrameCorrectionModes::Mode(
-          FrameCorrectionModes::Mode::FrameHeightCorrection |
-          FrameCorrectionModes::Mode::FrameOriginCorrection));
     }
 #else
     if (stateData.frameSize.width != 0 && stateData.frameSize.height != 0) {
