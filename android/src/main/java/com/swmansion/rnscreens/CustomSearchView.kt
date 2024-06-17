@@ -1,10 +1,12 @@
 package com.swmansion.rnscreens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 
+@SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class CustomSearchView(context: Context, fragment: Fragment) : SearchView(context) {
     /*
         CustomSearchView uses some variables from SearchView. They are listed below with links to documentation
