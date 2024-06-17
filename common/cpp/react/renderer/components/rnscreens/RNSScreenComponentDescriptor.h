@@ -22,8 +22,6 @@ class RNSScreenComponentDescriptor final
   static constexpr const char *kScreenDummyLayoutHelperClass =
       "com/swmansion/rnscreens/utils/ScreenDummyLayoutHelper";
 
-  static constexpr const int kFontSizeUnset = -1;
-
   void adopt(ShadowNode &shadowNode) const override {
     react_native_assert(dynamic_cast<RNSScreenShadowNode *>(&shadowNode));
     auto &screenShadowNode = static_cast<RNSScreenShadowNode &>(shadowNode);
@@ -77,20 +75,20 @@ class RNSScreenComponentDescriptor final
       // layout(s), when we haven't received state update from JVM side yet.
 
       auto headerConfigChildOpt = findHeaderConfigChild(layoutableShadowNode);
-      int fontSize = kFontSizeUnset;
-      bool headerHidden = true;
 
       // During creation of the shadow node children are not attached yet.
-      // We also do not want to set any padding in case
+      // We also do not want to set any padding in case.
       if (headerConfigChildOpt) {
         const auto &headerConfigChild = headerConfigChildOpt->get();
         const auto &headerProps =
             *std::static_pointer_cast<const RNSScreenStackHeaderConfigProps>(
                 headerConfigChild->getProps());
-        fontSize = headerProps.titleFontSize;
-        headerHidden = headerProps.hidden;
-        const auto headerHeight =
-            headerHidden ? 0.f : findHeaderHeight(fontSize).value_or(0.f);
+
+        const auto headerHeight = headerProps.hidden
+            ? 0.f
+            : findHeaderHeight(
+                  headerProps.titleFontSize, headerProps.title.empty())
+                  .value_or(0.f);
 
         screenShadowNode.setPadding({0, 0, 0, headerHeight});
         screenShadowNode.setHeaderHeight(headerHeight);
@@ -122,7 +120,9 @@ class RNSScreenComponentDescriptor final
   }
 
 #ifdef ANDROID
-  std::optional<float> findHeaderHeight(const int fontSize) const {
+  std::optional<float> findHeaderHeight(
+      const int fontSize,
+      const bool isTitleEmpty) const {
     JNIEnv *env = facebook::jni::Environment::current();
 
     if (env == nullptr) {
@@ -139,7 +139,7 @@ class RNSScreenComponentDescriptor final
     }
 
     jmethodID computeDummyLayoutID =
-        env->GetMethodID(layoutHelperClass, "computeDummyLayout", "(I)F");
+        env->GetMethodID(layoutHelperClass, "computeDummyLayout", "(IZ)F");
 
     if (computeDummyLayoutID == nullptr) {
       LOG(ERROR)
@@ -166,8 +166,8 @@ class RNSScreenComponentDescriptor final
       return {};
     }
 
-    jfloat headerHeight =
-        env->CallFloatMethod(packageInstance, computeDummyLayoutID, fontSize);
+    jfloat headerHeight = env->CallFloatMethod(
+        packageInstance, computeDummyLayoutID, fontSize, isTitleEmpty);
 
     return {headerHeight};
   }

@@ -11,7 +11,6 @@ import com.google.android.material.appbar.AppBarLayout
 import com.swmansion.rnscreens.ScreenStackHeaderConfig
 import java.lang.ref.WeakReference
 
-
 /**
  * This class provides methods to create dummy layout (that mimics Screen setup), and to compute
  * expected header height. It is meant to be accessed from C++ layer via JNI.
@@ -26,9 +25,10 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
     private lateinit var dummyContentView: View
     private lateinit var toolbar: Toolbar
     private var defaultFontSize: Float = 0f
+    private var defaultContentInsetStartWithNavigation: Int = 0
 
     // LRU with size 1
-    private var cache: HeaderHeightCacheEntry = HeaderHeightCacheEntry.EMPTY
+    private var cache: CacheEntry = CacheEntry.EMPTY
 
     // We do not want to be responsible for the context lifecycle. If it's null, we're fine.
     // This same context is being passed down to our view components so it is destroyed
@@ -49,7 +49,6 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
         WEAK_INSTANCE = WeakReference(this)
         ensureDummyLayoutWithHeader(reactContext)
     }
-
 
     /**
      * Initializes dummy view hierarchy with CoordinatorLayout, AppBarLayout and dummy View.
@@ -75,7 +74,7 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
         }
 
         toolbar = Toolbar(contextWithTheme).apply {
-            title = "FontSize123!#$"
+            title = DEFAULT_HEADER_TITLE
             layoutParams = AppBarLayout.LayoutParams(
                 AppBarLayout.LayoutParams.MATCH_PARENT,
                 AppBarLayout.LayoutParams.WRAP_CONTENT
@@ -84,6 +83,7 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
 
         // We know the title text view will be there, cause we've just set title.
         defaultFontSize = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)!!.textSize
+        defaultContentInsetStartWithNavigation = toolbar.contentInsetStartWithNavigation
 
         appBarLayout.addView(toolbar)
 
@@ -107,13 +107,13 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
      * @param fontSize font size value as passed from JS
      * @return header height in dp as consumed by Yoga
      */
-    private fun computeDummyLayout(fontSize: Int): Float {
+    private fun computeDummyLayout(fontSize: Int, isTitleEmpty: Boolean): Float {
         if (!::coordinatorLayout.isInitialized) {
             Log.e(TAG, "[RNScreens] Attempt to access dummy view hierarchy before it is initialized")
             return 0.0f
         }
 
-        if (cache.hasKey(fontSize)) {
+        if (cache.hasKey(CacheKey(fontSize, isTitleEmpty))) {
             return cache.headerHeight
         }
 
@@ -127,6 +127,14 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
         val widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(decorViewWidth, View.MeasureSpec.EXACTLY)
         val heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(decorViewHeight, View.MeasureSpec.EXACTLY)
 
+        if (isTitleEmpty) {
+            toolbar.title = ""
+            toolbar.contentInsetStartWithNavigation = 0
+        } else {
+            toolbar.title = DEFAULT_HEADER_TITLE
+            toolbar.contentInsetStartWithNavigation = defaultContentInsetStartWithNavigation
+        }
+
         val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)
         textView?.textSize = if (fontSize != FONT_SIZE_UNSET) fontSize.toFloat() else defaultFontSize
 
@@ -137,7 +145,7 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
         coordinatorLayout.layout(0, 0, decorViewWidth, decorViewHeight)
 
         val headerHeight = PixelUtil.toDIPFromPixel(appBarLayout.height.toFloat())
-        cache = HeaderHeightCacheEntry(fontSize, headerHeight)
+        cache = CacheEntry(CacheKey(fontSize, isTitleEmpty), headerHeight)
         return headerHeight
     }
 
@@ -156,6 +164,8 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
 
         const val FONT_SIZE_UNSET = -1
 
+        private const val DEFAULT_HEADER_TITLE: String = "FontSize123!#$"
+
         // We access this field from C++ layer, through `getInstance` method.
         // We don't care what instance we get access to as long as it has initialized
         // dummy view hierarchy.
@@ -168,10 +178,12 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
     }
 }
 
-private class HeaderHeightCacheEntry(val cacheKey: Int, val headerHeight: Float) {
-    fun hasKey(key: Int) = cacheKey == key
+private data class CacheKey(val fontSize: Int, val isTitleEmpty: Boolean)
+
+private class CacheEntry(val cacheKey: CacheKey, val headerHeight: Float) {
+    fun hasKey(key: CacheKey) = cacheKey.fontSize != Int.MIN_VALUE && cacheKey == key
 
     companion object {
-        val EMPTY = HeaderHeightCacheEntry(Int.MIN_VALUE, 0f)
+        val EMPTY = CacheEntry(CacheKey(Int.MIN_VALUE, false), 0f)
     }
 }
