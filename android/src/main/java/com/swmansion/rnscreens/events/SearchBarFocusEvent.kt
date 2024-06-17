@@ -13,6 +13,6 @@ class SearchBarFocusEvent(surfaceId: Int, viewId: Int) : Event<SearchBarFocusEve
     override fun getEventData(): WritableMap? = Arguments.createMap()
 
     companion object {
-        const val EVENT_NAME = "topFocus"
+        const val EVENT_NAME = "topSearchFocus"
     }
 }
