@@ -1,5 +1,6 @@
 #pragma once
 
+#include <react/renderer/graphics/Float.h>
 #include <react/renderer/graphics/Size.h>
 #include <cmath>
 #include <concepts>
@@ -26,7 +27,7 @@ inline bool equalWithRespectToEps(const T a, const T b, const T eps) {
 inline bool compareFrameSizes(
     const react::Size &first,
     const react::Size &second,
-    float eps = 0.01) {
+    react::Float eps = 0.01) {
   return equalWithRespectToEps(first.width, second.width, eps) &&
       equalWithRespectToEps(first.height, second.height, eps);
 }
