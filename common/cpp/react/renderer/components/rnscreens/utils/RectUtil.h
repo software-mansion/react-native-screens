@@ -12,7 +12,7 @@ namespace react = facebook::react;
 template <typename T>
   requires std::is_floating_point_v<T>
 inline bool equalWithRespectToEps(const T a, const T b, const T eps) {
-  return std::abs(a - b) < eps;
+  return std::abs(a - b) <= eps;
 }
 
 /**
