@@ -1209,13 +1209,13 @@ namespace react = facebook::react;
 
 - (void)invalidate
 {
-  //  _invalidated = YES;
-  //  for (UIViewController *controller in _presentedModals) {
-  //    [controller dismissViewControllerAnimated:NO completion:nil];
-  //  }
-  //  [_presentedModals removeAllObjects];
-  //  [_controller willMoveToParentViewController:nil];
-  //  [_controller removeFromParentViewController];
+  _invalidated = YES;
+  for (UIViewController *controller in _presentedModals) {
+    [controller dismissViewControllerAnimated:NO completion:nil];
+  }
+  [_presentedModals removeAllObjects];
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
