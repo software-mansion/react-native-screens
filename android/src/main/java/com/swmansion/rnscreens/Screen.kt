@@ -18,7 +18,7 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.UIManagerModule
 import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 
-@SuppressLint("ViewConstructor")
+@SuppressLint("ViewConstructor") // Only we construct this view, it is never inflated.
 class Screen(context: ReactContext?) : FabricEnabledViewGroup(context) {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
