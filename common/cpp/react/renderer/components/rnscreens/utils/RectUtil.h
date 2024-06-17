@@ -20,7 +20,8 @@ inline bool equalWithRespectToEps(const T a, const T b, const T eps) {
  *
  * @param first first frame size
  * @param second second frame size
- * @param eps comparison precision
+ * @param eps comparison precision, defaults to 0.01, which should ensure that
+ * precision of comparison is under 1px
  * @return whether the frame dimensions are the same with respect to given
  * epsilon
  */
