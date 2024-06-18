@@ -26,7 +26,7 @@ import com.swmansion.rnscreens.events.HeaderDetachedEvent
 class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
-    var isHeaderHidden = false  // named this way to avoid conflict with platform's isHidden
+    var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
     var isHeaderTranslucent = false // named this way to avoid conflict with platform's isTranslucent
     private var headerTopInset: Int? = null
     private var title: String? = null
@@ -163,7 +163,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             screenFragment?.setToolbar(toolbar)
         }
 
-        if (isTopInsetEnabled && false) {
+        if (isTopInsetEnabled) {
             headerTopInset.let {
                 toolbar.setPadding(0, it ?: 0, 0, 0)
             }
