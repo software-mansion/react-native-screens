@@ -118,7 +118,6 @@ namespace react = facebook::react;
   BOOL _invalidated;
   BOOL _isFullWidthSwiping;
   UIPercentDrivenInteractiveTransition *_interactionController;
-  BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -142,7 +141,6 @@ namespace react = facebook::react;
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
   if (self = [super init]) {
-    _hasLayout = NO;
     _invalidated = NO;
     _manager = manager;
     [self initCommonProps];
@@ -1072,7 +1070,6 @@ namespace react = facebook::react;
   // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
   // ui queue will guarantee that the update will run after layout.
   dispatch_async(dispatch_get_main_queue(), ^{
-    self->_hasLayout = YES;
     [self maybeAddToParentAndUpdateContainer];
   });
 }
