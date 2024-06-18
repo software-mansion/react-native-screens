@@ -7,6 +7,8 @@ import com.facebook.react.module.annotations.ReactModuleList
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.swmansion.rnscreens.utils.ScreenDummyLayoutHelper
+
 
 @ReactModuleList(
     nativeModules = [
@@ -14,8 +16,20 @@ import com.facebook.react.uimanager.ViewManager
     ]
 )
 class RNScreensPackage : TurboReactPackage() {
-    override fun createViewManagers(reactContext: ReactApplicationContext) =
-        listOf<ViewManager<*, *>>(
+    // We just retain it here. This object helps us tackle jumping content when using native header.
+    // See: https://github.com/software-mansion/react-native-screens/pull/2169
+    private var screenDummyLayoutHelper: ScreenDummyLayoutHelper? = null
+
+
+    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
+        // This is the earliest we lay our hands on react context.
+        // Moreover this is called before FabricUIManger has finished initializing, not to mention
+        // installing its C++ bindings - so we are safe in terms of creating this helper
+        // before RN starts creating shadow nodes.
+        // See https://github.com/software-mansion/react-native-screens/pull/2169
+        screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
+
+        return listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
             ScreenViewManager(),
             ModalScreenViewManager(),
@@ -24,6 +38,7 @@ class RNScreensPackage : TurboReactPackage() {
             ScreenStackHeaderSubviewManager(),
             SearchBarManager()
         )
+    }
 
     override fun getModule(
         s: String,
@@ -50,5 +65,9 @@ class RNScreensPackage : TurboReactPackage() {
             )
             moduleInfos
         }
+    }
+
+    companion object {
+        const val TAG = "RNScreensPackage"
     }
 }
