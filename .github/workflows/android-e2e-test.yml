@@ -35,8 +35,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+          cache: 'gradle'
       - name: Use Node.js 18
         uses: actions/setup-node@v4
         with:
@@ -68,7 +67,7 @@ jobs:
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: ${{ env.API_LEVEL }}
-          target: aosp_atd
+          target: default
           profile: pixel_2
           ram-size: '4096M'
           disk-size: '10G'
