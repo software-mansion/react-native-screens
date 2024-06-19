@@ -54,6 +54,10 @@ jobs:
         name: Reinstall node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
+      - name: Install AVD dependencies
+        run: |
+          sudo apt update
+          sudo apt-get install -y libpulse0 libgl1
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
@@ -67,7 +71,7 @@ jobs:
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           api-level: ${{ env.API_LEVEL }}
-          target: default
+          target: aosp_atd
           profile: pixel_2
           ram-size: '4096M'
           disk-size: '10G'
