@@ -3,6 +3,7 @@ package com.swmansion.rnscreens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -122,6 +123,11 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             layoutParams = AppBarLayout.LayoutParams(
                 AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.WRAP_CONTENT
             )
+
+            touchscreenBlocksFocus = false
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                isKeyboardNavigationCluster = false
+            }
         }
 
         view?.addView(appBarLayout)
