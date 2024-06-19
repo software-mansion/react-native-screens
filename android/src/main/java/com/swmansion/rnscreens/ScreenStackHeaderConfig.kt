@@ -23,7 +23,9 @@ import com.facebook.react.views.text.ReactTypefaceUtils
 import com.swmansion.rnscreens.events.HeaderAttachedEvent
 import com.swmansion.rnscreens.events.HeaderDetachedEvent
 
-class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
+class ScreenStackHeaderConfig(
+    context: Context,
+) : ViewGroup(context) {
     private val configSubviews = ArrayList<ScreenStackHeaderSubview>(3)
     val toolbar: CustomToolbar
     var isHeaderHidden = false // named this way to avoid conflict with platform's isHidden
@@ -45,29 +47,36 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
     private var isAttachedToWindow = false
     private val defaultStartInset: Int
     private val defaultStartInsetWithNavigation: Int
-    private val backClickListener = OnClickListener {
-        screenFragment?.let {
-            val stack = screenStack
-            if (stack != null && stack.rootScreen == it.screen) {
-                val parentFragment = it.parentFragment
-                if (parentFragment is ScreenStackFragment) {
-                    if (parentFragment.screen.nativeBackButtonDismissalEnabled) {
-                        parentFragment.dismiss()
-                    } else {
-                        parentFragment.dispatchHeaderBackButtonClickedEvent()
+    private val backClickListener =
+        OnClickListener {
+            screenFragment?.let {
+                val stack = screenStack
+                if (stack != null && stack.rootScreen == it.screen) {
+                    val parentFragment = it.parentFragment
+                    if (parentFragment is ScreenStackFragment) {
+                        if (parentFragment.screen.nativeBackButtonDismissalEnabled) {
+                            parentFragment.dismiss()
+                        } else {
+                            parentFragment.dispatchHeaderBackButtonClickedEvent()
+                        }
                     }
-                }
-            } else {
-                if (it.screen.nativeBackButtonDismissalEnabled) {
-                    it.dismiss()
                 } else {
-                    it.dispatchHeaderBackButtonClickedEvent()
+                    if (it.screen.nativeBackButtonDismissalEnabled) {
+                        it.dismiss()
+                    } else {
+                        it.dispatchHeaderBackButtonClickedEvent()
+                    }
                 }
             }
         }
-    }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
         // no-op
     }
 
@@ -79,18 +88,21 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         super.onAttachedToWindow()
         isAttachedToWindow = true
         val surfaceId = UIManagerHelper.getSurfaceId(this)
-        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+        UIManagerHelper
+            .getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderAttachedEvent(surfaceId, id))
         // we want to save the top inset before the status bar can be hidden, which would resolve in
         // inset being 0
         if (headerTopInset == null) {
-            headerTopInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                rootWindowInsets.getInsets(WindowInsets.Type.systemBars()).top
-            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                rootWindowInsets.systemWindowInsetTop
-            else
-            // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
-                (25 * resources.displayMetrics.density).toInt()
+            headerTopInset =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    rootWindowInsets.getInsets(WindowInsets.Type.systemBars()).top
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    rootWindowInsets.systemWindowInsetTop
+                } else {
+                    // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
+                    (25 * resources.displayMetrics.density).toInt()
+                }
         }
         onUpdate()
     }
@@ -99,7 +111,8 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         super.onDetachedFromWindow()
         isAttachedToWindow = false
         val surfaceId = UIManagerHelper.getSurfaceId(this)
-        UIManagerHelper.getEventDispatcherForReactTag(context as ReactContext, id)
+        UIManagerHelper
+            .getEventDispatcherForReactTag(context as ReactContext, id)
             ?.dispatchEvent(HeaderDetachedEvent(surfaceId, id))
     }
 
@@ -144,11 +157,12 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             // because sometimes we don't have the Fragment and Activity available then yet, e.g. on the
             // first setting of props. Similar thing is done for Screens of ScreenContainers, but in
             // `onContainerUpdate` of their Fragment
-            val reactContext = if (context is ReactContext) {
-                context as ReactContext
-            } else {
-                it.fragmentWrapper?.tryGetContext()
-            }
+            val reactContext =
+                if (context is ReactContext) {
+                    context as ReactContext
+                } else {
+                    it.fragmentWrapper?.tryGetContext()
+                }
             ScreenWindowTraits.trySetWindowTraits(it, activity, reactContext)
         }
 
@@ -187,7 +201,7 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         // hide back button
         actionBar.setDisplayHomeAsUpEnabled(
-            screenFragment?.canNavigateBack() == true && !isBackButtonHidden
+            screenFragment?.canNavigateBack() == true && !isBackButtonHidden,
         )
 
         // when setSupportActionBar is called a toolbar wrapper gets initialized that overwrites
@@ -217,9 +231,14 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
 
         if (titleTextView != null) {
             if (titleFontFamily != null || titleFontWeight > 0) {
-                val titleTypeface = ReactTypefaceUtils.applyStyles(
-                    null, 0, titleFontWeight, titleFontFamily, context.assets
-                )
+                val titleTypeface =
+                    ReactTypefaceUtils.applyStyles(
+                        null,
+                        0,
+                        titleFontWeight,
+                        titleFontFamily,
+                        context.assets,
+                    )
                 titleTextView.typeface = titleTypeface
             }
             if (titleFontSize > 0) {
@@ -250,10 +269,11 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
             if (type === ScreenStackHeaderSubview.Type.BACK) {
                 // we special case BACK button header config type as we don't add it as a view into toolbar
                 // but instead just copy the drawable from imageview that's added as a first child to it.
-                val firstChild = view.getChildAt(0) as? ImageView
-                    ?: throw JSApplicationIllegalArgumentException(
-                        "Back button header config view should have Image as first child"
-                    )
+                val firstChild =
+                    view.getChildAt(0) as? ImageView
+                        ?: throw JSApplicationIllegalArgumentException(
+                            "Back button header config view should have Image as first child",
+                        )
                 actionBar.setHomeAsUpIndicator(firstChild.drawable)
                 i++
                 continue
@@ -304,7 +324,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         maybeUpdate()
     }
 
-    fun addConfigSubview(child: ScreenStackHeaderSubview, index: Int) {
+    fun addConfigSubview(
+        child: ScreenStackHeaderSubview,
+        index: Int,
+    ) {
         configSubviews.add(index, child)
         maybeUpdate()
     }
@@ -365,7 +388,10 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         this.direction = direction
     }
 
-    private class DebugMenuToolbar(context: Context, config: ScreenStackHeaderConfig) : CustomToolbar(context, config) {
+    private class DebugMenuToolbar(
+        context: Context,
+        config: ScreenStackHeaderConfig,
+    ) : CustomToolbar(context, config) {
         override fun showOverflowMenu(): Boolean {
             (context.applicationContext as ReactApplication)
                 .reactNativeHost
