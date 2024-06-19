@@ -74,7 +74,8 @@ class Screen(
             val height = b - t
 
             val headerHeight = calculateHeaderHeight()
-            val totalHeight = headerHeight.first + headerHeight.second // action bar height + status bar height
+            val totalHeight =
+                headerHeight.first + headerHeight.second  // action bar height + status bar height
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 updateScreenSizeFabric(width, height, totalHeight)
             } else {
@@ -187,7 +188,13 @@ class Screen(
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             field = statusBarStyle
-            fragmentWrapper?.let { ScreenWindowTraits.setStyle(this, it.tryGetActivity(), it.tryGetContext()) }
+            fragmentWrapper?.let {
+                ScreenWindowTraits.setStyle(
+                    this,
+                    it.tryGetActivity(),
+                    it.tryGetContext()
+                )
+            }
         }
 
     var isStatusBarHidden: Boolean? = null
@@ -220,7 +227,13 @@ class Screen(
                 ScreenWindowTraits.applyDidSetStatusBarAppearance()
             }
             field = statusBarColor
-            fragmentWrapper?.let { ScreenWindowTraits.setColor(this, it.tryGetActivity(), it.tryGetContext()) }
+            fragmentWrapper?.let {
+                ScreenWindowTraits.setColor(
+                    this,
+                    it.tryGetActivity(),
+                    it.tryGetContext()
+                )
+            }
         }
 
     var navigationBarColor: Int? = null
@@ -229,7 +242,12 @@ class Screen(
                 ScreenWindowTraits.applyDidSetNavigationBarAppearance()
             }
             field = navigationBarColor
-            fragmentWrapper?.let { ScreenWindowTraits.setNavigationBarColor(this, it.tryGetActivity()) }
+            fragmentWrapper?.let {
+                ScreenWindowTraits.setNavigationBarColor(
+                    this,
+                    it.tryGetActivity()
+                )
+            }
         }
 
     var isNavigationBarTranslucent: Boolean? = null
@@ -264,7 +282,8 @@ class Screen(
 
     private fun calculateHeaderHeight(): Pair<Double, Double> {
         val actionBarTv = TypedValue()
-        val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
+        val resolvedActionBarSize =
+            context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
 
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
