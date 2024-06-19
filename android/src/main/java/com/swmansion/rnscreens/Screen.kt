@@ -75,7 +75,7 @@ class Screen(
 
             val headerHeight = calculateHeaderHeight()
             val totalHeight =
-                headerHeight.first + headerHeight.second  // action bar height + status bar height
+                headerHeight.first + headerHeight.second // action bar height + status bar height
             if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
                 updateScreenSizeFabric(width, height, totalHeight)
             } else {
@@ -192,7 +192,7 @@ class Screen(
                 ScreenWindowTraits.setStyle(
                     this,
                     it.tryGetActivity(),
-                    it.tryGetContext()
+                    it.tryGetContext(),
                 )
             }
         }
@@ -231,7 +231,7 @@ class Screen(
                 ScreenWindowTraits.setColor(
                     this,
                     it.tryGetActivity(),
-                    it.tryGetContext()
+                    it.tryGetContext(),
                 )
             }
         }
@@ -245,7 +245,7 @@ class Screen(
             fragmentWrapper?.let {
                 ScreenWindowTraits.setNavigationBarColor(
                     this,
-                    it.tryGetActivity()
+                    it.tryGetActivity(),
                 )
             }
         }

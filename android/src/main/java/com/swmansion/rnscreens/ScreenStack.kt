@@ -192,7 +192,8 @@ class ScreenStack(
             goingForward = shouldUseOpenAnimation
 
             if (shouldUseOpenAnimation &&
-                newTop != null && needsDrawReordering(newTop) &&
+                newTop != null &&
+                needsDrawReordering(newTop) &&
                 visibleBottom == null
             ) {
                 // When using an open animation in which two screens overlap (eg. fade_from_bottom or

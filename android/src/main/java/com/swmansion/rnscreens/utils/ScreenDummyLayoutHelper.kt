@@ -17,7 +17,9 @@ import java.lang.ref.WeakReference
  * See https://github.com/software-mansion/react-native-screens/pull/2169
  * for more detailed description of the issue this code solves.
  */
-internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
+internal class ScreenDummyLayoutHelper(
+    reactContext: ReactApplicationContext,
+) {
     // The state required to compute header dimensions. We want this on instance rather than on class
     // for context access & being tied to instance lifetime.
     private lateinit var coordinatorLayout: CoordinatorLayout
@@ -33,7 +35,8 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
     // We do not want to be responsible for the context lifecycle. If it's null, we're fine.
     // This same context is being passed down to our view components so it is destroyed
     // only if our views also are.
-    private var reactContextRef: WeakReference<ReactApplicationContext> = WeakReference(reactContext)
+    private var reactContextRef: WeakReference<ReactApplicationContext> =
+        WeakReference(reactContext)
 
     init {
 
@@ -46,7 +49,7 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
             Log.w(TAG, "Failed to load $LIBRARY_NAME")
         }
 
-        WEAK_INSTANCE = WeakReference(this)
+        weakInstance = WeakReference(this)
         ensureDummyLayoutWithHeader(reactContext)
     }
 
@@ -66,20 +69,25 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
 
         coordinatorLayout = CoordinatorLayout(contextWithTheme)
 
-        appBarLayout = AppBarLayout(contextWithTheme).apply {
-            layoutParams = CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
-            )
-        }
+        appBarLayout =
+            AppBarLayout(contextWithTheme).apply {
+                layoutParams =
+                    CoordinatorLayout.LayoutParams(
+                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                        CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                    )
+            }
 
-        toolbar = Toolbar(contextWithTheme).apply {
-            title = DEFAULT_HEADER_TITLE
-            layoutParams = AppBarLayout.LayoutParams(
-                AppBarLayout.LayoutParams.MATCH_PARENT,
-                AppBarLayout.LayoutParams.WRAP_CONTENT
-            ).apply { scrollFlags = 0 }
-        }
+        toolbar =
+            Toolbar(contextWithTheme).apply {
+                title = DEFAULT_HEADER_TITLE
+                layoutParams =
+                    AppBarLayout
+                        .LayoutParams(
+                            AppBarLayout.LayoutParams.MATCH_PARENT,
+                            AppBarLayout.LayoutParams.WRAP_CONTENT,
+                        ).apply { scrollFlags = 0 }
+            }
 
         // We know the title text view will be there, cause we've just set title.
         defaultFontSize = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)!!.textSize
@@ -87,12 +95,14 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
 
         appBarLayout.addView(toolbar)
 
-        dummyContentView = View(contextWithTheme).apply {
-            layoutParams = CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                CoordinatorLayout.LayoutParams.MATCH_PARENT
-            )
-        }
+        dummyContentView =
+            View(contextWithTheme).apply {
+                layoutParams =
+                    CoordinatorLayout.LayoutParams(
+                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                    )
+            }
 
         coordinatorLayout.apply {
             addView(appBarLayout)
@@ -107,9 +117,15 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
      * @param fontSize font size value as passed from JS
      * @return header height in dp as consumed by Yoga
      */
-    private fun computeDummyLayout(fontSize: Int, isTitleEmpty: Boolean): Float {
+    private fun computeDummyLayout(
+        fontSize: Int,
+        isTitleEmpty: Boolean,
+    ): Float {
         if (!::coordinatorLayout.isInitialized) {
-            Log.e(TAG, "[RNScreens] Attempt to access dummy view hierarchy before it is initialized")
+            Log.e(
+                TAG,
+                "[RNScreens] Attempt to access dummy view hierarchy before it is initialized",
+            )
             return 0.0f
         }
 
@@ -124,8 +140,10 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
         val decorViewWidth = topLevelDecorView.width
         val decorViewHeight = topLevelDecorView.height
 
-        val widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(decorViewWidth, View.MeasureSpec.EXACTLY)
-        val heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(decorViewHeight, View.MeasureSpec.EXACTLY)
+        val widthMeasureSpec =
+            View.MeasureSpec.makeMeasureSpec(decorViewWidth, View.MeasureSpec.EXACTLY)
+        val heightMeasureSpec =
+            View.MeasureSpec.makeMeasureSpec(decorViewHeight, View.MeasureSpec.EXACTLY)
 
         if (isTitleEmpty) {
             toolbar.title = ""
@@ -136,7 +154,8 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
         }
 
         val textView = ScreenStackHeaderConfig.findTitleTextViewInToolbar(toolbar)
-        textView?.textSize = if (fontSize != FONT_SIZE_UNSET) fontSize.toFloat() else defaultFontSize
+        textView?.textSize =
+            if (fontSize != FONT_SIZE_UNSET) fontSize.toFloat() else defaultFontSize
 
         coordinatorLayout.measure(widthMeasureSpec, heightMeasureSpec)
 
@@ -149,13 +168,15 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
         return headerHeight
     }
 
-    private fun requireReactContext(): ReactApplicationContext {
-        return requireNotNull(reactContextRef.get()) { "[RNScreens] Attempt to require missing react context" }
-    }
+    private fun requireReactContext(): ReactApplicationContext =
+        requireNotNull(reactContextRef.get()) {
+            "[RNScreens] Attempt to require missing react context"
+        }
 
-    private fun requireActivity(): Activity {
-        return requireNotNull(requireReactContext().currentActivity) { "[RNScreens] Attempt to use context detached from activity" }
-    }
+    private fun requireActivity(): Activity =
+        requireNotNull(requireReactContext().currentActivity) {
+            "[RNScreens] Attempt to use context detached from activity"
+        }
 
     companion object {
         const val TAG = "ScreenDummyLayoutHelper"
@@ -169,18 +190,22 @@ internal class ScreenDummyLayoutHelper(reactContext: ReactApplicationContext) {
         // We access this field from C++ layer, through `getInstance` method.
         // We don't care what instance we get access to as long as it has initialized
         // dummy view hierarchy.
-        private var WEAK_INSTANCE = WeakReference<ScreenDummyLayoutHelper>(null)
+        private var weakInstance = WeakReference<ScreenDummyLayoutHelper>(null)
 
         @JvmStatic
-        fun getInstance(): ScreenDummyLayoutHelper? {
-            return WEAK_INSTANCE.get()
-        }
+        fun getInstance(): ScreenDummyLayoutHelper? = weakInstance.get()
     }
 }
 
-private data class CacheKey(val fontSize: Int, val isTitleEmpty: Boolean)
+private data class CacheKey(
+    val fontSize: Int,
+    val isTitleEmpty: Boolean,
+)
 
-private class CacheEntry(val cacheKey: CacheKey, val headerHeight: Float) {
+private class CacheEntry(
+    val cacheKey: CacheKey,
+    val headerHeight: Float,
+) {
     fun hasKey(key: CacheKey) = cacheKey.fontSize != Int.MIN_VALUE && cacheKey == key
 
     companion object {
