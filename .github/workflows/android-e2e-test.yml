@@ -18,7 +18,7 @@ jobs:
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: Example
-      API_LEVEL: 31
+      API_LEVEL: 28
     concurrency:
       group: android-e2e-${{ github.ref }}
       cancel-in-progress: true
