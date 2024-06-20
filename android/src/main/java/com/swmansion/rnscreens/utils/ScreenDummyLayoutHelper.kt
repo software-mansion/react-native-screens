@@ -8,6 +8,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.PixelUtil
 import com.google.android.material.appbar.AppBarLayout
+import com.swmansion.rnscreens.BuildConfig
 import com.swmansion.rnscreens.ScreenStackHeaderConfig
 import java.lang.ref.WeakReference
 
