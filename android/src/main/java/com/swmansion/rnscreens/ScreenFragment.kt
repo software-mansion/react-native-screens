@@ -27,9 +27,14 @@ import com.swmansion.rnscreens.ext.recycle
 import kotlin.math.max
 import kotlin.math.min
 
-open class ScreenFragment : Fragment, ScreenFragmentWrapper {
+open class ScreenFragment :
+    Fragment,
+    ScreenFragmentWrapper {
     enum class ScreenLifecycleEvent {
-        DID_APPEAR, WILL_APPEAR, DID_DISAPPEAR, WILL_DISAPPEAR
+        DID_APPEAR,
+        WILL_APPEAR,
+        DID_DISAPPEAR,
+        WILL_DISAPPEAR,
     }
 
     override val fragment: Fragment
@@ -42,6 +47,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     override val childScreenContainers: MutableList<ScreenContainer> = ArrayList()
 
     private var shouldUpdateOnResume = false
+
     // if we don't set it, it will be 0.0f at the beginning so the progress will not be sent
     // due to progress value being already 0.0f
     private var transitionProgress = -1f
@@ -59,7 +65,7 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
 
     constructor() {
         throw IllegalStateException(
-            "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
+            "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.",
         )
     }
 
@@ -79,14 +85,17 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        screen.layoutParams = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        val wrapper = context?.let { ScreensFrameLayout(it) }?.apply {
-            addView(screen.recycle())
-        }
+        screen.layoutParams =
+            FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
+        val wrapper =
+            context?.let { ScreensFrameLayout(it) }?.apply {
+                addView(screen.recycle())
+            }
         return wrapper
     }
 
@@ -156,12 +165,13 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         return null
     }
 
-    override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean = when (event) {
-        ScreenLifecycleEvent.WILL_APPEAR -> canDispatchWillAppear
-        ScreenLifecycleEvent.DID_APPEAR -> canDispatchAppear
-        ScreenLifecycleEvent.WILL_DISAPPEAR -> !canDispatchWillAppear
-        ScreenLifecycleEvent.DID_DISAPPEAR -> !canDispatchAppear
-    }
+    override fun canDispatchLifecycleEvent(event: ScreenLifecycleEvent): Boolean =
+        when (event) {
+            ScreenLifecycleEvent.WILL_APPEAR -> canDispatchWillAppear
+            ScreenLifecycleEvent.DID_APPEAR -> canDispatchAppear
+            ScreenLifecycleEvent.WILL_DISAPPEAR -> !canDispatchWillAppear
+            ScreenLifecycleEvent.DID_DISAPPEAR -> !canDispatchAppear
+        }
 
     override fun updateLastEventDispatched(event: ScreenLifecycleEvent) {
         when (event) {
@@ -192,18 +202,22 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         dispatchTransitionProgressEvent(1.0f, true)
     }
 
-    override fun dispatchLifecycleEvent(event: ScreenLifecycleEvent, fragmentWrapper: ScreenFragmentWrapper) {
+    override fun dispatchLifecycleEvent(
+        event: ScreenLifecycleEvent,
+        fragmentWrapper: ScreenFragmentWrapper,
+    ) {
         val fragment = fragmentWrapper.fragment
         if (fragment is ScreenStackFragment && fragment.canDispatchLifecycleEvent(event)) {
             fragment.screen.let {
                 fragmentWrapper.updateLastEventDispatched(event)
                 val surfaceId = UIManagerHelper.getSurfaceId(it)
-                val lifecycleEvent: Event<*> = when (event) {
-                    ScreenLifecycleEvent.WILL_APPEAR -> ScreenWillAppearEvent(surfaceId, it.id)
-                    ScreenLifecycleEvent.DID_APPEAR -> ScreenAppearEvent(surfaceId, it.id)
-                    ScreenLifecycleEvent.WILL_DISAPPEAR -> ScreenWillDisappearEvent(surfaceId, it.id)
-                    ScreenLifecycleEvent.DID_DISAPPEAR -> ScreenDisappearEvent(surfaceId, it.id)
-                }
+                val lifecycleEvent: Event<*> =
+                    when (event) {
+                        ScreenLifecycleEvent.WILL_APPEAR -> ScreenWillAppearEvent(surfaceId, it.id)
+                        ScreenLifecycleEvent.DID_APPEAR -> ScreenAppearEvent(surfaceId, it.id)
+                        ScreenLifecycleEvent.WILL_DISAPPEAR -> ScreenWillDisappearEvent(surfaceId, it.id)
+                        ScreenLifecycleEvent.DID_DISAPPEAR -> ScreenDisappearEvent(surfaceId, it.id)
+                    }
                 val screenContext = screen.context as ReactContext
                 val eventDispatcher: EventDispatcher? =
                     UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
@@ -227,7 +241,10 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
             ?.dispatchEvent(HeaderBackButtonClickedEvent(surfaceId, screen.id))
     }
 
-    override fun dispatchTransitionProgressEvent(alpha: Float, closing: Boolean) {
+    override fun dispatchTransitionProgressEvent(
+        alpha: Float,
+        closing: Boolean,
+    ) {
         if (this is ScreenStackFragment) {
             if (transitionProgress != alpha) {
                 transitionProgress = max(0.0f, min(1.0f, alpha))
@@ -240,8 +257,12 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                     ?.dispatchEvent(
                         ScreenTransitionProgressEvent(
                             UIManagerHelper.getSurfaceId(screenContext),
-                            screen.id, transitionProgress, closing, goingForward, coalescingKey
-                        )
+                            screen.id,
+                            transitionProgress,
+                            closing,
+                            goingForward,
+                            coalescingKey,
+                        ),
                     )
             }
         }
@@ -269,11 +290,12 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
         // since we subscribe to parent's animation start/end and dispatch events in child from there
         // check for `isTransitioning` should be enough since the child's animation should take only
         // 20ms due to always being `StackAnimation.NONE` when nested stack being pushed
-        val parent = if (parentFragment is DimmingFragment) {
-            parentFragment?.parentFragment
-        } else {
-            parentFragment
-        }
+        val parent =
+            if (parentFragment is DimmingFragment) {
+                parentFragment?.parentFragment
+            } else {
+                parentFragment
+            }
         if (parent == null || (parent is ScreenFragment && !parent.isTransitioning)) {
             // onViewAnimationStart/End is triggered from View#onAnimationStart/End method of the fragment's root
             // view. We override an appropriate method of the StackFragment's
@@ -320,7 +342,15 @@ open class ScreenFragment : Fragment, ScreenFragmentWrapper {
                  - progress is 1 -> key 2
                  - progress is between 0 and 1 -> key 3
              */
-            return (if (progress == 0.0f) 1 else if (progress == 1.0f) 2 else 3).toShort()
+            return (
+                if (progress == 0.0f) {
+                    1
+                } else if (progress == 1.0f) {
+                    2
+                } else {
+                    3
+                }
+            ).toShort()
         }
     }
 }

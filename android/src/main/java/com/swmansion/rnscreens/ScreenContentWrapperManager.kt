@@ -19,11 +19,7 @@ class ScreenContentWrapperManager :
 
     override fun getName(): String = REACT_CLASS
 
-    override fun createViewInstance(reactContext: ThemedReactContext): ScreenContentWrapper {
-        return ScreenContentWrapper(reactContext)
-    }
+    override fun createViewInstance(reactContext: ThemedReactContext): ScreenContentWrapper = ScreenContentWrapper(reactContext)
 
-    override fun getDelegate(): ViewManagerDelegate<ScreenContentWrapper>? {
-        return delegate
-    }
+    override fun getDelegate(): ViewManagerDelegate<ScreenContentWrapper>? = delegate
 }

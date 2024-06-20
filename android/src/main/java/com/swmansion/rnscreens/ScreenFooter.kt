@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
@@ -18,7 +17,9 @@ import com.google.android.material.math.MathUtils
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor")
-class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext) {
+class ScreenFooter(
+    val reactContext: ReactContext,
+) : ReactViewGroup(reactContext) {
     private var lastContainerHeight: Int = 0
     private var lastStableSheetState: Int = STATE_HIDDEN
     private var isAnimationControlledByKeyboard = false
@@ -46,7 +47,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
             override fun onStart(
                 animation: WindowInsetsAnimationCompat,
-                bounds: WindowInsetsAnimationCompat.BoundsCompat
+                bounds: WindowInsetsAnimationCompat.BoundsCompat,
             ): WindowInsetsAnimationCompat.BoundsCompat {
                 isAnimationControlledByKeyboard = true
                 return super.onStart(animation, bounds)
@@ -54,7 +55,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
 
             override fun onProgress(
                 insets: WindowInsetsCompat,
-                runningAnimations: MutableList<WindowInsetsAnimationCompat>
+                runningAnimations: MutableList<WindowInsetsAnimationCompat>,
             ): WindowInsetsCompat {
                 val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
                 val navigationBarBottomInset =
@@ -72,7 +73,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
                     lastContainerHeight,
                     reactHeight,
                     sheetTopWhileDragging(lastSlideOffset),
-                    lastBottomInset
+                    lastBottomInset,
                 )
 
                 // Please note that we do *not* consume any insets here, so that we do not interfere with
@@ -99,57 +100,75 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
 
     // React calls `layout` function to set view dimensions, thus this is our entry point for
     // fixing layout up after Yoga repositions it.
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
         super.onLayout(changed, left, top, right, bottom)
         layoutFooterOnYAxis(
             lastContainerHeight,
             bottom - top,
             sheetTopInStableState(requireSheetBehaviour().state),
-            lastBottomInset
+            lastBottomInset,
         )
     }
 
     // Overriding it here just to make a comment. Due to Android restrictions on layout flow, particularly
     // the fact that onMeasure must set `measuredHeight` & `measuredWidth` React calls `measure` on every
     // view group with accurate dimensions computed by Yoga. This is our entry point to get current view dimensions.
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    private var footerCallback = object : BottomSheetCallback() {
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (!Screen.isStateStable(newState)) {
-                return
+    private var footerCallback =
+        object : BottomSheetCallback() {
+            override fun onStateChanged(
+                bottomSheet: View,
+                newState: Int,
+            ) {
+                if (!Screen.isStateStable(newState)) {
+                    return
+                }
+
+                when (newState) {
+                    STATE_COLLAPSED,
+                    STATE_HALF_EXPANDED,
+                    STATE_EXPANDED,
+                    ->
+                        layoutFooterOnYAxis(
+                            lastContainerHeight,
+                            reactHeight,
+                            sheetTopInStableState(newState),
+                            lastBottomInset,
+                        )
+
+                    else -> {}
+                }
+                lastStableSheetState = newState
             }
 
-            when (newState) {
-                STATE_COLLAPSED,
-                STATE_HALF_EXPANDED,
-                STATE_EXPANDED -> layoutFooterOnYAxis(
-                    lastContainerHeight,
-                    reactHeight,
-                    sheetTopInStableState(newState),
-                    lastBottomInset
-                )
-
-                else -> {}
-            }
-            lastStableSheetState = newState
-        }
-
-        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            override fun onSlide(
+                bottomSheet: View,
+                slideOffset: Float,
+            ) {
 //            Log.i(TAG, "onSlide $slideOffset")
-            lastSlideOffset = max(slideOffset, 0.0f)
-            if (!isAnimationControlledByKeyboard) {
-                layoutFooterOnYAxis(
-                    lastContainerHeight,
-                    reactHeight,
-                    sheetTopWhileDragging(lastSlideOffset),
-                    lastBottomInset
-                )
+                lastSlideOffset = max(slideOffset, 0.0f)
+                if (!isAnimationControlledByKeyboard) {
+                    layoutFooterOnYAxis(
+                        lastContainerHeight,
+                        reactHeight,
+                        sheetTopWhileDragging(lastSlideOffset),
+                        lastBottomInset,
+                    )
+                }
             }
         }
-    }
 
     // Important to keep this method idempotent! We attempt to (un)register
     // our callback in different places depending on whether the behaviour is already created.
@@ -190,15 +209,15 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         }
     }
 
-    private fun sheetTopWhileDragging(slideOffset: Float): Int {
-        return MathUtils.lerp(
-            sheetTopInStableState(STATE_COLLAPSED).toFloat(),
-            sheetTopInStableState(
-                STATE_EXPANDED
-            ).toFloat(),
-            slideOffset
-        ).toInt()
-    }
+    private fun sheetTopWhileDragging(slideOffset: Float): Int =
+        MathUtils
+            .lerp(
+                sheetTopInStableState(STATE_COLLAPSED).toFloat(),
+                sheetTopInStableState(
+                    STATE_EXPANDED,
+                ).toFloat(),
+                slideOffset,
+            ).toInt()
 
     /**
      * Parent Screen will call this on it's layout. We need to be notified on any update to Screen's content
@@ -210,13 +229,13 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         top: Int,
         right: Int,
         bottom: Int,
-        containerHeight: Int
+        containerHeight: Int,
     ) {
         lastContainerHeight = containerHeight
         layoutFooterOnYAxis(
             containerHeight,
             reactHeight,
-            sheetTopInStableState(requireSheetBehaviour().state)
+            sheetTopInStableState(requireSheetBehaviour().state),
         )
     }
 
@@ -240,7 +259,7 @@ class ScreenFooter(val reactContext: ReactContext) : ReactViewGroup(reactContext
         containerHeight: Int,
         footerHeight: Int,
         sheetTop: Int,
-        bottomInset: Int = 0
+        bottomInset: Int = 0,
     ) {
         // max(bottomInset, 0) is just a hack to avoid double offset of navigation bar.
         val newTop = containerHeight - footerHeight - sheetTop - max(bottomInset, 0)

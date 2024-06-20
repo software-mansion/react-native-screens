@@ -10,8 +10,9 @@ import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
 @ReactModule(name = ScreensModule.NAME)
-class ScreensModule(private val reactContext: ReactApplicationContext) :
-    NativeScreensModuleSpec(reactContext) {
+class ScreensModule(
+    private val reactContext: ReactApplicationContext,
+) : NativeScreensModuleSpec(reactContext) {
     private var topScreenId: Int = -1
     private val isActiveTransition = AtomicBoolean(false)
 
@@ -70,18 +71,25 @@ class ScreensModule(private val reactContext: ReactApplicationContext) :
             ?.dispatchEvent(
                 ScreenTransitionProgressEvent(
                     UIManagerHelper.getSurfaceId(reactContext),
-                    topScreenId, progressFloat, true, true, coalescingKey
-                )
+                    topScreenId,
+                    progressFloat,
+                    true,
+                    true,
+                    coalescingKey,
+                ),
             )
     }
 
     @DoNotStrip
-    private fun finishTransition(reactTag: Int?, canceled: Boolean) {
+    private fun finishTransition(
+        reactTag: Int?,
+        canceled: Boolean,
+    ) {
         UiThreadUtil.assertOnUiThread()
         if (!isActiveTransition.get() || reactTag == null) {
             Log.e(
                 "[RNScreens]",
-                "Unable to call `finishTransition` method before transition start."
+                "Unable to call `finishTransition` method before transition start.",
             )
             return
         }

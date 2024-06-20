@@ -26,7 +26,10 @@ import com.swmansion.rnscreens.events.HeaderHeightChangeEvent
 import com.swmansion.rnscreens.events.SheetDetentChangedEvent
 
 @SuppressLint("ViewConstructor")
-class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenContentWrapper.OnLayoutCallback {
+class Screen(
+    context: ReactContext,
+) : FabricEnabledViewGroup(context),
+    ScreenContentWrapper.OnLayoutCallback {
     val fragment: Fragment?
         get() = fragmentWrapper?.fragment
 
@@ -58,7 +61,7 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
             (fragment as? ScreenStackFragment)?.onSheetCornerRadiusChange()
         }
     var sheetExpandsWhenScrolledToEdge: Boolean = true
-    
+
     // We want to make sure here that at least one value is present in this array all the time.
     // TODO: Model this with custom data structure to guarantee that this invariant is not violated.
     var sheetDetents = ArrayList<Double>().apply { add(1.0) }
@@ -90,7 +93,6 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
         // for the time being
         layoutParams = WindowManager.LayoutParams(WindowManager.LayoutParams.TYPE_APPLICATION)
     }
-
 
     /**
      * ScreenContentWrapper notifies us here on it's layout. It is essential for implementing
@@ -124,9 +126,7 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
         super.onAttachedToWindow()
     }
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {
-        return super.onApplyWindowInsets(insets)
-    }
+    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
         // do nothing, react native will keep the view hierarchy so no need to serialize/deserialize
@@ -138,14 +138,23 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
         // ignore restoring instance state too as we are not saving anything anyways.
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
         val newWidth = MeasureSpec.getSize(widthMeasureSpec)
         val newHeight = MeasureSpec.getSize(heightMeasureSpec)
         Log.d(TAG, "[${this.id}] onMeasure with size $newWidth x $newHeight")
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
         if (container is ScreenStack && changed) {
             val width = r - l
             val height = b - t
@@ -340,24 +349,26 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
 
     var nativeBackButtonDismissalEnabled: Boolean = true
 
-
-
     private fun calculateHeaderHeight(): Pair<Double, Double> {
         val actionBarTv = TypedValue()
         val resolvedActionBarSize = context.theme.resolveAttribute(android.R.attr.actionBarSize, actionBarTv, true)
 
         // Check if it's possible to get an attribute from theme context and assign a value from it.
         // Otherwise, the default value will be returned.
-        val actionBarHeight = TypedValue.complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
-            .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true && headerConfig?.isHeaderTranslucent != true }
-            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
+        val actionBarHeight =
+            TypedValue
+                .complexToDimensionPixelSize(actionBarTv.data, resources.displayMetrics)
+                .takeIf { resolvedActionBarSize && headerConfig?.isHeaderHidden != true && headerConfig?.isHeaderTranslucent != true }
+                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() } ?: 0.0
 
-        val statusBarHeight = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            // Count only status bar when action bar is visible and status bar is not hidden
-            .takeIf { it > 0 && isStatusBarHidden != true && actionBarHeight > 0 }
-            ?.let { (context.resources::getDimensionPixelSize)(it) }
-            ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
-            ?: 0.0
+        val statusBarHeight =
+            context.resources
+                .getIdentifier("status_bar_height", "dimen", "android")
+                // Count only status bar when action bar is visible and status bar is not hidden
+                .takeIf { it > 0 && isStatusBarHidden != true && actionBarHeight > 0 }
+                ?.let { (context.resources::getDimensionPixelSize)(it) }
+                ?.let { PixelUtil.toDIPFromPixel(it.toFloat()).toDouble() }
+                ?: 0.0
 
         return actionBarHeight to statusBarHeight
     }
@@ -365,11 +376,15 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
     private fun notifyHeaderHeightChange(headerHeight: Double) {
         val screenContext = context as ReactContext
         val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
-        UIManagerHelper.getEventDispatcherForReactTag(screenContext, id)
+        UIManagerHelper
+            .getEventDispatcherForReactTag(screenContext, id)
             ?.dispatchEvent(HeaderHeightChangeEvent(surfaceId, id, headerHeight))
     }
 
-    internal fun emitOnSheetDetentChanged(detentIndex: Int, isStable: Boolean) {
+    internal fun emitOnSheetDetentChanged(
+        detentIndex: Int,
+        isStable: Boolean,
+    ) {
         val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
         reactEventDispatcher?.dispatchEvent(SheetDetentChangedEvent(surfaceId, id, detentIndex, isStable))
     }
@@ -429,14 +444,16 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
          *
          * @param state bottom sheet state to verify
          */
-        fun isStateStable(state: Int): Boolean = when (state) {
-            BottomSheetBehavior.STATE_HIDDEN,
-            BottomSheetBehavior.STATE_EXPANDED,
-            BottomSheetBehavior.STATE_COLLAPSED,
-            BottomSheetBehavior.STATE_HALF_EXPANDED -> true
+        fun isStateStable(state: Int): Boolean =
+            when (state) {
+                BottomSheetBehavior.STATE_HIDDEN,
+                BottomSheetBehavior.STATE_EXPANDED,
+                BottomSheetBehavior.STATE_COLLAPSED,
+                BottomSheetBehavior.STATE_HALF_EXPANDED,
+                -> true
 
-            else -> false
-        }
+                else -> false
+            }
 
         /**
          * This method maps indices from legal detents array (prop) to appropriate values
@@ -485,28 +502,33 @@ class Screen(context: ReactContext) : FabricEnabledViewGroup(context), ScreenCon
          *
          * @throws IllegalArgumentException for invalid state / detentCount combinations
          */
-        fun detentIndexFromSheetState(@State state: Int, detentCount: Int): Int {
-            return when (detentCount) {
-                1 -> when (state) {
-                    BottomSheetBehavior.STATE_HIDDEN -> -1
-                    BottomSheetBehavior.STATE_EXPANDED -> 0
-                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
-                }
-                2 -> when (state) {
-                    BottomSheetBehavior.STATE_HIDDEN -> -1
-                    BottomSheetBehavior.STATE_COLLAPSED -> 0
-                    BottomSheetBehavior.STATE_EXPANDED -> 1
-                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
-                }
-                3 -> when (state) {
-                    BottomSheetBehavior.STATE_HIDDEN -> -1
-                    BottomSheetBehavior.STATE_COLLAPSED -> 0
-                    BottomSheetBehavior.STATE_HALF_EXPANDED -> 1
-                    BottomSheetBehavior.STATE_EXPANDED -> 2
-                    else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
-                }
+        fun detentIndexFromSheetState(
+            @State state: Int,
+            detentCount: Int,
+        ): Int =
+            when (detentCount) {
+                1 ->
+                    when (state) {
+                        BottomSheetBehavior.STATE_HIDDEN -> -1
+                        BottomSheetBehavior.STATE_EXPANDED -> 0
+                        else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                    }
+                2 ->
+                    when (state) {
+                        BottomSheetBehavior.STATE_HIDDEN -> -1
+                        BottomSheetBehavior.STATE_COLLAPSED -> 0
+                        BottomSheetBehavior.STATE_EXPANDED -> 1
+                        else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                    }
+                3 ->
+                    when (state) {
+                        BottomSheetBehavior.STATE_HIDDEN -> -1
+                        BottomSheetBehavior.STATE_COLLAPSED -> 0
+                        BottomSheetBehavior.STATE_HALF_EXPANDED -> 1
+                        BottomSheetBehavior.STATE_EXPANDED -> 2
+                        else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
+                    }
                 else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
             }
-        }
     }
 }

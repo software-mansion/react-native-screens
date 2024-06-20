@@ -10,7 +10,9 @@ import com.facebook.react.viewmanagers.RNSScreenStackHeaderSubviewManagerDelegat
 import com.facebook.react.viewmanagers.RNSScreenStackHeaderSubviewManagerInterface
 
 @ReactModule(name = ScreenStackHeaderSubviewManager.REACT_CLASS)
-class ScreenStackHeaderSubviewManager : ViewGroupManager<ScreenStackHeaderSubview>(), RNSScreenStackHeaderSubviewManagerInterface<ScreenStackHeaderSubview> {
+class ScreenStackHeaderSubviewManager :
+    ViewGroupManager<ScreenStackHeaderSubview>(),
+    RNSScreenStackHeaderSubviewManagerInterface<ScreenStackHeaderSubview> {
     private val delegate: ViewManagerDelegate<ScreenStackHeaderSubview>
 
     init {
@@ -22,15 +24,19 @@ class ScreenStackHeaderSubviewManager : ViewGroupManager<ScreenStackHeaderSubvie
     override fun createViewInstance(context: ThemedReactContext) = ScreenStackHeaderSubview(context)
 
     @ReactProp(name = "type")
-    override fun setType(view: ScreenStackHeaderSubview, type: String?) {
-        view.type = when (type) {
-            "left" -> ScreenStackHeaderSubview.Type.LEFT
-            "center" -> ScreenStackHeaderSubview.Type.CENTER
-            "right" -> ScreenStackHeaderSubview.Type.RIGHT
-            "back" -> ScreenStackHeaderSubview.Type.BACK
-            "searchBar" -> ScreenStackHeaderSubview.Type.SEARCH_BAR
-            else -> throw JSApplicationIllegalArgumentException("Unknown type $type")
-        }
+    override fun setType(
+        view: ScreenStackHeaderSubview,
+        type: String?,
+    ) {
+        view.type =
+            when (type) {
+                "left" -> ScreenStackHeaderSubview.Type.LEFT
+                "center" -> ScreenStackHeaderSubview.Type.CENTER
+                "right" -> ScreenStackHeaderSubview.Type.RIGHT
+                "back" -> ScreenStackHeaderSubview.Type.BACK
+                "searchBar" -> ScreenStackHeaderSubview.Type.SEARCH_BAR
+                else -> throw JSApplicationIllegalArgumentException("Unknown type $type")
+            }
     }
 
     protected override fun getDelegate(): ViewManagerDelegate<ScreenStackHeaderSubview> = delegate

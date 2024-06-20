@@ -1,21 +1,22 @@
 package com.swmansion.rnscreens.bottomsheet
 
- import android.annotation.SuppressLint
- import android.view.MotionEvent
- import android.view.View
- import com.facebook.react.bridge.ReactContext
- import com.facebook.react.config.ReactFeatureFlags
- import com.facebook.react.uimanager.JSPointerDispatcher
- import com.facebook.react.uimanager.JSTouchDispatcher
- import com.facebook.react.uimanager.RootView
- import com.facebook.react.uimanager.events.EventDispatcher
- import com.facebook.react.views.view.ReactViewGroup
+import android.annotation.SuppressLint
+import android.view.MotionEvent
+import android.view.View
+import com.facebook.react.bridge.ReactContext
+import com.facebook.react.config.ReactFeatureFlags
+import com.facebook.react.uimanager.JSPointerDispatcher
+import com.facebook.react.uimanager.JSTouchDispatcher
+import com.facebook.react.uimanager.RootView
+import com.facebook.react.uimanager.events.EventDispatcher
+import com.facebook.react.views.view.ReactViewGroup
 
- @SuppressLint("ViewConstructor")
- class BottomSheetDialogRootView(
+@SuppressLint("ViewConstructor")
+class BottomSheetDialogRootView(
     val reactContext: ReactContext?,
-    private val eventDispatcher: EventDispatcher
- ) : ReactViewGroup(reactContext), RootView {
+    private val eventDispatcher: EventDispatcher,
+) : ReactViewGroup(reactContext),
+    RootView {
     private val jsTouchDispatcher: JSTouchDispatcher = JSTouchDispatcher(this)
     private var jsPointerDispatcher: JSPointerDispatcher? = null
 
@@ -26,7 +27,13 @@ package com.swmansion.rnscreens.bottomsheet
         }
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
         if (changed) {
             // This view is used right now only in ScreenModalFragment, where it is injected
             // to view hierarchy as a parent of a Screen.
@@ -54,7 +61,7 @@ package com.swmansion.rnscreens.bottomsheet
         jsTouchDispatcher.handleTouchEvent(event, eventDispatcher)
         jsPointerDispatcher?.handleMotionEvent(event, eventDispatcher, false)
         super.onTouchEvent(event)
-        return true;
+        return true
     }
 
     override fun onInterceptHoverEvent(event: MotionEvent): Boolean {
@@ -69,18 +76,22 @@ package com.swmansion.rnscreens.bottomsheet
         return super.onHoverEvent(event)
     }
 
-
-    override fun onChildStartedNativeGesture(view: View, event: MotionEvent) {
+    override fun onChildStartedNativeGesture(
+        view: View,
+        event: MotionEvent,
+    ) {
         jsTouchDispatcher.onChildStartedNativeGesture(event, eventDispatcher)
         jsPointerDispatcher?.onChildStartedNativeGesture(view, event, eventDispatcher)
     }
 
     @Deprecated("Deprecated by React Native")
-    override fun onChildStartedNativeGesture(event: MotionEvent) {
+    override fun onChildStartedNativeGesture(event: MotionEvent): Unit =
         throw IllegalStateException("Deprecated onChildStartedNativeGesture was called")
-    }
 
-    override fun onChildEndedNativeGesture(view: View, event: MotionEvent) {
+    override fun onChildEndedNativeGesture(
+        view: View,
+        event: MotionEvent,
+    ) {
         jsTouchDispatcher.onChildEndedNativeGesture(event, eventDispatcher)
         jsPointerDispatcher?.onChildEndedNativeGesture()
     }
@@ -93,10 +104,10 @@ package com.swmansion.rnscreens.bottomsheet
     override fun handleException(throwable: Throwable?) {
         // TODO: I need ThemedReactContext here.
         // TODO: Determine where it is initially created & verify its lifecycle
- //        reactContext?.reactApplicationContext?.handleException(RuntimeException(throwable))
+        //        reactContext?.reactApplicationContext?.handleException(RuntimeException(throwable))
     }
 
     companion object {
         val TAG = BottomSheetDialogRootView::class.simpleName
     }
- }
+}

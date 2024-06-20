@@ -1,31 +1,32 @@
 package com.swmansion.rnscreens
 
- import android.app.Activity
- import android.app.Dialog
- import android.content.Context
- import android.os.Build
- import android.os.Bundle
- import android.util.Log
- import android.view.LayoutInflater
- import android.view.View
- import android.view.ViewGroup
- import android.view.ViewParent
- import android.view.WindowManager
- import androidx.appcompat.widget.Toolbar
- import androidx.fragment.app.Fragment
- import com.facebook.react.bridge.ReactContext
- import com.facebook.react.uimanager.UIManagerHelper
- import com.google.android.material.bottomsheet.BottomSheetBehavior
- import com.google.android.material.bottomsheet.BottomSheetDialog
- import com.google.android.material.bottomsheet.BottomSheetDialogFragment
- import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogRootView
- import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogScreen
- import com.swmansion.rnscreens.events.ScreenDismissedEvent
- import com.swmansion.rnscreens.ext.parentAsView
- import com.swmansion.rnscreens.ext.recycle
- import kotlin.math.max
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
+import android.os.Build
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewParent
+import android.view.WindowManager
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import com.facebook.react.bridge.ReactContext
+import com.facebook.react.uimanager.UIManagerHelper
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogRootView
+import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogScreen
+import com.swmansion.rnscreens.events.ScreenDismissedEvent
+import com.swmansion.rnscreens.ext.parentAsView
+import com.swmansion.rnscreens.ext.recycle
 
-class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrapper {
+class ScreenModalFragment :
+    BottomSheetDialogFragment,
+    ScreenStackFragmentWrapper {
     override lateinit var screen: Screen
 
     // Nested containers
@@ -52,7 +53,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     constructor() {
         throw IllegalStateException(
-            "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
+            "Screen fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.",
         )
     }
 
@@ -67,7 +68,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         showsDialog = true
     }
 
-     // We override this method to provide our custom dialog type instead of the default Dialog.
+    // We override this method to provide our custom dialog type instead of the default Dialog.
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         configureDialogAndBehaviour()
 
@@ -94,7 +95,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? = null
 
     override fun dismissFromContainer() {
@@ -124,9 +125,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     override fun onViewAnimationEnd() {
     }
 
-    override fun tryGetActivity(): Activity? {
-        return requireActivity()
-    }
+    override fun tryGetActivity(): Activity? = requireActivity()
 
     override fun tryGetContext(): ReactContext? {
         if (context is ReactContext) {
@@ -159,7 +158,7 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
 
     override fun dispatchLifecycleEvent(
         event: ScreenFragment.ScreenLifecycleEvent,
-        fragmentWrapper: ScreenFragmentWrapper
+        fragmentWrapper: ScreenFragmentWrapper,
     ) {
         TODO("Not yet implemented")
     }
@@ -172,13 +171,16 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         TODO("Not yet implemented")
     }
 
-    override fun dispatchTransitionProgressEvent(alpha: Float, closing: Boolean) {
+    override fun dispatchTransitionProgressEvent(
+        alpha: Float,
+        closing: Boolean,
+    ) {
         TODO("Not yet implemented")
     }
 
     override fun onStop() {
         Log.d(TAG, "onStop")
- //        container!!.onExternalFragmentRemoval(this)
+        //        container!!.onExternalFragmentRemoval(this)
         super.onStop()
     }
 
@@ -191,55 +193,58 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
             if (screenContext is ReactContext) {
                 Log.d(TAG, "onDestroy / sending ScreenDismissedEvent")
                 val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
-                UIManagerHelper.getEventDispatcherForReactTag(screenContext, screen.id)
+                UIManagerHelper
+                    .getEventDispatcherForReactTag(screenContext, screen.id)
                     ?.dispatchEvent(ScreenDismissedEvent(surfaceId, screen.id))
             }
         }
         childScreenContainers.clear()
     }
 
-    override fun removeToolbar() {
-        throw IllegalStateException("Modal screens on Android do not support header right now")
-    }
+    override fun removeToolbar(): Unit = throw IllegalStateException("Modal screens on Android do not support header right now")
 
-    override fun setToolbar(toolbar: Toolbar) {
+    override fun setToolbar(toolbar: Toolbar): Unit =
         throw IllegalStateException("Modal screens on Android do not support header right now")
-    }
 
-    override fun setToolbarShadowHidden(hidden: Boolean) {
+    override fun setToolbarShadowHidden(hidden: Boolean): Unit =
         throw IllegalStateException("Modal screens on Android do not support header right now")
-    }
 
-    override fun setToolbarTranslucent(translucent: Boolean) {
+    override fun setToolbarTranslucent(translucent: Boolean): Unit =
         throw IllegalStateException("Modal screens on Android do not support header right now")
-    }
 
     private fun configureDialogAndBehaviour(): BottomSheetDialog {
         sheetDialog = BottomSheetDialogScreen(requireContext(), this)
         sheetDialog.dismissWithAnimation = true
         sheetDialog.setCanceledOnTouchOutside(screen.sheetClosesOnTouchOutside)
- //        sheetDialog?.window?.setDimAmount(0F)
+        //        sheetDialog?.window?.setDimAmount(0F)
 
         configureBehaviour()
 
         return sheetDialog
     }
 
-     /**
-      * This method might return slightly different values depending on code path,
-      * but during testing I've found this effect negligible. For practical purposes
-      * this is acceptable.
-      */
-     private fun tryResolveContainerHeight(): Int? {
-         screen.container?.height?.let { return it }
-         context?.resources?.displayMetrics?.heightPixels?.let { return it }
+    /**
+     * This method might return slightly different values depending on code path,
+     * but during testing I've found this effect negligible. For practical purposes
+     * this is acceptable.
+     */
+    private fun tryResolveContainerHeight(): Int? {
+        screen.container?.height?.let { return it }
+        context
+            ?.resources
+            ?.displayMetrics
+            ?.heightPixels
+            ?.let { return it }
 
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-             (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics?.bounds?.height()
-                 ?.let { return it }
-         }
-         return null
-     }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)
+                ?.currentWindowMetrics
+                ?.bounds
+                ?.height()
+                ?.let { return it }
+        }
+        return null
+    }
 
     private fun configureBehaviour() {
         val containerHeight = tryResolveContainerHeight()
@@ -259,34 +264,41 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
         Log.w(TAG, "configureBehaviour $containerHeight ${screen.sheetDetents}")
 
         when (screen.sheetDetents.count()) {
-            1 -> behavior.apply {
-                state = BottomSheetBehavior.STATE_EXPANDED
-                skipCollapsed = true
-                isFitToContents = true
-                maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
-            }
+            1 ->
+                behavior.apply {
+                    state = BottomSheetBehavior.STATE_EXPANDED
+                    skipCollapsed = true
+                    isFitToContents = true
+                    maxHeight = (screen.sheetDetents.first() * containerHeight).toInt()
+                }
 
-            2 -> behavior.apply {
-                state = Screen.sheetStateFromDetentIndex(
-                    screen.sheetInitialDetentIndex, screen.sheetDetents.count()
-                )
-                skipCollapsed = false
-                isFitToContents = true
-                peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
-            }
+            2 ->
+                behavior.apply {
+                    state =
+                        Screen.sheetStateFromDetentIndex(
+                            screen.sheetInitialDetentIndex,
+                            screen.sheetDetents.count(),
+                        )
+                    skipCollapsed = false
+                    isFitToContents = true
+                    peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
+                    maxHeight = (screen.sheetDetents[1] * containerHeight).toInt()
+                }
 
-            3 -> behavior.apply {
-                state = Screen.sheetStateFromDetentIndex(
-                    screen.sheetInitialDetentIndex, screen.sheetDetents.count()
-                )
-                skipCollapsed = false
-                isFitToContents = false
-                peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
-                expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
-                halfExpandedRatio =
-                    (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
-            }
+            3 ->
+                behavior.apply {
+                    state =
+                        Screen.sheetStateFromDetentIndex(
+                            screen.sheetInitialDetentIndex,
+                            screen.sheetDetents.count(),
+                        )
+                    skipCollapsed = false
+                    isFitToContents = false
+                    peekHeight = (screen.sheetDetents[0] * containerHeight).toInt()
+                    expandedOffset = ((1 - screen.sheetDetents[2]) * containerHeight).toInt()
+                    halfExpandedRatio =
+                        (screen.sheetDetents[1] / screen.sheetDetents[2]).toFloat()
+                }
 
             else -> throw IllegalStateException("[RNScreens] Invalid detent count ${screen.sheetDetents.count()}. Expected at most 3.")
         }
@@ -295,4 +307,4 @@ class ScreenModalFragment : BottomSheetDialogFragment, ScreenStackFragmentWrappe
     companion object {
         val TAG = ScreenModalFragment::class.simpleName
     }
- }
+}

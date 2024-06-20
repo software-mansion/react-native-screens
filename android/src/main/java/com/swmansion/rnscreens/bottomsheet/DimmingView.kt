@@ -13,7 +13,12 @@ import com.facebook.react.uimanager.ReactPointerEventsView
 import com.swmansion.rnscreens.ext.equalWithRespectToEps
 
 @SuppressLint("ViewConstructor") // Only we instantiate this view
-class DimmingView(context: Context, initialAlpha: Float = 0.6F) : ViewGroup(context), ReactCompoundViewGroup, ReactPointerEventsView {
+class DimmingView(
+    context: Context,
+    initialAlpha: Float = 0.6F,
+) : ViewGroup(context),
+    ReactCompoundViewGroup,
+    ReactPointerEventsView {
     private val blockGestures
         get() = !alpha.equalWithRespectToEps(0F)
 
@@ -27,7 +32,13 @@ class DimmingView(context: Context, initialAlpha: Float = 0.6F) : ViewGroup(cont
     }
 
     // This view group is not supposed to have any children, however we need it to be a view group
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) = Unit
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) = Unit
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (blockGestures) {
@@ -36,18 +47,21 @@ class DimmingView(context: Context, initialAlpha: Float = 0.6F) : ViewGroup(cont
         return blockGestures
     }
 
-    override fun reactTagForTouch(x: Float, y: Float): Int {
-        throw IllegalStateException("$TAG should never be asked for the view tag")
-    }
+    override fun reactTagForTouch(
+        x: Float,
+        y: Float,
+    ): Int = throw IllegalStateException("$TAG should never be asked for the view tag")
 
-    override fun interceptsTouchEvent(x: Float, y: Float) = blockGestures
+    override fun interceptsTouchEvent(
+        x: Float,
+        y: Float,
+    ) = blockGestures
 
     companion object {
         const val TAG = "DimmingView"
     }
 
     override fun getPointerEvents(): PointerEvents = if (blockGestures) PointerEvents.AUTO else PointerEvents.NONE
-
 
     override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {
         Log.w(TAG, "onApplyWindowInsets")

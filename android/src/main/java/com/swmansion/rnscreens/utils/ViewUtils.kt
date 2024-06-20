@@ -3,7 +3,11 @@ package com.swmansion.rnscreens.utils
 import android.view.ViewGroup
 import kotlin.math.max
 
-internal fun findMaxChildrenHeightInStraightLine(viewGroup: ViewGroup, currentMaxHeight: Int = -1, skip: Int = 1): Int {
+internal fun findMaxChildrenHeightInStraightLine(
+    viewGroup: ViewGroup,
+    currentMaxHeight: Int = -1,
+    skip: Int = 1,
+): Int {
     if (viewGroup.childCount == 0) {
         if (skip > 0) {
             return -1
