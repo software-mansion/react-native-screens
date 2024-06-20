@@ -240,7 +240,8 @@ class DimmingFragment(val nestedFragment: ScreenFragmentWrapper) :
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
             setBackgroundColor(Color.TRANSPARENT)
-            id = View.generateViewId()  // This is purely native view, React does not know of it, thus there should be no conflict with ids.
+            // This is purely native view, React does not know of it, thus there should be no conflict with ids.
+            id = View.generateViewId()
         }
     }
 

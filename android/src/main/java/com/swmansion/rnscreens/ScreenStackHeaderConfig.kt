@@ -84,13 +84,14 @@ class ScreenStackHeaderConfig(context: Context) : ViewGroup(context) {
         // we want to save the top inset before the status bar can be hidden, which would resolve in
         // inset being 0
         if (headerTopInset == null) {
-            headerTopInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            headerTopInset = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 rootWindowInsets.getInsets(WindowInsets.Type.systemBars()).top
-            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 rootWindowInsets.systemWindowInsetTop
-            else
-            // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
+            } else {
+                // Hacky fallback for old android. Before Marshmallow, the status bar height was always 25
                 (25 * resources.displayMetrics.density).toInt()
+            }
         }
         onUpdate()
     }
