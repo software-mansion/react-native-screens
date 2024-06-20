@@ -17,8 +17,12 @@ buildscript {
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.11.0"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
     }
+}
+
+def isRunningInContextOfScreensRepo() {
+    return project == rootProject
 }
 
 def isNewArchitectureEnabled() {
@@ -30,7 +34,7 @@ def isNewArchitectureEnabled() {
 }
 
 // spotless is only accessible within react-native-screens repo
-if (project == rootProject) {
+if (isRunningInContextOfScreensRepo()) {
     apply from: 'spotless.gradle'
 }
 
@@ -57,7 +61,7 @@ def resolveReactNativeDirectory() {
     }
 
     def reactNativeFromAppNodeModules = file("${projectDir}/../../react-native")
-    if (reactNativeFromAppNodeModules.exists()) {
+    if (!isRunningInContextOfScreensRepo() && reactNativeFromAppNodeModules.exists()) {
         return reactNativeFromAppNodeModules
     }
 
@@ -67,7 +71,7 @@ def resolveReactNativeDirectory() {
     }
 
     throw new GradleException(
-            "[RNScreens] Unable to resolve react-native location in node_modules. You should project extension property (in `app/build.gradle`) `REACT_NATIVE_NODE_MODULES_DIR` with path to react-native."
+        "[RNScreens] Unable to resolve react-native location in node_modules. You should add project extension property (in `app/build.gradle`) `REACT_NATIVE_NODE_MODULES_DIR` with path to react-native."
     )
 }
 

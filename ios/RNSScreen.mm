@@ -25,6 +25,8 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
+#import "UIView+RNSUtility.h"
+
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -473,22 +475,13 @@ namespace react = facebook::react;
   }
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-- (RCTSurfaceTouchHandler *)touchHandler
-#else
-- (RCTTouchHandler *)touchHandler
-#endif
+- (nullable RNS_TOUCH_HANDLER_ARCH_TYPE *)touchHandler
 {
   if (_touchHandler != nil) {
     return _touchHandler;
   }
-  UIView *parent = [self superview];
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
-    parent = parent.superview;
-  if (parent != nil) {
-    return [parent performSelector:@selector(touchHandler)];
-  }
-  return nil;
+
+  return [self rnscreens_findTouchHandlerInAncestorChain];
 }
 
 - (void)notifyFinishTransitioning
@@ -520,6 +513,14 @@ namespace react = facebook::react;
   }
 #endif
 }
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
+{
+  [self notifyGestureCancel];
+}
+#endif
 
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {

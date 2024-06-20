@@ -4,7 +4,10 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 
-class SearchBarBlurEvent(surfaceId: Int, viewId: Int) : Event<SearchBarBlurEvent>(surfaceId, viewId) {
+class SearchBarBlurEvent(
+    surfaceId: Int,
+    viewId: Int,
+) : Event<SearchBarBlurEvent>(surfaceId, viewId) {
     override fun getEventName(): String = EVENT_NAME
 
     // All events for a given view can be coalesced.
@@ -13,6 +16,6 @@ class SearchBarBlurEvent(surfaceId: Int, viewId: Int) : Event<SearchBarBlurEvent
     override fun getEventData(): WritableMap? = Arguments.createMap()
 
     companion object {
-        const val EVENT_NAME = "topBlur"
+        const val EVENT_NAME = "topSearchBlur"
     }
 }

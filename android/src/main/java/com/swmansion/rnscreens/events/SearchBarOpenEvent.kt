@@ -4,7 +4,10 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 
-class SearchBarOpenEvent(surfaceId: Int, viewId: Int) : Event<SearchBarOpenEvent>(surfaceId, viewId) {
+class SearchBarOpenEvent(
+    surfaceId: Int,
+    viewId: Int,
+) : Event<SearchBarOpenEvent>(surfaceId, viewId) {
     override fun getEventName(): String = EVENT_NAME
 
     // All events for a given view can be coalesced.
