@@ -41,7 +41,7 @@ const config = {
       return acc;
     }, {}),
 
-    nodeModulesPaths: [path.join(__dirname, '../../'), path.join(__dirname, 'node_modules')],
+    nodeModulesPaths: [path.join(__dirname, '../../')],
 
     // Since we use react-navigation as submodule it comes with it's own node_modules. While loading
     // react-navigation code, due to how module resolution algorithms works it seems that its node_modules
