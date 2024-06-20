@@ -108,6 +108,8 @@ export default function App(): JSX.Element {
             },
             headerShown: true,
             headerHideBackButton: false,
+            statusBarTranslucent: false,
+            headerTopInsetEnabled: false, 
           }}>
           <Stack.Screen name="First" component={Home} />
           <Stack.Screen
