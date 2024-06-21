@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, Button, useColorScheme, StyleSheet } from 'react-native';
+import { View, Button, useColorScheme, StyleSheet } from 'react-native';
 import {
   DarkTheme,
   DefaultTheme,
@@ -8,35 +8,23 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function HomeScreen({ navigation }) {
-  const scheme = useColorScheme();
-
   return (
     <View style={styles.container}>
-      <Text
-        style={[styles.text, { color: scheme === 'dark' ? '#FFF' : '#000' }]}>
-        This is the home screen!
-      </Text>
       <Button
-        onPress={() => navigation.navigate('MyModal')}
-        title="Open Modal"
+        onPress={() => navigation.navigate('fullScreenModal')}
+        title="Open fullScreenModal"
       />
       <Button
-        onPress={() => navigation.navigate('MyWorkingModal')}
-        title="Open Working Modal"
+        onPress={() => navigation.navigate('formSheet')}
+        title="Open formSheet"
       />
     </View>
   );
 }
 
 function ModalScreen({ navigation }) {
-  const scheme = useColorScheme();
-
   return (
     <View style={styles.container}>
-      <Text
-        style={[styles.text, { color: scheme === 'dark' ? '#FFF' : '#000' }]}>
-        This is a modal!
-      </Text>
       <Button onPress={() => navigation.goBack()} title="Dismiss" />
     </View>
   );
@@ -44,31 +32,28 @@ function ModalScreen({ navigation }) {
 
 const RootStack = createNativeStackNavigator();
 
-function App() {
+export default function App() {
   const scheme = useColorScheme();
 
   return (
     <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
       <RootStack.Navigator>
-        <RootStack.Group>
-          <RootStack.Screen name="Home" component={HomeScreen} />
-          <RootStack.Screen
-            name="MyWorkingModal"
-            component={ModalScreen}
-            options={{ presentation: 'formSheet' }}
-          />
-        </RootStack.Group>
-        <RootStack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
-          <RootStack.Screen name="MyModal" component={ModalScreen} />
-        </RootStack.Group>
+        <RootStack.Screen name="Home" component={HomeScreen} />
+        <RootStack.Screen
+          name="formSheet"
+          component={ModalScreen}
+          options={{ presentation: 'formSheet' }}
+        />
+        <RootStack.Screen
+          name="fullScreenModal"
+          component={ModalScreen}
+          options={{ presentation: 'fullScreenModal' }}
+        />
       </RootStack.Navigator>
     </NavigationContainer>
   );
 }
 
-export default App;
-
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  text: { fontSize: 30, marginBottom: 20 },
 });
