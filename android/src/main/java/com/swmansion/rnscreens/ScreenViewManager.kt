@@ -65,10 +65,10 @@ open class ScreenViewManager :
         parent: Screen,
         index: Int,
     ) {
-        super.removeViewAt(parent, index)
         if (parent.getChildAt(index) is ScreenFooter) {
             parent.footer = null
         }
+        super.removeViewAt(parent, index)
     }
 
     override fun removeView(
@@ -79,11 +79,6 @@ open class ScreenViewManager :
         if (view is ScreenFooter) {
             parent.footer = null
         }
-    }
-
-    override fun removeAllViews(parent: Screen) {
-        super.removeAllViews(parent)
-        parent.footer = null
     }
 
     override fun updateState(
