@@ -37,7 +37,7 @@ export default function App(): JSX.Element {
         <Stack.Navigator
           screenOptions={{
             headerTitleStyle: {
-              color: 'cyan',
+              color: 'seagreen',
             },
             headerShown: true,
             headerHideBackButton: false,

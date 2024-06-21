@@ -19,9 +19,11 @@ import {
 } from '../state';
 import { NavProp } from '../types';
 import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import GestureHandlerButton from './GestureHandlerButton';
 
 export default function CommonSheetContent(): React.JSX.Element {
-  const navigation = useNavigation<NavProp>()?.navigation;
+  const navigation = useNavigation();
 
   const [radius, setRadius] = jotai.useAtom(cornerRadiusAtom);
   const [detents, setDetents] = jotai.useAtom(allowedDetentsAtom);
@@ -62,7 +64,7 @@ export default function CommonSheetContent(): React.JSX.Element {
         />
         <Button
           title="Tap me for the first screen"
-          onPress={() => navigation.navigateDeprecated('First')}
+          onPress={() => navigation.popTo('First')}
         />
         <Button
           title="Tap me for the second screen"
@@ -146,11 +148,7 @@ export default function CommonSheetContent(): React.JSX.Element {
           }}
         />
       </View>
-      <TouchableOpacity
-        style={{ backgroundColor: 'goldenrod' }}
-        onPress={() => console.log('GH Button clicked')}>
-        <Text>GH BUTTON</Text>
-      </TouchableOpacity>
+      <GestureHandlerButton />
       {isAdditionalContentVisible && (
         <View style={{ backgroundColor: 'pink' }}>
           <Text>Additional content</Text>

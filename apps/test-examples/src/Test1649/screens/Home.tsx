@@ -6,20 +6,24 @@ import {
 
 import { NavProp } from '../types';
 
-export default function Home({ navigation }: NavProp) {
+export default function Home({ navigation }: NavProp): React.ReactNode {
   return (
     <View style={{ flex: 1, backgroundColor: 'cornflowerblue' }}>
       <Button
-        title="Tap me for the second screen"
+        title="Navigate Second"
         onPress={() => navigation.navigate('Second')}
       />
       <Button
-        title="Tap me for the PushWithScrollView"
+        title="Navigate PushWithScrollView"
         onPress={() => navigation.navigate('PushWithScrollView')}
       />
       <Button
-        title="Tap me for the sheet"
+        title="Navigate SheetScreen"
         onPress={() => navigation.navigate('SheetScreen')}
+      />
+      <Button
+        title="Push SheetScreen"
+        onPress={() => navigation.push('SheetScreen')}
       />
     </View>
   );
