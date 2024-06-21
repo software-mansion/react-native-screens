@@ -11,7 +11,7 @@ namespace react = facebook::react;
 
 template <typename T>
   requires std::is_floating_point_v<T>
-inline bool equalWithRespectToEps(const T a, const T b, const T eps) {
+inline constexpr bool equalWithRespectToEps(const T a, const T b, const T eps) {
   return std::abs(a - b) <= eps;
 }
 
@@ -25,10 +25,10 @@ inline bool equalWithRespectToEps(const T a, const T b, const T eps) {
  * @return whether the frame dimensions are the same with respect to given
  * epsilon
  */
-inline bool compareFrameSizes(
+inline constexpr bool compareFrameSizes(
     const react::Size &first,
     const react::Size &second,
-    react::Float eps = 0.01) {
+    const react::Float eps = 0.01) {
   return equalWithRespectToEps(first.width, second.width, eps) &&
       equalWithRespectToEps(first.height, second.height, eps);
 }
