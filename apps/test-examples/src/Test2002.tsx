@@ -42,14 +42,6 @@ function ModalScreen({ navigation }) {
   );
 }
 
-function DetailsScreen() {
-  return (
-    <View>
-      <Text>Details</Text>
-    </View>
-  );
-}
-
 const RootStack = createNativeStackNavigator();
 
 function App() {
@@ -60,7 +52,6 @@ function App() {
       <RootStack.Navigator>
         <RootStack.Group>
           <RootStack.Screen name="Home" component={HomeScreen} />
-          <RootStack.Screen name="Details" component={DetailsScreen} />
           <RootStack.Screen
             name="MyWorkingModal"
             component={ModalScreen}
