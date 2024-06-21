@@ -24,13 +24,6 @@ function HomeScreen({ navigation }) {
         onPress={() => navigation.navigate('MyWorkingModal')}
         title="Open Working Modal"
       />
-      <Text
-        style={[
-          styles.schemeText,
-          { color: scheme === 'dark' ? '#FFF' : '#000' },
-        ]}>
-        current scheme is: {scheme}
-      </Text>
     </View>
   );
 }
@@ -45,13 +38,6 @@ function ModalScreen({ navigation }) {
         This is a modal!
       </Text>
       <Button onPress={() => navigation.goBack()} title="Dismiss" />
-      <Text
-        style={[
-          styles.schemeText,
-          { color: scheme === 'dark' ? '#FFF' : '#000' },
-        ]}>
-        current scheme is: {scheme}
-      </Text>
     </View>
   );
 }
@@ -94,5 +80,4 @@ export default App;
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   text: { fontSize: 30, marginBottom: 20 },
-  schemeText: { marginTop: 20 },
 });
