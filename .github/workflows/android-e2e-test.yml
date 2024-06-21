@@ -54,10 +54,6 @@ jobs:
         name: Reinstall node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
-      - name: Install AVD dependencies
-        run: |
-          sudo apt update
-          sudo apt-get install -y libpulse0 libgl1
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn build-e2e-android
