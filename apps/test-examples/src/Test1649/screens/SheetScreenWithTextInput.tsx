@@ -6,9 +6,9 @@ import {
 } from 'react-native';
 
 import CommonSheetContent from '../components/CommonSheetContent';
-import { NavProp } from '../types';
+import { NavPropObj } from '../types';
 
-export default function SheetScreenWithTextInput({ navigation }: NavProp) {
+export default function SheetScreenWithTextInput({ navigation }: NavPropObj) {
   const [textValue, setTextValue] = React.useState('text input');
 
   return (

@@ -7,9 +7,9 @@ import {
   TextInput,
 } from 'react-native';
 
-import { NavProp } from '../types';
+import { NavPropObj } from '../types';
 
-export default function PushWithScrollView({ navigation }: NavProp): React.JSX.Element {
+export default function PushWithScrollView({ navigation }: NavPropObj): React.JSX.Element {
   const [additionalContentVisible, setAdditionalContentVisible] =
     React.useState(true);
 

@@ -2,19 +2,14 @@ import * as React from 'react';
 import { ParamListBase } from '@react-navigation/native';
 import {
   NativeStackNavigationOptions,
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
 } from 'react-native-screens/native-stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export type NavProp = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
+export type NavProp = NativeStackNavigationProp<ParamListBase>;
+
+export type NavPropObj = {
+  navigation: NavProp;
 };
 
 export type AllowedDetentsType = NativeStackNavigationOptions['sheetAllowedDetents'];
-
-export type ScreenComponent = {
-  name: string,
-  Component: React.ReactNode,
-  options: NativeStackScreenProps<ParamListBase>,
-};
 

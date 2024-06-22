@@ -17,16 +17,15 @@ import {
   largestUndimmedDetentAtom,
   selectedDetentIndexAtom
 } from '../state';
-import { NavProp } from '../types';
-import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ParamListBase, useNavigation } from '@react-navigation/native';
 import GestureHandlerButton from './GestureHandlerButton';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export default function CommonSheetContent(): React.JSX.Element {
-  const navigation = useNavigation();
+  const navigation: NativeStackNavigationProp<ParamListBase> = useNavigation();
 
   const [radius, setRadius] = jotai.useAtom(cornerRadiusAtom);
-  const [detents, setDetents] = jotai.useAtom(allowedDetentsAtom);
+  const [detents, _] = jotai.useAtom(allowedDetentsAtom);
   const [largestUndimmedDetent, setLargestUndimmedDetent] = jotai.useAtom(
     largestUndimmedDetentAtom,
   );
@@ -44,7 +43,7 @@ export default function CommonSheetContent(): React.JSX.Element {
 
   const ref = React.useRef<TextInput>(null);
 
-  function nextDetentLevel(currentDetent: number): number {
+  function nextDetentLevel(_: number): number {
     return 0;
   }
 
@@ -63,21 +62,21 @@ export default function CommonSheetContent(): React.JSX.Element {
           ref={ref}
         />
         <Button
-          title="Tap me for the first screen"
+          title="PopTo First"
           onPress={() => navigation.popTo('First')}
         />
         <Button
-          title="Tap me for the second screen"
-          onPress={() => navigation.navigateDeprecated('Second')}
+          title="PopTo Second"
+          onPress={() => navigation.popTo('Second')}
         />
         <Button
-          title="Tap me for the third screen / blur"
+          title="Navigate NestedStack"
           onPress={() => {
             navigation.navigate('NestedStack');
           }}
         />
         <Button
-          title="Tap me for goBack"
+          title="GoBack"
           onPress={() => {
             navigation.goBack();
           }}

@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { NavProp } from "../types";
+import { NavPropObj } from "../types";
 import { Button, TextInput, View } from 'react-native';
 
 export default function Third({
   navigation,
-}: NavProp) {
+}: NavPropObj) {
   const [color, _] = React.useState('firebrick');
 
   return (

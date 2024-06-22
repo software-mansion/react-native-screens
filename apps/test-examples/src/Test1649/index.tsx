@@ -17,12 +17,11 @@ import { sheetOptionsAtom } from './state';
 
 import Home from './screens/Home';
 import Second from './screens/Second';
-import PushWithScrollView from './screens/PushWithScrollView';
-import SheetScreen from './screens/SheetScreen';
-// import Footer from './components/Footer';
-import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import Third from './screens/Third';
+import SheetScreen from './screens/SheetScreen';
+import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import ModalScreen from './screens/ModalScreen';
+import PushWithScrollView from './screens/PushWithScrollView';
 
 const Stack = createNativeStackNavigator();
 

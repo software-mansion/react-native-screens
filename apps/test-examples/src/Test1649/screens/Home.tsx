@@ -4,9 +4,9 @@ import {
   View,
 } from 'react-native';
 
-import { NavProp } from '../types';
+import { NavPropObj } from '../types';
 
-export default function Home({ navigation }: NavProp): React.ReactNode {
+export default function Home({ navigation }: NavPropObj): React.ReactNode {
   return (
     <View style={{ flex: 1, backgroundColor: 'cornflowerblue' }}>
       <Button
