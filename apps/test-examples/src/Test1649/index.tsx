@@ -8,12 +8,12 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
-} from 'react-native-screens/native-stack';
+} from '@react-navigation/native-stack';
 
 import * as jotai from 'jotai';
 
 // import useFocusEffectIgnoreSheet from './hooks/useFocusEffectIgnoreSheet';
-import { sheetOptionsAtom } from './state';
+import { sheetOptionsAtom, sheetInitialOptions } from './state';
 
 import Routes from './routes';
 
@@ -24,9 +24,92 @@ import SheetScreen from './screens/SheetScreen';
 import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import ModalScreen from './screens/ModalScreen';
 import PushWithScrollView from './screens/PushWithScrollView';
+import SheetScreenWithTextInput from './screens/SheetScreenWithTextInput';
 
 
-const Stack = createNativeStackNavigator();
+// Attempt to use v7 API,
+const Stack = createNativeStackNavigator({
+  screens: {
+    First: Home,
+    Second: {
+      screen: Second,
+      options: {
+        fullScreenGestureEnabled: true,
+      },
+    },
+    Third: {
+      screen: Third,
+      options: {
+        headerShown: true,
+        fullScreenGestureEnabled: true,
+      }
+    },
+    Sheet: {
+      screen: SheetScreen,
+      options: {
+        headerShown: false,
+        presentation: 'formSheet',
+        sheetElevation: 24,
+        screenStyle: {
+          backgroundColor: 'firebrick',
+        },
+        onSheetDetentChanged: (
+          e: NativeSyntheticEvent<{ index: number; isStable: boolean }>,
+        ) => {
+          console.log(
+            `onSheetDetentChanged in App with index ${e.nativeEvent.index} isStable: ${e.nativeEvent.isStable}`,
+          );
+        },
+        ...sheetInitialOptions,
+      },
+    },
+    Modal: {
+      screen: SheetScreen,
+      options: {
+        headerShown: false,
+        presentation: 'modal',
+        ...sheetInitialOptions,
+      }
+    },
+    PushWithScrollView: PushWithScrollView,
+    SheetWithScrollView: {
+      screen: SheetScreenWithScrollView,
+      options: {
+        headerShown: false,
+        presentation: 'formSheet',
+        ...sheetInitialOptions,
+      },
+    },
+    SheetWithTextInput: {
+      screen: SheetScreenWithTextInput,
+      options: {
+        headerShown: false,
+        presentation: 'formSheet',
+        ...sheetInitialOptions,
+      },
+    },
+    AnotherSheet: {
+      screen: SheetScreen,
+      options: {
+        headerShown: false,
+        presentation: 'formSheet',
+        sheetElevation: 24,
+        sheetAllowedDetents: [0.5, 0.8],
+        screenStyle: {
+          backgroundColor: 'firebrick',
+        },
+        ...sheetInitialOptions,
+      }
+    }
+  },
+  screenOptions: {
+    headerTitleStyle: {
+      color: 'seagreen',
+    },
+    headerShown: true,
+    statusBarTranslucent: false,
+  }
+});
 
 const InnerStack = createNativeStackNavigator();
 
@@ -42,16 +125,14 @@ export default function App(): JSX.Element {
               color: 'seagreen',
             },
             headerShown: true,
-            headerHideBackButton: false,
             statusBarTranslucent: false,
-            headerTopInsetEnabled: false,
           }}>
           <Stack.Screen name="First" component={Home} />
           <Stack.Screen
             name={Routes.Second.name}
             component={Routes.Second.component}
             options={{
-              fullScreenSwipeEnabled: true,
+              fullScreenGestureEnabled: true,
             }}
           />
           <Stack.Screen
@@ -93,7 +174,7 @@ export default function App(): JSX.Element {
             component={Third}
             options={{
               headerShown: true,
-              fullScreenSwipeEnabled: true,
+              fullScreenGestureEnabled: true,
             }}
           />
           <Stack.Screen name="NestedStack" component={NestedStack} />

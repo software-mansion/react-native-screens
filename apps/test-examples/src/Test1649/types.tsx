@@ -13,3 +13,14 @@ export type NavPropObj = {
 
 export type AllowedDetentsType = NativeStackNavigationOptions['sheetAllowedDetents'];
 
+export type SheetOptions = {
+  sheetAllowedDetents?: AllowedDetentsType,
+  sheetLargestUndimmedDetent?: NativeStackNavigationOptions['sheetLargestUndimmedDetent'],
+  sheetElevation?: NativeStackNavigationOptions['sheetElevation'],
+  sheetExpandsWhenScrolledToEdge?: NativeStackNavigationOptions['sheetExpandsWhenScrolledToEdge'],
+  sheetCornerRadius?: NativeStackNavigationOptions['sheetCornerRadius'],
+  sheetGrabberVisible?: NativeStackNavigationOptions['sheetGrabberVisible'],
+  sheetInitialDetent?: NativeStackNavigationOptions['sheetInitialDetent'],
+  onSheetDetentChanged?: NativeStackNavigationOptions['onSheetDetentChanged'];
+}
+

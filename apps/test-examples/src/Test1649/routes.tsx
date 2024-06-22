@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as jotai from 'jotai';
 
-import { sheetOptionsAtom } from './state';
+import { sheetInitialOptions } from './state';
 
 import Home from './screens/Home';
 import Second from './screens/Second';
@@ -14,19 +14,12 @@ import SheetScreenWithTextInput from './screens/SheetScreenWithTextInput';
 import { NativeStackNavigationOptions } from 'react-native-screens/native-stack';
 import { NativeSyntheticEvent } from 'react-native';
 
-import {
-  createNativeStackNavigator,
-} from 'react-native-screens/native-stack';
-
-import type { StaticScreenProps } from '@react-navigation/native';
-
 export type RouteDescriptor = {
   name: string,
   component: (props: any) => React.JSX.Element,
   options?: NativeStackNavigationOptions,
 };
 
-// const sheetOptions = jotai.useAtomValue(sheetOptionsAtom);
 
 const routes: Record<string, RouteDescriptor> = {
   First: {
@@ -65,7 +58,7 @@ const routes: Record<string, RouteDescriptor> = {
           `onSheetDetentChanged in App with index ${e.nativeEvent.index} isStable: ${e.nativeEvent.isStable}`,
         );
       },
-      // ...sheetOptions,
+      ...sheetInitialOptions,
     },
   },
   Modal: {
@@ -74,7 +67,7 @@ const routes: Record<string, RouteDescriptor> = {
     options: {
       headerShown: false,
       stackPresentation: 'modal',
-      // ...sheetOptions,
+      ...sheetInitialOptions,
     },
   },
   SheetWithScrollView: {
@@ -83,7 +76,7 @@ const routes: Record<string, RouteDescriptor> = {
     options: {
       headerShown: false,
       stackPresentation: 'formSheet',
-      // ...sheetOptions,
+      ...sheetInitialOptions,
     },
   },
   SheetWithTextInput: {
@@ -92,7 +85,7 @@ const routes: Record<string, RouteDescriptor> = {
     options: {
       headerShown: false,
       stackPresentation: 'formSheet',
-      // ...sheetOptions,
+      ...sheetInitialOptions,
     },
   },
   PushWithScrollView: {
