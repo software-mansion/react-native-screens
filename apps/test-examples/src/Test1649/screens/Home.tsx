@@ -6,7 +6,7 @@ import {
 
 import { NavPropObj } from '../types';
 
-export default function Home({ navigation }: NavPropObj): React.ReactNode {
+export default function Home({ navigation }: NavPropObj) {
   return (
     <View style={{ flex: 1, backgroundColor: 'cornflowerblue' }}>
       <Button

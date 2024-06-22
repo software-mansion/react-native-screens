@@ -15,6 +15,8 @@ import * as jotai from 'jotai';
 // import useFocusEffectIgnoreSheet from './hooks/useFocusEffectIgnoreSheet';
 import { sheetOptionsAtom } from './state';
 
+import Routes from './routes';
+
 import Home from './screens/Home';
 import Second from './screens/Second';
 import Third from './screens/Third';
@@ -22,6 +24,7 @@ import SheetScreen from './screens/SheetScreen';
 import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import ModalScreen from './screens/ModalScreen';
 import PushWithScrollView from './screens/PushWithScrollView';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -45,8 +48,8 @@ export default function App(): JSX.Element {
           }}>
           <Stack.Screen name="First" component={Home} />
           <Stack.Screen
-            name="Second"
-            component={Second}
+            name={Routes.Second.name}
+            component={Routes.Second.component}
             options={{
               fullScreenSwipeEnabled: true,
             }}
@@ -89,7 +92,6 @@ export default function App(): JSX.Element {
             name="Third"
             component={Third}
             options={{
-              // stackPresentation: 'modal',
               headerShown: true,
               fullScreenSwipeEnabled: true,
             }}
