@@ -27,7 +27,6 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 @property (nonatomic) BOOL show;
 #else
-@property (nonatomic) UIBlurEffectStyle blurEffect;
 @property (nonatomic) BOOL hide;
 #endif
 
@@ -56,6 +55,7 @@
 @property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) UISemanticContentAttribute direction;
 @property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
+@property (nonatomic) UIBlurEffectStyle blurEffect;
 
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated
