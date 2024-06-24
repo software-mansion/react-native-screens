@@ -25,7 +25,9 @@ class RNScreensPackage : TurboReactPackage() {
         // installing its C++ bindings - so we are safe in terms of creating this helper
         // before RN starts creating shadow nodes.
         // See https://github.com/software-mansion/react-native-screens/pull/2169
-        screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            screenDummyLayoutHelper = ScreenDummyLayoutHelper(reactContext)
+        }
 
         return listOf<ViewManager<*, *>>(
             ScreenContainerViewManager(),
