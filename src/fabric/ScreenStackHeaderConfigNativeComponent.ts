@@ -44,6 +44,7 @@ export interface NativeProps extends ViewProps {
   backButtonDisplayMode?: WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean;
   backButtonInCustomView?: boolean;
+  blurEffect?: string;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean;
 }
