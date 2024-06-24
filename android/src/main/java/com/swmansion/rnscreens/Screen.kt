@@ -70,9 +70,9 @@ class Screen(
     var footer: ScreenFooter? = null
         set(value) {
             if (value == null && field != null) {
-                sheetBehavior?.let { field!!.unregisterWithSheetBehaviour(it) }
+                sheetBehavior?.let { field!!.unregisterWithSheetBehavior(it) }
             } else if (value != null) {
-                sheetBehavior?.let { value.registerWithSheetBehaviour(it) }
+                sheetBehavior?.let { value.registerWithSheetBehavior(it) }
             }
             field = value
         }

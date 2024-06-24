@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,16 +74,6 @@ class ScreenModalFragment :
 
         val rootView = BottomSheetDialogRootView(screen.reactContext, screen.reactEventDispatcher!!)
 
-//        if (screen.isSheetGrabberVisible) {
-//            val dragHandle = BottomSheetDragHandleView(requireContext()).apply {
-//                layoutParams = ViewGroup.LayoutParams(
-//                    ViewGroup.LayoutParams.MATCH_PARENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT,
-//                )
-//            }
-//            rootView.addView(dragHandle)
-//        }
-
         rootView.addView(screen.recycle())
         sheetDialog.setContentView(rootView)
 
@@ -106,7 +95,6 @@ class ScreenModalFragment :
     }
 
     // Modal can never be first on the stack
-    // TODO: What is exact semantic of this method?
     override fun canNavigateBack(): Boolean = true
 
     override fun addChildScreenContainer(container: ScreenContainer) {
@@ -179,20 +167,12 @@ class ScreenModalFragment :
         TODO("Not yet implemented")
     }
 
-    override fun onStop() {
-        Log.d(TAG, "onStop")
-        //        container!!.onExternalFragmentRemoval(this)
-        super.onStop()
-    }
-
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy")
         super.onDestroy()
         val container = container
         if (container == null || !container.hasScreen(this)) {
             val screenContext = screen.context
             if (screenContext is ReactContext) {
-                Log.d(TAG, "onDestroy / sending ScreenDismissedEvent")
                 val surfaceId = UIManagerHelper.getSurfaceId(screenContext)
                 UIManagerHelper
                     .getEventDispatcherForReactTag(screenContext, screen.id)
@@ -202,22 +182,21 @@ class ScreenModalFragment :
         childScreenContainers.clear()
     }
 
-    override fun removeToolbar(): Unit = throw IllegalStateException("Modal screens on Android do not support header right now")
+    override fun removeToolbar(): Unit = throw IllegalStateException("[RNScreens] Modal screens on Android do not support header right now")
 
     override fun setToolbar(toolbar: Toolbar): Unit =
-        throw IllegalStateException("Modal screens on Android do not support header right now")
+        throw IllegalStateException("[RNScreens] Modal screens on Android do not support header right now")
 
     override fun setToolbarShadowHidden(hidden: Boolean): Unit =
-        throw IllegalStateException("Modal screens on Android do not support header right now")
+        throw IllegalStateException("[RNScreens] Modal screens on Android do not support header right now")
 
     override fun setToolbarTranslucent(translucent: Boolean): Unit =
-        throw IllegalStateException("Modal screens on Android do not support header right now")
+        throw IllegalStateException("[RNScreens] Modal screens on Android do not support header right now")
 
     private fun configureDialogAndBehaviour(): BottomSheetDialog {
         sheetDialog = BottomSheetDialogScreen(requireContext(), this)
         sheetDialog.dismissWithAnimation = true
         sheetDialog.setCanceledOnTouchOutside(screen.sheetClosesOnTouchOutside)
-        //        sheetDialog?.window?.setDimAmount(0F)
 
         configureBehaviour()
 
@@ -254,15 +233,7 @@ class ScreenModalFragment :
         behavior.apply {
             isHideable = true
             isDraggable = true
-
-            // It seems that there is a guard in material implementation that will prevent
-            // this callback from being registered multiple times.
-//            addBottomSheetCallback(bottomSheetOnSwipedDownCallback)
         }
-
-//        screen.footer?.registerWithSheetBehaviour(behavior)
-
-        Log.w(TAG, "configureBehaviour $containerHeight ${screen.sheetDetents}")
 
         when (screen.sheetDetents.count()) {
             1 ->
@@ -306,6 +277,6 @@ class ScreenModalFragment :
     }
 
     companion object {
-        val TAG = ScreenModalFragment::class.simpleName
+        const val TAG = "ScreenModalFragment"
     }
 }

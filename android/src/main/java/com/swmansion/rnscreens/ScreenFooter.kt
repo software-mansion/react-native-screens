@@ -35,6 +35,10 @@ class ScreenFooter(
     private val sheetBehavior
         get() = requireScreenParent().sheetBehavior
 
+
+    // Due to Android restrictions on layout flow, particularly
+    // the fact that onMeasure must set `measuredHeight` & `measuredWidth` React calls `measure` on every
+    // view group with accurate dimensions computed by Yoga. This is our entry point to get current view dimensions.
     private val reactHeight
         get() = measuredHeight
 
@@ -88,7 +92,9 @@ class ScreenFooter(
         }
 
     init {
-        val rootView = reactContext.currentActivity!!.window.decorView
+        val rootView = checkNotNull(reactContext.currentActivity) {
+            "[RNScreens] Context detached from activity while creating ScreenFooter"
+        }.window.decorView
 
         // Note that we do override insets animation on given view. I can see it interfering e.g.
         // with reanimated keyboard or even other places in our code. Need to test this.
@@ -97,7 +103,7 @@ class ScreenFooter(
 
     private fun requireScreenParent(): Screen = requireNotNull(screenParent)
 
-    private fun requireSheetBehaviour(): BottomSheetBehavior<Screen> = requireNotNull(sheetBehavior)
+    private fun requireSheetBehavior(): BottomSheetBehavior<Screen> = requireNotNull(sheetBehavior)
 
     // React calls `layout` function to set view dimensions, thus this is our entry point for
     // fixing layout up after Yoga repositions it.
@@ -112,19 +118,9 @@ class ScreenFooter(
         layoutFooterOnYAxis(
             lastContainerHeight,
             bottom - top,
-            sheetTopInStableState(requireSheetBehaviour().state),
+            sheetTopInStableState(requireSheetBehavior().state),
             lastBottomInset,
         )
-    }
-
-    // Overriding it here just to make a comment. Due to Android restrictions on layout flow, particularly
-    // the fact that onMeasure must set `measuredHeight` & `measuredWidth` React calls `measure` on every
-    // view group with accurate dimensions computed by Yoga. This is our entry point to get current view dimensions.
-    override fun onMeasure(
-        widthMeasureSpec: Int,
-        heightMeasureSpec: Int,
-    ) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     private var footerCallback =
@@ -158,7 +154,6 @@ class ScreenFooter(
                 bottomSheet: View,
                 slideOffset: Float,
             ) {
-//            Log.i(TAG, "onSlide $slideOffset")
                 lastSlideOffset = max(slideOffset, 0.0f)
                 if (!isAnimationControlledByKeyboard) {
                     layoutFooterOnYAxis(
@@ -172,41 +167,41 @@ class ScreenFooter(
         }
 
     // Important to keep this method idempotent! We attempt to (un)register
-    // our callback in different places depending on whether the behaviour is already created.
-    fun registerWithSheetBehaviour(behaviour: BottomSheetBehavior<Screen>) {
+    // our callback in different places depending on whether the behavior is already created.
+    fun registerWithSheetBehavior(behavior: BottomSheetBehavior<Screen>) {
         if (!isCallbackRegistered) {
-            behaviour.addBottomSheetCallback(footerCallback)
+            behavior.addBottomSheetCallback(footerCallback)
             isCallbackRegistered = true
         }
     }
 
     // Important to keep this method idempotent! We attempt to (un)register
-    // our callback in different places depending on whether the behaviour is already created.
-    fun unregisterWithSheetBehaviour(behaviour: BottomSheetBehavior<Screen>) {
+    // our callback in different places depending on whether the behavior is already created.
+    fun unregisterWithSheetBehavior(behavior: BottomSheetBehavior<Screen>) {
         if (isCallbackRegistered) {
-            behaviour.removeBottomSheetCallback(footerCallback)
+            behavior.removeBottomSheetCallback(footerCallback)
             isCallbackRegistered = false
         }
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        sheetBehavior?.let { registerWithSheetBehaviour(it) }
+        sheetBehavior?.let { registerWithSheetBehavior(it) }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        sheetBehavior?.let { unregisterWithSheetBehaviour(it) }
+        sheetBehavior?.let { unregisterWithSheetBehavior(it) }
     }
 
     private fun sheetTopInStableState(state: Int): Int {
-        val behaviour = requireSheetBehaviour()
+        val behavior = requireSheetBehavior()
         return when (state) {
-            STATE_COLLAPSED -> lastContainerHeight - behaviour.peekHeight
-            STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - behaviour.halfExpandedRatio)).toInt()
-            STATE_EXPANDED -> behaviour.expandedOffset
+            STATE_COLLAPSED -> lastContainerHeight - behavior.peekHeight
+            STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - behavior.halfExpandedRatio)).toInt()
+            STATE_EXPANDED -> behavior.expandedOffset
             STATE_HIDDEN -> lastContainerHeight
-            else -> throw IllegalArgumentException("[RNSScreen] use of stable-state method for unstable state")
+            else -> throw IllegalArgumentException("[RNSScreens] use of stable-state method for unstable state")
         }
     }
 
@@ -236,7 +231,7 @@ class ScreenFooter(
         layoutFooterOnYAxis(
             containerHeight,
             reactHeight,
-            sheetTopInStableState(requireSheetBehaviour().state),
+            sheetTopInStableState(requireSheetBehavior().state),
         )
     }
 
@@ -251,7 +246,7 @@ class ScreenFooter(
      * Please note that React has no clue about updates enforced in below method.
      *
      * @param containerHeight this should be the height of the screen (sheet) container used
-     * to calculate sheet properties when configuring behaviour (pixels)
+     * to calculate sheet properties when configuring behavior (pixels)
      * @param footerHeight summarized height of this component children (pixels)
      * @param sheetTop current bottom sheet top (Screen top) **relative to container** (pixels)
      * @param bottomInset current bottom inset, used to offset the footer by keyboard height (pixels)

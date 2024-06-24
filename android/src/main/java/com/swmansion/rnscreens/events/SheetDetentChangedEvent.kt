@@ -9,7 +9,7 @@ class SheetDetentChangedEvent(
     viewId: Int,
     val index: Int,
     val isStable: Boolean,
-) : Event<ScreenDisappearEvent>(surfaceId, viewId) {
+) : Event<SheetDetentChangedEvent>(surfaceId, viewId) {
     override fun getEventName() = EVENT_NAME
 
     // All events for a given view can be coalesced.

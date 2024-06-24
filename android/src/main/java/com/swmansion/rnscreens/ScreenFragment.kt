@@ -319,7 +319,6 @@ open class ScreenFragment :
     override fun onDestroy() {
         super.onDestroy()
         val container = screen.container
-//        Log.d(TAG, "onDestroy")
         if (container == null || !container.hasScreen(this.screen.fragmentWrapper)) {
             // we only send dismissed even when the screen has been removed from its container
             val screenContext = screen.context

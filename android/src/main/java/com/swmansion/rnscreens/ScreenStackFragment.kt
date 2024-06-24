@@ -339,7 +339,7 @@ class ScreenStackFragment :
             addBottomSheetCallback(bottomSheetStateCallback)
         }
 
-        screen.footer?.registerWithSheetBehaviour(behavior)
+        screen.footer?.registerWithSheetBehavior(behavior)
 
         return when (keyboardState) {
             is KeyboardNotVisible -> {

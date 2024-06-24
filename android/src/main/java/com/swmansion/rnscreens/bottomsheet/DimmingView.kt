@@ -3,10 +3,8 @@ package com.swmansion.rnscreens.bottomsheet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewGroup
-import android.view.WindowInsets
 import com.facebook.react.uimanager.PointerEvents
 import com.facebook.react.uimanager.ReactCompoundViewGroup
 import com.facebook.react.uimanager.ReactPointerEventsView
@@ -25,10 +23,6 @@ class DimmingView(
     init {
         setBackgroundColor(Color.BLACK)
         alpha = initialAlpha
-    }
-
-    override fun setAlpha(alpha: Float) {
-        super.setAlpha(alpha)
     }
 
     // This view group is not supposed to have any children, however we need it to be a view group
@@ -57,14 +51,9 @@ class DimmingView(
         y: Float,
     ) = blockGestures
 
-    companion object {
-        const val TAG = "DimmingView"
-    }
-
     override fun getPointerEvents(): PointerEvents = if (blockGestures) PointerEvents.AUTO else PointerEvents.NONE
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {
-        Log.w(TAG, "onApplyWindowInsets")
-        return super.onApplyWindowInsets(insets)
+    companion object {
+        const val TAG = "DimmingView"
     }
 }

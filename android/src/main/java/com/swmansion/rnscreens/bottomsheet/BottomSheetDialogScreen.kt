@@ -1,7 +1,6 @@
 package com.swmansion.rnscreens.bottomsheet
 
 import android.content.Context
-import android.util.Log
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.swmansion.rnscreens.ScreenModalFragment
 import java.lang.ref.WeakReference
@@ -17,7 +16,6 @@ class BottomSheetDialogScreen(
     // to run, as this will lead to inconsistencies in ScreenStack state. Instead we intercept
     // dismiss intention and run our logic.
     override fun cancel() {
-        Log.d(TAG, "cancel")
         fragmentRef.get()!!.dismissFromContainer()
         this.show()
     }

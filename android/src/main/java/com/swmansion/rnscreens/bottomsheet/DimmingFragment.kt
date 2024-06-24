@@ -3,15 +3,12 @@ package com.swmansion.rnscreens.bottomsheet
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.Insets
 import androidx.core.view.OnApplyWindowInsetsListener
@@ -101,11 +98,9 @@ class DimmingFragment(
                     computeOffsetFromDetentIndex((screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(0, screen.sheetDetents.count() - 1))
                 assert(firstDimmedOffset >= largestUndimmedOffset) { "fdo: $firstDimmedOffset, luo: $largestUndimmedOffset" }
                 intervalLength = firstDimmedOffset - largestUndimmedOffset
-            } else if (newState != BottomSheetBehavior.STATE_HIDDEN) {
             }
         }
 
-        @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
         override fun onSlide(
             bottomSheet: View,
             slideOffset: Float,
@@ -116,6 +111,9 @@ class DimmingFragment(
             }
         }
 
+        /**
+         * This method does compute
+         */
         private fun computeOffsetFromDetentIndex(index: Int): Float =
             when (screen.sheetDetents.size) {
                 1 ->
@@ -182,18 +180,15 @@ class DimmingFragment(
     }
 
     override fun onPause() {
-        Log.d(TAG, "onPause $this")
         super.onPause()
         insetsProxy.removeOnApplyWindowInsetsListener(this)
     }
 
     override fun onStop() {
-        Log.d(TAG, "onStop $this")
         super.onStop()
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy $this")
         super.onDestroy()
     }
 
@@ -419,8 +414,6 @@ class DimmingFragment(
     ): WindowInsetsCompat {
         val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
         val imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime())
-
-        Log.w(TAG, "DV: $this: View $v received bottom inset $imeBottomInset ime: $isImeVisible")
 
         if (isImeVisible) {
             isKeyboardVisible = true

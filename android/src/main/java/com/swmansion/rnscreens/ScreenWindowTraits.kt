@@ -7,7 +7,6 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.view.ViewParent
 import androidx.core.graphics.Insets
@@ -35,10 +34,6 @@ object ScreenWindowTraits {
                 v: View,
                 insets: WindowInsetsCompat,
             ): WindowInsetsCompat {
-                Log.w(
-                    "ScreenWindowTraits",
-                    "onApplyWindowInsetsListener.Callback on $v",
-                )
                 val defaultInsets = ViewCompat.onApplyWindowInsets(v, insets)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -178,14 +173,11 @@ object ScreenWindowTraits {
                     // If the status bar is translucent hook into the window insets calculations
                     // and consume all the top insets so no padding will be added under the status bar.
                     val decorView = activity.window.decorView
-//                    val decorView = screen
                     if (translucent) {
-                        Log.w("ScreenWindowTraits", "setting onApplyWindowInsetsListener.Callback on $decorView")
                         InsetsObserverProxy.registerOnView(decorView)
                         InsetsObserverProxy.addOnApplyWindowInsetsListener(windowInsetsListener)
                         hasAttachedWindowInsetsCallback = true
                     } else {
-                        Log.w("ScreenWindowTraits", "Removing listener from $decorView")
                         InsetsObserverProxy.removeOnApplyWindowInsetsListener(windowInsetsListener)
                         hasAttachedWindowInsetsCallback = false
                     }
