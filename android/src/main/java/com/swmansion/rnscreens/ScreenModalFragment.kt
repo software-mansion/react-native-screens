@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogRootView
 import com.swmansion.rnscreens.bottomsheet.BottomSheetDialogScreen
+import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 import com.swmansion.rnscreens.ext.parentAsView
 import com.swmansion.rnscreens.ext.recycle
@@ -275,7 +276,7 @@ class ScreenModalFragment :
             2 ->
                 behavior.apply {
                     state =
-                        Screen.sheetStateFromDetentIndex(
+                        SheetUtils.sheetStateFromDetentIndex(
                             screen.sheetInitialDetentIndex,
                             screen.sheetDetents.count(),
                         )
@@ -288,7 +289,7 @@ class ScreenModalFragment :
             3 ->
                 behavior.apply {
                     state =
-                        Screen.sheetStateFromDetentIndex(
+                        SheetUtils.sheetStateFromDetentIndex(
                             screen.sheetInitialDetentIndex,
                             screen.sheetDetents.count(),
                         )

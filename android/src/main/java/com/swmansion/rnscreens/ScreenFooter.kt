@@ -14,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDE
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import com.google.android.material.math.MathUtils
+import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import kotlin.math.max
 
 @SuppressLint("ViewConstructor")
@@ -132,7 +133,7 @@ class ScreenFooter(
                 bottomSheet: View,
                 newState: Int,
             ) {
-                if (!Screen.isStateStable(newState)) {
+                if (!SheetUtils.isStateStable(newState)) {
                     return
                 }
 
@@ -252,7 +253,7 @@ class ScreenFooter(
      * @param containerHeight this should be the height of the screen (sheet) container used
      * to calculate sheet properties when configuring behaviour (pixels)
      * @param footerHeight summarized height of this component children (pixels)
-     * @param sheetTop current bottom sheet top (Screen top) **relative to container**
+     * @param sheetTop current bottom sheet top (Screen top) **relative to container** (pixels)
      * @param bottomInset current bottom inset, used to offset the footer by keyboard height (pixels)
      */
     fun layoutFooterOnYAxis(

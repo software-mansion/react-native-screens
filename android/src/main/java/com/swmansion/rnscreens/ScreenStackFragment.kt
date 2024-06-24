@@ -37,6 +37,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.swmansion.rnscreens.bottomsheet.DimmingFragment
+import com.swmansion.rnscreens.bottomsheet.SheetUtils
 import com.swmansion.rnscreens.ext.recycle
 import com.swmansion.rnscreens.utils.DeviceUtils
 
@@ -141,17 +142,17 @@ class ScreenStackFragment :
 
     private val bottomSheetStateCallback =
         object : BottomSheetCallback() {
-            private var lastStableState: Int = Screen.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
+            private var lastStableState: Int = SheetUtils.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
 
             override fun onStateChanged(
                 bottomSheet: View,
                 newState: Int,
             ) {
-                if (Screen.isStateStable(newState)) {
+                if (SheetUtils.isStateStable(newState)) {
                     lastStableState = newState
-                    screen.emitOnSheetDetentChanged(Screen.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), true)
+                    screen.emitOnSheetDetentChanged(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), true)
                 } else if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    screen.emitOnSheetDetentChanged(Screen.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
+                    screen.emitOnSheetDetentChanged(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
                 }
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
@@ -354,7 +355,7 @@ class ScreenStackFragment :
                     2 ->
                         behavior.apply {
                             state =
-                                Screen.sheetStateFromDetentIndex(
+                                SheetUtils.sheetStateFromDetentIndex(
                                     screen.sheetInitialDetentIndex,
                                     screen.sheetDetents.count(),
                                 )
@@ -367,7 +368,7 @@ class ScreenStackFragment :
                     3 ->
                         behavior.apply {
                             state =
-                                Screen.sheetStateFromDetentIndex(
+                                SheetUtils.sheetStateFromDetentIndex(
                                     screen.sheetInitialDetentIndex,
                                     screen.sheetDetents.count(),
                                 )
