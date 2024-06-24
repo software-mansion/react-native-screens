@@ -44,6 +44,10 @@ export default function Second({ navigation }: NavPropObj) {
         onPress={() => navigation.navigate('ModalScreen')}
       />
       <BorderedButton
+        title="Navigate NS"
+        onPress={() => navigation.navigate('NestedStack')}
+      />
+      <BorderedButton
         title="PopTo First"
         onPress={() => navigation.popTo("First")}
       />

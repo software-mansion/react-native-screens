@@ -70,6 +70,10 @@ export default function CommonSheetContent(): React.JSX.Element {
           onPress={() => navigation.popTo('Second')}
         />
         <Button
+          title='Navigate Third'
+          onPress={() => navigation.navigate('Third')}
+        />
+        <Button
           title="Navigate NestedStack"
           onPress={() => {
             navigation.navigate('NestedStack');

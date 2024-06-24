@@ -26,6 +26,7 @@ import SheetScreen from './screens/SheetScreen';
 import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import ModalScreen from './screens/ModalScreen';
 import PushWithScrollView from './screens/PushWithScrollView';
+import Second from './screens/Second';
 
 
 const Stack = createNativeStackNavigator();
@@ -139,7 +140,7 @@ function NestedStack(): React.JSX.Element {
         },
         statusBarTranslucent: false,
       }}>
-      <InnerStack.Screen name="NestedSheet" component={Third} />
+      <InnerStack.Screen name="NestedThird" component={Third} />
     </InnerStack.Navigator>
   );
 }
