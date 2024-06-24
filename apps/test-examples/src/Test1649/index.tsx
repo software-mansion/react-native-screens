@@ -6,6 +6,9 @@ import {
   NativeSyntheticEvent,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+// import {
+//   createNativeStackNavigator,
+// } from 'react-native-screens/native-stack';
 import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
@@ -13,103 +16,19 @@ import {
 import * as jotai from 'jotai';
 
 // import useFocusEffectIgnoreSheet from './hooks/useFocusEffectIgnoreSheet';
-import { sheetOptionsAtom, sheetInitialOptions } from './state';
+import { sheetOptionsAtom } from './state';
 
 import Routes from './routes';
 
 import Home from './screens/Home';
-import Second from './screens/Second';
 import Third from './screens/Third';
 import SheetScreen from './screens/SheetScreen';
 import SheetScreenWithScrollView from './screens/SheetScreenWithScrollView';
 import ModalScreen from './screens/ModalScreen';
 import PushWithScrollView from './screens/PushWithScrollView';
-import SheetScreenWithTextInput from './screens/SheetScreenWithTextInput';
 
 
-// Attempt to use v7 API,
-const Stack = createNativeStackNavigator({
-  screens: {
-    First: Home,
-    Second: {
-      screen: Second,
-      options: {
-        fullScreenGestureEnabled: true,
-      },
-    },
-    Third: {
-      screen: Third,
-      options: {
-        headerShown: true,
-        fullScreenGestureEnabled: true,
-      }
-    },
-    Sheet: {
-      screen: SheetScreen,
-      options: {
-        headerShown: false,
-        presentation: 'formSheet',
-        sheetElevation: 24,
-        screenStyle: {
-          backgroundColor: 'firebrick',
-        },
-        onSheetDetentChanged: (
-          e: NativeSyntheticEvent<{ index: number; isStable: boolean }>,
-        ) => {
-          console.log(
-            `onSheetDetentChanged in App with index ${e.nativeEvent.index} isStable: ${e.nativeEvent.isStable}`,
-          );
-        },
-        ...sheetInitialOptions,
-      },
-    },
-    Modal: {
-      screen: SheetScreen,
-      options: {
-        headerShown: false,
-        presentation: 'modal',
-        ...sheetInitialOptions,
-      }
-    },
-    PushWithScrollView: PushWithScrollView,
-    SheetWithScrollView: {
-      screen: SheetScreenWithScrollView,
-      options: {
-        headerShown: false,
-        presentation: 'formSheet',
-        ...sheetInitialOptions,
-      },
-    },
-    SheetWithTextInput: {
-      screen: SheetScreenWithTextInput,
-      options: {
-        headerShown: false,
-        presentation: 'formSheet',
-        ...sheetInitialOptions,
-      },
-    },
-    AnotherSheet: {
-      screen: SheetScreen,
-      options: {
-        headerShown: false,
-        presentation: 'formSheet',
-        sheetElevation: 24,
-        sheetAllowedDetents: [0.5, 0.8],
-        screenStyle: {
-          backgroundColor: 'firebrick',
-        },
-        ...sheetInitialOptions,
-      }
-    }
-  },
-  screenOptions: {
-    headerTitleStyle: {
-      color: 'seagreen',
-    },
-    headerShown: true,
-    statusBarTranslucent: false,
-  }
-});
+const Stack = createNativeStackNavigator();
 
 const InnerStack = createNativeStackNavigator();
 
@@ -144,8 +63,11 @@ export default function App(): JSX.Element {
             component={SheetScreen}
             options={{
               headerShown: false,
-              stackPresentation: 'formSheet',
+              presentation: 'formSheet',
               sheetElevation: 24,
+              contentStyle: {
+                backgroundColor: 'firebrick',
+              },
               screenStyle: {
                 backgroundColor: 'firebrick',
               },
@@ -165,7 +87,7 @@ export default function App(): JSX.Element {
             component={SheetScreenWithScrollView}
             options={{
               headerShown: false,
-              stackPresentation: 'formSheet',
+              presentation: 'formSheet',
               ...sheetOptions,
             }}
           />
@@ -183,7 +105,7 @@ export default function App(): JSX.Element {
             component={ModalScreen}
             options={{
               headerShown: false,
-              stackPresentation: 'modal',
+              presentation: 'modal',
               ...sheetOptions,
             }}
           />
@@ -192,7 +114,7 @@ export default function App(): JSX.Element {
             component={SheetScreen}
             options={{
               headerShown: false,
-              stackPresentation: 'formSheet',
+              presentation: 'formSheet',
               sheetElevation: 24,
               screenStyle: {
                 backgroundColor: 'firebrick',
@@ -212,6 +134,10 @@ function NestedStack(): React.JSX.Element {
     <InnerStack.Navigator
       screenOptions={{
         headerShown: true,
+        headerTitleStyle: {
+          color: 'firebrick',
+        },
+        statusBarTranslucent: false,
       }}>
       <InnerStack.Screen name="NestedSheet" component={Third} />
     </InnerStack.Navigator>

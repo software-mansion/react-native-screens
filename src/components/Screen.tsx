@@ -121,8 +121,6 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         }
       };
 
-      console.log(`sheetLargestUndimmedDetent: ${sheetLargestUndimmedDetent}`);
-
       return (
         <DelayedFreeze freeze={freezeOnBlur && activityState === 0}>
           <AnimatedScreen

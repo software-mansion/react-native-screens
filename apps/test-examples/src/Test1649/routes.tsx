@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as jotai from 'jotai';
 
 import { sheetInitialOptions } from './state';
 
@@ -19,7 +18,6 @@ export type RouteDescriptor = {
   component: (props: any) => React.JSX.Element,
   options?: NativeStackNavigationOptions,
 };
-
 
 const routes: Record<string, RouteDescriptor> = {
   First: {
