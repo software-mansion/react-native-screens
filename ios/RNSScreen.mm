@@ -115,7 +115,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   _sheetsScrollView = nil;
   _footer = nil;
   _didSetSheetAllowedDetentsOnController = NO;
-  //  self.translatesAutoresizingMaskIntoConstraints = true;
 }
 
 - (UIViewController *)reactViewController
@@ -1265,15 +1264,8 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   // any attempt of setting that via React props
 }
 
-- (void)setFrame:(CGRect)frame
-{
-  //  NSLog(@"RNSScreenView %p setFrame %@", self, NSStringFromCGRect(frame));
-  [super setFrame:frame];
-}
-
 - (void)reactSetFrame:(CGRect)frame
 {
-  //  NSLog(@"RNSScreenView %p reactSetFrame %@", self, NSStringFromCGRect(frame));
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
@@ -1963,9 +1955,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #else
 - (UIView *)view
 {
-  RNSScreenView *screenView = [[RNSScreenView alloc] initWithBridge:self.bridge];
-  NSLog(@"RNSScreenView CREATE %p", screenView);
-  return screenView;
+  return [[RNSScreenView alloc] initWithBridge:self.bridge];
 }
 #endif
 
