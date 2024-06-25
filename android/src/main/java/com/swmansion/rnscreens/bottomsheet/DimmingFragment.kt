@@ -48,7 +48,7 @@ class DimmingFragment(
     private lateinit var containerView: GestureTransparentViewGroup
 
     private val maxAlpha: Float = 0.15F
-    private val reactContext: ReactContext? = screen.reactContext
+    private val reactContext: ReactContext = screen.reactContext
 
     private var isKeyboardVisible: Boolean = false
     private var keyboardState: KeyboardState = KeyboardNotVisible
@@ -80,7 +80,7 @@ class DimmingFragment(
                 ),
             )
         private var intervalLength = firstDimmedOffset - largestUndimmedOffset
-        private var animator =
+        private val animator =
             ValueAnimator.ofFloat(0F, maxAlpha).apply {
                 duration = 1
                 addUpdateListener {
@@ -96,7 +96,9 @@ class DimmingFragment(
                 largestUndimmedOffset = computeOffsetFromDetentIndex(screen.sheetLargestUndimmedDetentIndex)
                 firstDimmedOffset =
                     computeOffsetFromDetentIndex((screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(0, screen.sheetDetents.count() - 1))
-                assert(firstDimmedOffset >= largestUndimmedOffset) { "fdo: $firstDimmedOffset, luo: $largestUndimmedOffset" }
+                assert(firstDimmedOffset >= largestUndimmedOffset) {
+                    "[RNScreens] firstDimmedOffset ($firstDimmedOffset) < largestDimmedOffset ($largestUndimmedOffset)"
+                }
                 intervalLength = firstDimmedOffset - largestUndimmedOffset
             }
         }
@@ -107,12 +109,13 @@ class DimmingFragment(
         ) {
             if (largestUndimmedOffset < slideOffset && slideOffset < firstDimmedOffset) {
                 val fraction = (slideOffset - largestUndimmedOffset) / intervalLength
-                animator!!.setCurrentFraction(fraction)
+                animator.setCurrentFraction(fraction)
             }
         }
 
         /**
-         * This method does compute
+         * This method does compute slide offset (see [BottomSheetCallback.onSlide] docs) for detent
+         * at given index in the detents array.
          */
         private fun computeOffsetFromDetentIndex(index: Int): Float =
             when (screen.sheetDetents.size) {
