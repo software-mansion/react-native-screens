@@ -52,14 +52,10 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
      UISheetPresentationControllerDelegate>
 #endif
 
-- (void)updateFooterLayout;
-
 @end
 
 @implementation RNSScreenView {
   __weak RCTScrollView *_sheetsScrollView;
-  __weak RNSScreenFooter *_footer;
-  CGSize _keyboardSize;
   BOOL _didSetSheetAllowedDetentsOnController;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
@@ -113,7 +109,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
   _sheetsScrollView = nil;
-  _footer = nil;
   _didSetSheetAllowedDetentsOnController = NO;
 }
 
@@ -128,50 +123,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   return _reactSubviews;
 }
 #endif
-
-- (void)setKeyboardSize:(CGSize)size
-{
-  NSLog(@"Setting keyboard size to %@", NSStringFromCGSize(size));
-  _keyboardSize = size;
-  //  [self updateFooterLayout];
-}
-
-- (void)animateFooterWithClosingKeyboard:(NSNotification *)keyboardNotification
-{
-  // When keyboard is opening it works nice out-of-the-box
-  //  NSNumber *duration = keyboardNotification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
-  //  UIViewAnimationOptions options = (UIViewAnimationOptions)(
-  //      [[keyboardNotification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue] << 16);
-  //  CGRect endFrame = ((NSValue *)(keyboardNotification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
-  //
-  //  [UIView animateWithDuration:[duration doubleValue]
-  //                        delay:0.0
-  //                      options:options
-  //                   animations:^{
-  //                     [self updateFooterLayout];
-  //                   }
-  //                   completion:nil];
-}
-
-- (void)updateFooterLayout
-{
-  //  if (_footer != nil && _footer.subviews.count > 0) {
-  //    CGPoint footerOrigin = _footer.frame.origin;
-  //    CGSize targetFooterSize = _footer.subviews[0].frame.size;
-  //    RCTView *child = (RCTView *)_footer.subviews[0];
-  //    footerOrigin.y -= targetFooterSize.height + child.reactCompoundInsets.bottom - child.reactPaddingInsets.bottom +
-  //        _keyboardSize.height;
-  //    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width,
-  //    targetFooterSize.height); NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame)); _footer.frame =
-  //    newFooterFrame;
-  //  }
-}
-
-- (void)layoutSubviews
-{
-  [super layoutSubviews];
-  //  [self updateFooterLayout];
-}
 
 - (void)updateBounds
 {
@@ -188,7 +139,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     [navctr.view setNeedsLayout];
   }
 #else
-  //  NSLog(@"RNSScreenView %p updateBounds frame %@", self, NSStringFromCGRect(self.frame));
   [_bridge.uiManager setSize:self.bounds.size forView:self];
 
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
@@ -229,7 +179,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context
 {
-  NSLog(@"OBSERVE VALUE FOR KEY PATH");
   UIView *scrollview = (UIView *)object;
   if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
     [scrollview setFrame:self.frame];
@@ -403,19 +352,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   [super insertReactSubview:subview atIndex:atIndex];
 }
 
-- (void)repositionFooter:(CGRect)footerFrame
-{
-  if (_footer == nil) {
-    return;
-  }
-
-  //  [_footer setFrame:CGRectMake(_footer.frame.origin.x,
-  //                               _footer.frame.origin.y,
-  //                               _footer.frame.size.width,
-  //                               _footer.frame.size.height)];
-  //
-}
-
 /// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
 - (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr
 {
@@ -445,22 +381,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 
 - (void)addSubview:(UIView *)view
 {
-  if ([view isKindOfClass:RNSScreenFooter.class]) {
-    _footer = (RNSScreenFooter *)view;
-    //    _footer.onLayout = ^(CGRect frame) {
-    //      [self updateFooterLayout];
-    //    };
-
-    //    [NSLayoutConstraint activateConstraints:@[
-    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeBottom
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0],
-    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeLeft
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
-    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeRight
-    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
-    //    ]];
-  }
-
   if ([view isKindOfClass:RNSScreenContentWrapper.class] &&
       self.stackPresentation == RNSScreenStackPresentationFormSheet) {
     auto contentWrapper = (RNSScreenContentWrapper *)view;
@@ -1031,26 +951,8 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
         [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:detentIndex].stringValue animate:YES];
       }
     } else {
-      RCTLogError(@"Value of sheetLargestUndimmedDetent prop must be >= -1");
+      RCTLogError(@"[RNScreens] Value of sheetLargestUndimmedDetent prop must be >= -1");
     }
-
-    //    if (detentIndex != -1 && _sheetAllowedDetents.count > 0) {
-    //      if (detentIndex >= 0 && detentIndex < _sheetAllowedDetents.count) {
-    //        [self setLargestUndimmedDetentForSheet:sheet to:_sheetLargestUndimmedDetent.stringValue animate:YES];
-    //      } else {
-    //        [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
-    //      }
-    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
-    //      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium
-    //      animate:YES];
-    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
-    //      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge
-    //      animate:YES];
-    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
-    //      [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
-    //    } else {
-    //      RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
-    //    }
   }
 #endif // Check for iOS >= 15
 }
@@ -1327,20 +1229,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return self;
 }
 
-- (void)keyboardWillShow:(NSNotification *)notification
-{
-  CGRect rect = ((NSValue *)(notification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
-  [self.screenView setKeyboardSize:rect.size];
-  [self.screenView updateFooterLayout];
-}
-
-- (void)keyboardWillHide:(NSNotification *)notification
-{
-  [self.screenView setKeyboardSize:CGSizeZero];
-  //  [self.screenView updateFooterLayout];
-  [self.screenView animateFooterWithClosingKeyboard:notification];
-}
-
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -1367,15 +1255,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
-
-  //  [[NSNotificationCenter defaultCenter] addObserver:self
-  //                                           selector:@selector(keyboardWillShow:)
-  //                                               name:UIKeyboardWillShowNotification
-  //                                             object:nil];
-  //  [[NSNotificationCenter defaultCenter] addObserver:self
-  //                                           selector:@selector(keyboardWillHide:)
-  //                                               name:UIKeyboardWillHideNotification
-  //                                             object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

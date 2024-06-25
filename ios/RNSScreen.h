@@ -131,7 +131,6 @@ namespace react = facebook::react;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;
 - (BOOL)isModal;
 - (BOOL)isPresentedAsNativeModal;
-- (void)setKeyboardSize:(CGSize)size;
 
 /// Looks for header configuration in instance's `reactSubviews` and returns it. If not present returns `nil`.
 - (RNSScreenStackHeaderConfig *_Nullable)findHeaderConfig;
