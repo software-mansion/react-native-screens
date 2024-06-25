@@ -1,6 +1,7 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
+#import <UIKit/UIKit.h>
 
 namespace react = facebook::react;
 
