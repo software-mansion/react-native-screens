@@ -15,7 +15,7 @@
 {
   [super traitCollectionDidChange:previousTraitCollection];
   if (RCTSharedApplication().applicationState == UIApplicationStateBackground ||
-      (self.stackPresentation != RNSScreenStackPresentationFullScreenModal)) {
+      self.stackPresentation != RNSScreenStackPresentationFullScreenModal) {
     return;
   }
 
