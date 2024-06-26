@@ -494,10 +494,15 @@ namespace react = facebook::react;
        config.direction == UISemanticContentAttributeForceRightToLeft) &&
       // iOS 12 cancels swipe gesture when direction is changed. See #1091
       navctr.view.semanticContentAttribute != config.direction) {
+    // This is needed for swipe back gesture direction
     navctr.view.semanticContentAttribute = config.direction;
-    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navctr.class ]]
+
+    // TODO: Some comment here please
+    navctr.navigationBar.semanticContentAttribute = config.direction;
+
+    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
         setSemanticContentAttribute:config.direction];
-    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navctr.class ]]
+    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
         setSemanticContentAttribute:config.direction];
   }
 
