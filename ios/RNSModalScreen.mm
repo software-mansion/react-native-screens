@@ -7,15 +7,13 @@
 
 @implementation RNSModalScreen
 
+// When using UIModalPresentationStyleFullScreen the views belonging to the presenting view controller are removed,
+// Thus there is no RCTRootView mounted and no trait observer working.
+// We have to set up an extra observer and send change notifications accoridngly
+// For more information, see https://github.com/software-mansion/react-native-screens/pull/2211.
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
 {
   [super traitCollectionDidChange:previousTraitCollection];
-
-  // Describe following facts:
-  // 1. With full screen modal react root view is mounted in the initial view hierarchy
-  // 2. Thus the trait observation in react root view does not work anymore
-  // 3. we need to send theme-chanages notification our selves
-  // Describe this in-depth in PR and paste link here
   if (RCTSharedApplication().applicationState == UIApplicationStateBackground ||
       (self.stackPresentation != RNSScreenStackPresentationFullScreenModal)) {
     return;
