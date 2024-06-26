@@ -497,9 +497,8 @@ namespace react = facebook::react;
     // This is needed for swipe back gesture direction
     navctr.view.semanticContentAttribute = config.direction;
 
-    // TODO: Some comment here please
+    // This is responsible for the direction of the navigationBar nad its contents
     navctr.navigationBar.semanticContentAttribute = config.direction;
-
     [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
         setSemanticContentAttribute:config.direction];
     [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
