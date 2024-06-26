@@ -347,7 +347,11 @@ export type NativeStackNavigationOptions = {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenProps['screenOrientation'];
-  screenStyle?: { backgroundColor: ViewStyle['backgroundColor'] };
+  /**
+   * Allows to set background color for the `Screen` component itself.
+   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
+   */
+  screenStyle?: ScreenProps['screenStyle'];
   /**
    * Object in which you should pass props in order to render native iOS searchBar.
    */
@@ -378,7 +382,7 @@ export type NativeStackNavigationOptions = {
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `true`.
    *
-   * @platform iOS
+   * @platform ios
    */
   sheetExpandsWhenScrolledToEdge?: ScreenProps['sheetExpandsWhenScrolledToEdge'];
   /**
@@ -395,11 +399,14 @@ export type NativeStackNavigationOptions = {
    * Works only when `stackPresentation` is set to `formSheet`.
    * Defaults to `false`.
    *
-   * @platform iOS
+   * @platform ios
    */
   sheetGrabberVisible?: ScreenProps['sheetGrabberVisible'];
   /**
-   * TODO: description of this prop
+   * Index of the detent the sheet should expand to after being opened.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Defaults to `0` - which represents first detent in the detents array.
    */
   sheetInitialDetent?: ScreenProps['sheetInitialDetent'];
   /**

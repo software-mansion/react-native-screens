@@ -271,7 +271,11 @@ export interface ScreenProps extends ViewProps {
    * - "landscape_right" – landscape-right orientation is permitted
    */
   screenOrientation?: ScreenOrientationTypes;
-  screenStyle?: StyleProp<ViewStyle>;
+  /**
+   * Allows to set background color for the `Screen` component itself.
+   * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
+   */
+  screenStyle?: StyleProp<Pick<ViewStyle, 'backgroundColor'>>;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
@@ -288,7 +292,7 @@ export interface ScreenProps extends ViewProps {
   /**
    * Integer value describing elevation of the sheet, impacting shadow on the top edge of the sheet.
    *
-   * Not dynamic.
+   * Not dynamic - changing it after the component is rendered won't have an effect.
    *
    * Defaults to `24`.
    *
@@ -333,7 +337,10 @@ export interface ScreenProps extends ViewProps {
    */
   sheetLargestUndimmedDetent?: number;
   /**
-   * TODO: Add description of this prop
+   * Index of the detent the sheet should expand to after being opened.
+   * Works only when `stackPresentation` is set to `formSheet`.
+   *
+   * Defaults to `0` - which represents first detent in the detents array.
    */
   sheetInitialDetent?: number;
   /**

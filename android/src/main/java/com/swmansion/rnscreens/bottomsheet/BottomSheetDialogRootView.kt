@@ -37,17 +37,8 @@ class BottomSheetDialogRootView(
         if (changed) {
             // This view is used right now only in ScreenModalFragment, where it is injected
             // to view hierarchy as a parent of a Screen.
-            if (childCount > 1) {
-                val grabberWidthSpec = MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY)
-                val grabberHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-
-                val grabber = getChildAt(0)
-                grabber.measure(grabberWidthSpec, grabberHeightSpec)
-                grabber.layout(l, t, r, grabber.measuredHeight)
-                getChildAt(childCount - 1).layout(l, t + grabber.measuredHeight, r, b)
-            } else {
-                getChildAt(childCount - 1).layout(l, t, r, b)
-            }
+            assert(childCount == 1) { "[RNScreens] Expected only a single child view under ${TAG}, received: ${childCount}"}
+            getChildAt(0).layout(l, t, r, b)
         }
     }
 
@@ -108,6 +99,6 @@ class BottomSheetDialogRootView(
     }
 
     companion object {
-        val TAG = BottomSheetDialogRootView::class.simpleName
+        const val TAG = "BottomSheetDialogRootView"
     }
 }

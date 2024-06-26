@@ -194,6 +194,14 @@ class ScreenFooter(
         sheetBehavior?.let { unregisterWithSheetBehavior(it) }
     }
 
+    /**
+     * Calculate position of sheet's top while it is in stable state given concrete sheet state.
+     *
+     * This method should not be used for sheet in unstable state.
+     *
+     * @param state sheet state as defined in [BottomSheetBehavior]
+     * @return position of sheet's top **relative to container**
+     */
     private fun sheetTopInStableState(state: Int): Int {
         val behavior = requireSheetBehavior()
         return when (state) {
@@ -201,10 +209,19 @@ class ScreenFooter(
             STATE_HALF_EXPANDED -> (lastContainerHeight * (1 - behavior.halfExpandedRatio)).toInt()
             STATE_EXPANDED -> behavior.expandedOffset
             STATE_HIDDEN -> lastContainerHeight
-            else -> throw IllegalArgumentException("[RNSScreens] use of stable-state method for unstable state")
+            else -> throw IllegalArgumentException("[RNScreens] use of stable-state method for unstable state")
         }
     }
 
+    /**
+     * Calculate position of sheet's top while it is in dragging / settling state given concrete slide offset
+     * as reported by [BottomSheetCallback.onSlide].
+     *
+     * This method should not be used for sheet in stable state.
+     *
+     * @param slideOffset sheet offset as reported by [BottomSheetCallback.onSlide]
+     * @return position of sheet's top **relative to container**
+     */
     private fun sheetTopWhileDragging(slideOffset: Float): Int =
         MathUtils
             .lerp(

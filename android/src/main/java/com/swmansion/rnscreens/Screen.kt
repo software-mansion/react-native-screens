@@ -7,7 +7,6 @@ import android.os.Parcelable
 import android.util.SparseArray
 import android.util.TypedValue
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.view.WindowManager
 import android.webkit.WebView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -118,12 +117,6 @@ class Screen(
     fun registerLayoutCallbackForWrapper(wrapper: ScreenContentWrapper) {
         wrapper.delegate = this
     }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-    }
-
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets = super.onApplyWindowInsets(insets)
 
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {
         // do nothing, react native will keep the view hierarchy so no need to serialize/deserialize

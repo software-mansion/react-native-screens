@@ -102,14 +102,11 @@ const MaybeNestedStack = ({
   const content = (
     <Container
       style={[
-        // stackPresentation === 'formSheet' && Platform.OS === 'ios' ? styles.absoluteFillNoBottom : styles.container,
-        // styles.container,
         stackPresentation === 'formSheet'
           ? Platform.OS === 'ios'
             ? styles.absoluteFillNoBottom
             : null
           : styles.container,
-        // stackPresentation === 'formSheet' && Platform.OS === 'ios' ? styles.absoluteFillNoBottom : styles.container,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,

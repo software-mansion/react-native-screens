@@ -62,20 +62,6 @@ object ScreenWindowTraits {
             }
         }
 
-    /**
-     * Whether we have attached an `OnApplyWindowInsetsListener` on decor view in `setTranslucent`.
-     * **UI thread only**.
-     */
-    private var hasAttachedWindowInsetsCallback = false
-        set(value) {
-            UiThreadUtil.assertOnUiThread()
-            field = value
-        }
-        get() {
-            UiThreadUtil.assertOnUiThread()
-            return field
-        }
-
     internal fun applyDidSetOrientation() {
         didSetOrientation = true
     }
@@ -176,10 +162,8 @@ object ScreenWindowTraits {
                     if (translucent) {
                         InsetsObserverProxy.registerOnView(decorView)
                         InsetsObserverProxy.addOnApplyWindowInsetsListener(windowInsetsListener)
-                        hasAttachedWindowInsetsCallback = true
                     } else {
                         InsetsObserverProxy.removeOnApplyWindowInsetsListener(windowInsetsListener)
-                        hasAttachedWindowInsetsCallback = false
                     }
                     ViewCompat.requestApplyInsets(decorView)
                 }

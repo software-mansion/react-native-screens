@@ -82,7 +82,7 @@ class DimmingFragment(
         private var intervalLength = firstDimmedOffset - largestUndimmedOffset
         private val animator =
             ValueAnimator.ofFloat(0F, maxAlpha).apply {
-                duration = 1
+                duration = 1 // Driven manually
                 addUpdateListener {
                     viewToAnimate.alpha = it.animatedValue as Float
                 }

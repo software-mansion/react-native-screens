@@ -140,6 +140,9 @@ class ScreenStackFragment :
         }
     }
 
+    // If the Screen has `formSheet` presentation this callback is attached to its behavior.
+    // It is responsible for firing detent changed events & removing the sheet from the container
+    // once it is hidden by user gesture.
     private val bottomSheetStateCallback =
         object : BottomSheetCallback() {
             private var lastStableState: Int = SheetUtils.sheetStateFromDetentIndex(screen.sheetInitialDetentIndex, screen.sheetDetents.count())
@@ -155,6 +158,8 @@ class ScreenStackFragment :
                     screen.emitOnSheetDetentChanged(SheetUtils.detentIndexFromSheetState(lastStableState, screen.sheetDetents.count()), false)
                 }
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    // If we are wrapped in DimmingFragment we want it to be removed alongside
+                    // => we use its fragment manager. Otherwise we just remove this fragment.
                     if (this@ScreenStackFragment.parentFragment is DimmingFragment) {
                         parentFragmentManager.commit {
                             setReorderingAllowed(true)
@@ -212,8 +217,7 @@ class ScreenStackFragment :
                 ).apply {
                     behavior =
                         if (screen.stackPresentation == Screen.StackPresentation.FORM_SHEET) {
-                            val behavior = createAndConfigureBottomSheetBehaviour()
-                            behavior
+                            createAndConfigureBottomSheetBehaviour()
                         } else if (isToolbarTranslucent) {
                             null
                         } else {
@@ -306,7 +310,7 @@ class ScreenStackFragment :
                         // https://developer.android.com/develop/ui/views/touch-and-input/keyboard-input/visibility
 
                         // I want to be polite here and request focus before dismissing the keyboard,
-                        // however event if it fails I want to try to hide the keyboard. This sometimes works...
+                        // however even if it fails I want to try to hide the keyboard. This sometimes works...
                         bottomSheet.requestFocus()
                         val imm = requireContext().getSystemService(InputMethodManager::class.java)
                         imm.hideSoftInputFromWindow(bottomSheet.windowToken, 0)
@@ -489,10 +493,6 @@ class ScreenStackFragment :
         screen.background = shape
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     override fun onStop() {
         if (DeviceUtils.isPlatformAndroidTV(context)) {
             lastFocusedChild = findLastFocusedChild()
@@ -658,6 +658,9 @@ class ScreenStackFragment :
 //            return Rect(screen.x.toInt(), -screen.y.toInt(), screen.x.toInt() + screen.width, screen.y.toInt() + screen.height)
 //        }
 
+        // We set pointer events to BOX_NONE, because we don't want the ScreensCoordinatorLayout
+        // to be target of react gestures and effectively prevent interaction with screens
+        // underneath the current screen (useful in `modal` & `formSheet` presentation).
         override fun getPointerEvents(): PointerEvents = PointerEvents.BOX_NONE
     }
 

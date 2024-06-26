@@ -1012,6 +1012,11 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   return _config != nil;
 }
 
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
+}
+
 + (BOOL)shouldBeRecycled
 {
   return NO;
