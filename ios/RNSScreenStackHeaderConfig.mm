@@ -503,6 +503,8 @@ namespace react = facebook::react;
         setSemanticContentAttribute:config.direction];
     [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
         setSemanticContentAttribute:config.direction];
+    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
+        setSemanticContentAttribute:config.direction];
   }
 
   if (shouldHide) {
@@ -669,13 +671,6 @@ namespace react = facebook::react;
       }
     }
   }
-
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
-    // Position the contents in the navigation bar, regarding to the direction.
-    for (UIView *view in navctr.navigationBar.subviews) {
-      view.semanticContentAttribute = config.direction;
-    }
-  });
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
