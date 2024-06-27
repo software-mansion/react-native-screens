@@ -1191,21 +1191,27 @@ namespace react = facebook::react;
 #else
 #pragma mark - Paper specific
 
-- (void)invalidate {
+- (void)invalidate
+{
   _invalidated = YES;
-  [self dismissAllPresentedViewControllersFrom:_controller completion:^{
-    // Ensure presented modals are removed and the controller is detached from its parent
-    [self->_presentedModals removeAllObjects];
-    [self->_controller willMoveToParentViewController:nil];
-    [self->_controller removeFromParentViewController];
-  }];
+  [self dismissAllPresentedViewControllersFrom:_controller
+                                    completion:^{
+                                      // Ensure presented modals are removed and the controller is detached from its
+                                      // parent
+                                      [self->_presentedModals removeAllObjects];
+                                      [self->_controller willMoveToParentViewController:nil];
+                                      [self->_controller removeFromParentViewController];
+                                    }];
 }
 
-- (void)dismissAllPresentedViewControllersFrom:(UIViewController *)viewController completion:(void (^)(void))completion {
+- (void)dismissAllPresentedViewControllersFrom:(UIViewController *)viewController completion:(void (^)(void))completion
+{
   if (viewController.presentedViewController) {
-    [viewController.presentedViewController dismissViewControllerAnimated:YES completion:^{
-      [self dismissAllPresentedViewControllersFrom:viewController completion:completion];
-    }];
+    [viewController.presentedViewController
+        dismissViewControllerAnimated:YES
+                           completion:^{
+                             [self dismissAllPresentedViewControllersFrom:viewController completion:completion];
+                           }];
   } else {
     completion();
   }
