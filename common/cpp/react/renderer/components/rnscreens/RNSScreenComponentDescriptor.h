@@ -51,7 +51,7 @@ class RNSScreenComponentDescriptor final
       // state update.
       if (screenShadowNode.getFrameCorrectionModes().check(
               FrameCorrectionModes::Mode::FrameHeightCorrection) &&
-          !compareFrameSizes(
+          !checkFrameSizesEqualWithEps(
               screenShadowNode.layoutMetrics_.frame.size,
               stateData.frameSize)) {
         LOG(ERROR)
