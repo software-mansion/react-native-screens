@@ -1,7 +1,10 @@
+#import <Foundation/NSValue.h>
 #import <UIKit/UIKit.h>
 
+#import "RCTScrollView.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenContentWrapper.h"
 #import "RNSScreenWindowTraits.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -22,6 +25,8 @@
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
+#import <React/RCTUIManagerUtils.h>
+#import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
@@ -31,15 +36,31 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
+constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
+
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
-    <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
+    <RCTRNSScreenViewProtocol,
+     UIAdaptivePresentationControllerDelegate,
+     CAAnimationDelegate,
+     RNSScreenContentWrapperDelegate,
+     UISheetPresentationControllerDelegate>
 #else
-    <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
+    <UIAdaptivePresentationControllerDelegate,
+     RNSScreenContentWrapperDelegate,
+     RCTInvalidating,
+     UISheetPresentationControllerDelegate>
 #endif
+
+- (void)updateFooterLayout;
+
 @end
 
 @implementation RNSScreenView {
+  __weak RCTScrollView *_sheetsScrollView;
+  __weak RNSScreenFooter *_footer;
+  CGSize _keyboardSize;
+  BOOL _didSetSheetAllowedDetentsOnController;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
@@ -91,6 +112,10 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
+  _sheetsScrollView = nil;
+  _footer = nil;
+  _didSetSheetAllowedDetentsOnController = NO;
+  //  self.translatesAutoresizingMaskIntoConstraints = true;
 }
 
 - (UIViewController *)reactViewController
@@ -104,6 +129,50 @@ namespace react = facebook::react;
   return _reactSubviews;
 }
 #endif
+
+- (void)setKeyboardSize:(CGSize)size
+{
+  NSLog(@"Setting keyboard size to %@", NSStringFromCGSize(size));
+  _keyboardSize = size;
+  //  [self updateFooterLayout];
+}
+
+- (void)animateFooterWithClosingKeyboard:(NSNotification *)keyboardNotification
+{
+  // When keyboard is opening it works nice out-of-the-box
+  //  NSNumber *duration = keyboardNotification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+  //  UIViewAnimationOptions options = (UIViewAnimationOptions)(
+  //      [[keyboardNotification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue] << 16);
+  //  CGRect endFrame = ((NSValue *)(keyboardNotification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
+  //
+  //  [UIView animateWithDuration:[duration doubleValue]
+  //                        delay:0.0
+  //                      options:options
+  //                   animations:^{
+  //                     [self updateFooterLayout];
+  //                   }
+  //                   completion:nil];
+}
+
+- (void)updateFooterLayout
+{
+  //  if (_footer != nil && _footer.subviews.count > 0) {
+  //    CGPoint footerOrigin = _footer.frame.origin;
+  //    CGSize targetFooterSize = _footer.subviews[0].frame.size;
+  //    RCTView *child = (RCTView *)_footer.subviews[0];
+  //    footerOrigin.y -= targetFooterSize.height + child.reactCompoundInsets.bottom - child.reactPaddingInsets.bottom +
+  //        _keyboardSize.height;
+  //    CGRect newFooterFrame = CGRectMake(footerOrigin.x, footerOrigin.y, targetFooterSize.width,
+  //    targetFooterSize.height); NSLog(@"Frame for footer %@", NSStringFromCGRect(newFooterFrame)); _footer.frame =
+  //    newFooterFrame;
+  //  }
+}
+
+- (void)layoutSubviews
+{
+  [super layoutSubviews];
+  //  [self updateFooterLayout];
+}
 
 - (void)updateBounds
 {
@@ -120,8 +189,52 @@ namespace react = facebook::react;
     [navctr.view setNeedsLayout];
   }
 #else
+  //  NSLog(@"RNSScreenView %p updateBounds frame %@", self, NSStringFromCGRect(self.frame));
   [_bridge.uiManager setSize:self.bounds.size forView:self];
+
+  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    return;
+  }
+
+  // In case of formSheet stack presentation, to mitigate view flickering
+  // (see PR with description of this problem: https://github.com/software-mansion/react-native-screens/pull/1870)
+  // we do not set `bottom: 0` in JS for wrapper of the screen content, causing React to not set
+  // strict frame every time the sheet size is updated by the code above. This approach leads however to
+  // situation where (if present) scrollview does not know its view port size resulting in buggy behaviour.
+  // That's exactly the issue we are handling below. We look for a scroll view down the view hierarchy (only going
+  // through first subviews, as the OS does something similar e.g. when looking for scrollview for large header
+  // interaction) and we set its frame to the sheet size. **This is not perfect**, as the content might jump when items
+  // are added/removed to/from the scroll view, but it's the best we got rn. See
+  // https://github.com/software-mansion/react-native-screens/pull/1852
+
+  // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
+  // It might be necessary in case someone doesn't want its scroll view to span over whole
+  // height of the sheet.
+  RCTScrollView *scrollView = [self findDirectLineDescendantRCTScrollView];
+  if (_sheetsScrollView != scrollView) {
+    [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
+    _sheetsScrollView = scrollView;
+
+    // We pass 0 as options, as we are not interested in receiving updated bounds value,
+    // we are going to overwrite it anyway.
+    [scrollView addObserver:self forKeyPath:@"bounds" options:0 context:nil];
+  }
+  if (scrollView != nil) {
+    [scrollView setFrame:self.frame];
+  }
 #endif
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+                       context:(void *)context
+{
+  NSLog(@"OBSERVE VALUE FOR KEY PATH");
+  UIView *scrollview = (UIView *)object;
+  if (!CGRectEqualToRect(scrollview.frame, self.frame)) {
+    [scrollview setFrame:self.frame];
+  }
 }
 
 - (void)setStackPresentation:(RNSScreenStackPresentation)stackPresentation
@@ -286,8 +399,75 @@ namespace react = facebook::react;
   return _reactSuperview;
 }
 
+- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex
+{
+  [super insertReactSubview:subview atIndex:atIndex];
+}
+
+- (void)repositionFooter:(CGRect)footerFrame
+{
+  if (_footer == nil) {
+    return;
+  }
+
+  //  [_footer setFrame:CGRectMake(_footer.frame.origin.x,
+  //                               _footer.frame.origin.y,
+  //                               _footer.frame.size.width,
+  //                               _footer.frame.size.height)];
+  //
+}
+
+/// This is RNSScreenContentWrapperDelegate method, where we do get notified when React did update frame of our child.
+- (void)reactDidSetFrame:(CGRect)reactFrame forContentWrapper:(RNSScreenContentWrapper *)contentWrapepr
+{
+  if (self.stackPresentation != RNSScreenStackPresentationFormSheet || _didSetSheetAllowedDetentsOnController == YES) {
+    return;
+  }
+
+  _didSetSheetAllowedDetentsOnController = YES;
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+  if (@available(iOS 16.0, *)) {
+    // Sheet controller should be already in place, TODO: explain why
+    UISheetPresentationController *sheetController = _controller.sheetPresentationController;
+    if (sheetController == nil) {
+      RCTLogError(@"[RNScreens] sheetPresentationController is null when attempting to set allowed detents");
+      return;
+    }
+
+    if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == -1) {
+      auto detents = [self detensFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height] ]];
+      [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
+    }
+  }
+#endif // Check for iOS >= 16
+}
+
 - (void)addSubview:(UIView *)view
 {
+  if ([view isKindOfClass:RNSScreenFooter.class]) {
+    _footer = (RNSScreenFooter *)view;
+    //    _footer.onLayout = ^(CGRect frame) {
+    //      [self updateFooterLayout];
+    //    };
+
+    //    [NSLayoutConstraint activateConstraints:@[
+    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeBottom
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0],
+    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeLeft
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
+    //      [NSLayoutConstraint constraintWithItem:_footer attribute:NSLayoutAttributeRight
+    //      relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
+    //    ]];
+  }
+
+  if ([view isKindOfClass:RNSScreenContentWrapper.class] &&
+      self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    auto contentWrapper = (RNSScreenContentWrapper *)view;
+    contentWrapper.delegate = self;
+  }
+
   if (![view isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     [super addSubview:view];
   } else {
@@ -399,6 +579,20 @@ namespace react = facebook::react;
 #else
   if (self.onDisappear) {
     self.onDisappear(nil);
+  }
+#endif
+}
+
+- (void)notifySheetDetentChanged:(NSInteger)newDetentIndex
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+  // TODO: Implement this on Fabric
+#else
+  if (self.onSheetDetentChanged) {
+    self.onSheetDetentChanged(@{
+      @"index" : @(newDetentIndex),
+      @"isStable" : @(YES),
+    });
   }
 #endif
 }
@@ -575,6 +769,19 @@ namespace react = facebook::react;
   return nil;
 }
 
+/// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
+- (nullable RCTScrollView *)findDirectLineDescendantRCTScrollView
+{
+  UIView *firstSubview = self;
+  while (firstSubview.subviews.count > 0) {
+    firstSubview = firstSubview.subviews[0];
+    if ([firstSubview isKindOfClass:RCTScrollView.class]) {
+      return (RCTScrollView *)firstSubview;
+    }
+  }
+  return nil;
+}
+
 - (BOOL)isModal
 {
   return self.stackPresentation != RNSScreenStackPresentationPush;
@@ -603,58 +810,297 @@ namespace react = facebook::react;
       self.controller.modalPresentationStyle == UIModalPresentationOverCurrentContext;
 }
 
+- (void)setPropertyForSheet:(UISheetPresentationController *)sheet
+                  withBlock:(void (^)(void))block
+                    animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (animate) {
+    [sheet animateChanges:block];
+  } else {
+    block();
+  }
+}
+
+- (void)setAllowedDetentsForSheet:(UISheetPresentationController *)sheet
+                               to:(NSArray<UISheetPresentationControllerDetent *> *)detents
+                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  [self setPropertyForSheet:sheet
+                  withBlock:^{
+                    sheet.detents = detents;
+                  }
+                    animate:animate];
+}
+
+- (void)setSelectedDetentForSheet:(UISheetPresentationController *)sheet
+                               to:(UISheetPresentationControllerDetentIdentifier)detent
+                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (sheet.selectedDetentIdentifier != detent) {
+    [self setPropertyForSheet:sheet
+                    withBlock:^{
+                      sheet.selectedDetentIdentifier = detent;
+                    }
+                      animate:animate];
+  }
+}
+
+- (void)setCornerRadiusForSheet:(UISheetPresentationController *)sheet
+                             to:(CGFloat)radius
+                        animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (sheet.preferredCornerRadius != radius) {
+    [self setPropertyForSheet:sheet
+                    withBlock:^{
+                      sheet.preferredCornerRadius =
+                          radius < 0 ? UISheetPresentationControllerAutomaticDimension : radius;
+                    }
+                      animate:animate];
+  }
+}
+
+- (void)setGrabberVisibleForSheet:(UISheetPresentationController *)sheet
+                               to:(BOOL)visible
+                          animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (sheet.prefersGrabberVisible != visible) {
+    [self setPropertyForSheet:sheet
+                    withBlock:^{
+                      sheet.prefersGrabberVisible = visible;
+                    }
+                      animate:animate];
+  }
+}
+
+- (void)setLargestUndimmedDetentForSheet:(UISheetPresentationController *)sheet
+                                      to:(UISheetPresentationControllerDetentIdentifier)detent
+                                 animate:(BOOL)animate API_AVAILABLE(ios(15.0))
+{
+  if (sheet.largestUndimmedDetentIdentifier != detent) {
+    [self setPropertyForSheet:sheet
+                    withBlock:^{
+                      sheet.largestUndimmedDetentIdentifier = detent;
+                    }
+                      animate:animate];
+  }
+}
+
 #if !TARGET_OS_TV && !TARGET_OS_VISION
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+- (NSInteger)detentIndexFromDetentIdentifier:(UISheetPresentationControllerDetentIdentifier)identifier
+    API_AVAILABLE(ios(15.0))
+{
+  // We first check if we are running on iOS 16+ as the API is different
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+  if (_sheetAllowedDetents.count > 0) {
+    // We should be running on custom detents in this case, thu identifier should be a stringified number.
+    return identifier.integerValue;
+  } else
+#endif // iOS 16 check
+  {
+    if (_sheetAllowedDetents.count >= 2) {
+      if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
+        return 0;
+      } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
+        return 1;
+      }
+    } else if (_sheetAllowedDetents.count == 0) {
+      if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
+        return 0;
+      } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
+        return 1;
+      }
+    } else {
+      // There is only single option.
+      return 0;
+    }
+  }
+  return 0;
+}
+
+- (void)sheetPresentationControllerDidChangeSelectedDetentIdentifier:
+    (UISheetPresentationController *)sheetPresentationController API_AVAILABLE(ios(15.0))
+{
+  UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
+  [self notifySheetDetentChanged:[self detentIndexFromDetentIdentifier:ident]];
+}
+#endif // iOS 15 check
+
 /**
  * Updates settings for sheet presentation controller.
  * Note that this method should not be called inside `stackPresentation` setter, because on Paper we don't have
- * guarantee that values of all related props had been updated earlier.
+ * guarantee that values of all related props had been updated earlier. It should be invoked from `didSetProps`.
+ * On Fabric we have controll over prop-setting process but it might be reasonable to run it from `finalizeUpdates`.
  */
-- (void)updatePresentationStyle
+- (void)updateFormSheetPresentationStyle
 {
+  if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
+    return;
+  }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
+  int sheetLudLimitExclusive = _sheetAllowedDetents.count;
+
+  // Whether we use system (iOS 15) detents or custom (iOS 16+).
+  // Custom detents are in use if we are on iOS 16+ and we have at least single detent
+  // defined in the detents array. In any other case we do use system defined detents.
+  bool systemDetentsInUse = false;
+
   if (@available(iOS 15.0, *)) {
     UISheetPresentationController *sheet = _controller.sheetPresentationController;
-    if (_stackPresentation == RNSScreenStackPresentationFormSheet && sheet != nil) {
-      sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
-      sheet.prefersGrabberVisible = _sheetGrabberVisible;
-      sheet.preferredCornerRadius =
-          _sheetCornerRadius < 0 ? UISheetPresentationControllerAutomaticDimension : _sheetCornerRadius;
-
-      if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
-        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
-      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
-        sheet.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-      } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
-        sheet.largestUndimmedDetentIdentifier = nil;
-      } else {
-        RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
+    if (sheet == nil) {
+      return;
+    }
+    sheet.delegate = self;
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+    if (_sheetAllowedDetents.count > 0) {
+      if (@available(iOS 16.0, *)) {
+        if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
+          // We do not set anything here, we will set once React computed layout of our React's children, namely
+          // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
+          // actual content.
+        } else {
+          [self setAllowedDetentsForSheet:sheet
+                                       to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents]
+                                  animate:NO];
+        }
       }
+    } else
+#endif // Check for iOS >= 16
+    {
+      systemDetentsInUse = true;
+      if (_sheetAllowedDetents.count == 0) {
+        [self setAllowedDetentsForSheet:sheet
+                                     to:@[
+                                       UISheetPresentationControllerDetent.mediumDetent,
+                                       UISheetPresentationControllerDetent.largeDetent
+                                     ]
+                                animate:YES];
+      } else if (_sheetAllowedDetents.count >= 2) {
+        float first = _sheetAllowedDetents[0].floatValue;
+        float second = _sheetAllowedDetents[1].floatValue;
+        sheetLudLimitExclusive = 2;
 
-      if (_sheetAllowedDetents == RNSScreenDetentTypeMedium) {
-        sheet.detents = @[ UISheetPresentationControllerDetent.mediumDetent ];
-        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierMedium) {
-          [sheet animateChanges:^{
-            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierMedium;
-          }];
+        if (first < second) {
+          [self setAllowedDetentsForSheet:sheet
+                                       to:@[
+                                         UISheetPresentationControllerDetent.mediumDetent,
+                                         UISheetPresentationControllerDetent.largeDetent
+                                       ]
+                                  animate:YES];
+        } else {
+          RCTLogError(@"The values in sheetAllowedDetents array must be sorted");
         }
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeLarge) {
-        sheet.detents = @[ UISheetPresentationControllerDetent.largeDetent ];
-        if (sheet.selectedDetentIdentifier != UISheetPresentationControllerDetentIdentifierLarge) {
-          [sheet animateChanges:^{
-            sheet.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-          }];
-        }
-      } else if (_sheetAllowedDetents == RNSScreenDetentTypeAll) {
-        sheet.detents =
-            @[ UISheetPresentationControllerDetent.mediumDetent, UISheetPresentationControllerDetent.largeDetent ];
       } else {
-        RCTLogError(@"Unhandled value of sheetAllowedDetents passed");
+        float first = _sheetAllowedDetents[0].floatValue;
+        if (first == SHEET_FIT_TO_CONTENTS) {
+          RCTLogError(@"Unsupported on iOS versions below 16");
+        } else if (first < 1.0) {
+          [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
+        } else {
+          [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.largeDetent ] animate:YES];
+          [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge animate:YES];
+        }
       }
     }
+
+    sheet.prefersScrollingExpandsWhenScrolledToEdge = _sheetExpandsWhenScrolledToEdge;
+    [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
+    [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
+
+    int detentIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
+    detentIndex = detentIndex >= sheetLudLimitExclusive ? detentIndex - 1 : detentIndex;
+    if (detentIndex == -1) {
+      [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+    } else if (detentIndex >= 0) {
+      if (systemDetentsInUse) {
+        if (sheetLudLimitExclusive == 0 || (sheetLudLimitExclusive == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
+          [self setLargestUndimmedDetentForSheet:sheet
+                                              to:UISheetPresentationControllerDetentIdentifierMedium
+                                         animate:YES];
+        } else {
+          [self setLargestUndimmedDetentForSheet:sheet
+                                              to:UISheetPresentationControllerDetentIdentifierLarge
+                                         animate:YES];
+        }
+      } else {
+        [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:detentIndex].stringValue animate:YES];
+      }
+    } else {
+      RCTLogError(@"Value of sheetLargestUndimmedDetent prop must be >= -1");
+    }
+
+    //    if (detentIndex != -1 && _sheetAllowedDetents.count > 0) {
+    //      if (detentIndex >= 0 && detentIndex < _sheetAllowedDetents.count) {
+    //        [self setLargestUndimmedDetentForSheet:sheet to:_sheetLargestUndimmedDetent.stringValue animate:YES];
+    //      } else {
+    //        [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+    //      }
+    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeMedium) {
+    //      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium
+    //      animate:YES];
+    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeLarge) {
+    //      [self setLargestUndimmedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierLarge
+    //      animate:YES];
+    //    } else if (_sheetLargestUndimmedDetent == RNSScreenDetentTypeAll) {
+    //      [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
+    //    } else {
+    //      RCTLogError(@"Unhandled value of sheetLargestUndimmedDetent passed");
+    //    }
   }
-#endif // Check for max allowed iOS version
+#endif // Check for iOS >= 15
 }
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
+
+- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
+    API_AVAILABLE(ios(16.0))
+{
+  NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
+      [NSMutableArray arrayWithCapacity:fractions.count];
+  int detentIndex = 0;
+  for (NSNumber *frac in fractions) {
+    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithInt:detentIndex] stringValue];
+    [customDetents
+        addObject:[UISheetPresentationControllerDetent
+                      customDetentWithIdentifier:ident
+                                        resolver:^CGFloat(
+                                            id<UISheetPresentationControllerDetentResolutionContext> ctx) {
+                                          return MIN(ctx.maximumDetentValue, ctx.maximumDetentValue * frac.floatValue);
+                                        }]];
+    ++detentIndex;
+  }
+  return customDetents;
+}
+
+- (NSArray<UISheetPresentationControllerDetent *> *)detensFromMaxHeights:(NSArray<NSNumber *> *)maxHeights
+    API_AVAILABLE(ios(16.0))
+{
+  NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
+      [NSMutableArray arrayWithCapacity:maxHeights.count];
+
+  int detentIndex = 0;
+  for (NSNumber *height in maxHeights) {
+    NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
+    [customDetents addObject:[UISheetPresentationControllerDetent
+                                 customDetentWithIdentifier:ident
+                                                   resolver:^CGFloat(
+                                                       id<UISheetPresentationControllerDetentResolutionContext> ctx) {
+                                                     return MIN(ctx.maximumDetentValue, height.floatValue);
+                                                   }]];
+    ++detentIndex;
+  }
+  return customDetents;
+}
+
+#endif // Check for iOS >= 16
+
 #endif // !TARGET_OS_TV
 
 #pragma mark - Fabric specific
@@ -663,11 +1109,6 @@ namespace react = facebook::react;
 - (BOOL)hasHeaderConfig
 {
   return _config != nil;
-}
-
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
 }
 
 + (BOOL)shouldBeRecycled
@@ -750,12 +1191,11 @@ namespace react = facebook::react;
   [self setSheetExpandsWhenScrolledToEdge:newScreenProps.sheetExpandsWhenScrolledToEdge];
 
   if (newScreenProps.sheetAllowedDetents != oldScreenProps.sheetAllowedDetents) {
-    [self setSheetAllowedDetents:[RNSConvert RNSScreenDetentTypeFromAllowedDetents:newScreenProps.sheetAllowedDetents]];
+    [self setSheetAllowedDetents:[RNSConvert detentFractionsArrayFromVector:newScreenProps.sheetAllowedDetents]];
   }
 
   if (newScreenProps.sheetLargestUndimmedDetent != oldScreenProps.sheetLargestUndimmedDetent) {
-    [self setSheetLargestUndimmedDetent:
-              [RNSConvert RNSScreenDetentTypeFromLargestUndimmedDetent:newScreenProps.sheetLargestUndimmedDetent]];
+    [self setSheetLargestUndimmedDetent:[NSNumber numberWithInt:newScreenProps.sheetLargestUndimmedDetent]];
   }
 #endif // !TARGET_OS_TV
 
@@ -802,7 +1242,7 @@ namespace react = facebook::react;
 {
   [super finalizeUpdates:updateMask];
 #if !TARGET_OS_TV && !TARGET_OS_VISION
-  [self updatePresentationStyle];
+  [self updateFormSheetPresentationStyle];
 #endif // !TARGET_OS_TV
 }
 
@@ -813,7 +1253,9 @@ namespace react = facebook::react;
 {
   [super didSetProps:changedProps];
 #if !TARGET_OS_TV && !TARGET_OS_VISION
-  [self updatePresentationStyle];
+  if (self.stackPresentation == RNSScreenStackPresentationFormSheet) {
+    [self updateFormSheetPresentationStyle];
+  }
 #endif // !TARGET_OS_TV
 }
 
@@ -823,13 +1265,21 @@ namespace react = facebook::react;
   // any attempt of setting that via React props
 }
 
+- (void)setFrame:(CGRect)frame
+{
+  //  NSLog(@"RNSScreenView %p setFrame %@", self, NSStringFromCGRect(frame));
+  [super setFrame:frame];
+}
+
 - (void)reactSetFrame:(CGRect)frame
 {
+  //  NSLog(@"RNSScreenView %p reactSetFrame %@", self, NSStringFromCGRect(frame));
   _reactFrame = frame;
   UIViewController *parentVC = self.reactViewController.parentViewController;
   if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super reactSetFrame:frame];
   }
+  //  [super reactSetFrame:frame];
   // when screen is mounted under RNSNavigationController it's size is controller
   // by the navigation controller itself. That is, it is set to fill space of
   // the controller. In that case we ignore react layout system from managing
@@ -841,6 +1291,7 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _controller = nil;
+  [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
 }
 #endif
 
@@ -884,6 +1335,20 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   return self;
 }
 
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+  CGRect rect = ((NSValue *)(notification.userInfo[UIKeyboardFrameEndUserInfoKey])).CGRectValue;
+  [self.screenView setKeyboardSize:rect.size];
+  [self.screenView updateFooterLayout];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification
+{
+  [self.screenView setKeyboardSize:CGSizeZero];
+  //  [self.screenView updateFooterLayout];
+  [self.screenView animateFooterWithClosingKeyboard:notification];
+}
+
 // TODO: Find out why this is executed when screen is going out
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -910,6 +1375,15 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self notifyTransitionProgress:0.0 closing:_closing goingForward:_goingForward];
     [self setupProgressNotification];
   }
+
+  //  [[NSNotificationCenter defaultCenter] addObserver:self
+  //                                           selector:@selector(keyboardWillShow:)
+  //                                               name:UIKeyboardWillShowNotification
+  //                                             object:nil];
+  //  [[NSNotificationCenter defaultCenter] addObserver:self
+  //                                           selector:@selector(keyboardWillHide:)
+  //                                               name:UIKeyboardWillHideNotification
+  //                                             object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -1446,6 +1920,7 @@ RCT_EXPORT_VIEW_PROPERTY(onTransitionProgress, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillAppear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onWillDisappear, RCTDirectEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onGestureCancel, RCTDirectEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onSheetDetentChanged, RCTDirectEventBlock);
 
 #if !TARGET_OS_TV
 RCT_EXPORT_VIEW_PROPERTY(screenOrientation, UIInterfaceOrientationMask)
@@ -1454,8 +1929,8 @@ RCT_EXPORT_VIEW_PROPERTY(statusBarHidden, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(statusBarStyle, RNSStatusBarStyle)
 RCT_EXPORT_VIEW_PROPERTY(homeIndicatorHidden, BOOL)
 
-RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, RNSScreenDetentType);
-RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, RNSScreenDetentType);
+RCT_EXPORT_VIEW_PROPERTY(sheetAllowedDetents, NSArray<NSNumber *> *);
+RCT_EXPORT_VIEW_PROPERTY(sheetLargestUndimmedDetent, NSNumber *);
 RCT_EXPORT_VIEW_PROPERTY(sheetGrabberVisible, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(sheetCornerRadius, CGFloat);
 RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
@@ -1488,7 +1963,9 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 #else
 - (UIView *)view
 {
-  return [[RNSScreenView alloc] initWithBridge:self.bridge];
+  RNSScreenView *screenView = [[RNSScreenView alloc] initWithBridge:self.bridge];
+  NSLog(@"RNSScreenView CREATE %p", screenView);
+  return screenView;
 }
 #endif
 

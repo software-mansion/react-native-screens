@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Animated, Platform, StyleSheet, View, ViewProps } from 'react-native';
+import { Animated, Platform, StyleSheet, ViewProps } from 'react-native';
 // @ts-ignore Getting private component
 // eslint-disable-next-line import/no-named-as-default, import/default, import/no-named-as-default-member, import/namespace
 import AppContainer from 'react-native/Libraries/ReactNative/AppContainer';
@@ -10,6 +10,7 @@ import {
   ScreenContext,
   GHContext,
   GestureDetectorBridge,
+  ScreenContentWrapper,
 } from 'react-native-screens';
 import {
   ParamListBase,
@@ -37,24 +38,29 @@ import getDefaultHeaderHeight from '../utils/getDefaultHeaderHeight';
 import getStatusBarHeight from '../utils/getStatusBarHeight';
 import HeaderHeightContext from '../utils/HeaderHeightContext';
 import AnimatedHeaderHeightContext from '../utils/AnimatedHeaderHeightContext';
+import FooterComponent from './FooterComponent';
 
 const isAndroid = Platform.OS === 'android';
 
-let Container = View;
+let Container = ScreenContentWrapper;
 
 if (__DEV__) {
   const DebugContainer = (
     props: ViewProps & { stackPresentation: StackPresentationTypes }
   ) => {
     const { stackPresentation, ...rest } = props;
-    if (Platform.OS === 'ios' && stackPresentation !== 'push') {
+    if (
+      Platform.OS === 'ios' &&
+      stackPresentation !== 'push' &&
+      stackPresentation !== 'formSheet'
+    ) {
       return (
         <AppContainer>
-          <View {...rest} />
+          <ScreenContentWrapper {...rest} />
         </AppContainer>
       );
     }
-    return <View {...rest} />;
+    return <ScreenContentWrapper {...rest} />;
   };
   // @ts-ignore Wrong props
   Container = DebugContainer;
@@ -72,7 +78,7 @@ const MaybeNestedStack = ({
   children: React.ReactNode;
 }) => {
   const { colors } = useTheme();
-  const { headerShown = true, contentStyle } = options;
+  const { headerShown = true, contentStyle, screenStyle = null } = options;
 
   const Screen = React.useContext(ScreenContext);
 
@@ -96,7 +102,14 @@ const MaybeNestedStack = ({
   const content = (
     <Container
       style={[
-        styles.container,
+        // stackPresentation === 'formSheet' && Platform.OS === 'ios' ? styles.absoluteFillNoBottom : styles.container,
+        // styles.container,
+        stackPresentation === 'formSheet'
+          ? Platform.OS === 'ios'
+            ? styles.absoluteFillNoBottom
+            : null
+          : styles.container,
+        // stackPresentation === 'formSheet' && Platform.OS === 'ios' ? styles.absoluteFillNoBottom : styles.container,
         stackPresentation !== 'transparentModal' &&
           stackPresentation !== 'containedTransparentModal' && {
             backgroundColor: colors.background,
@@ -138,7 +151,7 @@ const MaybeNestedStack = ({
           enabled
           isNativeStack
           hasLargeHeader={hasLargeHeader}
-          style={StyleSheet.absoluteFill}>
+          style={[StyleSheet.absoluteFill, screenStyle]}>
           <HeaderHeightContext.Provider value={headerHeight}>
             <HeaderConfig {...options} route={route} />
             {content}
@@ -173,16 +186,18 @@ const RouteView = ({
   screensRefs: ScreensRefsHolder;
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
+
   const {
     gestureEnabled,
     headerShown,
     hideKeyboardOnSwipe,
     homeIndicatorHidden,
-    sheetAllowedDetents = 'large',
-    sheetLargestUndimmedDetent = 'all',
+    sheetLargestUndimmedDetent = -1,
     sheetGrabberVisible = false,
     sheetCornerRadius = -1.0,
+    sheetElevation = 24,
     sheetExpandsWhenScrolledToEdge = true,
+    sheetInitialDetent = 0,
     nativeBackButtonDismissalEnabled = false,
     navigationBarColor,
     navigationBarTranslucent,
@@ -197,15 +212,28 @@ const RouteView = ({
     swipeDirection = 'horizontal',
     transitionDuration,
     freezeOnBlur,
+    footerComponent,
+    onSheetDetentChanged = null,
   } = options;
 
   let {
+    sheetAllowedDetents = [1.0],
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
+    screenStyle = null,
   } = options;
+
+  // We only want to allow backgroundColor for now
+  screenStyle = screenStyle
+    ? { backgroundColor: screenStyle.backgroundColor }
+    : null;
+
+  if (sheetAllowedDetents === 'fitToContents') {
+    sheetAllowedDetents = [-1];
+  }
 
   if (swipeDirection === 'vertical') {
     // for `vertical` direction to work, we need to set `fullScreenSwipeEnabled` to `true`
@@ -285,11 +313,13 @@ const RouteView = ({
       enabled
       isNativeStack
       hasLargeHeader={hasLargeHeader}
-      style={StyleSheet.absoluteFill}
+      style={[StyleSheet.absoluteFill, screenStyle]}
       sheetAllowedDetents={sheetAllowedDetents}
       sheetLargestUndimmedDetent={sheetLargestUndimmedDetent}
       sheetGrabberVisible={sheetGrabberVisible}
+      sheetInitialDetent={sheetInitialDetent}
       sheetCornerRadius={sheetCornerRadius}
+      sheetElevation={sheetElevation}
       sheetExpandsWhenScrolledToEdge={sheetExpandsWhenScrolledToEdge}
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
@@ -321,6 +351,7 @@ const RouteView = ({
         });
       }}
       onWillAppear={() => {
+        console.log(`onWillAppear/transitionStart route: ${route.key}`);
         navigation.emit({
           type: 'transitionStart',
           data: { closing: false },
@@ -328,6 +359,7 @@ const RouteView = ({
         });
       }}
       onWillDisappear={() => {
+        console.log(`onWillDisappear/transitionStart route: ${route.key}`);
         navigation.emit({
           type: 'transitionStart',
           data: { closing: true },
@@ -335,10 +367,12 @@ const RouteView = ({
         });
       }}
       onAppear={() => {
+        console.log(`onAppear/appear route: ${route.key}`);
         navigation.emit({
           type: 'appear',
           target: route.key,
         });
+        console.log(`onAppear/transitionEnd route: ${route.key}`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: false },
@@ -346,6 +380,7 @@ const RouteView = ({
         });
       }}
       onDisappear={() => {
+        console.log(`onDisappear/transitionEnd route: ${route.key}`);
         navigation.emit({
           type: 'transitionEnd',
           data: { closing: true },
@@ -365,6 +400,7 @@ const RouteView = ({
         }
       }}
       onDismissed={e => {
+        console.log(`onDismissed/dismiss route: ${route.key}`);
         navigation.emit({
           type: 'dismiss',
           target: route.key,
@@ -378,6 +414,11 @@ const RouteView = ({
           source: route.key,
           target: stateKey,
         });
+      }}
+      onSheetDetentChanged={e => {
+        if (onSheetDetentChanged) {
+          onSheetDetentChanged(e);
+        }
       }}
       onGestureCancel={() => {
         navigation.emit({
@@ -401,6 +442,9 @@ const RouteView = ({
             route={route}
             headerShown={isHeaderInPush}
           />
+          {footerComponent && (
+            <FooterComponent>{footerComponent}</FooterComponent>
+          )}
         </HeaderHeightContext.Provider>
       </AnimatedHeaderHeightContext.Provider>
     </Screen>
@@ -484,5 +528,18 @@ export default function NativeStackView(props: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  absoluteFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  absoluteFillNoBottom: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
 });
