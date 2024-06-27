@@ -8,7 +8,8 @@ using namespace rnscreens;
 
 extern const char RNSScreenComponentName[] = "RNSScreen";
 
-Point RNSScreenShadowNode::getContentOriginOffset() const {
+Point RNSScreenShadowNode::getContentOriginOffset(
+    bool /*includeTransform*/) const {
   auto stateData = getStateData();
   auto contentOffset = stateData.contentOffset;
   return {contentOffset.x, contentOffset.y};
