@@ -35,7 +35,7 @@ function Second({ navigation }) {
     <ScrollView>
       <Button
         title="Tap me for first screen"
-        onPress={() => navigation.navigate('First')}
+        onPress={() => navigation.popTo('First')}
       />
     </ScrollView>
   );

@@ -7,7 +7,9 @@ import android.widget.ImageView
 import androidx.appcompat.R
 import androidx.appcompat.widget.SearchView
 
-class SearchViewFormatter(var searchView: SearchView) {
+class SearchViewFormatter(
+    var searchView: SearchView,
+) {
     private var defaultTextColor: Int? = null
     private var defaultTintBackground: Drawable? = null
 
@@ -57,7 +59,10 @@ class SearchViewFormatter(var searchView: SearchView) {
         }
     }
 
-    fun setPlaceholder(placeholder: String, shouldShowHintSearchIcon: Boolean) {
+    fun setPlaceholder(
+        placeholder: String,
+        shouldShowHintSearchIcon: Boolean,
+    ) {
         if (shouldShowHintSearchIcon) {
             searchView.queryHint = placeholder
         } else {

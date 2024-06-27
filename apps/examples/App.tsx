@@ -43,12 +43,14 @@ const SCREENS: Record<
     title: string;
     component: () => React.JSX.Element;
     type: 'example' | 'playground';
+    isTVOSReady?: boolean;
   }
 > = {
   SimpleNativeStack: {
     title: 'Simple Native Stack',
     component: SimpleNativeStack,
     type: 'example',
+    isTVOSReady: true,
   },
   SwipeBackAnimation: {
     title: 'Swipe Back Animation',
@@ -59,16 +61,19 @@ const SCREENS: Record<
     title: 'Stack Presentation',
     component: StackPresentation,
     type: 'example',
+    isTVOSReady: true,
   },
   BottomTabsAndStack: {
     title: 'Bottom tabs and native stack',
     component: BottomTabsAndStack,
     type: 'example',
+    isTVOSReady: true,
   },
   Modals: {
     title: 'Modals',
     component: Modals,
     type: 'example',
+    isTVOSReady: true,
   },
   HeaderOptions: {
     title: 'Header Options',
@@ -107,6 +112,18 @@ const SCREENS: Record<
   },
 };
 
+const isPlatformReady = (name: keyof typeof SCREENS) => {
+  if (Platform.isTV) {
+    return !!SCREENS[name].isTVOSReady;
+  }
+
+  return true;
+};
+
+const screens = Object.keys(SCREENS);
+const examples = screens.filter(name => SCREENS[name].type === 'example');
+const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
+
 type RootStackParamList = {
   Main: undefined;
 } & {
@@ -133,27 +150,25 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
     <Text style={styles.label} testID="root-screen-examples-header">
       Examples
     </Text>
-    {Object.keys(SCREENS)
-      .filter(name => SCREENS[name].type === 'example')
-      .map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-example-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-        />
-      ))}
+    {examples.map(name => (
+      <ListItem
+        key={name}
+        testID={`root-screen-example-${name}`}
+        title={SCREENS[name].title}
+        onPress={() => navigation.navigate(name)}
+        disabled={!isPlatformReady(name)}
+      />
+    ))}
     <Text style={styles.label}>Playgrounds</Text>
-    {Object.keys(SCREENS)
-      .filter(name => SCREENS[name].type === 'playground')
-      .map(name => (
-        <ListItem
-          key={name}
-          testID={`root-screen-playground-${name}`}
-          title={SCREENS[name].title}
-          onPress={() => navigation.navigate(name)}
-        />
-      ))}
+    {playgrounds.map(name => (
+      <ListItem
+        key={name}
+        testID={`root-screen-playground-${name}`}
+        title={SCREENS[name].title}
+        onPress={() => navigation.navigate(name)}
+        disabled={!isPlatformReady(name)}
+      />
+    ))}
   </ScrollView>
 );
 
@@ -164,7 +179,11 @@ const ExampleApp = (): React.JSX.Element => (
         <Stack.Navigator>
           <Stack.Screen
             name="Main"
-            options={{ title: '📱 React Native Screens Examples' }}
+            options={{
+              title: `${
+                Platform.isTV ? '📺' : '📱'
+              } React Native Screens Examples`,
+            }}
             component={MainScreen}
           />
           {Object.keys(SCREENS).map(name => (

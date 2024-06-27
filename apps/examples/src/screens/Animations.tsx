@@ -113,7 +113,7 @@ const NavigateScreen = ({
 
   return (
     <View style={{ ...styles.container, backgroundColor: 'pink' }}>
-      <Button title="Go back" onPress={() => navigation.navigate('Main')} />
+      <Button title="Go back" onPress={() => navigation.popTo('Main')} />
     </View>
   );
 };

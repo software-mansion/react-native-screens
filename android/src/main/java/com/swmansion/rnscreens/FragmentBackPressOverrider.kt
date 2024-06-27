@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 
 class FragmentBackPressOverrider(
     private val fragment: Fragment,
-    private val onBackPressedCallback: OnBackPressedCallback
+    private val onBackPressedCallback: OnBackPressedCallback,
 ) {
     private var isCallbackAdded: Boolean = false
     var overrideBackAction: Boolean = true
@@ -14,7 +14,7 @@ class FragmentBackPressOverrider(
         if (!isCallbackAdded && overrideBackAction) {
             fragment.activity?.onBackPressedDispatcher?.addCallback(
                 fragment,
-                onBackPressedCallback
+                onBackPressedCallback,
             )
             isCallbackAdded = true
         }

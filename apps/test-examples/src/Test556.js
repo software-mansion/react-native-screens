@@ -29,7 +29,7 @@ function Second({ navigation }) {
   return (
     <Button
       title="Tap me for second screen"
-      onPress={() => navigation.navigate('First')}
+      onPress={() => navigation.popTo('First')}
     />
   );
 }

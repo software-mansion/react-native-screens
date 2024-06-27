@@ -123,7 +123,7 @@ function Second({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
     <ScrollView contentInsetAdjustmentBehavior="automatic">
       <Button
         title="Tap me for first screen"
-        onPress={() => navigation.navigate('First')}
+        onPress={() => navigation.popTo('First')}
       />
       <Button
         title="Tap me for third screen"
@@ -165,7 +165,7 @@ function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
       keyboardDismissMode="on-drag">
       <Button
         title="Tap me for the first screen"
-        onPress={() => navigation.navigate('First')}
+        onPress={() => navigation.popTo('First')}
       />
       <Button
         title="Focus search bar"
@@ -197,7 +197,7 @@ function Third({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
       />
       <Button
         title="Tap me for the first screen"
-        onPress={() => navigation.navigate('First')}
+        onPress={() => navigation.popTo('First')}
       />
       <Button
         title="Focus search bar"

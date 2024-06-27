@@ -4,7 +4,7 @@ apply plugin: 'com.diffplug.spotless'
 spotless {
   kotlin {
     target 'src/**/*.kt'
-    ktlint("0.43.0")
+    ktlint("1.3.0")
     trimTrailingWhitespace()
     indentWithSpaces()
     endWithNewline()

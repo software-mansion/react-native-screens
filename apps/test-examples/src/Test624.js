@@ -71,7 +71,7 @@ function ThirdScreen({ navigation }) {
       <View style={styles.flexOne}>
         <TouchableOpacity
           style={[styles.centeredContainer, styles.buttonExtras]}
-          onPress={() => navigation.navigate('Second')}>
+          onPress={() => navigation.popTo('Second')}>
           <Text style={styles.buttonText}>Tap me for second screen</Text>
         </TouchableOpacity>
       </View>
@@ -122,7 +122,7 @@ function NestedSecond({ navigation }) {
       <View style={styles.centeredContainer}>
         <TouchableOpacity
           style={[styles.centeredContainer, styles.buttonExtras]}
-          onPress={() => navigation.navigate('NestedFirst')}>
+          onPress={() => navigation.popTo('NestedFirst')}>
           <Text style={styles.buttonText}>Tap me for second screen</Text>
         </TouchableOpacity>
       </View>

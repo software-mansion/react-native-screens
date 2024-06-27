@@ -47,7 +47,6 @@
     "@types/jest": "^29.2.5",
     "@types/react": "^18.2.72",
     "@types/react-native": "0.72.2",
-    "@types/react-native-restart": "^0.0.0",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.6.3",
     "detox": "^20.17.0",

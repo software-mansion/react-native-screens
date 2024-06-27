@@ -60,7 +60,7 @@ function Second({
       headerSearchBarOptions: {
         autoCapitalize: 'none',
         autoFocus: true,
-        onClose: () => navigation.navigate('First'),
+        onClose: () => navigation.popTo('First'),
         onChangeText: e => setText(e.nativeEvent.text),
         barTintColor: text,
       },

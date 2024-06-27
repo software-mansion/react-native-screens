@@ -19,27 +19,37 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.swmansion.rnscreens.Screen.ActivityState
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 
-open class ScreenContainer(context: Context?) : ViewGroup(context) {
+open class ScreenContainer(
+    context: Context?,
+) : ViewGroup(context) {
     @JvmField
     protected val screenWrappers = ArrayList<ScreenFragmentWrapper>()
+
     @JvmField
     protected var fragmentManager: FragmentManager? = null
     private var isAttached = false
     private var needsUpdate = false
     private var isLayoutEnqueued = false
-    private val layoutCallback: ChoreographerCompat.FrameCallback = object : ChoreographerCompat.FrameCallback() {
-        override fun doFrame(frameTimeNanos: Long) {
-            isLayoutEnqueued = false
-            measure(
-                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
-            )
-            layout(left, top, right, bottom)
+    private val layoutCallback: ChoreographerCompat.FrameCallback =
+        object : ChoreographerCompat.FrameCallback() {
+            override fun doFrame(frameTimeNanos: Long) {
+                isLayoutEnqueued = false
+                measure(
+                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+                )
+                layout(left, top, right, bottom)
+            }
         }
-    }
     private var parentScreenWrapper: ScreenFragmentWrapper? = null
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    override fun onLayout(
+        changed: Boolean,
+        l: Int,
+        t: Int,
+        r: Int,
+        b: Int,
+    ) {
         var i = 0
         val size = childCount
         while (i < size) {
@@ -69,9 +79,11 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
             isLayoutEnqueued = true
             // we use NATIVE_ANIMATED_MODULE choreographer queue because it allows us to catch the current
             // looper loop instead of enqueueing the update in the next loop causing a one frame delay.
-            ReactChoreographer.getInstance()
+            ReactChoreographer
+                .getInstance()
                 .postFrameCallback(
-                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE, layoutCallback
+                    ReactChoreographer.CallbackType.NATIVE_ANIMATED_MODULE,
+                    layoutCallback,
                 )
         }
     }
@@ -85,7 +97,10 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
 
     protected open fun adapt(screen: Screen): ScreenFragmentWrapper = ScreenFragment(screen)
 
-    fun addScreen(screen: Screen, index: Int) {
+    fun addScreen(
+        screen: Screen,
+        index: Int,
+    ) {
         val fragment = adapt(screen)
         screen.fragmentWrapper = fragment
         screenWrappers.add(index, fragment)
@@ -173,7 +188,7 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
                     parentScreenWrapper = fragmentWrapper
                     fragmentWrapper.addChildScreenContainer(this)
                     setFragmentManager(fragmentWrapper.fragment.childFragmentManager)
-                }
+                },
             ) { "Parent Screen does not have its Fragment attached" }
         } else {
             // we expect top level view to be of type ReactRootView, this isn't really necessary but in
@@ -186,13 +201,15 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         }
     }
 
-    protected fun createTransaction(): FragmentTransaction {
-        return requireNotNull(fragmentManager) { "fragment manager is null when creating transaction" }
+    protected fun createTransaction(): FragmentTransaction =
+        requireNotNull(fragmentManager) { "fragment manager is null when creating transaction" }
             .beginTransaction()
             .setReorderingAllowed(true)
-    }
 
-    private fun attachScreen(transaction: FragmentTransaction, fragment: Fragment) {
+    private fun attachScreen(
+        transaction: FragmentTransaction,
+        fragment: Fragment,
+    ) {
         transaction.add(id, fragment)
     }
 
@@ -228,15 +245,16 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         }
     }
 
-    private fun detachScreen(transaction: FragmentTransaction, fragment: Fragment) {
+    private fun detachScreen(
+        transaction: FragmentTransaction,
+        fragment: Fragment,
+    ) {
         transaction.remove(fragment)
     }
 
-    private fun getActivityState(screenFragmentWrapper: ScreenFragmentWrapper): ActivityState? =
-        screenFragmentWrapper.screen.activityState
+    private fun getActivityState(screenFragmentWrapper: ScreenFragmentWrapper): ActivityState? = screenFragmentWrapper.screen.activityState
 
-    open fun hasScreen(screenFragmentWrapper: ScreenFragmentWrapper?): Boolean =
-        screenWrappers.contains(screenFragmentWrapper)
+    open fun hasScreen(screenFragmentWrapper: ScreenFragmentWrapper?): Boolean = screenWrappers.contains(screenFragmentWrapper)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -295,7 +313,10 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
         }
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         for (i in 0 until childCount) {
             getChildAt(i).measure(widthMeasureSpec, heightMeasureSpec)
@@ -342,11 +363,12 @@ open class ScreenContainer(context: Context?) : ViewGroup(context) {
     open fun onUpdate() {
         createTransaction().let {
             // detach screens that are no longer active
-            val orphaned: MutableSet<Fragment> = HashSet(
-                requireNotNull(fragmentManager) {
-                    "fragment manager is null when performing update in ScreenContainer"
-                }.fragments
-            )
+            val orphaned: MutableSet<Fragment> =
+                HashSet(
+                    requireNotNull(fragmentManager) {
+                        "fragment manager is null when performing update in ScreenContainer"
+                    }.fragments,
+                )
             for (fragmentWrapper in screenWrappers) {
                 if (getActivityState(fragmentWrapper) === ActivityState.INACTIVE &&
                     fragmentWrapper.fragment.isAdded

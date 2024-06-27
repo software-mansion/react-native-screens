@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 60
     env:
       WORKING_DIRECTORY: TVOSExample
@@ -40,4 +40,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: yarn tv-os
+        run: npx react-native run-ios --scheme="TVOSExample-tvOS" --simulator="Apple TV"

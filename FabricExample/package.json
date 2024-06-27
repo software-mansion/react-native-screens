@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-navigation/bottom-tabs": "link:../react-navigation/packages/bottom-tabs/",
     "@react-navigation/core": "link:../react-navigation/packages/core/",
+    "@react-navigation/drawer": "link:../react-navigation/packages/drawer/",
     "@react-navigation/elements": "link:../react-navigation/packages/elements/",
     "@react-navigation/native": "link:../react-navigation/packages/native/",
     "@react-navigation/native-stack": "link:../react-navigation/packages/native-stack/",

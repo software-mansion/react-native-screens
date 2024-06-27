@@ -26,6 +26,8 @@
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenWindowTraits.h"
 
+#import "UIView+RNSUtility.h"
+
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -735,43 +737,8 @@ namespace react = facebook::react;
   // item is close to an edge and we start pulling from edge we want the Touchable to be cancelled.
   // Without the below code the Touchable will remain active (highlighted) for the duration of back
   // gesture and onPress may fire when we release the finger.
-#ifdef RCT_NEW_ARCH_ENABLED
-  // On Fabric there is no view that exposes touchHandler above us in the view hierarchy, however it is still
-  // utilised. `RCTSurfaceView` should be present above us, which hosts `RCTFabricSurface` instance, which in turn
-  // hosts `RCTSurfaceTouchHandler` as a private field. When initialised, `RCTSurfaceTouchHandler` is attached to the
-  // surface view as a gestureRecognizer <- and this is where we can lay our hands on it.
-  UIView *parent = _controller.view;
-  while (parent != nil && ![parent isKindOfClass:RCTSurfaceView.class]) {
-    parent = parent.superview;
-  }
 
-  // This could be possible in modal context
-  if (parent == nil) {
-    return;
-  }
-
-  RCTSurfaceTouchHandler *touchHandler = nil;
-  // Experimentation shows that RCTSurfaceTouchHandler is the only gestureRecognizer registered here,
-  // so we should not be afraid of any performance hit here.
-  for (UIGestureRecognizer *recognizer in parent.gestureRecognizers) {
-    if ([recognizer isKindOfClass:RCTSurfaceTouchHandler.class]) {
-      touchHandler = static_cast<RCTSurfaceTouchHandler *>(recognizer);
-    }
-  }
-
-  [touchHandler rnscreens_cancelTouches];
-#else
-  // On Paper we can access touchHandler hosted by `RCTRootContentView` which should be above ScreenStack
-  // in view hierarchy.
-  UIView *parent = _controller.view;
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)]) {
-    parent = parent.superview;
-  }
-  if (parent != nil) {
-    RCTTouchHandler *touchHandler = [parent performSelector:@selector(touchHandler)];
-    [touchHandler rnscreens_cancelTouches];
-  }
-#endif // RCT_NEW_ARCH_ENABLED
+  [[self rnscreens_findTouchHandlerInAncestorChain] rnscreens_cancelTouches];
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer

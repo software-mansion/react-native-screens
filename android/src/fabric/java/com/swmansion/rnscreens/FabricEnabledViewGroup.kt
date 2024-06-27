@@ -9,22 +9,31 @@ import com.facebook.react.uimanager.FabricViewStateManager
 import com.facebook.react.uimanager.PixelUtil
 import kotlin.math.abs
 
-abstract class FabricEnabledViewGroup constructor(context: ReactContext?) : ViewGroup(context), FabricViewStateManager.HasFabricViewStateManager {
+abstract class FabricEnabledViewGroup constructor(
+    context: ReactContext?,
+) : ViewGroup(context),
+    FabricViewStateManager.HasFabricViewStateManager {
     private val mFabricViewStateManager: FabricViewStateManager = FabricViewStateManager()
 
     private var lastSetWidth = 0f
     private var lastSetHeight = 0f
 
-    override fun getFabricViewStateManager(): FabricViewStateManager {
-        return mFabricViewStateManager
-    }
+    override fun getFabricViewStateManager(): FabricViewStateManager = mFabricViewStateManager
 
-    protected fun updateScreenSizeFabric(width: Int, height: Int, headerHeight: Double) {
+    protected fun updateScreenSizeFabric(
+        width: Int,
+        height: Int,
+        headerHeight: Double,
+    ) {
         updateState(width, height, headerHeight)
     }
 
     @UiThread
-    fun updateState(width: Int, height: Int, headerHeight: Double) {
+    fun updateState(
+        width: Int,
+        height: Int,
+        headerHeight: Double,
+    ) {
         val realWidth: Float = PixelUtil.toDIPFromPixel(width.toFloat())
         val realHeight: Float = PixelUtil.toDIPFromPixel(height.toFloat())
 
