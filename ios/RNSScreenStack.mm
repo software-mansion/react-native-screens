@@ -1214,12 +1214,27 @@ namespace react = facebook::react;
 - (void)invalidate
 {
   _invalidated = YES;
-  for (UIViewController *controller in _presentedModals) {
-    [controller dismissViewControllerAnimated:NO completion:nil];
+  [self dismissAllPresentedViewControllersFrom:_controller
+                                    completion:^{
+                                      // Ensure presented modals are removed and the controller is detached from its
+                                      // parent
+                                      [self->_presentedModals removeAllObjects];
+                                      [self->_controller willMoveToParentViewController:nil];
+                                      [self->_controller removeFromParentViewController];
+                                    }];
+}
+
+- (void)dismissAllPresentedViewControllersFrom:(UIViewController *)viewController completion:(void (^)(void))completion
+{
+  if (viewController.presentedViewController) {
+    [viewController.presentedViewController
+        dismissViewControllerAnimated:YES
+                           completion:^{
+                             [self dismissAllPresentedViewControllersFrom:viewController completion:completion];
+                           }];
+  } else {
+    completion();
   }
-  [_presentedModals removeAllObjects];
-  [_controller willMoveToParentViewController:nil];
-  [_controller removeFromParentViewController];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED
