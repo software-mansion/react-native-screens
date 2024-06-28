@@ -1,12 +1,10 @@
 buildscript {
-    ext {
-        buildToolsVersion = "34.0.0"
-        minSdkVersion = 23
-        compileSdkVersion = 34
-        targetSdkVersion = 34
-        ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.22"
-    }
+    val buildToolsVersion: String by extra("34.0.0")
+    val compileSdkVersion: Int by extra(34)
+    val minSdkVersion: Int by extra(23)
+    val targetSdkVersion: Int by extra(34)
+    val ndkVersion: String by extra("26.1.10909125")
+    val kotlinVersion: String by extra("1.9.22")
     repositories {
         google()
         mavenCentral()
@@ -26,9 +24,9 @@ buildscript {
 allprojects {
     repositories {
         maven {
-            url("$rootDir/../node_modules/detox/Detox-android")
+            url = uri("$rootDir/../node_modules/detox/Detox-android")
         }
     }
 }
 
-apply plugin: "com.facebook.react.rootproject"
+apply (plugin= "com.facebook.react.rootproject")
