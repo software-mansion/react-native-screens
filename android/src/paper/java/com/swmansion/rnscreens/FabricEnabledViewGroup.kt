@@ -2,12 +2,12 @@ package com.swmansion.rnscreens
 
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.uimanager.FabricViewStateManager
+import com.facebook.react.uimanager.StateWrapper
 
-abstract class FabricEnabledViewGroup constructor(
+abstract class FabricEnabledViewGroup(
     context: ReactContext?,
 ) : ViewGroup(context) {
-    val fabricViewStateManager get() = null as FabricViewStateManager?
+    fun setStateWrapper(wrapper: StateWrapper?) = Unit
 
     protected fun updateScreenSizeFabric(
         width: Int,
