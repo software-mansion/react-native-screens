@@ -15,6 +15,28 @@ type OnDetachedEvent = Readonly<{}>;
 
 type BackButtonDisplayMode = 'minimal' | 'default' | 'generic';
 
+type BlurEffect =
+  | 'extraLight'
+  | 'light'
+  | 'dark'
+  | 'regular'
+  | 'prominent'
+  | 'systemUltraThinMaterial'
+  | 'systemThinMaterial'
+  | 'systemMaterial'
+  | 'systemThickMaterial'
+  | 'systemChromeMaterial'
+  | 'systemUltraThinMaterialLight'
+  | 'systemThinMaterialLight'
+  | 'systemMaterialLight'
+  | 'systemThickMaterialLight'
+  | 'systemChromeMaterialLight'
+  | 'systemUltraThinMaterialDark'
+  | 'systemThinMaterialDark'
+  | 'systemMaterialDark'
+  | 'systemThickMaterialDark'
+  | 'systemChromeMaterialDark';
+
 export interface NativeProps extends ViewProps {
   onAttached?: DirectEventHandler<OnAttachedEvent>;
   onDetached?: DirectEventHandler<OnDetachedEvent>;
@@ -44,6 +66,7 @@ export interface NativeProps extends ViewProps {
   backButtonDisplayMode?: WithDefault<BackButtonDisplayMode, 'default'>;
   hideBackButton?: boolean;
   backButtonInCustomView?: boolean;
+  blurEffect?: WithDefault<BlurEffect, 'extraLight'>;
   // TODO: implement this props on iOS
   topInsetEnabled?: boolean;
 }
