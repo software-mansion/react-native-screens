@@ -40,6 +40,8 @@ namespace react = facebook::react;
 
 + (RNSSearchBarPlacement)RNSScreenSearchBarPlacementFromCppEquivalent:(react::RNSSearchBarPlacement)placement;
 
++ (UIBlurEffectStyle)UIBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect;
+
 @end
 
 #endif // RCT_NEW_ARCH_ENABLED

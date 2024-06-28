@@ -901,7 +901,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
 
   if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
-    _blurEffect = [RCTConvert UIBlurEffectStyle:RCTNSStringFromString(newScreenProps.blurEffect)];
+    _blurEffect = [RNSConvert UIBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
   }
 
   [self updateViewControllerIfNeeded];
