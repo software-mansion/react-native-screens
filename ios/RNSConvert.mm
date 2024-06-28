@@ -177,6 +177,71 @@
   }
 }
 
++ (UIBlurEffectStyle)UIBlurEffectStyleFromCppEquivalent:(react::RNSScreenStackHeaderConfigBlurEffect)blurEffect
+{
+#if !TARGET_OS_TV && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+  if (@available(iOS 13.0, *)) {
+    switch (blurEffect) {
+      case react::RNSScreenStackHeaderConfigBlurEffect::ExtraLight:
+        return UIBlurEffectStyleExtraLight;
+      case react::RNSScreenStackHeaderConfigBlurEffect::Light:
+        return UIBlurEffectStyleLight;
+      case react::RNSScreenStackHeaderConfigBlurEffect::Dark:
+        return UIBlurEffectStyleDark;
+      case react::RNSScreenStackHeaderConfigBlurEffect::Regular:
+        return UIBlurEffectStyleRegular;
+      case react::RNSScreenStackHeaderConfigBlurEffect::Prominent:
+        return UIBlurEffectStyleProminent;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterial:
+        return UIBlurEffectStyleSystemUltraThinMaterial;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterial:
+        return UIBlurEffectStyleSystemThinMaterial;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterial:
+        return UIBlurEffectStyleSystemMaterial;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterial:
+        return UIBlurEffectStyleSystemThickMaterial;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterial:
+        return UIBlurEffectStyleSystemChromeMaterial;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterialLight:
+        return UIBlurEffectStyleSystemUltraThinMaterialLight;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterialLight:
+        return UIBlurEffectStyleSystemThinMaterialLight;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterialLight:
+        return UIBlurEffectStyleSystemMaterialLight;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterialLight:
+        return UIBlurEffectStyleSystemThickMaterialLight;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterialLight:
+        return UIBlurEffectStyleSystemChromeMaterialLight;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemUltraThinMaterialDark:
+        return UIBlurEffectStyleSystemUltraThinMaterialDark;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThinMaterialDark:
+        return UIBlurEffectStyleSystemThinMaterialDark;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemMaterialDark:
+        return UIBlurEffectStyleSystemMaterialDark;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemThickMaterialDark:
+        return UIBlurEffectStyleSystemThickMaterialDark;
+      case react::RNSScreenStackHeaderConfigBlurEffect::SystemChromeMaterialDark:
+        return UIBlurEffectStyleSystemChromeMaterialDark;
+    }
+  }
+#endif
+
+  switch (blurEffect) {
+    case react::RNSScreenStackHeaderConfigBlurEffect::Light:
+      return UIBlurEffectStyleLight;
+    case react::RNSScreenStackHeaderConfigBlurEffect::Dark:
+      return UIBlurEffectStyleDark;
+    case react::RNSScreenStackHeaderConfigBlurEffect::Regular:
+      return UIBlurEffectStyleRegular;
+    case react::RNSScreenStackHeaderConfigBlurEffect::Prominent:
+      return UIBlurEffectStyleProminent;
+    case react::RNSScreenStackHeaderConfigBlurEffect::ExtraLight:
+    default:
+      return UIBlurEffectStyleExtraLight;
+  }
+}
+
 @end
 
 #endif // RCT_NEW_ARCH_ENABLED
