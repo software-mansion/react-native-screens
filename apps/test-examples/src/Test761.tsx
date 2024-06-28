@@ -52,7 +52,7 @@ function Second({
     <View style={{ backgroundColor: 'yellow', flex: 1 }}>
       <Button
         title="Tap me for first screen"
-        onPress={() => navigation.navigate('First')}
+        onPress={() => navigation.popTo('First')}
       />
     </View>
   );
