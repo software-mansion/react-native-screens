@@ -37,6 +37,11 @@ import com.swmansion.rnscreens.ScreenStackFragment
 import com.swmansion.rnscreens.ScreenStackFragmentWrapper
 import com.swmansion.rnscreens.events.ScreenDismissedEvent
 
+/**
+ * This fragment aims to provide dimming view functionality behind the nested fragment.
+ * Useful when nested fragment is transparent / uses some kind of non-fullscreen presentation,
+ * such as `formSheet`.
+ */
 class DimmingFragment(
     val nestedFragment: ScreenFragmentWrapper,
 ) : Fragment(),
@@ -66,12 +71,18 @@ class DimmingFragment(
         nestedFragment.fragment.lifecycle.addObserver(this)
     }
 
+    /**
+     * This bottom sheet callback is responsible for animating alpha of the dimming view.
+     */
     private class AnimateDimmingViewCallback(
         val screen: Screen,
         val viewToAnimate: View,
         val maxAlpha: Float,
     ) : BottomSheetCallback() {
+        // largest *slide offset* that is yet undimmed
         private var largestUndimmedOffset: Float = computeOffsetFromDetentIndex(screen.sheetLargestUndimmedDetentIndex)
+
+        // first *slide offset* that should be fully dimmed
         private var firstDimmedOffset: Float =
             computeOffsetFromDetentIndex(
                 (screen.sheetLargestUndimmedDetentIndex + 1).coerceIn(
@@ -79,6 +90,8 @@ class DimmingFragment(
                     screen.sheetDetents.count() - 1,
                 ),
             )
+
+        // interval that we interpolate the alpha value over
         private var intervalLength = firstDimmedOffset - largestUndimmedOffset
         private val animator =
             ValueAnimator.ofFloat(0F, maxAlpha).apply {
@@ -148,7 +161,9 @@ class DimmingFragment(
         transit: Int,
         enter: Boolean,
         nextAnim: Int,
-    ): Animation? = AnimationUtils.loadAnimation(context, if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out)
+    ): Animation? =
+        // We want dimming view to have always fade animation in current usages.
+        AnimationUtils.loadAnimation(context, if (enter) R.anim.rns_fade_in else R.anim.rns_fade_out)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -289,7 +304,7 @@ class DimmingFragment(
     }
 
     private fun requireRootView(): View =
-        screen.reactContext.currentActivity!!
+        checkNotNull(screen.reactContext.currentActivity) { "[RNScreens] Attempt to access activity on detached context" }
             .window.decorView
 
     // TODO: Move these methods related to toolbar to separate interface
@@ -389,25 +404,6 @@ class DimmingFragment(
 
     companion object {
         const val TAG = "DimmingFragment"
-
-        fun isStateLessEqualThan(
-            state: Int,
-            otherState: Int,
-        ): Boolean {
-            if (state == otherState) {
-                return true
-            }
-            if (state != BottomSheetBehavior.STATE_HALF_EXPANDED && otherState != BottomSheetBehavior.STATE_HALF_EXPANDED) {
-                return state > otherState
-            }
-            if (state == BottomSheetBehavior.STATE_HALF_EXPANDED) {
-                return otherState == BottomSheetBehavior.STATE_EXPANDED
-            }
-            if (state == BottomSheetBehavior.STATE_COLLAPSED) {
-                return otherState != BottomSheetBehavior.STATE_HIDDEN
-            }
-            return false
-        }
     }
 
     // This is View.OnApplyWindowInsetsListener method, not view's own!

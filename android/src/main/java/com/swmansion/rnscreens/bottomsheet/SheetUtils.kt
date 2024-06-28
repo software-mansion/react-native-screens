@@ -105,4 +105,23 @@ object SheetUtils {
 
             else -> throw IllegalArgumentException("Invalid state $state for detentCount $detentCount")
         }
+
+    fun isStateLessEqualThan(
+        state: Int,
+        otherState: Int,
+    ): Boolean {
+        if (state == otherState) {
+            return true
+        }
+        if (state != STATE_HALF_EXPANDED && otherState != STATE_HALF_EXPANDED) {
+            return state > otherState
+        }
+        if (state == STATE_HALF_EXPANDED) {
+            return otherState == BottomSheetBehavior.STATE_EXPANDED
+        }
+        if (state == STATE_COLLAPSED) {
+            return otherState != STATE_HIDDEN
+        }
+        return false
+    }
 }

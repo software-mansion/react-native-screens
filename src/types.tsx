@@ -7,7 +7,6 @@ import {
   TargetedEvent,
   TextInputFocusEventData,
   ColorValue,
-  StyleProp,
   ViewStyle,
 } from 'react-native';
 import { NativeStackNavigatorProps } from './native-stack/types';
@@ -275,7 +274,7 @@ export interface ScreenProps extends ViewProps {
    * Allows to set background color for the `Screen` component itself.
    * This might come handy when using `formSheet` stack presentation, when the content view is clipped.
    */
-  screenStyle?: StyleProp<Pick<ViewStyle, 'backgroundColor'>>;
+  screenStyle?: Pick<ViewStyle, 'backgroundColor'>;
   /**
    * Describes heights where a sheet can rest.
    * Works only when `stackPresentation` is set to `formSheet`.
