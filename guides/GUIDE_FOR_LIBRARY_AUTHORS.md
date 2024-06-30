@@ -143,9 +143,10 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+
 ### `sheetAllowedDetents` (iOS only)
 
-Describes heights where a sheet can rest. 
+Describes heights where a sheet can rest.
 Works only when `stackPresentation` is set to `formSheet`.
 
 Available values:
@@ -180,16 +181,16 @@ Defaults to `false`.
 
 ### `sheetLargestUndimmedDetent` (iOS only)
 
- The largest sheet detent for which a view underneath won't be dimmed.
- Works only when `stackPresentation` is set to `formSheet`.
+The largest sheet detent for which a view underneath won't be dimmed.
+Works only when `stackPresentation` is set to `formSheet`.
 
- If this prop is set to:
+If this prop is set to:
 
- - `large` - the view underneath won't be dimmed at any detent level
- - `medium` - the view underneath will be dimmed only when detent level is `large`
- - `all` - the view underneath will be dimmed for any detent level
+- `large` - the view underneath won't be dimmed at any detent level
+- `medium` - the view underneath will be dimmed only when detent level is `large`
+- `all` - the view underneath will be dimmed for any detent level
 
- Defaults to `all`.
+Defaults to `all`.
 
 ### `stackAnimation`
 
@@ -253,9 +254,9 @@ Defaults to `false`.
 
 ### `statusBarStyle`
 
-Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `inverted` (colors opposite to `auto`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
+Sets the status bar color (similar to the `StatusBar` component). Requires enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file. On iOS, the possible values are: `auto` (screens will match theme preference from react-navigation), `system` (based on [user interface style](https://developer.apple.com/documentation/uikit/uiuserinterfacestyle?language=objc), `systemInverted` (colors opposite to `system`), `light`, `dark`. On Android, the status bar will be dark if set to `dark` and `light` otherwise.
 
-Defaults to `auto`.
+Defaults to `system`.
 
 ### `statusBarTranslucent` (Android only)
 
