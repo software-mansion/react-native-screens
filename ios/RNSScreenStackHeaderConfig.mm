@@ -638,6 +638,10 @@ namespace react = facebook::react;
       }
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle: {
+        for (UIView *view in subview.subviews) {
+          view.clipsToBounds = YES;
+          view.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        }
         navitem.titleView = subview;
         break;
       }
