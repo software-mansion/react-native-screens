@@ -639,6 +639,7 @@ namespace react = facebook::react;
       case RNSScreenStackHeaderSubviewTypeCenter:
       case RNSScreenStackHeaderSubviewTypeTitle: {
         for (UIView *view in subview.subviews) {
+          view.frame = subview.bounds;
           view.clipsToBounds = YES;
           view.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         }
