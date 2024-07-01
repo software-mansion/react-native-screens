@@ -14,9 +14,11 @@ type SimpleStackParams = {
 };
 
 const HeaderTitle = () => (
-  <Text>
-    React Native Screens Examples Very Long Title That Should Get Truncated
-  </Text>
+  <View style={{ borderColor: 'green', borderWidth: 2 }}>
+    <Text>
+      React Native Screens Examples Very Long Title That Should Get Truncated
+    </Text>
+  </View>
 );
 
 const Left = () => <Text style={{ backgroundColor: '#00F' }}>Left</Text>;
