@@ -93,7 +93,7 @@ To begin with, let install all dependencies:
 5. `yarn`
 6. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
 
-and open `react-native-screens/xample/android` with Android Studio.
+and open `react-native-screens/Example/android` with Android Studio.
 
 ![Android Studio](android_studio.png)
 
