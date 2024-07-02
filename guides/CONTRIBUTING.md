@@ -42,7 +42,6 @@ We inform you that unrespectful issues will be closed.
 - `apps` &ndash; apps implementations shared by wrappers
 - `Example` &ndash; paper version of React Native mobile example app from apps/App
 - `FabricExample` &ndash; fabric version of React Native mobile example app from apps/App
-- `FabricTestExample` &ndash; fabric version of React Native mobile app containing test examples from apps/TestApp
 - `gesture-handler` &ndash; interop between react-native-screens and react-native-gesture-handler
 - `guides` &ndash; guides for developers
 - `ios` &ndash; source code of native implementation for iOS
@@ -51,7 +50,6 @@ We inform you that unrespectful issues will be closed.
 - `reanimated` &ndash; interop between react-native-screens and react-native-reanimated
 - `scripts` &ndash; utility scripts, used by CLI
 - `src` &ndash; library TS core code 
-- `TestsExample` &ndash; paper version of React Native mobile app containing test examples from apps/TestApp
 - `TVOSExample` &ndash; React Native example app for TVOS
 - `windows` &ndash; source code of native implementation for Windows
 
@@ -90,13 +88,12 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-3. `(cd apps && yarn)`
-4. `(cd react-navigation && yarn prepare)`
-5. `cd TestsExample`
-6. `yarn`
-7. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
+3. `(cd react-navigation && yarn prepare)`
+4. `cd Example`
+5. `yarn`
+6. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
 
-and open `react-native-screens/TestsExample/android` with Android Studio.
+and open `react-native-screens/xample/android` with Android Studio.
 
 ![Android Studio](android_studio.png)
 
@@ -108,18 +105,17 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-3. `(cd apps && yarn)`
-4. `(cd react-navigation && yarn prepare)`
-5. `cd TestsExample`
-6. `yarn`
-7. `(cd ios && pod install)`
-8. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
+3. `(cd react-navigation && yarn prepare)`
+4. `cd Example`
+5. `yarn`
+6. `(cd ios && pod install)`
+7. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
 
-and open `react-native-screens/TestsExample/ios/TestsExample.xcworkspace` with XCode.
+and open `react-native-screens/Example/ios/ScreensExample.xcworkspace` with XCode.
 
 ![XCode](xcode.png)
 
-To find the native source code of `react-native-screens` navigate to `Pods > Development Pods >  RNScreens > TestsExample > node_modules > react-native-screens > ios` or `Pods > Development Pods > RNScreens > .. > TestsExample > node_modules > react-native-screens > ios`. Making sure metro builder is run, you can now build React Native app or debug native code. 
+To find the native source code of `react-native-screens` navigate to `Pods > Development Pods >  RNScreens > ScreensExample > node_modules > react-native-screens > ios` or `Pods > Development Pods > RNScreens > .. > ScreensExample > node_modules > react-native-screens > ios`. Making sure metro builder is run, you can now build React Native app or debug native code. 
 
 ### Fabric 
 
