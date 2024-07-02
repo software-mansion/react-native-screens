@@ -3,7 +3,7 @@ import { View, Text, Button, Pressable, StyleSheet, Alert } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const Stack = createNativeStackNavigator(); // <-- change to createStackNavigator to see a difference
+const Stack = createNativeStackNavigator();
 const NestedStack = createNativeStackNavigator();
 
 export default function App() {
@@ -49,13 +49,8 @@ function HomeScreen() {
 }
 
 function DetailsScreen() {
-  const navigation = useNavigation();
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('DetailsStack2')}
-      />
       {new Array(10).fill(0).map((_, i) => (
         <Pressable
           key={i.toString()}
@@ -90,3 +85,4 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
+
