@@ -103,6 +103,7 @@ import Test2048 from './src/tests/Test2048';
 import Test2069 from './src/tests/Test2069';
 import Test2118 from './src/tests/Test2118';
 import Test2184 from './src/tests/Test2184';
+import Test2223 from './src/tests/Test2223';
 import TestScreenAnimation from './src/tests/TestScreenAnimation';
 import TestHeader from './src/tests/TestHeader';
 
