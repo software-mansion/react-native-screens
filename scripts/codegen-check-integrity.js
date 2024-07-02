@@ -1,9 +1,8 @@
-const {checkCodegenIntegrity} = require('./codegen-utils')
+const { checkCodegenIntegrity } = require('./codegen-utils');
 
 if (require.main === module) {
-   async function main() {
-     await checkCodegenIntegrity();
-   }
-   main();
- }
- 
+  async function main() {
+    await checkCodegenIntegrity();
+  }
+  main();
+}

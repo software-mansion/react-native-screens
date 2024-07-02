@@ -1,9 +1,8 @@
-const {generateCodegenJavaOldArch} = require('./codegen-utils')
+const { generateCodegenJavaOldArch } = require('./codegen-utils');
 
 if (require.main === module) {
-   async function main() {
-     await generateCodegenJavaOldArch();
-   }
-   main();
- }
- 
+  async function main() {
+    await generateCodegenJavaOldArch();
+  }
+  main();
+}
