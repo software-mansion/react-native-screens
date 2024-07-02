@@ -26,7 +26,7 @@ class JSI_EXPORT RNSScreenShadowNode final : public ConcreteViewShadowNode<
 
 #pragma mark - ShadowNode overrides
 
-  Point getContentOriginOffset() const override;
+  Point getContentOriginOffset(bool includeTransform) const override;
 
   void layout(LayoutContext layoutContext) override;
 
