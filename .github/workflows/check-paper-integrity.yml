@@ -1,0 +1,18 @@
+name: Test Paper Architecture integrity
+on: [pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: check-paper-integrity-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js 18
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: 'yarn'
+      - name: Install node dependencies
+        run: yarn check-integrity
