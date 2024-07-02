@@ -9,15 +9,14 @@ function exec(command) {
 }
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const EXAMPLE_DIR = path.resolve(ROOT_DIR, 'example');
 const ANDROID_DIR = path.resolve(ROOT_DIR, 'android');
 const GENERATED_DIR = path.resolve(ANDROID_DIR, 'build/generated');
 const OLD_ARCH_DIR = path.resolve(ANDROID_DIR, 'src/paper');
 const SPECS_DIR = path.resolve(ROOT_DIR, packageJSON.codegenConfig.jsSrcsDir);
 const PACKAGE_NAME = packageJSON.codegenConfig.android.javaPackageName;
-const RN_DIR = path.resolve(EXAMPLE_DIR, 'node_modules/react-native');
+const RN_DIR = path.resolve(ROOT_DIR, 'node_modules/react-native');
 const RN_CODEGEN_DIR = path.resolve(
-  EXAMPLE_DIR,
+  ROOT_DIR,
   'node_modules/@react-native/codegen'
 );
 
