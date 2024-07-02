@@ -15,4 +15,6 @@ jobs:
           node-version: 18
           cache: 'yarn'
       - name: Install node dependencies
+        run: yarn
+      - name: Install node dependencies
         run: yarn check-integrity
