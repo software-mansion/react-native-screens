@@ -9,7 +9,7 @@ on:
       - 'package.json'
       - 'ios/**'
       - 'common/**'
-      - 'TestsExample/**'
+      - 'Example/**'
   push:
     branches:
       - main
@@ -19,7 +19,7 @@ jobs:
     runs-on: macos-14
     timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: TestsExample
+      WORKING_DIRECTORY: Example
     concurrency:
       group: ios-${{ github.ref }}
       cancel-in-progress: true
@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
-          cache-dependency-path: 'TestsExample/yarn.lock'
+          cache-dependency-path: 'Example/yarn.lock'
       - name: Use latest stable Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:

@@ -10,7 +10,7 @@ on:
       - 'ios/**'
       - 'common/**'
       - 'src/fabric/**'
-      - 'FabricTestExample/**'
+      - 'FabricExample/**'
   push:
     branches:
       - main
@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-14
     timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: FabricTestExample
+      WORKING_DIRECTORY: FabricExample
     concurrency:
       group: ios-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
-          cache-dependency-path: 'FabricTestExample/yarn.lock'
+          cache-dependency-path: 'FabricExample/yarn.lock'
       - name: Use latest stable Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:

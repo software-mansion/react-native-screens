@@ -7,7 +7,7 @@ on:
       - 'android/**'
       - 'common/**'
       - 'src/fabric/**'
-      - 'FabricTestExample/**'
+      - 'FabricExample/**'
       - 'package.json'
       - '.github/workflows/android-build-test-fabric.yml'
   push:
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: FabricTestExample
+      WORKING_DIRECTORY: FabricExample
     concurrency:
       group: android-fabric-${{ github.ref }}
       cancel-in-progress: true
@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
-          cache-dependency-path: 'FabricTestExample/yarn.lock'
+          cache-dependency-path: 'FabricExample/yarn.lock'
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn

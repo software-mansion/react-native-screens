@@ -6,7 +6,7 @@ on:
     paths:
       - 'android/**'
       - 'package.json'
-      - 'TestsExample/**'
+      - 'Example/**'
       - '.github/workflows/android-build-test.yml'
   push:
     branches:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      WORKING_DIRECTORY: TestsExample
+      WORKING_DIRECTORY: Example
     concurrency:
       group: android-${{ github.ref }}
       cancel-in-progress: true
@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
-          cache-dependency-path: 'TestsExample/yarn.lock'
+          cache-dependency-path: 'Example/yarn.lock'
       - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
