@@ -40,8 +40,8 @@ We inform you that unrespectful issues will be closed.
 - `common` &ndash; C++ code related to components - shadow nodes and state
 - `cpp` &ndash; C++ code for turbo modules
 - `apps` &ndash; apps implementations shared by wrappers
-- `Example` &ndash; paper version of React Native mobile example app from apps/App
-- `FabricExample` &ndash; fabric version of React Native mobile example app from apps/App
+- `Example` &ndash; paper version of React Native mobile example app from apps
+- `FabricExample` &ndash; fabric version of React Native mobile example app from apps
 - `gesture-handler` &ndash; interop between react-native-screens and react-native-gesture-handler
 - `guides` &ndash; guides for developers
 - `ios` &ndash; source code of native implementation for iOS
@@ -71,10 +71,12 @@ Submitting Pull Requests that resolve issues is great way to contribute to Scree
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
-We have two types of sources: pure examples (apps/App for source code) and examples, dedicated for tests from issues / pull requests (apps/TestApp for source code). The first work as a showcase of the library, the latter contains specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare showcases in Example app. Example and FabricExample applications are used as wrappers for those applications.
+We have two types of sources: pure examples (apps/Example for source code) and examples, dedicated for tests from issues / pull requests (apps/src/tests for source code). The first work as a showcase of the library, the latter contains specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare showcases in Example app. The apps/App file is where you set the source code for the application to use by either leaving `<Example>` as is or replacing it with `<Test.Test*>`.
+There are two separate applications: Example and FabricExample in root which are used as wrappers for running the examples depending on the architecture needed.
 
-- `apps/App` &ndash; source code with showcase app
-- `apps/TestApp` &ndash; source code with test examples app 
+- `apps/Example` &ndash; source code with showcase app
+- `apps/src/tests` &ndash; source code with test examples app
+- `apps/App` &ndash; source code management
 - `Example/src` &ndash; wrapper with paper architecture for showcase and test examples app
 - `FabricExample/src` &ndash; wrapper with fabric architecture for showcase and test examples app
 - `TVOSExample/src` &ndash; source code with example app for TVOS
