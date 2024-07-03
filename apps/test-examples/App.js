@@ -115,5 +115,5 @@ import TestHeader from './src/TestHeader';
 enableFreeze(true);
 
 export default function App() {
-  return <Test42 />;
+  return <Test1946 />;
 }
