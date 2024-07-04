@@ -751,6 +751,7 @@ namespace react = facebook::react;
 {
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+  [self updateViewControllerIfNeeded];
 }
 
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
