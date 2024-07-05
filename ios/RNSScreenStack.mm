@@ -272,11 +272,7 @@ namespace react = facebook::react;
   BOOL wasScreenMounted = _controller.parentViewController != nil;
   BOOL isScreenReadyForShowing = self.window;
   if (!isScreenReadyForShowing && !wasScreenMounted) {
-    // We wait with adding to parent controller until the stack is mounted and has its initial
-    // layout done.
-    // If we add it before layout, some of the items (specifically items from the navigation bar),
-    // won't be able to position properly. Also the position and size of such items, even if it
-    // happens to change, won't be properly updated (this is perhaps some internal issue of UIKit).
+    // We wait with adding to parent controller until the stack is mounted
     // If we add it when window is not attached, some of the view transitions will be bloced (i.e.
     // modal transitions) and the internal view controler's state will get out of sync with what's
     // on screen without us knowing.
