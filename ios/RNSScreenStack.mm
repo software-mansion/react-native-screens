@@ -872,6 +872,7 @@ namespace react = facebook::react;
         [_interactionController cancelInteractiveTransition];
       }
       _interactionController = nil;
+      _isFullWidthSwiping = NO;
     }
     default: {
       break;
