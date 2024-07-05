@@ -141,8 +141,8 @@ namespace react = facebook::react;
     nextVC = nav.topViewController;
   }
 
-  // we want updates sent to the VC below modal too since it is also visible
-  BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC;
+  // we want updates sent to the VC directly below modal too since it is also visible
+  BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC && vc == nav.topViewController;
 
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
