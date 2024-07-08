@@ -25,7 +25,7 @@ inline constexpr bool equalWithRespectToEps(const T a, const T b, const T eps) {
  * @return whether the frame dimensions are the same with respect to given
  * epsilon
  */
-inline constexpr bool compareFrameSizes(
+inline constexpr bool checkFrameSizesEqualWithEps(
     const react::Size &first,
     const react::Size &second,
     const react::Float eps = 0.01) {

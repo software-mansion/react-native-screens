@@ -96,12 +96,15 @@ import Test1844 from './src/Test1844';
 import Test1864 from './src/Test1864';
 import Test1970 from './src/Test1970';
 import Test1981 from './src/Test1981';
+import Test2002 from './src/Test2002';
 import Test2008 from './src/Test2008';
 import Test2028 from './src/Test2028';
 import Test2048 from './src/Test2048';
 import Test2069 from './src/Test2069';
 import Test2118 from './src/Test2118';
 import Test2184 from './src/Test2184';
+import Test2223 from './src/Test2223';
+import Test2229 from './src/Test2229';
 import TestScreenAnimation from './src/TestScreenAnimation';
 import TestHeader from './src/TestHeader';
 
