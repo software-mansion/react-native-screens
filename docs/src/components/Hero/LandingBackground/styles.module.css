@@ -1,0 +1,23 @@
+.heroBackground {
+  position: absolute;
+  top: 0;
+
+  background: linear-gradient(
+    180deg,
+    var(--swm-blue-light-40) 0%,
+    var(--swm-blue-light-20) 10%,
+    var(--swm-white) 26%
+  );
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -20;
+}
+
+[data-theme='dark'] .heroBackground {
+  background: linear-gradient(
+    180deg,
+    var(--swm-blue-dark-120) 0%,
+    var(--swm-navy-dark-140) 46%
+  );
+}
