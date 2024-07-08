@@ -18,3 +18,4 @@ jobs:
         run: yarn
       - name: Install node dependencies
         run: yarn check-integrity
+        
