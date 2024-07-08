@@ -135,3 +135,13 @@ dependencies {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply plugin: 'com.github.node-gradle.node'
+
+task syncArchs(type: NodeTask) {
+    group = 'Build'
+    description = 'Run sync beetwen Paper and Fabric arch'
+    yarn_install
+    script = file('../../../scripts/codegen-sync-archs.js')
+}
+
+tasks['preBuild'].dependsOn(syncArchs)
