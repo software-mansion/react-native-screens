@@ -9,6 +9,9 @@ static const float RNSFadeOpenTransitionDurationProportion = 0.2 / 0.35;
 static const float RNSSlideCloseTransitionDurationProportion = 0.25 / 0.35;
 static const float RNSFadeCloseTransitionDurationProportion = 0.15 / 0.35;
 static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
+// same value is used in other projects using similar approach for transistions
+// and it looks the most similar to the value used by Apple
+static constexpr float RNSShadowViewMaxAlpha = 0.1;
 
 @implementation RNSScreenStackAnimator {
   UINavigationControllerOperation _operation;
@@ -105,15 +108,23 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
     leftTransform = CGAffineTransformMakeTranslation(belowViewWidth, 0);
   }
 
+  auto shadowView = [[UIView alloc] initWithFrame:fromViewController.view.frame];
+  shadowView.backgroundColor = [UIColor blackColor];
+
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = rightTransform;
     [[transitionContext containerView] addSubview:toViewController.view];
+    [[transitionContext containerView] insertSubview:shadowView belowSubview:toViewController.view];
+    shadowView.alpha = 0.0;
+
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
         animations:^{
           fromViewController.view.transform = leftTransform;
           toViewController.view.transform = CGAffineTransformIdentity;
+          shadowView.alpha = RNSShadowViewMaxAlpha;
         }
         completion:^(BOOL finished) {
+          [shadowView removeFromSuperview];
           fromViewController.view.transform = CGAffineTransformIdentity;
           toViewController.view.transform = CGAffineTransformIdentity;
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
@@ -121,12 +132,16 @@ static const float RNSFadeCloseDelayTransitionDurationProportion = 0.1 / 0.35;
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
+    [[transitionContext containerView] insertSubview:shadowView belowSubview:fromViewController.view];
+    shadowView.alpha = RNSShadowViewMaxAlpha;
 
     void (^animationBlock)(void) = ^{
       toViewController.view.transform = CGAffineTransformIdentity;
       fromViewController.view.transform = rightTransform;
+      shadowView.alpha = 0.0;
     };
     void (^completionBlock)(BOOL) = ^(BOOL finished) {
+      [shadowView removeFromSuperview];
       fromViewController.view.transform = CGAffineTransformIdentity;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
