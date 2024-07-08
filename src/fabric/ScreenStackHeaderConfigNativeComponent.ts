@@ -45,6 +45,7 @@ export interface NativeProps extends ViewProps {
   hideBackButton?: boolean;
   backButtonInCustomView?: boolean;
   // TODO: implement this props on iOS
+  topInsetEnabled?: boolean;
 }
 
 export default codegenNativeComponent<NativeProps>(
