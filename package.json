@@ -19,7 +19,7 @@
     "lint": "yarn lint-js && yarn lint-android",
     "release": "yarn prepare && npm login && release-it",
     "prepare": "bob build && husky install",
-    "check-integrity": "node ./scripts/codegen-check-integrity.js",
+    "check-archs-consistency": "node ./scripts/codegen-check-consistency.js",
     "sync-archs": "node ./scripts/codegen-sync-archs.js"
   },
   "main": "lib/commonjs/index",

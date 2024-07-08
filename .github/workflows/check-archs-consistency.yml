@@ -1,10 +1,16 @@
-name: Test Paper Architecture integrity
-on: [pull_request]
+name: Test consistency between Paper & Fabric
+on: 
+  pull_request:
+    branches:
+      - main
+    paths: 
+      - src/fabric/**
+      - android/src/paper/java/com/facebook/react/viewmanagers/**
 jobs:
   check:
     runs-on: ubuntu-latest
     concurrency:
-      group: check-paper-integrity-${{ github.ref }}
+      group: check-archs-consistency-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: checkout
@@ -17,5 +23,5 @@ jobs:
       - name: Install node dependencies
         run: yarn
       - name: Check Android Paper & Fabric generated interfaces consistency
-        run: yarn check-integrity
+        run: yarn check-archs-consistency
         
