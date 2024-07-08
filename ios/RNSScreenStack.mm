@@ -270,8 +270,7 @@ namespace react = facebook::react;
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
-  BOOL isScreenReadyForShowing = self.window;
-  if (!isScreenReadyForShowing && !wasScreenMounted) {
+  if (!self.window && !wasScreenMounted) {
     // We wait with adding to parent controller until the stack is mounted.
     // If we add it when window is not attached, some of the view transitions will be blocked (i.e.
     // modal transitions) and the internal view controler's state will get out of sync with what's
