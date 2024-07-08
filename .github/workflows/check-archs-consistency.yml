@@ -24,4 +24,3 @@ jobs:
         run: yarn
       - name: Check Android Paper & Fabric generated interfaces consistency
         run: yarn check-archs-consistency
-        
