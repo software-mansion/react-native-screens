@@ -71,13 +71,10 @@ async function generateCodegenJavaOldArch() {
 
   const generatedFiles = fs.readdirSync(CODEGEN_FILES_DIR);
   const oldArchFiles = fs.readdirSync(OLD_ARCH_FILES_DIR);
-
-  const existingFilesMap = Object.fromEntries(
-    oldArchFiles.map(fileName => [fileName, 1])
-  );
+  const existingFilesSet = new Set(oldArchFiles.map(fileName => fileName));
 
   generatedFiles.forEach(generatedFile => {
-    if (!existingFilesMap[generatedFile]) {
+    if (!existingFilesSet.has(generatedFile)) {
       console.warn(
         `[RNScreens] ${generatedFile} not found in paper dir, if it's used on Android you need to copy it manually and implement yourself before using auto-copy feature.`
       );
@@ -121,13 +118,6 @@ async function checkCodegenIntegrity() {
   oldArchFiles.forEach(file => {
     compareFileAtTwoPaths(file, CODEGEN_FILES_DIR, OLD_ARCH_FILES_DIR);
   });
-}
-
-if (require.main === module) {
-  async function main() {
-    await generateCodegenJavaOldArch();
-  }
-  main();
 }
 
 module.exports = { generateCodegenJavaOldArch, checkCodegenIntegrity };
