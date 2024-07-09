@@ -1,0 +1,20 @@
+.overviewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6.5rem
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 55.2px;
+}
+
+@media(max-width: 996px) {
+  .overviewContainer {
+    gap: 3.5rem
+  }
+  .title {
+    font-size: 40px;
+  }
+}

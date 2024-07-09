@@ -1,0 +1,26 @@
+.screens {
+    position: absolute;
+    top: 10rem;
+    right: 0
+}
+
+@media(max-width: 1350px) {
+    .screens {
+        top: 12rem
+    }
+}
+
+@media(max-width: 996px) {
+    .screens {
+        top: 6rem
+    }
+}
+
+@media(max-width: 768px) {
+    .screens {
+        position: relative;
+        top: 2rem;
+        display: flex;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,43 @@
+.overviewTile {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
+.tileReversed {
+    flex-direction: row-reverse;
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  flex: 1
+}
+
+.contentContainer h3 {
+  font-size: 32px;
+  line-height: 36.8px;
+  font-weight: 500;
+}
+
+.contentContainer p {
+    font-size: 20px
+}
+
+@media(max-width: 996px) {
+    .overviewTile {
+        flex-direction: column;
+    }
+    .imageContainer {
+        display: flex;
+        justify-content: center;
+    }
+    .contentContainer h3 {
+        font-size: 24px
+    }
+    .contentContainer p {
+        font-size: 18px
+    }
+}

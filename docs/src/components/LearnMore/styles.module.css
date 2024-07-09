@@ -20,6 +20,7 @@
 
 .learnMoreContent > p {
   font-size: 20px;
+  font-weight: 400;
 }
 
 @media(max-width: 996px) {

@@ -4,12 +4,20 @@
   align-items: center;
   gap: 2.5rem;
   margin-bottom: 16rem;
-  margin-top: 4.5rem;
+  margin-top: 6.5rem;
+}
+
+@media(max-width: 996px) {
+  .hireUsSectionWrapper {
+    margin-top: 3.5rem;
+    margin-bottom: 10rem
+  }
 }
 
 @media (max-width: 768px) {
   .hireUsSectionWrapper {
     gap: 1.5rem;
+    margin-top: 0;
     margin-bottom: 5rem !important;
   }
   .hireUsTitleContainer h2 {
@@ -22,7 +30,8 @@
 
 @media (max-width: 420px) {
   .hireUsSectionWrapper {
-    margin-bottom: 2rem !important;
+    margin-top: 0;
+    margin-bottom: 4rem !important;
   }
 }
 

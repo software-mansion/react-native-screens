@@ -6,11 +6,6 @@ import HomepageButton from "@site/src/components/HomepageButton";
 const StartScreen = () => {
   return (
     <section className={styles.hero}>
-      <div className={styles.heroImageContainer}>
-        <div className={styles.heroImageWrapper}>
-          <img className={styles.heroImage} src={useBaseUrl("/img/hero.png")} draggable={false} />
-        </div>
-      </div>
       <div className={styles.heading}>
         <div>
           <h1 className={styles.headingLabel}>

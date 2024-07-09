@@ -1,3 +1,3 @@
-import { Footer } from 'test-rex';
+import { Footer } from '@swmansion/t-rex-ui';
 
 export default Footer;
