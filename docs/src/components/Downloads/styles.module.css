@@ -40,7 +40,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6.5rem;
+  gap: 2rem;
 }
 
 @media (max-width: 1440px) {

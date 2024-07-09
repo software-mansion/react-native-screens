@@ -1,7 +1,7 @@
 .hero {
   display: flex;
   flex-direction: column;
-  margin-bottom: 2rem;
+  margin-bottom: 6rem;
 }
 
 .heading {
@@ -45,7 +45,7 @@
   letter-spacing: var(--swm-heading-letter-spacing-bigger);
 
   margin-top: 3rem;
-  margin-bottom: 5.5rem;
+  margin-bottom: 4rem;
   width: 75%;
   color: var(--swm-landing-heading);
   text-wrap: balance;

@@ -23,7 +23,8 @@
 }
 
 .contentContainer p {
-    font-size: 20px
+    font-size: 20px;
+    text-wrap: balance
 }
 
 @media(max-width: 996px) {
