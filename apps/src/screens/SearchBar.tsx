@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { ScrollView, Text, StyleSheet } from 'react-native';
+import { ScrollView, Text, StyleSheet, useColorScheme } from 'react-native';
 import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
@@ -14,6 +14,7 @@ import {
   ToastProvider,
   useToast,
 } from '../shared';
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 
 type StackParamList = {
   Main: undefined;
@@ -31,6 +32,7 @@ interface MainScreenProps {
 
 const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const toast = useToast();
+  const scheme = useColorScheme();
 
   const [search, setSearch] = useState('');
   const [placeholder, setPlaceholder] = useState('Search for something...');
@@ -132,7 +134,13 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         onValueChange={setAutoCapitalize}
         items={['none', 'words', 'sentences', 'characters']}
       />
-      <Text style={styles.heading}>iOS only</Text>
+      <Text
+        style={[
+          styles.heading,
+          scheme === 'dark' ? styles.headingDark : styles.headingLight,
+        ]}>
+        iOS only
+      </Text>
       <SettingsSwitch
         label="Hide navigation bar"
         value={hideNavigationBar}
@@ -148,7 +156,13 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         value={hideWhenScrolling}
         onValueChange={setHideWhenScrolling}
       />
-      <Text style={styles.heading}>Android only</Text>
+      <Text
+        style={[
+          styles.heading,
+          scheme === 'dark' ? styles.headingDark : styles.headingLight,
+        ]}>
+        Android only
+      </Text>
       <SettingsPicker<InputType>
         label="Input type"
         value={inputType}
@@ -291,6 +305,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  headingLight: {
+    color: DefaultTheme.colors.text,
+  },
+  headingDark: {
+    color: DarkTheme.colors.text,
   },
 });
 

@@ -1,3 +1,4 @@
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
   Text,
@@ -5,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  useColorScheme,
 } from 'react-native';
 
 type Props = {
@@ -19,13 +21,25 @@ export const SettingsInput = ({
   onValueChange,
 }: Props): React.JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
+  const scheme = useColorScheme();
   return (
     <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
-      <View style={styles.container}>
-        <Text style={styles.label}>{`${label}: ${value}`}</Text>
+      <View
+        style={[
+          styles.container,
+          scheme === 'dark' ? styles.containerDark : styles.containerLight,
+        ]}>
+        <Text
+          style={[
+            styles.label,
+            scheme === 'dark' ? styles.labelDark : styles.labelLight,
+          ]}>{`${label}: ${value}`}</Text>
         {isOpen ? (
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              scheme === 'dark' ? styles.inputDark : styles.inputLight,
+            ]}
             value={value}
             onChangeText={onValueChange}
             autoCapitalize="none"
@@ -46,16 +60,33 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#039be5',
-    backgroundColor: 'white',
+  },
+  containerLight: {
+    backgroundColor: DefaultTheme.colors.card,
+  },
+  containerDark: {
+    backgroundColor: DarkTheme.colors.card,
   },
   label: {
     fontSize: 15,
-    color: 'black',
+  },
+  labelLight: {
+    color: DefaultTheme.colors.text,
+  },
+  labelDark: {
+    color: DarkTheme.colors.text,
   },
   input: {
     height: 40,
     width: '100%',
     borderWidth: 1,
-    borderColor: 'black',
+  },
+  inputLight: {
+    borderColor: DefaultTheme.colors.border,
+    color: DefaultTheme.colors.text,
+  },
+  inputDark: {
+    borderColor: DarkTheme.colors.border,
+    color: DarkTheme.colors.text,
   },
 });
