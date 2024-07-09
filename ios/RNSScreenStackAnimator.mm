@@ -74,17 +74,22 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
       // we are swiping with full width gesture
       if (screen.customAnimationOnSwipe) {
         [self animateTransitionWithStackAnimation:screen.stackAnimation
+                                    shadowEnabled:screen.fullScreenSwipeShadowEnabled
                                 transitionContext:transitionContext
                                              toVC:toViewController
                                            fromVC:fromViewController];
       } else {
         // we have to provide an animation when swiping, otherwise the screen will be popped immediately,
         // so in case of no custom animation on swipe set, we provide the one closest to the default
-        [self animateSimplePushWithTransitionContext:transitionContext toVC:toViewController fromVC:fromViewController];
+        [self animateSimplePushWithShadowEnabled:screen.fullScreenSwipeShadowEnabled
+                               transitionContext:transitionContext
+                                            toVC:toViewController
+                                          fromVC:fromViewController];
       }
     } else {
       // we are going forward or provided custom animation on swipe or clicked native header back button
       [self animateTransitionWithStackAnimation:screen.stackAnimation
+                                  shadowEnabled:screen.fullScreenSwipeShadowEnabled
                               transitionContext:transitionContext
                                            toVC:toViewController
                                          fromVC:fromViewController];
@@ -92,9 +97,10 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   }
 }
 
-- (void)animateSimplePushWithTransitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
-                                          toVC:(UIViewController *)toViewController
-                                        fromVC:(UIViewController *)fromViewController
+- (void)animateSimplePushWithShadowEnabled:(BOOL)shadowEnabled
+                         transitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
+                                      toVC:(UIViewController *)toViewController
+                                    fromVC:(UIViewController *)fromViewController
 {
   float containerWidth = transitionContext.containerView.bounds.size.width;
   float belowViewWidth = containerWidth * 0.3;
@@ -108,23 +114,32 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     leftTransform = CGAffineTransformMakeTranslation(belowViewWidth, 0);
   }
 
-  auto shadowView = [[UIView alloc] initWithFrame:fromViewController.view.frame];
-  shadowView.backgroundColor = [UIColor blackColor];
+  UIView *shadowView;
+  if (shadowEnabled) {
+    shadowView = [[UIView alloc] initWithFrame:fromViewController.view.frame];
+    shadowView.backgroundColor = [UIColor blackColor];
+  }
 
   if (_operation == UINavigationControllerOperationPush) {
     toViewController.view.transform = rightTransform;
     [[transitionContext containerView] addSubview:toViewController.view];
-    [[transitionContext containerView] insertSubview:shadowView belowSubview:toViewController.view];
-    shadowView.alpha = 0.0;
+    if (shadowView) {
+      [[transitionContext containerView] insertSubview:shadowView belowSubview:toViewController.view];
+      shadowView.alpha = 0.0;
+    }
 
     [UIView animateWithDuration:[self transitionDuration:transitionContext]
         animations:^{
           fromViewController.view.transform = leftTransform;
           toViewController.view.transform = CGAffineTransformIdentity;
-          shadowView.alpha = RNSShadowViewMaxAlpha;
+          if (shadowView) {
+            shadowView.alpha = RNSShadowViewMaxAlpha;
+          }
         }
         completion:^(BOOL finished) {
-          [shadowView removeFromSuperview];
+          if (shadowView) {
+            [shadowView removeFromSuperview];
+          }
           fromViewController.view.transform = CGAffineTransformIdentity;
           toViewController.view.transform = CGAffineTransformIdentity;
           [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
@@ -132,16 +147,22 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
   } else if (_operation == UINavigationControllerOperationPop) {
     toViewController.view.transform = leftTransform;
     [[transitionContext containerView] insertSubview:toViewController.view belowSubview:fromViewController.view];
-    [[transitionContext containerView] insertSubview:shadowView belowSubview:fromViewController.view];
-    shadowView.alpha = RNSShadowViewMaxAlpha;
+    if (shadowView) {
+      [[transitionContext containerView] insertSubview:shadowView belowSubview:fromViewController.view];
+      shadowView.alpha = RNSShadowViewMaxAlpha;
+    }
 
     void (^animationBlock)(void) = ^{
       toViewController.view.transform = CGAffineTransformIdentity;
       fromViewController.view.transform = rightTransform;
-      shadowView.alpha = 0.0;
+      if (shadowView) {
+        shadowView.alpha = 0.0;
+      }
     };
     void (^completionBlock)(BOOL) = ^(BOOL finished) {
-      [shadowView removeFromSuperview];
+      if (shadowView) {
+        [shadowView removeFromSuperview];
+      }
       fromViewController.view.transform = CGAffineTransformIdentity;
       toViewController.view.transform = CGAffineTransformIdentity;
       [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
@@ -396,12 +417,13 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
 }
 
 - (void)animateTransitionWithStackAnimation:(RNSScreenStackAnimation)animation
+                              shadowEnabled:(BOOL)shadowEnabled
                           transitionContext:(id<UIViewControllerContextTransitioning>)transitionContext
                                        toVC:(UIViewController *)toVC
                                      fromVC:(UIViewController *)fromVC
 {
   if (animation == RNSScreenStackAnimationSimplePush) {
-    [self animateSimplePushWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+    [self animateSimplePushWithShadowEnabled:shadowEnabled transitionContext:transitionContext toVC:toVC fromVC:fromVC];
     return;
   } else if (animation == RNSScreenStackAnimationSlideFromLeft) {
     [self animateSlideFromLeftWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
@@ -417,7 +439,7 @@ static constexpr float RNSShadowViewMaxAlpha = 0.1;
     return;
   }
   // simple_push is the default custom animation
-  [self animateSimplePushWithTransitionContext:transitionContext toVC:toVC fromVC:fromVC];
+  [self animateSimplePushWithShadowEnabled:shadowEnabled transitionContext:transitionContext toVC:toVC fromVC:fromVC];
 }
 
 @end

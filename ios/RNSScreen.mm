@@ -703,6 +703,8 @@ namespace react = facebook::react;
 
   [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
 
+  [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
+
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
@@ -1427,6 +1429,7 @@ RCT_EXPORT_MODULE()
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(hideKeyboardOnSwipe, BOOL)

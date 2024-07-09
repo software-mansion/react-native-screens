@@ -48,6 +48,7 @@ export default function App() {
       <Stack.Navigator
         screenOptions={{
           fullScreenGestureEnabled: true,
+          fullScreenGestureShadowEnabled: true,
         }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Details" component={DetailsScreen} />

@@ -134,6 +134,16 @@ export interface ScreenProps extends ViewProps {
    */
   fullScreenSwipeEnabled?: boolean;
   /**
+   * Whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
+   * doesn't have a shadow by default. When enabled a custom shadow view is added during the transition which tries to mimick the
+   * default iOS shadow. Defaults to `false`.
+   *
+   * Doesn't affect the behavior of transitions not using this gesture.
+   *
+   * @platform ios
+   */
+  fullScreenSwipeShadowEnabled?: boolean;
+  /**
    * Whether you can use gestures to dismiss this screen. Defaults to `true`.
    *
    * @platform ios

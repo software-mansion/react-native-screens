@@ -202,6 +202,7 @@ const RouteView = ({
   let {
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
+    fullScreenSwipeShadowEnabled,
     gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
@@ -215,6 +216,9 @@ const RouteView = ({
     // Also, the default animation for this direction seems to be `slide_from_bottom`.
     if (fullScreenSwipeEnabled === undefined) {
       fullScreenSwipeEnabled = true;
+    }
+    if (fullScreenSwipeShadowEnabled === undefined) {
+      fullScreenSwipeShadowEnabled = true;
     }
     if (customAnimationOnSwipe === undefined) {
       customAnimationOnSwipe = true;
@@ -294,6 +298,7 @@ const RouteView = ({
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
+      fullScreenSwipeShadowEnabled={fullScreenSwipeShadowEnabled}
       hideKeyboardOnSwipe={hideKeyboardOnSwipe}
       homeIndicatorHidden={homeIndicatorHidden}
       gestureEnabled={isAndroid ? false : gestureEnabled}
