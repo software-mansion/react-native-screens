@@ -24,9 +24,9 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Use Node.js 18
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'yarn'
@@ -59,7 +59,7 @@ jobs:
       - name: Test app
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn test-e2e-ios
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: ios-fail-screen-shots
