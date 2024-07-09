@@ -118,7 +118,6 @@ namespace react = facebook::react;
   BOOL _invalidated;
   BOOL _isFullWidthSwiping;
   UIPercentDrivenInteractiveTransition *_interactionController;
-  BOOL _hasLayout;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -142,7 +141,6 @@ namespace react = facebook::react;
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
   if (self = [super init]) {
-    _hasLayout = NO;
     _invalidated = NO;
     _manager = manager;
     [self initCommonProps];
@@ -272,18 +270,9 @@ namespace react = facebook::react;
 - (void)maybeAddToParentAndUpdateContainer
 {
   BOOL wasScreenMounted = _controller.parentViewController != nil;
-#ifdef RCT_NEW_ARCH_ENABLED
-  BOOL isScreenReadyForShowing = self.window;
-#else
-  BOOL isScreenReadyForShowing = self.window && _hasLayout;
-#endif
-  if (!isScreenReadyForShowing && !wasScreenMounted) {
-    // We wait with adding to parent controller until the stack is mounted and has its initial
-    // layout done.
-    // If we add it before layout, some of the items (specifically items from the navigation bar),
-    // won't be able to position properly. Also the position and size of such items, even if it
-    // happens to change, won't be properly updated (this is perhaps some internal issue of UIKit).
-    // If we add it when window is not attached, some of the view transitions will be bloced (i.e.
+  if (!self.window && !wasScreenMounted) {
+    // We wait with adding to parent controller until the stack is mounted.
+    // If we add it when window is not attached, some of the view transitions will be blocked (i.e.
     // modal transitions) and the internal view controler's state will get out of sync with what's
     // on screen without us knowing.
     return;
@@ -1076,7 +1065,6 @@ namespace react = facebook::react;
   // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
   // ui queue will guarantee that the update will run after layout.
   dispatch_async(dispatch_get_main_queue(), ^{
-    self->_hasLayout = YES;
     [self maybeAddToParentAndUpdateContainer];
   });
 }
