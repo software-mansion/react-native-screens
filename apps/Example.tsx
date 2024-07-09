@@ -210,7 +210,10 @@ const ExampleApp = (): React.JSX.Element => {
         <ThemeToggle.Provider value={{ toggleTheme }}>
           <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
             <Stack.Navigator
-              screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
+              screenOptions={{
+                statusBarStyle: isDark ? 'light' : 'dark',
+                statusBarBackgroundColor: isDark ? 'black' : 'white',
+              }}>
               <Stack.Screen
                 name="Main"
                 options={{
