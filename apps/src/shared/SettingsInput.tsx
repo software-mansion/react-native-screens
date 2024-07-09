@@ -1,4 +1,4 @@
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
   Text,
@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
-  useColorScheme,
 } from 'react-native';
 
 type Props = {
@@ -21,24 +20,24 @@ export const SettingsInput = ({
   onValueChange,
 }: Props): React.JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
-  const scheme = useColorScheme();
+  const isDark = useTheme().dark;
   return (
     <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
       <View
         style={[
           styles.container,
-          scheme === 'dark' ? styles.containerDark : styles.containerLight,
+          isDark ? styles.containerDark : styles.containerLight,
         ]}>
         <Text
           style={[
             styles.label,
-            scheme === 'dark' ? styles.labelDark : styles.labelLight,
+            isDark ? styles.labelDark : styles.labelLight,
           ]}>{`${label}: ${value}`}</Text>
         {isOpen ? (
           <TextInput
             style={[
               styles.input,
-              scheme === 'dark' ? styles.inputDark : styles.inputLight,
+              isDark ? styles.inputDark : styles.inputLight,
             ]}
             value={value}
             onChangeText={onValueChange}

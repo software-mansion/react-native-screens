@@ -170,7 +170,9 @@ interface PrivacyScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const PrivacyScreen = ({ navigation }: PrivacyScreenProps): React.JSX.Element => {
+const PrivacyScreen = ({
+  navigation,
+}: PrivacyScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {
@@ -228,7 +230,9 @@ interface OptionsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
 }
 
-const OptionsScreen = ({ navigation }: OptionsScreenProps): React.JSX.Element => {
+const OptionsScreen = ({
+  navigation,
+}: OptionsScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   useEffect(() => {

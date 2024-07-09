@@ -12,6 +12,7 @@ import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
+  useTheme,
 } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -142,7 +143,7 @@ interface MainScreenProps {
 }
 
 const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
-  const scheme = useColorScheme();
+  const isDark = useTheme().dark;
   return (
     <ScrollView testID="root-screen-examples-scrollview">
       <SettingsSwitch
@@ -155,10 +156,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         }}
       />
       <Text
-        style={[
-          styles.label,
-          scheme === 'dark' ? styles.labelDark : styles.labelLight,
-        ]}
+        style={[styles.label, isDark ? styles.labelDark : styles.labelLight]}
         testID="root-screen-examples-header">
         Examples
       </Text>
@@ -172,10 +170,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         />
       ))}
       <Text
-        style={[
-          styles.label,
-          scheme === 'dark' ? styles.labelDark : styles.labelLight,
-        ]}>
+        style={[styles.label, isDark ? styles.labelDark : styles.labelLight]}>
         Playgrounds
       </Text>
       {playgrounds.map(name => (

@@ -1,12 +1,6 @@
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
-import {
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ViewStyle,
-  useColorScheme,
-} from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 type Props<T = string> = {
   testID?: string;
@@ -26,12 +20,12 @@ export function SettingsPicker<T extends string>({
   style = {},
 }: Props<T>): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
-  const scheme = useColorScheme();
+  const isDark = useTheme().dark;
   return (
     <TouchableOpacity
       style={[
         styles.container,
-        scheme === 'dark' ? styles.containerDark : styles.containerLight,
+        isDark ? styles.containerDark : styles.containerLight,
         style,
       ]}
       onPress={() => setIsOpen(!isOpen)}>
@@ -39,7 +33,7 @@ export function SettingsPicker<T extends string>({
         testID={testID}
         style={[
           styles.label,
-          scheme === 'dark' ? styles.labelDark : styles.labelLight,
+          isDark ? styles.labelDark : styles.labelLight,
         ]}>{`${label}: ${value}`}</Text>
       {isOpen
         ? items.map(item => (
@@ -48,7 +42,7 @@ export function SettingsPicker<T extends string>({
                 testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
                 style={[
                   styles.item,
-                  scheme === 'dark' ? styles.itemDark : styles.itemLight,
+                  isDark ? styles.itemDark : styles.itemLight,
                   item === value && { fontWeight: 'bold' },
                 ]}>
                 {item}

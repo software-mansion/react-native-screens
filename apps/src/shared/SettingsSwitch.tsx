@@ -1,12 +1,11 @@
 import React from 'react';
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
 import {
   Text,
   View,
   TouchableOpacity,
   StyleSheet,
   ViewStyle,
-  useColorScheme,
 } from 'react-native';
 
 type Props = {
@@ -22,19 +21,19 @@ export const SettingsSwitch = ({
   onValueChange,
   style = {},
 }: Props): React.JSX.Element => {
-  const scheme = useColorScheme();
+  const isDark = useTheme().dark;
   return (
     <TouchableOpacity onPress={() => onValueChange(!value)}>
       <View
         style={[
           styles.container,
-          scheme === 'dark' ? styles.containerDark : styles.containerLight,
+          isDark ? styles.containerDark : styles.containerLight,
           style,
         ]}>
         <Text
           style={[
             styles.label,
-            scheme === 'dark' ? styles.labelDark : styles.labelLight,
+            isDark ? styles.labelDark : styles.labelLight,
           ]}>{`${label}: ${value}`}</Text>
       </View>
     </TouchableOpacity>

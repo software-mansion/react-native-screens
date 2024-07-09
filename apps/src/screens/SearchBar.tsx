@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { ScrollView, Text, StyleSheet, useColorScheme } from 'react-native';
+import { ScrollView, Text, StyleSheet } from 'react-native';
 import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
@@ -14,7 +14,7 @@ import {
   ToastProvider,
   useToast,
 } from '../shared';
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
 
 type StackParamList = {
   Main: undefined;
@@ -32,7 +32,7 @@ interface MainScreenProps {
 
 const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const toast = useToast();
-  const scheme = useColorScheme();
+  const isDark = useTheme().dark;
 
   const [search, setSearch] = useState('');
   const [placeholder, setPlaceholder] = useState('Search for something...');
@@ -137,7 +137,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
       <Text
         style={[
           styles.heading,
-          scheme === 'dark' ? styles.headingDark : styles.headingLight,
+          isDark ? styles.headingDark : styles.headingLight,
         ]}>
         iOS only
       </Text>
@@ -159,7 +159,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
       <Text
         style={[
           styles.heading,
-          scheme === 'dark' ? styles.headingDark : styles.headingLight,
+          isDark ? styles.headingDark : styles.headingLight,
         ]}>
         Android only
       </Text>

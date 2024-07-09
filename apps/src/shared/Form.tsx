@@ -1,12 +1,6 @@
 import React, { Fragment } from 'react';
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-} from 'react-native';
+import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
+import { View, StyleSheet, Text, TextInput } from 'react-native';
 
 const fields = [
   { name: 'form-first-name', placeholder: 'First Name *' },
@@ -15,15 +9,12 @@ const fields = [
 ];
 
 export const Form = (): React.JSX.Element => {
-  const scheme = useColorScheme();
+  const isDark = useTheme().dark;
   return (
     <View testID="form" style={styles.wrapper}>
       <Text
         testID="form-header"
-        style={[
-          styles.heading,
-          scheme === 'dark' ? styles.labelDark : styles.labelLight,
-        ]}>
+        style={[styles.heading, isDark ? styles.labelDark : styles.labelLight]}>
         Example form
       </Text>
       {fields.map(({ name, placeholder }) => (
@@ -32,7 +23,7 @@ export const Form = (): React.JSX.Element => {
             testID={`${name}-label`}
             style={[
               styles.label,
-              scheme === 'dark' ? styles.labelDark : styles.labelLight,
+              isDark ? styles.labelDark : styles.labelLight,
             ]}>
             {placeholder}
           </Text>
@@ -40,7 +31,7 @@ export const Form = (): React.JSX.Element => {
             testID={`${name}-input`}
             style={[
               styles.input,
-              scheme === 'dark' ? styles.inputDark : styles.inputLight,
+              isDark ? styles.inputDark : styles.inputLight,
             ]}
           />
         </Fragment>

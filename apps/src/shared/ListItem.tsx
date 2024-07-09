@@ -1,12 +1,6 @@
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  useColorScheme,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface Props {
   title: string;
@@ -21,17 +15,17 @@ export const ListItem = ({
   testID,
   disabled,
 }: Props): React.JSX.Element => {
-  const scheme = useColorScheme();
+  const isDark = useTheme().dark;
   return (
     <TouchableOpacity onPress={onPress} testID={testID} disabled={disabled}>
       <View
         style={[
           styles.container,
-          scheme === 'dark' ? styles.containerDark : styles.containerLight,
+          isDark ? styles.containerDark : styles.containerLight,
         ]}>
         <Text
           style={[
-            scheme === 'dark' ? styles.titleDark : styles.titleLight,
+            isDark ? styles.titleDark : styles.titleLight,
             disabled && styles.disabled,
           ]}>
           {disabled && '(N/A) '}
