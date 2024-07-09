@@ -5,41 +5,33 @@ import TestimonialItem from '@site/src/components/Testimonials/TestimonialItem';
 
 const items = [
   {
-    author: 'Marc Rousavy',
-    company: 'Margelo',
-    body: 'We’ve used Reanimated and Gesture Handler for a ton of apps already - it’s amazingly simple yet poweful! 😍',
-    link: 'https://twitter.com/mrousavy/status/1754909520571019756',
+    author: 'Test author',
+    company: 'Test',
+    body: 'Screens are the best ever and ever - I love using it!',
+    link: 'https://test.com/',
     image: {
-      alt: 'marc rousavy',
-      src: 'https://pbs.twimg.com/profile_images/1713946397391667200/l-LXWNl2_400x400.jpg',
+      alt: 'test',
+      src: '/img/logo.svg',
     },
   },
   {
-    author: 'Andrew Lo',
-    company: 'Shopify',
-    body: 'They enable us app devs to make our users feel delight, have fun, and enjoy using our apps more.',
-    link: 'https://twitter.com/alotoronto/status/1754905332709576823',
+    author: 'Test author',
+    company: 'Test',
+    body: 'Screens are the best ever and ever - I love using it!',
+    link: 'https://test.com/',
     image: {
-      alt: 'andrew lo',
-      src: 'https://pbs.twimg.com/profile_images/870388069819707393/WSdiZCDG_400x400.jpg',
+      alt: 'test',
+      src: '/img/logo.svg',
     },
   },
   {
-    author: 'Mo Gorhom',
-    body: `Reanimated and Gesture Handler are the reason why I shifted my focus from native (objc&java) development to React Native 🖤.`,
-    link: 'https://twitter.com/gorhom/status/1754974706782896465',
+    author: 'Test author',
+    company: 'Test',
+    body: 'Screens are the best ever and ever - I love using it!',
+    link: 'https://test.com/',
     image: {
-      alt: 'mo gorhom',
-      src: 'https://pbs.twimg.com/profile_images/1699071865996869632/R09iQ1T5_400x400.jpg',
-    },
-  },
-  {
-    author: 'Brandon Austin',
-    body: `I’ve built dozens of apps, each and every one of them have used both Reanimated and Gesture Handler at different levels of complexity.`,
-    link: 'https://twitter.com/bran_aust/status/1754907731536863670',
-    image: {
-      alt: 'brandon austin',
-      src: 'https://pbs.twimg.com/profile_images/1757102996654043136/zwiTEFm8_400x400.jpg',
+      alt: 'test',
+      src: '/img/logo.svg',
     },
   },
 ];
