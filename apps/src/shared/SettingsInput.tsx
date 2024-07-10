@@ -1,12 +1,8 @@
-import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import ThemedText from './ThemedText';
+import ThemedView from './ThemedView';
+import ThemedTextInput from './ThemedTextInput';
 
 type Props = {
   label: string;
@@ -20,32 +16,20 @@ export const SettingsInput = ({
   onValueChange,
 }: Props): React.JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
-  const isDark = useTheme().dark;
   return (
     <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
-      <View
-        style={[
-          styles.container,
-          isDark ? styles.containerDark : styles.containerLight,
-        ]}>
-        <Text
-          style={[
-            styles.label,
-            isDark ? styles.labelDark : styles.labelLight,
-          ]}>{`${label}: ${value}`}</Text>
+      <ThemedView style={styles.container}>
+        <ThemedText style={styles.label}>{`${label}: ${value}`}</ThemedText>
         {isOpen ? (
-          <TextInput
-            style={[
-              styles.input,
-              isDark ? styles.inputDark : styles.inputLight,
-            ]}
+          <ThemedTextInput
+            style={styles.input}
             value={value}
             onChangeText={onValueChange}
             autoCapitalize="none"
             autoCorrect={false}
           />
         ) : null}
-      </View>
+      </ThemedView>
     </TouchableOpacity>
   );
 };
@@ -60,32 +44,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: '#039be5',
   },
-  containerLight: {
-    backgroundColor: DefaultTheme.colors.card,
-  },
-  containerDark: {
-    backgroundColor: DarkTheme.colors.card,
-  },
   label: {
     fontSize: 15,
-  },
-  labelLight: {
-    color: DefaultTheme.colors.text,
-  },
-  labelDark: {
-    color: DarkTheme.colors.text,
   },
   input: {
     height: 40,
     width: '100%',
     borderWidth: 1,
-  },
-  inputLight: {
-    borderColor: DefaultTheme.colors.border,
-    color: DefaultTheme.colors.text,
-  },
-  inputDark: {
-    borderColor: DarkTheme.colors.border,
-    color: DarkTheme.colors.text,
   },
 });

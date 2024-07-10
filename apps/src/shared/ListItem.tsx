@@ -1,6 +1,7 @@
-import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import { ThemedText, ThemedView } from '.';
 
 interface Props {
   title: string;
@@ -15,23 +16,15 @@ export const ListItem = ({
   testID,
   disabled,
 }: Props): React.JSX.Element => {
-  const isDark = useTheme().dark;
+  const { colors } = useTheme();
   return (
     <TouchableOpacity onPress={onPress} testID={testID} disabled={disabled}>
-      <View
-        style={[
-          styles.container,
-          isDark ? styles.containerDark : styles.containerLight,
-        ]}>
-        <Text
-          style={[
-            isDark ? styles.titleDark : styles.titleLight,
-            disabled && styles.disabled,
-          ]}>
+      <ThemedView style={[styles.container, { borderColor: colors.border }]}>
+        <ThemedText style={disabled ? styles.disabled : undefined}>
           {disabled && '(N/A) '}
           {title}
-        </Text>
-      </View>
+        </ThemedText>
+      </ThemedView>
     </TouchableOpacity>
   );
 };
@@ -44,21 +37,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
   },
-  containerLight: {
-    backgroundColor: DefaultTheme.colors.card,
-    borderColor: DefaultTheme.colors.border,
-  },
-  containerDark: {
-    backgroundColor: DarkTheme.colors.card,
-    borderColor: DarkTheme.colors.border,
-  },
   disabled: {
     color: 'gray',
-  },
-  titleLight: {
-    color: DefaultTheme.colors.text,
-  },
-  titleDark: {
-    color: DarkTheme.colors.text,
   },
 });

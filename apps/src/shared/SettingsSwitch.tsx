@@ -1,12 +1,6 @@
 import React from 'react';
-import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  ViewStyle,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
+import { ThemedText, ThemedView } from '.';
 
 type Props = {
   label: string;
@@ -21,21 +15,11 @@ export const SettingsSwitch = ({
   onValueChange,
   style = {},
 }: Props): React.JSX.Element => {
-  const isDark = useTheme().dark;
   return (
     <TouchableOpacity onPress={() => onValueChange(!value)}>
-      <View
-        style={[
-          styles.container,
-          isDark ? styles.containerDark : styles.containerLight,
-          style,
-        ]}>
-        <Text
-          style={[
-            styles.label,
-            isDark ? styles.labelDark : styles.labelLight,
-          ]}>{`${label}: ${value}`}</Text>
-      </View>
+      <ThemedView style={[styles.container, style]}>
+        <ThemedText style={styles.label}>{`${label}: ${value}`}</ThemedText>
+      </ThemedView>
     </TouchableOpacity>
   );
 };
@@ -51,19 +35,7 @@ const styles = StyleSheet.create({
     borderColor: '#039be5',
     backgroundColor: 'white',
   },
-  containerLight: {
-    backgroundColor: DefaultTheme.colors.card,
-  },
-  containerDark: {
-    backgroundColor: DarkTheme.colors.card,
-  },
   label: {
     fontSize: 15,
-  },
-  labelLight: {
-    color: DefaultTheme.colors.text,
-  },
-  labelDark: {
-    color: DarkTheme.colors.text,
   },
 });

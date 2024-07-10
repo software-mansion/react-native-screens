@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { ScrollView, Text, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { SearchBarCommands, SearchBarProps } from 'react-native-screens';
 import {
   createNativeStackNavigator,
@@ -11,10 +11,10 @@ import {
   SettingsInput,
   SettingsPicker,
   SettingsSwitch,
+  ThemedText,
   ToastProvider,
   useToast,
 } from '../shared';
-import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
 
 type StackParamList = {
   Main: undefined;
@@ -32,7 +32,6 @@ interface MainScreenProps {
 
 const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
   const toast = useToast();
-  const isDark = useTheme().dark;
 
   const [search, setSearch] = useState('');
   const [placeholder, setPlaceholder] = useState('Search for something...');
@@ -134,13 +133,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         onValueChange={setAutoCapitalize}
         items={['none', 'words', 'sentences', 'characters']}
       />
-      <Text
-        style={[
-          styles.heading,
-          isDark ? styles.headingDark : styles.headingLight,
-        ]}>
-        iOS only
-      </Text>
+      <ThemedText style={styles.heading}>iOS only</ThemedText>
       <SettingsSwitch
         label="Hide navigation bar"
         value={hideNavigationBar}
@@ -156,13 +149,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         value={hideWhenScrolling}
         onValueChange={setHideWhenScrolling}
       />
-      <Text
-        style={[
-          styles.heading,
-          isDark ? styles.headingDark : styles.headingLight,
-        ]}>
-        Android only
-      </Text>
+      <ThemedText style={styles.heading}>Android only</ThemedText>
       <SettingsPicker<InputType>
         label="Input type"
         value={inputType}
@@ -186,7 +173,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         value={shouldShowHintSearchIcon}
         onValueChange={setShouldShowHintSearchIcon}
       />
-      <Text style={styles.heading}>Imperative actions</Text>
+      <ThemedText style={styles.heading}>Imperative actions</ThemedText>
       <Button onPress={() => searchBarRef.current?.blur()} title="Blur" />
       <Button onPress={() => searchBarRef.current?.focus()} title="Focus" />
       <Button
@@ -206,7 +193,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         onPress={() => searchBarRef.current?.cancelSearch()}
         title="Cancel search"
       />
-      <Text style={styles.heading}>Other</Text>
+      <ThemedText style={styles.heading}>Other</ThemedText>
       <Button
         onPress={() => navigation.navigate('Search')}
         title="Other Searchbar example"
@@ -305,12 +292,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: 'bold',
     fontSize: 16,
-  },
-  headingLight: {
-    color: DefaultTheme.colors.text,
-  },
-  headingDark: {
-    color: DarkTheme.colors.text,
   },
 });
 

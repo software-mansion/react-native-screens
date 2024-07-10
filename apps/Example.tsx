@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
-  Text,
   I18nManager,
   Platform,
   StatusBar,
@@ -18,7 +17,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNRestart from 'react-native-restart';
 
-import { ListItem, SettingsSwitch } from './src/shared';
+import { ListItem, SettingsSwitch, ThemedText } from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import SwipeBackAnimation from './src/screens/SwipeBackAnimation';
@@ -163,11 +162,9 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
         value={isDark}
         onValueChange={toggleTheme}
       />
-      <Text
-        style={[styles.label, isDark ? styles.labelDark : styles.labelLight]}
-        testID="root-screen-examples-header">
+      <ThemedText style={styles.label} testID="root-screen-examples-header">
         Examples
-      </Text>
+      </ThemedText>
       {examples.map(name => (
         <ListItem
           key={name}
@@ -177,10 +174,7 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
           disabled={!isPlatformReady(name)}
         />
       ))}
-      <Text
-        style={[styles.label, isDark ? styles.labelDark : styles.labelLight]}>
-        Playgrounds
-      </Text>
+      <ThemedText style={styles.label}>Playgrounds</ThemedText>
       {playgrounds.map(name => (
         <ListItem
           key={name}
@@ -241,12 +235,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     margin: 10,
     marginTop: 15,
-  },
-  labelLight: {
-    color: DefaultTheme.colors.text,
-  },
-  labelDark: {
-    color: DarkTheme.colors.text,
   },
   switch: {
     marginTop: 15,

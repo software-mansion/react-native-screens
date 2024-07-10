@@ -1,6 +1,6 @@
-import { DarkTheme, DefaultTheme, useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { ThemedText, ThemedView } from '.';
 
 type Props<T = string> = {
   testID?: string;
@@ -20,36 +20,27 @@ export function SettingsPicker<T extends string>({
   style = {},
 }: Props<T>): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
-  const isDark = useTheme().dark;
   return (
-    <TouchableOpacity
-      style={[
-        styles.container,
-        isDark ? styles.containerDark : styles.containerLight,
-        style,
-      ]}
-      onPress={() => setIsOpen(!isOpen)}>
-      <Text
-        testID={testID}
-        style={[
-          styles.label,
-          isDark ? styles.labelDark : styles.labelLight,
-        ]}>{`${label}: ${value}`}</Text>
-      {isOpen
-        ? items.map(item => (
-            <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
-              <Text
-                testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
-                style={[
-                  styles.item,
-                  isDark ? styles.itemDark : styles.itemLight,
-                  item === value && { fontWeight: 'bold' },
-                ]}>
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))
-        : null}
+    <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
+      <ThemedView style={[styles.container, style]}>
+        <ThemedText
+          testID={testID}
+          style={styles.label}>{`${label}: ${value}`}</ThemedText>
+        {isOpen
+          ? items.map(item => (
+              <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
+                <ThemedText
+                  testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
+                  style={[
+                    styles.item,
+                    item === value && { fontWeight: 'bold' },
+                  ]}>
+                  {item}
+                </ThemedText>
+              </TouchableOpacity>
+            ))
+          : null}
+      </ThemedView>
     </TouchableOpacity>
   );
 }
@@ -64,20 +55,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: '#039be5',
   },
-  containerLight: {
-    backgroundColor: DefaultTheme.colors.card,
-  },
-  containerDark: {
-    backgroundColor: DarkTheme.colors.card,
-  },
   label: {
     fontSize: 15,
-  },
-  labelLight: {
-    color: DefaultTheme.colors.text,
-  },
-  labelDark: {
-    color: DarkTheme.colors.text,
   },
   picker: {
     height: 50,
@@ -86,11 +65,5 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 5,
     paddingHorizontal: 20,
-  },
-  itemLight: {
-    color: DefaultTheme.colors.text,
-  },
-  itemDark: {
-    color: DarkTheme.colors.text,
   },
 });
