@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
-          cache-dependency-path: 'Example/yarn.lock'
+          cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/yarn.lock
       - name: Use latest stable Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
