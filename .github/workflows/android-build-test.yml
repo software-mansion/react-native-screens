@@ -37,6 +37,8 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'Example/yarn.lock'
       - name: Install node dependencies
+        run: yarn
+      - name: Install node dependencies
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: yarn
       - name: Build app
