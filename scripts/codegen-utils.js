@@ -21,7 +21,7 @@ const CODEGEN_FILES_DIR = `${GENERATED_DIR}/source/codegen/${SOURCE_FOLDERS}`;
 const OLD_ARCH_FILES_DIR = `${OLD_ARCH_DIR}/${SOURCE_FOLDERS}`;
 
 function exec(command) {
-  console.log(`[${PACKAGE_NAME}]> ` + command);
+  console.log(`[${ERROR_PREFIX}]> ` + command);
   execSync(command);
 }
 
