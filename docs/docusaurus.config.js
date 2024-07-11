@@ -4,7 +4,7 @@
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "React Native Screens",
-  favicon: "img/favicon.png",
+  favicon: "img/favicon.ico",
 
   url: "https://docs.swmansion.com",
 
@@ -41,7 +41,11 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: "img/og-image.png",
+      image: 'img/og-image.png',
+      metadata: [
+        { name: 'og:image:width', content: '1200' },
+        { name: 'og:image:height', content: '630' },
+      ],
       navbar: {
         hideOnScroll: true,
         logo: {
