@@ -216,6 +216,11 @@ open class ScreenViewManager :
         value: Boolean,
     ) = Unit
 
+    override fun setFullScreenSwipeShadowEnabled(
+        view: Screen?,
+        value: Boolean,
+    ) = Unit
+
     override fun setTransitionDuration(
         view: Screen?,
         value: Int,

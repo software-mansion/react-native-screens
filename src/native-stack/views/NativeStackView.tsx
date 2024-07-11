@@ -217,15 +217,16 @@ const RouteView = ({
     if (fullScreenSwipeEnabled === undefined) {
       fullScreenSwipeEnabled = true;
     }
-    if (fullScreenSwipeShadowEnabled === undefined) {
-      fullScreenSwipeShadowEnabled = true;
-    }
     if (customAnimationOnSwipe === undefined) {
       customAnimationOnSwipe = true;
     }
     if (stackAnimation === undefined) {
       stackAnimation = 'slide_from_bottom';
     }
+  }
+
+  if (fullScreenSwipeShadowEnabled === undefined) {
+    fullScreenSwipeShadowEnabled = false;
   }
 
   if (index === 0) {
