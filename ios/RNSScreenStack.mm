@@ -626,7 +626,13 @@ namespace react = facebook::react;
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
 
+#ifdef RCT_NEW_ARCH_ENABLED
+      if (newControllers.count <= _controller.viewControllers.count) {
+        [_controller setViewControllers:newControllers animated:NO];
+      }
+#else
       [_controller setViewControllers:newControllers animated:NO];
+#endif // RTC_NEW_ARCH_ENABLED
       [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
