@@ -1,11 +1,6 @@
 import React from 'react';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  ViewStyle,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
+import { ThemedText, ThemedView } from '.';
 
 type Props = {
   label: string;
@@ -22,9 +17,9 @@ export const SettingsSwitch = ({
 }: Props): React.JSX.Element => {
   return (
     <TouchableOpacity onPress={() => onValueChange(!value)}>
-      <View style={{ ...styles.container, ...style }}>
-        <Text style={styles.label}>{`${label}: ${value}`}</Text>
-      </View>
+      <ThemedView style={[styles.container, style]}>
+        <ThemedText style={styles.label}>{`${label}: ${value}`}</ThemedText>
+      </ThemedView>
     </TouchableOpacity>
   );
 };
@@ -38,10 +33,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#039be5',
-    backgroundColor: 'white',
   },
   label: {
     fontSize: 15,
-    color: 'black',
   },
 });

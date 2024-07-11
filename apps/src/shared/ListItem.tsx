@@ -1,5 +1,7 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import { ThemedText, ThemedView } from '.';
 
 interface Props {
   title: string;
@@ -14,11 +16,15 @@ export const ListItem = ({
   testID,
   disabled,
 }: Props): React.JSX.Element => {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity onPress={onPress} testID={testID} disabled={disabled}>
-      <View style={styles.container}>
-        <Text style={[styles.title, disabled && styles.disabled]}>{disabled && '(N/A) '}{title}</Text>
-      </View>
+      <ThemedView style={[styles.container, { borderColor: colors.border }]}>
+        <ThemedText style={disabled ? styles.disabled : undefined}>
+          {disabled && '(N/A) '}
+          {title}
+        </ThemedText>
+      </ThemedView>
     </TouchableOpacity>
   );
 };
@@ -29,18 +35,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: 'white',
-    borderColor: '#ccc',
     borderWidth: 1,
   },
   disabled: {
     color: 'gray',
-  },
-  title: {
-    color: 'black',
-  },
-  chevron: {
-    fontWeight: 'bold',
-    color: 'black',
   },
 });

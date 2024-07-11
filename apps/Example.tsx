@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
-  Text,
   I18nManager,
   Platform,
   StatusBar,
+  useColorScheme,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+  useTheme,
+} from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RNRestart from 'react-native-restart';
 
-import { ListItem, SettingsSwitch } from './src/shared';
+import { ListItem, SettingsSwitch, ThemedText } from './src/shared';
 
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import SwipeBackAnimation from './src/screens/SwipeBackAnimation';
@@ -136,74 +141,98 @@ interface MainScreenProps {
   navigation: StackNavigationProp<RootStackParamList, 'Main'>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
-  <ScrollView testID="root-screen-examples-scrollview">
-    <SettingsSwitch
-      style={styles.switch}
-      label="Right to left"
-      value={I18nManager.isRTL}
-      onValueChange={() => {
-        I18nManager.forceRTL(!I18nManager.isRTL);
-        RNRestart.Restart();
-      }}
-    />
-    <Text style={styles.label} testID="root-screen-examples-header">
-      Examples
-    </Text>
-    {examples.map(name => (
-      <ListItem
-        key={name}
-        testID={`root-screen-example-${name}`}
-        title={SCREENS[name].title}
-        onPress={() => navigation.navigate(name)}
-        disabled={!isPlatformReady(name)}
-      />
-    ))}
-    <Text style={styles.label}>Playgrounds</Text>
-    {playgrounds.map(name => (
-      <ListItem
-        key={name}
-        testID={`root-screen-playground-${name}`}
-        title={SCREENS[name].title}
-        onPress={() => navigation.navigate(name)}
-        disabled={!isPlatformReady(name)}
-      />
-    ))}
-  </ScrollView>
-);
+const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => {
+  const { toggleTheme } = useContext(ThemeToggle);
+  const isDark = useTheme().dark;
 
-const ExampleApp = (): React.JSX.Element => (
-  <GestureHandlerRootView style={{ flex: 1 }}>
-    <GestureDetectorProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Main"
-            options={{
-              title: `${
-                Platform.isTV ? '📺' : '📱'
-              } React Native Screens Examples`,
-            }}
-            component={MainScreen}
-          />
-          {Object.keys(SCREENS).map(name => (
-            <Stack.Screen
-              key={name}
-              name={name}
-              getComponent={() => SCREENS[name].component}
-              options={{ headerShown: false }}
-            />
-          ))}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </GestureDetectorProvider>
-  </GestureHandlerRootView>
-);
+  return (
+    <ScrollView testID="root-screen-examples-scrollview">
+      <SettingsSwitch
+        style={styles.switch}
+        label="Right to left"
+        value={I18nManager.isRTL}
+        onValueChange={() => {
+          I18nManager.forceRTL(!I18nManager.isRTL);
+          RNRestart.Restart();
+        }}
+      />
+      <SettingsSwitch
+        style={styles.switch}
+        label="Dark mode"
+        value={isDark}
+        onValueChange={toggleTheme}
+      />
+      <ThemedText style={styles.label} testID="root-screen-examples-header">
+        Examples
+      </ThemedText>
+      {examples.map(name => (
+        <ListItem
+          key={name}
+          testID={`root-screen-example-${name}`}
+          title={SCREENS[name].title}
+          onPress={() => navigation.navigate(name)}
+          disabled={!isPlatformReady(name)}
+        />
+      ))}
+      <ThemedText style={styles.label}>Playgrounds</ThemedText>
+      {playgrounds.map(name => (
+        <ListItem
+          key={name}
+          testID={`root-screen-playground-${name}`}
+          title={SCREENS[name].title}
+          onPress={() => navigation.navigate(name)}
+          disabled={!isPlatformReady(name)}
+        />
+      ))}
+    </ScrollView>
+  );
+};
+
+const ThemeToggle = createContext<{ toggleTheme: () => void }>(null!);
+
+const ExampleApp = (): React.JSX.Element => {
+  const scheme = useColorScheme();
+  const [isDark, setIsDark] = useState(scheme === 'dark');
+
+  useEffect(() => setIsDark(scheme === 'dark'), [scheme]);
+
+  const toggleTheme = () => setIsDark(prev => !prev);
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureDetectorProvider>
+        <ThemeToggle.Provider value={{ toggleTheme }}>
+          <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
+            <Stack.Navigator
+              screenOptions={{ statusBarStyle: isDark ? 'light' : 'dark' }}>
+              <Stack.Screen
+                name="Main"
+                options={{
+                  title: `${
+                    Platform.isTV ? '📺' : '📱'
+                  } React Native Screens Examples`,
+                }}
+                component={MainScreen}
+              />
+              {Object.keys(SCREENS).map(name => (
+                <Stack.Screen
+                  key={name}
+                  name={name}
+                  getComponent={() => SCREENS[name].component}
+                  options={{ headerShown: false }}
+                />
+              ))}
+            </Stack.Navigator>
+          </NavigationContainer>
+        </ThemeToggle.Provider>
+      </GestureDetectorProvider>
+    </GestureHandlerRootView>
+  );
+};
 
 const styles = StyleSheet.create({
   label: {
     fontSize: 15,
-    color: 'black',
     margin: 10,
     marginTop: 15,
   },

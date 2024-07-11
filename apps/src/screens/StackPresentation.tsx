@@ -76,7 +76,7 @@ interface FormScreenProps {
 }
 
 const FormScreen = ({ navigation }: FormScreenProps): React.JSX.Element => (
-  <View style={{ ...styles.container, backgroundColor: 'white' }}>
+  <View style={styles.container}>
     <Form />
     <Button
       testID="stack-presentation-form-screen-go-back-button"

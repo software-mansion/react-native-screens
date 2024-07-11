@@ -203,7 +203,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 10,
-    backgroundColor: 'white',
   },
   heading: {
     marginLeft: 10,

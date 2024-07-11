@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { ThemedText, ThemedView } from '.';
 
 type Props<T = string> = {
   testID?: string;
@@ -20,25 +21,26 @@ export function SettingsPicker<T extends string>({
 }: Props<T>): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <TouchableOpacity
-      style={{ ...styles.container, ...style }}
-      onPress={() => setIsOpen(!isOpen)}>
-      <Text testID={testID} style={styles.label}>{`${label}: ${value}`}</Text>
-      {isOpen
-        ? items.map(item => (
-            <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
-              <Text
-                testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
-                style={
-                  item === value
-                    ? { ...styles.item, fontWeight: 'bold' }
-                    : styles.item
-                }>
-                {item}
-              </Text>
-            </TouchableOpacity>
-          ))
-        : null}
+    <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
+      <ThemedView style={[styles.container, style]}>
+        <ThemedText
+          testID={testID}
+          style={styles.label}>{`${label}: ${value}`}</ThemedText>
+        {isOpen
+          ? items.map(item => (
+              <TouchableOpacity key={item} onPress={() => onValueChange(item)}>
+                <ThemedText
+                  testID={`${label.split(' ').join('-')}-${item}`.toLowerCase()}
+                  style={[
+                    styles.item,
+                    item === value && { fontWeight: 'bold' },
+                  ]}>
+                  {item}
+                </ThemedText>
+              </TouchableOpacity>
+            ))
+          : null}
+      </ThemedView>
     </TouchableOpacity>
   );
 }
@@ -52,11 +54,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#039be5',
-    backgroundColor: 'white',
   },
   label: {
     fontSize: 15,
-    color: 'black',
   },
   picker: {
     height: 50,
@@ -65,6 +65,5 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 5,
     paddingHorizontal: 20,
-    color: 'black',
   },
 });

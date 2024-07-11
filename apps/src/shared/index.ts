@@ -11,3 +11,6 @@ export * from './Choose';
 export * from './Dialog';
 export * from './Snack';
 export * from './Toast';
+export * from './ThemedText';
+export * from './ThemedView';
+export * from './ThemedTextInput';

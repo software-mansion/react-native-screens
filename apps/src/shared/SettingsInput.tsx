@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-} from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import { ThemedText, ThemedView, ThemedTextInput } from '.';
 
 type Props = {
   label: string;
@@ -21,10 +16,10 @@ export const SettingsInput = ({
   const [isOpen, setIsOpen] = useState(false);
   return (
     <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
-      <View style={styles.container}>
-        <Text style={styles.label}>{`${label}: ${value}`}</Text>
+      <ThemedView style={styles.container}>
+        <ThemedText style={styles.label}>{`${label}: ${value}`}</ThemedText>
         {isOpen ? (
-          <TextInput
+          <ThemedTextInput
             style={styles.input}
             value={value}
             onChangeText={onValueChange}
@@ -32,7 +27,7 @@ export const SettingsInput = ({
             autoCorrect={false}
           />
         ) : null}
-      </View>
+      </ThemedView>
     </TouchableOpacity>
   );
 };
@@ -46,16 +41,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#039be5',
-    backgroundColor: 'white',
   },
   label: {
     fontSize: 15,
-    color: 'black',
   },
   input: {
     height: 40,
     width: '100%',
     borderWidth: 1,
-    borderColor: 'black',
   },
 });
