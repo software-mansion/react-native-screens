@@ -18,7 +18,9 @@
     "lint-android": "./android/gradlew -p android spotlessCheck -q",
     "lint": "yarn lint-js && yarn lint-android",
     "release": "yarn prepare && npm login && release-it",
-    "prepare": "bob build && husky install"
+    "prepare": "bob build && husky install",
+    "check-archs-consistency": "node ./scripts/codegen-check-consistency.js",
+    "sync-archs": "node ./scripts/codegen-sync-archs.js"
   },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -127,7 +129,8 @@
     "cpp/**/*.{h,cpp}": "yarn format-cpp",
     "android/src/main/cpp/.{cpp, h}": "yarn format-android-cpp",
     "android/**/*.kt": "yarn format-android",
-    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios"
+    "ios/**/*.{h,m,mm,cpp}": "yarn format-ios",
+    "src/fabric/*.ts": "yarn sync-archs"
   },
   "react-native-builder-bob": {
     "source": "src",

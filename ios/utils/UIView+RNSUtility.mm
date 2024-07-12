@@ -9,7 +9,7 @@
 
 - (nullable RNS_TOUCH_HANDLER_ARCH_TYPE *)rnscreens_findTouchHandlerInAncestorChain
 {
-  UIView *parent = self;
+  UIView *parent = self.superview;
 
 #ifdef RCT_NEW_ARCH_ENABLED
   // On Fabric there is no view that exposes touchHandler above us in the view hierarchy, however it is still

@@ -138,6 +138,7 @@ class ScreenStackFragment :
         view?.addView(appBarLayout)
         if (isToolbarShadowHidden) {
             appBarLayout?.elevation = 0f
+            appBarLayout?.stateListAnimator = null
         }
         toolbar?.let { appBarLayout?.addView(recycleView(it)) }
         setHasOptionsMenu(true)
