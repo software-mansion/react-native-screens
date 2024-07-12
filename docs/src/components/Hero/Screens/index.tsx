@@ -6,7 +6,7 @@ import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 const HeroScreens = () => {
   return (
     <div className={styles.screens}>
-      {ExecutionEnvironment.canUseViewport && <Screens/>}
+      {ExecutionEnvironment.canUseViewport && <Screens />}
     </div>
   );
 };

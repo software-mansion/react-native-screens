@@ -5,7 +5,7 @@
 }
 
 .tileReversed {
-    flex-direction: row-reverse;
+  flex-direction: row-reverse;
 }
 
 .contentContainer {
@@ -13,7 +13,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 1.5rem;
-  flex: 1
+  flex: 1;
 }
 
 .contentContainer h3 {
@@ -23,22 +23,22 @@
 }
 
 .contentContainer p {
-    font-size: 20px;
-    text-wrap: balance
+  font-size: 20px;
+  text-wrap: balance;
 }
 
-@media(max-width: 996px) {
-    .overviewTile {
-        flex-direction: column;
-    }
-    .imageContainer {
-        display: flex;
-        justify-content: center;
-    }
-    .contentContainer h3 {
-        font-size: 24px
-    }
-    .contentContainer p {
-        font-size: 18px
-    }
+@media (max-width: 996px) {
+  .overviewTile {
+    flex-direction: column;
+  }
+  .imageContainer {
+    display: flex;
+    justify-content: center;
+  }
+  .contentContainer h3 {
+    font-size: 24px;
+  }
+  .contentContainer p {
+    font-size: 18px;
+  }
 }

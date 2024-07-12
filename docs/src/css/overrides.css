@@ -1,6 +1,6 @@
 :root {
   --swm-expandable-transition: transform 200ms ease;
-  --swm-logo-height: 36px
+  --swm-logo-height: 36px;
 }
 
 table {
@@ -72,7 +72,6 @@ table thead tr {
 .header-github:hover:before {
   background-color: var(--ifm-navbar-link-hover-color);
 }
-
 
 [class*='codeBlockContent'] pre {
   border: 1px solid var(--swm-border);

@@ -5302,6 +5302,7 @@ __metadata:
     "@mui/material": "npm:^5.16.0"
     "@swmansion/t-rex-ui": "npm:^0.0.12"
     clsx: "npm:^1.2.1"
+    prettier: "npm:^2.8.4"
     prism-react-renderer: "npm:^1.3.5"
     react: "npm:^17.0.2"
     react-dom: "npm:^17.0.2"
@@ -8970,6 +8971,15 @@ __metadata:
   version: 2.0.0
   resolution: "prepend-http@npm:2.0.0"
   checksum: 10c0/b023721ffd967728e3a25e3a80dd73827e9444e586800ab90a21b3a8e67f362d28023085406ad53a36db1e4d98cb10e43eb37d45c6b733140a9165ead18a0987
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.8.4":
+  version: 2.8.8
+  resolution: "prettier@npm:2.8.8"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 10c0/463ea8f9a0946cd5b828d8cf27bd8b567345cf02f56562d5ecde198b91f47a76b7ac9eae0facd247ace70e927143af6135e8cf411986b8cb8478784a4d6d724a
   languageName: node
   linkType: hard
 

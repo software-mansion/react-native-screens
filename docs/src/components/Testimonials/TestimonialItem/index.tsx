@@ -18,9 +18,7 @@ interface Props extends PropsWithChildren {
 const TestimonialItem = ({ author, company, image, link, children }: Props) => {
   return (
     <a href={link} target="_blank" className={styles.testimonialItem}>
-      <QuoteIcon
-        className={styles.quoteIcon}
-      />
+      <QuoteIcon className={styles.quoteIcon} />
       <div className={styles.testimonialAuthor}>
         <div className={styles.testimonialAuthorPhoto}>
           <img alt={image.alt} src={image.src} />

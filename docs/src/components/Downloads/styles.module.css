@@ -2,7 +2,7 @@
   font-size: 48px;
   font-weight: 700;
   text-align: center;
-  color: var(--swm-navy-light-100)
+  color: var(--swm-navy-light-100);
 }
 
 .content {
@@ -14,15 +14,15 @@
 }
 
 .brandContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 4rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 4rem;
 }
 
 .brandContainer img {
-    width: 100px;
-    height: auto
+  width: 100px;
+  height: auto;
 }
 
 .downloadsWrapper {
@@ -58,6 +58,6 @@
     font-size: 40px;
   }
   .brandContainer {
-    gap: 2.5rem
+    gap: 2.5rem;
   }
 }

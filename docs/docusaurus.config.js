@@ -3,36 +3,36 @@
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "React Native Screens",
-  favicon: "img/favicon.ico",
+  title: 'React Native Screens',
+  favicon: 'img/favicon.ico',
 
-  url: "https://docs.swmansion.com",
+  url: 'https://docs.swmansion.com',
 
-  baseUrl: "/",
+  baseUrl: '/',
 
-  organizationName: "software-mansion",
-  projectName: "react-native-screens",
+  organizationName: 'software-mansion',
+  projectName: 'react-native-screens',
 
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
 
   i18n: {
-    defaultLocale: "en",
-    locales: ["en"],
+    defaultLocale: 'en',
+    locales: ['en'],
   },
 
   presets: [
     [
-      "classic",
+      'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
           breadcrumbs: false,
-          sidebarPath: require.resolve("./sidebars.js"),
+          sidebarPath: require.resolve('./sidebars.js'),
           sidebarCollapsible: false,
         },
         theme: {
-          customCss: require.resolve("./src/css/custom.css"),
+          customCss: require.resolve('./src/css/custom.css'),
         },
       }),
     ],
@@ -49,30 +49,30 @@ const config = {
       navbar: {
         hideOnScroll: true,
         logo: {
-          alt: "React Native Screens logo",
-          src: "img/logo.svg",
-          srcDark:"img/logo-dark.svg"
+          alt: 'React Native Screens logo',
+          src: 'img/logo.svg',
+          srcDark: 'img/logo-dark.svg',
         },
         items: [
           {
-            to: "https://reactnavigation.org/docs/screen",
-            activeBasePath: "docs",
-            label: "Docs",
-            position: "right",
+            to: 'https://reactnavigation.org/docs/screen',
+            activeBasePath: 'docs',
+            label: 'Docs',
+            position: 'right',
           },
           {
-            "href": "https://github.com/software-mansion/react-native-screens/",
-            "position": "right",
-            "className": "header-github",
-            "aria-label": "GitHub repository",
+            href: 'https://github.com/software-mansion/react-native-screens/',
+            position: 'right',
+            className: 'header-github',
+            'aria-label': 'GitHub repository',
           },
         ],
       },
       footer: {
-        style: "light",
-        links: [
-        ],
-        copyright: "All trademarks and copyrights belong to their respective owners.",
+        style: 'light',
+        links: [],
+        copyright:
+          'All trademarks and copyrights belong to their respective owners.',
       },
     }),
 };

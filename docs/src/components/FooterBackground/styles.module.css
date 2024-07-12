@@ -3,7 +3,11 @@
   bottom: 0;
   left: 0;
 
-  background: linear-gradient(180deg, var(--swm-white) 0%, rgba(252, 252, 255, 0) 150.5%),
+  background: linear-gradient(
+      180deg,
+      var(--swm-white) 0%,
+      rgba(252, 252, 255, 0) 150.5%
+    ),
     linear-gradient(
       180deg,
       var(--swm-blue-light-40) 35%,
@@ -52,9 +56,12 @@ footer {
   }
 }
 
-
 [data-theme='dark'] .footerBackground {
-  background: linear-gradient(180deg, var(--swm-white) 0%, rgba(252, 252, 255, 0) 150.5%),
+  background: linear-gradient(
+      180deg,
+      var(--swm-white) 0%,
+      rgba(252, 252, 255, 0) 150.5%
+    ),
     linear-gradient(
       180deg,
       var(--swm-blue-dark-120) 35%,

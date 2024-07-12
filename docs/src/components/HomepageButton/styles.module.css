@@ -14,7 +14,7 @@
 }
 
 [data-theme='dark'] .homepageButton {
-  color:var(--swm-navy-dark-100);
+  color: var(--swm-navy-dark-100);
 }
 
 a.homepageButtonLink:hover {
@@ -70,8 +70,8 @@ a.homepageButtonLink:hover {
   color: var(--swm-landing-button);
 }
 
-[data-theme='dark'] .buttonTransparentStyling  {
-  color: var(--swm-off-white)
+[data-theme='dark'] .buttonTransparentStyling {
+  color: var(--swm-off-white);
 }
 
 .buttonTransparentStyling svg {
@@ -119,11 +119,11 @@ a.homepageButtonLink:hover {
 }
 
 .buttonTransparentBorderStyling {
-  border: 1px solid var(--swm-landing-button)
+  border: 1px solid var(--swm-landing-button);
 }
 
 [data-theme='dark'] .buttonTransparentBorderStyling {
-  border: 1px solid var(--swm-off-white) !important
+  border: 1px solid var(--swm-off-white) !important;
 }
 
 .arrow {

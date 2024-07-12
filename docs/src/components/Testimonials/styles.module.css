@@ -24,7 +24,7 @@
 }
 
 [data-theme='dark'] .title {
-  color: var(--swm-navy-light-100)
+  color: var(--swm-navy-light-100);
 }
 
 .testimonialsContainer {

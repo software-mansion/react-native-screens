@@ -7,10 +7,10 @@
   margin-top: 6.5rem;
 }
 
-@media(max-width: 996px) {
+@media (max-width: 996px) {
   .hireUsSectionWrapper {
     margin-top: 3.5rem;
-    margin-bottom: 10rem
+    margin-bottom: 10rem;
   }
 }
 
@@ -50,11 +50,11 @@
 }
 
 .hireUsTitleContainer h2 > span {
-  color: var(--swm-blue-light-80)
+  color: var(--swm-blue-light-80);
 }
 
 [data-theme='dark'] .hireUsTitleContainer h2 > span {
-  color: var(--swm-blue-light-80)
+  color: var(--swm-blue-light-80);
 }
 
 .hireUsSectionBody {

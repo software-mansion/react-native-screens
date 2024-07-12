@@ -1,0 +1,41 @@
+.multiplatformContainer {
+  background-color: var(--swm-navy-dark-40);
+  border-radius: 16px;
+  width: 456px;
+  height: 345px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.phone {
+  position: absolute;
+  width: 110px;
+  animation: firstDiv 15s linear infinite;
+}
+
+@keyframes firstDiv {
+  0% {
+    left: 0px;
+  }
+  14% {
+    left: -275px;
+  }
+  50% {
+    left: -446px;
+  }
+  65.9% {
+    left: -699px;
+  }
+  66% {
+    left: 594px;
+  }
+  99.9% {
+    left: 0px;
+  }
+  100% {
+    left: 0px;
+  }
+}

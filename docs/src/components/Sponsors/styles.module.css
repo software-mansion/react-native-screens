@@ -11,10 +11,9 @@
   gap: 4rem;
 }
 
-
 @media (max-width: 996px) {
   .sponsorsTitle {
-    font-size: 40px
+    font-size: 40px;
   }
   .sponsorsBrand {
     margin: 2.5rem auto 5.5rem;

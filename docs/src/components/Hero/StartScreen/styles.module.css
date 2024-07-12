@@ -29,14 +29,13 @@
   color: var(--swm-blue-dark-80);
 }
 
-@media(max-width: 1200px) {
+@media (max-width: 1350px) {
   .headingLabel {
     display: flex;
     flex-direction: column;
   }
 }
 
-  
 .subheadingLabel {
   font-family: var(--swm-h2-font-size);
   font-size: var(--swm-h2-font-size);
@@ -46,7 +45,7 @@
 
   margin-top: 3rem;
   margin-bottom: 4rem;
-  width: 75%;
+  width: 70%;
   color: var(--swm-landing-heading);
   text-wrap: balance;
 }
@@ -87,9 +86,9 @@
   }
 }
 
-@media(max-width: 768px) {
+@media (max-width: 768px) {
   .subheadingLabel {
-    width: 100%
+    width: 100%;
   }
 }
 

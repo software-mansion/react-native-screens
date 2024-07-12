@@ -11,7 +11,7 @@ export const ButtonStyling = {
 
 export const BorderStyling = {
   PURPLE: styles.buttonNavyBorderStyling,
-  TRANSPARENT: styles.buttonTransparentBorderStyling
+  TRANSPARENT: styles.buttonTransparentBorderStyling,
 };
 
 const HomepageButton: React.FC<{

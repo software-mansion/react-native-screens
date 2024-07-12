@@ -1,24 +1,27 @@
 .screens {
   position: absolute;
-  top: 10rem;
+  top: 8rem;
   right: 0;
-  /* height: 50%; */
   overflow: hidden;
+  min-height: 70%;
+  display: flex;
+  align-items: center;
 }
 
-@media(max-width: 1350px) {
+@media (max-width: 1350px) {
   .screens {
-    top: 12rem
+    top: 12rem;
+    min-height: 60%;
   }
 }
 
-@media(max-width: 996px) {
+@media (max-width: 996px) {
   .screens {
-    top: 6rem
+    top: 3rem;
   }
 }
 
-@media(max-width: 768px) {
+@media (max-width: 768px) {
   .screens {
     position: relative;
     top: 2rem;

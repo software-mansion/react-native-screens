@@ -6,7 +6,9 @@ const HireUsSection = () => {
   return (
     <div className={styles.hireUsSectionWrapper}>
       <div className={styles.hireUsTitleContainer}>
-        <h2>We are <span>Software Mansion</span></h2>
+        <h2>
+          We are <span>Software Mansion</span>
+        </h2>
       </div>
       <p className={styles.hireUsSectionBody}>
         React Native Core Contributors and experts in dealing with all kinds of

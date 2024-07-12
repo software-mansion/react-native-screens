@@ -63,7 +63,7 @@ const TestimonialList = () => {
     };
   }, [activeIndex]);
 
-  const handleDotClick = (index) => {
+  const handleDotClick = index => {
     setActiveIndex(index);
   };
 
