@@ -797,6 +797,7 @@ namespace react = facebook::react;
   // subviews
   // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
 }
+
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
