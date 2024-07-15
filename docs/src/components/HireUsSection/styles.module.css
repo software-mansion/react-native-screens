@@ -63,32 +63,3 @@
   text-align: center;
   font-weight: 400;
 }
-
-.buttonNavyStyling {
-  background-color: var(--swm-navy-light-100);
-  padding: 20px 50px;
-  color: var(--swm-off-white);
-}
-
-.buttonNavyStyling svg {
-  stroke: var(--swm-off-white);
-}
-
-.buttonNavyStyling:hover {
-  background-color: transparent;
-  color: var(--swm-navy-light-100);
-}
-
-.buttonNavyStyling:hover svg {
-  stroke: var(--swm-navy-light-100);
-}
-
-.buttonNavyBorderStyling {
-  border: 1px solid var(--swm-navy-light-100);
-}
-
-[data-theme='dark'] .buttonNavyStyling:hover,
-[data-theme='dark'] .buttonNavyStyling:hover svg {
-  stroke: var(--swm-landing-button-purple);
-  color: var(--swm-landing-button-purple);
-}
