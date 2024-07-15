@@ -9,10 +9,7 @@ const LearnMore = () => {
   return (
     <div className={styles.learnMoreContainer}>
       <div className={styles.learnMoreContent}>
-        <h4>
-          Did you know that this library is the first library migrated to
-          Fabric?
-        </h4>
+        <h4>React Native Screens is the first library migrated to Fabric!</h4>
         <p>Learn more about the new architecture in React Native Screens.</p>
       </div>
       <HomepageButton
