@@ -19,7 +19,7 @@ const LearnMore = () => {
         target="_blank"
         href="https://blog.swmansion.com/introducing-fabric-to-react-native-screens-fd17bf18858e"
         title="See blog post"
-        backgroundStyling={ButtonStyling.TO_PURPLE}
+        backgroundStyling={ButtonStyling.TO_NAVY}
         borderStyling={BorderStyling.TRANSPARENT}
       />
     </div>
