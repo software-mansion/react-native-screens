@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from 'react-native';
+import { Button, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -8,7 +8,11 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          animation: 'fade',
+          headerTitle: () => <Text>Simple Native Stack</Text>,
+        }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
       </Stack.Navigator>
@@ -16,7 +20,7 @@ export default function App() {
   );
 }
 
-function First({ navigation }) {
+function First({ navigation }: any) {
   return (
     <Button
       title="Tap me for second screen"
@@ -25,10 +29,10 @@ function First({ navigation }) {
   );
 }
 
-function Second({ navigation }) {
+function Second({ navigation }: any) {
   return (
     <Button
-      title="Tap me for second screen"
+      title="Tap me for first screen"
       onPress={() => navigation.popTo('First')}
     />
   );
