@@ -760,22 +760,16 @@ namespace react = facebook::react;
   [childComponentView removeFromSuperview];
 }
 
-- (void)setViewToSnapshot:(RNSScreenStackHeaderSubview *)childComponentView {
-    UINavigationItem *navitem = _screenView.controller.navigationItem;
-    if(childComponentView.type == RNSScreenStackHeaderSubviewTypeLeft){
-        navitem.leftBarButtonItem.customView = [self takeSnapshot:navitem.leftBarButtonItem.customView ];
-    } else if (childComponentView.type == RNSScreenStackHeaderSubviewTypeCenter){
-        navitem.titleView = [self takeSnapshot:navitem.titleView];
-    } else if (childComponentView.type == RNSScreenStackHeaderSubviewTypeRight){
-        navitem.rightBarButtonItem.customView = [self takeSnapshot:navitem.rightBarButtonItem.customView];
-    }
-}
-
-- (UIView *)takeSnapshot:(UIView *)view {
-    if (view.window != nil) {
-        return [view snapshotViewAfterScreenUpdates:NO];
-    }
-    return view;
+- (void)setViewToSnapshot:(RNSScreenStackHeaderSubview *)childComponentView
+{
+  UINavigationItem *navitem = _screenView.controller.navigationItem;
+  if (childComponentView.type == RNSScreenStackHeaderSubviewTypeLeft) {
+    navitem.leftBarButtonItem.customView = [navitem.leftBarButtonItem.customView snapshotViewAfterScreenUpdates:NO];
+  } else if (childComponentView.type == RNSScreenStackHeaderSubviewTypeCenter) {
+    navitem.titleView = [navitem.titleView snapshotViewAfterScreenUpdates:NO];
+  } else if (childComponentView.type == RNSScreenStackHeaderSubviewTypeRight) {
+    navitem.rightBarButtonItem.customView = [navitem.rightBarButtonItem.customView snapshotViewAfterScreenUpdates:NO];
+  }
 }
 
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
