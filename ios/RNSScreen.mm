@@ -1393,9 +1393,21 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 
   if (self.navigationItem.titleView.window != nil) {
-    UIView *navSnapshot = [self.navigationItem.titleView snapshotViewAfterScreenUpdates:NO];
+    UIView *titleSnapshot = [self.navigationItem.titleView snapshotViewAfterScreenUpdates:NO];
     [self.navigationItem.titleView removeFromSuperview];
-    self.navigationItem.titleView = navSnapshot;
+    self.navigationItem.titleView = titleSnapshot;
+  }
+
+  if (self.navigationItem.rightBarButtonItem.customView.window != nil) {
+    UIView *rightSnapshot = [self.navigationItem.rightBarButtonItem.customView snapshotViewAfterScreenUpdates:NO];
+    [self.navigationItem.rightBarButtonItem.customView removeFromSuperview];
+    self.navigationItem.rightBarButtonItem.customView = rightSnapshot;
+  }
+
+  if (self.navigationItem.leftBarButtonItem.customView.window != nil) {
+    UIView *rightSnapshot = [self.navigationItem.leftBarButtonItem.customView snapshotViewAfterScreenUpdates:NO];
+    [self.navigationItem.leftBarButtonItem.customView removeFromSuperview];
+    self.navigationItem.leftBarButtonItem.customView = rightSnapshot;
   }
 }
 

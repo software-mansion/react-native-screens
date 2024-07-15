@@ -12,6 +12,7 @@ export default function App() {
         screenOptions={{
           animation: 'fade',
           headerTitle: () => <Text>Simple Native Stack</Text>,
+          headerRight: () => <Text>Right</Text>,
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
