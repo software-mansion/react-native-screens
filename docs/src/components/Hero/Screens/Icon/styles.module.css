@@ -11,3 +11,12 @@
 .svg {
   overflow: visible;
 }
+
+@media (max-width: 996px) {
+  .hovered {
+    transform: none;
+  }
+  .neighbourHovered {
+    transform: none;
+  }
+}

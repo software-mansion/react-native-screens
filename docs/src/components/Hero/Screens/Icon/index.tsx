@@ -127,8 +127,14 @@ const ScreensIcon = () => {
           {screen.map((path, i) => (
             <path
               key={i}
-              fill={hoveredIndex === index ? 'transparent' : path.fill}
-              stroke={hoveredIndex === index ? path.fill : 'none'}
+              fill={
+                hoveredIndex === index && windowWidth > 996
+                  ? 'transparent'
+                  : path.fill
+              }
+              stroke={
+                hoveredIndex === index && windowWidth > 996 ? path.fill : 'none'
+              }
               strokeWidth={hoveredIndex === index ? 2 : 0}
               d={path.d}
             />
