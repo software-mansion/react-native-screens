@@ -797,7 +797,7 @@ namespace react = facebook::react;
   // subviews
   // Explanation taken from `reactSetFrame`, which is old arch equivalent of this code.
 }
-
+ 
 - (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask
 {
   [super finalizeUpdates:updateMask];
@@ -1390,24 +1390,6 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     [self.view removeFromSuperview];
     self.view = snapshot;
     [superView addSubview:snapshot];
-  }
-
-  if (self.navigationItem.titleView.window != nil) {
-    UIView *titleSnapshot = [self.navigationItem.titleView snapshotViewAfterScreenUpdates:NO];
-    [self.navigationItem.titleView removeFromSuperview];
-    self.navigationItem.titleView = titleSnapshot;
-  }
-
-  if (self.navigationItem.rightBarButtonItem.customView.window != nil) {
-    UIView *rightSnapshot = [self.navigationItem.rightBarButtonItem.customView snapshotViewAfterScreenUpdates:NO];
-    [self.navigationItem.rightBarButtonItem.customView removeFromSuperview];
-    self.navigationItem.rightBarButtonItem.customView = rightSnapshot;
-  }
-
-  if (self.navigationItem.leftBarButtonItem.customView.window != nil) {
-    UIView *rightSnapshot = [self.navigationItem.leftBarButtonItem.customView snapshotViewAfterScreenUpdates:NO];
-    [self.navigationItem.leftBarButtonItem.customView removeFromSuperview];
-    self.navigationItem.leftBarButtonItem.customView = rightSnapshot;
   }
 }
 

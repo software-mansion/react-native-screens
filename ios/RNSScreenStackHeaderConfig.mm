@@ -756,7 +756,26 @@ namespace react = facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
+  [self setViewToSnapshot:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+}
+
+- (void)setViewToSnapshot:(RNSScreenStackHeaderSubview *)childComponentView {
+    UINavigationItem *navitem = _screenView.controller.navigationItem;
+    if(childComponentView.type == RNSScreenStackHeaderSubviewTypeLeft){
+        navitem.leftBarButtonItem.customView = [self takeSnapshot:navitem.leftBarButtonItem.customView ];
+    } else if (childComponentView.type == RNSScreenStackHeaderSubviewTypeCenter){
+        navitem.titleView = [self takeSnapshot:navitem.titleView];
+    } else if (childComponentView.type == RNSScreenStackHeaderSubviewTypeRight){
+        navitem.rightBarButtonItem.customView = [self takeSnapshot:navitem.rightBarButtonItem.customView];
+    }
+}
+
+- (UIView *)takeSnapshot:(UIView *)view {
+    if (view.window != nil) {
+        return [view snapshotViewAfterScreenUpdates:NO];
+    }
+    return view;
 }
 
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
