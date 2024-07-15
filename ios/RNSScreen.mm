@@ -1384,9 +1384,19 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 - (void)setViewToSnapshot:(UIView *)snapshot
 {
   UIView *superView = self.view.superview;
-  [self.view removeFromSuperview];
-  self.view = snapshot;
-  [superView addSubview:self.view];
+  // if we dismissed the view natively, it will already be detached from view hierarchy
+  if (self.view.window != nil) {
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+    [superView addSubview:snapshot];
+  }
+
+  if (self.navigationItem.titleView.window != nil) {
+    UIView *navSnapshot = [self.navigationItem.titleView snapshotViewAfterScreenUpdates:NO];
+    [self.navigationItem.titleView removeFromSuperview];
+    self.navigationItem.titleView = navSnapshot;
+  }
 }
 
 #else
