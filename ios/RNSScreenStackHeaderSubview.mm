@@ -72,6 +72,7 @@ namespace react = facebook::react;
         self);
   } else {
     self.bounds = CGRect{CGPointZero, frame.size};
+    [self.superview layoutIfNeeded];
   }
 }
 
