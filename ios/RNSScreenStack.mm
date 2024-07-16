@@ -1117,7 +1117,7 @@ namespace react = facebook::react;
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
-  // Child update operation is performed in the mountingTransactionDidMount method to prevent error while
+  // Child update operation is performed in the mountingTransactionDidMount method to prevent error, while
   // navigating to `n` different screens at the same time.
 }
 
