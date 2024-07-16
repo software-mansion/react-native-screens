@@ -4,7 +4,10 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 
-class ScreenDisappearEvent(surfaceId: Int, viewId: Int) : Event<ScreenDisappearEvent>(surfaceId, viewId) {
+class ScreenDisappearEvent(
+    surfaceId: Int,
+    viewId: Int,
+) : Event<ScreenDisappearEvent>(surfaceId, viewId) {
     override fun getEventName() = EVENT_NAME
 
     // All events for a given view can be coalesced.

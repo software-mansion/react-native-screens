@@ -141,8 +141,8 @@ namespace react = facebook::react;
     nextVC = nav.topViewController;
   }
 
-  // we want updates sent to the VC below modal too since it is also visible
-  BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC;
+  // we want updates sent to the VC directly below modal too since it is also visible
+  BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC && vc == nav.topViewController;
 
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
@@ -494,8 +494,17 @@ namespace react = facebook::react;
        config.direction == UISemanticContentAttributeForceRightToLeft) &&
       // iOS 12 cancels swipe gesture when direction is changed. See #1091
       navctr.view.semanticContentAttribute != config.direction) {
+    // This is needed for swipe back gesture direction
     navctr.view.semanticContentAttribute = config.direction;
+
+    // This is responsible for the direction of the navigationBar and its contents
     navctr.navigationBar.semanticContentAttribute = config.direction;
+    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
+        setSemanticContentAttribute:config.direction];
+    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
+        setSemanticContentAttribute:config.direction];
+    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
+        setSemanticContentAttribute:config.direction];
   }
 
   if (shouldHide) {
@@ -580,6 +589,12 @@ namespace react = facebook::react;
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
 
+// appearance does not apply to the tvOS so we need to use lagacy customization
+#if TARGET_OS_TV
+    navctr.navigationBar.titleTextAttributes = appearance.titleTextAttributes;
+    navctr.navigationBar.backgroundColor = appearance.backgroundColor;
+#endif
+
     UINavigationBarAppearance *scrollEdgeAppearance =
         [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     if (config.largeTitleBackgroundColor != nil) {
@@ -606,8 +621,6 @@ namespace react = facebook::react;
 #endif
   }
 #if !TARGET_OS_TV
-  // Workaround for the wrong rotation of back button arrow in RTL mode.
-  navitem.hidesBackButton = true;
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
@@ -664,13 +677,6 @@ namespace react = facebook::react;
       }
     }
   }
-
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
-    // Position the contents in the navigation bar, regarding to the direction.
-    for (UIView *view in navctr.navigationBar.subviews) {
-      view.semanticContentAttribute = config.direction;
-    }
-  });
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)

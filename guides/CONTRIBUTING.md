@@ -40,9 +40,8 @@ We inform you that unrespectful issues will be closed.
 - `common` &ndash; C++ code related to components - shadow nodes and state
 - `cpp` &ndash; C++ code for turbo modules
 - `apps` &ndash; apps implementations shared by wrappers
-- `Example` &ndash; paper version of React Native mobile example app from apps/examples
-- `FabricExample` &ndash; fabric version of React Native mobile example app from apps/examples
-- `FabricTestExample` &ndash; fabric version of React Native mobile app containing test examples from apps/test-examples
+- `Example` &ndash; paper version of React Native mobile example app from apps
+- `FabricExample` &ndash; fabric version of React Native mobile example app from apps
 - `gesture-handler` &ndash; interop between react-native-screens and react-native-gesture-handler
 - `guides` &ndash; guides for developers
 - `ios` &ndash; source code of native implementation for iOS
@@ -51,7 +50,6 @@ We inform you that unrespectful issues will be closed.
 - `reanimated` &ndash; interop between react-native-screens and react-native-reanimated
 - `scripts` &ndash; utility scripts, used by CLI
 - `src` &ndash; library TS core code 
-- `TestsExample` &ndash; paper version of React Native mobile app containing test examples from apps/test-examples
 - `TVOSExample` &ndash; React Native example app for TVOS
 - `windows` &ndash; source code of native implementation for Windows
 
@@ -73,14 +71,14 @@ Submitting Pull Requests that resolve issues is great way to contribute to Scree
 > [!tip]
 > For commits and pull request names we follow a [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
-We have two types of applications: pure examples (Example, FabricExample as wrappers and apps/examples for source code) and examples, dedicated for tests from issues / pull requests (FabricTestExample, TestsExample as wrappers and apps/test-examples for source code). The first work as a showcase of the library, the latter contains specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare showcases in Example app.  
+We have two types of sources: pure examples (apps/Example for source code) and examples, dedicated for tests from issues / pull requests (apps/src/tests for source code). The first work as a showcase of the library, the latter contains specific test cases that corresponds to GitHub issues. For example, `Test1864.tsx` corresponds to issue [#1864](https://github.com/software-mansion/react-native-screens/issues/1864). Our developer flow usually consists of creating new `Test*.tsx` file with code example that we try to fix or add. For new features we try to prepare showcases in Example app. The `apps/App` file is where you set the source code for the application to use by either leaving `<Example>` as is or replacing it with `<Test.Test*>`.
+There are two separate applications: Example and FabricExample in root which are used as wrappers for running the examples depending on the architecture needed.
 
-- `apps/examples` &ndash; source code with showcase app
-- `apps/test-examples` &ndash; source code with test examples app 
-- `Example/src` &ndash; wrapper with paper architecture for examples app
-- `TestsExample/src` &ndash; wrapper with paper architecture for test examples app
-- `FabricExample/src` &ndash; wrapper with fabric architecture for examples app
-- `FabricTestExample/src` &ndash;  wrapper with fabric architecture for test examples app
+- `apps/Example` &ndash; source code with showcase app
+- `apps/src/tests` &ndash; source code with test examples app
+- `apps/App` &ndash; source code management
+- `Example/src` &ndash; wrapper with paper architecture for showcase and test examples app
+- `FabricExample/src` &ndash; wrapper with fabric architecture for showcase and test examples app
 - `TVOSExample/src` &ndash; source code with example app for TVOS
 - `src` &ndash; contains JS core code of the library
 - `android` &ndash; source code related to Android native part
@@ -92,13 +90,12 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-3. `(cd apps/test-examples && yarn)`
-4. `(cd react-navigation && yarn prepare)`
-5. `cd TestsExample`
-6. `yarn`
-7. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
+3. `(cd react-navigation && yarn prepare)`
+4. `cd Example`
+5. `yarn`
+6. `yarn start` &ndash; make sure to start metro bundler before building the app in Android Studio
 
-and open `react-native-screens/TestsExample/android` with Android Studio.
+and open `react-native-screens/Example/android` with Android Studio.
 
 ![Android Studio](android_studio.png)
 
@@ -110,18 +107,17 @@ To begin with, let install all dependencies:
 
 1. `yarn`
 2. `yarn submodules`
-3. `(cd apps/test-examples && yarn)`
-4. `(cd react-navigation && yarn prepare)`
-5. `cd TestsExample`
-6. `yarn`
-7. `(cd ios && pod install)`
-8. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
+3. `(cd react-navigation && yarn prepare)`
+4. `cd Example`
+5. `yarn`
+6. `(cd ios && pod install)`
+7. `yarn start` &ndash; make sure to start metro bundler before building the app in XCode.
 
-and open `react-native-screens/TestsExample/ios/TestsExample.xcworkspace` with XCode.
+and open `react-native-screens/Example/ios/ScreensExample.xcworkspace` with XCode.
 
 ![XCode](xcode.png)
 
-To find the native source code of `react-native-screens` navigate to `Pods > Development Pods >  RNScreens > TestsExample > node_modules > react-native-screens > ios` or `Pods > Development Pods > RNScreens > .. > TestsExample > node_modules > react-native-screens > ios`. Making sure metro builder is run, you can now build React Native app or debug native code. 
+To find the native source code of `react-native-screens` navigate to `Pods > Development Pods >  RNScreens > ScreensExample > node_modules > react-native-screens > ios` or `Pods > Development Pods > RNScreens > .. > ScreensExample > node_modules > react-native-screens > ios`. Making sure metro builder is run, you can now build React Native app or debug native code. 
 
 ### Fabric 
 
