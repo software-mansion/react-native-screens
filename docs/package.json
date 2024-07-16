@@ -20,7 +20,7 @@
     "@emotion/styled": "^11.11.5",
     "@mdx-js/react": "^1.6.22",
     "@mui/material": "^5.16.0",
-    "@swmansion/t-rex-ui": "^0.0.12",
+    "@swmansion/t-rex-ui": "^0.0.13",
     "clsx": "^1.2.1",
     "prettier": "^2.8.4",
     "prism-react-renderer": "^1.3.5",

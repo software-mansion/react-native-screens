@@ -3085,9 +3085,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swmansion/t-rex-ui@npm:^0.0.12":
-  version: 0.0.12
-  resolution: "@swmansion/t-rex-ui@npm:0.0.12"
+"@swmansion/t-rex-ui@npm:^0.0.13":
+  version: 0.0.13
+  resolution: "@swmansion/t-rex-ui@npm:0.0.13"
   dependencies:
     "@docsearch/react": "npm:^3.6.0"
     "@docusaurus/core": "npm:^2.4.3"
@@ -3104,7 +3104,7 @@ __metadata:
     "@mui/material": ">=5.0.0"
     react: "*"
     react-dom: "*"
-  checksum: 10c0/07fb9dfda88e67a737a3257074f5d01cc29d1a9759dd867f2f0e34d1fd6272afed2087aaf26faa14e096cd343304ffd26ea48f549177984a799c01e961efac05
+  checksum: 10c0/27b12efc5c7b735ff24edf20e9458aed47aecd5a27c35cbdb0f3ffa9289d15cef606d91e8c43a45856fcb25fa151427b877cf5cf1371c7e7640e29e49d90298e
   languageName: node
   linkType: hard
 
@@ -5300,7 +5300,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.5"
     "@mdx-js/react": "npm:^1.6.22"
     "@mui/material": "npm:^5.16.0"
-    "@swmansion/t-rex-ui": "npm:^0.0.12"
+    "@swmansion/t-rex-ui": "npm:^0.0.13"
     clsx: "npm:^1.2.1"
     prettier: "npm:^2.8.4"
     prism-react-renderer: "npm:^1.3.5"
