@@ -626,13 +626,7 @@ namespace react = facebook::react;
       NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
       [newControllers removeLastObject];
 
-#ifdef RCT_NEW_ARCH_ENABLED
-      if (newControllers.count <= _controller.viewControllers.count) {
-        [_controller setViewControllers:newControllers animated:NO];
-      }
-#else
       [_controller setViewControllers:newControllers animated:NO];
-#endif // RTC_NEW_ARCH_ENABLED
       [_controller pushViewController:top animated:YES];
     } else {
       // don't really know what this case could be, but may need to handle it
@@ -1123,9 +1117,8 @@ namespace react = facebook::react;
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self maybeAddToParentAndUpdateContainer];
-  });
+  // Child update operation is performed in the mountingTransactionDidMount method to prevent error while
+  // navigating to `n` different screens at the same time.
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -1158,9 +1151,6 @@ namespace react = facebook::react;
   screenChildComponent.reactSuperview = nil;
   [_reactSubviews removeObject:screenChildComponent];
   [screenChildComponent removeFromSuperview];
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self maybeAddToParentAndUpdateContainer];
-  });
 }
 
 - (void)takeSnapshot
@@ -1180,6 +1170,25 @@ namespace react = facebook::react;
         strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
       [self takeSnapshot];
       return;
+    }
+  }
+}
+
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
+{
+  for (auto &mutation : transaction.getMutations()) {
+    if (mutation.parentShadowView.componentName != nil &&
+        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
+      if (mutation.type == react::ShadowViewMutation::Type::Update ||
+          mutation.type == react::ShadowViewMutation::Type::Remove) {
+        // we need to wait until children have their layout set. At this point they don't have the layout
+        // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
+        // ui queue will guarantee that the update will run after layout.
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [self maybeAddToParentAndUpdateContainer];
+        });
+      }
     }
   }
 }
