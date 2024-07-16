@@ -5,12 +5,12 @@ import ArrowRight from '@site/static/img/arrow-right-hero.svg';
 import clsx from 'clsx';
 
 export const ButtonStyling = {
-  TO_PURPLE: styles.buttonTransparentStyling,
+  TO_NAVY: styles.buttonTransparentStyling,
   TO_TRANSPARENT: styles.buttonNavyStyling,
 };
 
 export const BorderStyling = {
-  PURPLE: styles.buttonNavyBorderStyling,
+  NAVY: styles.buttonNavyBorderStyling,
   TRANSPARENT: styles.buttonTransparentBorderStyling,
 };
 
@@ -26,7 +26,7 @@ const HomepageButton: React.FC<{
   href,
   target = '_self',
   backgroundStyling = ButtonStyling.TO_TRANSPARENT,
-  borderStyling = BorderStyling.PURPLE,
+  borderStyling = BorderStyling.NAVY,
 }) => {
   return (
     <a href={href} target={target} className={styles.homepageButtonLink}>
