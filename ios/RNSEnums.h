@@ -37,7 +37,8 @@ typedef NS_ENUM(NSInteger, RNSActivityState) {
 
 typedef NS_ENUM(NSInteger, RNSStatusBarStyle) {
   RNSStatusBarStyleAuto,
-  RNSStatusBarStyleInverted,
+  RNSStatusBarStyleSystem,
+  RNSStatusBarStyleSystemInverted,
   RNSStatusBarStyleLight,
   RNSStatusBarStyleDark,
 };

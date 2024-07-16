@@ -192,7 +192,6 @@ const RouteView = ({
     statusBarAnimation,
     statusBarColor,
     statusBarHidden,
-    statusBarStyle,
     statusBarTranslucent,
     swipeDirection = 'horizontal',
     transitionDuration,
@@ -203,6 +202,7 @@ const RouteView = ({
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
     gestureResponseDistance,
+    statusBarStyle,
     stackAnimation,
     stackPresentation = 'push',
   } = options;
@@ -269,6 +269,10 @@ const RouteView = ({
   const Screen = React.useContext(ScreenContext);
   const { dark } = useTheme();
 
+  if (statusBarStyle === 'auto') {
+    statusBarStyle = !dark ? 'light' : 'dark';
+  }
+
   const screenRef = React.useRef(null);
   React.useEffect(() => {
     screensRefs.current[route.key] = screenRef;
@@ -309,7 +313,7 @@ const RouteView = ({
       statusBarAnimation={statusBarAnimation}
       statusBarColor={statusBarColor}
       statusBarHidden={statusBarHidden}
-      statusBarStyle={statusBarStyle ?? (dark ? 'light' : 'dark')}
+      statusBarStyle={statusBarStyle}
       statusBarTranslucent={statusBarTranslucent}
       swipeDirection={swipeDirection}
       transitionDuration={transitionDuration}
