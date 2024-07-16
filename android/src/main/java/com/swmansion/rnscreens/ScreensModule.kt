@@ -40,8 +40,9 @@ class ScreensModule(
         if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
             val fabricUIManager =
             UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
-            proxy = NativeProxy()
-            proxy?.nativeAddMutationsListener(fabricUIManager)
+            proxy = NativeProxy().apply {
+                nativeAddMutationsListener(fabricUIManager)
+            }
         }
     }
 

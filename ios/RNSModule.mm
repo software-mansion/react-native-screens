@@ -125,7 +125,7 @@ std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
 {
   RNSScreenStackView *view = [self getScreenStackView:stackTag];
   if (view != nil && ![view isKindOfClass:[RNSScreenStackView class]]) {
-    RCTLogError(@"[RNSCREENS] Invalid view type, expecting RNSScreenStackView, got: %@", view);
+    RCTLogError(@"[RNScreens] Invalid view type, expecting RNSScreenStackView, got: %@", view);
     return nil;
   }
   return view;
@@ -138,7 +138,7 @@ std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
   RCTAssertMainQueue();
   UIView *view = [self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
   if (view != nil && ![view isKindOfClass:[RNSScreenView class]]) {
-    RCTLogError(@"[RNSCREENS] Invalid view type, expecting RNSScreenStackView, got: %@", view);
+    RCTLogError(@"[RNScreens] Invalid view type, expecting RNSScreenStackView, got: %@", view);
     return nil;
   }
   return (RNSScreenView *)view;
@@ -159,7 +159,7 @@ std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
   RCTScheduler *scheduler = [_surfacePresenter scheduler];
   auto uiManager = scheduler.uiManager;
   if (uiManager == nullptr) {
-    RCTLogError(@"[RNSCREENS] Could not get uiManager");
+    RCTLogError(@"[RNScreens] Could not get uiManager");
   }
   return uiManager;
 }

@@ -298,7 +298,7 @@ class Screen(
                     // does not handle `startViewTransition` properly.
                     // It has a custom `getChildDrawingOrder` method which returns
                     // wrong index if we called `startViewTransition` on the views on new arch.
-                    // We add a simple View to make bump the number of children so it works.
+                    // We add a simple View to bump the number of children to make it work.
                     // TODO: find a better way to handle this scenario
                     it.addView(View(context), i)
                 } else {

@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.9.0)
 
 project(rnscreens)
-set(CMAKE_CXX_STANDARD 20)
 
-if(${IS_NEW_ARCHITECTURE_ENABLED})
+if(${RNS_NEW_ARCH_ENABLED})
 add_library(rnscreens
     SHARED
     ../cpp/RNScreensTurboModule.cpp
@@ -24,6 +23,13 @@ include_directories(
     ../cpp
 )
 
+set_target_properties(rnscreens PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    POSITION_INDEPENDENT_CODE ON
+)
+
 target_compile_definitions(
     rnscreens
     PRIVATE
@@ -32,7 +38,7 @@ target_compile_definitions(
 
 find_package(ReactAndroid REQUIRED CONFIG)
 
-if(${IS_NEW_ARCHITECTURE_ENABLED})
+if(${RNS_NEW_ARCH_ENABLED})
     find_package(fbjni REQUIRED CONFIG)
     
     target_link_libraries(
