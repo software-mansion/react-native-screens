@@ -755,8 +755,8 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
-  [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [self setViewToSnapshot:(RNSScreenStackHeaderSubview *)childComponentView];
+  [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
 }
 
