@@ -27,7 +27,11 @@ export default function Home() {
     <Testimonals/>
     <div className={styles.container}> */}
         <Sponsors />
-        <HireUsSection />
+        <HireUsSection
+          href={
+            'https://swmansion.com/contact/projects?utm_source=screens&utm_medium=docs} '
+          }
+        />
       </div>
       <FooterBackground />
     </Layout>
