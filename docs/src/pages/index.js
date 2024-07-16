@@ -9,7 +9,7 @@ import Overview from '@site/src/components/Overview';
 import LearnMore from '@site/src/components/LearnMore';
 import Testimonals from '@site/src/components/Testimonials';
 import Sponsors from '@site/src/components/Sponsors';
-import HireUsSection from '@site/src/components/HireUsSection';
+import { HireUsSection } from '@swmansion/t-rex-ui';
 import styles from './styles.module.css';
 
 export default function Home() {

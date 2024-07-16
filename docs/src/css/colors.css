@@ -239,6 +239,12 @@
 
   --swm-landing-sponsors-color: var(--ifm-font-color-base);
 
+  /* Hire Us Section */
+
+  --swm-hire-us-section-title: var(--swm-blue-light-80);
+  --swm-hire-us-section: var(--swm-navy-light-100);
+  --swm-hire-us-section-color: var(--swm-off-white);
+
   /* Cards */
   --swm-card-background: var(--swm-background);
   --swm-card-border: var(--swm-navy-light-20);
@@ -407,6 +413,12 @@
   --swm-landing-feature-item-shadow: var(--swm-purple-dark-140);
 
   --swm-landing-sponsors-color: var(--swm-off-white);
+
+  /* Hire Us Section */
+
+  --swm-hire-us-section-title: var(--swm-blue-dark-80);
+  --swm-hire-us-section: var(--swm-blue-dark-80);
+  --swm-hire-us-section-color: var(--swm-navy-light-100);
 
   /* Cards */
   --swm-card-background: var(--swm-navy);
