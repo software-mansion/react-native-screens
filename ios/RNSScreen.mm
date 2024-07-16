@@ -295,6 +295,14 @@ namespace react = facebook::react;
   }
 }
 
+- (void)postNotificationWithEvent:(NSObject<RCTEvent> *)event
+{
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                      object:nil
+                                                    userInfo:userInfo];
+}
+
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -416,7 +424,7 @@ namespace react = facebook::react;
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  [self postNotificationWithEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -502,7 +510,7 @@ namespace react = facebook::react;
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  [self postNotificationWithEvent:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{

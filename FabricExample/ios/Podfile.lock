@@ -4,9 +4,9 @@ PODS:
   - FBLazyVector (0.75.0-rc.2)
   - fmt (9.1.0)
   - glog (0.3.5)
-  - hermes-engine (0.75.0-rc.0):
-    - hermes-engine/Pre-built (= 0.75.0-rc.0)
-  - hermes-engine/Pre-built (0.75.0-rc.0)
+  - hermes-engine (0.75.0-rc.2):
+    - hermes-engine/Pre-built (= 0.75.0-rc.2)
+  - hermes-engine/Pre-built (0.75.0-rc.2)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1876,9 +1876,9 @@ SPEC CHECKSUMS:
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: bc6824d4d258dcc02d6e4115e09eb96d93e6a9ed
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
-  glog: 69ef571f3de08433d766d614c73a9838a06bf7eb
-  hermes-engine: d36cb62f4539f11f5d1200068c49f5bf01506d28
-  RCT-Folly: 4464f4d875961fce86008d45f4ecf6cef6de0740
+  glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
+  hermes-engine: d5fd477f592d499f4d94612671d3daf3e1b4ba28
+  RCT-Folly: 045d6ecaa59d826c5736dfba0b2f4083ff8d79df
   RCTDeprecation: ceaf98f63a0386c79f99322190b0688b4a50d082
   RCTRequired: cab142bdf5441acdfc75fd28013455371457d11e
   RCTTypeSafety: 410e547c7179edd6f14ca481638f4e78abe13383
