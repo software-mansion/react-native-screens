@@ -1,24 +1,11 @@
-import {
-  createNativeStackNavigator,
-  NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useLayoutEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { SettingsSwitch, Square, ToastProvider } from '../shared';
 import { NavigationContainer } from '@react-navigation/native';
 
-type StackParamList = {
-  Settings: undefined;
-};
-
-interface SettingsScreenProps {
-  navigation: NativeStackNavigationProp<StackParamList, 'Settings'>;
-}
-
-const SettingsScreen = ({
-  navigation,
-}: SettingsScreenProps): React.JSX.Element => {
+const SettingsScreen = ({ navigation }: any) => {
   const [hasLeftItem, setHasLeftItem] = useState(false);
 
   const square1 = (props: { tintColor?: string }) => (
@@ -42,42 +29,28 @@ const SettingsScreen = ({
   }, [navigation, hasLeftItem]);
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      style={styles.container}>
-      <SettingsSwitch
-        label="Left item"
-        value={hasLeftItem}
-        onValueChange={setHasLeftItem}
-      />
-    </ScrollView>
+    <SettingsSwitch
+      label="Left item"
+      value={hasLeftItem}
+      onValueChange={setHasLeftItem}
+    />
   );
 };
 
-const Stack = createNativeStackNavigator<StackParamList>();
+const Stack = createNativeStackNavigator();
 
-const App = (): React.JSX.Element => (
+const App = () => (
   <NavigationContainer>
-    <ToastProvider>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={{
-            headerTintColor: 'hotpink',
-          }}
-        />
-      </Stack.Navigator>
-    </ToastProvider>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          headerTintColor: 'hotpink',
+        }}
+      />
+    </Stack.Navigator>
   </NavigationContainer>
 );
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 10,
-    backgroundColor: 'white',
-  },
-});
 
 export default App;
