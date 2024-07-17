@@ -55,7 +55,7 @@ type ActiveExampleImage = ActiveExampleImageProperties & {
 type onItemPressFn = <T>(
   animatedRef: RefObject<T>,
   item: ExampleImage,
-  svs: ActiveExampleImageProperties,
+  svs: ActiveExampleImageProperties
 ) => void;
 function ImageList({
   images,
@@ -164,7 +164,7 @@ function ImageTransition({
 
   const targetX = useSharedValue(0);
   const targetY = useSharedValue(
-    (dimensions.height - targetHeight) / 2 - headerHeight,
+    (dimensions.height - targetHeight) / 2 - headerHeight
   );
 
   const translateX = useSharedValue(0);
@@ -179,14 +179,14 @@ function ImageTransition({
         translateY.value,
         [-200, 0, 200],
         [0.65, 1, 0.65],
-        Extrapolate.CLAMP,
+        Extrapolate.CLAMP
       );
 
       backdropOpacity.value = interpolate(
         translateY.value,
         [-100, 0, 100],
         [0, 1, 0],
-        Extrapolate.CLAMP,
+        Extrapolate.CLAMP
       );
     },
 
@@ -206,7 +206,7 @@ function ImageTransition({
             },
             () => {
               runOnJS(onClose)();
-            },
+            }
           );
         });
 
@@ -283,14 +283,14 @@ const images: ExampleImage[] = Array.from({ length: 30 }, (_, index) => {
 
 function LightboxExample(): React.ReactElement {
   const [activeImage, setActiveImage] = useState<ActiveExampleImage | null>(
-    null,
+    null
   );
 
   function onItemPress(
     // @ts-ignore: FIXME AnimatedImage type
     animatedRef: RefObject<AnimatedImage>,
     item: ExampleImage,
-    svs: ActiveExampleImageProperties,
+    svs: ActiveExampleImageProperties
   ) {
     setActiveImage({
       animatedRef,

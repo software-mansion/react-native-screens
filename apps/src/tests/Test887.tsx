@@ -72,7 +72,7 @@ function SiblingView() {
     () =>
       (reaProgress.progress.value < 0.5
         ? reaProgress.progress.value * 50
-        : (1 - reaProgress.progress.value) * 50) + 50,
+        : (1 - reaProgress.progress.value) * 50) + 50
   );
   const reaStyle = useAnimatedStyle(() => {
     return {
@@ -111,7 +111,7 @@ function First({
     () =>
       (reaProgress.progress.value < 0.5
         ? reaProgress.progress.value * 50
-        : (1 - reaProgress.progress.value) * 50) + 50,
+        : (1 - reaProgress.progress.value) * 50) + 50
   );
   const reaStyle = useAnimatedStyle(() => {
     return {
@@ -207,7 +207,7 @@ const Dialog = ({
     () =>
       (reaProgress.progress.value < 0.5
         ? reaProgress.progress.value * 50
-        : (1 - reaProgress.progress.value) * 50) + 50,
+        : (1 - reaProgress.progress.value) * 50) + 50
   );
   const reaStyle = useAnimatedStyle(() => {
     return {

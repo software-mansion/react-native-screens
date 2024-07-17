@@ -20,9 +20,12 @@ interface MainScreenProps {
 
 const MainScreen = ({ navigation }: MainScreenProps): JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
-    <Button title="Go ScreenB" onPress={() => {
-      navigation.navigate('ScreenB')
-      }} />
+    <Button
+      title="Go ScreenB"
+      onPress={() => {
+        navigation.navigate('ScreenB');
+      }}
+    />
     <Button onPress={() => navigation.pop()} title="🔙 Back to Examples" />
   </View>
 );
@@ -52,8 +55,8 @@ const Stack = createNativeStackNavigator<StackParamList>();
 
 const App = (): JSX.Element => (
   <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-    <GestureDetectorProvider>
+    <NavigationContainer>
+      <GestureDetectorProvider>
         <Stack.Navigator
           screenOptions={{
             headerHideBackButton: true,
@@ -69,8 +72,8 @@ const App = (): JSX.Element => (
           />
           <Stack.Screen name="ScreenC" component={ScreenC} />
         </Stack.Navigator>
-    </GestureDetectorProvider>
-      </NavigationContainer>
+      </GestureDetectorProvider>
+    </NavigationContainer>
   </GestureHandlerRootView>
 );
 

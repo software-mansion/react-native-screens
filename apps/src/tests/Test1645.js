@@ -1,12 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 
-import React, {useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
 
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationContainer} from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
 const TestBottomTabBar = createBottomTabNavigator();
 const TestNativeStack1 = createNativeStackNavigator();
@@ -28,8 +28,8 @@ const TestScreen1 = () => {
         flex: 1,
         backgroundColor: '#000',
       }}>
-      {Array.from({length: 100}).map((e, idx) => (
-        <Text style={{color: '#fff'}} key={idx}>
+      {Array.from({ length: 100 }).map((e, idx) => (
+        <Text style={{ color: '#fff' }} key={idx}>
           T{idx}: {t}
         </Text>
       ))}
@@ -54,8 +54,8 @@ const TestScreen2 = () => {
         flex: 1,
         backgroundColor: '#000',
       }}>
-      {Array.from({length: 100}).map((e, idx) => (
-        <Text style={{color: 'red'}} key={idx}>
+      {Array.from({ length: 100 }).map((e, idx) => (
+        <Text style={{ color: 'red' }} key={idx}>
           T{idx}: {t}
         </Text>
       ))}

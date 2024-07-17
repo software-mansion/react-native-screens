@@ -47,7 +47,9 @@ interface SettingsScreenProps {
   navigation: NativeStackNavigationProp<StackParamList, 'Settings'>;
 }
 
-const SettingsScreen = ({ navigation }: SettingsScreenProps): React.JSX.Element => {
+const SettingsScreen = ({
+  navigation,
+}: SettingsScreenProps): React.JSX.Element => {
   const toast = useToast();
 
   const [headerTitle, setHeaderTitle] = useState('Settings');

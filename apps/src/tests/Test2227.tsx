@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {Button, View, Text} from 'react-native';
+import { Button, View, Text } from 'react-native';
 
 type RootStackParamList = {
   Home: undefined;
@@ -16,9 +16,9 @@ type DetailsScreenProps = NativeStackScreenProps<RootStackParamList, 'Details'>;
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function HomeScreen({navigation}: HomeScreenProps) {
+function HomeScreen({ navigation }: HomeScreenProps) {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Home Screen</Text>
       <Button
         title="Go to Details"
@@ -28,9 +28,9 @@ function HomeScreen({navigation}: HomeScreenProps) {
   );
 }
 
-function DetailsScreen({navigation}: DetailsScreenProps) {
+function DetailsScreen({ navigation }: DetailsScreenProps) {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Details Screen</Text>
       <Button
         title="Go to Details Again"

@@ -38,7 +38,7 @@ function Deeper({ navigation }: Props) {
           }`,
           backgroundColor: 'orange',
         });
-      },
+      }
     );
 
     return unsubscribe;
@@ -64,9 +64,9 @@ function Deeper({ navigation }: Props) {
         console.warn(
           Platform.OS +
             ' Deeper transitionStart ' +
-            (data.closing ? 'closing' : 'opening'),
+            (data.closing ? 'closing' : 'opening')
         );
-      },
+      }
     );
 
     return unsubscribe;
@@ -77,7 +77,7 @@ function Deeper({ navigation }: Props) {
       console.warn(
         Platform.OS +
           ' Deeper transitionEnd ' +
-          (data.closing ? 'closing' : 'opening'),
+          (data.closing ? 'closing' : 'opening')
       );
     });
 
@@ -125,7 +125,7 @@ function Status({ navigation }: Props) {
           }`,
           backgroundColor: 'orange',
         });
-      },
+      }
     );
 
     return unsubscribe;
@@ -151,9 +151,9 @@ function Status({ navigation }: Props) {
         console.warn(
           Platform.OS +
             ' Status transitionStart ' +
-            (data.closing ? 'closing' : 'opening'),
+            (data.closing ? 'closing' : 'opening')
         );
-      },
+      }
     );
 
     return unsubscribe;
@@ -164,7 +164,7 @@ function Status({ navigation }: Props) {
       console.warn(
         Platform.OS +
           ' Status transitionEnd ' +
-          (data.closing ? 'closing' : 'opening'),
+          (data.closing ? 'closing' : 'opening')
       );
     });
 
@@ -191,7 +191,7 @@ function Privacy({ navigation }: Props) {
           }`,
           backgroundColor: 'orange',
         });
-      },
+      }
     );
 
     return unsubscribe;
@@ -217,9 +217,9 @@ function Privacy({ navigation }: Props) {
         console.warn(
           Platform.OS +
             ' Privacy transitionStart ' +
-            (data.closing ? 'closing' : 'opening'),
+            (data.closing ? 'closing' : 'opening')
         );
-      },
+      }
     );
 
     return unsubscribe;
@@ -230,7 +230,7 @@ function Privacy({ navigation }: Props) {
       console.warn(
         Platform.OS +
           ' Privacy transitionEnd ' +
-          (data.closing ? 'closing' : 'opening'),
+          (data.closing ? 'closing' : 'opening')
       );
     });
 
@@ -257,7 +257,7 @@ function Another({ navigation }: Props) {
           }`,
           backgroundColor: 'orange',
         });
-      },
+      }
     );
 
     return unsubscribe;
@@ -283,9 +283,9 @@ function Another({ navigation }: Props) {
         console.warn(
           Platform.OS +
             ' Another transitionStart ' +
-            (data.closing ? 'closing' : 'opening'),
+            (data.closing ? 'closing' : 'opening')
         );
-      },
+      }
     );
 
     return unsubscribe;
@@ -296,7 +296,7 @@ function Another({ navigation }: Props) {
       console.warn(
         Platform.OS +
           ' Another transitionEnd ' +
-          (data.closing ? 'closing' : 'opening'),
+          (data.closing ? 'closing' : 'opening')
       );
     });
 

@@ -104,7 +104,7 @@ function Post({ onPress }: { onPress?: () => void }) {
 function generatePhotos(
   amount: number,
   width: number,
-  height: number,
+  height: number
 ): JSX.Element[] {
   const startFrom = Math.floor(Math.random() * 20) + 10;
   return Array.from({ length: amount }, (_, index) => {
