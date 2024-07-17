@@ -10,32 +10,44 @@
   align-items: center;
 }
 
-.phone {
-  position: absolute;
-  width: 110px;
-  animation: firstDiv 15s linear infinite;
+.marquee {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  gap: 3rem;
 }
 
-@keyframes firstDiv {
+.content {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  gap: 3rem;
+  min-width: 100%;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.content svg {
+  width: 100%;
+  object-fit: contain;
+}
+
+.marqueeItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes marquee {
   0% {
-    left: 0px;
-  }
-  14% {
-    left: -275px;
-  }
-  50% {
-    left: -446px;
-  }
-  65.9% {
-    left: -699px;
-  }
-  66% {
-    left: 594px;
-  }
-  99.9% {
-    left: 0px;
+    transform: translateX(0);
   }
   100% {
-    left: 0px;
+    transform: translateX(calc(-100% - 3rem));
+    /* we need to do full full translate minus gap */
   }
+}
+
+.animation .content {
+  animation: marquee 15s linear infinite;
 }
