@@ -1,6 +1,6 @@
 import React from 'react';
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
-import HeroScreens from '@site/src/components/Hero/Screens';
+import HeroScreens from '@site/src/components/Hero/ScreensIcon';
 import styles from './styles.module.css';
 
 const LandingBackground = () => {

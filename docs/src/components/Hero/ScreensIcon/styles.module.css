@@ -1,29 +1,30 @@
 .screens {
   position: absolute;
-  top: 0;
+  top: 2rem;
   right: 0;
   overflow: hidden;
-  min-height: 70%;
+  min-height: 55%;
   display: flex;
   align-items: center;
 }
 
 @media (max-width: 2000px) {
   .screens {
-    top: 6rem;
+    top: 4rem;
+    min-height: 70%;
   }
 }
 
 @media (max-width: 1350px) {
   .screens {
-    top: 12rem;
+    top: 9rem;
     min-height: 60%;
   }
 }
 
 @media (max-width: 996px) {
   .screens {
-    top: 3rem;
+    top: 2rem;
   }
 }
 
