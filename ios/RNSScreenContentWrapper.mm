@@ -25,7 +25,7 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScreenContentWrapperComponentDescriptor>();
 }
 
-Class<RCTComponentViewProtocol> _RNSScreenContentWrapperCls(void)
+Class<RCTComponentViewProtocol> RNSScreenContentWrapperCls(void)
 {
   return RNSScreenContentWrapper.class;
 }

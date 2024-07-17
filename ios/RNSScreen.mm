@@ -505,7 +505,6 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 - (void)notifySheetDetentChanged:(NSInteger)newDetentIndex
 {
 #ifdef RCT_NEW_ARCH_ENABLED
-  // TODO: Implement this on Fabric
 #else
   if (self.onSheetDetentChanged) {
     self.onSheetDetentChanged(@{

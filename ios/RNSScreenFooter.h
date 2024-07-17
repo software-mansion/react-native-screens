@@ -2,6 +2,7 @@
 #import <UIKit/UIKit.h>
 
 #if RCT_NEW_ARCH_ENABLED
+#import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTViewComponentView.h>
 #else
 #import <React/RCTView.h>
