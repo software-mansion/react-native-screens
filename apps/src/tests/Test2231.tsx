@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useLayoutEffect, useState } from 'react';
 import { View } from 'react-native';
 
-import { SettingsSwitch, Square, ToastProvider } from '../shared';
+import { SettingsSwitch, Square } from '../shared';
 import { NavigationContainer } from '@react-navigation/native';
 
 const SettingsScreen = ({ navigation }: any) => {
