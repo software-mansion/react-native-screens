@@ -210,7 +210,6 @@ const RouteView = ({
     transitionDuration,
     freezeOnBlur,
     footerComponent,
-    onSheetDetentChanged = null,
   } = options;
 
   let {
@@ -413,9 +412,14 @@ const RouteView = ({
         });
       }}
       onSheetDetentChanged={e => {
-        if (onSheetDetentChanged) {
-          onSheetDetentChanged(e);
-        }
+        navigation.emit({
+          type: 'sheetDetentChange',
+          target: route.key,
+          data: {
+            index: e.nativeEvent.index,
+            isStable: e.nativeEvent.isStable,
+          },
+        });
       }}
       onGestureCancel={() => {
         navigation.emit({

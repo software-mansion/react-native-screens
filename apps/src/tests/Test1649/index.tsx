@@ -73,13 +73,6 @@ export default function App(): JSX.Element {
                 backgroundColor: 'firebrick',
               },
               // footerComponent: Footer(),
-              onSheetDetentChanged: (
-                e: NativeSyntheticEvent<{ index: number; isStable: boolean }>,
-              ) => {
-                console.log(
-                  `onSheetDetentChanged in App with index ${e.nativeEvent.index} isStable: ${e.nativeEvent.isStable}`,
-                );
-              },
               ...sheetOptions,
             }}
           />

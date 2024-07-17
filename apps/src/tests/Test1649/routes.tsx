@@ -49,13 +49,6 @@ const routes: Record<string, RouteDescriptor> = {
       screenStyle: {
         backgroundColor: 'firebrick',
       },
-      onSheetDetentChanged: (
-        e: NativeSyntheticEvent<{ index: number; isStable: boolean }>,
-      ) => {
-        console.log(
-          `onSheetDetentChanged in App with index ${e.nativeEvent.index} isStable: ${e.nativeEvent.isStable}`,
-        );
-      },
       ...sheetInitialOptions,
     },
   },
