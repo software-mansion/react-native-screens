@@ -36,7 +36,8 @@
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
 
-constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
+constexpr NSInteger SHEET_FIT_TO_CONTENTS = -1;
+constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
 @interface RNSScreenView ()
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -883,6 +884,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     if (_sheetAllowedDetents.count > 0) {
       if (@available(iOS 16.0, *)) {
         if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
+          // This is `fitToContents` case, where sheet should be just high to display its contents.
           // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
           // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
           // actual content. The update will be triggered once our child is mounted and laid out by React.
@@ -906,11 +908,11 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
                                      ]
                                 animate:YES];
       } else if (_sheetAllowedDetents.count >= 2) {
-        float first = _sheetAllowedDetents[0].floatValue;
-        float second = _sheetAllowedDetents[1].floatValue;
+        float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
+        float secondDetentFraction = _sheetAllowedDetents[1].floatValue;
         firstDimmedDetentIndex = 2;
 
-        if (first < second) {
+        if (firstDetentFraction < secondDetentFraction) {
           [self setAllowedDetentsForSheet:sheet
                                        to:@[
                                          UISheetPresentationControllerDetent.mediumDetent,
@@ -921,10 +923,10 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
           RCTLogError(@"The values in sheetAllowedDetents array must be sorted");
         }
       } else {
-        float first = _sheetAllowedDetents[0].floatValue;
-        if (first == SHEET_FIT_TO_CONTENTS) {
+        float firstDetentFraction = _sheetAllowedDetents[0].floatValue;
+        if (firstDetentFraction == SHEET_FIT_TO_CONTENTS) {
           RCTLogError(@"Unsupported on iOS versions below 16");
-        } else if (first < 1.0) {
+        } else if (firstDetentFraction < 1.0) {
           [self setAllowedDetentsForSheet:sheet to:@[ UISheetPresentationControllerDetent.mediumDetent ] animate:YES];
           [self setSelectedDetentForSheet:sheet to:UISheetPresentationControllerDetentIdentifierMedium animate:YES];
         } else {
@@ -938,13 +940,18 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     [self setGrabberVisibleForSheet:sheet to:_sheetGrabberVisible animate:YES];
     [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
 
-    int detentIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
-    detentIndex = detentIndex >= firstDimmedDetentIndex ? detentIndex - 1 : detentIndex;
-    if (detentIndex == -1) {
+    // lud - largest undimmed detent
+    // First we try to take value from the prop or default.
+    int ludIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
+    // Rationalize the value in case the user set something that did not make sense.
+    ludIndex = ludIndex >= firstDimmedDetentIndex ? firstDimmedDetentIndex - 1 : ludIndex;
+    if (ludIndex == SHEET_LARGEST_UNDIMMED_DETENT_NONE) {
       [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
-    } else if (detentIndex >= 0) {
+    } else if (ludIndex >= 0) {
       if (systemDetentsInUse) {
+        // We're on iOS 15 or do not have custom detents specified by the user.
         if (firstDimmedDetentIndex == 0 || (firstDimmedDetentIndex == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
+          // There are no detents specified or there is exactly one & it is less than 1.0 we default to medium.
           [self setLargestUndimmedDetentForSheet:sheet
                                               to:UISheetPresentationControllerDetentIdentifierMedium
                                          animate:YES];
@@ -954,7 +961,8 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
                                          animate:YES];
         }
       } else {
-        [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:detentIndex].stringValue animate:YES];
+        // We're on iOS 16+ & have custom detents.
+        [self setLargestUndimmedDetentForSheet:sheet to:[NSNumber numberWithInt:ludIndex].stringValue animate:YES];
       }
     } else {
       RCTLogError(@"[RNScreens] Value of sheetLargestUndimmedDetent prop must be >= -1");
