@@ -822,22 +822,19 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
   if (_sheetAllowedDetents.count > 0) {
-    // We should be running on custom detents in this case, thu identifier should be a stringified number.
+    // We should be running on custom detents in this case, thus identifier should be a stringified number.
     return identifier.integerValue;
   } else
 #endif // iOS 16 check
   {
-    if (_sheetAllowedDetents.count >= 2) {
+    // We're using system defined identifiers.
+    if (_sheetAllowedDetents.count >= 2 || _sheetAllowedDetents.count == 0) {
       if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
         return 0;
       } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
         return 1;
-      }
-    } else if (_sheetAllowedDetents.count == 0) {
-      if (identifier == UISheetPresentationControllerDetentIdentifierMedium) {
-        return 0;
-      } else if (identifier == UISheetPresentationControllerDetentIdentifierLarge) {
-        return 1;
+      } else {
+        RCTLogError(@"[RNScreens] Unexpected detent identifier %@", identifier);
       }
     } else {
       // There is only single option.
@@ -868,7 +865,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_15_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_15_0
-  int sheetLudLimitExclusive = _sheetAllowedDetents.count;
+  int firstDimmedDetentIndex = _sheetAllowedDetents.count;
 
   // Whether we use system (iOS 15) detents or custom (iOS 16+).
   // Custom detents are in use if we are on iOS 16+ and we have at least single detent
@@ -911,7 +908,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
       } else if (_sheetAllowedDetents.count >= 2) {
         float first = _sheetAllowedDetents[0].floatValue;
         float second = _sheetAllowedDetents[1].floatValue;
-        sheetLudLimitExclusive = 2;
+        firstDimmedDetentIndex = 2;
 
         if (first < second) {
           [self setAllowedDetentsForSheet:sheet
@@ -942,12 +939,12 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     [self setCornerRadiusForSheet:sheet to:_sheetCornerRadius animate:YES];
 
     int detentIndex = _sheetLargestUndimmedDetent != nil ? _sheetLargestUndimmedDetent.intValue : -1;
-    detentIndex = detentIndex >= sheetLudLimitExclusive ? detentIndex - 1 : detentIndex;
+    detentIndex = detentIndex >= firstDimmedDetentIndex ? detentIndex - 1 : detentIndex;
     if (detentIndex == -1) {
       [self setLargestUndimmedDetentForSheet:sheet to:nil animate:YES];
     } else if (detentIndex >= 0) {
       if (systemDetentsInUse) {
-        if (sheetLudLimitExclusive == 0 || (sheetLudLimitExclusive == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
+        if (firstDimmedDetentIndex == 0 || (firstDimmedDetentIndex == 1 && _sheetAllowedDetents[0].floatValue < 1.0)) {
           [self setLargestUndimmedDetentForSheet:sheet
                                               to:UISheetPresentationControllerDetentIdentifierMedium
                                          animate:YES];
