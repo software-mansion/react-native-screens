@@ -505,6 +505,11 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 - (void)notifySheetDetentChanged:(NSInteger)newDetentIndex
 {
 #ifdef RCT_NEW_ARCH_ENABLED
+  if (_eventEmitter != nullptr) {
+    int index = newDetentIndex;
+    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onSheetDetentChanged(facebook::react::RNSScreenEventEmitter::OnSheetDetentChanged{.index = index, .isStable = true});
+  }
 #else
   if (self.onSheetDetentChanged) {
     self.onSheetDetentChanged(@{
