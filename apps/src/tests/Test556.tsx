@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Text } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -11,8 +11,16 @@ export default function App() {
       <Stack.Navigator
         screenOptions={{
           animation: 'fade',
-          headerTitle: () => <Text>Simple Native Stack</Text>,
-          headerRight: () => <Text>Right</Text>,
+          headerTitle: () => (
+            <View style={styles.container}>
+              <Text>Simple Native Stack</Text>
+            </View>
+          ),
+          headerRight: () => (
+            <View style={styles.container}>
+              <Text>Right</Text>
+            </View>
+          ),
         }}>
         <Stack.Screen name="First" component={First} />
         <Stack.Screen name="Second" component={Second} />
@@ -38,3 +46,10 @@ function Second({ navigation }: any) {
     />
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 3,
+    backgroundColor: 'cyan',
+  },
+});
