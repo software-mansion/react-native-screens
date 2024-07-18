@@ -1,7 +1,5 @@
-#import <Foundation/NSValue.h>
 #import <UIKit/UIKit.h>
 
-#import "RCTScrollView.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
 #import "RNSScreenContentWrapper.h"
@@ -11,6 +9,7 @@
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
+#import <React/RCTScrollViewComponentView.h>
 #import <React/RCTSurfaceTouchHandler.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -19,13 +18,20 @@
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
+
+#define ReactScrollViewBase RCTScrollViewComponentView
+
 #else
+#import <React/RCTScrollView.h>
 #import <React/RCTTouchHandler.h>
+
+#define ReactScrollViewBase RCTScrollViewC
 #endif
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
+
 #import "RNSScreenFooter.h"
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
@@ -39,24 +45,21 @@ namespace react = facebook::react;
 constexpr NSInteger SHEET_FIT_TO_CONTENTS = -1;
 constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 
-@interface RNSScreenView ()
+@interface RNSScreenView () <
+    UIAdaptivePresentationControllerDelegate,
+    RNSScreenContentWrapperDelegate,
+    UISheetPresentationControllerDelegate,
 #ifdef RCT_NEW_ARCH_ENABLED
-    <RCTRNSScreenViewProtocol,
-     UIAdaptivePresentationControllerDelegate,
-     CAAnimationDelegate,
-     RNSScreenContentWrapperDelegate,
-     UISheetPresentationControllerDelegate>
+    RCTRNSScreenViewProtocol,
+    CAAnimationDelegate>
 #else
-    <UIAdaptivePresentationControllerDelegate,
-     RNSScreenContentWrapperDelegate,
-     RCTInvalidating,
-     UISheetPresentationControllerDelegate>
+    RCTInvalidating>
 #endif
 
 @end
 
 @implementation RNSScreenView {
-  __weak RCTScrollView *_sheetsScrollView;
+  __weak ReactScrollViewBase *_sheetsScrollView;
   BOOL _didSetSheetAllowedDetentsOnController;
 #ifdef RCT_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
@@ -143,6 +146,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   }
 #else
   [_bridge.uiManager setSize:self.bounds.size forView:self];
+#endif // RCT_NEW_ARCH_ENABLED
 
   if (_stackPresentation != RNSScreenStackPresentationFormSheet) {
     return;
@@ -162,7 +166,7 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   // TODO: Consider adding a prop to control whether we want to look for a scroll view here.
   // It might be necessary in case someone doesn't want its scroll view to span over whole
   // height of the sheet.
-  RCTScrollView *scrollView = [self findDirectLineDescendantRCTScrollView];
+  ReactScrollViewBase *scrollView = [self findDirectLineDescendantReactScrollView];
   if (_sheetsScrollView != scrollView) {
     [_sheetsScrollView removeObserver:self forKeyPath:@"bounds" context:nil];
     _sheetsScrollView = scrollView;
@@ -174,7 +178,6 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
   if (scrollView != nil) {
     [scrollView setFrame:self.frame];
   }
-#endif
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -697,13 +700,13 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 }
 
 /// Looks for RCTScrollView in direct line - goes through the subviews at index 0 down the view hierarchy.
-- (nullable RCTScrollView *)findDirectLineDescendantRCTScrollView
+- (nullable ReactScrollViewBase *)findDirectLineDescendantReactScrollView
 {
   UIView *firstSubview = self;
   while (firstSubview.subviews.count > 0) {
     firstSubview = firstSubview.subviews[0];
-    if ([firstSubview isKindOfClass:RCTScrollView.class]) {
-      return (RCTScrollView *)firstSubview;
+    if ([firstSubview isKindOfClass:ReactScrollViewBase.class]) {
+      return (ReactScrollViewBase *)firstSubview;
     }
   }
   return nil;
