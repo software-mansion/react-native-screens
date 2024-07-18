@@ -21,9 +21,9 @@ module.exports = {
       'react-native-screens/gesture-handler',
     ],
     'import/ignore': [
-      'node_modules/react-native/index\\.js$', 
+      'node_modules/react-native/index\\.js$',
       'react-native/Libraries/Utilities/codegenNativeComponent.*',
-      'react-native/Libraries/Types/CodegenTypes.*'
+      'react-native/Libraries/Types/CodegenTypes.*',
     ],
     'import/resolver': {
       node: {

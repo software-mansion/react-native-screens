@@ -47,18 +47,38 @@ export default function App(): JSX.Element {
 }
 
 const First = ({ navigation }: Props) => (
-  <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'seagreen' }}>
-    <View style={{ height: 100, width: 100, justifyContent: 'flex-start', backgroundColor: 'blue' }} />
+  <View
+    style={{
+      flex: 1,
+      justifyContent: 'space-between',
+      backgroundColor: 'seagreen',
+    }}>
+    <View
+      style={{
+        height: 100,
+        width: 100,
+        justifyContent: 'flex-start',
+        backgroundColor: 'blue',
+      }}
+    />
     <Button
       title="Tap me for second screen"
       onPress={() => navigation.navigate('Second')}
     />
-    <View style={{ height: 100, width: 100, justifyContent: 'flex-end', backgroundColor: 'red' }} />
+    <View
+      style={{
+        height: 100,
+        width: 100,
+        justifyContent: 'flex-end',
+        backgroundColor: 'red',
+      }}
+    />
   </View>
 );
 
 const Second = ({ navigation }: Props) => (
-  <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'steelblue' }}>
+  <View
+    style={{ flex: 1, justifyContent: 'center', backgroundColor: 'steelblue' }}>
     <Button
       title="Tap me for first screen"
       onPress={() => navigation.navigate('First')}
@@ -71,7 +91,8 @@ const Second = ({ navigation }: Props) => (
 );
 
 const Third = ({ navigation }: Props) => (
-  <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'salmon' }}>
+  <View
+    style={{ flex: 1, justifyContent: 'center', backgroundColor: 'salmon' }}>
     <Button
       title="Tap me for first screen"
       onPress={() => navigation.navigate('First')}

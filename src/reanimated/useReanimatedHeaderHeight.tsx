@@ -6,7 +6,7 @@ export default function useReanimatedHeaderHeight() {
 
   if (height === undefined) {
     throw new Error(
-      "Couldn't find the header height using Reanimated. Are you inside a screen in a navigator with a header and your NavigationContainer is wrapped in ReanimatedScreenProvider?"
+      "Couldn't find the header height using Reanimated. Are you inside a screen in a navigator with a header and your NavigationContainer is wrapped in ReanimatedScreenProvider?",
     );
   }
 

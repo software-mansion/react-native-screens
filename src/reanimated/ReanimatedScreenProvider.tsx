@@ -31,7 +31,7 @@ class ReanimatedScreenWrapper extends React.Component<ScreenProps> {
 }
 
 export default function ReanimatedScreenProvider(
-  props: PropsWithChildren<unknown>
+  props: PropsWithChildren<unknown>,
 ) {
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

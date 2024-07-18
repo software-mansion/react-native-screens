@@ -6,6 +6,9 @@ interface Props {
   size?: number;
 }
 
-export const Square = ({ size = 100, color = 'red' }: Props): React.JSX.Element => (
+export const Square = ({
+  size = 100,
+  color = 'red',
+}: Props): React.JSX.Element => (
   <View style={{ width: size, height: size, backgroundColor: color }} />
 );
