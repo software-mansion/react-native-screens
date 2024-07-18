@@ -137,7 +137,7 @@ function Home({
           setStatusBarColor(
             statusBarColor === 'mediumseagreen'
               ? 'rgba(255,128,128,0.5)'
-              : 'mediumseagreen'
+              : 'mediumseagreen',
           );
         }}
       />
@@ -148,7 +148,7 @@ function Home({
             statusBarColor,
           });
           setStatusBarColor(
-            statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen'
+            statusBarColor === 'mediumseagreen' ? 'orange' : 'mediumseagreen',
           );
         }}
       />
@@ -186,7 +186,7 @@ function Home({
             statusBarAnimation,
           });
           setStatusBarAnimation(
-            statusBarAnimation === 'none' ? 'slide' : 'none'
+            statusBarAnimation === 'none' ? 'slide' : 'none',
           );
         }}
       />
@@ -197,7 +197,7 @@ function Home({
             navigationBarColor,
           });
           setNavigationBarColor(
-            navigationBarColor === 'green' ? 'powderblue' : 'green'
+            navigationBarColor === 'green' ? 'powderblue' : 'green',
           );
         }}
       />

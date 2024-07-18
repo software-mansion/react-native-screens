@@ -143,9 +143,10 @@ Sets the current screen's available orientations and forces rotation if current 
 - `landscape_right`
 
 Defaults to `default` on iOS.
+
 ### `sheetAllowedDetents` (iOS only)
 
-Describes heights where a sheet can rest. 
+Describes heights where a sheet can rest.
 Works only when `stackPresentation` is set to `formSheet`.
 
 Available values:
@@ -180,16 +181,16 @@ Defaults to `false`.
 
 ### `sheetLargestUndimmedDetent` (iOS only)
 
- The largest sheet detent for which a view underneath won't be dimmed.
- Works only when `stackPresentation` is set to `formSheet`.
+The largest sheet detent for which a view underneath won't be dimmed.
+Works only when `stackPresentation` is set to `formSheet`.
 
- If this prop is set to:
+If this prop is set to:
 
- - `large` - the view underneath won't be dimmed at any detent level
- - `medium` - the view underneath will be dimmed only when detent level is `large`
- - `all` - the view underneath will be dimmed for any detent level
+- `large` - the view underneath won't be dimmed at any detent level
+- `medium` - the view underneath will be dimmed only when detent level is `large`
+- `all` - the view underneath will be dimmed for any detent level
 
- Defaults to `all`.
+Defaults to `all`.
 
 ### `stackAnimation`
 
@@ -342,7 +343,7 @@ function Home() {
     () =>
       (reaProgress.progress.value < 0.5
         ? reaProgress.progress.value * 50
-        : (1 - reaProgress.progress.value) * 50) + 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
   );
   const reaStyle = useAnimatedStyle(() => {
     return {
@@ -447,7 +448,8 @@ Boolean indicating whether to show the menu on longPress of iOS >= 14 back butto
 
 ### `backButtonDisplayMode` (iOS only)
 
-Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of:  `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+
 - `default` – show given back button previous controller title, system generic or just icon based on available space
 - `generic` – show given system generic or just icon based on available space
 - `minimal` – show just an icon

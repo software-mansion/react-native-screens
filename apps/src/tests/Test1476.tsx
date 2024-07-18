@@ -71,7 +71,7 @@ function ModalA(props: Props) {
 
 const StackBuilder = (
   configs: any,
-  groupOptions?: NativeStackNavigationOptions
+  groupOptions?: NativeStackNavigationOptions,
 ) => {
   return () => (
     <NativeStack.Group screenOptions={groupOptions}>
@@ -113,7 +113,7 @@ const ScreenGroup = StackBuilder(
     gestureEnabled: true,
     contentStyle: { backgroundColor: 'white' },
     fullScreenGestureEnabled: true,
-  }
+  },
 );
 
 const ModalGroup = StackBuilder(
@@ -130,7 +130,7 @@ const ModalGroup = StackBuilder(
     presentation: 'containedTransparentModal',
     fullScreenGestureEnabled: true,
     animationMatchesGesture: true,
-  }
+  },
 );
 
 export default function TestModalPresentation() {

@@ -6,7 +6,7 @@ export default function useReanimatedTransitionProgress() {
 
   if (progress === undefined) {
     throw new Error(
-      "Couldn't find values for reanimated transition progress. Are you inside a screen in Native Stack?"
+      "Couldn't find values for reanimated transition progress. Are you inside a screen in Native Stack?",
     );
   }
 

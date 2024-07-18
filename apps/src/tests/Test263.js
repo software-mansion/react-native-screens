@@ -34,7 +34,7 @@ class DraggableBox extends Component {
           },
         },
       ],
-      { useNativeDriver: true }
+      { useNativeDriver: true },
     );
   }
 

@@ -58,7 +58,7 @@ interface NativeCommands {
   clearText: (viewRef: React.ElementRef<ComponentType>) => void;
   toggleCancelButton: (
     viewRef: React.ElementRef<ComponentType>,
-    flag: boolean
+    flag: boolean,
   ) => void;
   setText: (viewRef: React.ElementRef<ComponentType>, text: string) => void;
   cancelSearch: (viewRef: React.ElementRef<ComponentType>) => void;

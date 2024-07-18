@@ -1,9 +1,9 @@
 name: Test consistency between Paper & Fabric
-on: 
+on:
   pull_request:
     branches:
       - main
-    paths: 
+    paths:
       - src/fabric/**
       - android/src/paper/java/com/facebook/react/viewmanagers/**
 jobs:

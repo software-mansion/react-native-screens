@@ -44,7 +44,7 @@ const RootNavigator = () => {
         <Text>Close</Text>
       </Pressable>
     ),
-    [navigation]
+    [navigation],
   );
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
