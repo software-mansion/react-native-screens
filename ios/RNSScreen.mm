@@ -62,6 +62,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
   NSMutableArray<UIView *> *_reactSubviews;
+  __weak RNSScreenContentWrapper *_contentWrapper;
 #else
   __weak RCTBridge *_bridge;
   RCTTouchHandler *_touchHandler;
@@ -76,6 +77,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     static const auto defaultProps = std::make_shared<const react::RNSScreenProps>();
     _props = defaultProps;
     _reactSubviews = [NSMutableArray new];
+    _contentWrapper = nil;
     [self initCommonProps];
   }
   return self;
@@ -884,9 +886,11 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     if (_sheetAllowedDetents.count > 0) {
       if (@available(iOS 16.0, *)) {
         if (_sheetAllowedDetents.count == 1 && [_sheetAllowedDetents[0] integerValue] == SHEET_FIT_TO_CONTENTS) {
-          // We do not set anything here, we will set once React computed layout of our React's children, namely
+          // Paper: we do not set anything here, we will set once React computed layout of our React's children, namely
           // RNSScreenContentWrapper, which in case of formSheet presentation style does have exactly the same frame as
-          // actual content.
+          // actual content. The update will be triggered once our child is mounted and laid out by React.
+          // Fabric: in this very moment our children are already mounted & laid out. In the very end of this method,
+          // after all other configuration is applied we trigger content wrapper to send us update on its frame.
         } else {
           [self setAllowedDetentsForSheet:sheet
                                        to:[self detentsFromMaxHeightFractions:_sheetAllowedDetents]
@@ -959,6 +963,12 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
       RCTLogError(@"[RNScreens] Value of sheetLargestUndimmedDetent prop must be >= -1");
     }
   }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+  // We trigger update from content wrapper, because on Fabric we update props after the children are mounted & laid
+  // out.
+  [self->_contentWrapper triggerDelegateUpdate];
+#endif // RCT_NEW_ARCH_ENABLED
 #endif // Check for iOS >= 15
 }
 
@@ -1036,6 +1046,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
   if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
     auto contentWrapper = (RNSScreenContentWrapper *)childComponentView;
     contentWrapper.delegate = self;
+    _contentWrapper = contentWrapper;
   }
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = (RNSScreenStackHeaderConfig *)childComponentView;
@@ -1049,6 +1060,10 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 {
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = nil;
+  }
+  if ([childComponentView isKindOfClass:[RNSScreenContentWrapper class]]) {
+    _contentWrapper.delegate = nil;
+    _contentWrapper = nil;
   }
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];

@@ -20,13 +20,12 @@ namespace react = facebook::react;
   }
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-
-//
-- (void)setDelegate:(id<RNSScreenContentWrapperDelegate>)delegate
+- (void)triggerDelegateUpdate
 {
-  _delegate = delegate;
+  [self.delegate reactDidSetFrame:self.frame forContentWrapper:self];
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
 
 - (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics

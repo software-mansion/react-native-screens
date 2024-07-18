@@ -28,6 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
     RCTView
 #endif
 
+/**
+ * Call this method to notify delegate with most recent frame set by React.
+ */
+- (void)triggerDelegateUpdate;
+
 @property (nonatomic, nullable, weak) id<RNSScreenContentWrapperDelegate> delegate;
 
 @end
