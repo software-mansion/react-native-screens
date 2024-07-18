@@ -372,7 +372,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     }
 
     if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == -1) {
-      auto detents = [self detensFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height] ]];
+      auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height] ]];
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
     }
   }
@@ -502,13 +502,14 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 #endif
 }
 
-- (void)notifySheetDetentChanged:(NSInteger)newDetentIndex
+- (void)notifySheetDetentChangeToIndex:(NSInteger)newDetentIndex isStable:(BOOL)isStable
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     int index = newDetentIndex;
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onSheetDetentChanged(facebook::react::RNSScreenEventEmitter::OnSheetDetentChanged{.index = index, .isStable = true});
+        ->onSheetDetentChanged(
+            facebook::react::RNSScreenEventEmitter::OnSheetDetentChanged{.index = index, .isStable = isStable});
   }
 #else
   if (self.onSheetDetentChanged) {
@@ -848,7 +849,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
     (UISheetPresentationController *)sheetPresentationController API_AVAILABLE(ios(15.0))
 {
   UISheetPresentationControllerDetentIdentifier ident = sheetPresentationController.selectedDetentIdentifier;
-  [self notifySheetDetentChanged:[self detentIndexFromDetentIdentifier:ident]];
+  [self notifySheetDetentChangeToIndex:[self detentIndexFromDetentIdentifier:ident] isStable:YES];
 }
 #endif // iOS 15 check
 
@@ -964,44 +965,48 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
 
-- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
+/**
+ * Creates array of detent objects based on provided `values` & `resolver`. Since we need to name the detents to be able
+ * to later refer to them, this method names the detents by stringifying their indices, e.g. detent on index 2 will be
+ * named "2".
+ */
+- (NSArray<UISheetPresentationControllerDetent *> *)
+    detentsFromValues:(NSArray<NSNumber *> *)values
+         withResolver:(CGFloat (^)(id<UISheetPresentationControllerDetentResolutionContext>, NSNumber *))resolver
     API_AVAILABLE(ios(16.0))
 {
   NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
-      [NSMutableArray arrayWithCapacity:fractions.count];
-  int detentIndex = 0;
-  for (NSNumber *frac in fractions) {
-    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithInt:detentIndex] stringValue];
-    [customDetents
-        addObject:[UISheetPresentationControllerDetent
-                      customDetentWithIdentifier:ident
-                                        resolver:^CGFloat(
-                                            id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                          return MIN(ctx.maximumDetentValue, ctx.maximumDetentValue * frac.floatValue);
-                                        }]];
-    ++detentIndex;
-  }
-  return customDetents;
-}
-
-- (NSArray<UISheetPresentationControllerDetent *> *)detensFromMaxHeights:(NSArray<NSNumber *> *)maxHeights
-    API_AVAILABLE(ios(16.0))
-{
-  NSMutableArray<UISheetPresentationControllerDetent *> *customDetents =
-      [NSMutableArray arrayWithCapacity:maxHeights.count];
-
-  int detentIndex = 0;
-  for (NSNumber *height in maxHeights) {
-    NSString *ident = [[NSNumber numberWithInt:detentIndex] stringValue];
+      [NSMutableArray arrayWithCapacity:values.count];
+  [values enumerateObjectsUsingBlock:^(NSNumber *value, NSUInteger index, BOOL *stop) {
+    UISheetPresentationControllerDetentIdentifier ident = [[NSNumber numberWithInt:index] stringValue];
     [customDetents addObject:[UISheetPresentationControllerDetent
                                  customDetentWithIdentifier:ident
                                                    resolver:^CGFloat(
                                                        id<UISheetPresentationControllerDetentResolutionContext> ctx) {
-                                                     return MIN(ctx.maximumDetentValue, height.floatValue);
+                                                     return resolver(ctx, value);
                                                    }]];
-    ++detentIndex;
-  }
+  }];
   return customDetents;
+}
+
+- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeightFractions:(NSArray<NSNumber *> *)fractions
+    API_AVAILABLE(ios(16.0))
+{
+  return [self
+      detentsFromValues:fractions
+           withResolver:^CGFloat(id<UISheetPresentationControllerDetentResolutionContext> ctx, NSNumber *fraction) {
+             return MIN(ctx.maximumDetentValue, ctx.maximumDetentValue * fraction.floatValue);
+           }];
+}
+
+- (NSArray<UISheetPresentationControllerDetent *> *)detentsFromMaxHeights:(NSArray<NSNumber *> *)maxHeights
+    API_AVAILABLE(ios(16.0))
+{
+  return
+      [self detentsFromValues:maxHeights
+                 withResolver:^CGFloat(id<UISheetPresentationControllerDetentResolutionContext> ctx, NSNumber *height) {
+                   return MIN(ctx.maximumDetentValue, height.floatValue);
+                 }];
 }
 
 #endif // Check for iOS >= 16
