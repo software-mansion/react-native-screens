@@ -96,22 +96,9 @@
   //  }
 }
 
-#ifndef RCT_NEW_ARCH_ENABLED
-
-#pragma Paper specific
-
-- (void)reactSetFrame:(CGRect)frame
-{
-  // ignore frame from react
-  // this view should be layouted by it's parent screen
-  //  [super reactSetFrame:frame];
-}
-
-#endif // !RCT_NEW_ARCH_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
 
 #pragma Fabric specific
-
-#ifdef RCT_NEW_ARCH_ENABLED
 
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
@@ -121,6 +108,17 @@
 Class<RCTComponentViewProtocol> RNSScreenFooterCls(void)
 {
   return RNSScreenFooter.class;
+}
+
+#else
+
+#pragma Paper specific
+
+- (void)reactSetFrame:(CGRect)frame
+{
+  // ignore frame from react
+  // this view should be layouted by it's parent screen
+  //  [super reactSetFrame:frame];
 }
 
 #endif // RCT_NEW_ARCH_ENABLED

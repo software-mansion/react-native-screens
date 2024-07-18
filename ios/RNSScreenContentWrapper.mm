@@ -1,6 +1,7 @@
 #import "RNSScreenContentWrapper.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
+#import <React/RCTConversions.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
@@ -20,6 +21,22 @@ namespace react = facebook::react;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
+
+//
+- (void)setDelegate:(id<RNSScreenContentWrapperDelegate>)delegate
+{
+  _delegate = delegate;
+}
+
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+  [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+  if (self.delegate != nil) {
+    [self.delegate reactDidSetFrame:RCTCGRectFromRect(layoutMetrics.frame) forContentWrapper:self];
+  }
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenContentWrapperComponentDescriptor>();

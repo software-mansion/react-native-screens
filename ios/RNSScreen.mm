@@ -364,14 +364,13 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_16_0) && \
     __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_16_0
   if (@available(iOS 16.0, *)) {
-    // Sheet controller should be already in place, TODO: explain why
     UISheetPresentationController *sheetController = _controller.sheetPresentationController;
     if (sheetController == nil) {
       RCTLogError(@"[RNScreens] sheetPresentationController is null when attempting to set allowed detents");
       return;
     }
 
-    if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == -1) {
+    if (_sheetAllowedDetents.count > 0 && _sheetAllowedDetents[0].intValue == SHEET_FIT_TO_CONTENTS) {
       auto detents = [self detentsFromMaxHeights:@[ [NSNumber numberWithFloat:reactFrame.size.height] ]];
       [self setAllowedDetentsForSheet:sheetController to:detents animate:YES];
     }
@@ -381,6 +380,7 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 
 - (void)addSubview:(UIView *)view
 {
+  /// This system method is called on Paper only. Fabric uses `-[insertSubview:atIndex:]`.
   if ([view isKindOfClass:RNSScreenContentWrapper.class] &&
       self.stackPresentation == RNSScreenStackPresentationFormSheet) {
     auto contentWrapper = (RNSScreenContentWrapper *)view;
@@ -1033,6 +1033,10 @@ constexpr const NSInteger SHEET_FIT_TO_CONTENTS = -1;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  if ([childComponentView isKindOfClass:RNSScreenContentWrapper.class]) {
+    auto contentWrapper = (RNSScreenContentWrapper *)childComponentView;
+    contentWrapper.delegate = self;
+  }
   if ([childComponentView isKindOfClass:[RNSScreenStackHeaderConfig class]]) {
     _config = (RNSScreenStackHeaderConfig *)childComponentView;
     _config.screenView = self;
