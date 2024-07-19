@@ -104,7 +104,7 @@ export default function HeaderConfig({
   warnOnce(
     isVisionOS &&
       (headerTitleStyle.color !== undefined || headerTintColor !== undefined),
-    'headerTitleStyle.color and headerTintColor are not supported on visionOS.'
+    'headerTitleStyle.color and headerTintColor are not supported on visionOS.',
   );
 
   return (

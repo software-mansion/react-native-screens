@@ -35,8 +35,8 @@ const config = {
     blockList: exclusionList(
       modules.map(
         m =>
-          new RegExp(`^${escape(path.join(rnsRoot, 'node_modules', m))}\\/.*$`)
-      )
+          new RegExp(`^${escape(path.join(rnsRoot, 'node_modules', m))}\\/.*$`),
+      ),
     ),
 
     extraNodeModules: modules.reduce((acc, name) => {
@@ -71,7 +71,7 @@ const config = {
             __dirname,
             'node_modules',
             moduleName,
-            `index${ext}`
+            `index${ext}`,
           );
 
           const possibleSrcPath = path.join(
@@ -79,7 +79,7 @@ const config = {
             'node_modules',
             moduleName,
             'src',
-            `index${ext}`
+            `index${ext}`,
           );
 
           if (fs.existsSync(possiblePath)) {

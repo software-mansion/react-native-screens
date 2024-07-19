@@ -19,14 +19,14 @@ const SupportedGestures = [
 
 export function getAnimationForTransition(
   goBackGesture: GoBackGesture | undefined,
-  customTransitionAnimation: AnimatedScreenTransition | undefined
+  customTransitionAnimation: AnimatedScreenTransition | undefined,
 ) {
   let transitionAnimation = ScreenTransition.SwipeRight;
   if (customTransitionAnimation) {
     transitionAnimation = customTransitionAnimation;
     if (!goBackGesture) {
       throw new Error(
-        '[RNScreens] You have to specify `goBackGesture` when using `transitionAnimation`.'
+        '[RNScreens] You have to specify `goBackGesture` when using `transitionAnimation`.',
       );
     }
   } else {
@@ -34,7 +34,7 @@ export function getAnimationForTransition(
       transitionAnimation = AnimationForGesture[goBackGesture];
     } else if (goBackGesture !== undefined) {
       throw new Error(
-        `[RNScreens] Unknown goBackGesture parameter has been specified: ${goBackGesture}.`
+        `[RNScreens] Unknown goBackGesture parameter has been specified: ${goBackGesture}.`,
       );
     }
   }
@@ -43,7 +43,7 @@ export function getAnimationForTransition(
 
 export function checkBoundaries(
   goBackGesture: string | undefined,
-  event: GestureUpdateEvent<PanGestureHandlerEventPayload>
+  event: GestureUpdateEvent<PanGestureHandlerEventPayload>,
 ) {
   'worklet';
   if (goBackGesture === 'swipeRight' && event.translationX < 0) {
@@ -62,7 +62,7 @@ export function checkIfTransitionCancelled(
   distanceX: number,
   requiredXDistance: number,
   distanceY: number,
-  requiredYDistance: number
+  requiredYDistance: number,
 ) {
   'worklet';
   let isTransitionCanceled = false;

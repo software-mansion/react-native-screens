@@ -35,7 +35,7 @@ export function useBackPressSubscription({
       subscription.current?.remove();
       subscription.current = BackHandler.addEventListener(
         'hardwareBackPress',
-        onBackPress
+        onBackPress,
       );
       setIsActive(true);
     }

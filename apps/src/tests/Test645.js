@@ -36,7 +36,10 @@ function DetailsScreen({ navigation }) {
 function SettingsScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button onPress={() => navigation.popTo('Main', {screen: 'Home'})} title="Go to Home" />
+      <Button
+        onPress={() => navigation.popTo('Main', { screen: 'Home' })}
+        title="Go to Home"
+      />
       <Text>Details</Text>
     </View>
   );
