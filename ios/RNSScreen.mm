@@ -18,15 +18,10 @@
 #import "RNSConvert.h"
 #import "RNSHeaderHeightChangeEvent.h"
 #import "RNSScreenViewEvent.h"
-
-#define ReactScrollViewBase RCTScrollViewComponentView
-
 #else
 #import <React/RCTScrollView.h>
 #import <React/RCTTouchHandler.h>
-
-#define ReactScrollViewBase RCTScrollViewC
-#endif
+#endif // RCT_NEW_ARCH_ENABLED
 
 #import <React/RCTShadowView.h>
 #import <React/RCTUIManager.h>
@@ -40,6 +35,9 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
+#define ReactScrollViewBase RCTScrollViewComponentView
+#else
+#define ReactScrollViewBase RCTScrollView
 #endif // RCT_NEW_ARCH_ENABLED
 
 constexpr NSInteger SHEET_FIT_TO_CONTENTS = -1;
@@ -513,9 +511,9 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     int index = newDetentIndex;
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onSheetDetentChanged(
-            facebook::react::RNSScreenEventEmitter::OnSheetDetentChanged{.index = index, .isStable = isStable});
+            react::RNSScreenEventEmitter::OnSheetDetentChanged{.index = index, .isStable = isStable});
   }
 #else
   if (self.onSheetDetentChanged) {
@@ -531,9 +529,8 @@ constexpr NSInteger SHEET_LARGEST_UNDIMMED_DETENT_NONE = -1;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
-    std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
-        ->onHeaderHeightChange(
-            facebook::react::RNSScreenEventEmitter::OnHeaderHeightChange{.headerHeight = headerHeight});
+    std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
+        ->onHeaderHeightChange(react::RNSScreenEventEmitter::OnHeaderHeightChange{.headerHeight = headerHeight});
   }
 
   RNSHeaderHeightChangeEvent *event =
@@ -1997,3 +1994,7 @@ RCT_ENUM_CONVERTER(
 #endif
 
 @end
+
+// So that the define-macro is not leaked out of this file.
+// This one is defined in very top of the file depending on RN architecture.
+#undef ReactScrollViewBase
