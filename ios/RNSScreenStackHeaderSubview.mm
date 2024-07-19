@@ -56,6 +56,18 @@ namespace react = facebook::react;
   return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderSubviewComponentDescriptor>();
 }
 
+- (void)setBounds:(CGRect)bounds
+{
+  NSLog(@"Setting bounds for subview %p of type %d: %@", self, self.type, NSStringFromCGRect(bounds));
+  [super setBounds:bounds];
+}
+
+- (void)setFrame:(CGRect)frame
+{
+  NSLog(@"Setting frame for subview %p of type %d: %@", self, self.type, NSStringFromCGRect(frame));
+  [super setFrame:frame];
+}
+
 - (void)updateLayoutMetrics:(const react::LayoutMetrics &)layoutMetrics
            oldLayoutMetrics:(const react::LayoutMetrics &)oldLayoutMetrics
 {
