@@ -10,13 +10,13 @@ import CommonSheetContent from '../components/CommonSheetContent';
 
 export default function SheetScreenWithScrollView() {
   const [additionalContentVisible, setAdditionalContentVisible] =
-    React.useState(false);
+    React.useState(true);
 
   const svRef = React.useRef<ScrollView | null>(null);
   const contentRef = React.useRef<View | null>(null);
 
   return (
-    <ScrollView ref={svRef} nestedScrollEnabled={true} scrollEnabled>
+    <ScrollView ref={svRef} nestedScrollEnabled={false} scrollEnabled>
       <View ref={contentRef}>
         <CommonSheetContent />
         <Button
@@ -24,7 +24,7 @@ export default function SheetScreenWithScrollView() {
           onPress={() => setAdditionalContentVisible(old => !old)}
         />
         {additionalContentVisible &&
-          [...Array(3).keys()].map(val => (
+          [...Array(10).keys()].map(val => (
             <Text key={`${val}`}>Some component {val}</Text>
           ))}
       </View>
