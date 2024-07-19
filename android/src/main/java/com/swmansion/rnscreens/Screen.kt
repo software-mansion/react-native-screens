@@ -38,7 +38,7 @@ class Screen(
     var screenOrientation: Int? = null
         private set
     var isStatusBarAnimated: Boolean? = null
-    private var isBeingRemoved = false
+    var isBeingRemoved = false
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
