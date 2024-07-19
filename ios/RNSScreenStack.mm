@@ -1179,16 +1179,15 @@ namespace react = facebook::react;
 {
   for (auto &mutation : transaction.getMutations()) {
     if (mutation.parentShadowView.componentName != nil &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-      if (mutation.type == react::ShadowViewMutation::Type::Update ||
-          mutation.type == react::ShadowViewMutation::Type::Remove) {
-        // we need to wait until children have their layout set. At this point they don't have the layout
-        // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
-        // ui queue will guarantee that the update will run after layout.
-        dispatch_async(dispatch_get_main_queue(), ^{
-          [self maybeAddToParentAndUpdateContainer];
-        });
-      }
+        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0 &&
+        (mutation.type == react::ShadowViewMutation::Type::Update ||
+         mutation.type == react::ShadowViewMutation::Type::Remove)) {
+      // we need to wait until children have their layout set. At this point they don't have the layout
+      // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
+      // ui queue will guarantee that the update will run after layout.
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [self maybeAddToParentAndUpdateContainer];
+      });
     }
   }
 }
