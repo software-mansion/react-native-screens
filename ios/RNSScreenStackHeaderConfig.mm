@@ -763,12 +763,22 @@ namespace react = facebook::react;
 - (void)setViewToSnapshot:(RNSScreenStackHeaderSubview *)childComponentView
 {
   UINavigationItem *navitem = _screenView.controller.navigationItem;
-  if (childComponentView.type == RNSScreenStackHeaderSubviewTypeLeft) {
-    navitem.leftBarButtonItem.customView = [navitem.leftBarButtonItem.customView snapshotViewAfterScreenUpdates:NO];
-  } else if (childComponentView.type == RNSScreenStackHeaderSubviewTypeCenter) {
-    navitem.titleView = [navitem.titleView snapshotViewAfterScreenUpdates:NO];
-  } else if (childComponentView.type == RNSScreenStackHeaderSubviewTypeRight) {
-    navitem.rightBarButtonItem.customView = [navitem.rightBarButtonItem.customView snapshotViewAfterScreenUpdates:NO];
+  UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
+
+  switch (childComponentView.type) {
+    case RNSScreenStackHeaderSubviewTypeLeft:
+      navitem.leftBarButtonItem.customView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeCenter:
+    case RNSScreenStackHeaderSubviewTypeTitle:
+      navitem.titleView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeRight:
+      navitem.rightBarButtonItem.customView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeSearchBar:
+    case RNSScreenStackHeaderSubviewTypeBackButton:
+      break;
   }
 }
 
