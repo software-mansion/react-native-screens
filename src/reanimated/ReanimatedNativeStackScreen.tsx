@@ -19,7 +19,7 @@ import getStatusBarHeight from '../native-stack/utils/getStatusBarHeight';
 import ReanimatedHeaderHeightContext from './ReanimatedHeaderHeightContext';
 
 const AnimatedScreen = Animated.createAnimatedComponent(
-  InnerScreen as unknown as React.ComponentClass
+  InnerScreen as unknown as React.ComponentClass,
 );
 
 // We use prop added to global by reanimated since it seems safer than the one from RN. See:
@@ -40,7 +40,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
   const statusBarHeight = getStatusBarHeight(
     topInset,
     dimensions,
-    isStatusBarTranslucent
+    isStatusBarTranslucent,
   );
 
   // Default header height, normally used in `useHeaderHeight` hook.
@@ -49,7 +49,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
     dimensions,
     statusBarHeight,
     stackPresentation,
-    hasLargeHeader
+    hasLargeHeader,
   );
 
   const cachedHeaderHeight = React.useRef(defaultHeaderHeight);
@@ -79,7 +79,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             ENABLE_FABRIC
             ? 'onTransitionProgress'
             : 'topTransitionProgress',
-        ]
+        ],
       )}
       onHeaderHeightChangeReanimated={useEvent(
         (event: HeaderHeightChangeEventType) => {
@@ -96,7 +96,7 @@ const ReanimatedNativeStackScreen = React.forwardRef<
             : ENABLE_FABRIC
             ? 'onHeaderHeightChange'
             : 'topHeaderHeightChange',
-        ]
+        ],
       )}
       {...rest}>
       <ReanimatedHeaderHeightContext.Provider value={headerHeight}>

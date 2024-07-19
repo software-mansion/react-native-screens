@@ -41,7 +41,7 @@ function NativeStackNavigator({
     // @ts-ignore navigation.dangerouslyGetParent was removed in v6
     if (navigation?.dangerouslyGetParent === undefined) {
       console.warn(
-        'Looks like you are importing `native-stack` from `react-native-screens/native-stack`. Since version 6 of `react-navigation`, it should be imported from `@react-navigation/native-stack`.'
+        'Looks like you are importing `native-stack` from `react-native-screens/native-stack`. Since version 6 of `react-navigation`, it should be imported from `@react-navigation/native-stack`.',
       );
     }
   }, [navigation]);
@@ -70,9 +70,9 @@ function NativeStackNavigator({
               });
             }
           });
-        }
+        },
       ),
-    [navigation, state.index, state.key]
+    [navigation, state.index, state.key],
   );
 
   return (
