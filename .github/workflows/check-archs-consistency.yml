@@ -6,6 +6,7 @@ on:
     paths:
       - src/fabric/**
       - android/src/paper/java/com/facebook/react/viewmanagers/**
+      - .github/workflows/check-archs-consistency.yml
 jobs:
   check:
     runs-on: ubuntu-latest
