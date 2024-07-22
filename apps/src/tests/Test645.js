@@ -1,85 +1,86 @@
-import React from 'react';
-import { Button, Text, View } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useState } from 'react';
+import { Alert, Button, Text, View, Switch } from 'react-native';
+import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-function HomeScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 30 }}>This is the home screen!</Text>
-      <Button
-        onPress={() => navigation.navigate('Details')}
-        title="Go to Details"
-      />
-      <Button
-        onPress={() => navigation.navigate('Second')}
-        title="Go to Second"
-      />
-    </View>
-  );
-}
+const RootStack = createNativeStackNavigator();
+const BottomTab = createBottomTabNavigator();
 
-function DetailsScreen({ navigation }) {
+function TabScreen() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Button
-        onPress={() => navigation.navigate('Settings')}
-        title="Go to Settings"
+        title="Test"
+        onPress={() => {
+          Alert.alert('Test');
+        }}
       />
-      <Text>Details</Text>
-    </View>
-  );
-}
-
-function SettingsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button
-        onPress={() => navigation.popTo('Main', { screen: 'Home' })}
-        title="Go to Home"
+      <Switch
+        trackColor={{ false: '#767577', true: '#81b0ff' }}
+        thumbColor={'#f5dd4b'}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={() => {
+          Alert.alert('Test');
+        }}
       />
-      <Text>Details</Text>
     </View>
-  );
-}
-
-function SecondScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 30 }}>This is a second screen!</Text>
-      <Button onPress={() => navigation.goBack()} title="go back" />
-    </View>
-  );
-}
-
-const MainStack = createNativeStackNavigator();
-const Tabs = createBottomTabNavigator();
-
-function MainStackScreen() {
-  return (
-    <MainStack.Navigator screenOptions={{ headerLargeTitle: true }}>
-      <MainStack.Screen name="Main" component={TabsScreen} />
-      <MainStack.Screen name="Details" component={DetailsScreen} />
-      <MainStack.Screen name="Settings" component={SettingsScreen} />
-    </MainStack.Navigator>
   );
 }
 
 function TabsScreen() {
   return (
-    <Tabs.Navigator detachInactiveScreens={true}>
-      <Tabs.Screen name="Home" component={HomeScreen} />
-      <Tabs.Screen name="Second" component={SecondScreen} />
-    </Tabs.Navigator>
+    <BottomTab.Navigator initialRouteName="tab">
+      <BottomTab.Screen name="tab" component={TabScreen} />
+    </BottomTab.Navigator>
+  );
+}
+
+export function RootStackNavigator() {
+  return (
+    <RootStack.Navigator
+      initialRouteName="tabNavigation"
+      screenOptions={{ headerShown: false }}>
+      <RootStack.Screen name="tabNavigation" component={TabsScreen} />
+    </RootStack.Navigator>
+  );
+}
+
+function LoginScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>No tabs</Text>
+    </View>
+  );
+}
+
+export function LoginStackNavigator() {
+  return (
+    <RootStack.Navigator
+      initialRouteName="login"
+      screenOptions={{ headerShown: false }}>
+      <RootStack.Screen name="login" component={LoginScreen} />
+    </RootStack.Navigator>
   );
 }
 
 export default function App() {
+  const [showTabs, setShowTabs] = useState(true);
   return (
-    <NavigationContainer>
-      <MainStackScreen />
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer key={showTabs ? 'a' : 'b'}>
+        {showTabs ? <RootStackNavigator /> : <LoginStackNavigator />}
+      </NavigationContainer>
+      <View style={{ marginBottom: 32 }}>
+        <Button
+          title="Toggle"
+          onPress={() => {
+            setShowTabs(!showTabs);
+          }}
+        />
+      </View>
+    </SafeAreaProvider>
   );
 }
