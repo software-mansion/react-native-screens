@@ -1129,9 +1129,11 @@ namespace react = facebook::react;
   // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
   // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
   // snapshot.
+
   if (screenChildComponent.window != nil &&
       ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
        screenChildComponent == [_presentedModals.lastObject view])) {
+    [self takeSnapshot];
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
   }
 
@@ -1169,13 +1171,14 @@ namespace react = facebook::react;
 - (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
                 withSurfaceTelemetry:(react::SurfaceTelemetry const &)surfaceTelemetry
 {
-  for (auto &mutation : transaction.getMutations()) {
-    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-      [self takeSnapshot];
-      return;
-    }
-  }
+  //  for (auto &mutation : transaction.getMutations()) {
+  //    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil
+  //    &&
+  //        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
+  //      [self takeSnapshot];
+  //      return;
+  //    }
+  //  }
 }
 
 - (void)prepareForRecycle
