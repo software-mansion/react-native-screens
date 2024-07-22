@@ -39,6 +39,11 @@ namespace react = facebook::react;
 
 #pragma mark-- Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
++ (BOOL)shouldBeRecycled
+{
+  return NO;
+}
+
 + (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenNavigationContainerComponentDescriptor>();

@@ -250,18 +250,6 @@ namespace react = facebook::react;
 
 #pragma mark-- Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
-
-// THIS FIXES THIS ISSUE TYMO DON'T **DON'T** REMOVE!!!!!
-//+ (BOOL)shouldBeRecycled
-//{
-//  return NO;
-//}
-
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSScreenContainerComponentDescriptor>();
-}
-
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if (![childComponentView isKindOfClass:[RNSScreenView class]]) {
@@ -310,6 +298,10 @@ namespace react = facebook::react;
   [self markChildUpdated];
 }
 
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return react::concreteComponentDescriptorProvider<react::RNSScreenContainerComponentDescriptor>();
+}
 #pragma mark-- Paper specific
 #else
 
