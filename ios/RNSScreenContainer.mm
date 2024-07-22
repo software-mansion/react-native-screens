@@ -302,6 +302,14 @@ namespace react = facebook::react;
 {
   return react::concreteComponentDescriptorProvider<react::RNSScreenContainerComponentDescriptor>();
 }
+
+- (void)prepareForRecycle
+{
+  [super prepareForRecycle];
+  [_controller willMoveToParentViewController:nil];
+  [_controller removeFromParentViewController];
+}
+
 #pragma mark-- Paper specific
 #else
 
