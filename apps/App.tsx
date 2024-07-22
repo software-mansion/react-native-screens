@@ -6,6 +6,6 @@ import * as Test from './src/tests';
 enableFreeze(true);
 
 export default function App() {
-  // return <Example />;
-  return <Test.Test645 />;
+  return <Example />;
+  // return <Test.Test42 />;
 }
