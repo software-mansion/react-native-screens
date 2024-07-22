@@ -345,7 +345,9 @@ class ScreenStack(
         super.drawChild(op.canvas!!, op.child, op.drawingTime)
     }
 
-    private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeLast()
+    // Can't use `drawingOpPool.removeLast` here due to issues with static name resolution in Android SDK 35+.
+    // See: https://developer.android.com/about/versions/15/behavior-changes-15?hl=en#openjdk-api-changes
+    private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
 
     private inner class DrawingOp {
         var canvas: Canvas? = null
