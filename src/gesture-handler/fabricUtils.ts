@@ -29,7 +29,7 @@ if (isFabric()) {
 }
 
 export function getShadowNodeWrapperAndTagFromRef(
-  ref: React.Ref<NativeStackNavigatorProps> | React.Component
+  ref: React.Ref<NativeStackNavigatorProps> | React.Component,
 ) {
   const hostInstance = findHostInstance(ref as React.Component);
   return {

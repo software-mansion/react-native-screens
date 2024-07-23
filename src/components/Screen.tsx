@@ -19,7 +19,7 @@ export const NativeScreen: React.ComponentType<ScreenProps> =
   ScreenNativeComponent as React.ComponentType<ScreenProps>;
 const AnimatedNativeScreen = Animated.createAnimatedComponent(NativeScreen);
 const AnimatedNativeModalScreen = Animated.createAnimatedComponent(
-  ModalScreenNativeComponent as React.ComponentType<ScreenProps>
+  ModalScreenNativeComponent as React.ComponentType<ScreenProps>,
 );
 
 // Incomplete type, all accessible properties available at:
@@ -98,7 +98,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
 
       if (active !== undefined && activityState === undefined) {
         console.warn(
-          'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens'
+          'It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens',
         );
         activityState = active !== 0 ? 2 : 0; // in the new version, we need one of the screens to have value of 2 after the transition
       }
@@ -151,7 +151,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
                         },
                       },
                     ],
-                    { useNativeDriver: true }
+                    { useNativeDriver: true },
                   )
             }
             onGestureCancel={
@@ -197,7 +197,7 @@ export const InnerScreen = React.forwardRef<View, ScreenProps>(
         />
       );
     }
-  }
+  },
 );
 
 // context to be used when the user wants to use enhanced implementation

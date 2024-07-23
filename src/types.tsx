@@ -211,7 +211,7 @@ export interface ScreenProps extends ViewProps {
    * A callback that gets called when the header height has changed.
    */
   onHeaderHeightChange?: (
-    e: NativeSyntheticEvent<HeaderHeightChangeEventType>
+    e: NativeSyntheticEvent<HeaderHeightChangeEventType>,
   ) => void;
   /**
    * A callback that gets called after swipe back is canceled.
@@ -229,13 +229,13 @@ export interface ScreenProps extends ViewProps {
    * @platform ios
    */
   onNativeDismissCancelled?: (
-    e: NativeSyntheticEvent<{ dismissCount: number }>
+    e: NativeSyntheticEvent<{ dismissCount: number }>,
   ) => void;
   /**
    * An internal callback called every frame during the transition of screens of `native-stack`, used to feed transition context.
    */
   onTransitionProgress?: (
-    e: NativeSyntheticEvent<TransitionProgressEventType>
+    e: NativeSyntheticEvent<TransitionProgressEventType>,
   ) => void;
   /**
    * A callback that gets called when the current screen will appear. This is called as soon as the transition begins.
@@ -413,7 +413,7 @@ export interface ScreenContainerProps extends ViewProps {
 
 export interface GestureDetectorBridge {
   stackUseEffectCallback: (
-    stackRef: React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>
+    stackRef: React.MutableRefObject<React.Ref<NativeStackNavigatorProps>>,
   ) => void;
 }
 
@@ -685,7 +685,7 @@ export interface SearchBarProps {
    * A callback that gets called when the search button is pressed. It receives the current text value of the search bar.
    */
   onSearchButtonPress?: (
-    e: NativeSyntheticEvent<TextInputFocusEventData>
+    e: NativeSyntheticEvent<TextInputFocusEventData>,
   ) => void;
   /**
    * Text displayed when search field is empty

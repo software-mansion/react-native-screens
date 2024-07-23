@@ -40,7 +40,7 @@ const ScreenGestureDetector = ({
   const canPerformUpdates = makeMutable(false);
   const transitionAnimation = getAnimationForTransition(
     goBackGesture,
-    customTransitionAnimation
+    customTransitionAnimation,
   );
   const screenTransitionConfig = makeMutable({
     stackTag: -1,
@@ -90,7 +90,7 @@ const ScreenGestureDetector = ({
   }, [currentRouteKey]);
 
   function computeProgress(
-    event: GestureUpdateEvent<PanGestureHandlerEventPayload>
+    event: GestureUpdateEvent<PanGestureHandlerEventPayload>,
   ) {
     'worklet';
     let progress = 0;
@@ -114,10 +114,10 @@ const ScreenGestureDetector = ({
       progress = Math.abs(event.translationY / screenDimensions.height / 2);
     } else if (goBackGesture === 'twoDimensionalSwipe') {
       const progressX = Math.abs(
-        event.translationX / screenDimensions.width / 2
+        event.translationX / screenDimensions.width / 2,
       );
       const progressY = Math.abs(
-        event.translationY / screenDimensions.height / 2
+        event.translationY / screenDimensions.height / 2,
       );
       progress = Math.max(progressX, progressY);
     }
@@ -194,7 +194,7 @@ const ScreenGestureDetector = ({
       distanceX,
       requiredXDistance,
       distanceY,
-      requiredYDistance
+      requiredYDistance,
     );
     const stackTag = screenTransitionConfig.value.stackTag;
     screenTransitionConfig.value.onFinishAnimation = () => {

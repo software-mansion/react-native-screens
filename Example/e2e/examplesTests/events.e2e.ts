@@ -13,33 +13,33 @@ const pressBack = async () => {
 const awaitClassicalEventBehavior = async () => {
   if (device.getPlatform() === 'ios') {
     await expect(
-      element(by.text('9. Chats | transitionStart | closing'))
+      element(by.text('9. Chats | transitionStart | closing')),
     ).toExist();
     await expect(
-      element(by.text('10. Privacy | transitionStart | closing'))
+      element(by.text('10. Privacy | transitionStart | closing')),
     ).toExist();
     await expect(
-      element(by.text('11. Main | transitionStart | opening'))
+      element(by.text('11. Main | transitionStart | opening')),
     ).toExist();
     await expect(
-      element(by.text('12. Chats | transitionEnd | closing'))
+      element(by.text('12. Chats | transitionEnd | closing')),
     ).toExist();
     await expect(
-      element(by.text('13. Privacy | transitionEnd | closing'))
+      element(by.text('13. Privacy | transitionEnd | closing')),
     ).toExist();
     await expect(element(by.text('14. Privacy | beforeRemove'))).toExist();
     await expect(element(by.text('15. Chats | beforeRemove'))).toExist();
     await expect(
-      element(by.text('16. Main | transitionEnd | opening'))
+      element(by.text('16. Main | transitionEnd | opening')),
     ).toExist();
   } else {
     await expect(element(by.text('9. Privacy | beforeRemove'))).toExist();
     await expect(element(by.text('10. Chats | beforeRemove'))).toExist();
     await expect(
-      element(by.text('11. Main | transitionStart | opening'))
+      element(by.text('11. Main | transitionStart | opening')),
     ).toExist();
     await expect(
-      element(by.text('12. Main | transitionEnd | opening'))
+      element(by.text('12. Main | transitionEnd | opening')),
     ).toExist();
   }
 };
@@ -64,10 +64,10 @@ describe('Events', () => {
     await element(by.id('root-screen-playground-Events')).tap();
 
     await expect(
-      element(by.text('1. Main | transitionStart | opening'))
+      element(by.text('1. Main | transitionStart | opening')),
     ).toExist();
     await expect(
-      element(by.text('2. Main | transitionEnd | opening'))
+      element(by.text('2. Main | transitionEnd | opening')),
     ).toExist();
   });
 
@@ -79,7 +79,7 @@ describe('Events', () => {
       await element(by.type('_UIButtonBarButton')).tap();
     } else {
       await element(
-        by.type('androidx.appcompat.widget.AppCompatImageButton')
+        by.type('androidx.appcompat.widget.AppCompatImageButton'),
       ).tap();
     }
 
@@ -98,7 +98,7 @@ describe('Events', () => {
       await element(by.type('_UIButtonBarButton')).tap();
     } else {
       await element(
-        by.type('androidx.appcompat.widget.AppCompatImageButton')
+        by.type('androidx.appcompat.widget.AppCompatImageButton'),
       ).tap();
     }
 
@@ -114,22 +114,22 @@ describe('Events', () => {
     await element(by.id('events-go-to-chats')).tap();
 
     await expect(
-      element(by.text('3. Main | transitionStart | closing'))
+      element(by.text('3. Main | transitionStart | closing')),
     ).toExist();
     await expect(
-      element(by.text('4. Chats | transitionStart | opening'))
+      element(by.text('4. Chats | transitionStart | opening')),
     ).toExist();
     await expect(
-      element(by.text('5. Privacy | transitionStart | opening'))
+      element(by.text('5. Privacy | transitionStart | opening')),
     ).toExist();
     await expect(
-      element(by.text('6. Main | transitionEnd | closing'))
+      element(by.text('6. Main | transitionEnd | closing')),
     ).toExist();
     await expect(
-      element(by.text('7. Chats | transitionEnd | opening'))
+      element(by.text('7. Chats | transitionEnd | opening')),
     ).toExist();
     await expect(
-      element(by.text('8. Privacy | transitionEnd | opening'))
+      element(by.text('8. Privacy | transitionEnd | opening')),
     ).toExist();
   });
 
@@ -145,7 +145,7 @@ describe('Events', () => {
       await element(by.type('_UIButtonBarButton')).tap();
     } else {
       await element(
-        by.type('androidx.appcompat.widget.AppCompatImageButton')
+        by.type('androidx.appcompat.widget.AppCompatImageButton'),
       ).tap();
     }
 

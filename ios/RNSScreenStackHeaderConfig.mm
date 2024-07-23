@@ -589,6 +589,12 @@ namespace react = facebook::react;
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
 
+// appearance does not apply to the tvOS so we need to use lagacy customization
+#if TARGET_OS_TV
+    navctr.navigationBar.titleTextAttributes = appearance.titleTextAttributes;
+    navctr.navigationBar.backgroundColor = appearance.backgroundColor;
+#endif
+
     UINavigationBarAppearance *scrollEdgeAppearance =
         [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     if (config.largeTitleBackgroundColor != nil) {

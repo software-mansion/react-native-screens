@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 export default function getStatusBarHeight(
   topInset: number,
   dimensions: Rect,
-  isStatusBarTranslucent: boolean
+  isStatusBarTranslucent: boolean,
 ) {
   if (Platform.OS === 'ios') {
     // It looks like some iOS devices don't have strictly set status bar height to 44.

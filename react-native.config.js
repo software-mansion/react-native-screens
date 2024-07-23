@@ -11,20 +11,22 @@ try {
 module.exports = {
   dependency: {
     platforms: {
-      android: supportsCodegenConfig ? {
-        componentDescriptors: [
-          "RNSFullWindowOverlayComponentDescriptor",
-          "RNSScreenContainerComponentDescriptor",
-          "RNSScreenNavigationContainerComponentDescriptor",
-          "RNSScreenStackHeaderConfigComponentDescriptor",
-          "RNSScreenStackHeaderSubviewComponentDescriptor",
-          "RNSScreenStackComponentDescriptor",
-          "RNSSearchBarComponentDescriptor",
-          'RNSScreenComponentDescriptor',
-          'RNSModalScreenComponentDescriptor'
-        ],
-        cmakeListsPath: "../android/src/main/jni/CMakeLists.txt"
-      } : {},
+      android: supportsCodegenConfig
+        ? {
+            componentDescriptors: [
+              'RNSFullWindowOverlayComponentDescriptor',
+              'RNSScreenContainerComponentDescriptor',
+              'RNSScreenNavigationContainerComponentDescriptor',
+              'RNSScreenStackHeaderConfigComponentDescriptor',
+              'RNSScreenStackHeaderSubviewComponentDescriptor',
+              'RNSScreenStackComponentDescriptor',
+              'RNSSearchBarComponentDescriptor',
+              'RNSScreenComponentDescriptor',
+              'RNSModalScreenComponentDescriptor',
+            ],
+            cmakeListsPath: '../android/src/main/jni/CMakeLists.txt',
+          }
+        : {},
     },
   },
-}
+};
