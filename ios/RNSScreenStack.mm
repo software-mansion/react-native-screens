@@ -36,12 +36,7 @@ namespace react = facebook::react;
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate
-#ifdef RCT_NEW_ARCH_ENABLED
-    ,
-    RCTMountingTransactionObserving
-#endif
-    >
+    UIViewControllerTransitioningDelegate>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -1166,19 +1161,6 @@ namespace react = facebook::react;
   } else {
     _snapshot = [[_presentedModals.lastObject view] snapshotViewAfterScreenUpdates:NO];
   }
-}
-
-- (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
-                withSurfaceTelemetry:(react::SurfaceTelemetry const &)surfaceTelemetry
-{
-  //  for (auto &mutation : transaction.getMutations()) {
-  //    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil
-  //    &&
-  //        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-  //      [self takeSnapshot];
-  //      return;
-  //    }
-  //  }
 }
 
 - (void)prepareForRecycle
