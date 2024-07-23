@@ -7,6 +7,11 @@ on:
       - src/fabric/**
       - android/src/paper/java/com/facebook/react/viewmanagers/**
       - .github/workflows/check-archs-consistency.yml
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -24,4 +29,4 @@ jobs:
       - name: Install node dependencies
         run: yarn
       - name: Check Android Paper & Fabric generated interfaces consistency
-        run: yarn check-archs-consistency
+        run: yarn architectures-consistency-check
