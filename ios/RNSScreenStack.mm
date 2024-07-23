@@ -36,12 +36,7 @@ namespace react = facebook::react;
     UINavigationControllerDelegate,
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
-    UIViewControllerTransitioningDelegate
-#ifdef RCT_NEW_ARCH_ENABLED
-    ,
-    RCTMountingTransactionObserving
-#endif
-    >
+    UIViewControllerTransitioningDelegate>
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;
 @property (nonatomic) BOOL updatingModals;
@@ -1125,6 +1120,7 @@ namespace react = facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
+
   // We should only do a snapshot of a screen that is on the top.
   // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
   // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
@@ -1132,6 +1128,7 @@ namespace react = facebook::react;
   if (screenChildComponent.window != nil &&
       ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
        screenChildComponent == [_presentedModals.lastObject view])) {
+    [self takeSnapshot];
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
   }
 
@@ -1163,18 +1160,6 @@ namespace react = facebook::react;
     _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
   } else {
     _snapshot = [[_presentedModals.lastObject view] snapshotViewAfterScreenUpdates:NO];
-  }
-}
-
-- (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
-                withSurfaceTelemetry:(react::SurfaceTelemetry const &)surfaceTelemetry
-{
-  for (auto &mutation : transaction.getMutations()) {
-    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-      [self takeSnapshot];
-      return;
-    }
   }
 }
 
