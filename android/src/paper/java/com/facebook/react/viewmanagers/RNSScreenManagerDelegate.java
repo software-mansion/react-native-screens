@@ -104,9 +104,6 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "navigationBarHidden":
         mViewManager.setNavigationBarHidden(view, value == null ? false : (boolean) value);
         break;
-      case "nativeBackButtonDismissalEnabled":
-        mViewManager.setNativeBackButtonDismissalEnabled(view, value == null ? false : (boolean) value);
-        break;
       default:
         super.setProperty(view, propName, value);
     }
