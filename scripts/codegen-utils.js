@@ -17,7 +17,7 @@ const RN_CODEGEN_DIR = path.resolve(
 );
 
 const SOURCE_FOLDER = 'java/com/facebook/react/viewmanagers';
-const SCREENS_SOURCE_FOLDER = 'java/com/swmansion/rnscreens/'
+const SCREENS_SOURCE_FOLDER = 'java/com/swmansion/rnscreens'
 
 const SOURCE_FOLDERS = [
   {codegenPath: `${GENERATED_DIR}/source/codegen/${SOURCE_FOLDER}`, oldArchPath: `${OLD_ARCH_DIR}/${SOURCE_FOLDER}`},
