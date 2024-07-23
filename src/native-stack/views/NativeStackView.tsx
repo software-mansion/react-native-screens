@@ -174,6 +174,7 @@ const RouteView = ({
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
+    fullScreenSwipeShadowEnabled = false,
     gestureEnabled,
     headerShown,
     hideKeyboardOnSwipe,
@@ -202,7 +203,6 @@ const RouteView = ({
   let {
     customAnimationOnSwipe,
     fullScreenSwipeEnabled,
-    fullScreenSwipeShadowEnabled,
     gestureResponseDistance,
     stackAnimation,
     stackPresentation = 'push',
@@ -223,10 +223,6 @@ const RouteView = ({
     if (stackAnimation === undefined) {
       stackAnimation = 'slide_from_bottom';
     }
-  }
-
-  if (fullScreenSwipeShadowEnabled === undefined) {
-    fullScreenSwipeShadowEnabled = false;
   }
 
   if (index === 0) {
