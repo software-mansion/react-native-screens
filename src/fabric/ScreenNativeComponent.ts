@@ -97,6 +97,7 @@ export interface NativeProps extends ViewProps {
   navigationBarColor?: ColorValue;
   navigationBarTranslucent?: boolean;
   navigationBarHidden?: boolean;
+  nativeBackButtonDismissalEnabled?: boolean;
 }
 
 export default codegenNativeComponent<NativeProps>('RNSScreen', {
