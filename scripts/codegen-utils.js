@@ -25,7 +25,7 @@ const SOURCE_FOLDERS = [
 ]
 
 const BLACKLISTED_FILES = new Set([
-  'ReactContextExtensions.kt',
+  'FabricEnabledViewGroup.kt',
 ]);
 
 
