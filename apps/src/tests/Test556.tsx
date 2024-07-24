@@ -11,19 +11,31 @@ export default function App() {
       <Stack.Navigator
         screenOptions={{
           animation: 'fade',
+        }}>
+        <Stack.Screen name="First" component={First} options={{
           headerTitle: () => (
-            <View style={styles.container}>
-              <Text>Simple Native Stack</Text>
+            <View style={[styles.container, { backgroundColor: 'goldenrod' }]}>
+              <Text>Hello there!</Text>
             </View>
           ),
           headerRight: () => (
-            <View style={styles.container}>
-              <Text>Right</Text>
+            <View style={[styles.container, { backgroundColor: 'lightblue' }]}>
+              <Text>Right-1</Text>
             </View>
           ),
-        }}>
-        <Stack.Screen name="First" component={First} />
-        <Stack.Screen name="Second" component={Second} />
+        }} />
+        <Stack.Screen name="Second" component={Second} options={{
+          headerTitle: () => (
+            <View style={[styles.container, { backgroundColor: 'mediumseagreen' }]}>
+              <Text>General Kenobi</Text>
+            </View>
+          ),
+          headerRight: () => (
+            <View style={[styles.container, { backgroundColor: 'mediumvioletred' }]}>
+              <Text>Right-2</Text>
+            </View>
+          ),
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -50,6 +62,5 @@ function Second({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     padding: 3,
-    backgroundColor: 'cyan',
   },
 });
