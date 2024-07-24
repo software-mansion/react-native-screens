@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationProp, createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
+
+type ScreenBaseProps = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+}
 
 export default function App() {
   return (
@@ -41,7 +45,7 @@ export default function App() {
   );
 }
 
-function First({ navigation }: any) {
+function First({ navigation }: ScreenBaseProps) {
   return (
     <Button
       title="Tap me for second screen"
@@ -50,7 +54,7 @@ function First({ navigation }: any) {
   );
 }
 
-function Second({ navigation }: any) {
+function Second({ navigation }: ScreenBaseProps) {
   return (
     <Button
       title="Tap me for first screen"
