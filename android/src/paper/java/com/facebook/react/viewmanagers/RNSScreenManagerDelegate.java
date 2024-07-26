@@ -44,6 +44,9 @@ public class RNSScreenManagerDelegate<T extends View, U extends BaseViewManagerI
       case "fullScreenSwipeEnabled":
         mViewManager.setFullScreenSwipeEnabled(view, value == null ? false : (boolean) value);
         break;
+      case "fullScreenSwipeShadowEnabled":
+        mViewManager.setFullScreenSwipeShadowEnabled(view, value == null ? false : (boolean) value);
+        break;
       case "homeIndicatorHidden":
         mViewManager.setHomeIndicatorHidden(view, value == null ? false : (boolean) value);
         break;
