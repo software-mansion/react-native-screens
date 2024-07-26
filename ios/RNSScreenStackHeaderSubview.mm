@@ -78,6 +78,11 @@ namespace react = facebook::react;
   }
 }
 
++ (BOOL)shouldBeRecycled
+{
+  return NO;
+}
+
 #else
 #pragma mark - Paper specific
 
