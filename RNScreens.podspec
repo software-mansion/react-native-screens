@@ -2,7 +2,7 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+new_arch_enabled = ENV["RCT_NEW_ARCH_ENABLED"] == "1" && ENV["USE_FRAMEWORKS"] != "dynamic"
 platform = new_arch_enabled ? "11.0" : "9.0"
 source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : ["ios/**/*.{h,m,mm}", "cpp/**/*.{cpp,h}"]
 
@@ -24,6 +24,7 @@ Pod::Spec.new do |s|
 
   install_modules_dependencies(s)
   if new_arch_enabled
+    s.compiler_flags  = "-DRNS_NEW_ARCH_ENABLED"
     s.subspec "common" do |ss|
       ss.source_files         = ["common/cpp/**/*.{cpp,h}", "cpp/**/*.{cpp,h}"]
       ss.header_dir           = "rnscreens"

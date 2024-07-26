@@ -1,18 +1,18 @@
 #import "RNSScreenStackHeaderSubview.h"
 #import "RNSConvert.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @interface RCTBridge (Private)
 + (RCTBridge *)currentBridge;
@@ -22,7 +22,7 @@ namespace react = facebook::react;
 
 #pragma mark - Common
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 
 #pragma mark - Fabric specific
 
@@ -96,15 +96,15 @@ namespace react = facebook::react;
   [super reactSetFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
 }
 
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 - (RCTBridge *)bridge
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   return [RCTBridge currentBridge];
 #else
   return _bridge;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 }
 
 @end
@@ -115,7 +115,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {
@@ -125,7 +125,7 @@ RCT_EXPORT_VIEW_PROPERTY(type, RNSScreenStackHeaderSubviewType)
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderSubviewCls(void)
 {
   return RNSScreenStackHeaderSubview.class;

@@ -1,4 +1,4 @@
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTImageComponentView.h>
@@ -25,17 +25,17 @@
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
-#ifndef RCT_NEW_ARCH_ENABLED
+#ifndef RNS_NEW_ARCH_ENABLED
 // Some RN private method hacking below. Couldn't figure out better way to access image data
 // of a given RCTImageView. See more comments in the code section processing SubviewTypeBackButton
 @interface RCTImageView (Private)
 - (UIImage *)image;
 @end
-#endif // !RCT_NEW_ARCH_ENABLED
+#endif // !RNS_NEW_ARCH_ENABLED
 
 @interface RCTImageLoader (Private)
 - (id<RCTImageCache>)imageCache;
@@ -55,13 +55,13 @@ namespace react = facebook::react;
 
 @implementation RNSScreenStackHeaderConfig {
   NSMutableArray<RNSScreenStackHeaderSubview *> *_reactSubviews;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   BOOL _initialPropsSet;
 #else
 #endif
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -274,11 +274,11 @@ namespace react = facebook::react;
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
     if (subview.type == RNSScreenStackHeaderSubviewTypeBackButton && subview.subviews.count > 0) {
       hasBackButtonImage = YES;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
       RCTImageComponentView *imageView = subview.subviews[0];
 #else
       RCTImageView *imageView = subview.subviews[0];
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
       if (imageView.image == nil) {
         // This is yet another workaround for loading custom back icon. It turns out that under
         // certain circumstances image attribute can be null despite the app running in production
@@ -317,12 +317,12 @@ namespace react = facebook::react;
             imageForUrl:imageSource.request.URL.absoluteString
                    size:imageSource.size
                   scale:imageSource.scale
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
              resizeMode:resizeModeFromCppEquiv(
                             std::static_pointer_cast<const react::ImageProps>(imageView.props)->resizeMode)];
 #else
              resizeMode:imageView.resizeMode];
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
       }
       if (image == nil) {
         // This will be triggered if the image is not in the cache yet. What we do is we wait until
@@ -384,7 +384,7 @@ namespace react = facebook::react;
   }
 
   // TODO: implement blurEffect on Fabric
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
@@ -473,7 +473,7 @@ namespace react = facebook::react;
       currentIndex > 0 ? [navctr.viewControllers objectAtIndex:currentIndex - 1].navigationItem : nil;
 
   BOOL wasHidden = navctr.navigationBarHidden;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   BOOL shouldHide = config == nil || !config.show;
 #else
   BOOL shouldHide = config == nil || config.hide;
@@ -732,7 +732,7 @@ namespace react = facebook::react;
   [self updateViewControllerIfNeeded];
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -942,7 +942,7 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
 #endif
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackHeaderConfigCls(void)
 {
   return RNSScreenStackHeaderConfig.class;

@@ -1,4 +1,4 @@
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #else
 #import <React/RCTViewManager.h>
@@ -16,7 +16,7 @@
 @end
 
 @interface RNSScreenStackHeaderConfig :
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     RCTViewComponentView
 #else
     UIView
@@ -24,7 +24,7 @@
 
 @property (nonatomic, weak) RNSScreenView *screenView;
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 @property (nonatomic) BOOL show;
 #else
 @property (nonatomic) UIBlurEffectStyle blurEffect;

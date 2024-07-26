@@ -4,7 +4,7 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreenWindowTraits.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTRootComponentView.h>
@@ -27,12 +27,12 @@
 
 #import "UIView+RNSUtility.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @interface RNSScreenView ()
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     <RCTRNSScreenViewProtocol, UIAdaptivePresentationControllerDelegate>
 #else
     <UIAdaptivePresentationControllerDelegate, RCTInvalidating>
@@ -40,7 +40,7 @@ namespace react = facebook::react;
 @end
 
 @implementation RNSScreenView {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   RCTSurfaceTouchHandler *_touchHandler;
   react::RNSScreenShadowNode::ConcreteState::Shared _state;
   // on fabric, they are not available by default so we need them exposed here too
@@ -52,7 +52,7 @@ namespace react = facebook::react;
 #endif
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -73,7 +73,7 @@ namespace react = facebook::react;
 
   return self;
 }
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 - (void)initCommonProps
 {
@@ -98,7 +98,7 @@ namespace react = facebook::react;
   return _controller;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (NSArray<UIView *> *)reactSubviews
 {
   return _reactSubviews;
@@ -107,7 +107,7 @@ namespace react = facebook::react;
 
 - (void)updateBounds
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_state != nullptr) {
     RNSScreenStackHeaderConfig *config = [self findHeaderConfig];
     // in large title, ScrollView handles the offset of content so we cannot set it here also.
@@ -172,11 +172,11 @@ namespace react = facebook::react;
     // https://developer.apple.com/documentation/uikit/uiviewcontroller/1621426-presentationcontroller?language=objc
     _controller.presentationController.delegate = self;
   } else if (_stackPresentation != RNSScreenStackPresentationPush) {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
     RCTLogError(
         @"Screen presentation updated from modal to push, this may likely result in a screen object leakage. If you need to change presentation style create a new screen object instead");
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
   }
   _stackPresentation = stackPresentation;
 }
@@ -297,7 +297,7 @@ namespace react = facebook::react;
 
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
@@ -318,7 +318,7 @@ namespace react = facebook::react;
 
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
@@ -334,7 +334,7 @@ namespace react = facebook::react;
 
 - (void)notifyWillAppear
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
@@ -356,7 +356,7 @@ namespace react = facebook::react;
   if (_hideKeyboardOnSwipe) {
     [self endEditing:YES];
   }
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
@@ -371,7 +371,7 @@ namespace react = facebook::react;
 
 - (void)notifyAppear
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
@@ -390,7 +390,7 @@ namespace react = facebook::react;
 
 - (void)notifyDisappear
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   // If screen is already unmounted then there will be no event emitter
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
@@ -405,7 +405,7 @@ namespace react = facebook::react;
 
 - (void)notifyHeaderHeightChange:(double)headerHeight
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const facebook::react::RNSScreenEventEmitter>(_eventEmitter)
         ->onHeaderHeightChange(
@@ -428,7 +428,7 @@ namespace react = facebook::react;
 
 - (void)notifyGestureCancel
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onGestureCancel(react::RNSScreenEventEmitter::OnGestureCancel{});
@@ -442,7 +442,7 @@ namespace react = facebook::react;
 
 - (BOOL)isMountedUnderScreenOrReactRoot
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #define RNS_EXPECTED_VIEW RCTRootComponentView
 #else
 #define RNS_EXPECTED_VIEW RCTRootView
@@ -463,7 +463,7 @@ namespace react = facebook::react;
   // root application window.
   if (self.window != nil && ![self isMountedUnderScreenOrReactRoot]) {
     if (_touchHandler == nil) {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
       _touchHandler = [RCTSurfaceTouchHandler new];
 #else
       _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
@@ -491,7 +491,7 @@ namespace react = facebook::react;
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenEventEmitter>(_eventEmitter)
         ->onTransitionProgress(react::RNSScreenEventEmitter::OnTransitionProgress{
@@ -534,7 +534,7 @@ namespace react = facebook::react;
   // pulling down starting at some touchable item. Without "reset" the touchable
   // will never go back from highlighted state even when the modal start sliding
   // down.
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   [_touchHandler setEnabled:NO];
   [_touchHandler setEnabled:YES];
 #else
@@ -658,7 +658,7 @@ namespace react = facebook::react;
 #endif // !TARGET_OS_TV
 
 #pragma mark - Fabric specific
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 
 - (BOOL)hasHeaderConfig
 {
@@ -848,7 +848,7 @@ namespace react = facebook::react;
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return RNSScreenView.class;
@@ -879,7 +879,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
     self.view = view;
     _fakeView = [UIView new];
     _shouldNotify = YES;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     _initialView = (RNSScreenView *)view;
 #endif
   }
@@ -989,7 +989,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 
   _isSwiping = NO;
   _shouldNotify = YES;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
   [self traverseForScrollView:self.screenView];
 #endif
@@ -1012,7 +1012,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
   }
 
   if (isDisplayedWithinUINavController || self.screenView.isPresentedAsNativeModal) {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     [self.screenView updateBounds];
 #else
     if (!CGRectEqualToRect(_lastViewFrame, self.screenView.frame)) {
@@ -1338,7 +1338,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 // when we want to check props of ScreenView, we need to get them from _initialView
 - (RNSScreenView *)screenView
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   return _initialView;
 #else
   return (RNSScreenView *)self.view;
@@ -1363,7 +1363,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
           [self.navigationController.viewControllers objectAtIndex:currentIndex - 1].navigationItem;
       BOOL wasSearchBarActive = prevNavigationItem.searchController.active;
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
       BOOL shouldHideHeader = !config.show;
 #else
       BOOL shouldHideHeader = config.hide;
@@ -1380,7 +1380,7 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #endif
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)setViewToSnapshot:(UIView *)snapshot
@@ -1487,7 +1487,7 @@ RCT_EXPORT_VIEW_PROPERTY(sheetExpandsWhenScrolledToEdge, BOOL);
 }
 #endif // !TARGET_OS_TV
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {

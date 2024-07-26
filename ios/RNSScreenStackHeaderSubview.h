@@ -1,5 +1,5 @@
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #endif
 
@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RNSScreenStackHeaderSubview :
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     RCTViewComponentView
 #else
     UIView
@@ -22,10 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) RCTBridge *bridge;
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @end
 

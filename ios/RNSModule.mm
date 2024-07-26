@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 RCT_EXPORT_MODULE()
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 @synthesize viewRegistry_DEPRECATED = _viewRegistry_DEPRECATED;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 @synthesize bridge = _bridge;
 
 - (dispatch_queue_t)methodQueue
@@ -43,11 +43,11 @@ RCT_EXPORT_MODULE()
 {
   RCTAssertMainQueue();
   RNSScreenStackView *view;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   view = (RNSScreenStackView *)[self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
 #else
   view = (RNSScreenStackView *)[self.bridge.uiManager viewForReactTag:reactTag];
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
   return view;
 }
 
@@ -66,11 +66,11 @@ RCT_EXPORT_MODULE()
     UIView *belowTopScreen = screens[screenCount - 2].view;
     belowTopScreen.transform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
     isActiveTransition = true;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     screenTags = @[ @(topScreen.tag), @(belowTopScreen.tag) ];
 #else
     screenTags = @[ topScreen.reactTag, belowTopScreen.reactTag ];
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
     [stackView startScreenTransition];
   }
   return screenTags;
@@ -122,7 +122,7 @@ RCT_EXPORT_MODULE()
   return view;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {

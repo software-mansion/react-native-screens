@@ -1,4 +1,4 @@
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <UIKit/UIKit.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSEnums.h"
@@ -42,4 +42,4 @@ namespace react = facebook::react;
 
 @end
 
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED

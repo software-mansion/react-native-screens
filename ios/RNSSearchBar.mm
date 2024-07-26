@@ -6,18 +6,18 @@
 #import <React/RCTComponent.h>
 #import <React/RCTUIManager.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
 #import <react/renderer/components/rnscreens/EventEmitters.h>
 #import <react/renderer/components/rnscreens/Props.h>
 #import "RNSConvert.h"
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @implementation RNSSearchBar {
   __weak RCTBridge *_bridge;
@@ -36,7 +36,7 @@ namespace react = facebook::react;
   return self;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (instancetype)init
 {
   if (self = [super init]) {
@@ -64,7 +64,7 @@ namespace react = facebook::react;
 
 - (void)emitOnFocusEvent
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchFocus(react::RNSSearchBarEventEmitter::OnSearchFocus{});
@@ -78,7 +78,7 @@ namespace react = facebook::react;
 
 - (void)emitOnBlurEvent
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchBlur(react::RNSSearchBarEventEmitter::OnSearchBlur{});
@@ -92,7 +92,7 @@ namespace react = facebook::react;
 
 - (void)emitOnSearchButtonPressEventWithText:(NSString *)text
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onSearchButtonPress(
@@ -109,7 +109,7 @@ namespace react = facebook::react;
 
 - (void)emitOnCancelButtonPressEvent
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onCancelButtonPress(react::RNSSearchBarEventEmitter::OnCancelButtonPress{});
@@ -123,7 +123,7 @@ namespace react = facebook::react;
 
 - (void)emitOnChangeTextEventWithText:(NSString *)text
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSSearchBarEventEmitter>(_eventEmitter)
         ->onChangeText(react::RNSSearchBarEventEmitter::OnChangeText{.text = RCTStringFromNSString(text)});
@@ -320,7 +320,7 @@ namespace react = facebook::react;
 
 #pragma mark-- Fabric specific
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
 {
   const auto &oldScreenProps = *std::static_pointer_cast<const react::RNSSearchBarProps>(_props);
@@ -380,11 +380,11 @@ namespace react = facebook::react;
 }
 
 #else
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
 {
   return RNSSearchBar.class;
@@ -395,7 +395,7 @@ Class<RCTComponentViewProtocol> RNSSearchBarCls(void)
 
 RCT_EXPORT_MODULE()
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {
@@ -420,7 +420,7 @@ RCT_EXPORT_VIEW_PROPERTY(onSearchButtonPress, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSearchFocus, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSearchBlur, RCTDirectEventBlock)
 
-#ifndef RCT_NEW_ARCH_ENABLED
+#ifndef RNS_NEW_ARCH_ENABLED
 
 RCT_EXPORT_METHOD(focus : (NSNumber *_Nonnull)reactTag)
 {
@@ -470,7 +470,7 @@ RCT_EXPORT_METHOD(cancelSearch : (NSNumber *_Nonnull)reactTag)
   }];
 }
 
-#endif /* !RCT_NEW_ARCH_ENABLED */
+#endif /* !RNS_NEW_ARCH_ENABLED */
 
 @end
 

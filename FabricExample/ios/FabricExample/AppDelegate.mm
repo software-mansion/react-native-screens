@@ -19,6 +19,15 @@
   return [self bundleURL];
 }
 
+- (BOOL)bridgelessEnabled
+{
+#ifdef RNS_NEW_ARCH_ENABLED
+  return YES;
+#else
+  return NO;
+#endif
+}
+
 - (NSURL *)bundleURL
 {
 #if DEBUG

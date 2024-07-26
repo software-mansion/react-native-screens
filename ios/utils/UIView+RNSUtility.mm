@@ -1,7 +1,7 @@
 
 #import "UIView+RNSUtility.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTSurfaceView.h>
 #endif
 
@@ -11,7 +11,7 @@
 {
   UIView *parent = self.superview;
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   // On Fabric there is no view that exposes touchHandler above us in the view hierarchy, however it is still
   // utilised. `RCTSurfaceView` should be present above us, which hosts `RCTFabricSurface` instance, which in turn
   // hosts `RCTSurfaceTouchHandler` as a private field. When initialised, `RCTSurfaceTouchHandler` is attached to the
@@ -47,7 +47,7 @@
     return static_cast<RNS_TOUCH_HANDLER_ARCH_TYPE *>(touchHandler);
   }
 
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
   return nil;
 }

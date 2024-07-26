@@ -4,17 +4,17 @@
 #import "RNSEnums.h"
 #import "RNSScreenContainer.h"
 
-#if RCT_NEW_ARCH_ENABLED
+#if RNS_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #else
 #import <React/RCTView.h>
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 NS_ASSUME_NONNULL_BEGIN
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @interface RCTConvert (RNSScreen)
 
@@ -39,7 +39,7 @@ namespace react = facebook::react;
 - (void)calculateAndNotifyHeaderHeightChangeIsModal:(BOOL)isModal;
 - (void)notifyFinishTransitioning;
 - (RNSScreenView *)screenView;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (void)setViewToSnapshot:(UIView *)snapshot;
 - (CGFloat)calculateHeaderHeightIsModal:(BOOL)isModal;
 #endif
@@ -49,7 +49,7 @@ namespace react = facebook::react;
 @class RNSScreenStackHeaderConfig;
 
 @interface RNSScreenView :
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     RCTViewComponentView
 #else
     RCTView
@@ -93,7 +93,7 @@ namespace react = facebook::react;
 @property (nonatomic) BOOL sheetExpandsWhenScrolledToEdge;
 #endif // !TARGET_OS_TV
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 // we recreate the behavior of `reactSetFrame` on new architecture
 @property (nonatomic) react::LayoutMetrics oldLayoutMetrics;
 @property (nonatomic) react::LayoutMetrics newLayoutMetrics;
@@ -109,12 +109,12 @@ namespace react = facebook::react;
 @property (nonatomic, copy) RCTDirectEventBlock onNativeDismissCancelled;
 @property (nonatomic, copy) RCTDirectEventBlock onTransitionProgress;
 @property (nonatomic, copy) RCTDirectEventBlock onGestureCancel;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 - (void)notifyFinishTransitioning;
 - (void)notifyHeaderHeightChange:(double)height;
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (void)notifyWillAppear;
 - (void)notifyWillDisappear;
 - (void)notifyAppear;
@@ -124,7 +124,7 @@ namespace react = facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame;
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 - (void)notifyTransitionProgress:(double)progress closing:(BOOL)closing goingForward:(BOOL)goingForward;
 - (void)notifyDismissCancelledWithDismissCount:(int)dismissCount;

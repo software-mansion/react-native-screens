@@ -1,4 +1,4 @@
-#ifndef RCT_NEW_ARCH_ENABLED
+#ifndef RNS_NEW_ARCH_ENABLED
 #import "RCTTouchHandler+RNSUtility.h"
 
 @implementation RCTTouchHandler (RNSUtility)
@@ -12,4 +12,4 @@
 
 @end
 
-#endif // !RCT_NEW_ARCH_ENABLED
+#endif // !RNS_NEW_ARCH_ENABLED

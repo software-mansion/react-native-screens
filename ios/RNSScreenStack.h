@@ -1,4 +1,4 @@
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #else
 #import <React/RCTUIManagerObserverCoordinator.h>
@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface RNSScreenStackView :
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     RCTViewComponentView <RNSScreenContainerDelegate>
 #else
     UIView <RNSScreenContainerDelegate, RCTInvalidating>
@@ -29,10 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL customAnimation;
 @property (nonatomic) BOOL disableSwipeBack;
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onFinishTransitioning;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @end
 

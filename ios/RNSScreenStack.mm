@@ -1,4 +1,4 @@
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/RCTFabricSurface.h>
 #import <React/RCTMountingTransactionObserving.h>
@@ -18,7 +18,7 @@
 #import <React/RCTUIManager.h>
 #import <React/RCTUIManagerUtils.h>
 #import "RCTTouchHandler+RNSUtility.h"
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 #import "RNSScreen.h"
 #import "RNSScreenStack.h"
@@ -28,9 +28,9 @@
 
 #import "UIView+RNSUtility.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @interface RNSScreenStackView () <
     UINavigationControllerDelegate,
@@ -115,12 +115,12 @@ namespace react = facebook::react;
   UIPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   UIView *_snapshot;
 #endif
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -131,7 +131,7 @@ namespace react = facebook::react;
 
   return self;
 }
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 - (instancetype)initWithManager:(RNSScreenStackManager *)manager
 {
@@ -178,7 +178,7 @@ namespace react = facebook::react;
 
 - (void)emitOnFinishTransitioningEvent
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (_eventEmitter != nullptr) {
     std::dynamic_pointer_cast<const react::RNSScreenStackEventEmitter>(_eventEmitter)
         ->onFinishTransitioning(react::RNSScreenStackEventEmitter::OnFinishTransitioning{});
@@ -195,7 +195,7 @@ namespace react = facebook::react;
                     animated:(BOOL)animated
 {
   UIView *view = viewController.view;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   if (![view isKindOfClass:[RNSScreenView class]]) {
     // if the current view is a snapshot, config was already removed so we don't trigger the method
     return;
@@ -222,7 +222,7 @@ namespace react = facebook::react;
     [_presentedModals removeObject:presentationController.presentedViewController];
 
     _updatingModals = NO;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     [self emitOnFinishTransitioningEvent];
 #else
     // we double check if there are no new controllers pending to be presented since someone could
@@ -249,7 +249,7 @@ namespace react = facebook::react;
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   // for handling nested stacks
   [self maybeAddToParentAndUpdateContainer];
 #else
@@ -572,7 +572,7 @@ namespace react = facebook::react;
   }
 
   UIViewController *top = controllers.lastObject;
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
   UIViewController *previousTop = _controller.topViewController;
 #else
   UIViewController *previousTop = _controller.viewControllers.lastObject;
@@ -594,7 +594,7 @@ namespace react = facebook::react;
       if (![_controller.viewControllers containsObject:top] &&
           ((RNSScreenView *)top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
         // setting new controllers with animation does `push` animation by default
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
         // This is a workaround for the case, when in the app we're trying to do `replace` action on screens, when
         // there's already ongoing transition to some screen. In such case, we're making the snapshot, but we're trying
         // to add it to the wrong superview (where it should be UIViewControllerWrapperView, but it's
@@ -604,7 +604,7 @@ namespace react = facebook::react;
         [_controller setViewControllers:controllers animated:previousTop.view.window != nil];
 #else
         [_controller setViewControllers:controllers animated:YES];
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
       } else {
         // last top controller is no longer on stack
         // in this case we set the controllers stack to the new list with
@@ -681,12 +681,12 @@ namespace react = facebook::react;
 
 - (void)dismissOnReload
 {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
   dispatch_async(dispatch_get_main_queue(), ^{
     [self invalidate];
   });
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 }
 
 #pragma mark methods connected to transitioning
@@ -1092,7 +1092,7 @@ namespace react = facebook::react;
   _interactionController = nil;
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -1196,11 +1196,11 @@ namespace react = facebook::react;
   [_controller removeFromParentViewController];
 }
 
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenStackCls(void)
 {
   return RNSScreenStackView.class;
@@ -1215,7 +1215,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
 - (UIView *)view
 {
@@ -1226,7 +1226,7 @@ RCT_EXPORT_VIEW_PROPERTY(onFinishTransitioning, RCTDirectEventBlock);
   [_stacks addPointer:(__bridge void *)view];
   return view;
 }
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 - (void)invalidate
 {

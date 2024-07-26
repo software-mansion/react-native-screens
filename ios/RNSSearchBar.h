@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTViewComponentView.h>
 #import <react/renderer/components/rnscreens/RCTComponentViewHelpers.h>
 #endif
@@ -11,7 +11,7 @@
 #import "RNSEnums.h"
 
 @interface RNSSearchBar :
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     RCTViewComponentView <UISearchBarDelegate, RCTRNSSearchBarViewProtocol>
 #else
     UIView <UISearchBarDelegate>
@@ -27,7 +27,7 @@
     API_UNAVAILABLE(tvos, watchos);
 #endif // Check for iOS >= 16 && !TARGET_OS_TV
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #else
 @property (nonatomic, copy) RCTDirectEventBlock onChangeText;
 @property (nonatomic, copy) RCTDirectEventBlock onCancelButtonPress;

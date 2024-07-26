@@ -1,7 +1,7 @@
 #import "RNSScreenContainer.h"
 #import "RNSScreen.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 #import <React/RCTConversions.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnscreens/ComponentDescriptors.h>
@@ -9,7 +9,7 @@
 
 namespace react = facebook::react;
 
-#endif // RCT_NEW_ARCH_ENABLED
+#endif // RNS_NEW_ARCH_ENABLED
 
 @implementation RNSViewController
 
@@ -61,7 +61,7 @@ namespace react = facebook::react;
 - (instancetype)init
 {
   if (self = [super initWithFrame:CGRectZero]) {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     static const auto defaultProps = std::make_shared<const react::RNSScreenContainerProps>();
     _props = defaultProps;
 #endif
@@ -237,7 +237,7 @@ namespace react = facebook::react;
   [super layoutSubviews];
   _controller.view.frame = self.bounds;
   for (RNSScreenView *subview in _reactSubviews) {
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
     react::LayoutMetrics screenLayoutMetrics = subview.newLayoutMetrics;
     screenLayoutMetrics.frame = RCTRectFromCGRect(CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height));
     [subview updateLayoutMetrics:screenLayoutMetrics oldLayoutMetrics:subview.oldLayoutMetrics];
@@ -249,7 +249,7 @@ namespace react = facebook::react;
 }
 
 #pragma mark-- Fabric specific
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
@@ -324,7 +324,7 @@ namespace react = facebook::react;
 
 @end
 
-#ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RNS_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenContainerCls(void)
 {
   return RNSScreenContainerView.class;
