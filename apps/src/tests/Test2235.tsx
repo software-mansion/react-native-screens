@@ -5,7 +5,7 @@ import {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { Button } from '../shared';
-import { NavigationContainer, ParamListBase, RouteProp } from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 
 interface RouteProps {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -38,6 +38,12 @@ const NestedMainScreen = ({ navigation }: RouteProps): React.JSX.Element => (
         navigation.navigate('Detail2');
       }}
     />
+    <Button
+      title="Pop stack"
+      onPress={() => {
+        navigation.goBack();
+      }}
+    />
   </View>
 );
 
@@ -62,14 +68,13 @@ const DetailScreen2 = ({
   </View>
 );
 
-const NestedStackScreen = ({ navigation }: RouteProps): React.JSX.Element => (
+const NestedStackScreen = (): React.JSX.Element => (
   <NestedStack.Navigator screenOptions={{ headerBackVisible: false }}>
     <NestedStack.Screen name="NestedDetail" component={NestedMainScreen} />
     <Stack.Screen name="Detail" component={DetailScreen} />
     <Stack.Screen name="Detail2" component={DetailScreen2} />
   </NestedStack.Navigator>
 )
-
 
 const Stack = createNativeStackNavigator<ParamListBase>();
 const NestedStack = createNativeStackNavigator<ParamListBase>();
