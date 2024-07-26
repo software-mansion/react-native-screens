@@ -1168,8 +1168,7 @@ namespace react = facebook::react;
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
   for (const auto &mutation : transaction.getMutations()) {
-    if (mutation.parentShadowView.componentName != nil &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0 &&
+    if (mutation.parentShadowView.tag == self.tag &&
         (mutation.type == react::ShadowViewMutation::Type::Insert ||
          mutation.type == react::ShadowViewMutation::Type::Remove)) {
       // we need to wait until children have their layout set. At this point they don't have the layout

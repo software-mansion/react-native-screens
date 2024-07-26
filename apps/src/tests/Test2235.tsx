@@ -5,22 +5,33 @@ import {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 import { Button } from '../shared';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, ParamListBase, RouteProp } from '@react-navigation/native';
 
-type StackParamList = {
-  Main: undefined;
-  Detail: undefined;
-  Detail2: undefined;
-};
-
-interface MainScreenProps {
-  navigation: NativeStackNavigationProp<StackParamList, 'Main'>;
+interface RouteProps {
+  navigation: NativeStackNavigationProp<ParamListBase>;
 }
 
-const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
+const MainScreen = ({ navigation }: RouteProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
     <Button
-      testID="simple-native-stack-go-to-detail"
+      title="Push 2 screens at once"
+      onPress={() => {
+        navigation.navigate('Detail');
+        navigation.navigate('Detail2');
+      }}
+    />
+    <Button
+      title="Open nested stack"
+      onPress={() => {
+        navigation.navigate('NestedStack');
+      }}
+    />
+  </View>
+);
+
+const NestedMainScreen = ({ navigation }: RouteProps): React.JSX.Element => (
+  <View style={{ ...styles.container, backgroundColor: 'moccasin' }}>
+    <Button
       title="Go to detail"
       onPress={() => {
         navigation.navigate('Detail');
@@ -30,33 +41,38 @@ const MainScreen = ({ navigation }: MainScreenProps): React.JSX.Element => (
   </View>
 );
 
-interface DetailScreenProps {
-  navigation: NativeStackNavigationProp<StackParamList, 'Detail'>;
-}
 
-const DetailScreen = ({ navigation }: DetailScreenProps): React.JSX.Element => (
+const DetailScreen = ({ navigation }: RouteProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'thistle' }}>
     <Button
       title="Go back"
       onPress={() => navigation.goBack()}
-      testID="simple-native-stack-detail-go-back"
     />
   </View>
 );
 
 const DetailScreen2 = ({
   navigation,
-}: DetailScreenProps): React.JSX.Element => (
+}: RouteProps): React.JSX.Element => (
   <View style={{ ...styles.container, backgroundColor: 'yellow' }}>
     <Button
       title="Go back"
       onPress={() => navigation.goBack()}
-      testID="simple-native-stack-detail-go-back"
     />
   </View>
 );
 
-const Stack = createNativeStackNavigator<StackParamList>();
+const NestedStackScreen = ({ navigation }: RouteProps): React.JSX.Element => (
+  <NestedStack.Navigator screenOptions={{ headerBackVisible: false }}>
+    <NestedStack.Screen name="NestedDetail" component={NestedMainScreen} />
+    <Stack.Screen name="Detail" component={DetailScreen} />
+    <Stack.Screen name="Detail2" component={DetailScreen2} />
+  </NestedStack.Navigator>
+)
+
+
+const Stack = createNativeStackNavigator<ParamListBase>();
+const NestedStack = createNativeStackNavigator<ParamListBase>();
 
 const App = (): React.JSX.Element => (
   <NavigationContainer>
@@ -71,6 +87,7 @@ const App = (): React.JSX.Element => (
       />
       <Stack.Screen name="Detail" component={DetailScreen} />
       <Stack.Screen name="Detail2" component={DetailScreen2} />
+      <Stack.Screen name="NestedStack" component={NestedStackScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );
