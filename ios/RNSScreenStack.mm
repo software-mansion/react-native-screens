@@ -1117,8 +1117,8 @@ namespace react = facebook::react;
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
-  // Child update operation is performed in the mountingTransactionDidMount method to prevent error, while
-  // navigating to `n` different screens at the same time.
+  // Container update is done after all mount operations are executed in
+  // `- [RNSScreenStackView mountingTransactionDidMount: withSurfaceTelemetry:]`
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -1177,10 +1177,10 @@ namespace react = facebook::react;
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
                withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  for (auto &mutation : transaction.getMutations()) {
+  for (const auto &mutation : transaction.getMutations()) {
     if (mutation.parentShadowView.componentName != nil &&
         strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0 &&
-        (mutation.type == react::ShadowViewMutation::Type::Update ||
+        (mutation.type == react::ShadowViewMutation::Type::Insert ||
          mutation.type == react::ShadowViewMutation::Type::Remove)) {
       // we need to wait until children have their layout set. At this point they don't have the layout
       // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
@@ -1188,6 +1188,7 @@ namespace react = facebook::react;
       dispatch_async(dispatch_get_main_queue(), ^{
         [self maybeAddToParentAndUpdateContainer];
       });
+      break;
     }
   }
 }
