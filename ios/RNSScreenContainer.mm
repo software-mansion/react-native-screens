@@ -250,6 +250,7 @@ namespace react = facebook::react;
 
 #pragma mark-- Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
+
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if (![childComponentView isKindOfClass:[RNSScreenView class]]) {
