@@ -26,6 +26,10 @@
 #import "UIView+RNSUtility.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
+namespace react = facebook::react;
+#endif // RCT_NEW_ARCH_ENABLED
+
+#ifdef RCT_NEW_ARCH_ENABLED
 Class<RCTComponentViewProtocol> RNSScreenCls(void)
 {
   return RNSScreenView.class;

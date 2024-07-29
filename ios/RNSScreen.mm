@@ -2,20 +2,15 @@
 
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
-#import <React/RCTTouchHandler.h>
-#endif
-
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSScreenView.h"
 #import "RNSScreenWindowTraits.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
-namespace react = facebook::react;
-#endif // RCT_NEW_ARCH_ENABLED
+#else
+#import <React/RCTTouchHandler.h>
+#endif
 
 #pragma mark - RNSScreen
 
