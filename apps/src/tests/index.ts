@@ -109,3 +109,5 @@ export { default as Test2232 } from './Test2232';
 export { default as Test2235 } from './Test2235';
 export { default as TestScreenAnimation } from './TestScreenAnimation';
 export { default as TestHeader } from './TestHeader';
+export { default as TestDismiss } from './TestDismiss';
+
