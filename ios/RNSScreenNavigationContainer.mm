@@ -1,6 +1,7 @@
 #import "RNSScreenNavigationContainer.h"
 #import "RNSScreen.h"
 #import "RNSScreenContainer.h"
+#import "RNSScreenView.h"
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import <React/RCTFabricComponentsPlugins.h>

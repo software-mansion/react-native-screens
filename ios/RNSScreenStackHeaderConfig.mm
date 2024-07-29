@@ -22,6 +22,7 @@
 #import "RNSConvert.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenView.h"
 #import "RNSSearchBar.h"
 #import "RNSUIBarButtonItem.h"
 

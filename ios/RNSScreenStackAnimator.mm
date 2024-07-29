@@ -2,6 +2,7 @@
 #import "RNSScreenStack.h"
 
 #import "RNSScreen.h"
+#import "RNSScreenView.h"
 
 // proportions to default transition duration
 static const float RNSSlideOpenTransitionDurationProportion = 1;

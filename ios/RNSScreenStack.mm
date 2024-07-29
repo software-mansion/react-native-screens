@@ -24,6 +24,7 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackAnimator.h"
 #import "RNSScreenStackHeaderConfig.h"
+#import "RNSScreenView.h"
 #import "RNSScreenWindowTraits.h"
 
 #import "UIView+RNSUtility.h"
