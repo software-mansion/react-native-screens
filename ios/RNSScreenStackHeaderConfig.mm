@@ -762,6 +762,7 @@ namespace react = facebook::react;
   [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+  [self updateViewControllerIfNeeded];
 }
 
 - (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
