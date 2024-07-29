@@ -78,6 +78,8 @@
 #endif // RCT_NEW_ARCH_ENABLED
 }
 
+#pragma mark Initializers
+
 #ifdef RCT_NEW_ARCH_ENABLED
 - (instancetype)init
 {
@@ -162,20 +164,7 @@
   }
 }
 
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSFullWindowOverlayComponentDescriptor>();
-}
-
-- (void)prepareForRecycle
-{
-  [_container removeFromSuperview];
-  // Due to view recycling we don't really want to set _container = nil
-  // as it won't be instantiated when the component appears for the second time.
-  // We could consider nulling in here & using container (lazy getter) everywhere else.
-  // _container = nil;
-  [super prepareForRecycle];
-}
+#pragma mark Mounting operations
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
@@ -191,6 +180,27 @@
 {
   [childComponentView removeFromSuperview];
 }
+
+#pragma mark View recycling
+
+- (void)prepareForRecycle
+{
+  [_container removeFromSuperview];
+  // Due to view recycling we don't really want to set _container = nil
+  // as it won't be instantiated when the component appears for the second time.
+  // We could consider nulling in here & using container (lazy getter) everywhere else.
+  // _container = nil;
+  [super prepareForRecycle];
+}
+
+#pragma mark Descriptor
+
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return react::concreteComponentDescriptorProvider<react::RNSFullWindowOverlayComponentDescriptor>();
+}
+
+#pragma mark - RCTComponentViewProtocol
 
 - (void)updateLayoutMetrics:(react::LayoutMetrics const &)layoutMetrics
            oldLayoutMetrics:(react::LayoutMetrics const &)oldLayoutMetrics

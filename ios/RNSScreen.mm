@@ -665,15 +665,7 @@ namespace react = facebook::react;
   return _config != nil;
 }
 
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
-}
-
-+ (BOOL)shouldBeRecycled
-{
-  return NO;
-}
+#pragma mark Mounting operations
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
@@ -692,6 +684,20 @@ namespace react = facebook::react;
   }
   [_reactSubviews removeObject:childComponentView];
   [super unmountChildComponentView:childComponentView index:index];
+}
+
+#pragma mark Descriptor
+
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return react::concreteComponentDescriptorProvider<react::RNSScreenComponentDescriptor>();
+}
+
+#pragma mark View Recycling
+
++ (BOOL)shouldBeRecycled
+{
+  return NO;
 }
 
 #pragma mark - RCTComponentViewProtocol
