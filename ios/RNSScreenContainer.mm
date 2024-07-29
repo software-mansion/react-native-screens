@@ -269,11 +269,10 @@ namespace react = facebook::react;
 
   [_reactSubviews insertObject:screenView atIndex:index];
   screenView.reactSuperview = self;
-  [self markChildUpdated];
-
   react::LayoutMetrics screenLayoutMetrics = screenView.newLayoutMetrics;
   screenLayoutMetrics.frame = RCTRectFromCGRect(CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height));
   [screenView updateLayoutMetrics:screenLayoutMetrics oldLayoutMetrics:screenView.oldLayoutMetrics];
+  [self markChildUpdated];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index

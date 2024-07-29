@@ -788,7 +788,7 @@ namespace react = facebook::react;
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
+  if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
   // when screen is mounted under RNSNavigationController it's size is controller
