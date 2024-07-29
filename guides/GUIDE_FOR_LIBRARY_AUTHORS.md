@@ -50,6 +50,12 @@ Defaults to `false`. When `enableFreeze()` is run at the top of the application 
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
 
+### `fullScreenSwipeShadowEnabled` (iOS only)
+
+Boolean indicating whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
+doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
+default iOS shadow. Defaults to `false`.
+
 ### `gestureEnabled` (iOS only)
 
 When set to `false` the back swipe gesture will be disabled. The default value is `true`.

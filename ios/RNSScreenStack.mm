@@ -1117,14 +1117,14 @@ namespace react = facebook::react;
 
   [_reactSubviews insertObject:(RNSScreenView *)childComponentView atIndex:index];
   ((RNSScreenView *)childComponentView).reactSuperview = self;
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self maybeAddToParentAndUpdateContainer];
-  });
+  // Container update is done after all mount operations are executed in
+  // `- [RNSScreenStackView mountingTransactionDidMount: withSurfaceTelemetry:]`
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RNSScreenView *screenChildComponent = (RNSScreenView *)childComponentView;
+
   // We should only do a snapshot of a screen that is on the top.
   // We also check `_presentedModals` since if you push 2 modals, second one is not a "child" of _controller.
   // Also, when dissmised with a gesture, the screen already is not under the window, so we don't need to apply
@@ -1132,6 +1132,7 @@ namespace react = facebook::react;
   if (screenChildComponent.window != nil &&
       ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
        screenChildComponent == [_presentedModals.lastObject view])) {
+    [self takeSnapshot];
     [screenChildComponent.controller setViewToSnapshot:_snapshot];
   }
 
@@ -1152,9 +1153,6 @@ namespace react = facebook::react;
   screenChildComponent.reactSuperview = nil;
   [_reactSubviews removeObject:screenChildComponent];
   [screenChildComponent removeFromSuperview];
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [self maybeAddToParentAndUpdateContainer];
-  });
 }
 
 - (void)takeSnapshot
@@ -1166,14 +1164,20 @@ namespace react = facebook::react;
   }
 }
 
-- (void)mountingTransactionWillMount:(react::MountingTransaction const &)transaction
-                withSurfaceTelemetry:(react::SurfaceTelemetry const &)surfaceTelemetry
+- (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction
+               withSurfaceTelemetry:(const facebook::react::SurfaceTelemetry &)surfaceTelemetry
 {
-  for (auto &mutation : transaction.getMutations()) {
-    if (mutation.type == react::ShadowViewMutation::Type::Remove && mutation.parentShadowView.componentName != nil &&
-        strcmp(mutation.parentShadowView.componentName, "RNSScreenStack") == 0) {
-      [self takeSnapshot];
-      return;
+  for (const auto &mutation : transaction.getMutations()) {
+    if (mutation.parentShadowView.tag == self.tag &&
+        (mutation.type == react::ShadowViewMutation::Type::Insert ||
+         mutation.type == react::ShadowViewMutation::Type::Remove)) {
+      // we need to wait until children have their layout set. At this point they don't have the layout
+      // set yet, however the layout call is already enqueued on ui thread. Enqueuing update call on the
+      // ui queue will guarantee that the update will run after layout.
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [self maybeAddToParentAndUpdateContainer];
+      });
+      break;
     }
   }
 }

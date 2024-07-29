@@ -174,6 +174,7 @@ const RouteView = ({
 }) => {
   const { options, render: renderScene } = descriptors[route.key];
   const {
+    fullScreenSwipeShadowEnabled = false,
     gestureEnabled,
     headerShown,
     hideKeyboardOnSwipe,
@@ -294,6 +295,7 @@ const RouteView = ({
       customAnimationOnSwipe={customAnimationOnSwipe}
       freezeOnBlur={freezeOnBlur}
       fullScreenSwipeEnabled={fullScreenSwipeEnabled}
+      fullScreenSwipeShadowEnabled={fullScreenSwipeShadowEnabled}
       hideKeyboardOnSwipe={hideKeyboardOnSwipe}
       homeIndicatorHidden={homeIndicatorHidden}
       gestureEnabled={isAndroid ? false : gestureEnabled}

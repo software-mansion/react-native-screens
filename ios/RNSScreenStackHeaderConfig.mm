@@ -628,6 +628,8 @@ namespace react = facebook::react;
   navitem.titleView = nil;
 
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
+    // This code should be kept in sync on Fabric with analogous switch statement in
+    // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
 #if !TARGET_OS_TV
@@ -755,8 +757,37 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  // For explanation of why we can make a snapshot here despite the fact that our children are already
+  // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
+  [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+}
+
+- (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
+{
+  UINavigationItem *navitem = _screenView.controller.navigationItem;
+  UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
+
+  // This code should be kept in sync with analogous switch statement in
+  // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
+  switch (childComponentView.type) {
+    case RNSScreenStackHeaderSubviewTypeLeft:
+      navitem.leftBarButtonItem.customView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeCenter:
+    case RNSScreenStackHeaderSubviewTypeTitle:
+      navitem.titleView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeRight:
+      navitem.rightBarButtonItem.customView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeSearchBar:
+    case RNSScreenStackHeaderSubviewTypeBackButton:
+      break;
+    default:
+      RCTLogError(@"[RNScreens] Unhandled subview type: %ld", childComponentView.type);
+  }
 }
 
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)

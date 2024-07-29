@@ -56,6 +56,7 @@ namespace react = facebook::react;
 #endif
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
+@property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;
 @property (nonatomic) BOOL hasStatusBarStyleSet;
