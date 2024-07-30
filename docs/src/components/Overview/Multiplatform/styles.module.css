@@ -1,8 +1,8 @@
 .multiplatformContainer {
   background-color: var(--swm-navy-dark-40);
   border-radius: 16px;
-  width: 456px;
-  height: 345px;
+  width: 450px;
+  height: 350px;
   position: relative;
   overflow: hidden;
   display: flex;

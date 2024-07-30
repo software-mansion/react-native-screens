@@ -35,7 +35,7 @@
   cursor: pointer;
   height: 12px;
   width: 12px;
-  background-color: #33488e40;
+  background-color: var(--swm-navy-light-transparent);
   border-radius: 50%;
   display: inline-block;
   transition: background-color 0.4s ease;
