@@ -8,13 +8,13 @@ const config = {
 
   url: 'https://docs.swmansion.com',
 
-  baseUrl: '/',
+  baseUrl: '/react-native-screens/',
 
   organizationName: 'software-mansion',
   projectName: 'react-native-screens',
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenMarkdownLinks: 'throw',
 
   i18n: {
     defaultLocale: 'en',
@@ -55,7 +55,7 @@ const config = {
         },
         items: [
           {
-            to: 'https://reactnavigation.org/docs/screen',
+            to: 'https://reactnavigation.org/docs/7.x/native-stack-navigator/',
             activeBasePath: 'docs',
             label: 'Docs',
             position: 'right',

@@ -13,8 +13,8 @@ const Downloads = () => {
           Native Screens in React Native applications.
         </p>
         <div className={styles.brandContainer}>
-          <img src="/img/react-navigation.svg" />
-          <img src="/img/expo-router.svg" />
+          <img src="img/react-navigation.svg" />
+          <img src="img/expo-router.svg" />
         </div>
       </div>
     </div>
