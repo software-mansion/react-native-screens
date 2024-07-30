@@ -48,7 +48,7 @@ function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
     },
     toggleCancelButton: (flag: boolean) => {
       _callMethodWithRef(ref =>
-        NativeSearchBarCommands.toggleCancelButton(ref, flag)
+        NativeSearchBarCommands.toggleCancelButton(ref, flag),
       );
     },
     clearText: () => {
@@ -69,16 +69,16 @@ function SearchBar(props: SearchBarProps, ref: React.Ref<SearchBarCommands>) {
         method(ref);
       } else {
         console.warn(
-          'Reference to native search bar component has not been updated yet'
+          'Reference to native search bar component has not been updated yet',
         );
       }
     },
-    [searchBarRef]
+    [searchBarRef],
   );
 
   if (!isSearchBarAvailableForCurrentPlatform) {
     console.warn(
-      'Importing SearchBar is only valid on iOS and Android devices.'
+      'Importing SearchBar is only valid on iOS and Android devices.',
     );
     return View as unknown as React.ReactNode;
   }

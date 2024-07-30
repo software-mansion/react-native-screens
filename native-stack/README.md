@@ -1,6 +1,6 @@
 # Native Stack Navigator
 
-> **_NOTE:_**  This README is dedicated for using `native-stack` with React Navigation **v5**. For using `native-stack` in React Navigation **v6** please refer to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator).
+> **_NOTE:_** This README is dedicated for using `native-stack` with React Navigation **v5**. For using `native-stack` in React Navigation **v6** please refer to the [Native Stack Navigator part of React Navigation documentation](https://reactnavigation.org/docs/native-stack-navigator).
 
 Provides a way for your app to transition between screens where each new screen is placed on top of a stack.
 
@@ -81,7 +81,8 @@ Boolean indicating whether to show the menu on longPress of iOS >= 14 back butto
 
 #### `backButtonDisplayMode` (iOS only)
 
-Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of:  `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+Enum value indicating display mode of **default** back button. It works on iOS >= 14, and is used only when none of: `backTitleFontFamily`, `backTitleFontSize`, `disableBackButtonMenu` or `backTitle` is set. Otherwise, when the button is customized, under the hood we use iOS native `backButtonItem` which overrides `backButtonDisplayMode`. Read more [#2123](https://github.com/software-mansion/react-native-screens/pull/2123). Possible options:
+
 - `default` – show given back button previous controller title, system generic or just icon based on available space
 - `generic` – show given system generic or just icon based on available space
 - `minimal` – show just an icon
@@ -90,13 +91,19 @@ Enum value indicating display mode of **default** back button. It works on iOS >
 
 Boolean indicating whether the swipe gesture should work on whole screen. Swiping with this option results in the same transition animation as `simple_push` by default. It can be changed to other custom animations with `customAnimationOnSwipe` prop, but default iOS swipe animation is not achievable due to usage of custom recognizer. Defaults to `false`.
 
+### `fullScreenSwipeShadowEnabled` (iOS only)
+
+Boolean indicating whether the full screen dismiss gesture has shadow under view during transition. The gesture uses custom transition and thus
+doesn't have a shadow by default. When enabled, a custom shadow view is added during the transition which tries to mimic the
+default iOS shadow. Defaults to `false`.
+
 #### `gestureEnabled` (iOS only)
 
 Whether you can use gestures to dismiss this screen. Defaults to `true`.
 
 #### `gestureResponseDistance` (iOS only)
 
-Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage: 
+Use it to restrict the distance from the edges of screen in which the gesture should be recognized. To be used alongside `fullScreenSwipeEnabled`. The responsive area is covered with 4 values: `start`, `end`, `top`, `bottom`. Example usage:
 
 ```tsx
 gestureResponseDistance: {
@@ -196,13 +203,13 @@ Style object for header title. Supported properties:
 
 #### `headerTopInsetEnabled` (Android only)
 
-A Boolean to that lets you opt out of insetting the header. You may want to * set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque.
+A Boolean to that lets you opt out of insetting the header. You may want to \* set this to `false` if you use an opaque status bar. Defaults to `true`. Insets are always applied on iOS because the header cannot be opaque.
 
 #### `headerTranslucent`
 
 Boolean indicating whether the navigation bar is translucent.
 
-####  `hideKeyboardOnSwipe` (iOS only)
+#### `hideKeyboardOnSwipe` (iOS only)
 
 Whether the keyboard should hide when swiping to the previous screen. Defaults to `false`.
 
@@ -229,14 +236,15 @@ Sets the visibility of the navigation bar. Defaults to `false`.
 
 How should the screen replacing another screen animate.
 The following values are currently supported:
-  - `push` – the new screen will perform push animation.
-  - `pop` – the new screen will perform pop animation.
+
+- `push` – the new screen will perform push animation.
+- `pop` – the new screen will perform pop animation.
 
 Defaults to `pop`.
 
 #### `sheetAllowedDetents` (iOS only)
 
-Describes heights where a sheet can rest. 
+Describes heights where a sheet can rest.
 Works only when `stackPresentation` is set to `formSheet`.
 
 Available values:
@@ -271,16 +279,16 @@ Defaults to `false`.
 
 #### `sheetLargestUndimmedDetent` (iOS only)
 
- The largest sheet detent for which a view underneath won't be dimmed.
- Works only when `stackPresentation` is set to `formSheet`.
+The largest sheet detent for which a view underneath won't be dimmed.
+Works only when `stackPresentation` is set to `formSheet`.
 
- If this prop is set to:
+If this prop is set to:
 
- - `large` - the view underneath won't be dimmed at any detent level
- - `medium` - the view underneath will be dimmed only when detent level is `large`
- - `all` - the view underneath will be dimmed for any detent level
+- `large` - the view underneath won't be dimmed at any detent level
+- `medium` - the view underneath will be dimmed only when detent level is `large`
+- `all` - the view underneath will be dimmed for any detent level
 
- Defaults to `all`.
+Defaults to `all`.
 
 #### `stackAnimation`
 
@@ -318,6 +326,7 @@ Using `containedModal` and `containedTransparentModal` with other types of modal
 #### `swipeDirection` (iOS only)
 
 Sets the direction in which you should swipe to dismiss the screen. The following values are supported:
+
 - `vertical` – dismiss screen vertically
 - `horizontal` – dismiss screen horizontally (default)
 
@@ -342,25 +351,28 @@ Defaults to `false`. When `enableFreeze()` is run at the top of the application 
 #### `useTransitionProgress`
 
 Hook providing context value of transition progress of the current screen to be used with `react-native` `Animated`. It consists of 2 values:
+
 - `progress` - `Animated.Value` between `0.0` and `1.0` with the progress of the current transition.
 - `closing` - `Animated.Value` of `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `Animated.Value` of `1` or `0` indicating if the current transition is pushing or removing screens.
 
 ```jsx
-import {Animated} from 'react-native';
-import {useTransitionProgress} from 'react-native-screens';
+import { Animated } from 'react-native';
+import { useTransitionProgress } from 'react-native-screens';
 
 function Home() {
-  const {progress} = useTransitionProgress();
+  const { progress } = useTransitionProgress();
 
   const opacity = progress.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [1.0, 0.0 ,1.0],
+    outputRange: [1.0, 0.0, 1.0],
     extrapolate: 'clamp',
   });
 
   return (
-    <Animated.View style={{opacity, height: 50, width: '100%', backgroundColor: 'green'}} />
+    <Animated.View
+      style={{ opacity, height: 50, width: '100%', backgroundColor: 'green' }}
+    />
   );
 }
 ```
@@ -368,14 +380,15 @@ function Home() {
 #### `useReanimatedTransitionProgress`
 
 A callback called every frame during the transition of screens to be used with `react-native-reanimated` version `2.x`. It consists of 2 shared values:
+
 - `progress` - between `0.0` and `1.0` with the progress of the current transition.
-- `closing` -  `1` or `0` indicating if the current screen is being navigated into or from.
+- `closing` - `1` or `0` indicating if the current screen is being navigated into or from.
 - `goingForward` - `1` or `0` indicating if the current transition is pushing or removing screens.
 
 In order to use it, you need to have `react-native-reanimated` version `2.x` installed in your project and wrap your code with `ReanimatedScreenProvider`, like this:
 
 ```jsx
-import {ReanimatedScreenProvider} from 'react-native-screens/reanimated';
+import { ReanimatedScreenProvider } from 'react-native-screens/reanimated';
 
 export default function App() {
   return (
@@ -389,12 +402,20 @@ export default function App() {
 Then you can use `useReanimatedTransitionProgress` to get the shared values:
 
 ```jsx
-import {useReanimatedTransitionProgress} from 'react-native-screens/reanimated';
-import Animated, {useAnimatedStyle, useDerivedValue} from 'react-native-reanimated';
+import { useReanimatedTransitionProgress } from 'react-native-screens/reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+} from 'react-native-reanimated';
 
 function Home() {
   const reaProgress = useReanimatedTransitionProgress();
-  const sv = useDerivedValue(() => (reaProgress.progress.value < 0.5 ? (reaProgress.progress.value * 50) : ((1 - reaProgress.progress.value) * 50)) + 50);
+  const sv = useDerivedValue(
+    () =>
+      (reaProgress.progress.value < 0.5
+        ? reaProgress.progress.value * 50
+        : (1 - reaProgress.progress.value) * 50) + 50,
+  );
   const reaStyle = useAnimatedStyle(() => {
     return {
       width: sv.value,
@@ -403,9 +424,7 @@ function Home() {
     };
   });
 
-  return (
-    <Animated.View style={reaStyle} />
-  );
+  return <Animated.View style={reaStyle} />;
 }
 ```
 
@@ -413,10 +432,11 @@ function Home() {
 
 With `native-stack`, the status bar and screen orientation can be managed by `UIViewController` on iOS. On Android, the status bar and screen orientation can be managed by `FragmentActivity`. On iOS, it requires:
 
-1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component). 
+1. For status bar managment: enabling (or deleting) `View controller-based status bar appearance` in your Info.plist file (it disables the option to use React Native's `StatusBar` component).
 2. For both status bar and orientation managment: adding `#import <RNScreens/UIViewController+RNScreens.h>` in your project's `AppDelegate.m` (you can see this change applied in the `AppDelegate.m` of `Example` project).
 
 On Android, no additional setup is required, although, you should keep in mind that once you set the orientation or status bar props, `react-native-screens` will manage them on every screen, so you shouldn't use other methods of manipulating them then.
+
 #### `screenOrientation`
 
 Sets the current screen's available orientations and forces rotation if current orientation is not included. On iOS, if you have supported orientations set in `info.plist`, they will take precedence over this prop. Possible values:
@@ -462,14 +482,14 @@ Sets the translucency of the status bar (similar to the `StatusBar` component). 
 
 The search bar is just a `searchBar` property that can be specified in the navigator's `screenOptions` or an individual screen's `options`. Search bars are rarely static so normally it is controlled by passing an object to `searchBar` navigation option in the component's body.
 
-Example: 
+Example:
 
 ```js
 React.useLayoutEffect(() => {
   navigation.setOptions({
     searchBar: {
       // search bar options
-    }
+    },
   });
 }, [navigation]);
 ```
@@ -510,7 +530,7 @@ The text to be used instead of default `Cancel` button text.
 
 #### `disableBackButtonOverride` (Android only)
 
-Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true` 
+Default behavior is to prevent screen from going back when search bar is open (`disableBackButtonOverride: false`). If you don't want this to happen set `disableBackButtonOverride` to `true`
 
 #### `hideNavigationBar` (iOS only)
 
@@ -529,12 +549,13 @@ Defaults to `true`.
 This prop is used to change type of the input and keyboard. Default value is `'text'`.
 
 All values:
+
 - `'text'` - normal text input
 - `'number'` - number input
 - `'email'` - email input
 - `'phone'` - phone input
 
-####  `obscureBackground` (iOS only)
+#### `obscureBackground` (iOS only)
 
 Boolean indicating whether to obscure the underlying content with semi-transparent overlay.
 
@@ -560,11 +581,12 @@ const [search, setSearch] = React.useState('');
 React.useLayoutEffect(() => {
   navigation.setOptions({
     searchBar: {
-      onChangeText: (event) => setSearch(event.nativeEvent.text),
-    }
+      onChangeText: event => setSearch(event.nativeEvent.text),
+    },
   });
 }, [navigation]);
 ```
+
 #### `onClose` (Android only)
 
 A callback that gets called when search bar is closing
@@ -590,15 +612,15 @@ Defaults to an empty string.
 #### `placement` (iOS only)
 
 Position of the search bar
-   
+
 Supported values:
- 
-* `automatic` - the search bar is placed according to current layout
-* `inline` - the search bar is placed on the trailing edge of navigation bar
-* `stacked` - the search bar is placed below the other content in navigation bar
+
+- `automatic` - the search bar is placed according to current layout
+- `inline` - the search bar is placed on the trailing edge of navigation bar
+- `stacked` - the search bar is placed below the other content in navigation bar
 
 Defaults to `stacked`
-  
+
 #### `textColor`
 
 The search field text color.
@@ -619,12 +641,12 @@ Show the search hint icon when search bar is focused. (Android only)
 
 A React ref to imperatively modify search bar. Supported actions:
 
-*  `focus` - focus on search bar
-*  `blur` - remove focus from search bar
-*  `clearText` - clear text in search bar
-*  `setText` - set search bar's content to given string
-*  `cancelSearch` - cancel search in search bar.
-*  `toggleCancelButton` (iOS only) - toggle cancel button display near search bar.
+- `focus` - focus on search bar
+- `blur` - remove focus from search bar
+- `clearText` - clear text in search bar
+- `setText` - set search bar's content to given string
+- `cancelSearch` - cancel search in search bar.
+- `toggleCancelButton` (iOS only) - toggle cancel button display near search bar.
 
 ### Events
 
@@ -639,16 +661,13 @@ Event which fires when the screen appears.
 Example:
 
 ```js
-React.useEffect(
-  () => {
-    const unsubscribe = navigation.addListener('appear', e => {
-      // Do something
-    });
+React.useEffect(() => {
+  const unsubscribe = navigation.addListener('appear', e => {
+    // Do something
+  });
 
-    return unsubscribe;
-  },
-  [navigation]
-);
+  return unsubscribe;
+}, [navigation]);
 ```
 
 #### `dismiss`
@@ -658,16 +677,13 @@ Event which fires when the current screen is dismissed by hardware back (on Andr
 Example:
 
 ```js
-React.useEffect(
-  () => {
-    const unsubscribe = navigation.addListener('dismiss', e => {
-      // Do something
-    });
+React.useEffect(() => {
+  const unsubscribe = navigation.addListener('dismiss', e => {
+    // Do something
+  });
 
-    return unsubscribe;
-  },
-  [navigation]
-);
+  return unsubscribe;
+}, [navigation]);
 ```
 
 #### `transitionStart`
@@ -681,20 +697,17 @@ Event data:
 Example:
 
 ```js
-React.useEffect(
-  () => {
-    const unsubscribe = navigation.addListener('transitionStart', e => {
-      if (e.data.closing) {
-        // Will be dismissed
-      } else {
-        // Will appear
-      }
-    });
+React.useEffect(() => {
+  const unsubscribe = navigation.addListener('transitionStart', e => {
+    if (e.data.closing) {
+      // Will be dismissed
+    } else {
+      // Will appear
+    }
+  });
 
-    return unsubscribe;
-  },
-  [navigation]
-);
+  return unsubscribe;
+}, [navigation]);
 ```
 
 #### `transitionEnd`
@@ -708,20 +721,17 @@ Event data:
 Example:
 
 ```js
-React.useEffect(
-  () => {
-    const unsubscribe = navigation.addListener('transitionEnd', e => {
-      if (e.data.closing) {
-        // Was dismissed
-      } else {
-        // Did appear
-      }
-    });
+React.useEffect(() => {
+  const unsubscribe = navigation.addListener('transitionEnd', e => {
+    if (e.data.closing) {
+      // Was dismissed
+    } else {
+      // Did appear
+    }
+  });
 
-    return unsubscribe;
-  },
-  [navigation]
-);
+  return unsubscribe;
+}, [navigation]);
 ```
 
 ### Helpers
@@ -760,9 +770,10 @@ navigation.popToTop();
 ### Measuring header's height
 
 To measure header's height, you can use the `useHeaderHeight`, `useAnimatedHeaderHeight` or `useReanimatedHeaderHeight` hook.
+
 - `useHeaderHeight` returns the static header's height. The value provided by this hook changes when screen appears, when there's a change in header options or screen orientation.
   Use this hook if you're sure your header height won't change dynamically, or when the screen is heavy.
-- `useAnimatedHeaderHeight` dynamically calculates the header's height. The value provided by this hook changes with every view layout (such as shrinking a large header into small one with a ScrollView). It returns an Animated.Value. 
+- `useAnimatedHeaderHeight` dynamically calculates the header's height. The value provided by this hook changes with every view layout (such as shrinking a large header into small one with a ScrollView). It returns an Animated.Value.
   Please beware of using this hook in heavy components, as it may result in performance issues.
 - `useReanimatedHeaderHeight` also dynamically calculates the header's height but uses React Native Reanimated under the hood. It returns an Animated.SharedValue.
   Make sure to wrap your Stack.Navigator with `ReanimatedScreenProvider` before using this hook.
@@ -771,13 +782,13 @@ We recommend using `useReanimatedHeaderHeight` rather than `useAnimatedHeaderHei
 
 ```tsx
 // for using useHeaderHeight
-import {useHeaderHeight} from 'react-native-screens/native-stack';
+import { useHeaderHeight } from 'react-native-screens/native-stack';
 
 // for using useAnimatedHeaderHeight
-import {useAnimatedHeaderHeight} from 'react-native-screens/native-stack';
+import { useAnimatedHeaderHeight } from 'react-native-screens/native-stack';
 
 // for using useReanimatedHeaderHeight
-import {useReanimatedHeaderHeight} from 'react-native-screens/reanimated';
+import { useReanimatedHeaderHeight } from 'react-native-screens/reanimated';
 ```
 
 ## Example

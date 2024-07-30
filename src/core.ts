@@ -19,7 +19,7 @@ export function enableScreens(shouldEnableScreens = true) {
 
   if (ENABLE_SCREENS && !UIManager.getViewManagerConfig('RNSScreen')) {
     console.error(
-      `Screen native module hasn't been linked. Please check the react-native-screens README for more details`
+      `Screen native module hasn't been linked. Please check the react-native-screens README for more details`,
     );
   }
 }
