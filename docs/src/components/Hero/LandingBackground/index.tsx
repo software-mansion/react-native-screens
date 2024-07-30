@@ -1,13 +1,13 @@
 import React from 'react';
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
-import HeroScreens from '@site/src/components/Hero/ScreensIcon';
+import ScreenSequence from '@site/src/components/Hero/ScreenSequence';
 import styles from './styles.module.css';
 
 const LandingBackground = () => {
   return (
     <>
       <div className={styles.heroBackground} />
-      {ExecutionEnvironment.canUseViewport && <HeroScreens />}
+      {ExecutionEnvironment.canUseViewport && <ScreenSequence />}
     </>
   );
 };

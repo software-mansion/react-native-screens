@@ -1,14 +1,14 @@
 import React from 'react';
 import styles from './styles.module.css';
-import Screens from '@site/src/components/Hero/ScreensIcon/Icon';
+import Sequence from '@site/src/components/Hero/ScreenSequence/Sequence';
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 
-const HeroScreens = () => {
+const ScreenSequence = () => {
   return (
     <div className={styles.screens}>
-      {ExecutionEnvironment.canUseViewport && <Screens />}
+      {ExecutionEnvironment.canUseViewport && <Sequence />}
     </div>
   );
 };
 
-export default HeroScreens;
+export default ScreenSequence;

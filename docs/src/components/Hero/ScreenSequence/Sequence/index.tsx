@@ -90,7 +90,7 @@ const SCREENS = [
   ],
 ];
 
-const ScreensIcon = () => {
+const Sequence = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { windowWidth } = useScreenSize();
 
@@ -145,4 +145,4 @@ const ScreensIcon = () => {
   );
 };
 
-export default ScreensIcon;
+export default Sequence;
