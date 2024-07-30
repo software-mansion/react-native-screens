@@ -1,5 +1,4 @@
 import React from 'react';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import LandingBackground from '@site/src/components/Hero/LandingBackground';
 import FooterBackground from '@site/src/components/FooterBackground';
@@ -23,9 +22,9 @@ export default function Home() {
       <div className={styles.container}>
         <Overview />
         <LearnMore />
-        {/* </div>
-    <Testimonals/>
-    <div className={styles.container}> */}
+      </div>
+      <Testimonals />
+      <div className={styles.container}>
         <Sponsors />
         <HireUsSection
           href={

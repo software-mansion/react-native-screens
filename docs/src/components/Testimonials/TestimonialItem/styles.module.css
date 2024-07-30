@@ -8,6 +8,7 @@
   gap: 1rem;
   flex-direction: column;
   max-width: calc(50% - 3.5rem / 2);
+  /* max width of tile minus gap of parent */
   transition: 0.2s ease-in-out;
 }
 
