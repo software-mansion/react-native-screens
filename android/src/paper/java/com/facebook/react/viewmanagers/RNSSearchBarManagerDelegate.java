@@ -74,7 +74,7 @@ public class RNSSearchBarManagerDelegate<T extends View, U extends BaseViewManag
   }
 
   @Override
-  public void receiveCommand(T view, String commandName, @Nullable ReadableArray args) {
+  public void receiveCommand(T view, String commandName, ReadableArray args) {
     switch (commandName) {
       case "blur":
         mViewManager.blur(view);
