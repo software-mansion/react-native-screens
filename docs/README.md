@@ -1,41 +1,19 @@
-# Website
+# Screens Documentation
 
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+👉 Landing: [https://docs.swmansion.com/react-native-screens/](https://docs.swmansion.com/react-native-screens/)
+👉 Documentation: [https://reactnavigation.org/docs/native-stack-navigator/](https://reactnavigation.org/docs/native-stack-navigator/)
 
-### Installation
+## How can I help?
 
-```
-$ yarn
-```
+Glad you asked! You can help the project in many ways e.g. by:
 
-### Local Development
+- _Reading and sharing_ the docs with friends and co-workers
+- _Sending feedback_ in the discussion or issues on GitHub
+- _Submitting PRs_ with fixes and improvements to the docs content and styles
 
-```
-$ yarn start
-```
+All feedback in all forms ranging from general to tiny fixes is highly appreciated!
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+## Meet the docs team
 
-### Build
-
-```
-$ yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-Using SSH:
-
-```
-$ USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+- [Balbina Falba](https://dribbble.com/balbina): design
+- [Patrycja Kalińska](https://x.com/patkalinska): site development
