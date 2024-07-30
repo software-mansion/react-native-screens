@@ -22,9 +22,9 @@ export default function Home() {
       <div className={styles.container}>
         <Overview />
         <LearnMore />
-      </div>
+        {/* </div>
       <Testimonals />
-      <div className={styles.container}>
+      <div className={styles.container}> */}
         <Sponsors />
         <HireUsSection
           href={
