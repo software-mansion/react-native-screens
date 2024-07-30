@@ -6,7 +6,7 @@ const TILES = [
   {
     title: 'Truly native',
     content:
-      'This navigator uses the native APIs and ` Fragment` on Android so that navigation will behave exactly the same and have the same performance characteristics as apps built natively on top of those APIs.',
+      'This navigator uses the native APIs and "Fragment" on Android so that navigation will behave exactly the same and have the same performance characteristics as apps built natively on top of those APIs.',
     src: 'img/overview-native.png',
   },
   {
@@ -33,7 +33,7 @@ const Overview = () => {
           title={tile.title}
           content={tile.content}
           src={tile.src}
-          reversed={tile.reversed && tile.reversed}
+          reversed={!!tile.reversed}
           multiplatform={tile.multiplatform}
         />
       ))}

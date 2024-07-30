@@ -104,9 +104,9 @@ const Sequence = () => {
           ? 0.45
           : windowWidth < 1350
           ? 0.4
-          : windowWidth > 2000
-          ? 0.2
-          : 0.3)
+          : windowWidth < 2000
+          ? 0.3
+          : 0.2)
       }
       fill="none"
       viewBox="0 0 468 397"
