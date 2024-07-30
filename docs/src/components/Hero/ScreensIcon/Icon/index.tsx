@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import useScreenSize from '@site/src/hooks/useScreenSize';
 import styles from './styles.module.css';
 
-const screens = [
+const SCREENS = [
   [
     {
       fill: '#C1C6E5',
@@ -112,7 +112,7 @@ const ScreensIcon = () => {
       viewBox="0 0 468 397"
       xmlns="http://www.w3.org/2000/svg"
       className={styles.svg}>
-      {screens.map((screen, index) => (
+      {SCREENS.map((screen, index) => (
         <g
           key={index}
           className={clsx(
