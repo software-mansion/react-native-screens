@@ -154,10 +154,9 @@ class ScreenStackFragment :
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        if (screen.stackPresentation != Screen.StackPresentation.TRANSPARENT_MODAL || screen.headerConfig?.isHeaderHidden == false)
-            {
-                updateToolbarMenu(menu)
-            }
+        if (screen.stackPresentation != Screen.StackPresentation.TRANSPARENT_MODAL || screen.headerConfig?.isHeaderHidden == false) {
+            updateToolbarMenu(menu)
+        }
         return super.onPrepareOptionsMenu(menu)
     }
 
