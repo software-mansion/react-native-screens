@@ -1,34 +1,44 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  NativeStackScreenProps,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SearchBarProps } from 'react-native-screens';
 
-const Stack = createNativeStackNavigator();
+type StackParamList = {
+  Home: undefined;
+  Details: undefined;
+};
 
-function HomeScreen({ navigation }: any) {
+const Stack = createNativeStackNavigator<StackParamList>();
+
+function HomeScreen({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'Home'>) {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-      <Button title="Details" onPress={() => navigation.navigate('Details')} />
       <Button
-        title="Details2"
-        onPress={() => navigation.navigate('Details2')}
+        title="Open Modal"
+        onPress={() => navigation.navigate('Details')}
       />
     </View>
   );
 }
-function DetailScreen({ navigation }: any) {
+function DetailScreen({
+  navigation,
+}: NativeStackScreenProps<StackParamList, 'Details'>) {
   return (
     <View style={styles.container}>
       <Text>DetailScreen</Text>
-      <Button title={'go back'} onPress={navigation.goBack} />
+      <Button title={'Bo Back'} onPress={navigation.goBack} />
     </View>
   );
 }
 
-function App(): React.JSX.Element {
+export default function App(): React.JSX.Element {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
@@ -45,25 +55,18 @@ function App(): React.JSX.Element {
                 textColor: 'black',
                 hintTextColor: 'black',
                 headerIconColor: 'black',
-              } as SearchBarProps,
+              },
             }}
             name="Home"
             component={HomeScreen}
           />
-          <Stack.Group
-            screenOptions={{
+          <Stack.Screen
+            name="Details"
+            component={DetailScreen}
+            options={{
               headerShown: false,
               presentation: 'transparentModal',
-            }}>
-            <Stack.Screen name="Details" component={DetailScreen} />
-          </Stack.Group>
-
-          <Stack.Screen
-            options={{
-              presentation: 'modal',
             }}
-            name="Details2"
-            component={DetailScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -71,16 +74,10 @@ function App(): React.JSX.Element {
   );
 }
 
-export default App;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  contentContainer: {
-    minHeight: 300,
-    alignItems: 'center',
   },
 });
