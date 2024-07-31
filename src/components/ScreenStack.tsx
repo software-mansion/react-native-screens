@@ -7,6 +7,10 @@ import ScreenStackNativeComponent from '../fabric/ScreenStackNativeComponent';
 const NativeScreenStack: React.ComponentType<ScreenStackProps> =
   ScreenStackNativeComponent as any;
 
+function isFabric() {
+  return 'nativeFabricUIManager' in global;
+}
+
 function ScreenStack(props: ScreenStackProps) {
   const { children, gestureDetectorBridge, ...rest } = props;
   const ref = React.useRef(null);
@@ -19,8 +23,14 @@ function ScreenStack(props: ScreenStackProps) {
     const isFreezeEnabled =
       descriptor?.options?.freezeOnBlur ?? freezeEnabled();
 
+    // On Fabric, when screen is frozen, animated and reanimated values are not updated
+    // due to component being unmounted. To avoid this, we don't freeze the previous screen there
+    const freezePreviousScreen = isFabric()
+      ? size - index > 2
+      : size - index > 1;
+
     return (
-      <DelayedFreeze freeze={isFreezeEnabled && size - index > 1}>
+      <DelayedFreeze freeze={isFreezeEnabled && freezePreviousScreen}>
         {child}
       </DelayedFreeze>
     );
