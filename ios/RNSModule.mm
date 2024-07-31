@@ -5,15 +5,8 @@
 #import <React/RCTUIManagerUtils.h>
 #import <React/RCTUtils.h>
 #include <jsi/jsi.h>
-#import "RNSScreen.h"
 #import "RNSScreenStack.h"
 #import "RNScreensTurboModule.h"
-
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <React/RCTScheduler.h>
-#import <React/RCTSurfacePresenter.h>
-#import "RNSScreenRemovalListener.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,8 +18,6 @@ RCT_EXPORT_MODULE()
 
 #ifdef RCT_NEW_ARCH_ENABLED
 @synthesize viewRegistry_DEPRECATED = _viewRegistry_DEPRECATED;
-__weak RCTSurfacePresenter *_surfacePresenter;
-std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
 #endif // RCT_NEW_ARCH_ENABLED
 @synthesize bridge = _bridge;
 
@@ -132,57 +123,10 @@ std::shared_ptr<RNSScreenRemovalListener> screenRemovalListener_;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
-
-- (RNSScreenView *)getScreenView:(NSNumber *)reactTag
-{
-  RCTAssertMainQueue();
-  UIView *view = [self.viewRegistry_DEPRECATED viewForReactTag:reactTag];
-  if (view != nil && ![view isKindOfClass:[RNSScreenView class]]) {
-    RCTLogError(@"[RNScreens] Invalid view type, expecting RNSScreenStackView, got: %@", view);
-    return nil;
-  }
-  return (RNSScreenView *)view;
-}
-
-/*
- * Taken from RCTNativeAnimatedTurboModule:
- * In bridgeless mode, `setBridge` is never called during initializtion. Instead this selector is invoked via
- * BridgelessTurboModuleSetup.
- */
-- (void)setSurfacePresenter:(id<RCTSurfacePresenterStub>)surfacePresenter
-{
-  _surfacePresenter = surfacePresenter;
-}
-
-- (std::shared_ptr<facebook::react::UIManager>)getUIManager
-{
-  RCTScheduler *scheduler = [_surfacePresenter scheduler];
-  auto uiManager = scheduler.uiManager;
-  if (uiManager == nullptr) {
-    RCTLogError(@"[RNScreens] Could not get uiManager");
-  }
-  return uiManager;
-}
-
-- (void)setupMutationsListener
-{
-  auto uiManager = [self getUIManager];
-  screenRemovalListener_ = std::make_shared<RNSScreenRemovalListener>([self](int tag) {
-    RNSScreenView *screen = [self getScreenView:[NSNumber numberWithInt:tag]];
-    [screen notifyAboutRemoval];
-  });
-  uiManager->getShadowTreeRegistry().enumerate([self](const facebook::react::ShadowTree &shadowTree, bool &stop) {
-    shadowTree.getMountingCoordinator()->setMountingOverrideDelegate(screenRemovalListener_);
-  });
-}
-
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
   [self installHostObject];
-#ifdef RCT_NEW_ARCH_ENABLED
-  [self setupMutationsListener];
-#endif
   return std::make_shared<facebook::react::NativeScreensModuleSpecJSI>(params);
 }
 #endif

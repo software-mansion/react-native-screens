@@ -146,7 +146,8 @@ android {
                 "**/libjsi.so",
                 "**/libc++_shared.so",
                 "**/libreact_render*.so",
-                "**/libreactnativejni.so"
+                "**/libreactnativejni.so",
+                "**/libreact_performance_timeline.so"
         ]
     }
     sourceSets.main {

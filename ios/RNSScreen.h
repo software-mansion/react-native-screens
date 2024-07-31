@@ -56,6 +56,7 @@ namespace react = facebook::react;
 #endif
 
 @property (nonatomic) BOOL fullScreenSwipeEnabled;
+@property (nonatomic) BOOL fullScreenSwipeShadowEnabled;
 @property (nonatomic) BOOL gestureEnabled;
 @property (nonatomic) BOOL hasStatusBarHiddenSet;
 @property (nonatomic) BOOL hasStatusBarStyleSet;
@@ -120,7 +121,6 @@ namespace react = facebook::react;
 - (void)notifyDisappear;
 - (void)updateBounds;
 - (void)notifyDismissedWithCount:(int)dismissCount;
-- (void)notifyAboutRemoval;
 - (instancetype)initWithFrame:(CGRect)frame;
 #else
 - (instancetype)initWithBridge:(RCTBridge *)bridge;

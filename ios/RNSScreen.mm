@@ -416,7 +416,7 @@ namespace react = facebook::react;
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -502,7 +502,7 @@ namespace react = facebook::react;
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
@@ -660,6 +660,14 @@ namespace react = facebook::react;
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
+- (void)postNotificationForEventDispatcherObserversWithEvent:(NSObject<RCTEvent> *)event
+{
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                      object:nil
+                                                    userInfo:userInfo];
+}
+
 - (BOOL)hasHeaderConfig
 {
   return _config != nil;
@@ -702,6 +710,8 @@ namespace react = facebook::react;
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
   [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+
+  [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
 
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
@@ -786,7 +796,7 @@ namespace react = facebook::react;
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
+  if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
   // when screen is mounted under RNSNavigationController it's size is controller
@@ -804,11 +814,6 @@ namespace react = facebook::react;
 #if !TARGET_OS_TV && !TARGET_OS_VISION
   [self updatePresentationStyle];
 #endif // !TARGET_OS_TV
-}
-
-- (void)notifyAboutRemoval
-{
-  [_controller setViewToSnapshot];
 }
 
 #pragma mark - Paper specific
@@ -1436,6 +1441,7 @@ RCT_EXPORT_MODULE()
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(hideKeyboardOnSwipe, BOOL)

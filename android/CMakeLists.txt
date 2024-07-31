@@ -57,6 +57,9 @@ if(${RNS_NEW_ARCH_ENABLED})
             ReactAndroid::rrc_text
             ReactAndroid::glog
             ReactAndroid::react_render_componentregistry
+            ReactAndroid::react_render_consistency
+            ReactAndroid::react_performance_timeline
+            ReactAndroid::react_render_observers_events
             fbjni::fbjni
             android
     )
