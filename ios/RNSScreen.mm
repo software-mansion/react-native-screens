@@ -295,7 +295,7 @@ namespace react = facebook::react;
   }
 }
 
-- (void)postNotificationWithEvent:(NSObject<RCTEvent> *)event
+- (void)postNotificationForEventDispatcherObserversWithEvent:(NSObject<RCTEvent> *)event
 {
   NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
   [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
@@ -424,7 +424,7 @@ namespace react = facebook::react;
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [self postNotificationWithEvent:event];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -510,7 +510,7 @@ namespace react = facebook::react;
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [self postNotificationWithEvent:event];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
