@@ -38,6 +38,7 @@ export function Tabs() {
     <tabs.Navigator screenOptions={{ headerShown: false }}>
       <tabs.Screen name="First" component={DummyScreen} />
       <tabs.Screen name="Second" component={DummyScreen} />
+      <tabs.Screen name="Third" component={DummyScreen} />
     </tabs.Navigator>
   );
 }
