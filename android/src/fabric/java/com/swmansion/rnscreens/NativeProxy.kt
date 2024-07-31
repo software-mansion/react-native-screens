@@ -17,6 +17,7 @@ class NativeProxy {
     }
 
     private external fun initHybrid(): HybridData
+
     external fun nativeAddMutationsListener(fabricUIManager: FabricUIManager)
 
     companion object {
@@ -24,7 +25,10 @@ class NativeProxy {
         // and written to on the UI thread.
         private val viewsMap = ConcurrentHashMap<Int, WeakReference<Screen>>()
 
-        fun addScreenToMap(tag: Int, view: Screen) {
+        fun addScreenToMap(
+            tag: Int,
+            view: Screen,
+        ) {
             viewsMap[tag] = WeakReference(view)
         }
 
@@ -43,7 +47,7 @@ class NativeProxy {
         if (screen is Screen) {
             screen.startRemovalTransition()
         } else {
-            Log.w("[RNScreens]", "Did not find view with tag ${screenTag}.")
+            Log.w("[RNScreens]", "Did not find view with tag $screenTag.")
         }
     }
 }

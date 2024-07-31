@@ -37,10 +37,10 @@ namespace react = facebook::react;
     UIAdaptivePresentationControllerDelegate,
     UIGestureRecognizerDelegate,
     UIViewControllerTransitioningDelegate
-    #ifdef RCT_NEW_ARCH_ENABLED
+#ifdef RCT_NEW_ARCH_ENABLED
     ,
     RCTMountingTransactionObserving
-    #endif
+#endif
     >
 
 @property (nonatomic) NSMutableArray<UIViewController *> *presentedModals;

@@ -7,8 +7,13 @@ class NativeProxy {
     fun nativeAddMutationsListener(fabricUIManager: FabricUIManager) = Unit
 
     companion object {
-        fun addScreenToMap(tag: Int, view: Screen) = Unit
+        fun addScreenToMap(
+            tag: Int,
+            view: Screen,
+        ) = Unit
+
         fun removeScreenFromMap(tag: Int) = Unit
+
         fun clearMapOnInvalidate() = Unit
     }
 }
