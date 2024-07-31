@@ -49,11 +49,13 @@ abstract class FabricEnabledViewGroup(
 
         lastSetWidth = realWidth
         lastSetHeight = realHeight
-        val map: WritableMap = WritableNativeMap()
-        map.putDouble("frameWidth", realWidth.toDouble())
-        map.putDouble("frameHeight", realHeight.toDouble())
-        map.putDouble("contentOffsetX", 0.0)
-        map.putDouble("contentOffsetY", headerHeight)
+        val map: WritableMap =
+            WritableNativeMap().apply {
+                putDouble("frameWidth", realWidth.toDouble())
+                putDouble("frameHeight", realHeight.toDouble())
+                putDouble("contentOffsetX", 0.0)
+                putDouble("contentOffsetY", headerHeight)
+            }
         mStateWrapper?.updateState(map)
     }
 }
