@@ -4,8 +4,10 @@ import android.util.Log
 import com.facebook.proguard.annotations.DoNotStrip
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.UiThreadUtil
+import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.common.UIManagerType
 import com.swmansion.rnscreens.events.ScreenTransitionProgressEvent
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -15,6 +17,7 @@ class ScreensModule(
 ) : NativeScreensModuleSpec(reactContext) {
     private var topScreenId: Int = -1
     private val isActiveTransition = AtomicBoolean(false)
+    private var proxy: NativeProxy? = null
 
     init {
         try {
@@ -31,6 +34,18 @@ class ScreensModule(
     }
 
     private external fun nativeInstall(jsiPtr: Long)
+
+    override fun initialize() {
+        super.initialize()
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            val fabricUIManager =
+                UIManagerHelper.getUIManager(reactContext, UIManagerType.FABRIC) as FabricUIManager
+            proxy =
+                NativeProxy().apply {
+                    nativeAddMutationsListener(fabricUIManager)
+                }
+        }
+    }
 
     override fun getName(): String = NAME
 

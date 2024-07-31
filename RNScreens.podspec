@@ -4,7 +4,7 @@ package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 new_arch_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
 platform = new_arch_enabled ? "11.0" : "9.0"
-source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : ["ios/**/*.{h,m,mm}", "cpp/**/*.{cpp,h}"]
+source_files = new_arch_enabled ? 'ios/**/*.{h,m,mm,cpp}' : ["ios/**/*.{h,m,mm}", "cpp/RNScreensTurboModule.cpp", "cpp/RNScreensTurboModule.h"]
 
 Pod::Spec.new do |s|
   s.name         = "RNScreens"

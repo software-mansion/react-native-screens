@@ -81,6 +81,7 @@ def reactProperties = new Properties()
 file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
 def REACT_NATIVE_VERSION = reactProperties.getProperty("VERSION_NAME")
 def REACT_NATIVE_MINOR_VERSION = REACT_NATIVE_VERSION.startsWith("0.0.0-") ? 1000 : REACT_NATIVE_VERSION.split("\\.")[1].toInteger()
+def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
@@ -106,13 +107,14 @@ android {
         targetSdkVersion safeExtGet('targetSdkVersion', rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
         externalNativeBuild {
             cmake {
-                arguments "-DANDROID_STL=c++_shared"
+                arguments "-DANDROID_STL=c++_shared",
+                        "-DRNS_NEW_ARCH_ENABLED=${IS_NEW_ARCHITECTURE_ENABLED}"
             }
         }
     }
@@ -143,13 +145,15 @@ android {
                 "META-INF/**",
                 "**/libjsi.so",
                 "**/libc++_shared.so",
-                "**/libreact_render*.so"
+                "**/libreact_render*.so",
+                "**/libreactnativejni.so",
+                "**/libreact_performance_timeline.so"
         ]
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"
         java {
-            if (isNewArchitectureEnabled()) {
+            if (IS_NEW_ARCHITECTURE_ENABLED) {
                 srcDirs += [
                     "src/fabric/java",
                 ]
