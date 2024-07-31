@@ -1,19 +1,32 @@
 .overviewTile {
-  display: flex;
-  flex-direction: row;
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.5rem;
+  align-items: center;
 }
 
 .tileReversed {
-  flex-direction: row-reverse;
+  grid-template-columns: 1fr 1fr;
 }
 
 .contentContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1.5rem;
-  flex: 1;
+  grid-column: 1;
+}
+
+.imageContainer {
+  grid-column: 2;
+
+  max-width: 456px;
+  max-height: 345px;
+}
+
+.tileReversed .contentContainer {
+  grid-column: 2;
+}
+
+.tileReversed .imageContainer {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .contentContainer h3 {
@@ -29,6 +42,7 @@
 
 @media (max-width: 996px) {
   .overviewTile {
+    display: flex;
     flex-direction: column;
   }
   .imageContainer {
