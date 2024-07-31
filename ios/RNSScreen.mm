@@ -295,14 +295,6 @@ namespace react = facebook::react;
   }
 }
 
-- (void)postNotificationForEventDispatcherObserversWithEvent:(NSObject<RCTEvent> *)event
-{
-  NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
-                                                      object:nil
-                                                    userInfo:userInfo];
-}
-
 - (void)notifyDismissedWithCount:(int)dismissCount
 {
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -667,6 +659,14 @@ namespace react = facebook::react;
 
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
+
+- (void)postNotificationForEventDispatcherObserversWithEvent:(NSObject<RCTEvent> *)event
+{
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                      object:nil
+                                                    userInfo:userInfo];
+}
 
 - (BOOL)hasHeaderConfig
 {
