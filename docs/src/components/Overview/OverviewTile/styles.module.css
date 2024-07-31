@@ -9,6 +9,12 @@
   grid-template-columns: 1fr 1fr;
 }
 
+@media (min-width: 2000px) {
+  .overviewTile {
+    column-gap: 6rem;
+  }
+}
+
 .contentContainer {
   grid-column: 1;
 }
@@ -54,5 +60,6 @@
   }
   .contentContainer p {
     font-size: 18px;
+    margin-bottom: 2rem;
   }
 }
