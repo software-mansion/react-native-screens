@@ -12,16 +12,8 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
-        <stack.Navigator
-          screenOptions={{
-            statusBarColor: 'white',
-            statusBarStyle: 'dark',
-            headerTopInsetEnabled: false,
-            headerShown: true,
-            headerTranslucent: true,
-            headerLargeTitle: true,
-          }}>
-          <stack.Screen name="tabbar" component={Tabbar} />
+        <stack.Navigator screenOptions={{ headerLargeTitle: true }}>
+          <stack.Screen name="Tabs" component={Tabs} />
         </stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
@@ -31,7 +23,6 @@ export default function App() {
 function DummyScreen() {
   return (
     <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{
         alignItems: 'center',
         justifyContent: 'center',
@@ -42,19 +33,11 @@ function DummyScreen() {
   );
 }
 
-export function Tabbar({ navigation }: any) {
+export function Tabs() {
   return (
     <tabs.Navigator screenOptions={{ headerShown: false }}>
-      <tabs.Screen
-        name="First"
-        component={DummyScreen}
-        listeners={{ focus: () => navigation.setOptions({ title: 'First' }) }}
-      />
-      <tabs.Screen
-        name="Second"
-        component={DummyScreen}
-        listeners={{ focus: () => navigation.setOptions({ title: 'Second' }) }}
-      />
+      <tabs.Screen name="First" component={DummyScreen} />
+      <tabs.Screen name="Second" component={DummyScreen} />
     </tabs.Navigator>
   );
 }
