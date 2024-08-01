@@ -69,8 +69,6 @@ internal class ScreenDummyLayoutHelper(
             return false
         }
 
-        reactContext.isBridgeless
-
         // We need to use activity here, as react context does not have theme attributes required by
         // AppBarLayout attached leading to crash.
         val contextWithTheme =
