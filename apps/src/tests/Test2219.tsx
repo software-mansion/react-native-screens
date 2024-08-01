@@ -1,32 +1,55 @@
 import * as React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Pressable,
+  PressableProps,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
+interface CustomButtonProps extends PressableProps {
+  title: string;
+}
+
+const CustomButton = (props: CustomButtonProps) => (
+  <Pressable
+    style={({ pressed }) => [
+      styles.pressable,
+      { backgroundColor: pressed ? 'goldenrod' : 'lightblue' },
+    ]}
+    {...props}>
+    <Text>{props.title}</Text>
+  </Pressable>
+);
+
 export default function App() {
+  const [count, setCount] = React.useState(0);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="First"
-          component={First}
+          name="Screen"
+          component={Screen}
           options={{
             headerLeft: () => (
-              <Pressable
-                style={[styles.pressable, { backgroundColor: 'goldenrod' }]}
-                onPressIn={() => console.log('does work')}>
-                <Text>Left</Text>
-              </Pressable>
+              <CustomButton
+                title="PressIn (-)"
+                onPressIn={() => setCount(prev => prev - 1)}
+              />
             ),
             headerRight: () => (
-              <Pressable
-                style={[styles.pressable, { backgroundColor: 'lightblue' }]}
-                onPress={() => console.log('does not work')}>
-                <Text>Right</Text>
-              </Pressable>
+              <CustomButton
+                onPress={() => setCount(prev => prev + 1)}
+                title="Press (+)"
+              />
             ),
+            title: count.toString(),
+            headerTitleAlign: 'center',
           }}
         />
       </Stack.Navigator>
@@ -34,26 +57,31 @@ export default function App() {
   );
 }
 
-function First() {
+function Screen() {
+  const [count, setCount] = React.useState(0);
   return (
     <View style={styles.container}>
-      <Pressable
-        onPressIn={() => console.log('does work')}
-        style={[styles.pressable, { backgroundColor: 'lightblue' }]}>
-        <Text>Tap me for second screen by press in</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => console.log('does not work')}
-        style={[styles.pressable, { backgroundColor: 'goldenrod' }]}>
-        <Text>Tap me for second screen by press</Text>
-      </Pressable>
+      <Text style={styles.count}>{count}</Text>
+      <CustomButton
+        onPressIn={() => setCount(prev => prev - 1)}
+        title="PressIn (-)"
+      />
+      <CustomButton
+        onPress={() => setCount(prev => prev + 1)}
+        title="Press (+)"
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   pressable: {
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  count: {
+    fontSize: 48,
+    fontWeight: 'bold',
   },
   container: {
     flex: 1,
