@@ -154,6 +154,9 @@ class ScreenStackFragment :
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
+        // If the screen is a transparent modal with hidden header we don't want to update the toolbar
+        // menu because it may erase the menu of the previous screen (which is still visible in these
+        // circumstances). See here: https://github.com/software-mansion/react-native-screens/issues/2271
         if (screen.stackPresentation != Screen.StackPresentation.TRANSPARENT_MODAL || screen.headerConfig?.isHeaderHidden == false) {
             updateToolbarMenu(menu)
         }
