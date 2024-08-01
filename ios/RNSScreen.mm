@@ -88,6 +88,7 @@ namespace react = facebook::react;
   _hasStatusBarHiddenSet = NO;
   _hasOrientationSet = NO;
   _hasHomeIndicatorHiddenSet = NO;
+  _hiddenFromStack = NO;
 #if !TARGET_OS_TV
   _sheetExpandsWhenScrolledToEdge = YES;
 #endif // !TARGET_OS_TV
@@ -279,6 +280,13 @@ namespace react = facebook::react;
   _homeIndicatorHidden = homeIndicatorHidden;
   [RNSScreenWindowTraits updateHomeIndicatorAutoHidden];
 }
+
+- (void)setHiddenFromStack:(BOOL)hiddenFromStack
+{
+  _hiddenFromStack = hiddenFromStack;
+  [_reactSuperview updateContainer];
+}
+
 #endif
 
 - (UIView *)reactSuperview
@@ -716,6 +724,8 @@ namespace react = facebook::react;
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
   [self setTransitionDuration:[NSNumber numberWithInt:newScreenProps.transitionDuration]];
+
+  [self setHiddenFromStack:newScreenProps.hiddenFromStack];
 
   [self setHideKeyboardOnSwipe:newScreenProps.hideKeyboardOnSwipe];
 
@@ -1444,6 +1454,7 @@ RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
+RCT_EXPORT_VIEW_PROPERTY(hiddenFromStack, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideKeyboardOnSwipe, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(preventNativeDismiss, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(replaceAnimation, RNSScreenReplaceAnimation)

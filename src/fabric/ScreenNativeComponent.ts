@@ -93,6 +93,7 @@ export interface NativeProps extends ViewProps {
   transitionDuration?: WithDefault<Int32, 350>;
   replaceAnimation?: WithDefault<ReplaceAnimation, 'pop'>;
   swipeDirection?: WithDefault<SwipeDirection, 'horizontal'>;
+  hiddenFromStack?: boolean;
   hideKeyboardOnSwipe?: boolean;
   activityState?: WithDefault<Float, -1.0>;
   navigationBarColor?: ColorValue;
