@@ -120,9 +120,6 @@ namespace react = facebook::react;
   UIPercentDrivenInteractiveTransition *_interactionController;
   __weak RNSScreenStackManager *_manager;
   BOOL _updateScheduled;
-#ifdef RCT_NEW_ARCH_ENABLED
-  UIView *_snapshot;
-#endif
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -1132,8 +1129,7 @@ namespace react = facebook::react;
   if (screenChildComponent.window != nil &&
       ((screenChildComponent == _controller.visibleViewController.view && _presentedModals.count < 2) ||
        screenChildComponent == [_presentedModals.lastObject view])) {
-    [self takeSnapshot];
-    [screenChildComponent.controller setViewToSnapshot:_snapshot];
+    [screenChildComponent.controller setViewToSnapshot];
   }
 
   RCTAssert(
@@ -1153,15 +1149,6 @@ namespace react = facebook::react;
   screenChildComponent.reactSuperview = nil;
   [_reactSubviews removeObject:screenChildComponent];
   [screenChildComponent removeFromSuperview];
-}
-
-- (void)takeSnapshot
-{
-  if (_presentedModals.count < 2) {
-    _snapshot = [_controller.visibleViewController.view snapshotViewAfterScreenUpdates:NO];
-  } else {
-    _snapshot = [[_presentedModals.lastObject view] snapshotViewAfterScreenUpdates:NO];
-  }
 }
 
 - (void)mountingTransactionDidMount:(const facebook::react::MountingTransaction &)transaction

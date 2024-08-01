@@ -5,20 +5,21 @@ import androidx.annotation.UiThread
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
-import com.facebook.react.uimanager.FabricViewStateManager
 import com.facebook.react.uimanager.PixelUtil
+import com.facebook.react.uimanager.StateWrapper
 import kotlin.math.abs
 
-abstract class FabricEnabledViewGroup constructor(
+abstract class FabricEnabledViewGroup(
     context: ReactContext?,
-) : ViewGroup(context),
-    FabricViewStateManager.HasFabricViewStateManager {
-    private val mFabricViewStateManager: FabricViewStateManager = FabricViewStateManager()
+) : ViewGroup(context) {
+    private var mStateWrapper: StateWrapper? = null
 
     private var lastSetWidth = 0f
     private var lastSetHeight = 0f
 
-    override fun getFabricViewStateManager(): FabricViewStateManager = mFabricViewStateManager
+    fun setStateWrapper(wrapper: StateWrapper?) {
+        mStateWrapper = wrapper
+    }
 
     protected fun updateScreenSizeFabric(
         width: Int,
@@ -48,14 +49,13 @@ abstract class FabricEnabledViewGroup constructor(
 
         lastSetWidth = realWidth
         lastSetHeight = realHeight
-
-        mFabricViewStateManager.setState {
-            val map: WritableMap = WritableNativeMap()
-            map.putDouble("frameWidth", realWidth.toDouble())
-            map.putDouble("frameHeight", realHeight.toDouble())
-            map.putDouble("contentOffsetX", 0.0)
-            map.putDouble("contentOffsetY", headerHeight)
-            map
-        }
+        val map: WritableMap =
+            WritableNativeMap().apply {
+                putDouble("frameWidth", realWidth.toDouble())
+                putDouble("frameHeight", realHeight.toDouble())
+                putDouble("contentOffsetX", 0.0)
+                putDouble("contentOffsetY", headerHeight)
+            }
+        mStateWrapper?.updateState(map)
     }
 }

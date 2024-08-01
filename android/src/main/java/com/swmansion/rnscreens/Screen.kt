@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Parcelable
 import android.util.SparseArray
 import android.util.TypedValue
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebView
@@ -37,6 +38,7 @@ class Screen(
     var screenOrientation: Int? = null
         private set
     var isStatusBarAnimated: Boolean? = null
+    var isBeingRemoved = false
 
     init {
         // we set layout params as WindowManager.LayoutParams to workaround the issue with TextInputs
@@ -279,6 +281,40 @@ class Screen(
         }
 
     var nativeBackButtonDismissalEnabled: Boolean = true
+
+    fun startRemovalTransition() {
+        if (!isBeingRemoved) {
+            isBeingRemoved = true
+            startTransitionRecursive(this)
+        }
+    }
+
+    private fun startTransitionRecursive(parent: ViewGroup?) {
+        parent?.let {
+            for (i in 0 until it.childCount) {
+                val child = it.getChildAt(i)
+                if (child.javaClass.simpleName.equals("CircleImageView")) {
+                    // SwipeRefreshLayout class which has CircleImageView as a child,
+                    // does not handle `startViewTransition` properly.
+                    // It has a custom `getChildDrawingOrder` method which returns
+                    // wrong index if we called `startViewTransition` on the views on new arch.
+                    // We add a simple View to bump the number of children to make it work.
+                    // TODO: find a better way to handle this scenario
+                    it.addView(View(context), i)
+                } else {
+                    child?.let { view -> it.startViewTransition(view) }
+                }
+                if (child is ScreenStackHeaderConfig) {
+                    // we want to start transition on children of the toolbar too,
+                    // which is not a child of ScreenStackHeaderConfig
+                    startTransitionRecursive(child.toolbar)
+                }
+                if (child is ViewGroup) {
+                    startTransitionRecursive(child)
+                }
+            }
+        }
+    }
 
     private fun calculateHeaderHeight(): Pair<Double, Double> {
         val actionBarTv = TypedValue()

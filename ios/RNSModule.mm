@@ -116,7 +116,7 @@ RCT_EXPORT_MODULE()
 {
   RNSScreenStackView *view = [self getScreenStackView:stackTag];
   if (view != nil && ![view isKindOfClass:[RNSScreenStackView class]]) {
-    RCTLogError(@"Invalid view type, expecting RNSScreenStackView, got: %@", view);
+    RCTLogError(@"[RNScreens] Invalid view type, expecting RNSScreenStackView, got: %@", view);
     return nil;
   }
   return view;

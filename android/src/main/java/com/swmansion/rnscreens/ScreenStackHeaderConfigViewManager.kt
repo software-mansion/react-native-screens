@@ -203,7 +203,7 @@ class ScreenStackHeaderConfigViewManager :
 
     // TODO: Find better way to handle platform specific props
     private fun logNotAvailable(propName: String) {
-        Log.w("RN SCREENS", "$propName prop is not available on Android")
+        Log.w("[RNScreens]", "$propName prop is not available on Android")
     }
 
     override fun setBackTitle(
