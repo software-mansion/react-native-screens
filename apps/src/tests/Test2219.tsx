@@ -1,45 +1,29 @@
 import * as React from 'react';
-import { Button, Pressable, StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer, ParamListBase } from '@react-navigation/native';
-import {
-  NativeStackNavigationProp,
-  createNativeStackNavigator,
-} from '@react-navigation/native-stack';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
-
-type ScreenBaseProps = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-};
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          animation: 'fade',
-        }}>
+      <Stack.Navigator>
         <Stack.Screen
           name="First"
           component={First}
           options={{
-            headerTitle: () => (
-              <View
-                style={[styles.container, { backgroundColor: 'goldenrod' }]}>
-                <Text>Hello there!</Text>
-              </View>
-            ),
             headerLeft: () => (
               <Pressable
-                style={[styles.container, { backgroundColor: 'lightblue' }]}
+                style={[styles.pressable, { backgroundColor: 'goldenrod' }]}
                 onPressIn={() => console.log('does work')}>
                 <Text>Left</Text>
               </Pressable>
             ),
             headerRight: () => (
               <Pressable
-                style={[styles.container, { backgroundColor: 'lightblue' }]}
-                onPress={() => console.log('doesnt work')}>
+                style={[styles.pressable, { backgroundColor: 'lightblue' }]}
+                onPress={() => console.log('does not work')}>
                 <Text>Right</Text>
               </Pressable>
             ),
@@ -50,17 +34,31 @@ export default function App() {
   );
 }
 
-function First({ navigation }: ScreenBaseProps) {
+function First() {
   return (
-    <Button
-      title="Tap me for second screen"
-      onPress={() => navigation.navigate('Second')}
-    />
+    <View style={styles.container}>
+      <Pressable
+        onPressIn={() => console.log('does work')}
+        style={[styles.pressable, { backgroundColor: 'lightblue' }]}>
+        <Text>Tap me for second screen by press in</Text>
+      </Pressable>
+      <Pressable
+        onPress={() => console.log('does not work')}
+        style={[styles.pressable, { backgroundColor: 'goldenrod' }]}>
+        <Text>Tap me for second screen by press</Text>
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  pressable: {
+    padding: 5,
+  },
   container: {
-    padding: 3,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 24,
   },
 });
