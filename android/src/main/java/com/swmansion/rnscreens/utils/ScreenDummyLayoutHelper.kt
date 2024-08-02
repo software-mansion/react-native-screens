@@ -218,9 +218,9 @@ internal class ScreenDummyLayoutHelper(
 
     override fun onHostResume() {
         // This is the earliest we have guarantee that the context has a reference to an activity.
-        maybeInitDummyLayoutWithHeader(requireReactContext())
-        requireReactContext { "[RNScreens] ReactContext missing in onHostResume! This should not happen." }
-            .removeLifecycleEventListener(this)
+        val reactContext = requireReactContext { "[RNScreens] ReactContext missing in onHostResume! This should not happen." }
+        check(maybeInitDummyLayoutWithHeader(reactContext)) { "[RNScreens] Failed to initialise dummy layout in onHostResume. This is not expected."}
+        reactContext.removeLifecycleEventListener(this)
     }
 
     override fun onHostPause() = Unit
