@@ -137,3 +137,4 @@ async function checkCodegenIntegrity() {
 }
 
 module.exports = { generateCodegenJavaOldArch, checkCodegenIntegrity };
+
