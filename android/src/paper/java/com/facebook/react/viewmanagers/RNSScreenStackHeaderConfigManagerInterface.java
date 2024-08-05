@@ -39,5 +39,6 @@ public interface RNSScreenStackHeaderConfigManagerInterface<T extends View> {
   void setBackButtonDisplayMode(T view, @Nullable String value);
   void setHideBackButton(T view, boolean value);
   void setBackButtonInCustomView(T view, boolean value);
+  void setBlurEffect(T view, @Nullable String value);
   void setTopInsetEnabled(T view, boolean value);
 }
