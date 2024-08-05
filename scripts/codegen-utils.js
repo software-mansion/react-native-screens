@@ -45,6 +45,12 @@ function readdirSync(dir) {
   });
 }
 
+function throwIfFileMissing(filepath) {
+  if (!fs.lstatSync(filepath, { throwIfNoEntry: false })?.isFile()) {
+    throw new Error(`${TAG} File ${filepath} does not exist or is not a regular file. Maybe it is not codegen-managed and you forgot to put it in blacklist?`);
+  }
+}
+
 function fixOldArchJavaForRN72Compat(dir) {
   console.log(`${TAG} fixOldArchJavaForRN72Compat:  ${dir}`);
   // see https://github.com/rnmapbox/maps/issues/3193
@@ -125,8 +131,14 @@ async function generateCodegenJavaOldArch() {
 
 function compareFileAtTwoPaths(filename, firstPath, secondPath) {
   console.log(`${TAG} compare file: ${filename} at path first: ${firstPath}, second: ${secondPath}`);
-  const fileA = fs.readFileSync(`${firstPath}/${filename}`, 'utf-8');
-  const fileB = fs.readFileSync(`${secondPath}/${filename}`, 'utf-8');
+  const filepathA = `${firstPath}/${filename}`;
+  const filepathB = `${secondPath}/${filename}`;
+
+  throwIfFileMissing(filepathA);
+  throwIfFileMissing(filepathB);
+
+  const fileA = fs.readFileSync(filepathA, 'utf-8');
+  const fileB = fs.readFileSync(filepathB, 'utf-8');
 
   if (fileA !== fileB) {
     throw new Error(
