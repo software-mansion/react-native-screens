@@ -26,6 +26,7 @@ const SOURCE_FOLDERS = [
 
 const BLACKLISTED_FILES = new Set([
   'FabricEnabledViewGroup.kt',
+  'NativeProxy.kt',
 ]);
 
 
