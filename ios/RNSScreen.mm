@@ -25,6 +25,8 @@
 #import "RNSScreenStack.h"
 #import "RNSScreenStackHeaderConfig.h"
 
+#import "UIView+RNSUtility.h"
+
 #ifdef RCT_NEW_ARCH_ENABLED
 namespace react = facebook::react;
 #endif // RCT_NEW_ARCH_ENABLED
@@ -414,7 +416,7 @@ namespace react = facebook::react;
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -473,22 +475,13 @@ namespace react = facebook::react;
   }
 }
 
-#ifdef RCT_NEW_ARCH_ENABLED
-- (RCTSurfaceTouchHandler *)touchHandler
-#else
-- (RCTTouchHandler *)touchHandler
-#endif
+- (nullable RNS_TOUCH_HANDLER_ARCH_TYPE *)touchHandler
 {
   if (_touchHandler != nil) {
     return _touchHandler;
   }
-  UIView *parent = [self superview];
-  while (parent != nil && ![parent respondsToSelector:@selector(touchHandler)])
-    parent = parent.superview;
-  if (parent != nil) {
-    return [parent performSelector:@selector(touchHandler)];
-  }
-  return nil;
+
+  return [self rnscreens_findTouchHandlerInAncestorChain];
 }
 
 - (void)notifyFinishTransitioning
@@ -509,7 +502,7 @@ namespace react = facebook::react;
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
@@ -520,6 +513,14 @@ namespace react = facebook::react;
   }
 #endif
 }
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
+{
+  [self notifyGestureCancel];
+}
+#endif
 
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
@@ -659,6 +660,14 @@ namespace react = facebook::react;
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
 
+- (void)postNotificationForEventDispatcherObserversWithEvent:(NSObject<RCTEvent> *)event
+{
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                      object:nil
+                                                    userInfo:userInfo];
+}
+
 - (BOOL)hasHeaderConfig
 {
   return _config != nil;
@@ -701,6 +710,8 @@ namespace react = facebook::react;
   const auto &newScreenProps = *std::static_pointer_cast<const react::RNSScreenProps>(props);
 
   [self setFullScreenSwipeEnabled:newScreenProps.fullScreenSwipeEnabled];
+
+  [self setFullScreenSwipeShadowEnabled:newScreenProps.fullScreenSwipeShadowEnabled];
 
   [self setGestureEnabled:newScreenProps.gestureEnabled];
 
@@ -785,7 +796,7 @@ namespace react = facebook::react;
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
+  if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
   // when screen is mounted under RNSNavigationController it's size is controller
@@ -1380,12 +1391,16 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
-- (void)setViewToSnapshot:(UIView *)snapshot
+- (void)setViewToSnapshot
 {
   UIView *superView = self.view.superview;
-  [self.view removeFromSuperview];
-  self.view = snapshot;
-  [superView addSubview:self.view];
+  // if we dismissed the view natively, it will already be detached from view hierarchy
+  if (self.view.window != nil) {
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+    [superView addSubview:snapshot];
+  }
 }
 
 #else
@@ -1426,6 +1441,7 @@ RCT_EXPORT_MODULE()
 RCT_REMAP_VIEW_PROPERTY(activityState, activityStateOrNil, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(customAnimationOnSwipe, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeEnabled, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(fullScreenSwipeShadowEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(gestureEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(gestureResponseDistance, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(hideKeyboardOnSwipe, BOOL)

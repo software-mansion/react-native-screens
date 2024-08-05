@@ -51,6 +51,7 @@ public class MainActivity extends ReactActivity {
     }
 }
 ```
+
 </details>
 
 <details>
@@ -69,6 +70,7 @@ class MainActivity: ReactActivity() {
     }
 }
 ```
+
 </details>
 
 For people that must handle cases like this, there is [a more detailed discussion of the difficulties in a series of related comments](https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704633).
@@ -105,11 +107,13 @@ Screens are already integrated with the React Native's most popular navigation l
 ## Supported react-native version
 
 | library version | react-native version |
-| ------- | -------------------- |
-| 3.30.0+ | 0.68.0+              |
-| 3.14.0+ | 0.64.0+              |
-| 3.0.0+  | 0.62.0+              |
-| 2.0.0+  | 0.60.0+              |
+| --------------- | -------------------- |
+| 3.33.0+         | 0.72.0+
+| 3.32.0+         | 0.71.0+              |
+| 3.30.0+         | 0.68.0+              |
+| 3.14.0+         | 0.64.0+              |
+| 3.0.0+          | 0.62.0+              |
+| 2.0.0+          | 0.60.0+              |
 
 ### Support for Fabric
 
@@ -118,12 +122,14 @@ Screens are already integrated with the React Native's most popular navigation l
 Here's a table with summary of supported `react-native` versions when Fabric is turned on.
 
 | library version | react-native version |
-| ------- | -------------------- |
-| 3.28.0+ | 0.73.0+              |
-| 3.21.0+ | 0.72.0+              |
-| 3.19.0+ | 0.71.0+              |
-| 3.18.0+ | 0.70.0+              |
-| 3.14.0+ | 0.69.0+              |
+| --------------- | -------------------- |
+| 3.33.0+         | 0.75.0+              |
+| 3.32.0+         | 0.74.0+              |
+| 3.28.0+         | 0.73.0+              |
+| 3.21.0+         | 0.72.0+              |
+| 3.19.0+         | 0.71.0+              |
+| 3.18.0+         | 0.70.0+              |
+| 3.14.0+         | 0.69.0+              |
 
 ## Usage with [react-navigation](https://github.com/react-navigation/react-navigation)
 
@@ -233,3 +239,7 @@ This project has been build and is maintained thanks to the support from [Shopif
 [![shopify](https://avatars1.githubusercontent.com/u/8085?v=3&s=100 'Shopify.com')](https://shopify.com)
 [![expo](https://avatars2.githubusercontent.com/u/12504344?v=3&s=100 'Expo.io')](https://expo.io)
 [![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=react-native-reanimated-github 'Software Mansion')](https://swmansion.com)
+
+## React Native Screens is created by Software Mansion
+
+Since 2012 [Software Mansion](https://swmansion.com) is a software agency with experience in building web and mobile apps. We are Core React Native Contributors and experts in dealing with all kinds of React Native issues. We can help you build your next dream product – [Hire us](https://swmansion.com/contact/projects?utm_source=screens&utm_medium=readme).

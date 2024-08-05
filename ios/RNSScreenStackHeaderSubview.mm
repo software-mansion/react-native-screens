@@ -72,7 +72,15 @@ namespace react = facebook::react;
         self);
   } else {
     self.bounds = CGRect{CGPointZero, frame.size};
+    // We're forcing the parent view to layout this subview with correct frame size,
+    // see: https://github.com/software-mansion/react-native-screens/pull/2248
+    [self.superview layoutIfNeeded];
   }
+}
+
++ (BOOL)shouldBeRecycled
+{
+  return NO;
 }
 
 #else

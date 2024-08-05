@@ -24,7 +24,9 @@ import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
 import com.swmansion.rnscreens.utils.DeviceUtils
 import com.google.android.material.R as MaterialR
 
-class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
+class ScreenStackFragment :
+    ScreenFragment,
+    ScreenStackFragmentWrapper {
     private var appBarLayout: AppBarLayout? = null
     var screenStackHeader = ScreenStackHeader(screen)
 
@@ -42,7 +44,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     constructor() {
         throw IllegalStateException(
-            "ScreenStack fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity."
+            "ScreenStack fragments should never be restored. Follow instructions from https://github.com/software-mansion/react-native-screens/issues/17#issuecomment-424704067 to properly configure your main activity.",
         )
     }
 
@@ -126,14 +128,17 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         val view: ScreensCoordinatorLayout? =
             context?.let { ScreensCoordinatorLayout(it, this) }
 
-        screen.layoutParams = CoordinatorLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
-        ).apply { behavior = if (isToolbarTranslucent) null else ScrollingViewBehavior() }
+        screen.layoutParams =
+            CoordinatorLayout
+                .LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                ).apply { behavior = if (isToolbarTranslucent) null else ScrollingViewBehavior() }
 
         view?.addView(recycleView(screen))
 
@@ -164,6 +169,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
         if (isToolbarShadowHidden) {
             appBarLayout?.elevation = 0f
+            appBarLayout?.stateListAnimator = null
         }
 
         setHasOptionsMenu(true)
@@ -171,8 +177,9 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
     }
 
     override fun onStop() {
-        if (DeviceUtils.isPlatformAndroidTV(context))
+        if (DeviceUtils.isPlatformAndroidTV(context)) {
             lastFocusedChild = findLastFocusedChild()
+        }
 
         super.onStop()
     }
@@ -182,7 +189,10 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         return super.onPrepareOptionsMenu(menu)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateOptionsMenu(
+        menu: Menu,
+        inflater: MenuInflater,
+    ) {
         updateToolbarMenu(menu)
         return super.onCreateOptionsMenu(menu, inflater)
     }
@@ -284,7 +294,7 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
 
     private class ScreensCoordinatorLayout(
         context: Context,
-        private val mFragment: ScreenFragment
+        private val mFragment: ScreenFragment,
     ) : CoordinatorLayout(context) {
         private val mAnimationListener: Animation.AnimationListener =
             object : Animation.AnimationListener {
@@ -312,20 +322,22 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
             val fakeAnimation = ScreensAnimation(mFragment).apply { duration = animation.duration }
 
             if (animation is AnimationSet && !mFragment.isRemoving) {
-                animation.apply {
-                    addAnimation(fakeAnimation)
-                    setAnimationListener(mAnimationListener)
-                }.also {
-                    super.startAnimation(it)
-                }
+                animation
+                    .apply {
+                        addAnimation(fakeAnimation)
+                        setAnimationListener(mAnimationListener)
+                    }.also {
+                        super.startAnimation(it)
+                    }
             } else {
-                AnimationSet(true).apply {
-                    addAnimation(animation)
-                    addAnimation(fakeAnimation)
-                    setAnimationListener(mAnimationListener)
-                }.also {
-                    super.startAnimation(it)
-                }
+                AnimationSet(true)
+                    .apply {
+                        addAnimation(animation)
+                        addAnimation(fakeAnimation)
+                        setAnimationListener(mAnimationListener)
+                    }.also {
+                        super.startAnimation(it)
+                    }
             }
         }
 
@@ -343,8 +355,13 @@ class ScreenStackFragment : ScreenFragment, ScreenStackFragmentWrapper {
         }
     }
 
-    private class ScreensAnimation(private val mFragment: ScreenFragment) : Animation() {
-        override fun applyTransformation(interpolatedTime: Float, t: Transformation) {
+    private class ScreensAnimation(
+        private val mFragment: ScreenFragment,
+    ) : Animation() {
+        override fun applyTransformation(
+            interpolatedTime: Float,
+            t: Transformation,
+        ) {
             super.applyTransformation(interpolatedTime, t)
             // interpolated time should be the progress of the current transition
             mFragment.dispatchTransitionProgressEvent(interpolatedTime, !mFragment.isResumed)

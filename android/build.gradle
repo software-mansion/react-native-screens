@@ -18,8 +18,12 @@ buildscript {
     dependencies {
         classpath('com.android.tools.build:gradle:4.2.2')
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${safeExtGet('kotlinVersion', rnsDefaultKotlinVersion)}"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.11.0"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
     }
+}
+
+def isRunningInContextOfScreensRepo() {
+    return project == rootProject
 }
 
 def isNewArchitectureEnabled() {
@@ -31,7 +35,7 @@ def isNewArchitectureEnabled() {
 }
 
 // spotless is only accessible within react-native-screens repo
-if (project == rootProject) {
+if (isRunningInContextOfScreensRepo()) {
     apply from: 'spotless.gradle'
 }
 
@@ -58,7 +62,7 @@ def resolveReactNativeDirectory() {
     }
 
     def reactNativeFromAppNodeModules = file("${projectDir}/../../react-native")
-    if (reactNativeFromAppNodeModules.exists()) {
+    if (!isRunningInContextOfScreensRepo() && reactNativeFromAppNodeModules.exists()) {
         return reactNativeFromAppNodeModules
     }
 
@@ -68,7 +72,7 @@ def resolveReactNativeDirectory() {
     }
 
     throw new GradleException(
-        "[RNScreens] Unable to resolve react-native location in node_modules. You should project extension property (in `app/build.gradle`) `REACT_NATIVE_NODE_MODULES_DIR` with path to react-native."
+        "[RNScreens] Unable to resolve react-native location in node_modules. You should add project extension property (in `app/build.gradle`) `REACT_NATIVE_NODE_MODULES_DIR` with path to react-native."
     )
 }
 
@@ -77,6 +81,7 @@ def reactProperties = new Properties()
 file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
 def REACT_NATIVE_VERSION = reactProperties.getProperty("VERSION_NAME")
 def REACT_NATIVE_MINOR_VERSION = REACT_NATIVE_VERSION.startsWith("0.0.0-") ? 1000 : REACT_NATIVE_VERSION.split("\\.")[1].toInteger()
+def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
 
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', rnsDefaultCompileSdkVersion)
@@ -102,13 +107,14 @@ android {
         targetSdkVersion safeExtGet('targetSdkVersion', rnsDefaultTargetSdkVersion)
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
         ndk {
             abiFilters (*reactNativeArchitectures())
         }
         externalNativeBuild {
             cmake {
-                arguments "-DANDROID_STL=c++_shared"
+                arguments "-DANDROID_STL=c++_shared",
+                        "-DRNS_NEW_ARCH_ENABLED=${IS_NEW_ARCHITECTURE_ENABLED}"
             }
         }
     }
@@ -139,20 +145,21 @@ android {
                 "META-INF/**",
                 "**/libjsi.so",
                 "**/libc++_shared.so",
-                "**/libreact_render*.so"
+                "**/libreact_render*.so",
+                "**/libreactnativejni.so",
+                "**/libreact_performance_timeline.so"
         ]
     }
     sourceSets.main {
         ext.androidResDir = "src/main/res"
         java {
-            if (isNewArchitectureEnabled()) {
+            if (IS_NEW_ARCHITECTURE_ENABLED) {
                 srcDirs += [
                     "src/fabric/java",
                 ]
             } else {
                 srcDirs += [
                     "src/paper/java",
-                    "build/generated/source/codegen/java"
                 ]
             }
         }

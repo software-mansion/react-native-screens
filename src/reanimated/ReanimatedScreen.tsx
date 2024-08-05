@@ -5,7 +5,7 @@ import { InnerScreen, ScreenProps } from 'react-native-screens';
 import Animated from 'react-native-reanimated';
 
 const AnimatedScreen = Animated.createAnimatedComponent(
-  InnerScreen as unknown as React.ComponentClass
+  InnerScreen as unknown as React.ComponentClass,
 );
 
 const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
@@ -17,7 +17,7 @@ const ReanimatedScreen = React.forwardRef<typeof AnimatedScreen, ScreenProps>(
         {...props}
       />
     );
-  }
+  },
 );
 
 ReanimatedScreen.displayName = 'ReanimatedScreen';

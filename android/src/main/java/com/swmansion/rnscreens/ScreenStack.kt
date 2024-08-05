@@ -12,7 +12,9 @@ import java.util.Collections
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
-class ScreenStack(context: Context?) : ScreenContainer(context) {
+class ScreenStack(
+    context: Context?,
+) : ScreenContainer(context) {
     private val stack = ArrayList<ScreenStackFragmentWrapper>()
     private val dismissedWrappers: MutableSet<ScreenStackFragmentWrapper> = HashSet()
     private val drawingOpPool: MutableList<DrawingOp> = ArrayList()
@@ -142,11 +144,21 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                         StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_enter_in, R.anim.rns_default_enter_out)
                         StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
                         StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
-                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
-                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
-                        StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
-                            R.anim.rns_slide_in_from_bottom, R.anim.rns_no_animation_medium
-                        )
+                        StackAnimation.SLIDE_FROM_RIGHT ->
+                            it.setCustomAnimations(
+                                R.anim.rns_slide_in_from_right,
+                                R.anim.rns_slide_out_to_left,
+                            )
+                        StackAnimation.SLIDE_FROM_LEFT ->
+                            it.setCustomAnimations(
+                                R.anim.rns_slide_in_from_left,
+                                R.anim.rns_slide_out_to_right,
+                            )
+                        StackAnimation.SLIDE_FROM_BOTTOM ->
+                            it.setCustomAnimations(
+                                R.anim.rns_slide_in_from_bottom,
+                                R.anim.rns_no_animation_medium,
+                            )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_fade_from_bottom, R.anim.rns_no_animation_350)
                         StackAnimation.IOS -> it.setCustomAnimations(R.anim.rns_slide_in_from_right_ios, R.anim.rns_slide_out_to_left_ios)
                     }
@@ -155,11 +167,21 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                         StackAnimation.DEFAULT -> it.setCustomAnimations(R.anim.rns_default_exit_in, R.anim.rns_default_exit_out)
                         StackAnimation.NONE -> it.setCustomAnimations(R.anim.rns_no_animation_20, R.anim.rns_no_animation_20)
                         StackAnimation.FADE -> it.setCustomAnimations(R.anim.rns_fade_in, R.anim.rns_fade_out)
-                        StackAnimation.SLIDE_FROM_RIGHT -> it.setCustomAnimations(R.anim.rns_slide_in_from_left, R.anim.rns_slide_out_to_right)
-                        StackAnimation.SLIDE_FROM_LEFT -> it.setCustomAnimations(R.anim.rns_slide_in_from_right, R.anim.rns_slide_out_to_left)
-                        StackAnimation.SLIDE_FROM_BOTTOM -> it.setCustomAnimations(
-                            R.anim.rns_no_animation_medium, R.anim.rns_slide_out_to_bottom
-                        )
+                        StackAnimation.SLIDE_FROM_RIGHT ->
+                            it.setCustomAnimations(
+                                R.anim.rns_slide_in_from_left,
+                                R.anim.rns_slide_out_to_right,
+                            )
+                        StackAnimation.SLIDE_FROM_LEFT ->
+                            it.setCustomAnimations(
+                                R.anim.rns_slide_in_from_right,
+                                R.anim.rns_slide_out_to_left,
+                            )
+                        StackAnimation.SLIDE_FROM_BOTTOM ->
+                            it.setCustomAnimations(
+                                R.anim.rns_no_animation_medium,
+                                R.anim.rns_slide_out_to_bottom,
+                            )
                         StackAnimation.FADE_FROM_BOTTOM -> it.setCustomAnimations(R.anim.rns_no_animation_250, R.anim.rns_fade_to_bottom)
                         StackAnimation.IOS -> it.setCustomAnimations(R.anim.rns_slide_in_from_left_ios, R.anim.rns_slide_out_to_right_ios)
                     }
@@ -170,7 +192,8 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
             goingForward = shouldUseOpenAnimation
 
             if (shouldUseOpenAnimation &&
-                newTop != null && needsDrawReordering(newTop) &&
+                newTop != null &&
+                needsDrawReordering(newTop) &&
                 visibleBottom == null
             ) {
                 // When using an open animation in which two screens overlap (eg. fade_from_bottom or
@@ -208,9 +231,12 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
                 for (fragmentWrapper in screenWrappers) {
                     // ignore all screens beneath the visible bottom
                     if (beneathVisibleBottom) {
-                        beneathVisibleBottom = if (fragmentWrapper === visibleBottom) {
-                            false
-                        } else continue
+                        beneathVisibleBottom =
+                            if (fragmentWrapper === visibleBottom) {
+                                false
+                            } else {
+                                continue
+                            }
                     }
                     // when first visible screen found, make all screens after that visible
                     it.add(id, fragmentWrapper.fragment).runOnCommit { top?.screen?.bringToFront() }
@@ -298,13 +324,17 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         drawAndRelease()
     }
 
-    override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
+    override fun drawChild(
+        canvas: Canvas,
+        child: View,
+        drawingTime: Long,
+    ): Boolean {
         drawingOps.add(
             obtainDrawingOp().apply {
                 this.canvas = canvas
                 this.child = child
                 this.drawingTime = drawingTime
-            }
+            },
         )
         return true
     }
@@ -315,8 +345,9 @@ class ScreenStack(context: Context?) : ScreenContainer(context) {
         super.drawChild(op.canvas!!, op.child, op.drawingTime)
     }
 
-    private fun obtainDrawingOp(): DrawingOp =
-        if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeLast()
+    // Can't use `drawingOpPool.removeLast` here due to issues with static name resolution in Android SDK 35+.
+    // See: https://developer.android.com/about/versions/15/behavior-changes-15?hl=en#openjdk-api-changes
+    private fun obtainDrawingOp(): DrawingOp = if (drawingOpPool.isEmpty()) DrawingOp() else drawingOpPool.removeAt(drawingOpPool.lastIndex)
 
     private inner class DrawingOp {
         var canvas: Canvas? = null

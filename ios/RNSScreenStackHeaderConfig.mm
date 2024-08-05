@@ -19,6 +19,7 @@
 #import <React/RCTFont.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageSource.h>
+#import "RNSConvert.h"
 #import "RNSScreen.h"
 #import "RNSScreenStackHeaderConfig.h"
 #import "RNSSearchBar.h"
@@ -140,8 +141,8 @@ namespace react = facebook::react;
     nextVC = nav.topViewController;
   }
 
-  // we want updates sent to the VC below modal too since it is also visible
-  BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC;
+  // we want updates sent to the VC directly below modal too since it is also visible
+  BOOL isPresentingVC = nextVC != nil && vc.presentedViewController == nextVC && vc == nav.topViewController;
 
   BOOL isInFullScreenModal = nav == nil && _screenView.stackPresentation == RNSScreenStackPresentationFullScreenModal;
   // if nav is nil, it means we can be in a fullScreen modal, so there is no nextVC, but we still want to update
@@ -493,8 +494,17 @@ namespace react = facebook::react;
        config.direction == UISemanticContentAttributeForceRightToLeft) &&
       // iOS 12 cancels swipe gesture when direction is changed. See #1091
       navctr.view.semanticContentAttribute != config.direction) {
+    // This is needed for swipe back gesture direction
     navctr.view.semanticContentAttribute = config.direction;
+
+    // This is responsible for the direction of the navigationBar and its contents
     navctr.navigationBar.semanticContentAttribute = config.direction;
+    [[UIButton appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
+        setSemanticContentAttribute:config.direction];
+    [[UIView appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
+        setSemanticContentAttribute:config.direction];
+    [[UISearchBar appearanceWhenContainedInInstancesOfClasses:@[ navctr.navigationBar.class ]]
+        setSemanticContentAttribute:config.direction];
   }
 
   if (shouldHide) {
@@ -512,6 +522,13 @@ namespace react = facebook::react;
   [backBarButtonItem setMenuHidden:config.disableBackButtonMenu];
 
   auto isBackButtonCustomized = !isBackTitleBlank || config.disableBackButtonMenu;
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_14_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
+  if (@available(iOS 14.0, *)) {
+    prevItem.backButtonDisplayMode = config.backButtonDisplayMode;
+  }
+#endif
 
   if (config.isBackTitleVisible) {
     if ((config.backTitleFontFamily &&
@@ -572,6 +589,12 @@ namespace react = facebook::react;
     navitem.standardAppearance = appearance;
     navitem.compactAppearance = appearance;
 
+// appearance does not apply to the tvOS so we need to use lagacy customization
+#if TARGET_OS_TV
+    navctr.navigationBar.titleTextAttributes = appearance.titleTextAttributes;
+    navctr.navigationBar.backgroundColor = appearance.backgroundColor;
+#endif
+
     UINavigationBarAppearance *scrollEdgeAppearance =
         [[UINavigationBarAppearance alloc] initWithBarAppearance:appearance];
     if (config.largeTitleBackgroundColor != nil) {
@@ -598,8 +621,6 @@ namespace react = facebook::react;
 #endif
   }
 #if !TARGET_OS_TV
-  // Workaround for the wrong rotation of back button arrow in RTL mode.
-  navitem.hidesBackButton = true;
   navitem.hidesBackButton = config.hideBackButton;
 #endif
   navitem.leftBarButtonItem = nil;
@@ -607,6 +628,8 @@ namespace react = facebook::react;
   navitem.titleView = nil;
 
   for (RNSScreenStackHeaderSubview *subview in config.reactSubviews) {
+    // This code should be kept in sync on Fabric with analogous switch statement in
+    // `- [RNSScreenStackHeaderConfig replaceNavigationBarViewsWithSnapshotOfSubview:]` method.
     switch (subview.type) {
       case RNSScreenStackHeaderSubviewTypeLeft: {
 #if !TARGET_OS_TV
@@ -656,13 +679,6 @@ namespace react = facebook::react;
       }
     }
   }
-
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
-    // Position the contents in the navigation bar, regarding to the direction.
-    for (UIView *view in navctr.navigationBar.subviews) {
-      view.semanticContentAttribute = config.direction;
-    }
-  });
 
   // This assignment should be done after `navitem.titleView = ...` assignment (iOS 16.0 bug).
   // See: https://github.com/software-mansion/react-native-screens/issues/1570 (comments)
@@ -741,8 +757,38 @@ namespace react = facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
+  // For explanation of why we can make a snapshot here despite the fact that our children are already
+  // unmounted see https://github.com/software-mansion/react-native-screens/pull/2261
+  [self replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView];
   [_reactSubviews removeObject:(RNSScreenStackHeaderSubview *)childComponentView];
   [childComponentView removeFromSuperview];
+  [self updateViewControllerIfNeeded];
+}
+
+- (void)replaceNavigationBarViewsWithSnapshotOfSubview:(RNSScreenStackHeaderSubview *)childComponentView
+{
+  UINavigationItem *navitem = _screenView.controller.navigationItem;
+  UIView *snapshot = [childComponentView snapshotViewAfterScreenUpdates:NO];
+
+  // This code should be kept in sync with analogous switch statement in
+  // `+ [RNSScreenStackHeaderConfig updateViewController: withConfig: animated:]` method.
+  switch (childComponentView.type) {
+    case RNSScreenStackHeaderSubviewTypeLeft:
+      navitem.leftBarButtonItem.customView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeCenter:
+    case RNSScreenStackHeaderSubviewTypeTitle:
+      navitem.titleView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeRight:
+      navitem.rightBarButtonItem.customView = snapshot;
+      break;
+    case RNSScreenStackHeaderSubviewTypeSearchBar:
+    case RNSScreenStackHeaderSubviewTypeBackButton:
+      break;
+    default:
+      RCTLogError(@"[RNScreens] Unhandled subview type: %ld", childComponentView.type);
+  }
 }
 
 static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
@@ -786,11 +832,6 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _initialPropsSet = NO;
 }
 
-+ (react::ComponentDescriptorProvider)componentDescriptorProvider
-{
-  return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
-}
-
 - (NSNumber *)getFontSizePropValue:(int)value
 {
   if (value > 0)
@@ -798,14 +839,9 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   return nil;
 }
 
-- (UISemanticContentAttribute)getDirectionPropValue:(react::RNSScreenStackHeaderConfigDirection)direction
++ (react::ComponentDescriptorProvider)componentDescriptorProvider
 {
-  switch (direction) {
-    case react::RNSScreenStackHeaderConfigDirection::Rtl:
-      return UISemanticContentAttributeForceRightToLeft;
-    case react::RNSScreenStackHeaderConfigDirection::Ltr:
-      return UISemanticContentAttributeForceLeftToRight;
-  }
+  return react::concreteComponentDescriptorProvider<react::RNSScreenStackHeaderConfigComponentDescriptor>();
 }
 
 - (void)updateProps:(react::Props::Shared const &)props oldProps:(react::Props::Shared const &)oldProps
@@ -852,9 +888,11 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _backTitleFontSize = [self getFontSizePropValue:newScreenProps.backTitleFontSize];
   _hideBackButton = newScreenProps.hideBackButton;
   _disableBackButtonMenu = newScreenProps.disableBackButtonMenu;
+  _backButtonDisplayMode =
+      [RNSConvert UINavigationItemBackButtonDisplayModeFromCppEquivalent:newScreenProps.backButtonDisplayMode];
 
   if (newScreenProps.direction != oldScreenProps.direction) {
-    _direction = [self getDirectionPropValue:newScreenProps.direction];
+    _direction = [RNSConvert UISemanticContentAttributeFromCppEquivalent:newScreenProps.direction];
   }
 
   _backTitleVisible = newScreenProps.backTitleVisible;
@@ -945,8 +983,8 @@ RCT_EXPORT_VIEW_PROPERTY(hideBackButton, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(hideShadow, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(backButtonInCustomView, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableBackButtonMenu, BOOL)
-// `hidden` is an UIView property, we need to use different name internally
-RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(backButtonDisplayMode, UINavigationItemBackButtonDisplayMode)
+RCT_REMAP_VIEW_PROPERTY(hidden, hide, BOOL) // `hidden` is an UIView property, we need to use different name internally
 RCT_EXPORT_VIEW_PROPERTY(translucent, BOOL)
 
 @end
@@ -1000,6 +1038,16 @@ RCT_ENUM_CONVERTER(
       @"rtl" : @(UISemanticContentAttributeForceRightToLeft),
     }),
     UISemanticContentAttributeUnspecified,
+    integerValue)
+
+RCT_ENUM_CONVERTER(
+    UINavigationItemBackButtonDisplayMode,
+    (@{
+      @"default" : @(UINavigationItemBackButtonDisplayModeDefault),
+      @"generic" : @(UINavigationItemBackButtonDisplayModeGeneric),
+      @"minimal" : @(UINavigationItemBackButtonDisplayModeMinimal),
+    }),
+    UINavigationItemBackButtonDisplayModeDefault,
     integerValue)
 
 RCT_ENUM_CONVERTER(UIBlurEffectStyle, ([self blurEffectsForIOSVersion]), UIBlurEffectStyleExtraLight, integerValue)

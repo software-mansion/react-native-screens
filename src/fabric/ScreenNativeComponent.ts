@@ -79,6 +79,7 @@ export interface NativeProps extends ViewProps {
   sheetExpandsWhenScrolledToEdge?: WithDefault<boolean, false>;
   customAnimationOnSwipe?: boolean;
   fullScreenSwipeEnabled?: boolean;
+  fullScreenSwipeShadowEnabled?: boolean;
   homeIndicatorHidden?: boolean;
   preventNativeDismiss?: boolean;
   gestureEnabled?: WithDefault<boolean, true>;
@@ -97,6 +98,7 @@ export interface NativeProps extends ViewProps {
   hideKeyboardOnSwipe?: boolean;
   activityState?: WithDefault<Float, -1.0>;
   navigationBarColor?: ColorValue;
+  navigationBarTranslucent?: boolean;
   navigationBarHidden?: boolean;
   nativeBackButtonDismissalEnabled?: boolean;
   headerType?: WithDefault<HeaderType, 'small'>;

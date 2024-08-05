@@ -55,6 +55,7 @@
 @property (nonatomic) BOOL translucent;
 @property (nonatomic) BOOL backButtonInCustomView;
 @property (nonatomic) UISemanticContentAttribute direction;
+@property (nonatomic) UINavigationItemBackButtonDisplayMode backButtonDisplayMode;
 
 + (void)willShowViewController:(UIViewController *)vc
                       animated:(BOOL)animated
@@ -70,5 +71,6 @@
 
 + (UIBlurEffectStyle)UIBlurEffectStyle:(id)json;
 + (UISemanticContentAttribute)UISemanticContentAttribute:(id)json;
++ (UINavigationItemBackButtonDisplayMode)UINavigationItemBackButtonDisplayMode:(id)json;
 
 @end
