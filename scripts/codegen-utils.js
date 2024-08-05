@@ -46,6 +46,7 @@ function readdirSync(dir) {
 }
 
 function fixOldArchJavaForRN72Compat(dir) {
+  console.log(`${TAG} fixOldArchJavaForRN72Compat:  ${dir}`);
   // see https://github.com/rnmapbox/maps/issues/3193
   const files = readdirSync(dir);
   files.forEach(file => {
@@ -74,6 +75,7 @@ function fixOldArchJavaForRN72Compat(dir) {
 }
 
 async function generateCodegen() {
+  console.log(`${TAG} generateCodegen`);
   exec(`rm -rf ${GENERATED_DIR}`);
   exec(`mkdir -p ${GENERATED_DIR}/source/codegen/`);
 
@@ -134,6 +136,8 @@ function compareFileAtTwoPaths(filename, firstPath, secondPath) {
 }
 
 async function checkCodegenIntegrity() {
+  console.log(`${TAG} checkCodegenIntegrity`);
+
   await generateCodegen();
 
   SOURCE_FOLDERS.forEach(({codegenPath, oldArchPath}) => {
