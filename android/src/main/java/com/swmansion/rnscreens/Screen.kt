@@ -395,9 +395,11 @@ class Screen(
         NAVIGATION_BAR_HIDDEN,
     }
 
-    enum class HeaderType(val isCollapsing: Boolean) {
+    enum class HeaderType(
+        val isCollapsing: Boolean,
+    ) {
         Small(false),
         Medium(true),
-        Large(true);
+        Large(true),
     }
 }

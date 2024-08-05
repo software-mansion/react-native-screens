@@ -63,10 +63,11 @@ class ScreenStackFragment :
 
         // As AppBarLayout may have dimensions of expanded medium / large header,
         // We need to change its layout params to `WRAP_CONTENT`.
-        appBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
-            CoordinatorLayout.LayoutParams.MATCH_PARENT,
-            CoordinatorLayout.LayoutParams.WRAP_CONTENT
-        )
+        appBarLayout?.layoutParams =
+            CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+            )
     }
 
     override fun setToolbar(toolbar: Toolbar) {
@@ -80,9 +81,11 @@ class ScreenStackFragment :
 
         // As `setToolbar` may be called after changing header's visibility,
         // we need to apply correction to layoutParams with proper dimensions.
-        appBarLayout?.layoutParams = CoordinatorLayout.LayoutParams(
-            CoordinatorLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(toolbar.context)
-        )
+        appBarLayout?.layoutParams =
+            CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                getHeightOfToolbar(toolbar.context),
+            )
     }
 
     override fun setToolbarShadowHidden(hidden: Boolean) {
@@ -142,28 +145,31 @@ class ScreenStackFragment :
 
         view?.addView(recycleView(screen))
 
-        appBarLayout = context?.let { AppBarLayout(it) }?.apply {
-            // By default AppBarLayout will have a background color set but since we cover the whole layout
-            // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
-            // role. On top of that it breaks screens animations when alfa offscreen compositing is off
-            // (which is the default)
-            setBackgroundColor(Color.TRANSPARENT)
+        appBarLayout =
+            context?.let { AppBarLayout(it) }?.apply {
+                // By default AppBarLayout will have a background color set but since we cover the whole layout
+                // with toolbar (that can be semi-transparent) the bar layout background color does not pay a
+                // role. On top of that it breaks screens animations when alfa offscreen compositing is off
+                // (which is the default)
+                setBackgroundColor(Color.TRANSPARENT)
 
-            layoutParams = AppBarLayout.LayoutParams(
-                AppBarLayout.LayoutParams.MATCH_PARENT, getHeightOfToolbar(context)
-            )
+                layoutParams =
+                    AppBarLayout.LayoutParams(
+                        AppBarLayout.LayoutParams.MATCH_PARENT,
+                        getHeightOfToolbar(context),
+                    )
 
-            // On Material 3 the elevation is not visible on AppBarLayout.
-            // To prevent this behavior, we're setting outline shadow colors to black.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                outlineAmbientShadowColor = Color.BLACK
-                outlineSpotShadowColor = Color.BLACK
+                // On Material 3 the elevation is not visible on AppBarLayout.
+                // To prevent this behavior, we're setting outline shadow colors to black.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    outlineAmbientShadowColor = Color.BLACK
+                    outlineSpotShadowColor = Color.BLACK
+                }
+
+                screenStackHeader.collapsingToolbarLayout?.let {
+                    addView(recycleView(it))
+                }
             }
-            
-            screenStackHeader.collapsingToolbarLayout?.let {
-                addView(recycleView(it))
-            }
-        }
 
         appBarLayout?.let { view?.addView(it) }
 
@@ -202,11 +208,12 @@ class ScreenStackFragment :
             return CoordinatorLayout.LayoutParams.WRAP_CONTENT
         }
 
-        val resolvedSize = when (screen.headerType) {
-            Screen.HeaderType.Medium -> MaterialR.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
-            Screen.HeaderType.Large -> MaterialR.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
-            else -> CoordinatorLayout.LayoutParams.WRAP_CONTENT
-        }
+        val resolvedSize =
+            when (screen.headerType) {
+                Screen.HeaderType.Medium -> MaterialR.attr.collapsingToolbarLayoutMediumSize.resolveAttribute(context)
+                Screen.HeaderType.Large -> MaterialR.attr.collapsingToolbarLayoutLargeSize.resolveAttribute(context)
+                else -> CoordinatorLayout.LayoutParams.WRAP_CONTENT
+            }
 
         // For apps that don't support Material 3 it's possible that resolved attribute of
         // given header type size will return -1. In such case we want to return fallback value of

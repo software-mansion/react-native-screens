@@ -9,24 +9,30 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.R as MaterialR
 
-class ScreenStackHeader(val screen: Screen) {
+class ScreenStackHeader(
+    val screen: Screen,
+) {
     var toolbar: CustomToolbar? = null
     var collapsingToolbarLayout: CollapsingToolbarLayout? = null
     var loadedHeaderType = screen.headerType
 
     fun recreateToolbar() {
         if (screen.headerType.isCollapsing) {
-            toolbar?.layoutParams = CollapsingToolbarLayout.LayoutParams(
-                CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,
-                android.R.attr.actionBarSize.resolveAttribute(screen.context)
-            ).apply {
-                collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
-            }
+            toolbar?.layoutParams =
+                CollapsingToolbarLayout
+                    .LayoutParams(
+                        CollapsingToolbarLayout.LayoutParams.MATCH_PARENT,
+                        android.R.attr.actionBarSize
+                            .resolveAttribute(screen.context),
+                    ).apply {
+                        collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
+                    }
         }
 
-        collapsingToolbarLayout = createCollapsingToolbarLayout().apply {
-            addView(toolbar)
-        }
+        collapsingToolbarLayout =
+            createCollapsingToolbarLayout().apply {
+                addView(toolbar)
+            }
     }
 
     fun updateHeaderType() {
@@ -81,17 +87,21 @@ class ScreenStackHeader(val screen: Screen) {
         }
 
     private fun createCollapsingToolbarLayout(): CollapsingToolbarLayout {
-        val toolbarStyle = when (screen.headerType) {
-            Screen.HeaderType.Large -> MaterialR.attr.collapsingToolbarLayoutLargeStyle
-            Screen.HeaderType.Medium -> MaterialR.attr.collapsingToolbarLayoutMediumStyle
-            else -> MaterialR.attr.collapsingToolbarLayoutStyle
-        }
+        val toolbarStyle =
+            when (screen.headerType) {
+                Screen.HeaderType.Large -> MaterialR.attr.collapsingToolbarLayoutLargeStyle
+                Screen.HeaderType.Medium -> MaterialR.attr.collapsingToolbarLayoutMediumStyle
+                else -> MaterialR.attr.collapsingToolbarLayoutStyle
+            }
 
         return CollapsingToolbarLayout(screen.context, null, toolbarStyle).apply {
-            layoutParams = AppBarLayout.LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT)
-                .apply {
-                    scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-                }
+            layoutParams =
+                AppBarLayout
+                    .LayoutParams(AppBarLayout.LayoutParams.MATCH_PARENT, AppBarLayout.LayoutParams.MATCH_PARENT)
+                    .apply {
+                        scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
+                            AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+                    }
 
             fitsSystemWindows = true
         }
