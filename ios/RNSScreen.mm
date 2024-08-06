@@ -416,7 +416,7 @@ namespace react = facebook::react;
       [[RNSHeaderHeightChangeEvent alloc] initWithEventName:@"onHeaderHeightChange"
                                                    reactTag:[NSNumber numberWithInt:self.tag]
                                                headerHeight:headerHeight];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onHeaderHeightChange) {
     self.onHeaderHeightChange(@{
@@ -502,7 +502,7 @@ namespace react = facebook::react;
                                                                    progress:progress
                                                                     closing:closing
                                                                goingForward:goingForward];
-  [[RCTBridge currentBridge].eventDispatcher notifyObserversOfEvent:event];
+  [self postNotificationForEventDispatcherObserversWithEvent:event];
 #else
   if (self.onTransitionProgress) {
     self.onTransitionProgress(@{
@@ -513,14 +513,6 @@ namespace react = facebook::react;
   }
 #endif
 }
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
-{
-  [self notifyGestureCancel];
-}
-#endif
 
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
@@ -546,11 +538,23 @@ namespace react = facebook::react;
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
   if (_preventNativeDismiss) {
-    [self notifyDismissCancelledWithDismissCount:1];
     return NO;
   }
   return _gestureEnabled;
 }
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
+{
+  // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
+  // with usePreventRemove API of react-navigation v7.
+  [self notifyGestureCancel];
+  if (_preventNativeDismiss) {
+    [self notifyDismissCancelledWithDismissCount:1];
+  }
+}
+#endif
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
@@ -659,6 +663,14 @@ namespace react = facebook::react;
 
 #pragma mark - Fabric specific
 #ifdef RCT_NEW_ARCH_ENABLED
+
+- (void)postNotificationForEventDispatcherObserversWithEvent:(NSObject<RCTEvent> *)event
+{
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:event, @"event", nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                      object:nil
+                                                    userInfo:userInfo];
+}
 
 - (BOOL)hasHeaderConfig
 {
@@ -788,7 +800,7 @@ namespace react = facebook::react;
   _newLayoutMetrics = layoutMetrics;
   _oldLayoutMetrics = oldLayoutMetrics;
   UIViewController *parentVC = self.reactViewController.parentViewController;
-  if (parentVC != nil && ![parentVC isKindOfClass:[RNSNavigationController class]]) {
+  if (parentVC == nil || ![parentVC isKindOfClass:[RNSNavigationController class]]) {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
   }
   // when screen is mounted under RNSNavigationController it's size is controller
@@ -1383,12 +1395,16 @@ Class<RCTComponentViewProtocol> RNSScreenCls(void)
 #ifdef RCT_NEW_ARCH_ENABLED
 #pragma mark - Fabric specific
 
-- (void)setViewToSnapshot:(UIView *)snapshot
+- (void)setViewToSnapshot
 {
   UIView *superView = self.view.superview;
-  [self.view removeFromSuperview];
-  self.view = snapshot;
-  [superView addSubview:self.view];
+  // if we dismissed the view natively, it will already be detached from view hierarchy
+  if (self.view.window != nil) {
+    UIView *snapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+    [self.view removeFromSuperview];
+    self.view = snapshot;
+    [superView addSubview:snapshot];
+  }
 }
 
 #else

@@ -159,7 +159,7 @@ class SearchBarManager :
     }
 
     private fun logNotAvailable(propName: String) {
-        Log.w("RN SCREENS", "$propName prop is not available on Android")
+        Log.w("[RNScreens]", "$propName prop is not available on Android")
     }
 
     // NativeCommands

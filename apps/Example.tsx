@@ -22,6 +22,7 @@ import { ListItem, SettingsSwitch, ThemedText } from './src/shared';
 import SimpleNativeStack from './src/screens/SimpleNativeStack';
 import SwipeBackAnimation from './src/screens/SwipeBackAnimation';
 import StackPresentation from './src/screens/StackPresentation';
+import PreventRemove from './src/screens/PreventRemove';
 import HeaderOptions from './src/screens/HeaderOptions';
 import StatusBarExample from './src/screens/StatusBar';
 import Animations from './src/screens/Animations';
@@ -80,6 +81,11 @@ const SCREENS: Record<
     type: 'example',
     isTVOSReady: true,
   },
+  PreventRemove: {
+    title: 'Prevent Remove',
+    component: PreventRemove,
+    type: 'example',
+  },
   HeaderOptions: {
     title: 'Header Options',
     component: HeaderOptions,
@@ -132,8 +138,8 @@ const playgrounds = screens.filter(name => SCREENS[name].type === 'playground');
 type RootStackParamList = {
   Main: undefined;
 } & {
-  [P in keyof typeof SCREENS]: undefined;
-};
+    [P in keyof typeof SCREENS]: undefined;
+  };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -208,9 +214,8 @@ const ExampleApp = (): React.JSX.Element => {
               <Stack.Screen
                 name="Main"
                 options={{
-                  title: `${
-                    Platform.isTV ? '📺' : '📱'
-                  } React Native Screens Examples`,
+                  title: `${Platform.isTV ? '📺' : '📱'
+                    } React Native Screens Examples`,
                 }}
                 component={MainScreen}
               />

@@ -383,13 +383,9 @@ namespace react = facebook::react;
     appearance.backgroundColor = config.backgroundColor;
   }
 
-  // TODO: implement blurEffect on Fabric
-#ifdef RCT_NEW_ARCH_ENABLED
-#else
   if (config.blurEffect) {
     appearance.backgroundEffect = [UIBlurEffect effectWithStyle:config.blurEffect];
   }
-#endif
 
   if (config.hideShadow) {
     appearance.shadowColor = nil;
@@ -903,6 +899,10 @@ static RCTResizeMode resizeModeFromCppEquiv(react::ImageResizeMode resizeMode)
   _largeTitleColor = RCTUIColorFromSharedColor(newScreenProps.largeTitleColor);
   _color = RCTUIColorFromSharedColor(newScreenProps.color);
   _backgroundColor = RCTUIColorFromSharedColor(newScreenProps.backgroundColor);
+
+  if (newScreenProps.blurEffect != oldScreenProps.blurEffect) {
+    _blurEffect = [RNSConvert UIBlurEffectStyleFromCppEquivalent:newScreenProps.blurEffect];
+  }
 
   [self updateViewControllerIfNeeded];
 
