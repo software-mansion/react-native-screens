@@ -296,4 +296,11 @@ class ScreenStackHeaderConfigViewManager :
     ) {
         logNotAvailable("backButtonDisplayMode")
     }
+
+    override fun setBlurEffect(
+        view: ScreenStackHeaderConfig?,
+        value: String?,
+    ) {
+        logNotAvailable("blurEffect")
+    }
 }
