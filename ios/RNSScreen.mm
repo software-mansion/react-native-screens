@@ -514,14 +514,6 @@ namespace react = facebook::react;
 #endif
 }
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
-    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
-- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
-{
-  [self notifyGestureCancel];
-}
-#endif
-
 - (void)presentationControllerWillDismiss:(UIPresentationController *)presentationController
 {
   // We need to call both "cancel" and "reset" here because RN's gesture recognizer
@@ -546,11 +538,23 @@ namespace react = facebook::react;
 - (BOOL)presentationControllerShouldDismiss:(UIPresentationController *)presentationController
 {
   if (_preventNativeDismiss) {
-    [self notifyDismissCancelledWithDismissCount:1];
     return NO;
   }
   return _gestureEnabled;
 }
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && defined(__IPHONE_13_0) && \
+    __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
+- (void)presentationControllerDidAttemptToDismiss:(UIPresentationController *)presentationController
+{
+  // NOTE(kkafar): We should consider depracating the use of gesture cancel here & align
+  // with usePreventRemove API of react-navigation v7.
+  [self notifyGestureCancel];
+  if (_preventNativeDismiss) {
+    [self notifyDismissCancelledWithDismissCount:1];
+  }
+}
+#endif
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
 {
